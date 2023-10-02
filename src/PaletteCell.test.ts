@@ -9,7 +9,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render, screen, fireEvent, waitFor } from "@testing-library/preact";
+import { render, screen, fireEvent } from "@testing-library/preact";
 import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 import { PaletteCell } from "./PaletteCell";
