@@ -1,4 +1,15 @@
-import { render, screen, fireEvent } from "@testing-library/preact";
+/*
+ * Copyright 2023 Inclusive Design Research Centre, OCAD University
+ * All rights reserved.
+ *
+ * Licensed under the New BSD license. You may not use this file except in
+ * compliance with this License.
+ *
+ * You may obtain a copy of the License at
+ * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
+ */
+
+import { render, screen, fireEvent, waitFor } from "@testing-library/preact";
 import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 import { PaletteCell } from "./PaletteCell";
@@ -40,6 +51,7 @@ test("The PaletteCell is rendered correctly", async () => {
   // Check styling due to mouse hover
   // TODO:  get `:hover` style from PaletteCell.css?
   fireEvent.mouseOver(button);
+
   buttonStyles = window.getComputedStyle(button);
   console.log(`Button's background colour: ${buttonStyles.backgroundColor}`);
   //expect(buttonStyles.backgroundColor).toBe("#cccccc");
