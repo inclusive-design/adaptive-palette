@@ -59,14 +59,13 @@ export function Palette (props) {
     theCells.push(paletteCell);
   });
 
-  render(html`
+  return html`
     <div
       class="paletteContainer"
       style="grid-template-columns: repeat(${rowsCols.numColumns}, auto);">
         ${theCells}
-    </div>`, document.getElementById("paletteCell")
-  );
-
+    </div>
+  `;
 }
 
 import bmwJson from "./keyboards/bmw_keys.json";
