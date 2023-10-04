@@ -16,15 +16,15 @@
   padding: 1em;
   font-size: 1em;
   text-align: center;
-}
 
-.paletteCell:hover, .paletteCell:focus {
-  background-color: lightblue;
-  color: #0000aa;
-}
+  &:hover, &:focus {
+    background-color: lightblue;
+    color: #0000aa;
+  }
 
-.paletteCell > svg {
-  display: block;
+  & > svg {
+    display: block;
+  }
 }
 
 .disabled {
