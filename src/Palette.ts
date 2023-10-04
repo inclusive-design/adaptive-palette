@@ -12,6 +12,7 @@
 import { render } from "preact";
 import { html } from "htm/preact";
 import { PaletteCell } from "./PaletteCell";
+import "./Palette.scss";
 
 /**
  * Given a palette defined in a json structure, compute the number of rows

@@ -10,5 +10,8 @@ module.exports = {
   },
   testPathIgnorePatterns: ["/node_modules/", "<rootDir>/dist/"],
   transformIgnorePatterns: ["<rootDir>/dist/"],
-  moduleFileExtensions: ["mjs", "js", "jsx", "ts", "tsx", "json", "node"]
+  moduleFileExtensions: ["mjs", "js", "jsx", "ts", "tsx", "json", "node"],
+  moduleNameMapper: {
+     "^.+\\.(css|less|scss)$": "babel-jest"
+  }
 };

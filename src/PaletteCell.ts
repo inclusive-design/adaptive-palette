@@ -10,6 +10,7 @@
  */
 
 import { html } from "htm/preact";
+import "./PaletteCell.scss";
 
 export function PaletteCell (props) {
 
