@@ -36,7 +36,7 @@ export function PaletteCell (props) {
 
   return html`
     <button id="${props.id}" class="${classes}" style="${styles}" disabled=${disabled}>
-      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10" role="presentation">
         <circle cx="5" cy="5" r="4" fill="transparent" stroke="black" stroke-width="1"/>
       </svg>
       ${props.labelText}
