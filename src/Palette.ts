@@ -29,12 +29,12 @@ function countRowsColumns (paletteDefinition) {
   let bottomRow = 0;
   const cellIds = Object.keys(paletteDefinition.cells);
   cellIds.forEach((id) => {
-    const aCell = paletteDefinition.cells[id];
-    rightColumn = aCell.columnStart + aCell.columnSpan;
+    const cellOptions = paletteDefinition.cells[id].options;
+    rightColumn = cellOptions.columnStart + cellOptions.columnSpan;
     if (rightColumn > colCount) {
       colCount = rightColumn;
     }
-    bottomRow = aCell.rowStart + aCell.rowSpan;
+    bottomRow = cellOptions.rowStart + cellOptions.rowSpan;
     if (bottomRow > rowCount) {
       rowCount = bottomRow;
     }
@@ -52,10 +52,11 @@ export function Palette (props) {
   const theCells = [];
   cellIds.forEach((id) => {
     const aCell = paletteDefinition.cells[id];
+    const cellOptions = aCell.options;
     const paletteCell = html`
-      <${PaletteCell} id="${id}" labelText="${aCell.label}"
-        columnStart="${aCell.columnStart}" columnSpan="${aCell.columnSpan}"
-        rowStart="${aCell.rowStart}" rowSpan="${aCell.rowSpan}"
+      <${PaletteCell} id="${id}" labelText="${cellOptions.label}"
+        columnStart="${cellOptions.columnStart}" columnSpan="${cellOptions.columnSpan}"
+        rowStart="${cellOptions.rowStart}" rowSpan="${cellOptions.rowSpan}"
       />`;
     theCells.push(paletteCell);
   });
@@ -69,6 +70,6 @@ export function Palette (props) {
   `;
 }
 
-import bmwJson from "./keyboards/bmw_keys.json";
+import bmwJson from "./keyboards/bmw_palette.json";
 render (html`<${Palette} json=${bmwJson}/>`, document.getElementById("paletteCell"));
 
