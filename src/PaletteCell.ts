@@ -27,8 +27,8 @@ export function PaletteCell (props) {
 
   // Also concatenate local styles with given grid cell styles
   let styles = `
-    grid-column: ${props.columnStart} / span ${props.columnSpan};
-    grid-row: ${props.rowStart} / span ${props.rowSpan};
+    grid-column: ${props.options.columnStart} / span ${props.options.columnSpan};
+    grid-row: ${props.options.rowStart} / span ${props.options.rowSpan};
   `;
   if (props.style) {
     styles = `${styles} ${props.style}`;
@@ -44,7 +44,7 @@ export function PaletteCell (props) {
   return html`
     <button id="${props.id}" class="${classes}" style="${styles}" disabled=${disabled}>
       ${svgString}
-      ${props.labelText}
+      ${props.options.label}
     </button>
   `;
 }

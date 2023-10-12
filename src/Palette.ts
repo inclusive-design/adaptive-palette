@@ -54,10 +54,8 @@ export function Palette (props) {
     const aCell = paletteDefinition.cells[id];
     const cellOptions = aCell.options;
     const paletteCell = html`
-      <${PaletteCell} id="${id}" labelText="${cellOptions.label}"
-        columnStart="${cellOptions.columnStart}" columnSpan="${cellOptions.columnSpan}"
-        rowStart="${cellOptions.rowStart}" rowSpan="${cellOptions.rowSpan}"
-      />`;
+      <${PaletteCell} id="${id}" options=${cellOptions} />
+    `;
     theCells.push(paletteCell);
   });
 
