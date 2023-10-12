@@ -70,6 +70,3 @@ export function Palette (props) {
   `;
 }
 
-import bmwJson from "./keyboards/bmw_palette.json";
-render (html`<${Palette} json=${bmwJson}/>`, document.getElementById("paletteCell"));
-
