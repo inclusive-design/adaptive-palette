@@ -17,6 +17,7 @@ import { PaletteCell } from "./PaletteCell";
 test("The PaletteCell is rendered correctly", async () => {
 
   // Render two cells for testing, a "normal" one and a disabled one.
+  const TEST_CELL_ID = "uuid-of-some-kind";
   const testCell = {
     options: {
       "label": "Bliss Language",
@@ -28,13 +29,14 @@ test("The PaletteCell is rendered correctly", async () => {
   };
   render(html`
     <${PaletteCell}
-      id="uuid-of-some-kind"
+      id="${TEST_CELL_ID}"
       options=${testCell.options}
       style="background-color: green;"
     />`
   );
 
   // Render a disabled cell.
+  const TEST_DISABLEDCELL_ID = "uuid-of-another-kind";
   const testDisabledCell = {
     options: {
       "label": "Disabled Cell",
@@ -46,14 +48,14 @@ test("The PaletteCell is rendered correctly", async () => {
   };
   render(html`
     <${PaletteCell}
-      id="uuid-of-another-kind"
+      id="${TEST_DISABLEDCELL_ID}"
       options="${testDisabledCell.options}"
       class="disabled"
     />`
   );
 
   // Check the first cell (enabled)
-  let button = await screen.findByRole("button", {name: "Bliss Language"});
+  let button = await screen.findByRole("button", {name: testCell.options.label});
   let buttonStyles = window.getComputedStyle(button);
   console.log(`Button's background colour: ${buttonStyles.backgroundColor}`);
 
@@ -61,7 +63,7 @@ test("The PaletteCell is rendered correctly", async () => {
   // attributes and text
   expect(button).toBeVisible();
   expect(button).toBeValid();
-  expect(button.id).toBe("uuid-of-some-kind");
+  expect(button.id).toBe(TEST_CELL_ID);
 
   // PaletteCell.css does not specify a bacground colour.  The background will
   // be whatever the browser default is.  For now, check that the specified
@@ -91,10 +93,10 @@ test("The PaletteCell is rendered correctly", async () => {
   //expect(buttonStyles.color).not.toBe("#0000aa");
 
   // Check the disabled cell.
-  button = await screen.findByRole("button", {name: "Disabled Cell"});
+  button = await screen.findByRole("button", {name: testDisabledCell.options.label});
   expect(button).toBeVisible();
   expect(button).toBeValid();
-  expect(button.id).toBe("uuid-of-another-kind");
+  expect(button.id).toBe(TEST_DISABLEDCELL_ID);
   expect(button.getAttribute("disabled")).toBe("");
   expect(button.getAttribute("class")).toContain("disabled");
 });
