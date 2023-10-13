@@ -65,7 +65,7 @@ test("The PaletteCell is rendered correctly", async () => {
   expect(button).toBeValid();
   expect(button.id).toBe(TEST_CELL_ID);
 
-  // PaletteCell.css does not specify a bacground colour.  The background will
+  // PaletteCell.css does not specify a background colour.  The background will
   // be whatever the browser default is.  For now, check that the specified
   // colour in the test render above is correct
   expect(button.style["background-color"]).toBe("green");
