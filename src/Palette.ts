@@ -9,7 +9,6 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render } from "preact";
 import { html } from "htm/preact";
 import { PaletteCell } from "./PaletteCell";
 import "./Palette.scss";
