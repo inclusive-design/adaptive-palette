@@ -9,7 +9,6 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render } from "preact";
 import { html } from "htm/preact";
 import { PaletteCell } from "./PaletteCell";
 import { ContentBmwEncoding } from "./ContentBmwEncoding";
@@ -63,11 +62,7 @@ export function Palette (props) {
       `;
     } else {
       paletteCell = html`
-      <${PaletteCell} id="${id}" labelText="${cellOptions.label}"
-        columnStart="${cellOptions.columnStart}" columnSpan="${cellOptions.columnSpan}"
-        rowStart="${cellOptions.rowStart}" rowSpan="${cellOptions.rowSpan}"
-        bciAvId=${cellOptions.bciAvId}
-      />`;
+      <${PaletteCell} id="${id}" type=${aCell.type} options=${cellOptions} />`;
     }
     theCells.push(paletteCell);
   });
@@ -81,6 +76,3 @@ export function Palette (props) {
     </div>
   `;
 }
-
-import bmwJson from "./keyboards/bmw_palette.json";
-render (html`<${Palette} json=${bmwJson}/>`, document.getElementById("paletteCell"));

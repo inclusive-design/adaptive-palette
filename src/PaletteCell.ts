@@ -14,35 +14,13 @@ import { msgSignal } from "./GlobalStates";
 import "./PaletteCell.scss";
 
 export function PaletteCell (props) {
-  // const {stateBmwEncodingAction, setStateBmwEncodingAction} = getStateBmwEncodingAction();
-
   const cellClicked = () => {
-    // setStateBmwEncodingAction({
-    //   "actionType": "add",
-    //   "payload": {
-    //     "id": props.id,
-    //     "label": props.labelText,
-    //     "bciAvId": props.bciAvId
-    //   }
-    // });
-    // console.log("click: ", stateBmwEncodingAction);
-    // setStateBmwEncodingAction(() => {
-    //   return {
-    //     "actionType": "add",
-    //     "payload": {
-    //       "id": props.id,
-    //       "label": props.labelText,
-    //       "bciAvId": props.bciAvId
-    //     }
-    //   };
-    //   console.log("after cell clicked: ", stateBmwEncodingAction);
-    // });
     msgSignal.value = {
       actionType: "addBmwCode",
       payload: {
         "id": props.id,
-        "label": props.labelText,
-        "bciAvId": props.bciAvId
+        "label": props.options.label,
+        "bciAvId": props.options.bciAvId
       }
     };
   };
@@ -60,19 +38,24 @@ export function PaletteCell (props) {
 
   // Also concatenate local styles with given grid cell styles
   let styles = `
-    grid-column: ${props.columnStart} / span ${props.columnSpan};
-    grid-row: ${props.rowStart} / span ${props.rowSpan};
+    grid-column: ${props.options.columnStart} / span ${props.options.columnSpan};
+    grid-row: ${props.options.rowStart} / span ${props.options.rowSpan};
   `;
   if (props.style) {
     styles = `${styles} ${props.style}`;
   }
 
+  // Placeholder for svg graphic for the cell
+  const svgString = html`
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10" role="presentation">
+      <circle cx="5" cy="5" r="4" fill="transparent" stroke="black" stroke-width="1"/>
+    </svg>
+  `;
+
   return html`
     <button id="${props.id}" class="${classes}" style="${styles}" disabled=${disabled} onClick=${cellClicked}>
-      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10" role="presentation">
-        <circle cx="5" cy="5" r="4" fill="transparent" stroke="black" stroke-width="1"/>
-      </svg>
-      ${props.labelText}
+      ${svgString}
+      ${props.options.label}
     </button>
   `;
 }

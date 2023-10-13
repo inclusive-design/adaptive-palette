@@ -15,18 +15,47 @@ import { html } from "htm/preact";
 import { PaletteCell } from "./PaletteCell";
 
 test("The PaletteCell is rendered correctly", async () => {
+
+  // Render two cells for testing, a "normal" one and a disabled one.
+  const TEST_CELL_ID = "uuid-of-some-kind";
+  const testCell = {
+    options: {
+      "label": "Bliss Language",
+      "rowStart": "3",
+      "rowSpan": "2",
+      "columnStart": "2",
+      "columnSpan": "1",
+    }
+  };
   render(html`
     <${PaletteCell}
-      id="uuid-of-some-kind"
-      labelText="Bliss Language"
-      rowStart="3"
-      rowSpan="2"
-      columnStart="2"
-      columnSpan="1"
+      id="${TEST_CELL_ID}"
+      options=${testCell.options}
       style="background-color: green;"
-    />`);
+    />`
+  );
 
-  let button = await screen.findByRole("button", {name: "Bliss Language"});
+  // Render a disabled cell.
+  const TEST_DISABLEDCELL_ID = "uuid-of-another-kind";
+  const testDisabledCell = {
+    options: {
+      "label": "Disabled Cell",
+      "rowStart": "3",
+      "rowSpan": "2",
+      "columnStart": "2",
+      "columnSpan": "1",
+    }
+  };
+  render(html`
+    <${PaletteCell}
+      id="${TEST_DISABLEDCELL_ID}"
+      options="${testDisabledCell.options}"
+      class="disabled"
+    />`
+  );
+
+  // Check the first cell (enabled)
+  let button = await screen.findByRole("button", {name: testCell.options.label});
   let buttonStyles = window.getComputedStyle(button);
   console.log(`Button's background colour: ${buttonStyles.backgroundColor}`);
 
@@ -34,9 +63,9 @@ test("The PaletteCell is rendered correctly", async () => {
   // attributes and text
   expect(button).toBeVisible();
   expect(button).toBeValid();
-  expect(button.id).toBe("uuid-of-some-kind");
+  expect(button.id).toBe(TEST_CELL_ID);
 
-  // PaletteCell.css does not specify a bacground colour.  The background will
+  // PaletteCell.css does not specify a background colour.  The background will
   // be whatever the browser default is.  For now, check that the specified
   // colour in the test render above is correct
   expect(button.style["background-color"]).toBe("green");
@@ -63,22 +92,11 @@ test("The PaletteCell is rendered correctly", async () => {
   //expect(buttonStyles.backgroundColor).not.toBe("#cccccc");
   //expect(buttonStyles.color).not.toBe("#0000aa");
 
-  // Create a diabled button and check its disabled state.
-  render(html`
-    <${PaletteCell}
-      id="uuid-of-another-kind"
-      labelText="Disabled Cell"
-      rowStart="3"
-      rowSpan="2"
-      columnStart="2"
-      columnSpan="1"
-      class="disabled"
-    />`);
-
-  button = await screen.findByRole("button", {name: "Disabled Cell"});
+  // Check the disabled cell.
+  button = await screen.findByRole("button", {name: testDisabledCell.options.label});
   expect(button).toBeVisible();
   expect(button).toBeValid();
-  expect(button.id).toBe("uuid-of-another-kind");
+  expect(button.id).toBe(TEST_DISABLEDCELL_ID);
   expect(button.getAttribute("disabled")).toBe("");
   expect(button.getAttribute("class")).toContain("disabled");
 });
