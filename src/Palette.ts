@@ -53,7 +53,7 @@ export function Palette (props) {
     const aCell = paletteDefinition.cells[id];
     const cellOptions = aCell.options;
     const paletteCell = html`
-      <${PaletteCell} id="${id}" type=${aCell.type} options=${cellOptions} />
+      <${PaletteCell} id="${id}" options=${cellOptions} />
     `;
     theCells.push(paletteCell);
   });

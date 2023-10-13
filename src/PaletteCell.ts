@@ -12,7 +12,21 @@
 import { html } from "htm/preact";
 import "./PaletteCell.scss";
 
-export function PaletteCell (props) {
+type PaletteCellProps = {
+  id: string,
+  options: {
+    label: string,
+    columnStart: number,
+    columnSpan: number,
+    rowStart: number,
+    rowSpan, number
+  },
+  class?: string,
+  style?: string
+}
+
+export function PaletteCell (props: PaletteCellProps) {
+  const { columnStart, columnSpan, rowStart, rowSpan } = props.options;
 
   // Basic styles are the `paletteCell` class defined in PaletteCell.css.
   // Concatenate any additional classes provided by `props`.
@@ -27,8 +41,8 @@ export function PaletteCell (props) {
 
   // Also concatenate local styles with given grid cell styles
   let styles = `
-    grid-column: ${props.options.columnStart} / span ${props.options.columnSpan};
-    grid-row: ${props.options.rowStart} / span ${props.options.rowSpan};
+    grid-column: ${columnStart} / span ${columnSpan};
+    grid-row: ${rowStart} / span ${rowSpan};
   `;
   if (props.style) {
     styles = `${styles} ${props.style}`;
