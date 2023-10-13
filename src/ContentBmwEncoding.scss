@@ -1,0 +1,27 @@
+/*
+ * Copyright 2023 Inclusive Design Research Centre, OCAD University
+ * All rights reserved.
+ *
+ * Licensed under the New BSD license. You may not use this file except in
+ * compliance with this License.
+ *
+ * You may obtain a copy of the License at
+ * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
+ */
+
+.bmwEncodingArea {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  color: #000;
+  height: 5rem;
+  margin: 0.5rem 0;
+  overflow: auto; /* Add scrollbar when content overflows */
+  padding: 6px;
+  line-height: 1.5;
+
+  &:hover {
+    border-color: #007bff; /* Change border color on focus (optional) */
+    outline: none; /* Remove the default outline (optional) */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a box shadow on focus (optional) */
+  }
+}

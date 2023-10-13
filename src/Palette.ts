@@ -12,6 +12,7 @@
 import { render } from "preact";
 import { html } from "htm/preact";
 import { PaletteCell } from "./PaletteCell";
+import { ContentBmwEncoding } from "./ContentBmwEncoding";
 import "./Palette.scss";
 
 /**
@@ -53,13 +54,24 @@ export function Palette (props) {
   cellIds.forEach((id) => {
     const aCell = paletteDefinition.cells[id];
     const cellOptions = aCell.options;
-    const paletteCell = html`
+    let paletteCell;
+    if (aCell.type === "ContentBmwEncoding") {
+      paletteCell = html`
+      <${ContentBmwEncoding} id="${id}" options=${cellOptions} 
+        columnSpan="${rowsCols.numColumns}"
+      />
+      `;
+    } else {
+      paletteCell = html`
       <${PaletteCell} id="${id}" labelText="${cellOptions.label}"
         columnStart="${cellOptions.columnStart}" columnSpan="${cellOptions.columnSpan}"
         rowStart="${cellOptions.rowStart}" rowSpan="${cellOptions.rowSpan}"
+        bciAvId=${cellOptions.bciAvId}
       />`;
+    }
     theCells.push(paletteCell);
   });
+
 
   return html`
     <div
@@ -72,4 +84,3 @@ export function Palette (props) {
 
 import bmwJson from "./keyboards/bmw_palette.json";
 render (html`<${Palette} json=${bmwJson}/>`, document.getElementById("paletteCell"));
-
