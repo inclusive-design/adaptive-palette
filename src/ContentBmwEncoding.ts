@@ -10,9 +10,8 @@
  */
 
 import { html } from "htm/preact";
-import { effect } from "@preact/signals";
-import { msgSignal } from "./GlobalStates";
 import "./ContentBmwEncoding.scss";
+import { onMessage } from "./GlobalMessageHandler";
 
 type ContentBmwEncodingProps = {
   id: string,
@@ -35,20 +34,15 @@ export function ContentBmwEncoding (props: ContentBmwEncodingProps) {
     grid-row: ${rowStart} / span ${rowSpan};
   `;
 
-  effect(() => {
-    const newAction = msgSignal.value;
-    if (newAction) {
-      switch (newAction.actionType) {
-      case "addBmwCode":
-        // update the state of the BMW encoding content
-        fullEncoding.push(newAction.payload);
-        // append the new payload to the display area
-        document.getElementById(id).innerHTML += newAction.payload.label;
-        break;
-      case "deleteAllBmwCodes":
-        document.getElementById(id).innerHTML = "";
-      }
-    }
+  onMessage("addBmwCode", (payload) => {
+    // update the state of the BMW encoding content
+    fullEncoding.push(payload);
+    // append the new payload to the display area
+    document.getElementById(id).innerHTML += payload.label;
+  });
+
+  onMessage("deleteAllBmwCodes", () => {
+    document.getElementById(id).innerHTML = "";
   });
 
   return html`

@@ -10,19 +10,16 @@
  */
 
 import { html } from "htm/preact";
-import { msgSignal } from "./GlobalStates";
+import { dispatchMessage } from "./GlobalMessageHandler";
 import "./PaletteCell.scss";
 
 export function PaletteCell (props) {
   const cellClicked = () => {
-    msgSignal.value = {
-      actionType: "addBmwCode",
-      payload: {
-        "id": props.id,
-        "label": props.options.label,
-        "bciAvId": props.options.bciAvId
-      }
-    };
+    dispatchMessage("addBmwCode",{
+      "id": props.id,
+      "label": props.options.label,
+      "bciAvId": props.options.bciAvId
+    });
   };
 
   // Basic styles are the `paletteCell` class defined in PaletteCell.css.
