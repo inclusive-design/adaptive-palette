@@ -31,7 +31,7 @@ const listeners = new Map<string, Array<(payload: any) => void>>();
 effect(() => {
   const msg = msgSignal.value;
   
-  let callbacks = listeners.get(msg?.type);
+  const callbacks = listeners.get(msg?.type);
   if(callbacks) {
     callbacks.forEach(callback => {
       callback(msg.payload);
@@ -44,12 +44,12 @@ export const dispatchMessage = (type: string, payload: any) => {
   msgSignal.value = {
     type,
     payload
-  }
+  };
 };
 
 // API to subscribe the call back function for a message type
 export const onMessage = (type: string, callback: (payload: any) => void) => {
-  let callbacks = listeners.get(type);
+  const callbacks = listeners.get(type);
   if(callbacks) {
     callbacks.push(callback);
   } else {
