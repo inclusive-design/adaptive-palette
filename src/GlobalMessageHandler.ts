@@ -39,7 +39,7 @@ effect(() => {
   }
 });
 
-// API to dispatch a message with payload
+// API to messages with defined type and payload
 export const dispatchMessage = (type: string, payload: any) => {
   msgSignal.value = {
     type,
@@ -47,7 +47,7 @@ export const dispatchMessage = (type: string, payload: any) => {
   };
 };
 
-// API to subscribe the call back function for a message type
+// API to subscribe to handler functions for specific message types
 export const onMessage = (type: string, callback: (payload: any) => void) => {
   const callbacks = listeners.get(type);
   if(callbacks) {
