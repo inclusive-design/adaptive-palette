@@ -8,10 +8,11 @@
     "preview": "vite preview",
     "lint": "run-p lint:*",
     "lint:js": "eslint .",
-    "lint:markdown": "markdownlint-cli2 \"./**/*.md\" \"#node_modules\" \"#dist\"",
+    "lint:markdown": "markdownlint-cli2 \"./**/*.md\" \"#node_modules\" \"#dist\" \"#Bliss-Blissary-BCI-ID-Map\"",
     "test": "jest"
   },
   "dependencies": {
+    "bliss-svg-builder": "github:hlridge/bliss-svg-builder",
     "htm": "^3.1.1",
     "preact": "^10.13.1",
     "sass": "^1.65.1"

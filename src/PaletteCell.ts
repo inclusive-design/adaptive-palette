@@ -10,7 +10,14 @@
  */
 
 import { html } from "htm/preact";
+import { getSvgMarkupString } from "./SvgUtils";
 import "./PaletteCell.scss";
+
+function debugProps(x) {
+  console.log("DEBUGPROPS(): %O", x);
+}
+
+export type BciAvId = number | (string|number)[];
 
 type PaletteCellProps = {
   id: string,
@@ -19,14 +26,18 @@ type PaletteCellProps = {
     columnStart: number,
     columnSpan: number,
     rowStart: number,
-    rowSpan, number
+    rowSpan: number,
+    bciAvId: BciAvId
   },
   class?: string,
   style?: string
 }
 
 export function PaletteCell (props: PaletteCellProps) {
+  debugProps(props);
+
   const { columnStart, columnSpan, rowStart, rowSpan } = props.options;
+  const { bciAvId } = props.options;
 
   // Basic styles are the `paletteCell` class defined in PaletteCell.css.
   // Concatenate any additional classes provided by `props`.
@@ -48,16 +59,11 @@ export function PaletteCell (props: PaletteCellProps) {
     styles = `${styles} ${props.style}`;
   }
 
-  // Placeholder for svg graphic for the cell
-  const svgString = html`
-    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10" role="presentation">
-      <circle cx="5" cy="5" r="4" fill="transparent" stroke="black" stroke-width="1"/>
-    </svg>
-  `;
-
+  // Get svg graphic for the cell
+  const svgString = getSvgMarkupString(bciAvId);
   return html`
     <button id="${props.id}" class="${classes}" style="${styles}" disabled=${disabled}>
-      ${svgString}
+      ${html([svgString])}<br/>
       ${props.options.label}
     </button>
   `;
