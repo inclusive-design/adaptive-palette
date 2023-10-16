@@ -34,7 +34,7 @@ export function ContentBmwEncoding (props: ContentBmwEncodingProps) {
     grid-row: ${rowStart} / span ${rowSpan};
   `;
 
-  onMessage("addBmwCode", (payload) => {
+  onMessage("addBmwCode", (payload: object) => {
     // update the state of the BMW encoding content
     fullEncoding.push(payload);
     // append the new payload to the display area
