@@ -15,7 +15,7 @@
  * This handler defines an internal Preact signal `msgSignal` to register one message
  * at a time. It also defines a map structure `msgListeners` to track the mapping
  * between every message type and their callback functions. When the value of `msgSignal`
- * changes, the function subscribed via `effect()` finds all call back functions for 
+ * changes, the function subscribed via `effect()` finds all callback functions for 
  * the given type and execute them.
  * 
  * Provided API::

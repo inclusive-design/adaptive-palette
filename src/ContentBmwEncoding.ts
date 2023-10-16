@@ -34,18 +34,14 @@ export function ContentBmwEncoding (props: ContentBmwEncodingProps) {
     grid-row: ${rowStart} / span ${rowSpan};
   `;
 
-  onMessage("addBmwCode", (payload: object) => {
+  onMessage("addBmwCode", (payload: any) => {
     // update the state of the BMW encoding content
     fullEncoding.push(payload);
     // append the new payload to the display area
-    document.getElementById(id).innerHTML += payload.label;
-  });
-
-  onMessage("deleteAllBmwCodes", () => {
-    document.getElementById(id).innerHTML = "";
+    document.getElementById(id).innerHTML += payload?.label;
   });
 
   return html`
-    <div id="${id}" class="bmwEncodingArea" style="${styles}"></div>
+    <div id="${id}" class="bmwEncodingArea" role="region" aria-label="BMW Encoding Area" style="${styles}"></div>
   `;
 }
