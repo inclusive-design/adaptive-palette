@@ -15,31 +15,29 @@ import { BciAvId } from "./PaletteCell";
 import blissIdMap from "../Bliss-Blissary-BCI-ID-Map/blissary_to_bci_mapping.json";
 
 /**
- * Convert the given `BciAvId` to a blissary ID as a string.  If the `BciAvId`
+ * Convert the given `BciAvId` to a SVG builder code string.  If the `BciAvId`
  * argument is an array of BCI-AV-IDs and punctuation, concatenate the array
- * into a string of blissary ids and punctuation marks.  Note that a "B" is
- * prepended to each blissary id.
+ * into a string of builder code strings and punctuation marks.
  * @param {BciAvId} - The BciAvId to convert.
- * @return {String} - The concatenation of the blissary ids with the punction,
+ * @return {String} - The concatenation of the builder codes and punctuation,
  *                    e.g., "B106/B12".
  */
 export function bciAvIdToString (bciAvId: BciAvId) {
-  let finalString = "";
+  let finalCode = "";
   if (typeof bciAvId === "number") {
-    const blissIds = bciToBlissaryId(bciAvId);
-    finalString = `B${blissIds.blissaryId}`;
+    finalCode = bciToBlissaryId(bciAvId).blissSvgBuilderCode;
   }
   // `bicAvId` is an array
   else {
     bciAvId.forEach((item) => {
       if (typeof item === "number") {
-        const blissIds = bciToBlissaryId(item);
-        finalString = `${finalString}B${blissIds.blissaryId}`;
+        const svgBuilderCode = bciToBlissaryId(item).blissSvgBuilderCode;
+        finalCode = `${finalCode}${svgBuilderCode}`;
       } else
-        finalString = `${finalString}${item}`;
+        finalCode = `${finalCode}${item}`;
     });
   }
-  return finalString;
+  return finalCode;
 }
 
 /**
@@ -66,6 +64,6 @@ export function getSvgMarkupString (bciAvId: BciAvId) {
 }
 
 export function bciToBlissaryId (bciAvId: number) {
-  return blissIdMap.find((pair) => pair.bciAvId === bciAvId);
+  return blissIdMap.find((entry) => entry.bciAvId === bciAvId);
 }
 
