@@ -11,8 +11,7 @@
 
 import { BlissSVGBuilder } from "bliss-svg-builder";
 import { BciAvId } from "./PaletteCell";
-
-import blissIdMap from "../Bliss-Blissary-BCI-ID-Map/blissary_to_bci_mapping.json";
+import { blissaryIdMap } from "./BlissaryIdMap";
 
 /**
  * Convert the given `BciAvId` to a SVG builder code string.  If the `BciAvId`
@@ -25,14 +24,15 @@ import blissIdMap from "../Bliss-Blissary-BCI-ID-Map/blissary_to_bci_mapping.jso
 export function bciAvIdToString (bciAvId: BciAvId) {
   let finalCode = "";
   if (typeof bciAvId === "number") {
-    finalCode = bciToBlissaryId(bciAvId).blissSvgBuilderCode;
+    const { blissSvgBuilderCode } = bciToBlissaryId(bciAvId);
+    finalCode = blissSvgBuilderCode;
   }
   // `bicAvId` is an array
   else {
     bciAvId.forEach((item) => {
       if (typeof item === "number") {
-        const svgBuilderCode = bciToBlissaryId(item).blissSvgBuilderCode;
-        finalCode = `${finalCode}${svgBuilderCode}`;
+        const { blissSvgBuilderCode } = bciToBlissaryId(item);
+        finalCode = `${finalCode}${blissSvgBuilderCode}`;
       } else
         finalCode = `${finalCode}${item}`;
     });
@@ -51,19 +51,20 @@ export function bciAvIdToString (bciAvId: BciAvId) {
 export function getSvgMarkupString (bciAvId: BciAvId) {
   let builder;
   const svgBuilderArgument = bciAvIdToString(bciAvId);
-  console.debug(`GETSVGMARKUPSTRING(): ${svgBuilderArgument}`);
   try {
-    builder = new BlissSVGBuilder(svgBuilderArgument);
+    // NOTE:  The replace() is TEMPORARY due to an issue in BlissSVGBuilder.
+    // Remove the replace() when the builder is modified.
+    builder = new BlissSVGBuilder(svgBuilderArgument.replace(/(.*?)\/K(:-\d+)(\/[^\/]*)/g, "$1$3$2"));
   }
   catch (err) {
     console.error(err);
-    console.debug("GETSVGMARKUPSTRING(): USING HEART");
+    console.error(`GETSVGMARKUPSTRING(): USING HEART for ${svgBuilderArgument} from bci-av-id = ${bciAvId}`);
     builder = new BlissSVGBuilder("H:0,8"); // heart shape
   }
   return builder.svgCode;
 }
 
 export function bciToBlissaryId (bciAvId: number) {
-  return blissIdMap.find((entry) => entry.bciAvId === bciAvId);
+  return blissaryIdMap.find((entry) => entry.bciAvId === bciAvId);
 }
 
