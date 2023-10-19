@@ -10,14 +10,13 @@
  */
 
 import { html } from "htm/preact";
-import { getSvgMarkupString } from "./SvgUtils";
+import { BlissSymbol, BciAvId } from "./BlissSymbol";
 import "./PaletteCell.scss";
 
 function debugProps(x) {
   console.log("DEBUGPROPS(): %O", x);
 }
 
-export type BciAvId = number | (string|number)[];
 
 type PaletteCellProps = {
   id: string,
@@ -37,7 +36,7 @@ export function PaletteCell (props: PaletteCellProps) {
   debugProps(props);
 
   const { columnStart, columnSpan, rowStart, rowSpan } = props.options;
-  const { bciAvId } = props.options;
+  const { bciAvId, label } = props.options;
 
   // Basic styles are the `paletteCell` class defined in PaletteCell.css.
   // Concatenate any additional classes provided by `props`.
@@ -60,11 +59,9 @@ export function PaletteCell (props: PaletteCellProps) {
   }
 
   // Get svg graphic for the cell
-  const svgString = getSvgMarkupString(bciAvId);
   return html`
     <button id="${props.id}" class="${classes}" style="${styles}" disabled=${disabled}>
-      ${html([svgString])}<br/>
-      ${props.options.label}
+      <${BlissSymbol} bciAvId=${bciAvId} label=${label} />
     </button>
   `;
 }

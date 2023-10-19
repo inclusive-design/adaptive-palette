@@ -10,7 +10,8 @@
  */
 
 import { BlissSVGBuilder } from "bliss-svg-builder";
-import { BciAvId } from "./PaletteCell";
+//import { BciAvId } from "./PaletteCell";
+import { BciAvId } from "./BlissSymbol";
 import { blissaryIdMap } from "./BlissaryIdMap";
 
 /**
@@ -54,6 +55,9 @@ export function getSvgMarkupString (bciAvId: BciAvId) {
   try {
     // NOTE:  The replace() is TEMPORARY due to an issue in BlissSVGBuilder.
     // Remove the replace() when the builder is modified.
+    // Also the linter does not like the escaped slashes, "\/"; disable that
+    // check.
+    // eslint-disable-next-line no-useless-escape
     builder = new BlissSVGBuilder(svgBuilderArgument.replace(/(.*?)\/K(:-\d+)(\/[^\/]*)/g, "$1$3$2"));
   }
   catch (err) {
