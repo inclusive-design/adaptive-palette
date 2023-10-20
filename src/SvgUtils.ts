@@ -10,7 +10,6 @@
  */
 
 import { BlissSVGBuilder } from "bliss-svg-builder";
-//import { BciAvId } from "./PaletteCell";
 import { BciAvId } from "./BlissSymbol";
 import { blissaryIdMap } from "./BlissaryIdMap";
 

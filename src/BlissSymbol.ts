@@ -34,7 +34,6 @@ export function BlissSymbol (props: BlissSymbolProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const templateStringArray = [`${svgMarkupString}`] as any;
   templateStringArray.raw = [`${svgMarkupString}`];
-  console.debug("templateStringArray.raw is " + (templateStringArray.raw ? templateStringArray.raw : "null"));
 
   return html`
     ${html(templateStringArray)}
