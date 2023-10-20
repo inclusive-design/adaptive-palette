@@ -10,7 +10,7 @@
  */
 
 import { html } from "htm/preact";
-import { PaletteCell } from "./PaletteCell";
+import { ActionBwmCodeCell } from "./ActionBwmCodeCell";
 import "./Palette.scss";
 
 /**
@@ -53,7 +53,7 @@ export function Palette (props) {
     const aCell = paletteDefinition.cells[id];
     const cellOptions = aCell.options;
     const paletteCell = html`
-      <${PaletteCell} id="${id}" options=${cellOptions} />
+      <${ActionBwmCodeCell} id="${id}" options=${cellOptions} />
     `;
     theCells.push(paletteCell);
   });
