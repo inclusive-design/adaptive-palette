@@ -10,7 +10,7 @@
  */
 "use strict";
 
-import { blissaryIdMap } from "./BlissaryIdMap";
+import { blissaryIdMap } from "./GlobalData";
 import { bciToBlissaryId, bciAvIdToString } from "./SvgUtils";
 
 describe("SvgUtils module", () => {

@@ -11,7 +11,7 @@
 
 import { BlissSVGBuilder } from "bliss-svg-builder";
 import { BciAvId } from "./BlissSymbol";
-import { blissaryIdMap } from "./BlissaryIdMap";
+import { blissaryIdMap } from "./GlobalData";
 
 /**
  * Convert the given `BciAvId` to a SVG builder code string.  If the `BciAvId`
@@ -70,4 +70,3 @@ export function getSvgMarkupString (bciAvId: BciAvId) {
 export function bciToBlissaryId (bciAvId: number) {
   return blissaryIdMap.find((entry) => entry.bciAvId === bciAvId);
 }
-

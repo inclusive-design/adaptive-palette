@@ -10,7 +10,7 @@
  */
 
 import { html } from "htm/preact";
-import { ActionBwmCodeCell } from "./ActionBwmCodeCell";
+import { cellTypeRegistry } from "./GlobalData";
 import "./Palette.scss";
 
 /**
@@ -52,8 +52,9 @@ export function Palette (props) {
   cellIds.forEach((id) => {
     const aCell = paletteDefinition.cells[id];
     const cellOptions = aCell.options;
+    const cellComponent = cellTypeRegistry[aCell.type];
     const paletteCell = html`
-      <${ActionBwmCodeCell} id="${id}" options=${cellOptions} />
+      <${cellComponent} id="${id}" options=${cellOptions} />
     `;
     theCells.push(paletteCell);
   });
@@ -66,4 +67,3 @@ export function Palette (props) {
     </div>
   `;
 }
-

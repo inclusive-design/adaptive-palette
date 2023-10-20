@@ -11,13 +11,13 @@
 
 import { html } from "htm/preact";
 import { BlissSymbol, BciAvId } from "./BlissSymbol";
-import "./ActionBwmCodeCell.scss";
+import "./ActionBmwCodeCell.scss";
 
 function debugProps(x) {
   console.log("DEBUGPROPS(): %O", x);
 }
 
-type ActionBwmCodeCellProps = {
+type ActionBmwCodeCellProps = {
   id: string,
   options: {
     label: string,
@@ -29,7 +29,7 @@ type ActionBwmCodeCellProps = {
   }
 }
 
-export function ActionBwmCodeCell (props: ActionBwmCodeCellProps) {
+export function ActionBmwCodeCell (props: ActionBmwCodeCellProps) {
   debugProps(props);
 
   const { columnStart, columnSpan, rowStart, rowSpan } = props.options;
@@ -41,7 +41,7 @@ export function ActionBwmCodeCell (props: ActionBwmCodeCellProps) {
   `;
 
   return html`
-    <button id="${props.id}" class="actionBwmCodeCell" style="${gridStyles}" >
+    <button id="${props.id}" class="actionBmwCodeCell" style="${gridStyles}" >
       <${BlissSymbol} bciAvId=${bciAvId} label=${label} />
     </button>
   `;
