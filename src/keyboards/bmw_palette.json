@@ -2,7 +2,7 @@
     "name": "BMW Palette",
     "cells": {
         "dem-bcdd2b73-c12f-4ace-8569-36903c34373c": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "DEM.",
                 "bciAvId": [
@@ -17,7 +17,7 @@
             }
         },
         "conj-cf674a22-08d9-455c-9bbf-36ff760ef67c": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "CONJ.",
                 "bciAvId": 23409,
@@ -28,7 +28,7 @@
             }
         },
         "adverb-b4c91425-9142-49f8-ac28-6e3ef8733955": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "ADVERB",
                 "bciAvId": 27003,
@@ -39,7 +39,7 @@
             }
         },
         "prep-2e90ab29-9302-4072-b2e8-2b60d80b9def": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "PREP.",
                 "bciAvId": [
@@ -54,7 +54,7 @@
             }
         },
         "adj-0803371e-d2b6-4624-9731-e50b1955fb82": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "ADJ.",
                 "bciAvId": 25554,
@@ -65,7 +65,7 @@
             }
         },
         "adj-er-657bb759-8153-4496-9afc-01c9fbc137dc": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "ADJ.+ER",
                 "bciAvId": 24879,
@@ -76,7 +76,7 @@
             }
         },
         "adj-est-1d4e1924-0500-48fa-8bb2-514b83170e1d": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "ADJ.+EST",
                 "bciAvId": 24944,
@@ -87,7 +87,7 @@
             }
         },
         "noun-2a795f21-332f-4467-9346-5b3bff01888e": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "NOUN",
                 "bciAvId": 27096,
@@ -98,7 +98,7 @@
             }
         },
         "noun-pl-6a272c72-5fa8-423e-ac47-82450c4bfdbb": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "NOUN PL.",
                 "bciAvId": [
@@ -113,7 +113,7 @@
             }
         },
         "n-person-d0ac4b02-0d2a-4e94-ac8b-23c8b021125a": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "N PERSON",
                 "bciAvId": 16161,
@@ -124,7 +124,7 @@
             }
         },
         "n-per-pl-6479d51f-8a8f-4b0b-aa8c-3b9fce127062": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "N.PER PL",
                 "bciAvId": [
@@ -139,7 +139,7 @@
             }
         },
         "abs-time-7def0b1f-6fe8-460c-a6d8-6be0c8eb56ef": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "ABS TIME",
                 "bciAvId": [
@@ -154,7 +154,7 @@
             }
         },
         "object-5ec24e46-d428-4af0-942a-c5f591d71f6f": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "OBJECT",
                 "bciAvId": 16421,
@@ -165,7 +165,7 @@
             }
         },
         "poss-0f002835-318f-4d1b-9081-da46efc263b7": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "POSS.",
                 "bciAvId": 24925,
@@ -176,7 +176,7 @@
             }
         },
         "verb-945fe13a-0b01-4608-9e79-09e710aa12a4": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "VERB",
                 "bciAvId": 12335,
@@ -187,7 +187,7 @@
             }
         },
         "verb-s-b5470a45-1742-49f7-b890-0819da0217cc": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "VERB+S",
                 "bciAvId": [
@@ -202,7 +202,7 @@
             }
         },
         "verb-ing-834ab1d1-d5e4-4770-882e-52fb052c3367": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "VERB+ING",
                 "bciAvId": [
@@ -217,7 +217,7 @@
             }
         },
         "verb-ed-d3da10f4-112e-4939-828d-0ae6106d2adf": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "VERB+ED",
                 "bciAvId": [
@@ -232,7 +232,7 @@
             }
         },
         "verb-en-0674fb46-69e1-4f92-81ed-953e292a932a": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "VERB+EN",
                 "bciAvId": [
@@ -247,7 +247,7 @@
             }
         },
         "to-verb-4d0fc453-f580-4458-bd1f-848056480296": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "TO+VERB",
                 "bciAvId": 13860,
@@ -258,7 +258,7 @@
             }
         },
         "what-fb96b75a-7bfe-4cda-9b33-55858c459488": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "WHAT",
                 "bciAvId": 18228,
@@ -269,7 +269,7 @@
             }
         },
         "interj-3574698c-cef9-4ed1-8ecd-c191fafbbfce": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "INTERJ.",
                 "bciAvId": [
@@ -284,7 +284,7 @@
             }
         },
         "minspeak-f9c06124-1070-4c4f-8f60-693bbf5b755f": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "MINSPEAK",
                 "bciAvId": [
@@ -301,7 +301,7 @@
             }
         },
         "force-32117bf3-6d02-4017-94a1-af3c6d6a6217": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "FORCE",
                 "bciAvId": 22914,
@@ -312,7 +312,7 @@
             }
         },
         "number-a90fd924-ba7d-49ec-b776-46fda6ca48e4": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "NUMBER",
                 "bciAvId": 15742,
@@ -323,7 +323,7 @@
             }
         },
         "poem-ee49daad-6e60-4b22-abd0-1302a4d80bf5": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "POEM",
                 "bciAvId": 16210,
@@ -334,7 +334,7 @@
             }
         },
         "i-42e15552-579e-4f21-9fed-365879f7a982": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "I+",
                 "bciAvId": 14916,
@@ -345,7 +345,7 @@
             }
         },
         "we-a1a9a0a7-68a4-4eaa-9b87-45de3ce03eef": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "WE+",
                 "bciAvId": 18212,
@@ -356,7 +356,7 @@
             }
         },
         "help-7f64fb1b-c289-448f-bd76-346b3cbdc72c": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "HELP",
                 "bciAvId": 14704,
@@ -367,7 +367,7 @@
             }
         },
         "give-ab887e11-cb80-4165-9654-9e0dbce4d40f": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "GIVE",
                 "bciAvId": 14440,
@@ -378,7 +378,7 @@
             }
         },
         "commun-910856e4-9fdd-4098-963e-65eb060bdb41": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "COMMUN.",
                 "bciAvId": 13390,
@@ -389,7 +389,7 @@
             }
         },
         "tool-0cc11263-f2f9-417a-a758-811bf8f54a04": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "TOOL",
                 "bciAvId": 17755,
@@ -400,7 +400,7 @@
             }
         },
         "country-544cde16-5c11-4fa4-b287-16cccbce763c": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "COUNTRY",
                 "bciAvId": 13423,
@@ -411,7 +411,7 @@
             }
         },
         "limitime-fb95f0fa-b580-4d2a-9642-def1597cf283": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "LIMITIME",
                 "bciAvId": 15212,
@@ -422,7 +422,7 @@
             }
         },
         "year-d9679e0f-abbe-446e-ba55-1bc021bb5a69": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "YEAR",
                 "bciAvId": 18289,
@@ -433,7 +433,7 @@
             }
         },
         "month-3e93855d-0c5b-4430-aac2-d1bdb83785fe": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "MONTH",
                 "bciAvId": 15649,
@@ -444,7 +444,7 @@
             }
         },
         "day-7cba67eb-b2bf-4b57-aca8-c9ccdfc95f7b": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "DAY",
                 "bciAvId": 13639,
@@ -455,7 +455,7 @@
             }
         },
         "many-3d841c81-7ce1-4c89-97a9-7135b0008a33": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "MANY",
                 "bciAvId": 15671,
@@ -466,7 +466,7 @@
             }
         },
         "part-27a8ddc8-b0b2-49d7-9aac-c8b1468104b4": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "PART",
                 "bciAvId": 15972,
@@ -477,7 +477,7 @@
             }
         },
         "relation-f60a0ac7-4b08-44a6-b066-4650dff176d4": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "RELATION",
                 "bciAvId": 16481,
@@ -488,7 +488,7 @@
             }
         },
         "you-f75fb795-ba4c-42ff-bc5a-dffc9f651eba": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "YOU+",
                 "bciAvId": 18465,
@@ -499,7 +499,7 @@
             }
         },
         "they-895f2780-1a37-4b0d-be10-60bd44c5e04d": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "THEY+",
                 "bciAvId": 17714,
@@ -510,7 +510,7 @@
             }
         },
         "receive-81e9a29d-8c09-43b2-82a2-c2c23f32273d": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "RECEIVE",
                 "bciAvId": 14435,
@@ -521,7 +521,7 @@
             }
         },
         "write-0b0ab802-a982-4866-920d-bd8ce74601a5": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "WRITE",
                 "bciAvId": 18285,
@@ -532,7 +532,7 @@
             }
         },
         "eye-eb46d74f-71ef-42c3-9a9c-d6cf588ade73": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "EYE",
                 "bciAvId": 14133,
@@ -543,7 +543,7 @@
             }
         },
         "repeat-d1f3889d-d4a9-4341-84c2-b3a070e68587": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "REPEAT",
                 "bciAvId": 16487,
@@ -554,7 +554,7 @@
             }
         },
         "water-a3318c07-d747-4021-a0a3-8e5739d5e564": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "WATER",
                 "bciAvId": 17990,
@@ -565,7 +565,7 @@
             }
         },
         "weight-fea23519-0c7d-4f17-80ad-4a8c25a68106": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "WEIGHT",
                 "bciAvId": 18221,
@@ -576,7 +576,7 @@
             }
         },
         "put-ef258f51-c3cd-40ca-b50b-302b66d4bdaf": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "PUT",
                 "bciAvId": 16440,
@@ -587,7 +587,7 @@
             }
         },
         "food-90a7dde9-9390-43ae-8f9e-46dcec9d8cc9": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "FOOD",
                 "bciAvId": 14377,
@@ -598,7 +598,7 @@
             }
         },
         "without-068deda3-7731-43d0-b9fa-14ee787f3369": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "WITHOUT",
                 "bciAvId": 15474,
@@ -609,7 +609,7 @@
             }
         },
         "also-1bcc0d41-3fed-4185-835e-0f075fbe997e": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "ALSO",
                 "bciAvId": 12374,
@@ -620,7 +620,7 @@
             }
         },
         "equal-ca86452a-6c0b-46d2-ac1a-72e4ef365369": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "EQUAL",
                 "bciAvId": 16713,
@@ -631,7 +631,7 @@
             }
         },
         "opposite-e22507e1-995b-45ec-aef4-93f897256512": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "OPPOSITE",
                 "bciAvId": 15927,
@@ -642,7 +642,7 @@
             }
         },
         "he-64e98acd-e969-4c0f-b45d-18d10879bca0": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "HE+",
                 "bciAvId": 14687,
@@ -653,7 +653,7 @@
             }
         },
         "preverb-11a47e32-563c-44a3-9c81-d9ad3ed9677f": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "PREVERB",
                 "bciAvId": [
@@ -668,7 +668,7 @@
             }
         },
         "quiet-02ac134a-44b2-4a0f-a3a3-87cc18af9ba1": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "QUIET",
                 "bciAvId": 16447,
@@ -679,7 +679,7 @@
             }
         },
         "want-fa7c3087-97b5-4106-a91e-f4170d97cac5": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "WANT",
                 "bciAvId": 18035,
@@ -690,7 +690,7 @@
             }
         },
         "electric-69b1c571-07ce-48a7-b847-6d045f0c02e3": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "ELECTRIC",
                 "bciAvId": 13917,
@@ -701,7 +701,7 @@
             }
         },
         "religion-8b58deb0-861b-40f1-92b1-a69cd4788813": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "RELIGION",
                 "bciAvId": 16483,
@@ -712,7 +712,7 @@
             }
         },
         "think-fb96f0c8-c705-4d89-8e41-bb4a38ede72d": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "THINK",
                 "bciAvId": 17718,
@@ -723,7 +723,7 @@
             }
         },
         "young-9c637bf7-868a-4473-8936-9275a22be7f1": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "YOUNG",
                 "bciAvId": 18467,
@@ -734,7 +734,7 @@
             }
         },
         "umbrella-6e3e7d40-c2ba-4b33-b777-658fcb04e749": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "UMBRELLA",
                 "bciAvId": 17966,
@@ -745,7 +745,7 @@
             }
         },
         "if-9afe0cd9-3900-4d12-abd1-d6cc379649e2": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "IF",
                 "bciAvId": 14927,
@@ -756,7 +756,7 @@
             }
         },
         "outworld-0f0c12e5-a87d-44e0-941f-acf7c79c1a9e": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "OUTWORLD",
                 "bciAvId": 15411,
@@ -767,7 +767,7 @@
             }
         },
         "past-24db85c0-6e17-483d-ad4f-896350527a82": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "PAST",
                 "bciAvId": 15975,
@@ -778,7 +778,7 @@
             }
         },
         "present-11853426-4f87-426a-8e7d-1143b9c6c56e": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "PRESENT",
                 "bciAvId": 14437,
@@ -789,7 +789,7 @@
             }
         },
         "future-b8cba31a-bd29-4c72-99aa-add19daa22d2": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "FUTURE",
                 "bciAvId": 14417,
@@ -800,7 +800,7 @@
             }
         },
         "she-2c2e14e7-cbda-4ecd-a8b5-4a6d5d32cec5": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "SHE+",
                 "bciAvId": 14688,
@@ -811,7 +811,7 @@
             }
         },
         "prevrb-s-323240a9-5019-4758-8611-bea9def88388": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "PREVRB+S",
                 "bciAvId": [
@@ -826,7 +826,7 @@
             }
         },
         "am-be-4c881faf-677f-4e28-96c4-99f19e3ff500": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "AM/BE",
                 "bciAvId": 12639,
@@ -837,7 +837,7 @@
             }
         },
         "stop-715d0364-cb06-4c60-be18-7fb71910e1bd": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "STOP",
                 "bciAvId": 13935,
@@ -848,7 +848,7 @@
             }
         },
         "directn-81d5b318-8eb0-4ad7-a74c-3241e95ae4ec": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "DIRECTN",
                 "bciAvId": 13682,
@@ -859,7 +859,7 @@
             }
         },
         "forgive-506e0e26-1996-4274-94cb-5e460152f28c": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "FORGIVE",
                 "bciAvId": 14388,
@@ -870,7 +870,7 @@
             }
         },
         "go-9eede9d7-d9c8-4650-a712-ca8482090fe8": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "GO",
                 "bciAvId": 14449,
@@ -881,7 +881,7 @@
             }
         },
         "have-7c46f330-63b2-4523-8561-866f808d618d": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "HAVE",
                 "bciAvId": 14685,
@@ -892,7 +892,7 @@
             }
         },
         "journey-caf434fa-b314-4e14-ae51-1ce009d95cb8": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "JOURNEY",
                 "bciAvId": 17779,
@@ -903,7 +903,7 @@
             }
         },
         "king-ea5d2de6-f996-4ba3-8b81-6c25f34d1a46": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "KING",
                 "bciAvId": 23559,
@@ -914,7 +914,7 @@
             }
         },
         "love-d625c20e-0f57-48e8-9888-eb072c061891": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "LOVE",
                 "bciAvId": 15399,
@@ -925,7 +925,7 @@
             }
         },
         "house-72526b98-aed1-45c8-a9a9-a01166b86d9a": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "HOUSE",
                 "bciAvId": 14905,
@@ -936,7 +936,7 @@
             }
         },
         "return-2a833658-1873-4025-a7c0-c8f814efba74": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "RETURN",
                 "bciAvId": 16499,
@@ -947,7 +947,7 @@
             }
         },
         "legsfeet-6557b8c7-df20-4ecd-9ba8-3d3dcbd8323b": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "LEGSFEET",
                 "bciAvId": 15189,
@@ -958,7 +958,7 @@
             }
         },
         "it-ae21e5d0-9d6c-4149-8d12-88595ad1ebbe": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "IT+",
                 "bciAvId": 14960,
@@ -969,7 +969,7 @@
             }
         },
         "no-8e4b1140-3f11-4333-ab8a-f2f03db05986": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "NO",
                 "bciAvId": 15474,
@@ -980,7 +980,7 @@
             }
         },
         "dress-1d74bfbf-c296-4d80-a812-d31df4fe4159": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "DRESS",
                 "bciAvId": 13876,
@@ -991,7 +991,7 @@
             }
         },
         "zebra-ea8260f4-3433-4595-b755-668ffe9c0ad2": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "ZEBRA",
                 "bciAvId": 18474,
@@ -1002,7 +1002,7 @@
             }
         },
         "exclaim-158a775c-364e-40cf-b57d-4cb07f5b4c17": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "EXCLAIM",
                 "bciAvId": 14947,
@@ -1013,7 +1013,7 @@
             }
         },
         "can-86375b3b-34c8-4540-ae86-19d459ce2632": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "CAN",
                 "bciAvId": 13114,
@@ -1024,7 +1024,7 @@
             }
         },
         "value-1a4590bb-9a58-4c63-9db0-1ba84603e703": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "VALUE",
                 "bciAvId": 13948,
@@ -1035,7 +1035,7 @@
             }
         },
         "but-8fc363b0-d79a-40ee-adb0-2f6258747da5": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "BUT",
                 "bciAvId": 13094,
@@ -1046,7 +1046,7 @@
             }
         },
         "near-3e924cb4-2434-43d9-9622-f3237bfef10f": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "NEAR",
                 "bciAvId": 15697,
@@ -1057,7 +1057,7 @@
             }
         },
         "maybe-7e4c36cf-2731-4b6e-a58a-13e6e7475d54": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "MAYBE",
                 "bciAvId": 16226,
@@ -1068,7 +1068,7 @@
             }
         },
         "money-a9a21e73-e766-4dda-851d-de98f00de6f3": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "MONEY",
                 "bciAvId": 15484,
@@ -1079,7 +1079,7 @@
             }
         },
         "furnitur-3fded620-36cf-4f7f-a5d0-4affbdc38539": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "FURNITUR",
                 "bciAvId": 14416,
@@ -1090,7 +1090,7 @@
             }
         },
         "yes-3a797561-4cea-45a9-aae7-013f16c58608": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "YES",
                 "bciAvId": 18294,
@@ -1101,7 +1101,7 @@
             }
         },
         "say-e9d5552a-1f58-4894-95cf-fb1a55c21911": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "SAY",
                 "bciAvId": 16728,
@@ -1112,7 +1112,7 @@
             }
         },
         "air-95c6ded9-0a03-449d-b22a-39b6654939e4": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "AIR",
                 "bciAvId": 12356,
@@ -1123,7 +1123,7 @@
             }
         },
         "open-6cfc2b49-ce3c-40e7-884b-dff09f0a200c": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "OPEN",
                 "bciAvId": 15921,
@@ -1134,7 +1134,7 @@
             }
         },
         "not-d90b1afd-40ce-44ee-8177-ed9133161591": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "NOT",
                 "bciAvId": 15733,
@@ -1145,7 +1145,7 @@
             }
         },
         "finish-eb42e18b-f375-451b-9efe-c8fffc631992": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "FINISH",
                 "bciAvId": 14181,
@@ -1156,7 +1156,7 @@
             }
         },
         "cause-f72fe553-7b33-4b34-b2b1-a4f09d589ca0": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "CAUSE",
                 "bciAvId": 13134,
@@ -1167,7 +1167,7 @@
             }
         },
         "birth-e5e3f470-d60c-4f5a-a5c9-88c2b3e8b18d": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "BIRTH",
                 "bciAvId": 12842,
@@ -1178,7 +1178,7 @@
             }
         },
         "sexual-71ec617c-df0c-400f-b1ca-2c462dc78970": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "SEXUAL",
                 "bciAvId": 16933,
@@ -1189,7 +1189,7 @@
             }
         },
         "lang-8f139fb7-271b-471b-bb0c-6138342d1df8": {
-            "type": "ActionBmwCodeKey",
+            "type": "ActionBwmCodeCell",
             "options": {
                 "label": "LANG.",
                 "bciAvId": 15172,
