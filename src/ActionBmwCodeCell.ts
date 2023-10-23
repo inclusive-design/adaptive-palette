@@ -11,6 +11,7 @@
 
 import { html } from "htm/preact";
 import { BlissSymbol, BciAvId } from "./BlissSymbol";
+import { dispatchMessage } from "./GlobalMessageHandler";
 import "./ActionBmwCodeCell.scss";
 
 function debugProps(x) {
@@ -40,9 +41,17 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellProps) {
     grid-row: ${rowStart} / span ${rowSpan};
   `;
 
+  const cellClicked = () => {
+    dispatchMessage("addBmwCode",{
+      "id": props.id,
+      "label": props.options.label,
+      "bciAvId": props.options.bciAvId
+    });
+  };
+
   return html`
-    <button id="${props.id}" class="actionBmwCodeCell" style="${gridStyles}" >
-      <${BlissSymbol} bciAvId=${bciAvId} label=${label} />
+    <button id="${props.id}" class="actionBmwCodeCell" style="${gridStyles}" onClick=${cellClicked}>
+      <${BlissSymbol} bciAvId=${bciAvId} label=${label}/>
     </button>
   `;
 }

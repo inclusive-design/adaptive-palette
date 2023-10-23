@@ -16,6 +16,7 @@
  */
 
 import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
+import { ContentBmwEncoding } from "./ContentBmwEncoding";
 
 // For debugging
 let fetchCount = 0;
@@ -37,5 +38,6 @@ export const blissaryIdMap = await loadBlissaryIdMap();
  * The map between cell types (string) and actual components that render cells
  */
 export const cellTypeRegistry = {
-  "ActionBmwCodeCell": ActionBmwCodeCell
+  "ActionBmwCodeCell": ActionBmwCodeCell,
+  "ContentBmwEncoding": ContentBmwEncoding
 };
