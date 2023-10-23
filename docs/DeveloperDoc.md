@@ -2,7 +2,7 @@
 
 ## How to render a palette
 
-`Palette.ts` constructs a palette based on a JSON file that contains a list of
+`Palette.ts` constructs a palette based on a JSON file that contains a list
 of the cells in the palette. An example is found in
 [`src/keyboards/bmw_palette.json`](../src/keyboards/bmw_palette.json). The
 cells object is the list of all of the cells. Each cell has a type `key` and
