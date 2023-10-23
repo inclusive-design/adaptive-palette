@@ -10,7 +10,7 @@
  */
 
 import { html } from "htm/preact";
-import { ActionBwmCodeCell } from "./ActionBwmCodeCell";
+import { cellTypeRegistry } from "./GlobalData";
 import "./Palette.scss";
 
 /**
@@ -52,10 +52,15 @@ export function Palette (props) {
   cellIds.forEach((id) => {
     const aCell = paletteDefinition.cells[id];
     const cellOptions = aCell.options;
-    const paletteCell = html`
-      <${ActionBwmCodeCell} id="${id}" options=${cellOptions} />
-    `;
-    theCells.push(paletteCell);
+    const cellComponent = cellTypeRegistry[aCell.type];
+    if (!cellComponent) {
+      console.error(`Error at rendering the cell type "${aCell.type}". Fix it by defining the render component for this cell type at GlobalData.ts -> cellTypeRegistry.`);
+    } else {
+      const paletteCell = html`
+        <${cellComponent} id="${id}" options=${cellOptions} />
+      `;
+      theCells.push(paletteCell);
+    }
   });
 
   return html`
@@ -66,4 +71,3 @@ export function Palette (props) {
     </div>
   `;
 }
-

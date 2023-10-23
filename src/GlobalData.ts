@@ -11,6 +11,12 @@
 
 "use strict";
 
+/**
+ * Populate and export global data
+ */
+
+import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
+
 // For debugging
 let fetchCount = 0;
 
@@ -22,5 +28,14 @@ async function loadBlissaryIdMap () {
   return idMap;
 }
 
+/**
+ * The map between the BCI-AV IDs and the code consumed by the Bliss SVG builder
+ */
 export const blissaryIdMap = await loadBlissaryIdMap();
 
+/**
+ * The map between cell types (string) and actual components that render cells
+ */
+export const cellTypeRegistry = {
+  "ActionBmwCodeCell": ActionBmwCodeCell
+};

@@ -12,9 +12,9 @@
 import { render, screen, fireEvent } from "@testing-library/preact";
 import "@testing-library/jest-dom";
 import { html } from "htm/preact";
-import { ActionBwmCodeCell } from "./ActionBwmCodeCell";
+import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
 
-test("The ActionBwmCodeCell is rendered correctly", async () => {
+test("The ActionBmwCodeCell is rendered correctly", async () => {
 
   const TEST_CELL_ID = "uuid-of-some-kind";
   const testCell = {
@@ -27,7 +27,7 @@ test("The ActionBwmCodeCell is rendered correctly", async () => {
     }
   };
   render(html`
-    <${ActionBwmCodeCell}
+    <${ActionBmwCodeCell}
       id="${TEST_CELL_ID}"
       options=${testCell.options}
     />`
@@ -38,13 +38,13 @@ test("The ActionBwmCodeCell is rendered correctly", async () => {
   let buttonStyles = window.getComputedStyle(button);
   console.log(`Button's background colour: ${buttonStyles.backgroundColor}`);
 
-  // Check that the ActionBwmCodeCell/button is rendered and has the correct
+  // Check that the ActionBmwCodeCell/button is rendered and has the correct
   // attributes and text
   expect(button).toBeVisible();
   expect(button).toBeValid();
   expect(button.id).toBe(TEST_CELL_ID);
 
-  // ActionBwmCodeCell.css background colour is 'gray'.  The gridcell properties are
+  // ActionBmwCodeCell.css background colour is 'gray'.  The gridcell properties are
   // passed from `testCell` above.
   expect(button.style["background-color"]).toBe("gray");
   expect(button.style["grid-column"]).toBe("2 / span 1");

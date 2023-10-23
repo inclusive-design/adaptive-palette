@@ -13,11 +13,6 @@
         import { render } from "preact";
         import { html } from "htm/preact";
         import { Palette } from "./src/Palette";
-
-        // Pre-load the blissaryIdMap -- not actually used yet but likely
-        // available when needed.
-        import { blissaryIdMap } from "./src/BlissaryIdMap";
-
         import bmwJson from "./src/keyboards/bmw_palette.json";
         render (html`<${Palette} json=${bmwJson}/>`, document.getElementById("bmwKeyCodes"));
       </script>
