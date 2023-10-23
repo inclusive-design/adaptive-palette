@@ -11,6 +11,7 @@ export default defineConfig({
     devSourcemap: true
   },
   build: {
-    sourcemap: true
+    sourcemap: true,
+    target: "esnext"
   }
 });

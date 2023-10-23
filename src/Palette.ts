@@ -10,8 +10,7 @@
  */
 
 import { html } from "htm/preact";
-import { PaletteCell } from "./PaletteCell";
-import { ContentBmwEncoding } from "./ContentBmwEncoding";
+import { cellTypeRegistry } from "./GlobalData";
 import "./Palette.scss";
 
 /**
@@ -53,18 +52,15 @@ export function Palette (props) {
   cellIds.forEach((id) => {
     const aCell = paletteDefinition.cells[id];
     const cellOptions = aCell.options;
-    let paletteCell;
-    if (aCell.type === "ContentBmwEncoding") {
-      paletteCell = html`
-      <${ContentBmwEncoding} id="${id}" options=${cellOptions} 
-        columnSpan="${rowsCols.numColumns}"
-      />
-      `;
+    const cellComponent = cellTypeRegistry[aCell.type];
+    if (!cellComponent) {
+      console.error(`Error at rendering the cell type "${aCell.type}". Fix it by defining the render component for this cell type at GlobalData.ts -> cellTypeRegistry.`);
     } else {
-      paletteCell = html`
-      <${PaletteCell} id="${id}" type=${aCell.type} options=${cellOptions} />`;
+      const paletteCell = html`
+        <${cellComponent} id="${id}" options=${cellOptions} />
+      `;
+      theCells.push(paletteCell);
     }
-    theCells.push(paletteCell);
   });
 
 
