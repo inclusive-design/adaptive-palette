@@ -33,8 +33,9 @@ export function bciAvIdToString (bciAvId: BciAvId) {
       if (typeof item === "number") {
         const { blissSvgBuilderCode } = bciToBlissaryId(item);
         finalCode = `${finalCode}${blissSvgBuilderCode}`;
-      } else
+      } else {
         finalCode = `${finalCode}${item}`;
+      }
     });
   }
   return finalCode;
@@ -44,7 +45,7 @@ export function bciAvIdToString (bciAvId: BciAvId) {
  * Get the SVG markup as a string based on the given single BCI-AV-ID.
  * or an array of BCI-AV-IDs and other characters
  *
- * @param {BciAvId} bciAvId - A signal BCI-AV-ID (a number) or an array of such
+ * @param {BciAvId} bciAvId - A single BCI-AV-ID (a number) or an array of such
  *                            ids and characters, e.g. `[ 12335, "/", 8499 ]`
  * @return {String} - The corresponding SVG markup, or the empty string.
  */
@@ -52,17 +53,12 @@ export function getSvgMarkupString (bciAvId: BciAvId) {
   let builder;
   const svgBuilderArgument = bciAvIdToString(bciAvId);
   try {
-    // NOTE:  The replace() is TEMPORARY due to an issue in BlissSVGBuilder.
-    // Remove the replace() when the builder is modified.
-    // Also the linter does not like the escaped slashes, "\/"; disable that
-    // check.
-    // eslint-disable-next-line no-useless-escape
-    builder = new BlissSVGBuilder(svgBuilderArgument.replace(/(.*?)\/K(:-\d+)(\/[^\/]*)/g, "$1$3$2"));
+    builder = new BlissSVGBuilder(svgBuilderArgument);
   }
   catch (err) {
     console.error(err);
-    console.error(`GETSVGMARKUPSTRING(): USING HEART for ${svgBuilderArgument} from bci-av-id = ${bciAvId}`);
-    builder = new BlissSVGBuilder("H:0,8"); // heart shape
+    console.error(`GETSVGMARKUPSTRING(): using question mark for ${svgBuilderArgument} from bci-av-id = ${bciAvId}`);
+    builder = new BlissSVGBuilder("B3"); // question mark
   }
   return builder.svgCode;
 }

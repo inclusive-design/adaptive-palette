@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@preact/signals": "^1.2.1",
-    "bliss-svg-builder": "github:hlridge/bliss-svg-builder",
+    "bliss-svg-builder": "^0.1.0-alpha.3",
     "htm": "^3.1.1",
     "preact": "^10.13.1",
     "sass": "^1.65.1"
