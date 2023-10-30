@@ -14,7 +14,7 @@ import { BlissSymbol, BciAvId } from "./BlissSymbol";
 import "./ActionBmwCodeCell.scss";
 
 function debugProps(x) {
-  console.log("DEBUGPROPS(): %O", x);
+  console.debug("DEBUGPROPS(): %O", x);
 }
 
 type ActionBmwCodeCellProps = {

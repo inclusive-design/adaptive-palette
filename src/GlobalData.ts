@@ -17,21 +17,27 @@
 
 import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
 
+export const adaptivePaletteGlobals = {
+  // The map between the BCI-AV IDs and the code consumed by the Bliss SVG
+  // builder.  The map itself is set asynchronously.
+  blissaryIdMapUrl: "https://raw.githubusercontent.com/hlridge/Bliss-Blissary-BCI-ID-Map/main/blissary_to_bci_mapping.json",
+  blissaryIdMap: null
+};
+
 // For debugging
 let fetchCount = 0;
 
-async function loadBlissaryIdMap () {
-  const response = await fetch("https://raw.githubusercontent.com/hlridge/Bliss-Blissary-BCI-ID-Map/main/blissary_to_bci_mapping.json");
+export async function loadBlissaryIdMap () {
+  const response = await fetch(adaptivePaletteGlobals.blissaryIdMapUrl);
   const idMap = await response.json();
   fetchCount++;
   console.debug(`loadBlissaryIdMap(): fetchCount = ${fetchCount}; idMap is ` + ( idMap === null ? "null": "not null"));
   return idMap;
 }
 
-/**
- * The map between the BCI-AV IDs and the code consumed by the Bliss SVG builder
- */
-export const blissaryIdMap = await loadBlissaryIdMap();
+export async function initAdaptivePaletteGlobals () {
+  adaptivePaletteGlobals.blissaryIdMap = await loadBlissaryIdMap();
+}
 
 /**
  * The map between cell types (string) and actual components that render cells
