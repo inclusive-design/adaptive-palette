@@ -1,0 +1,104 @@
+{
+  "name": "Peole",
+  "cells": {
+    "couple-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Couple",
+          "bciAvId": 13426,
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 1,
+          "columnSpan": 1
+        }
+    },
+    "woman-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Woman",
+          "bciAvId": 18269,
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 2,
+          "columnSpan": 1
+        }
+    },
+    "assistant-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Assistant",
+          "bciAvId": 14706,
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 3,
+          "columnSpan": 1
+        }
+    },
+    "girl-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Girl",
+          "bciAvId":  14439 ,
+          "rowStart": 2,
+          "rowSpan": 1,
+          "columnStart": 1,
+          "columnSpan": 1
+        }
+    },
+    "person-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Person",
+          "bciAvId":  16161,
+          "rowStart": 2,
+          "rowSpan": 1,
+          "columnStart": 2,
+          "columnSpan": 1
+        }
+    },
+    "boy-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Boy",
+          "bciAvId":  12888,
+          "rowStart": 2,
+          "rowSpan": 1,
+          "columnStart": 3,
+          "columnSpan": 1
+        }
+    },
+    "crowd-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Crowd",
+          "bciAvId":  14646,
+          "rowStart": 3,
+          "rowSpan": 1,
+          "columnStart": 1,
+          "columnSpan": 1
+        }
+    },
+    "man-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Man",
+          "bciAvId":  15416,
+          "rowStart": 3,
+          "rowSpan": 1,
+          "columnStart": 3,
+          "columnSpan": 1
+        }
+    },
+    "police-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Police",
+          "bciAvId":  16217,
+          "rowStart": 3,
+          "rowSpan": 1,
+          "columnStart": 2,
+          "columnSpan": 1
+        }
+    }
+  }
+}

@@ -4,10 +4,33 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
+    <script>
+      function getPaletteFileFromSelect () {
+        const theSelect = document.getElementById("paletteChooser");
+        return theSelect.value;
+      }
+
+      async function getPaletteJson (jsonFile) {
+        const response = await fetch(jsonFile);
+        console.debug("response is '" + ( response ? "non-null" : "null" ));
+        const paletteJson = await response.json();
+        console.debug("paletteJson is '" + ( paletteJson ? "non-null" : "null" ));
+        return paletteJson;
+      }
+    </script>
+
     <title>Adaptive Palette</title>
   </head>
   <body>
     <h2>Palette Based on JSON</h1>
+    <p id=paletteChoice>
+      <label for="paletteChooser">Select a palette:</label>
+      <select name="paletteChooser" id="paletteChooser" size="1">
+        <option value="./src/keyboards/bmw_palette.json" selected>BMW</option>
+        <option value="./src/keyboards/myfamily.json">My Family</option>
+        <option value="./src/keyboards/people.json">People</option>
+      </select>
+    </p>
     <div id="bmwKeyCodes">
       <script type="module">
         import { render } from "preact";
@@ -18,8 +41,19 @@
         await initAdaptivePaletteGlobals();
 
         import { Palette } from "./src/Palette";
-        import bmwJson from "./src/keyboards/bmw_palette.json";
+
+        const paletteFile = getPaletteFileFromSelect();
+        console.debug(`Selected palette file is ${paletteFile}`);
+        let bmwJson = await getPaletteJson(paletteFile);
         render (html`<${Palette} json=${bmwJson}/>`, document.getElementById("bmwKeyCodes"));
+
+        async function onSelectedPaletteChange (event) {
+          const paletteJson = await getPaletteJson(event.target.value);
+          console.debug(`Selected palette file in select change handler is ${event.target.value}`);
+          render (html`<${Palette} json=${paletteJson}/>`, document.getElementById("bmwKeyCodes"));
+        }
+        const theSelect = document.getElementById("paletteChooser");
+        theSelect.addEventListener("change", onSelectedPaletteChange);
       </script>
     </div>
   </body>
