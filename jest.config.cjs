@@ -1,7 +1,5 @@
 module.exports = {
-  globals: {
-    fetch: global.fetch
-  },
+  setupFiles: ["./setupFetchForJest.ts"],
   verbose: true,
   preset: "ts-jest",
   testEnvironment: "jsdom",
