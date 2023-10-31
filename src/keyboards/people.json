@@ -85,7 +85,7 @@
           "bciAvId":  15416,
           "rowStart": 3,
           "rowSpan": 1,
-          "columnStart": 3,
+          "columnStart": 2,
           "columnSpan": 1
         }
     },
@@ -96,7 +96,7 @@
           "bciAvId":  16217,
           "rowStart": 3,
           "rowSpan": 1,
-          "columnStart": 2,
+          "columnStart": 3,
           "columnSpan": 1
         }
     }
