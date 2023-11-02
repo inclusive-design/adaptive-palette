@@ -10,14 +10,10 @@
  */
 "use strict";
 
-import { blissaryIdMap } from "./GlobalData";
+import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
 import { bciToBlissaryId, bciAvIdToString } from "./SvgUtils";
 
 describe("SvgUtils module", () => {
-
-  // Get the 100th entry in the map.  There is nothing special about the 100th
-  // entry.  Just as good as any.
-  const blissaryIdMapEntry = blissaryIdMap[0];
 
   // The `singleBciAvId` is taken from the BMW json for "CONJ." The
   // `bciAvIdArray` is also from the BMW json file using the codes for
@@ -28,7 +24,17 @@ describe("SvgUtils module", () => {
   const bciAvIdArray =[ 12335, "/", 8499 ];   // VERB+EN
   const expectedConcatenation = "B106/B12";
 
+  beforeAll(async () => {
+    await initAdaptivePaletteGlobals();
+  });
+
   test("Retrieve blissary id from BCI-AV-ID", () => {
+    const { blissaryIdMap } = adaptivePaletteGlobals;
+
+    // Use the 100th entry in the map for testing.  There is nothing special
+    // about the 100th entry.  Just as good as any.
+    const blissaryIdMapEntry = blissaryIdMap[100];
+
     const result = bciToBlissaryId(blissaryIdMapEntry.bciAvId);
     expect(result.blissaryId).toBe(blissaryIdMapEntry.blissaryId);
   });

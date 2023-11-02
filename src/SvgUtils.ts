@@ -11,7 +11,7 @@
 
 import { BlissSVGBuilder } from "bliss-svg-builder";
 import { BciAvId } from "./BlissSymbol";
-import { blissaryIdMap } from "./GlobalData";
+import { adaptivePaletteGlobals } from "./GlobalData";
 
 /**
  * Convert the given `BciAvId` to a SVG builder code string.  If the `BciAvId`
@@ -50,6 +50,7 @@ export function bciAvIdToString (bciAvId: BciAvId) {
  * @return {String} - The corresponding SVG markup, or the empty string.
  */
 export function getSvgMarkupString (bciAvId: BciAvId) {
+
   let builder;
   const svgBuilderArgument = bciAvIdToString(bciAvId);
   try {
@@ -64,5 +65,6 @@ export function getSvgMarkupString (bciAvId: BciAvId) {
 }
 
 export function bciToBlissaryId (bciAvId: number) {
+  const { blissaryIdMap } = adaptivePaletteGlobals;
   return blissaryIdMap.find((entry) => entry.bciAvId === bciAvId);
 }

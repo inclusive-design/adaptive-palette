@@ -1,4 +1,5 @@
 module.exports = {
+  setupFiles: ["./setupFetchForJest.ts"],
   verbose: true,
   preset: "ts-jest",
   testEnvironment: "jsdom",
@@ -13,5 +14,5 @@ module.exports = {
   moduleFileExtensions: ["mjs", "js", "jsx", "ts", "tsx", "json", "node"],
   moduleNameMapper: {
      "^.+\\.(css|less|scss)$": "babel-jest"
-  }
+  },
 };
