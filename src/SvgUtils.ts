@@ -13,6 +13,8 @@ import { BlissSVGBuilder } from "bliss-svg-builder";
 import { BciAvId } from "./BlissSymbol";
 import { adaptivePaletteGlobals } from "./GlobalData";
 
+export const DEFAULT_SVG_MARKUP_STRING = "B3";   // Question mark
+
 /**
  * Convert the given `BciAvId` to a SVG builder code string.  If the `BciAvId`
  * argument is an array of BCI-AV-IDs and punctuation, concatenate the array
@@ -50,16 +52,15 @@ export function bciAvIdToString (bciAvId: BciAvId) {
  * @return {String} - The corresponding SVG markup, or the empty string.
  */
 export function getSvgMarkupString (bciAvId: BciAvId) {
-
   let builder;
-  const svgBuilderArgument = bciAvIdToString(bciAvId);
   try {
+    const svgBuilderArgument = bciAvIdToString(bciAvId);
     builder = new BlissSVGBuilder(svgBuilderArgument);
   }
   catch (err) {
     console.error(err);
-    console.error(`GETSVGMARKUPSTRING(): using question mark for ${svgBuilderArgument} from bci-av-id = ${bciAvId}`);
-    builder = new BlissSVGBuilder("B3"); // question mark
+    console.error(`GETSVGMARKUPSTRING(): using question mark for SVG builder argument from bci-av-id = ${bciAvId}`);
+    builder = new BlissSVGBuilder(DEFAULT_SVG_MARKUP_STRING); // question mark
   }
   return builder.svgCode;
 }
