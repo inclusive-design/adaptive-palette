@@ -16,12 +16,15 @@
  */
 
 import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
+import { ActionBranchToPalette } from "./ActionBranchToPalette";
+import { PaletteStore } from "./PaletteStore";
 
 export const adaptivePaletteGlobals = {
   // The map between the BCI-AV IDs and the code consumed by the Bliss SVG
   // builder.  The map itself is set asynchronously.
   blissaryIdMapUrl: "https://raw.githubusercontent.com/hlridge/Bliss-Blissary-BCI-ID-Map/main/blissary_to_bci_mapping.json",
-  blissaryIdMap: null
+  blissaryIdMap: null,
+  paletteStore: new PaletteStore()
 };
 
 // For debugging
@@ -43,5 +46,6 @@ export async function initAdaptivePaletteGlobals () {
  * The map between cell types (string) and actual components that render cells
  */
 export const cellTypeRegistry = {
-  "ActionBmwCodeCell": ActionBmwCodeCell
+  "ActionBmwCodeCell": ActionBmwCodeCell,
+  "ActionBranchToPalette": ActionBranchToPalette
 };

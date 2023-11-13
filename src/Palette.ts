@@ -10,7 +10,7 @@
  */
 
 import { html } from "htm/preact";
-import { cellTypeRegistry } from "./GlobalData";
+import { cellTypeRegistry, adaptivePaletteGlobals } from "./GlobalData";
 import "./Palette.scss";
 
 /**
@@ -43,6 +43,7 @@ function countRowsColumns (paletteDefinition) {
 
 export function Palette (props) {
 
+  const { paletteStore } = adaptivePaletteGlobals;
   const paletteDefinition = props.json;
   const rowsCols = countRowsColumns(paletteDefinition);
   const cellIds = Object.keys(paletteDefinition.cells);
@@ -63,8 +64,11 @@ export function Palette (props) {
     }
   });
 
+  paletteStore.addPalette(paletteDefinition);
+
   return html`
     <div
+      data-palettename="${paletteDefinition.name}"
       class="paletteContainer"
       style="grid-template-columns: repeat(${rowsCols.numColumns}, auto);">
         ${theCells}
