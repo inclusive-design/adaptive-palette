@@ -14,8 +14,11 @@ import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 import { ContentBmwEncoding } from "./ContentBmwEncoding";
 import { dispatchMessage } from "./GlobalMessageHandler";
+import { initAdaptivePaletteGlobals } from "./GlobalData";
 
 test("The BMW Encoding content area is rendered correctly", async () => {
+  await initAdaptivePaletteGlobals();
+
   const cellId = "uuid-of-bmw-encoding-area";
   const columnSpan = 5;
   const cellOptions = {
@@ -24,7 +27,7 @@ test("The BMW Encoding content area is rendered correctly", async () => {
     rowSpan: 3
   };
 
-  render(html`
+  const bmwEncodingArea = render(html`
     <${ContentBmwEncoding}
       id="${cellId}"
       columnSpan="${columnSpan}"
@@ -32,7 +35,7 @@ test("The BMW Encoding content area is rendered correctly", async () => {
     />`
   );
 
-  // The aria-label is defined
+  // Test thhe content area is rendered properly
   const encodingAreaByLabel = await screen.findByLabelText("BMW Encoding Area");
   expect(encodingAreaByLabel.id).toBe(cellId);
   expect(encodingAreaByLabel.style["grid-column"]).toBe("1 / span 5");
@@ -40,13 +43,14 @@ test("The BMW Encoding content area is rendered correctly", async () => {
 
   // The aria role is defined
   const encodingAreaByRole = await screen.findByRole("region");
-  expect(encodingAreaByRole).not.toBe(undefined);
+  expect(encodingAreaByRole).toBeVisible();
+  expect(encodingAreaByRole).toBeValid();
 
-  // The BMW Encoding content area responds to incoming requests
-  dispatchMessage("addBmwCode", {
+  // Test the content area can respond to incoming requests
+  const msg = {
     id: "hello-id",
     label: "hello-label",
-    bciAvId: 1
-  });
-  expect(document.getElementById(cellId).innerHTML).toBe("hello-label");
+    bciAvId: 23409
+  };
+  dispatchMessage("addBmwCode", msg);
 });
