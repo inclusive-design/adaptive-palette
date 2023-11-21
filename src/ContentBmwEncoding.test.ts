@@ -27,7 +27,7 @@ test("The BMW Encoding content area is rendered correctly", async () => {
     rowSpan: 3
   };
 
-  const bmwEncodingArea = render(html`
+  render(html`
     <${ContentBmwEncoding}
       id="${cellId}"
       columnSpan="${columnSpan}"
@@ -35,7 +35,7 @@ test("The BMW Encoding content area is rendered correctly", async () => {
     />`
   );
 
-  // Test thhe content area is rendered properly
+  // Test the content area is rendered properly
   const encodingAreaByLabel = await screen.findByLabelText("BMW Encoding Area");
   expect(encodingAreaByLabel.id).toBe(cellId);
   expect(encodingAreaByLabel.style["grid-column"]).toBe("1 / span 5");
@@ -46,6 +46,9 @@ test("The BMW Encoding content area is rendered correctly", async () => {
   expect(encodingAreaByRole).toBeVisible();
   expect(encodingAreaByRole).toBeValid();
 
+  // Nothing is rendered in the content area
+  expect(encodingAreaByLabel.childNodes.length).toBe(0);
+
   // Test the content area can respond to incoming requests
   const msg = {
     id: "hello-id",
@@ -53,4 +56,18 @@ test("The BMW Encoding content area is rendered correctly", async () => {
     bciAvId: 23409
   };
   dispatchMessage("addBmwCode", msg);
+
+  // Ensure the dispatched message is consumed and the correponding Bliss symbol
+  // is rendered in the encoding area
+  const blissSymbolText = await screen.findByText(msg.label);
+  expect(blissSymbolText).toBeVisible();
+  expect(blissSymbolText).toBeValid();
+
+  // A symbol is rendered in the content area
+  expect(encodingAreaByLabel.childNodes.length).toBe(1);
+
+  // Check the symbol rendered in the content area contains a SVG
+  const symbolNodes = encodingAreaByLabel.childNodes[0].childNodes;
+  expect(symbolNodes.length).toBe(2);
+  expect(symbolNodes[0].nodeName).toBe("svg");
 });
