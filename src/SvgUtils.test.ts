@@ -23,6 +23,7 @@ describe("SvgUtils module", () => {
   const expectedString = "B823";
   const bciAvIdArray =[ 12335, "/", 8499 ];   // VERB+EN
   const expectedConcatenation = "B106/B12";
+  const invalidBciAvId = 1;
 
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
@@ -45,6 +46,10 @@ describe("SvgUtils module", () => {
 
     result = bciAvIdToString(bciAvIdArray);
     expect(result).toBe(expectedConcatenation);
+  });
+
+  test("Unknown BCI-AV-ID", () => {
+    expect(() => { bciAvIdToString(invalidBciAvId); }).toThrow();
   });
 
 });
