@@ -12,7 +12,7 @@
 import { html } from "htm/preact";
 import { useState } from "preact/hooks";
 import { onMessage } from "./GlobalMessageHandler";
-import { BlissSymbol } from "./BlissSymbol";
+import { BlissSymbol, BciAvId } from "./BlissSymbol";
 import "./ContentBmwEncoding.scss";
 
 type ContentBmwEncodingProps = {
@@ -23,6 +23,12 @@ type ContentBmwEncodingProps = {
     rowStart: number,
     rowSpan: number
   }
+}
+
+type AddBmwCodeMsgPayload = {
+  id: string,
+  label: string,
+  bciAvId: BciAvId
 }
 
 export function ContentBmwEncoding (props: ContentBmwEncodingProps) {
@@ -36,7 +42,7 @@ export function ContentBmwEncoding (props: ContentBmwEncodingProps) {
     grid-row: ${rowStart} / span ${rowSpan};
   `;
 
-  onMessage("addBmwCode", (payload: any) => {
+  onMessage("addBmwCode", (payload: AddBmwCodeMsgPayload) => {
     setFullEncoding([...fullEncoding, payload]);
   });
 
