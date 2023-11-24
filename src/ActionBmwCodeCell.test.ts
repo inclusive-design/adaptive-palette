@@ -16,9 +16,7 @@ import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals } from "./GlobalData";
 import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
 
-test("The ActionBmwCodeCell is rendered correctly", async () => {
-
-  await initAdaptivePaletteGlobals();
+describe("ActionBmwCodeDell render tests", () => {
 
   const TEST_CELL_ID = "uuid-of-some-kind";
   const testCell = {
@@ -31,28 +29,37 @@ test("The ActionBmwCodeCell is rendered correctly", async () => {
       "bciAvId": [ 12335, "/", 8499 ]   // VERB+EN
     }
   };
-  render(html`
-    <${ActionBmwCodeCell}
-      id="${TEST_CELL_ID}"
-      options=${testCell.options}
-    />`
-  );
 
-  // Check the rendered cell
-  const button = await screen.findByRole("button", {name: testCell.options.label});
+  beforeAll(async () => {
+    await initAdaptivePaletteGlobals();
+  });
 
-  // Check that the ActionBmwCodeCell/button is rendered and has the correct
-  // attributes and text.
-  expect(button).toBeVisible();
-  expect(button).toBeValid();
-  expect(button.id).toBe(TEST_CELL_ID);
-  expect(button.getAttribute("class")).toBe("actionBmwCodeCell");
-  expect(button.textContent).toBe(testCell.options.label);
+  test("Single ActionBmwCodeCell rendering", async () => {
 
-  // Check the grid cell styles.
-  expect(button.style["grid-column"]).toBe("2 / span 1");
-  expect(button.style["grid-row"]).toBe("3 / span 2");
+    render(html`
+      <${ActionBmwCodeCell}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />`
+    );
 
-  // Check disabled state (should be enabled)
-  expect(button.getAttribute("disabled")).toBe(null);
+    // Check the rendered cell
+    const button = await screen.findByRole("button", {name: testCell.options.label});
+
+    // Check that the ActionBmwCodeCell/button is rendered and has the correct
+    // attributes and text.
+    expect(button).toBeVisible();
+    expect(button).toBeValid();
+    expect(button.id).toBe(TEST_CELL_ID);
+    expect(button.getAttribute("class")).toBe("actionBmwCodeCell");
+    expect(button.textContent).toBe(testCell.options.label);
+
+    // Check the grid cell styles.
+    expect(button.style["grid-column"]).toBe("2 / span 1");
+    expect(button.style["grid-row"]).toBe("3 / span 2");
+
+    // Check disabled state (should be enabled)
+    expect(button.getAttribute("disabled")).toBe(null);
+  });
+
 });
