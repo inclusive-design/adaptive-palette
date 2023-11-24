@@ -16,10 +16,7 @@ import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals } from "./GlobalData";
 import { BlissSymbol } from "./BlissSymbol";
 
-test("The BlissSymbol component is rendered correctly", async () => {
-
-  await initAdaptivePaletteGlobals();
-
+describe("BlissSymbol render tests", () => {
   const singleBciAvId = {
     bciAvId: 12335,
     label: "VERB"
@@ -30,37 +27,40 @@ test("The BlissSymbol component is rendered correctly", async () => {
     label: "VERB+S"
   };
 
-  // Render the two test BlissSymbols
-  render(html`
-    <${BlissSymbol}
-      bciAvId="${singleBciAvId.bciAvId}"
-      label="${singleBciAvId.label}"
-    />`
-  );
+  beforeAll(async () => {
+    await initAdaptivePaletteGlobals();
+  });
 
-  render(html`
-    <${BlissSymbol}
-      bciAvId="${arrayBciAvId.bciAvId}"
-      label="${arrayBciAvId.label}"
-    />`
-  );
+  test(`BlissSymbol defined by a single BCI_AV_ID (${singleBciAvId.label})`, async () => {
+    render(html`
+      <${BlissSymbol}
+        bciAvId="${singleBciAvId.bciAvId}"
+        label="${singleBciAvId.label}"
+      />`
+    );
+    const blissSymbolLabelDiv = await screen.findByText(singleBciAvId.label);
+    expect(blissSymbolLabelDiv).toBeVisible();
+    expect(blissSymbolLabelDiv).toBeValid();
 
-  // Check the rendered cells
-  console.debug(`Testing BlissSymbol with label ${singleBciAvId.label}`);
-  let blissSymbolLabelDiv = await screen.findByText(singleBciAvId.label);
-  expect(blissSymbolLabelDiv).toBeVisible();
-  expect(blissSymbolLabelDiv).toBeValid();
+    // Expect an <svg ...> element as the only sibling
+    const parentChildren = blissSymbolLabelDiv.parentNode.childNodes;
+    expect(parentChildren.length).toBe(2);
+    expect(parentChildren[0].nodeName).toBe("svg");
+  });
 
-  // Expert the only sibling to be an <svg ...> element
-  let parentChildren = blissSymbolLabelDiv.parentNode.childNodes;
-  expect(parentChildren.length).toBe(2);
-  expect(parentChildren[0].nodeName).toBe("svg");
-
-  console.debug(`Testing BlissSymbol with label ${arrayBciAvId.label}`);
-  blissSymbolLabelDiv = await screen.findByText(arrayBciAvId.label);
-  expect(blissSymbolLabelDiv).toBeVisible();
-  expect(blissSymbolLabelDiv).toBeValid();
-  parentChildren = blissSymbolLabelDiv.parentNode.childNodes;
-  expect(parentChildren.length).toBe(2);
-  expect(parentChildren[0].nodeName).toBe("svg");
+  test(`BlissSymbol defined by an of BCI_AV_IDs (${arrayBciAvId.label})`, async () => {
+    render(html`
+      <${BlissSymbol}
+        bciAvId="${arrayBciAvId.bciAvId}"
+        label="${arrayBciAvId.label}"
+      />`
+    );
+    const blissSymbolLabelDiv = await screen.findByText(arrayBciAvId.label);
+    expect(blissSymbolLabelDiv).toBeVisible();
+    expect(blissSymbolLabelDiv).toBeValid();
+    const parentChildren = blissSymbolLabelDiv.parentNode.childNodes;
+    expect(parentChildren.length).toBe(2);
+    expect(parentChildren[0].nodeName).toBe("svg");
+  });
 });
+
