@@ -42,7 +42,11 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellProps) {
 
   return html`
     <button id="${props.id}" class="actionBmwCodeCell" style="${gridStyles}" >
-      <${BlissSymbol} bciAvId=${bciAvId} label=${label} />
+      <${BlissSymbol}
+        bciAvId=${bciAvId}
+        label=${label}
+        isPresentation=true
+      />
     </button>
   `;
 }

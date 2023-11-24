@@ -14,7 +14,7 @@ import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals } from "./GlobalData";
-import { BlissSymbol } from "./BlissSymbol";
+import { BlissSymbol, GRAPHIC_ROLE } from "./BlissSymbol";
 
 describe("BlissSymbol render tests", () => {
   const singleBciAvId = {
@@ -27,6 +27,8 @@ describe("BlissSymbol render tests", () => {
     label: "VERB+S"
   };
 
+  const MOCK_LABEL_ID = "mockLabelId";
+
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
   });
@@ -36,6 +38,7 @@ describe("BlissSymbol render tests", () => {
       <${BlissSymbol}
         bciAvId="${singleBciAvId.bciAvId}"
         label="${singleBciAvId.label}"
+        isPresentation=true
       />`
     );
     const blissSymbolLabelDiv = await screen.findByText(singleBciAvId.label);
@@ -53,6 +56,7 @@ describe("BlissSymbol render tests", () => {
       <${BlissSymbol}
         bciAvId="${arrayBciAvId.bciAvId}"
         label="${arrayBciAvId.label}"
+        isPresentation=true
       />`
     );
     const blissSymbolLabelDiv = await screen.findByText(arrayBciAvId.label);
@@ -61,6 +65,37 @@ describe("BlissSymbol render tests", () => {
     const parentChildren = blissSymbolLabelDiv.parentNode.childNodes;
     expect(parentChildren.length).toBe(2);
     expect(parentChildren[0].nodeName).toBe("svg");
+  });
+
+  test("BlissSymbol aria: when svg has no role)", async () => {
+    render(html`
+      <${BlissSymbol}
+        bciAvId="${arrayBciAvId.bciAvId}"
+        label="${arrayBciAvId.label}"
+        isPresentation=true
+      />`
+    );
+    const blissSymbolLabelDiv = await screen.findByText(arrayBciAvId.label);
+    const svgElement = blissSymbolLabelDiv.parentNode.querySelector("svg");
+    expect(svgElement.getAttribute("aria-hidden")).toBe("true");
+    expect(svgElement.getAttribute("role")).toBe(null);
+    expect(svgElement.getAttribute("aria-labelledby")).toBe(null);
+  });
+
+  test("BlissSymbol aria: when svg has a graphic role)", async () => {
+    render(html`
+      <${BlissSymbol}
+        bciAvId="${arrayBciAvId.bciAvId}"
+        label="${arrayBciAvId.label}"
+        isPresentation=false
+        labelledBy=${MOCK_LABEL_ID}
+      />`
+    );
+    const blissSymbolLabelDiv = await screen.findByText(arrayBciAvId.label);
+    const svgElement = blissSymbolLabelDiv.parentNode.querySelector("svg");
+    expect(svgElement.getAttribute("role")).toBe(GRAPHIC_ROLE);
+    expect(svgElement.getAttribute("aria-labelledby")).toBe(MOCK_LABEL_ID);
+    expect(svgElement.getAttribute("aria-hidden")).toBe(null);
   });
 });
 
