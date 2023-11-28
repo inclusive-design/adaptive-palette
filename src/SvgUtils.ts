@@ -65,6 +65,29 @@ export function getSvgMarkupString (bciAvId: BciAvId) {
   return builder.svgCode;
 }
 
+/**
+ * Get the SVG markup as a DOM element based on the given single BCI-AV-ID.
+ * or an array of BCI-AV-IDs and other characters
+ *
+ * @param {BciAvId} bciAvId - A single BCI-AV-ID (a number) or an array of such
+ *                            ids and characters, e.g. `[ 12335, "/", 8499 ]`
+ * @return {Object} - The corresponding SVG element, or en elment for the
+ *                    question mark symbol.
+ */
+export function getSvgElement (bciAvId: BciAvId) {
+  let builder;
+  try {
+    const svgBuilderArgument = bciAvIdToString(bciAvId);
+    builder = new BlissSVGBuilder(svgBuilderArgument);
+  }
+  catch (err) {
+    console.error(err);
+    console.error(`GETSVGMARKUPSTRING(): using question mark for SVG builder argument from bci-av-id = ${bciAvId}`);
+    builder = new BlissSVGBuilder(DEFAULT_SVG_MARKUP_STRING); // question mark
+  }
+  return builder.svgElement;
+}
+
 export function bciToBlissaryId (bciAvId: number) {
   const { blissaryIdMap } = adaptivePaletteGlobals;
   return blissaryIdMap.find((entry) => entry.bciAvId === bciAvId);

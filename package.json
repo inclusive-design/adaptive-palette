@@ -8,7 +8,7 @@
     "preview": "vite preview",
     "lint": "run-p lint:*",
     "lint:js": "eslint .",
-    "lint:markdown": "markdownlint-cli2 \"./**/*.md\" \"#node_modules\" \"#dist\" \"#Bliss-Blissary-BCI-ID-Map\"",
+    "lint:markdown": "markdownlint-cli2 \"./**/*.md\" \"#node_modules\" \"#dist\"",
     "test": "jest"
   },
   "dependencies": {
