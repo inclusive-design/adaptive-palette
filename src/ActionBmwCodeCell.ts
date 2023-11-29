@@ -13,10 +13,6 @@ import { html } from "htm/preact";
 import { BlissSymbol, BciAvId } from "./BlissSymbol";
 import "./ActionBmwCodeCell.scss";
 
-function debugProps(x) {
-  console.debug("DEBUGPROPS(): %O", x);
-}
-
 type ActionBmwCodeCellProps = {
   id: string,
   options: {
@@ -30,7 +26,6 @@ type ActionBmwCodeCellProps = {
 }
 
 export function ActionBmwCodeCell (props: ActionBmwCodeCellProps) {
-  debugProps(props);
 
   const { columnStart, columnSpan, rowStart, rowSpan } = props.options;
   const { bciAvId, label } = props.options;
