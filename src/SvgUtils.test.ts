@@ -40,6 +40,10 @@ describe("SvgUtils module", () => {
     expect(result.blissaryId).toBe(blissaryIdMapEntry.blissaryId);
   });
 
+  test("No blissary id for unknown BCI-AV-ID", () => {
+    expect(bciToBlissaryId(invalidBciAvId)).toBe(undefined);
+  });
+
   test("Create svg builder argument", () => {
     let result = bciAvIdToString(singleBciAvId);
     expect(result).toBe(expectedString);
