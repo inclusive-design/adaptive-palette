@@ -31,14 +31,17 @@ export function BlissSymbol (props: BlissSymbolProps) {
   const { bciAvId, label, isPresentation, labelledBy } = props;
   const svgElement = getSvgElement(bciAvId);
 
-  // Deal with aria markup, depending on whether the SVG
-  if (isPresentation === "true") {
-    svgElement.setAttribute("aria-hidden", true);
-  } else {
-    svgElement.setAttribute("role", `${GRAPHIC_ROLE}`);
-    svgElement.setAttribute("aria-labelledby", labelledBy);
+  let svgMarkupString = "";
+  if (svgElement) {
+    // Deal with aria markup, depending on whether the SVG
+    if (isPresentation === "true") {
+      svgElement.setAttribute("aria-hidden", true);
+    } else {
+      svgElement.setAttribute("role", `${GRAPHIC_ROLE}`);
+      svgElement.setAttribute("aria-labelledby", labelledBy);
+    }
+    svgMarkupString = svgElement.outerHTML;
   }
-  const svgMarkupString = svgElement.outerHTML;
 
   // The coercion to `any` and assignment to `raw` is _only_ for the unit
   // tests to avoid the error:

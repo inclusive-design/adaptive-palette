@@ -44,14 +44,14 @@ export function bciAvIdToString (bciAvId: BciAvId) {
 }
 
 /**
- * Get the SVG markup as a string based on the given single BCI-AV-ID.
- * or an array of BCI-AV-IDs and other characters
- *
+ * Create and return the builder from a string based on the given BciAvId.  If
+ * the BciAvId is invalid, `null` is returned.
  * @param {BciAvId} bciAvId - A single BCI-AV-ID (a number) or an array of such
  *                            ids and characters, e.g. `[ 12335, "/", 8499 ]`
- * @return {String} - The corresponding SVG markup, or the empty string.
+ * @return {BlissSVGBuilder} - The corresponding SVG markup, or `null`.
  */
-export function getSvgMarkupString (bciAvId: BciAvId) {
+
+function getSvgBuilder (bciAvId: BciAvId) {
   let builder;
   try {
     const svgBuilderArgument = bciAvIdToString(bciAvId);
@@ -59,10 +59,23 @@ export function getSvgMarkupString (bciAvId: BciAvId) {
   }
   catch (err) {
     console.error(err);
-    console.error(`GETSVGMARKUPSTRING(): using question mark for SVG builder argument from bci-av-id = ${bciAvId}`);
-    builder = new BlissSVGBuilder(DEFAULT_SVG_MARKUP_STRING); // question mark
+    console.error(`Unknown bci-av-id = ${bciAvId}`);
+    builder = null;
   }
-  return builder.svgCode;
+  return builder;
+}
+
+/**
+ * Get the SVG markup as a string based on the given single BCI-AV-ID.
+ * or an array of BCI-AV-IDs and other characters
+ *
+ * @param {BciAvId} bciAvId - A single BCI-AV-ID (a number) or an array of such
+ *                            ids and characters, e.g. `[ 12335, "/", 8499 ]`
+ * @return {String} - The corresponding SVG markup, or `undefined`.
+ */
+export function getSvgMarkupString (bciAvId: BciAvId) {
+  const builder = getSvgBuilder(bciAvId);
+  return ( builder ? builder.svgCode : undefined );
 }
 
 /**
@@ -71,21 +84,11 @@ export function getSvgMarkupString (bciAvId: BciAvId) {
  *
  * @param {BciAvId} bciAvId - A single BCI-AV-ID (a number) or an array of such
  *                            ids and characters, e.g. `[ 12335, "/", 8499 ]`
- * @return {Object} - The corresponding SVG element, or en elment for the
- *                    question mark symbol.
+ * @return {String} - The corresponding SVG markup, or `undefined`.
  */
 export function getSvgElement (bciAvId: BciAvId) {
-  let builder;
-  try {
-    const svgBuilderArgument = bciAvIdToString(bciAvId);
-    builder = new BlissSVGBuilder(svgBuilderArgument);
-  }
-  catch (err) {
-    console.error(err);
-    console.error(`GETSVGMARKUPSTRING(): using question mark for SVG builder argument from bci-av-id = ${bciAvId}`);
-    builder = new BlissSVGBuilder(DEFAULT_SVG_MARKUP_STRING); // question mark
-  }
-  return builder.svgElement;
+  const builder = getSvgBuilder(bciAvId);
+  return ( builder ? builder.svgElement : undefined );
 }
 
 export function bciToBlissaryId (bciAvId: number) {
