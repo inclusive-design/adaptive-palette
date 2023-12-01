@@ -26,9 +26,9 @@ type ActionBmwCodeCellProps = {
 }
 
 export function ActionBmwCodeCell (props: ActionBmwCodeCellProps) {
-
-  const { columnStart, columnSpan, rowStart, rowSpan } = props.options;
-  const { bciAvId, label } = props.options;
+  const {
+    columnStart, columnSpan, rowStart, rowSpan, bciAvId, label
+  } = props.options;
 
   const gridStyles = `
     grid-column: ${columnStart} / span ${columnSpan};
