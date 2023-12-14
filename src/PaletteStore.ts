@@ -11,6 +11,8 @@
 
 "use strict";
 
+import { JsonPaletteType } from "./index.d";
+
 export class PaletteStore {
 
   // Singleton storage for all palettes
@@ -34,7 +36,7 @@ export class PaletteStore {
    * @param: {Object}.name    - The internal name of the palette.
    * @param: {String} name    - Optional, the preferred name of the palette.
    */
-  addPalette (palette, paletteName?: string) {
+  addPalette (palette: JsonPaletteType, paletteName?: string) {
     if (!palette) {
       return;
     }

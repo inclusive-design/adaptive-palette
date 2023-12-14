@@ -11,13 +11,12 @@
 
 import { html } from "htm/preact";
 import { getSvgElement } from "./SvgUtils";
-
-export type BciAvId = number | (string|number)[];
+import { BciAvIdType } from "./index.d";
 
 export const GRAPHIC_ROLE = "graphic-symbol img";
 
 type BlissSymbolProps = {
-  bciAvId: BciAvId,
+  bciAvId: BciAvIdType,
   label: string,
   // Aria markup information for svg part of the BlissSymbol.  The first is
   // really a boolean, but the html template function converts it to string

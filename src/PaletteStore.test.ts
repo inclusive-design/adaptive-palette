@@ -15,9 +15,51 @@ import { PaletteStore } from "./PaletteStore";
 
 describe("PaletteStore module", () => {
 
-  const dummyPalette1 = { name: "dummyPalette1", palette: null };
-  const dummyPalette2 = { name: "dummyPalette2", palette: null };
+  const dummyPalette1 = {
+    "name": "dummyPalette1",
+    "cells": {
+      "cellOne": {
+        "type": "cellOneType",
+        "options": {
+          "label": "Singer",
+          "bciAvId": 16991,
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 1,
+          "columnSpan": 1
+        }
+      },
+      "cellTwo": {
+        "type": "cellTwoType",
+        "options": {
+          "label": "Dancer",
+          "bciAvId": 19961,
+          "rowStart": 2,
+          "rowSpan": 3,
+          "columnStart": 4,
+          "columnSpan": 5
+        }
+      }
+    }
+  };
+
   const dummyPalette2Name = "DummyPalette2";
+  const dummyPalette2 = {
+    "name": "DifferentName",
+    "cells": {
+      "dummyCell": {
+        "type": "dummyCellType",
+        "options": {
+          "label": "Choreographer",
+          "bciAvId": 666,
+          "rowStart": 2,
+          "rowSpan": 2,
+          "columnStart": 2,
+          "columnSpan": 2
+        }
+      }
+    }
+  };
 
   const paletteStore = new PaletteStore();
 

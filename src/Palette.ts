@@ -10,6 +10,7 @@
  */
 
 import { html } from "htm/preact";
+import { PalettePropsType } from "./index.d";
 import { cellTypeRegistry } from "./GlobalData";
 import "./Palette.scss";
 
@@ -41,7 +42,7 @@ function countRowsColumns (paletteDefinition) {
   return { numRows: rowCount, numColumns: colCount };
 }
 
-export function Palette (props) {
+export function Palette (props: PalettePropsType) {
 
   const paletteDefinition = props.json;
   const rowsCols = countRowsColumns(paletteDefinition);
@@ -62,7 +63,6 @@ export function Palette (props) {
       theCells.push(paletteCell);
     }
   });
-
   return html`
     <div
       class="paletteContainer"

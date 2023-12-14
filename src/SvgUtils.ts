@@ -10,20 +10,18 @@
  */
 
 import { BlissSVGBuilder } from "bliss-svg-builder";
-import { BciAvId } from "./BlissSymbol";
+import { BciAvIdType } from "./index.d";
 import { adaptivePaletteGlobals } from "./GlobalData";
 
-export const DEFAULT_SVG_MARKUP_STRING = "B3";   // Question mark
-
 /**
- * Convert the given `BciAvId` to a SVG builder code string.  If the `BciAvId`
- * argument is an array of BCI-AV-IDs and punctuation, concatenate the array
- * into a string of builder code strings and punctuation marks.
- * @param {BciAvId} - The BciAvId to convert.
+ * Convert the given `BciAvIdType` to a SVG builder code string.  If the
+ * `BciAvIdType`argument is an array of BCI-AV-IDs and punctuation, concatenate
+ * the array into a string of builder code strings and punctuation marks.
+ * @param {BciAvIdType} bciAvId - The BciAvIdType to convert.
  * @return {String} - The concatenation of the builder codes and punctuation,
  *                    e.g., "B106/B12".
  */
-export function bciAvIdToString (bciAvId: BciAvId) {
+export function bciAvIdToString (bciAvId: BciAvIdType) {
   let finalCode = "";
   if (typeof bciAvId === "number") {
     const { blissSvgBuilderCode } = bciToBlissaryId(bciAvId);
@@ -44,14 +42,15 @@ export function bciAvIdToString (bciAvId: BciAvId) {
 }
 
 /**
- * Create and return the builder from a string based on the given BciAvId.  If
- * the BciAvId is invalid, `null` is returned.
- * @param {BciAvId} bciAvId - A single BCI-AV-ID (a number) or an array of such
- *                            ids and characters, e.g. `[ 12335, "/", 8499 ]`
+ * Create and return the builder from a string based on the given BciAvIdType.
+ * If the BciAvIdType is invalid, `null` is returned.
+ * @param {BciAvIdType} bciAvId - A single BCI-AV-ID (a number) or an array of
+ *                                such ids and characters, e.g.
+ *                                `[ 12335, "/", 8499 ]`
  * @return {BlissSVGBuilder} - The corresponding SVG markup, or `null`.
  */
 
-function getSvgBuilder (bciAvId: BciAvId) {
+function getSvgBuilder (bciAvId: BciAvIdType) {
   let builder;
   try {
     const svgBuilderArgument = bciAvIdToString(bciAvId);
@@ -69,11 +68,12 @@ function getSvgBuilder (bciAvId: BciAvId) {
  * Get the SVG markup as a string based on the given single BCI-AV-ID.
  * or an array of BCI-AV-IDs and other characters
  *
- * @param {BciAvId} bciAvId - A single BCI-AV-ID (a number) or an array of such
- *                            ids and characters, e.g. `[ 12335, "/", 8499 ]`
+ * @param {BciAvIdType} bciAvId - A single BCI-AV-ID (a number) or an array of
+ *                                such ids and characters, e.g.
+ *                                `[ 12335, "/", 8499 ]`
  * @return {String} - The corresponding SVG markup, or `undefined`.
  */
-export function getSvgMarkupString (bciAvId: BciAvId) {
+export function getSvgMarkupString (bciAvId: BciAvIdType) {
   const builder = getSvgBuilder(bciAvId);
   return ( builder ? builder.svgCode : undefined );
 }
@@ -82,11 +82,12 @@ export function getSvgMarkupString (bciAvId: BciAvId) {
  * Get the SVG markup as a DOM element based on the given single BCI-AV-ID.
  * or an array of BCI-AV-IDs and other characters
  *
- * @param {BciAvId} bciAvId - A single BCI-AV-ID (a number) or an array of such
- *                            ids and characters, e.g. `[ 12335, "/", 8499 ]`
- * @return {String} - The corresponding SVG markup, or `undefined`.
+ * @param {BciAvIdType} bciAvId - A single BCI-AV-ID (a number) or an array of
+ *                                such ids and characters, e.g.
+ *                                `[ 12335, "/", 8499 ]`
+ * @return {Element} - The corresponding SVG markup, or `undefined`.
  */
-export function getSvgElement (bciAvId: BciAvId) {
+export function getSvgElement (bciAvId: BciAvIdType) {
   const builder = getSvgBuilder(bciAvId);
   return ( builder ? builder.svgElement : undefined );
 }

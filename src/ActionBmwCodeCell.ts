@@ -10,22 +10,11 @@
  */
 
 import { html } from "htm/preact";
-import { BlissSymbol, BciAvId } from "./BlissSymbol";
+import { ActionBmwCodeCellPropsType } from "./index.d";
+import { BlissSymbol } from "./BlissSymbol";
 import "./ActionBmwCodeCell.scss";
 
-type ActionBmwCodeCellProps = {
-  id: string,
-  options: {
-    label: string,
-    columnStart: number,
-    columnSpan: number,
-    rowStart: number,
-    rowSpan: number,
-    bciAvId: BciAvId
-  }
-}
-
-export function ActionBmwCodeCell (props: ActionBmwCodeCellProps) {
+export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType) {
   const {
     columnStart, columnSpan, rowStart, rowSpan, bciAvId, label
   } = props.options;
