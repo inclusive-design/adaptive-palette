@@ -11,13 +11,12 @@
 
 import { html } from "htm/preact";
 import { getSvgElement } from "./SvgUtils";
-
-export type BciAvId = number | (string|number)[];
+import { BciAvIdType } from "./index.d";
 
 export const GRAPHIC_ROLE = "graphic-symbol img";
 
 type BlissSymbolProps = {
-  bciAvId: BciAvId,
+  bciAvId: BciAvIdType,
   label: string,
   // Aria markup information for svg part of the BlissSymbol.  The first is
   // really a boolean, but the html template function converts it to string
@@ -31,14 +30,17 @@ export function BlissSymbol (props: BlissSymbolProps) {
   const { bciAvId, label, isPresentation, labelledBy } = props;
   const svgElement = getSvgElement(bciAvId);
 
-  // Deal with aria markup, depending on whether the SVG
-  if (isPresentation === "true") {
-    svgElement.setAttribute("aria-hidden", true);
-  } else {
-    svgElement.setAttribute("role", `${GRAPHIC_ROLE}`);
-    svgElement.setAttribute("aria-labelledby", labelledBy);
+  let svgMarkupString = "";
+  if (svgElement) {
+    // Deal with aria markup, depending on whether the SVG
+    if (isPresentation === "true") {
+      svgElement.setAttribute("aria-hidden", true);
+    } else {
+      svgElement.setAttribute("role", `${GRAPHIC_ROLE}`);
+      svgElement.setAttribute("aria-labelledby", labelledBy);
+    }
+    svgMarkupString = svgElement.outerHTML;
   }
-  const svgMarkupString = svgElement.outerHTML;
 
   // The coercion to `any` and assignment to `raw` is _only_ for the unit
   // tests to avoid the error:

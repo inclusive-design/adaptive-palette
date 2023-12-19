@@ -11,6 +11,7 @@
 
 import { render } from "preact";
 import { html } from "htm/preact";
+import { ActionBmwCodeCellPropsType } from "./index.d";
 import { adaptivePaletteGlobals } from "./GlobalData";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
@@ -38,7 +39,7 @@ const navigateToPalette = (event) => {
   }
 };
 
-export function ActionBranchToPalette (props: ActionBmwCodeCellProps) {
+export function ActionBranchToPalette (props: ActionBmwCodeCellPropsType) {
   debugProps(props);
 
   const { columnStart, columnSpan, rowStart, rowSpan, branchTo } = props.options;

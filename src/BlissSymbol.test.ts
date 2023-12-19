@@ -28,6 +28,7 @@ describe("BlissSymbol render tests", () => {
   };
 
   const MOCK_LABEL_ID = "mockLabelId";
+  const UNKNOWN_BCI_AV_ID = -1;
 
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
@@ -49,6 +50,21 @@ describe("BlissSymbol render tests", () => {
     const parentChildren = blissSymbolLabelDiv.parentNode.childNodes;
     expect(parentChildren.length).toBe(2);
     expect(parentChildren[0].nodeName).toBe("svg");
+  });
+
+  test("BlissSymbol when the SVG is unknown", async () => {
+    render(html`
+      <${BlissSymbol}
+        bciAvId="${UNKNOWN_BCI_AV_ID}"
+        label="${arrayBciAvId.label}"
+        isPresentation=true
+      />`
+    );
+    const blissSymbolLabelDiv = await screen.findByText(arrayBciAvId.label);
+    const svgElement = blissSymbolLabelDiv.parentNode.querySelector("svg");
+    const parentChildren = blissSymbolLabelDiv.parentNode.childNodes;
+    expect(parentChildren.length).toBe(1);
+    expect(svgElement).toBe(null);
   });
 
   test(`BlissSymbol defined by an of BCI_AV_IDs (${arrayBciAvId.label})`, async () => {
