@@ -10,31 +10,21 @@
  */
 
 import { html } from "htm/preact";
-import { BlissSymbol, BciAvId } from "./BlissSymbol";
+import { OptionsType } from "./index.d";
+import { BlissSymbol } from "./BlissSymbol";
 import { dispatchMessage } from "./GlobalMessageHandler";
 import "./ActionBmwCodeCell.scss";
 
-function debugProps(x) {
-  console.debug("DEBUGPROPS(): %O", x);
-}
 
-type ActionBmwCodeCellProps = {
+type ActionBmwCodeCellPropsType = {
   id: string,
-  options: {
-    label: string,
-    columnStart: number,
-    columnSpan: number,
-    rowStart: number,
-    rowSpan: number,
-    bciAvId: BciAvId
-  }
-}
+  options: OptionsType
+};
 
-export function ActionBmwCodeCell (props: ActionBmwCodeCellProps) {
-  debugProps(props);
-
-  const { columnStart, columnSpan, rowStart, rowSpan } = props.options;
-  const { bciAvId, label } = props.options;
+export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType) {
+  const {
+    columnStart, columnSpan, rowStart, rowSpan, bciAvId, label
+  } = props.options;
 
   const gridStyles = `
     grid-column: ${columnStart} / span ${columnSpan};
@@ -51,7 +41,11 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellProps) {
 
   return html`
     <button id="${props.id}" class="actionBmwCodeCell" style="${gridStyles}" onClick=${cellClicked}>
-      <${BlissSymbol} bciAvId=${bciAvId} label=${label}/>
+      <${BlissSymbol}
+        bciAvId=${bciAvId}
+        label=${label}
+        isPresentation=true
+      />
     </button>
   `;
 }

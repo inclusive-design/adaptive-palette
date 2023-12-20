@@ -10,8 +10,13 @@
  */
 
 import { html } from "htm/preact";
+import { JsonPaletteType } from "./index.d";
 import { cellTypeRegistry } from "./GlobalData";
 import "./Palette.scss";
+
+type PalettePropsType = {
+  json: JsonPaletteType
+};
 
 /**
  * Given a palette defined in a json structure, compute the number of rows
@@ -41,7 +46,7 @@ function countRowsColumns (paletteDefinition) {
   return { numRows: rowCount, numColumns: colCount };
 }
 
-export function Palette (props) {
+export function Palette (props: PalettePropsType) {
 
   const paletteDefinition = props.json;
   const rowsCols = countRowsColumns(paletteDefinition);
@@ -62,8 +67,6 @@ export function Palette (props) {
       theCells.push(paletteCell);
     }
   });
-
-
   return html`
     <div
       class="paletteContainer"

@@ -10,16 +10,7 @@
     <h2>Palette Based on JSON</h1>
     <div id="bmwKeyCodes">
       <script type="module">
-        import { render } from "preact";
-        import { html } from "htm/preact";
-        import { initAdaptivePaletteGlobals } from "./src/GlobalData.ts";
-
-        // Initialize any globals used elsewhere in the code.
-        await initAdaptivePaletteGlobals();
-
-        import { Palette } from "./src/Palette";
-        import bmwJson from "./src/keyboards/bmw_palette.json";
-        render (html`<${Palette} json=${bmwJson}/>`, document.getElementById("bmwKeyCodes"));
+        import "./src/index.js";
       </script>
     </div>
   </body>

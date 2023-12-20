@@ -12,7 +12,8 @@
 import { html } from "htm/preact";
 import { useState } from "preact/hooks";
 import { onMessage } from "./GlobalMessageHandler";
-import { BlissSymbol, BciAvId } from "./BlissSymbol";
+import { BlissSymbol } from "./BlissSymbol";
+import { BciAvIdType } from "./index.d";
 import "./ContentBmwEncoding.scss";
 
 type ContentBmwEncodingProps = {
@@ -28,7 +29,7 @@ type ContentBmwEncodingProps = {
 type AddBmwCodeMsgPayload = {
   id: string,
   label: string,
-  bciAvId: BciAvId
+  bciAvId: BciAvIdType
 }
 
 export function ContentBmwEncoding (props: ContentBmwEncodingProps) {

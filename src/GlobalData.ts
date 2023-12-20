@@ -25,15 +25,9 @@ export const adaptivePaletteGlobals = {
   blissaryIdMap: null
 };
 
-// For debugging
-let fetchCount = 0;
-
 export async function loadBlissaryIdMap () {
   const response = await fetch(adaptivePaletteGlobals.blissaryIdMapUrl);
-  const idMap = await response.json();
-  fetchCount++;
-  console.debug(`loadBlissaryIdMap(): fetchCount = ${fetchCount}; idMap is ` + ( idMap === null ? "null": "not null"));
-  return idMap;
+  return await response.json();
 }
 
 export async function initAdaptivePaletteGlobals () {

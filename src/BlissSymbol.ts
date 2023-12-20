@@ -10,18 +10,37 @@
  */
 
 import { html } from "htm/preact";
-import { getSvgMarkupString } from "./SvgUtils";
+import { getSvgElement } from "./SvgUtils";
+import { BciAvIdType } from "./index.d";
 
-export type BciAvId = number | (string|number)[];
+export const GRAPHIC_ROLE = "graphic-symbol img";
 
-type BlissSymbolProps = {
-  bciAvId: BciAvId,
-  label: string
+type BlissSymbolPropsType = {
+  bciAvId: BciAvIdType,
+  label: string,
+  // Aria markup information for svg part of the BlissSymbol.  The first is
+  // really a boolean, but the html template function converts it to string
+  // values.
+  isPresentation: "true" | "false",
+  // @id of label element when isPresntation is "false"
+  labelledBy?: string
 }
 
-export function BlissSymbol (props: BlissSymbolProps) {
-  const { bciAvId, label } = props;
-  const svgMarkupString = getSvgMarkupString(bciAvId);
+export function BlissSymbol (props: BlissSymbolPropsType) {
+  const { bciAvId, label, isPresentation, labelledBy } = props;
+  const svgElement = getSvgElement(bciAvId);
+
+  let svgMarkupString = "";
+  if (svgElement) {
+    // Deal with aria markup, depending on whether the SVG
+    if (isPresentation === "true") {
+      svgElement.setAttribute("aria-hidden", true);
+    } else {
+      svgElement.setAttribute("role", `${GRAPHIC_ROLE}`);
+      svgElement.setAttribute("aria-labelledby", labelledBy);
+    }
+    svgMarkupString = svgElement.outerHTML;
+  }
 
   // The coercion to `any` and assignment to `raw` is _only_ for the unit
   // tests to avoid the error:
@@ -37,6 +56,6 @@ export function BlissSymbol (props: BlissSymbolProps) {
 
   return html`
     ${html(templateStringArray)}
-    <div>${label}</div>
+    <div id="${labelledBy}">${label}</div>
   `;
 }

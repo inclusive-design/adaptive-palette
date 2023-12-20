@@ -11,6 +11,8 @@
 
 "use strict";
 
+import { JsonPaletteType } from "./index.d";
+
 export class PaletteStore {
 
   // Singleton storage for all palettes
@@ -30,11 +32,11 @@ export class PaletteStore {
    * Add a palette to the store, or replace a palette with a new one.  If the
    * palette's name/identifier matches a palette already in the store, it
    * replaces it.
-   * @param: {Palette} palette - The palette to add to the store.
-   * @param: {Palette}.name  - The internal name of the palette.
-   * @param: {String} name   - Optional, the preferred name of the palette.
+   * @param: {Object} palette - The palette to add to the store.
+   * @param: {Object}.name    - The internal name of the palette.
+   * @param: {String} name    - Optional, the preferred name of the palette.
    */
-  addPalette (palette, paletteName?: string) {
+  addPalette (palette: JsonPaletteType, paletteName?: string) {
     if (!palette) {
       return;
     }
@@ -53,9 +55,9 @@ export class PaletteStore {
   /**
    * Remove the palette with the given name.
    * @param: {String} paletteName - The palette to remove.
-   * @return {Palette} reference to the removed palette.
+   * @return {Object} reference to the removed palette.
    */
-  removePalette (paletteName) {
+  removePalette (paletteName: string) {
     if (this.isEmpty()) {
       return null;
     } else {
@@ -70,9 +72,9 @@ export class PaletteStore {
 
   /**
    * Accessor for the number of palettes in the store.
-   * @return: {integer the number of palettes in the store}.
+   * @return: {integer} the number of palettes in the store}.
    */
-  get numPalettes() {
+  get numPalettes() : number {
     return Object.keys(PaletteStore.paletteMap).length;
   }
 
@@ -87,10 +89,10 @@ export class PaletteStore {
   /**
    * Accessor for a retrieving the named palette.
    * @param: {String} paletteName - The palette to retrieve.
-   * @return {Palette} reference to the named palette, or undefined if no such
+   * @return {Object} reference to the named palette, or undefined if no such
    * palette.
    */
-  getNamedPalette(paletteName) {
+  getNamedPalette(paletteName: string) {
     return PaletteStore.paletteMap[paletteName];
   }
 }
