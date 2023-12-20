@@ -29,14 +29,3 @@ export type JsonPaletteType = {
     }
   }
 };
-
-// Types associated with the `props` parameter of the component functions.
-
-export type PalettePropsType = {
-  json: JsonPaletteType
-};
-
-export type ActionBmwCodeCellPropsType = {
-  id: string,
-  options: OptionsType
-};

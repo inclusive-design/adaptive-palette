@@ -10,9 +10,13 @@
  */
 
 import { html } from "htm/preact";
-import { PalettePropsType } from "./index.d";
+import { JsonPaletteType } from "./index.d";
 import { cellTypeRegistry } from "./GlobalData";
 import "./Palette.scss";
+
+type PalettePropsType = {
+  json: JsonPaletteType
+};
 
 /**
  * Given a palette defined in a json structure, compute the number of rows
