@@ -12,7 +12,7 @@
 import { render } from "preact";
 import { html } from "htm/preact";
 import { OptionsType } from "./index.d";
-import { adaptivePaletteGlobals } from "./GlobalData";
+import { adaptivePaletteGlobals, getPaletteJson } from "./GlobalData";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
 import "./ActionBmwCodeCell.scss";
@@ -20,6 +20,14 @@ import "./ActionBmwCodeCell.scss";
 function debugProps(x) {
   console.debug("DEBUGPROPS(): %O", x);
 }
+
+// Msp of palette name and their files.  TODO: put this in a better place,
+// GlobalData?
+const paletteNameAndFile = {
+  "My Family Palette": "./src/keyboards/myfamily.json",
+  "People": "./src/keyboards/people.json",
+  "BMW Palette": "./src/keyboards/bmw_palette.json"
+};
 
 // TODO:  this is identical to `ActionBmwCodeCellPropsType`.  Should it be?
 type ActionBranchToPalettePropsType = {
@@ -30,26 +38,33 @@ type ActionBranchToPalettePropsType = {
 /*
  * Event handler for an ActionBranchToPalette button/cell that, when clicked,
  * finds and renders the palette referenced by this cell.
+ * TODO: re-write this with Preact's signal system
  */
-const navigateToPalette = (event) => {
+const navigateToPalette = async (event) => {
   const { paletteStore } = adaptivePaletteGlobals;
   const button = event.currentTarget;
 
   const branchToPaletteName = button.getAttribute("data-branchto");
-  const paletteDefinition = paletteStore.getNamedPalette(branchToPaletteName);
+  let paletteDefinition = paletteStore.getNamedPalette(branchToPaletteName);
+  if (!paletteDefinition) {
+    const paletteFile = paletteNameAndFile[branchToPaletteName];
+    paletteDefinition = await getPaletteJson(`${paletteFile}`);
+    paletteStore.addPalette(paletteDefinition);
+  }
   if (paletteDefinition) {
     render (html`<${Palette} json=${paletteDefinition}/>`, document.getElementById("bmwKeyCodes"));
   }
   else {
-    console.error(`navigateToPalette():  Unable to locate the palette definition for ${paletteDefinition}`);
+    console.error(`navigateToPalette():  Unable to locate the palette definition for ${branchToPaletteName}`);
   }
 };
 
 export function ActionBranchToPalette (props: ActionBranchToPalettePropsType) {
   debugProps(props);
 
-  const { columnStart, columnSpan, rowStart, rowSpan, branchTo } = props.options;
-  const { bciAvId, label } = props.options;
+  const {
+    columnStart, columnSpan, rowStart, rowSpan, branchTo, bciAvId, label
+  } = props.options;
 
   const gridStyles = `
     grid-column: ${columnStart} / span ${columnSpan};

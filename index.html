@@ -9,14 +9,6 @@
         const theSelect = document.getElementById("paletteChooser");
         return theSelect.value;
       }
-
-      async function getPaletteJson (jsonFile) {
-        const response = await fetch(jsonFile);
-        console.debug("response is '" + ( response ? "non-null" : "null" ));
-        const paletteJson = await response.json();
-        console.debug("paletteJson is '" + ( paletteJson ? "non-null" : "null" ));
-        return paletteJson;
-      }
     </script>
 
     <title>Adaptive Palette</title>
@@ -40,14 +32,14 @@
       <script type="module">
         import { render } from "preact";
         import { html } from "htm/preact";
-        import { initAdaptivePaletteGlobals } from "./src/GlobalData.ts";
+        import { initAdaptivePaletteGlobals, getPaletteJson } from "./src/GlobalData.ts";
 
         // Initialize any globals used elsewhere in the code.
         await initAdaptivePaletteGlobals();
 
         import { Palette } from "./src/Palette";
 
-        // Set up paletter for choosing palettes
+        // Set up palette for choosing palettes
         let paletteChooser = await getPaletteJson("./src/keyboards/palettes.json");
         render (html`<${Palette} json=${paletteChooser}/>`, document.getElementById("paletteChooserViaBliss"));
 

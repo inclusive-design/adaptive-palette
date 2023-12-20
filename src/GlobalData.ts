@@ -36,6 +36,15 @@ export async function initAdaptivePaletteGlobals () {
   adaptivePaletteGlobals.blissaryIdMap = await loadBlissaryIdMap();
 }
 
+// TODO: possibly move this function into the PaletteStore object
+export async function getPaletteJson (jsonFile) {
+  const response = await fetch(jsonFile);
+  console.debug("response is '" + ( response ? "non-null" : "null" ));
+  const paletteJson = await response.json();
+  console.debug("paletteJson is '" + ( paletteJson ? "non-null" : "null" ));
+  return paletteJson;
+}
+
 /**
  * The map between cell types (string) and actual components that render cells
  */
