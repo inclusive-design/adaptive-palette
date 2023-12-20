@@ -11,7 +11,7 @@
 
 import { render } from "preact";
 import { html } from "htm/preact";
-import { ActionBmwCodeCellPropsType } from "./index.d";
+import { OptionsType } from "./index.d";
 import { adaptivePaletteGlobals } from "./GlobalData";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
@@ -20,6 +20,12 @@ import "./ActionBmwCodeCell.scss";
 function debugProps(x) {
   console.debug("DEBUGPROPS(): %O", x);
 }
+
+// TODO:  this is identical to `ActionBmwCodeCellPropsType`.  Should it be?
+type ActionBranchToPalettePropsType = {
+  id: string,
+  options: OptionsType
+};
 
 /*
  * Event handler for an ActionBranchToPalette button/cell that, when clicked,
@@ -39,7 +45,7 @@ const navigateToPalette = (event) => {
   }
 };
 
-export function ActionBranchToPalette (props: ActionBmwCodeCellPropsType) {
+export function ActionBranchToPalette (props: ActionBranchToPalettePropsType) {
   debugProps(props);
 
   const { columnStart, columnSpan, rowStart, rowSpan, branchTo } = props.options;

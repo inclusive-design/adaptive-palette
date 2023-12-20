@@ -15,7 +15,7 @@ import { BciAvIdType } from "./index.d";
 
 export const GRAPHIC_ROLE = "graphic-symbol img";
 
-type BlissSymbolProps = {
+type BlissSymbolPropsType = {
   bciAvId: BciAvIdType,
   label: string,
   // Aria markup information for svg part of the BlissSymbol.  The first is
@@ -26,7 +26,7 @@ type BlissSymbolProps = {
   labelledBy?: string
 }
 
-export function BlissSymbol (props: BlissSymbolProps) {
+export function BlissSymbol (props: BlissSymbolPropsType) {
   const { bciAvId, label, isPresentation, labelledBy } = props;
   const svgElement = getSvgElement(bciAvId);
 

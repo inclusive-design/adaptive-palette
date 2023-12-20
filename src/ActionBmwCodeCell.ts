@@ -10,9 +10,15 @@
  */
 
 import { html } from "htm/preact";
-import { ActionBmwCodeCellPropsType } from "./index.d";
+import { OptionsType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import "./ActionBmwCodeCell.scss";
+
+
+type ActionBmwCodeCellPropsType = {
+  id: string,
+  options: OptionsType
+};
 
 export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType) {
   const {
