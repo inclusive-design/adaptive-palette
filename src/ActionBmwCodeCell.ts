@@ -10,18 +10,20 @@
  */
 
 import { html } from "htm/preact";
-import { OptionsType } from "./index.d";
+import { BlissCellType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
-import { dispatchMessage } from "./GlobalMessageHandler";
 import "./ActionBmwCodeCell.scss";
+import { usePaletteState } from "./GlobalData";
 
 
 type ActionBmwCodeCellPropsType = {
   id: string,
-  options: OptionsType
+  options: BlissCellType
 };
 
 export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType) {
+  const {fullEncoding, setFullEncoding} = usePaletteState();
+
   const {
     columnStart, columnSpan, rowStart, rowSpan, bciAvId, label
   } = props.options;
@@ -32,11 +34,12 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType) {
   `;
 
   const cellClicked = () => {
-    dispatchMessage("addBmwCode",{
+    const payload = {
       "id": props.id,
       "label": props.options.label,
       "bciAvId": props.options.bciAvId
-    });
+    };
+    setFullEncoding([...fullEncoding, payload]);
   };
 
   return html`

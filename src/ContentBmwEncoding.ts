@@ -10,42 +10,26 @@
  */
 
 import { html } from "htm/preact";
-import { useState } from "preact/hooks";
-import { onMessage } from "./GlobalMessageHandler";
 import { BlissSymbol } from "./BlissSymbol";
-import { BciAvIdType } from "./index.d";
+import { usePaletteState } from "./GlobalData";
+import { ContentBmwEncodingType } from "./index.d";
 import "./ContentBmwEncoding.scss";
 
 type ContentBmwEncodingProps = {
   id: string,
-  columnSpan: number,
-  options: {
-    columnStart: number,
-    rowStart: number,
-    rowSpan: number
-  }
-}
-
-type AddBmwCodeMsgPayload = {
-  id: string,
-  label: string,
-  bciAvId: BciAvIdType
+  options: ContentBmwEncodingType
 }
 
 export function ContentBmwEncoding (props: ContentBmwEncodingProps) {
-  const { id, options, columnSpan } = props;
-  const { columnStart, rowStart, rowSpan } = options;
-  const [fullEncoding, setFullEncoding] = useState([]);
+  const  { fullEncoding } = usePaletteState();
+  const { id, options } = props;
+  const { columnStart, columnSpan, rowStart, rowSpan } = options;
 
   // TODO: use a common utility function to calculate the grid position
   const styles = `
     grid-column: ${columnStart} / span ${columnSpan};
     grid-row: ${rowStart} / span ${rowSpan};
   `;
-
-  onMessage("addBmwCode", (payload: AddBmwCodeMsgPayload) => {
-    setFullEncoding([...fullEncoding, payload]);
-  });
 
   return html`
     <div id="${id}" class="bmwEncodingArea" role="region" aria-label="BMW Encoding Area" style="${styles}">

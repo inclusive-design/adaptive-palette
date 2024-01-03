@@ -10,11 +10,12 @@
  */
 import { render } from "preact";
 import { html } from "htm/preact";
-import { initAdaptivePaletteGlobals } from "./GlobalData.ts";
+import { initAdaptivePaletteGlobals } from "./GlobalData";
 
 // Initialize any globals used elsewhere in the code.
 await initAdaptivePaletteGlobals();
 
 import { Palette } from "./Palette";
 import bmwJson from "./keyboards/bmw_palette.json";
-render (html`<${Palette} json=${bmwJson}/>`, document.getElementById("bmwKeyCodes"));
+
+render(html`<${Palette} json=${bmwJson}/>`, document.getElementById("bmwKeyCodes"));
