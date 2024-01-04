@@ -24,12 +24,8 @@
         "command-clear-encoding": {
             "type": "CommandClearEncoding",
             "options": {
-                "label": "Clear Encoding",
-                "bciAvId": [
-                    13665,
-                    "/",
-                    12360
-                ],
+                "label": "Clear",
+                "bciAvId": 13665,
                 "rowStart": 2,
                 "rowSpan": 1,
                 "columnStart": 14,

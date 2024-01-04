@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -21,7 +21,9 @@ type ContentBmwEncodingProps = {
 }
 
 export function ContentBmwEncoding (props: ContentBmwEncodingProps) {
-  const  { fullEncoding } = usePaletteState();
+  const paletteState = usePaletteState();
+  const fullEncoding = paletteState?.fullEncoding ? paletteState?.fullEncoding : [];
+
   const { id, options } = props;
   const { columnStart, columnSpan, rowStart, rowSpan } = options;
 

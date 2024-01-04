@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -77,7 +77,7 @@ describe("Palette component", () => {
   test("Render palette", async() => {
 
     // render() the palette and then wait until its first cell is available to
-    // insure that the entire palette is in the DOM.
+    // ensure that the entire palette is in the DOM.
     render(html`<${Palette} json=${testPalette}/>`);
     const firstCell = await screen.findByText("First Cell");
     expect(firstCell).toBeInTheDocument();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -22,7 +22,14 @@ type CommandDelLastEncodingProps = {
 export function CommandDelLastEncoding (props: CommandDelLastEncodingProps) {
   const { id, options } = props;
   const { label, bciAvId, columnStart, columnSpan, rowStart, rowSpan } = options;
-  const { fullEncoding, setFullEncoding } = usePaletteState();
+
+  // Using separate lines to get "fullEncoding" & "setFullEncoding" rather than using one single line:
+  // { fullEncoding, setFullEncoding } = usePaletteState();
+  // is to accommodate the component unit test in which the parent palette component is not tested. The
+  // palette state is defined in the palette context.
+  const paletteState = usePaletteState();
+  const fullEncoding = paletteState?.fullEncoding;
+  const setFullEncoding = paletteState?.setFullEncoding;
 
   const gridStyles = `
     grid-column: ${columnStart} / span ${columnSpan};
@@ -36,7 +43,7 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps) {
   };
 
   return html`
-    <button id="${id}" class="CommandDelLastEncoding" style="${gridStyles}" onClick=${cellClicked}>
+    <button id="${id}" class="commandDelLastEncoding" style="${gridStyles}" onClick=${cellClicked}>
       <${BlissSymbol} bciAvId=${bciAvId} label=${label}/>
     </button>
   `;

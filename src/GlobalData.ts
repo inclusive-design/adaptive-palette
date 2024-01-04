@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -20,7 +20,7 @@ import { createContext } from "preact";
 import { useContext, useState } from "preact/hooks";
 
 /**
- * The map between cell types (string) and actual components that render cells
+ * The map between cell types (string) and actual components that render corresponding cells
  */
 import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
 import { ContentBmwEncoding } from "./ContentBmwEncoding";
