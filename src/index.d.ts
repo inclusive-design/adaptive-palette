@@ -11,7 +11,7 @@
 
 export type BciAvIdType = number | (string|number)[];
 
-export type OptionsType = {
+export type BlissCellType = {
     label: string,
     columnStart: number,
     columnSpan: number,
@@ -20,12 +20,19 @@ export type OptionsType = {
     bciAvId: BciAvIdType
 };
 
+export type ContentBmwEncodingType = {
+    columnStart: number,
+    columnSpan: number,
+    rowStart: number,
+    rowSpan: number,
+};
+
 export type JsonPaletteType = {
   name: string,
   cells: {
     [key: string]: {
       type: string,
-      options: OptionsType
+      options: BlissCellType | ContentBmwEncodingType
     }
   }
 };

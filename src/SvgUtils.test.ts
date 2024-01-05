@@ -8,7 +8,6 @@
  * You may obtain a copy of the License at
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
-"use strict";
 
 import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
 import { bciToBlissaryId, bciAvIdToString } from "./SvgUtils";

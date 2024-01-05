@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -9,14 +9,32 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-"use strict";
-
 /**
  * Populate and export global data
  */
 
-import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
+import { html } from "htm/preact";
+import { createContext } from "preact";
+import { useContext, useState } from "preact/hooks";
 
+/**
+ * The map between cell types (string) and actual components that render corresponding cells
+ */
+import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
+import { ContentBmwEncoding } from "./ContentBmwEncoding";
+import { CommandClearEncoding } from "./CommandClearEncoding";
+import { CommandDelLastEncoding } from "./CommandDelLastEncoding";
+
+export const cellTypeRegistry = {
+  "ActionBmwCodeCell": ActionBmwCodeCell,
+  "ContentBmwEncoding": ContentBmwEncoding,
+  "CommandClearEncoding": CommandClearEncoding,
+  "CommandDelLastEncoding": CommandDelLastEncoding
+};
+
+/**
+ * Load the map between the BCI-AV IDs and the code consumed by the Bliss SVG builder
+ */
 export const adaptivePaletteGlobals = {
   // The map between the BCI-AV IDs and the code consumed by the Bliss SVG
   // builder.  The map itself is set asynchronously.
@@ -34,8 +52,23 @@ export async function initAdaptivePaletteGlobals () {
 }
 
 /**
- * The map between cell types (string) and actual components that render cells
+ * Palette shared states
  */
-export const cellTypeRegistry = {
-  "ActionBmwCodeCell": ActionBmwCodeCell
-};
+// Create a context to pass the palette states to palette children components
+const paletteStateContext = createContext(null);
+
+// Create a provider component that will wrap the components needing access to the global states
+export function paletteStateProvider({ children }) {
+  const [fullEncoding, setFullEncoding] = useState([]);
+
+  return html`
+    <${paletteStateContext.Provider} value=${{ fullEncoding, setFullEncoding }}>
+      ${children}
+    </${paletteStateContext.Provider}>
+  `;
+}
+
+// Create a custom hook to easily access the global states within components
+export function usePaletteState() {
+  return useContext(paletteStateContext);
+}

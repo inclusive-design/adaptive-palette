@@ -11,7 +11,7 @@
 
 import { html } from "htm/preact";
 import { JsonPaletteType } from "./index.d";
-import { cellTypeRegistry } from "./GlobalData";
+import { cellTypeRegistry, paletteStateProvider } from "./GlobalData";
 import "./Palette.scss";
 
 type PalettePropsType = {
@@ -47,7 +47,6 @@ function countRowsColumns (paletteDefinition) {
 }
 
 export function Palette (props: PalettePropsType) {
-
   const paletteDefinition = props.json;
   const rowsCols = countRowsColumns(paletteDefinition);
   const cellIds = Object.keys(paletteDefinition.cells);
@@ -67,11 +66,14 @@ export function Palette (props: PalettePropsType) {
       theCells.push(paletteCell);
     }
   });
+
   return html`
+  <${paletteStateProvider}>
     <div
       class="paletteContainer"
       style="grid-template-columns: repeat(${rowsCols.numColumns}, auto);">
         ${theCells}
     </div>
+  </${paletteStateProvider}>
   `;
 }

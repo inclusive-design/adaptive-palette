@@ -9,7 +9,21 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-.paletteContainer {
-  display: grid;
-  grid-template-columns: auto auto auto;
+.bmwEncodingArea {
+  align-items: center;
+  background-color: #fff;
+  border: 3px solid #ccc;
+  color: #000;
+  display: flex;
+  overflow: auto; /* Add scrollbar when content overflows */
+
+  &:hover {
+    background-color: limegreen;
+    color: white;
+  }
+
+  .blissSymbol {
+    margin: 0 0.5rem;
+    text-align: center;
+  }
 }
