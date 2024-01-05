@@ -9,8 +9,6 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-"use strict";
-
 import { render, screen, fireEvent } from "@testing-library/preact";
 import "@testing-library/jest-dom";
 import { html } from "htm/preact";

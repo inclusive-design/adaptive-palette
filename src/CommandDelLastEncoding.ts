@@ -13,6 +13,7 @@ import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { usePaletteState } from "./GlobalData";
 import { BlissCellType } from "./index.d";
+import { getGridStyle } from "./GlobalUtils";
 
 type CommandDelLastEncodingProps = {
   id: string,
@@ -31,10 +32,7 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps) {
   const fullEncoding = paletteState?.fullEncoding;
   const setFullEncoding = paletteState?.setFullEncoding;
 
-  const gridStyles = `
-    grid-column: ${columnStart} / span ${columnSpan};
-    grid-row: ${rowStart} / span ${rowSpan};
-  `;
+  const gridStyles = getGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = () => {
     const newEncoding = [...fullEncoding];

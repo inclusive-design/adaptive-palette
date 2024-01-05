@@ -12,8 +12,9 @@
 import { html } from "htm/preact";
 import { BlissCellType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
-import "./ActionBmwCodeCell.scss";
 import { usePaletteState } from "./GlobalData";
+import { getGridStyle } from "./GlobalUtils";
+import "./ActionBmwCodeCell.scss";
 
 
 type ActionBmwCodeCellPropsType = {
@@ -34,10 +35,7 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType) {
     columnStart, columnSpan, rowStart, rowSpan, bciAvId, label
   } = props.options;
 
-  const gridStyles = `
-    grid-column: ${columnStart} / span ${columnSpan};
-    grid-row: ${rowStart} / span ${rowSpan};
-  `;
+  const gridStyles = getGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = () => {
     const payload = {

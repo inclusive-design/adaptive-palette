@@ -12,7 +12,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@preact/signals": "^1.2.1",
     "bliss-svg-builder": "^0.1.0-alpha.4",
     "htm": "^3.1.1",
     "preact": "^10.13.1",

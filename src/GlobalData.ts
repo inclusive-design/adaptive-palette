@@ -9,8 +9,6 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-"use strict";
-
 /**
  * Populate and export global data
  */
