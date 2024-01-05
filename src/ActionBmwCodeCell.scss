@@ -11,14 +11,6 @@
 
 .actionBmwCodeCell {
   border: 2px solid blue;
-  background-color: gray;
-  border-radius: 5px;
-  padding: 1rem;
-  font-size: 1rem;
+  background-color: beige;
   text-align: center;
-
-  &:hover, &:focus {
-    background-color: lightblue;
-    color: #0000aa;
-  }
 }

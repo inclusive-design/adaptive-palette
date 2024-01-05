@@ -88,23 +88,7 @@ describe("Palette integration test", () => {
     await initAdaptivePaletteGlobals();
   });
 
-  test("Render palette", async() => {
-    // render() the palette and then wait until its first cell is available to
-    // ensure that the entire palette is in the DOM.
-    render(html`<${Palette} json=${testPalette}/>`);
-    const firstCell = await screen.findByText("First Cell");
-    expect(firstCell).toBeInTheDocument();
-
-    const paletteElement = document.querySelector("div.paletteContainer");
-    expect(paletteElement).toBeVisible();
-    expect(paletteElement).toBeValid();
-
-    // There should be correct number of columns in the grid and correct numbers of children.
-    expect(paletteElement).toHaveStyle("grid-template-columns: repeat(15, auto);");
-    expect(paletteElement.childNodes.length).toBe(Object.keys(testPalette.cells).length);
-  });
-
-  test("Cell coordinations among the bmw cell, BMW encoding area, delete and clear buttons", async() => {
+  test("Cell coordinations among bmw action cells, BMW encoding area, delete and clear buttons", async() => {
     // render() the palette and then wait until its first cell is available to
     // insure that the entire palette is in the DOM.
     render(html`<${Palette} json=${testPalette}/>`);

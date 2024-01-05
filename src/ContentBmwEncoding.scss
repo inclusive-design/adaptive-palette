@@ -10,29 +10,20 @@
  */
 
 .bmwEncodingArea {
+  align-items: center;
   background-color: #fff;
-  border: 1px solid #ccc;
+  border: 3px solid #ccc;
   color: #000;
   display: flex;
-  height: 6rem;
-  margin: 0.5rem 0;
   overflow: auto; /* Add scrollbar when content overflows */
-  padding: 6px;
-  line-height: 1.5;
 
   &:hover {
-    border-color: #007bff; /* Change border color on focus (optional) */
-    outline: none; /* Remove the default outline (optional) */
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a box shadow on focus (optional) */
+    background-color: limegreen;
+    color: white;
   }
 
   .blissSymbol {
     margin: 0 0.5rem;
     text-align: center;
-
-    svg {
-      height: 4rem;
-      width: auto;
-    }
   }
 }

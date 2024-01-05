@@ -1,0 +1,36 @@
+/* Global Styles */
+
+html {
+  font-size: 18px;
+}
+
+body {
+  background-color: green;
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+button {
+    border-radius: 0.2rem;
+    color: darkmagenta;
+    padding-bottom: 0.5rem;
+
+    &:hover {
+      background-color: limegreen;
+      color: #0000aa;
+    }
+
+    &:focus {
+      background-color: lightblue;
+      color: #0000aa;
+    }
+}
+
+.btn-command {
+  background-color: lightsalmon;
+}
+
+svg {
+  height: 4rem;
+  width: auto;
+}

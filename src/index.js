@@ -11,6 +11,7 @@
 import { render } from "preact";
 import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals } from "./GlobalData";
+import "./index.scss";
 
 // Initialize any globals used elsewhere in the code.
 await initAdaptivePaletteGlobals();

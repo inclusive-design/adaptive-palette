@@ -43,7 +43,7 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps) {
   };
 
   return html`
-    <button id="${id}" class="commandDelLastEncoding" style="${gridStyles}" onClick=${cellClicked}>
+    <button id="${id}" class="btn-command" style="${gridStyles}" onClick=${cellClicked}>
       <${BlissSymbol} bciAvId=${bciAvId} label=${label}/>
     </button>
   `;

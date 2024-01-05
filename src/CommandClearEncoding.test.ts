@@ -51,7 +51,7 @@ describe("CommandClearEncoding render tests", () => {
     expect(button).toBeVisible();
     expect(button).toBeValid();
     expect(button.id).toBe(TEST_CELL_ID);
-    expect(button.getAttribute("class")).toBe("commandClearEncoding");
+    expect(button.getAttribute("class")).toBe("btn-command");
     expect(button.textContent).toBe(testCell.options.label);
 
     // Check the grid cell styles.

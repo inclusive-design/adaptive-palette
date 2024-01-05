@@ -40,7 +40,7 @@ export function CommandClearEncoding (props: CommandClearEncodingProps) {
   };
 
   return html`
-    <button id="${id}" class="commandClearEncoding" style="${gridStyles}" onClick=${cellClicked}>
+    <button id="${id}" class="btn-command" style="${gridStyles}" onClick=${cellClicked}>
       <${BlissSymbol} bciAvId=${bciAvId} label=${label}/>
     </button>
   `;
