@@ -13,7 +13,7 @@ import { html } from "htm/preact";
 import { BlissCellType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { usePaletteState } from "./GlobalData";
-import { getGridStyle } from "./GlobalUtils";
+import { getGridStyle, speak } from "./GlobalUtils";
 import "./ActionBmwCodeCell.scss";
 
 
@@ -44,6 +44,7 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType) {
       "bciAvId": props.options.bciAvId
     };
     setFullEncoding([...fullEncoding, payload]);
+    speak(props.options.label);
   };
 
   return html`
