@@ -10,19 +10,20 @@
  */
 
 import { html } from "htm/preact";
-import { BlissCellType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { usePaletteState } from "./GlobalData";
-import { getGridStyle, speak } from "./GlobalUtils";
-import "./ActionBmwCodeCell.scss";
+import { BlissCellType } from "./index.d";
+import { getGridStyle } from "./GlobalUtils";
 
-
-type ActionBmwCodeCellPropsType = {
+type CommandDelLastEncodingProps = {
   id: string,
   options: BlissCellType
-};
+}
 
-export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType) {
+export function CommandDelLastEncoding (props: CommandDelLastEncodingProps) {
+  const { id, options } = props;
+  const { label, bciAvId, columnStart, columnSpan, rowStart, rowSpan } = options;
+
   // Using separate lines to get "fullEncoding" & "setFullEncoding" rather than using one single line:
   // { fullEncoding, setFullEncoding } = usePaletteState();
   // is to accommodate the component unit test in which the parent palette component is not tested. The
@@ -31,29 +32,17 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType) {
   const fullEncoding = paletteState?.fullEncoding;
   const setFullEncoding = paletteState?.setFullEncoding;
 
-  const {
-    columnStart, columnSpan, rowStart, rowSpan, bciAvId, label
-  } = props.options;
-
   const gridStyles = getGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = () => {
-    const payload = {
-      "id": props.id,
-      "label": props.options.label,
-      "bciAvId": props.options.bciAvId
-    };
-    setFullEncoding([...fullEncoding, payload]);
-    speak(props.options.label);
+    const newEncoding = [...fullEncoding];
+    newEncoding.pop();
+    setFullEncoding(newEncoding);
   };
 
   return html`
-    <button id="${props.id}" class="actionBmwCodeCell" style="${gridStyles}" onClick=${cellClicked}>
-      <${BlissSymbol}
-        bciAvId=${bciAvId}
-        label=${label}
-        isPresentation=true
-      />
+    <button id="${id}" class="btn-command" style="${gridStyles}" onClick=${cellClicked}>
+      <${BlissSymbol} bciAvId=${bciAvId} label=${label}/>
     </button>
   `;
 }

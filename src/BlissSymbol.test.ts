@@ -114,4 +114,3 @@ describe("BlissSymbol render tests", () => {
     expect(svgElement.getAttribute("aria-hidden")).toBe(null);
   });
 });
-
