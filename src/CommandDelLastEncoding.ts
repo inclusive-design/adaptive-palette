@@ -13,7 +13,7 @@ import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { usePaletteState } from "./GlobalData";
 import { BlissCellType } from "./index.d";
-import { getGridStyle } from "./GlobalUtils";
+import { getGridStyle, speak } from "./GlobalUtils";
 
 type CommandDelLastEncodingProps = {
   id: string,
@@ -38,6 +38,7 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps) {
     const newEncoding = [...fullEncoding];
     newEncoding.pop();
     setFullEncoding(newEncoding);
+    speak(props.options.label);
   };
 
   return html`

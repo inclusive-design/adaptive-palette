@@ -13,7 +13,7 @@ import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { usePaletteState } from "./GlobalData";
 import { BlissCellType } from "./index.d";
-import { getGridStyle } from "./GlobalUtils";
+import { getGridStyle, speak } from "./GlobalUtils";
 
 type CommandClearEncodingProps = {
   id: string,
@@ -35,6 +35,7 @@ export function CommandClearEncoding (props: CommandClearEncodingProps) {
 
   const cellClicked = () => {
     setFullEncoding([]);
+    speak(props.options.label);
   };
 
   return html`

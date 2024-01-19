@@ -11,10 +11,11 @@
 
 import { render } from "preact";
 import { html } from "htm/preact";
-import { OptionsType } from "./index.d";
+import { BlissCellType } from "./index.d";
 import { adaptivePaletteGlobals, getPaletteJson } from "./GlobalData";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
+import { speak } from "./GlobalUtils";
 import "./ActionBmwCodeCell.scss";
 
 function debugProps(x) {
@@ -32,7 +33,7 @@ const paletteNameAndFile = {
 // TODO:  this is identical to `ActionBmwCodeCellPropsType`.  Should it be?
 type ActionBranchToPalettePropsType = {
   id: string,
-  options: OptionsType
+  options: BlissCellType
 };
 
 /*
@@ -43,6 +44,7 @@ type ActionBranchToPalettePropsType = {
 const navigateToPalette = async (event) => {
   const { paletteStore } = adaptivePaletteGlobals;
   const button = event.currentTarget;
+  speak(button.innerText);
 
   const branchToPaletteName = button.getAttribute("data-branchto");
   let paletteDefinition = paletteStore.getNamedPalette(branchToPaletteName);

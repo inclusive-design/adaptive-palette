@@ -1,12 +1,43 @@
 {
   "name": "My Family Palette",
   "cells": {
+    "bmw-encoding-area": {
+        "type": "ContentBmwEncoding",
+        "options": {
+            "rowStart": 2,
+            "rowSpan": 1,
+            "columnStart": 1,
+            "columnSpan": 12
+        }
+    },
+    "command-del-last-encoding": {
+        "type": "CommandDelLastEncoding",
+        "options": {
+            "label": "Delete",
+            "bciAvId": 12613,
+            "rowStart": 2,
+            "rowSpan": 1,
+            "columnStart": 13,
+            "columnSpan": 1
+        }
+    },
+    "command-clear-encoding": {
+        "type": "CommandClearEncoding",
+        "options": {
+            "label": "Clear",
+            "bciAvId": 13665,
+            "rowStart": 2,
+            "rowSpan": 1,
+            "columnStart": 14,
+            "columnSpan": 1
+        }
+    },
     "aunt-30a32c78-56fe-4622-9fba-0416b68d72fc": {
       "type": "ActionBmwCodeCell",
         "options": {
           "label": "Aunt",
           "bciAvId": 12596,
-          "rowStart": 1,
+          "rowStart": 3,
           "rowSpan": 1,
           "columnStart": 1,
           "columnSpan": 1
@@ -17,7 +48,7 @@
         "options": {
           "label": "Mother",
           "bciAvId": 15662,
-          "rowStart": 1,
+          "rowStart": 3,
           "rowSpan": 1,
           "columnStart": 2,
           "columnSpan": 1
@@ -28,7 +59,7 @@
         "options": {
           "label": "Cousin",
           "bciAvId": 25280,
-          "rowStart": 1,
+          "rowStart": 3,
           "rowSpan": 1,
           "columnStart": 3,
           "columnSpan": 1
@@ -39,7 +70,7 @@
         "options": {
           "label": "Sister",
           "bciAvId":  16994 ,
-          "rowStart": 2,
+          "rowStart": 4,
           "rowSpan": 1,
           "columnStart": 1,
           "columnSpan": 1
@@ -50,7 +81,7 @@
         "options": {
           "label": "Me",
           "bciAvId":  14916,
-          "rowStart": 2,
+          "rowStart": 4,
           "rowSpan": 1,
           "columnStart": 2,
           "columnSpan": 1
@@ -61,7 +92,7 @@
         "options": {
           "label": "Brother",
           "bciAvId":  12909,
-          "rowStart": 2,
+          "rowStart": 4,
           "rowSpan": 1,
           "columnStart": 3,
           "columnSpan": 1
@@ -72,7 +103,7 @@
         "options": {
           "label": "Cousin",
           "bciAvId":  25279,
-          "rowStart": 3,
+          "rowStart": 5,
           "rowSpan": 1,
           "columnStart": 1,
           "columnSpan": 1
@@ -83,7 +114,7 @@
         "options": {
           "label": "Father",
           "bciAvId":  14157,
-          "rowStart": 3,
+          "rowStart": 5,
           "rowSpan": 1,
           "columnStart": 2,
           "columnSpan": 1
@@ -94,7 +125,7 @@
         "options": {
           "label": "Uncle",
           "bciAvId":  17967,
-          "rowStart": 3,
+          "rowStart": 5,
           "rowSpan": 1,
           "columnStart": 3,
           "columnSpan": 1
