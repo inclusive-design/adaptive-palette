@@ -36,7 +36,7 @@ export function ContentBmwEncoding (props: ContentBmwEncodingProps) {
   return html`
     <div id="${id}" class="bmwEncodingArea" role="region" aria-label="BMW Encoding Area" style="${styles}">
       ${fullEncoding.map((payload) => html`
-        <div class="blissSymbol"><${BlissSymbol} bciAvId=${payload.bciAvId} label=${payload.label} /></div>
+        <div class="blissSymbol"><${BlissSymbol} bciAvId=${payload.bciAvId} label=${payload.label} isPresentation="true"/></div>
       `)}
     </div>
   `;
