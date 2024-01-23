@@ -12,12 +12,12 @@
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { usePaletteState } from "./GlobalData";
-import { BlissCellType } from "./index.d";
-import { getGridStyle } from "./GlobalUtils";
+import { BlissSymbolCellType } from "./index.d";
+import { generateGridStyle, speak } from "./GlobalUtils";
 
 type CommandDelLastEncodingProps = {
   id: string,
-  options: BlissCellType
+  options: BlissSymbolCellType
 }
 
 export function CommandDelLastEncoding (props: CommandDelLastEncodingProps) {
@@ -29,15 +29,14 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps) {
   // is to accommodate the component unit test in which the parent palette component is not tested. The
   // palette state is defined in the palette context.
   const paletteState = usePaletteState();
-  const fullEncoding = paletteState?.fullEncoding;
-  const setFullEncoding = paletteState?.setFullEncoding;
 
-  const gridStyles = getGridStyle(columnStart, columnSpan, rowStart, rowSpan);
+  const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = () => {
-    const newEncoding = [...fullEncoding];
+    const newEncoding = [...paletteState.fullEncoding];
     newEncoding.pop();
-    setFullEncoding(newEncoding);
+    paletteState.setFullEncoding(newEncoding);
+    speak(label);
   };
 
   return html`

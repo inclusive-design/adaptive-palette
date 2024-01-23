@@ -21,7 +21,7 @@
  * @param {number} rowSpan - The number of rows that the item will span across.
  * @return {String} - The grid css.
  */
-function getGridStyle(columnStart: number, columnSpan: number, rowStart: number, rowSpan: number) {
+function generateGridStyle(columnStart: number, columnSpan: number, rowStart: number, rowSpan: number) {
   return `grid-column: ${columnStart} / span ${columnSpan};grid-row: ${rowStart} / span ${rowSpan};`;
 }
 
@@ -46,6 +46,6 @@ function speak(text) {
 }
 
 export {
-  getGridStyle,
+  generateGridStyle,
   speak
 };

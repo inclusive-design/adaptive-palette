@@ -10,16 +10,16 @@
  */
 
 import { html } from "htm/preact";
-import { BlissCellType } from "./index.d";
+import { BlissSymbolCellType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { usePaletteState } from "./GlobalData";
-import { getGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle, speak } from "./GlobalUtils";
 import "./ActionBmwCodeCell.scss";
 
 
 type ActionBmwCodeCellPropsType = {
   id: string,
-  options: BlissCellType
+  options: BlissSymbolCellType
 };
 
 export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType) {
@@ -28,14 +28,12 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType) {
   // is to accommodate the component unit test in which the parent palette component is not tested. The
   // palette state is defined in the palette context.
   const paletteState = usePaletteState();
-  const fullEncoding = paletteState?.fullEncoding;
-  const setFullEncoding = paletteState?.setFullEncoding;
 
   const {
     columnStart, columnSpan, rowStart, rowSpan, bciAvId, label
   } = props.options;
 
-  const gridStyles = getGridStyle(columnStart, columnSpan, rowStart, rowSpan);
+  const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = () => {
     const payload = {
@@ -43,7 +41,8 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType) {
       "label": props.options.label,
       "bciAvId": props.options.bciAvId
     };
-    setFullEncoding([...fullEncoding, payload]);
+    const fullEncoding = paletteState.fullEncoding;
+    paletteState.setFullEncoding([...fullEncoding, payload]);
     speak(props.options.label);
   };
 

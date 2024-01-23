@@ -13,6 +13,7 @@ import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { usePaletteState } from "./GlobalData";
 import { ContentBmwEncodingType } from "./index.d";
+import { generateGridStyle } from "./GlobalUtils";
 import "./ContentBmwEncoding.scss";
 
 type ContentBmwEncodingProps = {
@@ -22,21 +23,16 @@ type ContentBmwEncodingProps = {
 
 export function ContentBmwEncoding (props: ContentBmwEncodingProps) {
   const paletteState = usePaletteState();
-  const fullEncoding = paletteState?.fullEncoding ? paletteState?.fullEncoding : [];
 
   const { id, options } = props;
   const { columnStart, columnSpan, rowStart, rowSpan } = options;
 
-  // TODO: use a common utility function to calculate the grid position
-  const styles = `
-    grid-column: ${columnStart} / span ${columnSpan};
-    grid-row: ${rowStart} / span ${rowSpan};
-  `;
+  const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   return html`
-    <div id="${id}" class="bmwEncodingArea" role="region" aria-label="BMW Encoding Area" style="${styles}">
-      ${fullEncoding.map((payload) => html`
-        <div class="blissSymbol"><${BlissSymbol} bciAvId=${payload.bciAvId} label=${payload.label} /></div>
+    <div id="${id}" class="bmwEncodingArea" role="region" aria-label="BMW Encoding Area" style="${gridStyles}">
+      ${paletteState.fullEncoding.map((payload) => html`
+        <div class="blissSymbol"><${BlissSymbol} bciAvId=${payload.bciAvId} label=${payload.label} isPresentation="true" /></div>
       `)}
     </div>
   `;

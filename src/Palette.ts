@@ -26,7 +26,7 @@ type PalettePropsType = {
  *                 heights and widths of the cells in the palette.
  * @return {Object} - The row and column counts: `{ numRows: ..., numColumns: ...}`.
  */
-function countRowsColumns (paletteDefinition) {
+function countRowsColumns (paletteDefinition: JsonPaletteType) {
   let rowCount = 0;
   let colCount = 0;
   let rightColumn = 0;

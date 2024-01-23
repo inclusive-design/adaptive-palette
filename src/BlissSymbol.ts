@@ -32,7 +32,8 @@ export function BlissSymbol (props: BlissSymbolPropsType) {
 
   let svgMarkupString = "";
   if (svgElement) {
-    // Deal with aria markup, depending on whether the SVG
+    // Deal with aria markup, depending on whether the SVG is for presentation only or
+    // associates with a labelled area.
     if (isPresentation === "true") {
       svgElement.setAttribute("aria-hidden", true);
     } else {
