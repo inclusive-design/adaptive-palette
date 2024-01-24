@@ -40,7 +40,7 @@
           "rowStart": 3,
           "rowSpan": 1,
           "columnStart": 1,
-          "columnSpan": 1
+          "columnSpan": 5
         }
     },
     "woman-30a32c78-56fe-4622-9fba-0416b68d72fc": {
@@ -50,8 +50,8 @@
           "bciAvId": 18269,
           "rowStart": 3,
           "rowSpan": 1,
-          "columnStart": 2,
-          "columnSpan": 1
+          "columnStart": 6,
+          "columnSpan": 5
         }
     },
     "assistant-30a32c78-56fe-4622-9fba-0416b68d72fc": {
@@ -61,8 +61,8 @@
           "bciAvId": 14706,
           "rowStart": 3,
           "rowSpan": 1,
-          "columnStart": 3,
-          "columnSpan": 1
+          "columnStart": 11,
+          "columnSpan": 4
         }
     },
     "girl-30a32c78-56fe-4622-9fba-0416b68d72fc": {
@@ -73,7 +73,7 @@
           "rowStart": 4,
           "rowSpan": 1,
           "columnStart": 1,
-          "columnSpan": 1
+          "columnSpan": 5
         }
     },
     "person-30a32c78-56fe-4622-9fba-0416b68d72fc": {
@@ -83,8 +83,8 @@
           "bciAvId":  16161,
           "rowStart": 4,
           "rowSpan": 1,
-          "columnStart": 2,
-          "columnSpan": 1
+          "columnStart": 6,
+          "columnSpan": 5
         }
     },
     "boy-30a32c78-56fe-4622-9fba-0416b68d72fc": {
@@ -94,8 +94,8 @@
           "bciAvId":  12888,
           "rowStart": 4,
           "rowSpan": 1,
-          "columnStart": 3,
-          "columnSpan": 1
+          "columnStart": 11,
+          "columnSpan": 4
         }
     },
     "crowd-30a32c78-56fe-4622-9fba-0416b68d72fc": {
@@ -106,7 +106,7 @@
           "rowStart": 5,
           "rowSpan": 1,
           "columnStart": 1,
-          "columnSpan": 1
+          "columnSpan": 5
         }
     },
     "man-30a32c78-56fe-4622-9fba-0416b68d72fc": {
@@ -116,8 +116,8 @@
           "bciAvId":  15416,
           "rowStart": 5,
           "rowSpan": 1,
-          "columnStart": 2,
-          "columnSpan": 1
+          "columnStart": 6,
+          "columnSpan": 5
         }
     },
     "police-30a32c78-56fe-4622-9fba-0416b68d72fc": {
@@ -127,8 +127,8 @@
           "bciAvId":  16217,
           "rowStart": 5,
           "rowSpan": 1,
-          "columnStart": 3,
-          "columnSpan": 1
+          "columnStart": 11,
+          "columnSpan": 4
         }
     }
   }

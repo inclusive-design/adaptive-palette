@@ -17,6 +17,11 @@ import "./index.scss";
 await initAdaptivePaletteGlobals();
 
 import { Palette } from "./Palette";
-import bmwJson from "./keyboards/bmw_palette.json";
 
+// Set up palette for choosing palettes
+import paletteChooser from "./keyboards/palettes.json";
+render (html`<${Palette} json=${paletteChooser}/>`, document.getElementById("paletteChooserViaBliss"));
+
+// Start with the BMW palette
+import bmwJson from "./keyboards/bmw_palette.json";
 render(html`<${Palette} json=${bmwJson}/>`, document.getElementById("bmwKeyCodes"));
