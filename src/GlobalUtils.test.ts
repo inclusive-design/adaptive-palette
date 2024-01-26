@@ -9,12 +9,12 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { getGridStyle } from "./GlobalUtils";
+import { generateGridStyle } from "./GlobalUtils";
 
 describe("Test global utility functions", () => {
 
-  test("Test getGridStyle()", () => {
-    expect(getGridStyle(2, 1, 3, 2)).toBe("grid-column: 2 / span 1;grid-row: 3 / span 2;");
-    expect(getGridStyle(undefined, undefined, undefined, undefined)).toBe("grid-column: undefined / span undefined;grid-row: undefined / span undefined;");
+  test("Test generateGridStyle()", () => {
+    expect(generateGridStyle(2, 1, 3, 2)).toBe("grid-column: 2 / span 1;grid-row: 3 / span 2;");
+    expect(generateGridStyle(undefined, undefined, undefined, undefined)).toBe("grid-column: undefined / span undefined;grid-row: undefined / span undefined;");
   });
 });

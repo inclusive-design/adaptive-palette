@@ -12,12 +12,12 @@
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { usePaletteState } from "./GlobalData";
-import { BlissCellType } from "./index.d";
-import { getGridStyle, speak } from "./GlobalUtils";
+import { BlissSymbolCellType } from "./index.d";
+import { generateGridStyle, speak } from "./GlobalUtils";
 
 type CommandClearEncodingProps = {
   id: string,
-  options: BlissCellType
+  options: BlissSymbolCellType
 }
 
 export function CommandClearEncoding (props: CommandClearEncodingProps) {
@@ -31,11 +31,11 @@ export function CommandClearEncoding (props: CommandClearEncodingProps) {
   const paletteState = usePaletteState();
   const setFullEncoding = paletteState?.setFullEncoding;
 
-  const gridStyles = getGridStyle(columnStart, columnSpan, rowStart, rowSpan);
+  const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = () => {
     setFullEncoding([]);
-    speak(props.options.label);
+    speak(label);
   };
 
   return html`

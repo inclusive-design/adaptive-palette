@@ -16,6 +16,7 @@
 import { html } from "htm/preact";
 import { createContext } from "preact";
 import { useContext, useState } from "preact/hooks";
+import { EncodingType } from "./index.d";
 
 /**
  * The map between cell types (string) and actual components that render corresponding cells
@@ -69,15 +70,24 @@ export async function getPaletteJson (jsonFile) {
  * Palette shared states
  */
 // Create a context to pass the palette states to palette children components
-const paletteStateContext = createContext(null);
+type PaletteStateType = {
+  fullEncoding: EncodingType[],
+  setFullEncoding: (param: object[]) => void
+};
+
+const defaultPaletteStateContext = {
+  fullEncoding: [],
+  setFullEncoding: () => {}
+};
+const paletteStateContext = createContext<PaletteStateType>(defaultPaletteStateContext);
 
 // Create a provider component that will wrap the components needing access to the global states
-export function paletteStateProvider({ children }) {
+export function paletteStateProvider(props: {children}) {
   const [fullEncoding, setFullEncoding] = useState([]);
 
   return html`
     <${paletteStateContext.Provider} value=${{ fullEncoding, setFullEncoding }}>
-      ${children}
+      ${props.children}
     </${paletteStateContext.Provider}>
   `;
 }
