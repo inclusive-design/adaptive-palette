@@ -43,7 +43,7 @@ function countRowsColumns (paletteDefinition: JsonPaletteType) {
       rowCount = bottomRow;
     }
   });
-  return { numRows: rowCount, numColumns: colCount };
+  return { numRows: rowCount-1, numColumns: colCount-1 };
 }
 
 export function Palette (props: PalettePropsType) {
@@ -71,7 +71,7 @@ export function Palette (props: PalettePropsType) {
   <${paletteStateProvider}>
     <div
       class="paletteContainer"
-      style="grid-template-columns: repeat(${rowsCols.numColumns}, auto);">
+      style="grid-template-columns: repeat(${rowsCols.numColumns}, 1fr);">
         ${theCells}
     </div>
   </${paletteStateProvider}>
