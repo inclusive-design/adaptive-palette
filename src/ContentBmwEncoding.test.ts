@@ -40,7 +40,7 @@ test("The BMW Encoding content area is rendered correctly", async () => {
   expect(encodingAreaByLabel.style["grid-row"]).toBe("2 / span 3");
 
   // The aria role is defined
-  const encodingAreaByRole = await screen.findByRole("region");
+  const encodingAreaByRole = await screen.findByRole("textbox");
   expect(encodingAreaByRole).toBeVisible();
   expect(encodingAreaByRole).toBeValid();
 
