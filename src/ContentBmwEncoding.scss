@@ -16,6 +16,7 @@
   color: #000;
   display: flex;
   overflow: auto; /* Add scrollbar when content overflows */
+  white-space: nowrap;
 
   &:hover {
     background-color: limegreen;
