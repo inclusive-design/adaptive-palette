@@ -30,7 +30,7 @@ export function ContentBmwEncoding (props: ContentBmwEncodingProps) {
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   return html`
-    <div id="${id}" class="bmwEncodingArea" role="textbox" aria-label="BMW Encoding Area" style="${gridStyles}">
+    <div id="${id}" class="bmwEncodingArea" role="textbox" aria-label="Input Area" aria-readonly="true" style="${gridStyles}">
       ${paletteState.fullEncoding.map((payload) => html`
         <div class="blissSymbol"><${BlissSymbol} bciAvId=${payload.bciAvId} label=${payload.label} isPresentation="true" /></div>
       `)}

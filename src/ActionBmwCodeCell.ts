@@ -23,10 +23,6 @@ type ActionBmwCodeCellPropsType = {
 };
 
 export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType) {
-  // Using separate lines to get "fullEncoding" & "setFullEncoding" rather than using one single line:
-  // { fullEncoding, setFullEncoding } = usePaletteState();
-  // is to accommodate the component unit test in which the parent palette component is not tested. The
-  // palette state is defined in the palette context.
   const paletteState = usePaletteState();
 
   const {
