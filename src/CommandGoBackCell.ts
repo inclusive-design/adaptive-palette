@@ -18,10 +18,6 @@ import { BlissSymbol } from "./BlissSymbol";
 import { speak } from "./GlobalUtils";
 import "./ActionBmwCodeCell.scss";
 
-function debugProps(x) {
-  console.debug("DEBUGPROPS(): %O", x);
-}
-
 // Msp of palette name and their files.  TODO: put this in a better place,
 // GlobalData?
 const paletteNameAndFile = {
@@ -31,43 +27,42 @@ const paletteNameAndFile = {
 };
 
 // TODO:  this is identical to `ActionBmwCodeCellPropsType`.  Should it be?
-type ActionBranchToPalettePropsType = {
+type CommandGoBackCellPropsType = {
   id: string,
   options: BlissSymbolCellType
 };
 
 /*
- * Event handler for an ActionBranchToPalette button/cell that, when clicked,
- * finds and renders the palette referenced by this cell.
+ * Event handler for an CommandGoBackCellPropsType button/cell that, when clicked,
+ * goes back one palette.
  */
-const navigateToPalette = async (event) => {
+const goBackToPalette = async (event) => {
   const { paletteStore, navigationStack } = adaptivePaletteGlobals;
   const button = event.currentTarget;
   speak(button.innerText);
 
-  const branchToPaletteName = button.getAttribute("data-branchto");
-  let paletteDefinition = paletteStore.getNamedPalette(branchToPaletteName);
+  const paletteToGoBackTo = navigationStack.peek();
+  let paletteDefinition = paletteStore.getNamedPalette(paletteToGoBackTo);
   if (!paletteDefinition) {
-    const paletteFile = paletteNameAndFile[branchToPaletteName];
+    const paletteFile = paletteNameAndFile[paletteToGoBackTo.name];
     paletteDefinition = await getPaletteJson(`${paletteFile}`);
     paletteStore.addPalette(paletteDefinition);
   }
   if (paletteDefinition) {
+    navigationStack.pop();
     const mainPaletteDisplayArea = document.getElementById("mainPaletteDisplayArea");
-    navigationStack.push(navigationStack.currentPalette);
     render (html`<${Palette} json=${paletteDefinition}/>`, mainPaletteDisplayArea);
     navigationStack.currentPalette = paletteDefinition;
   }
   else {
-    console.error(`navigateToPalette():  Unable to locate the palette definition for ${branchToPaletteName}`);
+    console.error(`goBackToPalette():  Unable to locate the palette definition for ${paletteToGoBackTo}`);
   }
 };
 
-export function ActionBranchToPalette (props: ActionBranchToPalettePropsType) {
-  debugProps(props);
+export function CommandGoBackCell (props: CommandGoBackCellPropsType) {
 
   const {
-    columnStart, columnSpan, rowStart, rowSpan, branchTo, bciAvId, label
+    columnStart, columnSpan, rowStart, rowSpan, bciAvId, label
   } = props.options;
 
   const gridStyles = `
@@ -78,7 +73,7 @@ export function ActionBranchToPalette (props: ActionBranchToPalettePropsType) {
   return html`
     <button
       id="${props.id}" class="actionBmwCodeCell" style="${gridStyles}"
-      data-branchto="${branchTo}" onClick=${navigateToPalette}>
+      onClick=${goBackToPalette}>
       <${BlissSymbol} bciAvId=${bciAvId} label=${label} />
     </button>
   `;

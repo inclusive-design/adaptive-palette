@@ -23,28 +23,33 @@ import { EncodingType } from "./index.d";
  */
 import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
 import { ActionBranchToPalette } from "./ActionBranchToPalette";
+import { CommandGoBackCell } from "./CommandGoBackCell";
 import { ContentBmwEncoding } from "./ContentBmwEncoding";
 import { CommandClearEncoding } from "./CommandClearEncoding";
 import { CommandDelLastEncoding } from "./CommandDelLastEncoding";
 import { PaletteStore } from "./PaletteStore";
+import { NavigationStack } from "./NavigationStack";
 
 export const cellTypeRegistry = {
   "ActionBmwCodeCell": ActionBmwCodeCell,
   "ActionBranchToPalette": ActionBranchToPalette,
+  "CommandGoBackCell": CommandGoBackCell,
   "ContentBmwEncoding": ContentBmwEncoding,
   "CommandClearEncoding": CommandClearEncoding,
   "CommandDelLastEncoding": CommandDelLastEncoding
 };
 
 /**
- * Load the map between the BCI-AV IDs and the code consumed by the Bliss SVG builder
+ * Load the map between the BCI-AV IDs and the code consumed by the Bliss SVG
+ * and create the PaletterStore and NavigationStack objects.
  */
 export const adaptivePaletteGlobals = {
   // The map between the BCI-AV IDs and the code consumed by the Bliss SVG
   // builder.  The map itself is set asynchronously.
   blissaryIdMapUrl: "https://raw.githubusercontent.com/hlridge/Bliss-Blissary-BCI-ID-Map/main/blissary_to_bci_mapping.json",
   blissaryIdMap: null,
-  paletteStore: new PaletteStore()
+  paletteStore: new PaletteStore(),
+  navigationStack: new NavigationStack()
 };
 
 export async function loadBlissaryIdMap () {

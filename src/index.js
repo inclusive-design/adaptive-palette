@@ -10,7 +10,7 @@
  */
 import { render } from "preact";
 import { html } from "htm/preact";
-import { initAdaptivePaletteGlobals } from "./GlobalData";
+import { initAdaptivePaletteGlobals, adaptivePaletteGlobals} from "./GlobalData";
 import "./index.scss";
 
 // Initialize any globals used elsewhere in the code.
@@ -24,4 +24,5 @@ render (html`<${Palette} json=${paletteChooser}/>`, document.getElementById("pal
 
 // Start with the BMW palette
 import bmwJson from "./keyboards/bmw_palette.json";
-render(html`<${Palette} json=${bmwJson}/>`, document.getElementById("bmwKeyCodes"));
+adaptivePaletteGlobals.navigationStack.currentPalette = bmwJson;
+render(html`<${Palette} json=${bmwJson}/>`, document.getElementById("mainPaletteDisplayArea"));
