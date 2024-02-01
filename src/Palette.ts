@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -22,8 +22,9 @@ type PalettePropsType = {
  * Given a palette defined in a json structure, compute the number of rows
  * and columns in that palette.
  *
- * @param {Object} paletteDefinition - An object that lists the positions,
- *                 heights and widths of the cells in the palette.
+ * @param {Object} paletteDefinition - An object in the pre-defined type of
+ *                 `JsonPaletteType` that lists the positions, heights and
+ *                  widths of the cells in the palette.
  * @return {Object} - The row and column counts: `{ numRows: ..., numColumns: ...}`.
  */
 function countRowsColumns (paletteDefinition: JsonPaletteType) {
@@ -43,7 +44,7 @@ function countRowsColumns (paletteDefinition: JsonPaletteType) {
       rowCount = bottomRow;
     }
   });
-  return { numRows: rowCount, numColumns: colCount };
+  return { numRows: rowCount-1, numColumns: colCount-1 };
 }
 
 export function Palette (props: PalettePropsType) {
@@ -75,7 +76,7 @@ export function Palette (props: PalettePropsType) {
     <div
       data-palettename="${paletteDefinition.name}"
       class="paletteContainer"
-      style="grid-template-columns: repeat(${rowsCols.numColumns}, auto);">
+      style="grid-template-columns: repeat(${rowsCols.numColumns}, 1fr);">
         ${theCells}
     </div>
   </${paletteStateProvider}>

@@ -86,7 +86,7 @@ describe("Palette integration test", () => {
     await initAdaptivePaletteGlobals();
   });
 
-  test("Cell coordinations among bmw action cells, BMW encoding area, delete and clear buttons", async() => {
+  test("Cell coordinations among bmw action cells, input area, delete and clear buttons", async() => {
     // render() the palette and then wait until its first cell is available to
     // insure that the entire palette is in the DOM.
     render(html`<${Palette} json=${testPalette}/>`);
@@ -94,7 +94,7 @@ describe("Palette integration test", () => {
     expect(firstCell).toBeInTheDocument();
 
     // The initial content area doesn't have anything displayed
-    const contentArea = await screen.findByLabelText("BMW Encoding Area");
+    const contentArea = await screen.findByLabelText("Input Area");
     expect(contentArea.childNodes.length).toBe(0);
 
     // The content area displays one symbol after clicking the first cell
