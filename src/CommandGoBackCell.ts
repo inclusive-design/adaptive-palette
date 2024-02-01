@@ -72,7 +72,7 @@ export function CommandGoBackCell (props: CommandGoBackCellPropsType) {
 
   return html`
     <button
-      id="${props.id}" class="actionBmwCodeCell" style="${gridStyles}"
+      id="${props.id}" class="btn-command" style="${gridStyles}"
       onClick=${goBackToPalette}>
       <${BlissSymbol} bciAvId=${bciAvId} label=${label} />
     </button>
