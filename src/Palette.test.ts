@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -8,8 +8,6 @@
  * You may obtain a copy of the License at
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
-
-"use strict";
 
 import { render, screen } from "@testing-library/preact";
 import "@testing-library/jest-dom";
@@ -77,7 +75,7 @@ describe("Palette component", () => {
   test("Render palette", async() => {
 
     // render() the palette and then wait until its first cell is available to
-    // insure that the entire palette is in the DOM.
+    // ensure that the entire palette is in the DOM.
     render(html`<${Palette} json=${testPalette}/>`);
     const firstCell = await screen.findByText("First Cell");
     expect(firstCell).toBeInTheDocument();
@@ -87,7 +85,7 @@ describe("Palette component", () => {
     expect(paletteElement).toBeValid();
 
     // There should be 6 columns in the grid and NUM_CELLS children.
-    expect(paletteElement).toHaveStyle("grid-template-columns: repeat(6, auto);");
+    expect(paletteElement).toHaveStyle("grid-template-columns: repeat(5, 1fr);");
     expect(paletteElement.childNodes.length).toBe(NUM_CELLS);
   });
 });

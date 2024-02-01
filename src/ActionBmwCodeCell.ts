@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -10,28 +10,40 @@
  */
 
 import { html } from "htm/preact";
-import { OptionsType } from "./index.d";
+import { BlissSymbolCellType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
+import { usePaletteState } from "./GlobalData";
+import { generateGridStyle, speak } from "./GlobalUtils";
 import "./ActionBmwCodeCell.scss";
 
 
 type ActionBmwCodeCellPropsType = {
   id: string,
-  options: OptionsType
+  options: BlissSymbolCellType
 };
 
 export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType) {
+  const paletteState = usePaletteState();
+
   const {
     columnStart, columnSpan, rowStart, rowSpan, bciAvId, label
   } = props.options;
 
-  const gridStyles = `
-    grid-column: ${columnStart} / span ${columnSpan};
-    grid-row: ${rowStart} / span ${rowSpan};
-  `;
+  const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
+
+  const cellClicked = () => {
+    const payload = {
+      "id": props.id,
+      "label": props.options.label,
+      "bciAvId": props.options.bciAvId
+    };
+    const fullEncoding = paletteState.fullEncoding;
+    paletteState.setFullEncoding([...fullEncoding, payload]);
+    speak(props.options.label);
+  };
 
   return html`
-    <button id="${props.id}" class="actionBmwCodeCell" style="${gridStyles}" >
+    <button id="${props.id}" class="actionBmwCodeCell" style="${gridStyles}" onClick=${cellClicked}>
       <${BlissSymbol}
         bciAvId=${bciAvId}
         label=${label}

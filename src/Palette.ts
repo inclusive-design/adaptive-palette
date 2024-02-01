@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -11,7 +11,7 @@
 
 import { html } from "htm/preact";
 import { JsonPaletteType } from "./index.d";
-import { cellTypeRegistry } from "./GlobalData";
+import { cellTypeRegistry, paletteStateProvider } from "./GlobalData";
 import "./Palette.scss";
 
 type PalettePropsType = {
@@ -22,11 +22,11 @@ type PalettePropsType = {
  * Given a palette defined in a json structure, compute the number of rows
  * and columns in that palette.
  *
- * @param {Object} paletteDefinition - An object that lists the positions,
- *                 heights and widths of the cells in the palette.
+ * @param {JsonPaletteType} paletteDefinition - A JSON palette object that
+ * lists the positions, heights and widths of the cells in the palette.
  * @return {Object} - The row and column counts: `{ numRows: ..., numColumns: ...}`.
  */
-function countRowsColumns (paletteDefinition) {
+function countRowsColumns (paletteDefinition: JsonPaletteType) {
   let rowCount = 0;
   let colCount = 0;
   let rightColumn = 0;
@@ -43,11 +43,10 @@ function countRowsColumns (paletteDefinition) {
       rowCount = bottomRow;
     }
   });
-  return { numRows: rowCount, numColumns: colCount };
+  return { numRows: rowCount-1, numColumns: colCount-1 };
 }
 
 export function Palette (props: PalettePropsType) {
-
   const paletteDefinition = props.json;
   const rowsCols = countRowsColumns(paletteDefinition);
   const cellIds = Object.keys(paletteDefinition.cells);
@@ -67,11 +66,14 @@ export function Palette (props: PalettePropsType) {
       theCells.push(paletteCell);
     }
   });
+
   return html`
+  <${paletteStateProvider}>
     <div
       class="paletteContainer"
-      style="grid-template-columns: repeat(${rowsCols.numColumns}, auto);">
+      style="grid-template-columns: repeat(${rowsCols.numColumns}, 1fr);">
         ${theCells}
     </div>
+  </${paletteStateProvider}>
   `;
 }

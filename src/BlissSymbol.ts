@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -32,7 +32,8 @@ export function BlissSymbol (props: BlissSymbolPropsType) {
 
   let svgMarkupString = "";
   if (svgElement) {
-    // Deal with aria markup, depending on whether the SVG
+    // Deal with aria markup, depending on whether the SVG is for presentation only or
+    // associates with a labelled area.
     if (isPresentation === "true") {
       svgElement.setAttribute("aria-hidden", true);
     } else {

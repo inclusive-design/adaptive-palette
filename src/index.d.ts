@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -11,7 +11,7 @@
 
 export type BciAvIdType = number | (string|number)[];
 
-export type OptionsType = {
+export type BlissSymbolCellType = {
     label: string,
     columnStart: number,
     columnSpan: number,
@@ -20,12 +20,25 @@ export type OptionsType = {
     bciAvId: BciAvIdType
 };
 
+export type ContentBmwEncodingType = {
+    columnStart: number,
+    columnSpan: number,
+    rowStart: number,
+    rowSpan: number,
+};
+
 export type JsonPaletteType = {
   name: string,
   cells: {
     [key: string]: {
       type: string,
-      options: OptionsType
+      options: BlissSymbolCellType | ContentBmwEncodingType
     }
   }
+};
+
+export type EncodingType = {
+  id: string,
+  label: string,
+  bciAvId: BciAvIdType
 };

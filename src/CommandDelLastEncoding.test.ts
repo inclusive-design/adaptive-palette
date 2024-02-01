@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
+ * Copyright 2024 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -14,19 +14,19 @@ import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals } from "./GlobalData";
-import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
+import { CommandDelLastEncoding } from "./CommandDelLastEncoding";
 
-describe("ActionBmwCodeDell render tests", () => {
+describe("CommandDelLastEncoding render tests", () => {
 
-  const TEST_CELL_ID = "uuid-of-some-kind";
+  const TEST_CELL_ID = "command-del-last-encoding";
   const testCell = {
     options: {
-      "label": "Bliss Language",
-      "rowStart": "3",
-      "rowSpan": "2",
-      "columnStart": "2",
-      "columnSpan": "1",
-      "bciAvId": [ 12335, "/", 8499 ]   // VERB+EN
+      "label": "Delete",
+      "bciAvId": 12613,
+      "rowStart": 2,
+      "rowSpan": 1,
+      "columnStart": 13,
+      "columnSpan": 1
     }
   };
 
@@ -34,10 +34,10 @@ describe("ActionBmwCodeDell render tests", () => {
     await initAdaptivePaletteGlobals();
   });
 
-  test("Single ActionBmwCodeCell rendering", async () => {
+  test("CommandDelLastEncoding rendering", async () => {
 
     render(html`
-      <${ActionBmwCodeCell}
+      <${CommandDelLastEncoding}
         id="${TEST_CELL_ID}"
         options=${testCell.options}
       />`
@@ -46,17 +46,17 @@ describe("ActionBmwCodeDell render tests", () => {
     // Check the rendered cell
     const button = await screen.findByRole("button", {name: testCell.options.label});
 
-    // Check that the ActionBmwCodeCell/button is rendered and has the correct
+    // Check that the CommandDelLastEncoding/button is rendered and has the correct
     // attributes and text.
     expect(button).toBeVisible();
     expect(button).toBeValid();
     expect(button.id).toBe(TEST_CELL_ID);
-    expect(button.getAttribute("class")).toBe("actionBmwCodeCell");
+    expect(button.getAttribute("class")).toBe("btn-command");
     expect(button.textContent).toBe(testCell.options.label);
 
     // Check the grid cell styles.
-    expect(button.style["grid-column"]).toBe("2 / span 1");
-    expect(button.style["grid-row"]).toBe("3 / span 2");
+    expect(button.style["grid-column"]).toBe("13 / span 1");
+    expect(button.style["grid-row"]).toBe("2 / span 1");
 
     // Check disabled state (should be enabled)
     expect(button.getAttribute("disabled")).toBe(null);

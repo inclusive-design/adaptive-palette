@@ -1,6 +1,37 @@
 {
     "name": "BMW Palette",
     "cells": {
+        "bmw-encoding-area": {
+            "type": "ContentBmwEncoding",
+            "options": {
+                "rowStart": 2,
+                "rowSpan": 1,
+                "columnStart": 1,
+                "columnSpan": 12
+            }
+        },
+        "command-del-last-encoding": {
+            "type": "CommandDelLastEncoding",
+            "options": {
+                "label": "Delete",
+                "bciAvId": 12613,
+                "rowStart": 2,
+                "rowSpan": 1,
+                "columnStart": 13,
+                "columnSpan": 1
+            }
+        },
+        "command-clear-encoding": {
+            "type": "CommandClearEncoding",
+            "options": {
+                "label": "Clear",
+                "bciAvId": 13665,
+                "rowStart": 2,
+                "rowSpan": 1,
+                "columnStart": 14,
+                "columnSpan": 1
+            }
+        },
         "dem-30a32c78-56fe-4622-9fba-0416b68d72fc": {
             "type": "ActionBmwCodeCell",
             "options": {

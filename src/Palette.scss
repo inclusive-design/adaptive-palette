@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -11,8 +11,4 @@
 
 .paletteContainer {
   display: grid;
-  grid-template-columns: auto auto auto;
-  border: 2px solid #f76707;
-  border-radius: 5px;
-  background-color: pink;
 }

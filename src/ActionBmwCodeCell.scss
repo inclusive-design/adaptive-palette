@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -11,14 +11,7 @@
 
 .actionBmwCodeCell {
   border: 2px solid blue;
-  background-color: gray;
-  border-radius: 5px;
-  padding: 1rem;
-  font-size: 1rem;
+  background-color: beige;
+  padding-inline: 0.5rem;
   text-align: center;
-
-  &:hover, &:focus {
-    background-color: lightblue;
-    color: #0000aa;
-  }
 }

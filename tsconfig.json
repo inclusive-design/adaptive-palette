@@ -9,7 +9,8 @@
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
 		"resolveJsonModule": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "alwaysStrict": true
   },
   "include": [
 		"node_modules/vite/client.d.ts",
