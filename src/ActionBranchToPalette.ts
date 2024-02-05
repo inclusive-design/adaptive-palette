@@ -16,11 +16,7 @@ import { adaptivePaletteGlobals, getPaletteJson } from "./GlobalData";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
 import { speak } from "./GlobalUtils";
-import "./ActionBmwCodeCell.scss";
-
-function debugProps(x) {
-  console.debug("DEBUGPROPS(): %O", x);
-}
+import "./ActionBranchToPalette.scss";
 
 // Msp of palette name and their files.  TODO: put this in a better place,
 // GlobalData?
@@ -64,8 +60,6 @@ const navigateToPalette = async (event) => {
 };
 
 export function ActionBranchToPalette (props: ActionBranchToPalettePropsType) {
-  debugProps(props);
-
   const {
     columnStart, columnSpan, rowStart, rowSpan, branchTo, bciAvId, label
   } = props.options;
@@ -77,7 +71,7 @@ export function ActionBranchToPalette (props: ActionBranchToPalettePropsType) {
 
   return html`
     <button
-      id="${props.id}" class="actionBmwCodeCell" style="${gridStyles}"
+      id="${props.id}" class="actionBranchToPaletteCell" style="${gridStyles}"
       data-branchto="${branchTo}" onClick=${navigateToPalette}>
       <${BlissSymbol} bciAvId=${bciAvId} label=${label} />
     </button>

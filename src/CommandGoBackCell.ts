@@ -49,10 +49,11 @@ const goBackToPalette = async (event) => {
     paletteStore.addPalette(paletteDefinition);
   }
   if (paletteDefinition) {
-    navigationStack.pop();
-    const mainPaletteDisplayArea = document.getElementById("mainPaletteDisplayArea");
-    render (html`<${Palette} json=${paletteDefinition}/>`, mainPaletteDisplayArea);
-    navigationStack.currentPalette = paletteDefinition;
+    navigationStack.popAndSetCurrent(paletteDefinition);
+    render (
+      html`<${Palette} json=${paletteDefinition}/>`,
+      document.getElementById("mainPaletteDisplayArea")
+    );
   }
   else {
     console.error(`goBackToPalette():  Unable to locate the palette definition for ${paletteToGoBackTo}`);
