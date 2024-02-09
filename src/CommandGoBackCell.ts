@@ -18,15 +18,6 @@ import { BlissSymbol } from "./BlissSymbol";
 import { speak } from "./GlobalUtils";
 import "./ActionBmwCodeCell.scss";
 
-// Msp of palette name and their files.  TODO: put this in a better place,
-// GlobalData?
-const paletteNameAndFile = {
-  "My Family Palette": "./src/keyboards/myfamily.json",
-  "People": "./src/keyboards/people.json",
-  "BMW Palette": "./src/keyboards/bmw_palette.json",
-  "Palettes": "./src/keyboards/palettes.json"
-};
-
 // TODO:  this is identical to `ActionBmwCodeCellPropsType`.  Should it be?
 type CommandGoBackCellPropsType = {
   id: string,
@@ -43,12 +34,7 @@ const goBackToPalette = async (event) => {
   speak(button.innerText);
 
   const paletteToGoBackTo = navigationStack.peek();
-  let paletteDefinition = paletteStore.getNamedPalette(paletteToGoBackTo);
-  if (!paletteDefinition) {
-    const paletteFile = paletteNameAndFile[paletteToGoBackTo.name];
-    paletteDefinition = await loadPaletteFromJsonFile(`${paletteFile}`);
-    paletteStore.addPalette(paletteDefinition);
-  }
+  const paletteDefinition = await paletteStore.getNamedPalette(paletteToGoBackTo.name, loadPaletteFromJsonFile);
   if (paletteDefinition) {
     navigationStack.popAndSetCurrent(paletteDefinition);
     render (

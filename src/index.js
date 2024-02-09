@@ -16,12 +16,15 @@ import "./index.scss";
 // Initialize any globals used elsewhere in the code.
 await initAdaptivePaletteGlobals();
 
+import { PaletteStore } from "./PaletteStore";
 import { Palette } from "./Palette";
 
-// Set up palette for navigating to other palettes
+import paletteFileMap from "./keyboards/palette_file_map.json";
 import firstLayer from "./keyboards/palettes.json";
-adaptivePaletteGlobals.paletteStore.addPalette(firstLayer);
 import goBackCell from "./keyboards/backup_palette.json";
+
+PaletteStore.paletteFileMap = paletteFileMap;
+adaptivePaletteGlobals.paletteStore.addPalette(firstLayer);
 adaptivePaletteGlobals.paletteStore.addPalette(goBackCell);
 //import outputPalette from "./keyboards/output_area.json";
 //adaptivePaletteGlobals.paletteStore.addPalette(outputPalette);

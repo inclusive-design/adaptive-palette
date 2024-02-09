@@ -18,15 +18,6 @@ import { BlissSymbol } from "./BlissSymbol";
 import { speak } from "./GlobalUtils";
 import "./ActionBranchToPalette.scss";
 
-// Msp of palette name and their files.  TODO: put this in a better place,
-// GlobalData? Read from a file?
-const paletteNameAndFile = {
-  "My Family Palette": "./src/keyboards/myfamily.json",
-  "People": "./src/keyboards/people.json",
-  "BMW Palette": "./src/keyboards/bmw_palette.json",
-  "Palettes": "./src/keyboards/palettes.json"
-};
-
 // TODO:  this is identical to `ActionBmwCodeCellPropsType`.  Should it be?
 type ActionBranchToPalettePropsType = {
   id: string,
@@ -43,12 +34,7 @@ const navigateToPalette = async (event) => {
   speak(button.innerText);
 
   const branchToPaletteName = button.getAttribute("data-branchto");
-  let paletteDefinition = paletteStore.getNamedPalette(branchToPaletteName);
-  if (!paletteDefinition) {
-    const paletteFile = paletteNameAndFile[branchToPaletteName];
-    paletteDefinition = await loadPaletteFromJsonFile(`${paletteFile}`);
-    paletteStore.addPalette(paletteDefinition);
-  }
+  const paletteDefinition = await paletteStore.getNamedPalette(branchToPaletteName, loadPaletteFromJsonFile);
   if (paletteDefinition) {
     const mainPaletteDisplayArea = document.getElementById("mainPaletteDisplayArea");
     navigationStack.push(navigationStack.currentPalette);

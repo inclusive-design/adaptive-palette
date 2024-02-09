@@ -59,8 +59,44 @@ describe("PaletteStore module", () => {
     }
   };
 
-  const paletteStore = new PaletteStore();
+  const mockPalette = {
+    "name": "mockPalette",
+    "cells": {
+      "dummyCell": {
+        "type": "mockCellType",
+        "options": {
+          "label": "clown",
+          "bciAvId": 23443,
+          "rowStart": 1,
+          "rowSpan": 1024,
+          "columnStart": 9,
+          "columnSpan": 99
+        }
+      }
+    }
+  };
 
+  // Mock-ups of the store's palette file name map and a mock load function.
+  const PALETTE_FILE_MAP = {
+    "dummyPalette1": "./path/to/dummy_palette1.json",
+    "DummyPalette2": "./path/to/dummy_palette2.json",
+    "mockPalette": "./path/to/mock_palette.json"
+  };
+
+  const FILE_PALETTE_MAP = {
+    "./path/to/dummy_palette1.json": dummyPalette1,
+    "./path/to/dummy_palette2.json": dummyPalette2,
+    "./path/to/mock_palette.json": mockPalette
+  };
+
+  const loadPalette = async (filePath:string) => {
+    return FILE_PALETTE_MAP[filePath];
+  };
+
+  const paletteStore = new PaletteStore();
+  PaletteStore.paletteFileMap = PALETTE_FILE_MAP;
+
+  // Tests start here
   test("Empty PaletteStore", () => {
     expect(paletteStore.isEmpty()).toBe(true);
   });
@@ -78,16 +114,33 @@ describe("PaletteStore module", () => {
     expect(paletteStore.paletteList).toEqual(["dummyPalette1", dummyPalette2Name]);
   });
 
-  test("Retrieve a palette", () => {
-    const retrievedPalette = paletteStore.getNamedPalette(dummyPalette2Name);
+  test("Retrieve a palette, with and without a load function", async () => {
+    let retrievedPalette = await paletteStore.getNamedPalette(dummyPalette2Name);
     expect(retrievedPalette).toBe(dummyPalette2);
+
+    // `mockPalette` should not be in the store. Ask for it and provide a
+    // a loader for it.  It should be added to the store and returned.
+    retrievedPalette = await paletteStore.getNamedPalette(mockPalette.name, loadPalette);
+    expect(retrievedPalette).toBe(mockPalette);
+    expect(paletteStore.numPalettes).toBe(3);
+    expect(paletteStore.paletteList).toEqual(["dummyPalette1", dummyPalette2Name, "mockPalette"]);
+
+    // `nonExistentPalette` should not be in the store, and should not be
+    // referenced by the store's file name map. Asking for it to be loaded
+    // should give a "no such palette" result (undefined).  The store should be
+    // unchanged.
+    retrievedPalette = await paletteStore.getNamedPalette("nonExistentPalette", loadPalette);
+    expect(retrievedPalette).toBe(undefined);
+    expect(paletteStore.numPalettes).toBe(3);
+    expect(paletteStore.paletteList).toEqual(["dummyPalette1", dummyPalette2Name, "mockPalette"]);
   });
 
-  test("Delete a palette", () => {
+  test("Delete a palette", async () => {
     const numPalettes = paletteStore.numPalettes;
     const removedPalette = paletteStore.removePalette(dummyPalette1.name);
     expect(removedPalette).toBe(dummyPalette1);
     expect(paletteStore.numPalettes).toBe(numPalettes - 1);
-    expect(paletteStore.getNamedPalette(dummyPalette1.name)).toBeUndefined();
+    const retrievedPalette = await paletteStore.getNamedPalette(dummyPalette1.name);
+    expect(retrievedPalette).toBeUndefined();
   });
 });

@@ -18,6 +18,9 @@ export class PaletteStore {
   // a unique name.
   static paletteMap = {};
 
+  // Singleton map of palette names and their files.
+  static paletteFileMap; PaletteFileMapType = {};
+
   /**
    * Report if the PaletteStore is empty.
    * @return: `true` if the store is empty; `false` otherwise.
@@ -30,9 +33,10 @@ export class PaletteStore {
    * Add a palette to the store, or replace a palette with a new one.  If the
    * palette's name/identifier matches a palette already in the store, it
    * replaces it.
-   * @param: {Object} palette - The palette to add to the store.
-   * @param: {Object}.name    - The internal name of the palette.
-   * @param: {String} name    - Optional, the preferred name of the palette.
+   * @param: {JsonPaletteType} palette - The palette to add to the store.
+   * @param: {JsonPaletteType}.name    - The internal name of the palette.
+   * @param: {String} name             - Optional, the preferred name of th
+   *                                     palette.
    */
   addPalette (palette: JsonPaletteType, paletteName?: string) {
     if (!palette) {
@@ -53,7 +57,7 @@ export class PaletteStore {
   /**
    * Remove the palette with the given name.
    * @param: {String} paletteName - The palette to remove.
-   * @return {Object} reference to the removed palette.
+   * @return {JsonPaletteType} reference to the removed palette.
    */
   removePalette (paletteName: string) {
     if (this.isEmpty()) {
@@ -86,11 +90,20 @@ export class PaletteStore {
 
   /**
    * Accessor for a retrieving the named palette.
-   * @param: {String} paletteName - The palette to retrieve.
-   * @return {Object} reference to the named palette, or undefined if no such
-   * palette.
+   * @param: {String} paletteName     - The palette to retrieve.
+   * @param; {Function} loadFunction  - Optional async function to call to load
+   *                                    the palette using the store's
+   *                                    PaletteFileMap if the palette is not in
+   *                                    the store.
+   * @return {JsonPaletteType} reference to the named palette, or undefined if
+   *                           no such palette.
    */
-  getNamedPalette(paletteName: string) {
-    return PaletteStore.paletteMap[paletteName];
+  async getNamedPalette(paletteName: string, loadFunction?: (string) => Promise<JsonPaletteType>) {
+    let palette = PaletteStore.paletteMap[paletteName];
+    if (!palette && loadFunction) {
+      palette = await loadFunction(PaletteStore.paletteFileMap[paletteName]);
+      this.addPalette(palette);
+    }
+    return palette;
   }
 }

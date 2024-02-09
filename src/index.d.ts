@@ -43,3 +43,8 @@ export type EncodingType = {
   label: string,
   bciAvId: BciAvIdType
 };
+
+export type PaletteFileMapType = {
+  paletteName: string,
+  filePath: string
+}
