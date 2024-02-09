@@ -12,7 +12,7 @@
 import { render } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolCellType } from "./index.d";
-import { adaptivePaletteGlobals, getPaletteJson } from "./GlobalData";
+import { adaptivePaletteGlobals, loadPaletteFromJsonFile } from "./GlobalData";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
 import { speak } from "./GlobalUtils";
@@ -23,7 +23,8 @@ import "./ActionBmwCodeCell.scss";
 const paletteNameAndFile = {
   "My Family Palette": "./src/keyboards/myfamily.json",
   "People": "./src/keyboards/people.json",
-  "BMW Palette": "./src/keyboards/bmw_palette.json"
+  "BMW Palette": "./src/keyboards/bmw_palette.json",
+  "Palettes": "./src/keyboards/palettes.json"
 };
 
 // TODO:  this is identical to `ActionBmwCodeCellPropsType`.  Should it be?
@@ -45,7 +46,7 @@ const goBackToPalette = async (event) => {
   let paletteDefinition = paletteStore.getNamedPalette(paletteToGoBackTo);
   if (!paletteDefinition) {
     const paletteFile = paletteNameAndFile[paletteToGoBackTo.name];
-    paletteDefinition = await getPaletteJson(`${paletteFile}`);
+    paletteDefinition = await loadPaletteFromJsonFile(`${paletteFile}`);
     paletteStore.addPalette(paletteDefinition);
   }
   if (paletteDefinition) {

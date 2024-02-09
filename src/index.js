@@ -18,11 +18,15 @@ await initAdaptivePaletteGlobals();
 
 import { Palette } from "./Palette";
 
-// Set up palette for choosing palettes
-import paletteChooser from "./keyboards/palettes.json";
-render (html`<${Palette} json=${paletteChooser}/>`, document.getElementById("paletteChooserViaBliss"));
+// Set up palette for navigating to other palettes
+import firstLayer from "./keyboards/palettes.json";
+adaptivePaletteGlobals.paletteStore.addPalette(firstLayer);
+import goBackCell from "./keyboards/backup_palette.json";
+adaptivePaletteGlobals.paletteStore.addPalette(goBackCell);
+//import outputPalette from "./keyboards/output_area.json";
+//adaptivePaletteGlobals.paletteStore.addPalette(outputPalette);
 
-// Start with the BMW palette
-import bmwJson from "./keyboards/bmw_palette.json";
-adaptivePaletteGlobals.navigationStack.currentPalette = bmwJson;
-render(html`<${Palette} json=${bmwJson}/>`, document.getElementById("mainPaletteDisplayArea"));
+adaptivePaletteGlobals.navigationStack.currentPalette = firstLayer;
+render(html`<${Palette} json=${goBackCell} />`, document.getElementById("backup_palette"));
+//render(html`<${Palette} json=${outputPalette} />`, document.getElementById("output_palette"));
+render(html`<${Palette} json=${firstLayer}/>`, document.getElementById("mainPaletteDisplayArea"));

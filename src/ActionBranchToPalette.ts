@@ -12,18 +12,19 @@
 import { render } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolCellType } from "./index.d";
-import { adaptivePaletteGlobals, getPaletteJson } from "./GlobalData";
+import { adaptivePaletteGlobals, loadPaletteFromJsonFile } from "./GlobalData";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
 import { speak } from "./GlobalUtils";
 import "./ActionBranchToPalette.scss";
 
 // Msp of palette name and their files.  TODO: put this in a better place,
-// GlobalData?
+// GlobalData? Read from a file?
 const paletteNameAndFile = {
   "My Family Palette": "./src/keyboards/myfamily.json",
   "People": "./src/keyboards/people.json",
-  "BMW Palette": "./src/keyboards/bmw_palette.json"
+  "BMW Palette": "./src/keyboards/bmw_palette.json",
+  "Palettes": "./src/keyboards/palettes.json"
 };
 
 // TODO:  this is identical to `ActionBmwCodeCellPropsType`.  Should it be?
@@ -45,7 +46,7 @@ const navigateToPalette = async (event) => {
   let paletteDefinition = paletteStore.getNamedPalette(branchToPaletteName);
   if (!paletteDefinition) {
     const paletteFile = paletteNameAndFile[branchToPaletteName];
-    paletteDefinition = await getPaletteJson(`${paletteFile}`);
+    paletteDefinition = await loadPaletteFromJsonFile(`${paletteFile}`);
     paletteStore.addPalette(paletteDefinition);
   }
   if (paletteDefinition) {

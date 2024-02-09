@@ -1,0 +1,16 @@
+{
+  "name": "Backup palette",
+  "cells": {
+    "back-up-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "CommandGoBackCell",
+      "options": {
+        "label": "Back Up",
+        "bciAvId":  12612,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    }
+  }
+}

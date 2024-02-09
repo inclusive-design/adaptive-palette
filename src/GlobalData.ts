@@ -61,13 +61,15 @@ export async function initAdaptivePaletteGlobals () {
   adaptivePaletteGlobals.blissaryIdMap = await loadBlissaryIdMap();
 }
 
-// TODO: possibly move this function into the PaletteStore object, OR just
-// use "import path/to/json/file.json".
-export async function getPaletteJson (jsonFile) {
+/**
+ * Load a palette from the given json file.
+ * @param {String} jsonFile  - Path to the file to load
+ * @return {JsonPaletteType} - The palette itself, or `null` if it could not be
+ *                             loaded.
+ */
+export async function loadPaletteFromJsonFile (jsonFile: string) {
   const response = await fetch(jsonFile);
-  console.debug("response is '" + ( response ? "non-null" : "null" ));
   const paletteJson = await response.json();
-  console.debug("paletteJson is '" + ( paletteJson ? "non-null" : "null" ));
   return paletteJson;
 }
 

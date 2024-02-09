@@ -130,6 +130,18 @@
           "columnStart": 11,
           "columnSpan": 4
         }
+    },
+    "myfamily-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBranchToPalette",
+      "options": {
+        "label": "My Family",
+        "branchTo": "My Family Palette",
+        "bciAvId": 20572,
+        "rowStart": 6,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 14
+      }
     }
   }
 }

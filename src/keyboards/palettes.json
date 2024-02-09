@@ -1,52 +1,72 @@
 {
   "name": "Palettes",
   "cells": {
-    "myfamily-30a32c78-56fe-4622-9fba-0416b68d72fc": {
-      "type": "ActionBranchToPalette",
+  "bmw-encoding-area": {
+    "type": "ContentBmwEncoding",
+    "options": {
+      "rowStart": 2,
+      "rowSpan": 1,
+      "columnStart": 1,
+      "columnSpan": 12
+    }
+  },
+  "command-del-last-encoding": {
+      "type": "CommandDelLastEncoding",
       "options": {
-        "label": "My Family",
-        "branchTo": "My Family Palette",
-        "bciAvId": 20572,
-        "rowStart": 1,
+        "label": "Delete",
+        "bciAvId": 12613,
+        "rowStart": 2,
         "rowSpan": 1,
-        "columnStart": 1,
+        "columnStart": 13,
         "columnSpan": 1
       }
-    },
-    "people-30a32c78-56fe-4622-9fba-0416b68d72fc": {
-      "type": "ActionBranchToPalette",
-      "options": {
-        "label": "People",
-        "branchTo": "People",
-        "bciAvId": 16161,
-        "rowStart": 1,
-        "rowSpan": 1,
-        "columnStart": 2,
-        "columnSpan": 1
-      }
-    },
-    "bmw-30a32c78-56fe-4622-9fba-0416b68d72fc": {
-      "type": "ActionBranchToPalette",
-      "options": {
-        "label": "BMW",
-        "branchTo": "BMW Palette",
-        "bciAvId": 1,
-        "rowStart": 1,
-        "rowSpan": 1,
-        "columnStart": 3,
-        "columnSpan": 1
-      }
-    },
-    "back-up-30a32c78-56fe-4622-9fba-0416b68d72fc": {
-      "type": "CommandGoBackCell",
-      "options": {
-        "label": "Back Up",
-        "bciAvId":  12612,
-        "rowStart": 1,
-        "rowSpan": 1,
-        "columnStart": 4,
-        "columnSpan": 1
-      }
+  },
+  "command-clear-encoding": {
+    "type": "CommandClearEncoding",
+    "options": {
+      "label": "Clear",
+      "bciAvId": 13665,
+      "rowStart": 2,
+      "rowSpan": 1,
+      "columnStart": 14,
+      "columnSpan": 1
+    }
+  },
+  "myfamily-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+   "type": "ActionBranchToPalette",
+   "options": {
+     "label": "My Family",
+     "bciAvId": 20572,
+     "branchTo": "My Family Palette",
+     "rowStart": 3,
+     "rowSpan": 1,
+     "columnStart": 1,
+     "columnSpan": 5
+    }
+  },
+  "people-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+    "type": "ActionBranchToPalette",
+    "options": {
+      "label": "People",
+      "branchTo": "People",
+      "bciAvId": 16161,
+      "rowStart": 3,
+      "rowSpan": 1,
+      "columnStart": 6,
+      "columnSpan": 5
+    }
+  },
+  "bmw-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+    "type": "ActionBranchToPalette",
+    "options": {
+      "label": "BMW",
+      "branchTo": "BMW Palette",
+      "bciAvId": 1,
+      "rowStart": 3,
+      "rowSpan": 1,
+      "columnStart": 11,
+      "columnSpan": 4
     }
   }
-}
+}}
+
