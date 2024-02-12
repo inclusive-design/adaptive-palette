@@ -39,8 +39,8 @@
           "bciAvId": 13426,
           "rowStart": 3,
           "rowSpan": 1,
-          "columnStart": 1,
-          "columnSpan": 5
+          "columnStart": 2,
+          "columnSpan": 4
         }
     },
     "woman-30a32c78-56fe-4622-9fba-0416b68d72fc": {
@@ -51,7 +51,7 @@
           "rowStart": 3,
           "rowSpan": 1,
           "columnStart": 6,
-          "columnSpan": 5
+          "columnSpan": 4
         }
     },
     "assistant-30a32c78-56fe-4622-9fba-0416b68d72fc": {
@@ -61,7 +61,7 @@
           "bciAvId": 14706,
           "rowStart": 3,
           "rowSpan": 1,
-          "columnStart": 11,
+          "columnStart": 10,
           "columnSpan": 4
         }
     },
@@ -72,8 +72,8 @@
           "bciAvId":  14439 ,
           "rowStart": 4,
           "rowSpan": 1,
-          "columnStart": 1,
-          "columnSpan": 5
+          "columnStart": 2,
+          "columnSpan": 4
         }
     },
     "person-30a32c78-56fe-4622-9fba-0416b68d72fc": {
@@ -84,7 +84,7 @@
           "rowStart": 4,
           "rowSpan": 1,
           "columnStart": 6,
-          "columnSpan": 5
+          "columnSpan": 4
         }
     },
     "boy-30a32c78-56fe-4622-9fba-0416b68d72fc": {
@@ -94,7 +94,7 @@
           "bciAvId":  12888,
           "rowStart": 4,
           "rowSpan": 1,
-          "columnStart": 11,
+          "columnStart": 10,
           "columnSpan": 4
         }
     },
@@ -105,8 +105,8 @@
           "bciAvId":  14646,
           "rowStart": 5,
           "rowSpan": 1,
-          "columnStart": 1,
-          "columnSpan": 5
+          "columnStart": 2,
+          "columnSpan": 4
         }
     },
     "man-30a32c78-56fe-4622-9fba-0416b68d72fc": {
@@ -117,7 +117,7 @@
           "rowStart": 5,
           "rowSpan": 1,
           "columnStart": 6,
-          "columnSpan": 5
+          "columnSpan": 4
         }
     },
     "police-30a32c78-56fe-4622-9fba-0416b68d72fc": {
@@ -127,7 +127,7 @@
           "bciAvId":  16217,
           "rowStart": 5,
           "rowSpan": 1,
-          "columnStart": 11,
+          "columnStart": 10,
           "columnSpan": 4
         }
     },
@@ -139,8 +139,30 @@
         "bciAvId": 20572,
         "rowStart": 6,
         "rowSpan": 1,
+        "columnStart": 6,
+        "columnSpan": 4
+      }
+    },
+    "back-up-10a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "CommandGoBackCell",
+      "options": {
+        "label": "Back Up",
+        "bciAvId":  12612,
+        "rowStart": 3,
+        "rowSpan": 1,
         "columnStart": 1,
-        "columnSpan": 14
+        "columnSpan": 1
+      }
+    },
+    "back-up-20a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "CommandGoBackCell",
+      "options": {
+        "label": "Back Up",
+        "bciAvId":  12612,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 14,
+        "columnSpan": 1
       }
     }
   }
