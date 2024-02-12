@@ -33,7 +33,7 @@
     }
   },
   "myfamily-30a32c78-56fe-4622-9fba-0416b68d72fc": {
-   "type": "ActionBranchToPalette",
+   "type": "ActionBranchToPaletteCell",
    "options": {
      "label": "My Family",
      "bciAvId": 20572,
@@ -45,7 +45,7 @@
     }
   },
   "people-30a32c78-56fe-4622-9fba-0416b68d72fc": {
-    "type": "ActionBranchToPalette",
+    "type": "ActionBranchToPaletteCell",
     "options": {
       "label": "People",
       "branchTo": "People",
@@ -57,7 +57,7 @@
     }
   },
   "bmw-30a32c78-56fe-4622-9fba-0416b68d72fc": {
-    "type": "ActionBranchToPalette",
+    "type": "ActionBranchToPaletteCell",
     "options": {
       "label": "BMW",
       "branchTo": "BMW Palette",

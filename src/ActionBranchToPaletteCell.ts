@@ -16,7 +16,7 @@ import { adaptivePaletteGlobals, loadPaletteFromJsonFile } from "./GlobalData";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
 import { speak } from "./GlobalUtils";
-import "./ActionBranchToPalette.scss";
+import "./ActionBranchToPaletteCell.scss";
 
 // TODO:  this is identical to `ActionBmwCodeCellPropsType`.  Should it be?
 type ActionBranchToPalettePropsType = {
@@ -25,7 +25,7 @@ type ActionBranchToPalettePropsType = {
 };
 
 /*
- * Event handler for an ActionBranchToPalette button/cell that, when clicked,
+ * Event handler for an ActionBranchToPaletteCell button/cell that, when clicked,
  * finds and renders the palette referenced by this cell.
  */
 const navigateToPalette = async (event) => {
@@ -46,7 +46,7 @@ const navigateToPalette = async (event) => {
   }
 };
 
-export function ActionBranchToPalette (props: ActionBranchToPalettePropsType) {
+export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType) {
   const {
     columnStart, columnSpan, rowStart, rowSpan, branchTo, bciAvId, label
   } = props.options;

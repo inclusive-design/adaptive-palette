@@ -14,9 +14,9 @@ import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals } from "./GlobalData";
-import { ActionBranchToPalette } from "./ActionBranchToPalette";
+import { ActionBranchToPaletteCell } from "./ActionBranchToPaletteCell";
 
-describe("ActionBranchToPalette render tests", () => {
+describe("ActionBranchToPaletteCell render tests", () => {
 
   const TEST_CELL_ID = "uuid-of-some-kind";
   const goToPaletteCell = {
@@ -35,10 +35,10 @@ describe("ActionBranchToPalette render tests", () => {
     await initAdaptivePaletteGlobals();
   });
 
-  test("ActionBranchToPalette rendering", async () => {
+  test("ActionBranchToPaletteCell rendering", async () => {
 
     render(html`
-      <${ActionBranchToPalette}
+      <${ActionBranchToPaletteCell}
         id="${TEST_CELL_ID}"
         options=${goToPaletteCell.options}
       />`

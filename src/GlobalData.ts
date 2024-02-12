@@ -22,7 +22,7 @@ import { EncodingType } from "./index.d";
  * The map between cell types (string) and actual components that render corresponding cells
  */
 import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
-import { ActionBranchToPalette } from "./ActionBranchToPalette";
+import { ActionBranchToPaletteCell } from "./ActionBranchToPaletteCell";
 import { CommandGoBackCell } from "./CommandGoBackCell";
 import { ContentBmwEncoding } from "./ContentBmwEncoding";
 import { CommandClearEncoding } from "./CommandClearEncoding";
@@ -32,7 +32,7 @@ import { NavigationStack } from "./NavigationStack";
 
 export const cellTypeRegistry = {
   "ActionBmwCodeCell": ActionBmwCodeCell,
-  "ActionBranchToPalette": ActionBranchToPalette,
+  "ActionBranchToPaletteCell": ActionBranchToPaletteCell,
   "CommandGoBackCell": CommandGoBackCell,
   "ContentBmwEncoding": ContentBmwEncoding,
   "CommandClearEncoding": CommandClearEncoding,
