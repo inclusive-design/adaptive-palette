@@ -68,8 +68,7 @@ export async function initAdaptivePaletteGlobals () {
  *                             loaded.
  */
 export async function loadPaletteFromJsonFile (jsonFile: string) {
-  const response = await fetch(jsonFile);
-  const paletteJson = await response.json();
+  const paletteJson = await import(jsonFile);
   return paletteJson;
 }
 
