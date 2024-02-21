@@ -1,6 +1,7 @@
 {
-  "My Family Palette": "./keyboards/myfamily.json",
-  "People": "./keyboards/people.json",
-  "BMW Palette": "./keyboards/bmw_palette.json",
-  "Palettes": "./keyboards/palettes.json"
+  "path": "keyboards",
+  "My Family Palette": "myfamily",
+  "People": "people",
+  "BMW Palette": "bmw_palette",
+  "Palettes": "palettes"
 }

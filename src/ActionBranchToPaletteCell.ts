@@ -12,7 +12,7 @@
 import { render } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolCellType } from "./index.d";
-import { adaptivePaletteGlobals, loadPaletteFromJsonFile } from "./GlobalData";
+import { adaptivePaletteGlobals, importPaletteFromJsonFile } from "./GlobalData";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
 import { speak } from "./GlobalUtils";
@@ -34,7 +34,7 @@ const navigateToPalette = async (event) => {
   speak(button.innerText);
 
   const branchToPaletteName = button.getAttribute("data-branchto");
-  const paletteDefinition = await paletteStore.getNamedPalette(branchToPaletteName, loadPaletteFromJsonFile);
+  const paletteDefinition = await paletteStore.getNamedPalette(branchToPaletteName, importPaletteFromJsonFile);
   if (paletteDefinition) {
     const mainPaletteDisplayArea = document.getElementById("mainPaletteDisplayArea");
     navigationStack.push(navigationStack.currentPalette);

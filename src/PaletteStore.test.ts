@@ -78,9 +78,10 @@ describe("PaletteStore module", () => {
 
   // Mock-ups of the store's palette file name map and a mock load function.
   const PALETTE_FILE_MAP = {
-    "dummyPalette1": "./path/to/dummy_palette1.json",
-    "DummyPalette2": "./path/to/dummy_palette2.json",
-    "mockPalette": "./path/to/mock_palette.json"
+    "path": "path/to",
+    "dummyPalette1": "dummy_palette1",
+    "DummyPalette2": "dummy_palette2",
+    "mockPalette": "mock_palette"
   };
 
   const FILE_PALETTE_MAP = {
@@ -89,8 +90,8 @@ describe("PaletteStore module", () => {
     "./path/to/mock_palette.json": mockPalette
   };
 
-  const loadPalette = async (filePath:string) => {
-    return FILE_PALETTE_MAP[filePath];
+  const loadPalette = async (file:string, path:string) => {
+    return FILE_PALETTE_MAP[`./${path}/${file}.json`];
   };
 
   const paletteStore = new PaletteStore();

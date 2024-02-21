@@ -98,10 +98,13 @@ export class PaletteStore {
    * @return {JsonPaletteType} reference to the named palette, or undefined if
    *                           no such palette.
    */
-  async getNamedPalette(paletteName: string, loadFunction?: (string) => Promise<JsonPaletteType>) {
+  async getNamedPalette(paletteName: string, loadFunction?: (file:string, path:string) => Promise<JsonPaletteType>) {
     let palette = PaletteStore.paletteMap[paletteName];
     if (!palette && loadFunction) {
-      palette = await loadFunction(PaletteStore.paletteFileMap[paletteName]);
+      palette = await loadFunction(
+        PaletteStore.paletteFileMap[paletteName],
+        PaletteStore.paletteFileMap["path"]
+      );
       this.addPalette(palette);
     }
     return palette;
