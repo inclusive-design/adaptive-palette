@@ -66,25 +66,38 @@ export class NavigationStack {
 
   /**
    * Return the palette at the top of the stack without changing the stack
-   * tself.  If an index is given, the palette at that index is returned.  Note
+   * itself.  If an index is given, the palette at that index is returned.  Note
    * that an index of zero denotes the top of the stack.
    * @param {integer} stackIndex - Optional: How far down the stack to peek,
    *                               where zero is the top of the stack (default).
-   *                               If out of range, `null` is returned.
+   *                               If out of range, `undefined` is returned.
    * @return {JsonPaletteType} - Reference to the palette at the top of the
-   *                             stack or at the given index; undefine if no
+   *                             stack or at the given index; `undefined` if
    *                             the given stack index is invalid -- negative or
    *                             greater than the size of the stack.
    */
   peek (stackIndex:number = 0) {
     // Flip the index value since Array.push() puts the item at the end
-    // of the array.  If `stackIndex` is zero or negative,
+    // of the array.
     let palette = undefined;
     const index = (this.navigateBackStack.length - stackIndex) - 1;
     if (index >= 0) {
       palette = this.navigateBackStack[index];
     }
     return palette;
+  }
+
+  /**
+   * Return the palette at the bottom of the stack without changing the stack.
+   * @return {JsonPaletteType} - Reference to the palette at the bottom of the
+   *                             stack, or `undefined` if the stack is empty.
+   */
+  peekLast () {
+    if (this.isEmpty()) {
+      return undefined;
+    } else {
+      return this.navigateBackStack[0];
+    }
   }
 
   /**

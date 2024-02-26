@@ -26,10 +26,7 @@ import goBackCell from "./keyboards/backup_palette.json";
 PaletteStore.paletteFileMap = paletteFileMap;
 adaptivePaletteGlobals.paletteStore.addPalette(firstLayer);
 adaptivePaletteGlobals.paletteStore.addPalette(goBackCell);
-//import outputPalette from "./keyboards/output_area.json";
-//adaptivePaletteGlobals.paletteStore.addPalette(outputPalette);
 
 adaptivePaletteGlobals.navigationStack.currentPalette = firstLayer;
 render(html`<${Palette} json=${goBackCell} />`, document.getElementById("backup_palette"));
-//render(html`<${Palette} json=${outputPalette} />`, document.getElementById("output_palette"));
 render(html`<${Palette} json=${firstLayer}/>`, document.getElementById("mainPaletteDisplayArea"));

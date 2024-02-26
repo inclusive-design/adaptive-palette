@@ -131,4 +131,11 @@ describe("NavigationStack module - pushing and popping", () => {
     expect(navigation.currentPalette).toBe(testPalette2);
   });
 
+  test("Check peeking at the bottom of the stack", () => {
+    expect(navigation.isEmpty()).toBe(true);
+    expect(navigation.peekLast()).toBe(undefined);
+    navigation.push(testPalette1);
+    navigation.push(testPalette2);
+    expect(navigation.peekLast()).toBe(testPalette1);
+  });
 });
