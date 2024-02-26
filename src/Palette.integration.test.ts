@@ -9,16 +9,16 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render, screen, fireEvent } from "@testing-library/preact";
+import { render, screen, fireEvent, waitFor } from "@testing-library/preact";
 import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 
-import { initAdaptivePaletteGlobals } from "./GlobalData";
+import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
 import { Palette } from "./Palette";
 
 describe("Palette integration test", () => {
 
-  // The test palette defines all cell types that need to coordinate with each other.
+  // The test palettes defines all cell types that need to coordinate with each other.
   const testPalette = {
     "name": "Test Palette",
     "cells": {
@@ -78,18 +78,88 @@ describe("Palette integration test", () => {
           "columnStart": 4,
           "columnSpan": 1
         }
+      },
+      "goToCell": {
+        "type": "ActionBranchToPaletteCell",
+        "options": {
+          "label": "Go To",
+          "branchTo": "People",
+          "bciAvId": 12343,
+          "rowStart": 3,
+          "rowSpan": 1,
+          "columnStart": 4,
+          "columnSpan": 1
+        }
+      }
+    }
+  };
+
+  // A second layer palette that `testPalette` can navigate to from its
+  // `goToCell` cell.  This second layer contains a go-back cell.
+  const testLayerOnePalette = {
+    "name": "People",
+    "cells": {
+      "woman": {
+        "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Woman",
+          "bciAvId": 18269,
+          "rowStart": 3,
+          "rowSpan": 1,
+          "columnStart": 6,
+          "columnSpan": 4
+        }
+      },
+      "person": {
+        "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Person",
+          "bciAvId":  16161,
+          "rowStart": 4,
+          "rowSpan": 1,
+          "columnStart": 6,
+          "columnSpan": 4
+        }
+      },
+      "man": {
+        "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Man",
+          "bciAvId":  15416,
+          "rowStart": 5,
+          "rowSpan": 1,
+          "columnStart": 6,
+          "columnSpan": 4
+        }
+      },
+      "back-up": {
+        "type": "CommandGoBackCell",
+        "options": {
+          "label": "Back Up",
+          "bciAvId":  12612,
+          "rowStart": 3,
+          "rowSpan": 1,
+          "columnStart": 1,
+          "columnSpan": 1
+        }
       }
     }
   };
 
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
+    // Pre-load `testLayerOnePalette` and avoid importing it from disk.
+    adaptivePaletteGlobals.paletteStore.addPalette(testLayerOnePalette);
+    render(html`<div id="mainPaletteDisplayArea" />`);
   });
 
   test("Cell coordinations among bmw action cells, input area, delete and clear buttons", async() => {
     // render() the palette and then wait until its first cell is available to
     // insure that the entire palette is in the DOM.
     render(html`<${Palette} json=${testPalette}/>`);
+    const navStack = adaptivePaletteGlobals.navigationStack;
+    navStack.currentPalette = testPalette;
+
     const firstCell = await screen.findByText("First Cell");
     expect(firstCell).toBeInTheDocument();
 
@@ -127,5 +197,19 @@ describe("Palette integration test", () => {
     const clearButton = await screen.findByText("Clear");
     fireEvent.click(clearButton);
     expect(contentArea.childNodes.length).toBe(0);
+
+    // Trigger forward navigation
+    const goForwardButton = await screen.findByText("Go To");
+    fireEvent.click(goForwardButton);
+    const goBackButton = await waitFor(() => screen.findByText("Back Up"));
+    expect(goBackButton).toBeInTheDocument();
+    expect(navStack.currentPalette).toBe(testLayerOnePalette);
+    expect(navStack.peek()).toBe(testPalette);
+
+    // Trigger go-back navigation
+    fireEvent.click(goBackButton);
+    await waitFor(() => expect(firstCell).toBeInTheDocument());
+    expect(navStack.currentPalette).toBe(testPalette);
+    expect(navStack.isEmpty()).toBe(true);
   });
 });
