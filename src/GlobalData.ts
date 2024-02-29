@@ -49,7 +49,13 @@ export const adaptivePaletteGlobals = {
   blissaryIdMapUrl: "https://raw.githubusercontent.com/hlridge/Bliss-Blissary-BCI-ID-Map/main/blissary_to_bci_mapping.json",
   blissaryIdMap: null,
   paletteStore: new PaletteStore(),
-  navigationStack: new NavigationStack()
+  navigationStack: new NavigationStack(),
+
+  // `id` attribute of the HTML element area where the main palette is
+  // displayed, set by initAdaptivePaletteGlobals().  It defaults to the empty
+  // string and that identifies the `<body>` elements as a default.
+  //
+  mainPaletteContainerId: ""
 };
 
 export async function loadBlissaryIdMap () {
@@ -57,8 +63,19 @@ export async function loadBlissaryIdMap () {
   return await response.json();
 }
 
-export async function initAdaptivePaletteGlobals () {
+/**
+ * Initialize the `adaptivePaletteGlobals` structure.
+ * @param {HTMLElement} mainPaletteContainerId  - Optional argument specifying
+ *                                                the id of a container element,
+ *                                                e.g., a `<div>` element, to
+ *                                                use for rendering the the
+ *                                                main paletted Defaults to the
+ *                                                empty string which denotes
+ *                                                the `<body>delement.
+ */
+export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string) {
   adaptivePaletteGlobals.blissaryIdMap = await loadBlissaryIdMap();
+  adaptivePaletteGlobals.mainPaletteContainerId = mainPaletteContainerId || "";
 }
 
 /**
@@ -73,7 +90,7 @@ export async function initAdaptivePaletteGlobals () {
  *
  * @param {String} jsonFile  - Name of the JSON file to load, without the
  *                            ".json" extension (added herein).
- * @param {String} jsonFile  - Path to the file to without any leading nor
+ * @param {String} path      - Path to the file to without any leading nor
  *                             trailing "/".
  * @return {JsonPaletteType} - The palette itself, or `null` if it could not be
  *                             loaded.

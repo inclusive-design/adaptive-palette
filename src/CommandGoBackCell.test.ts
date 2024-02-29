@@ -13,12 +13,14 @@ import { render, screen } from "@testing-library/preact";
 import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 
-import { initAdaptivePaletteGlobals } from "./GlobalData";
+import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
 import { CommandGoBackCell } from "./CommandGoBackCell";
 
-describe("ActionBmwCodeDell render tests", () => {
+describe("CommandGoBackCell render tests", () => {
 
-  const TEST_CELL_ID = "uuid-of-some-kind";
+  const TEST_CELL1_ID = "uuid-of-some-kind";
+  const TEST_CELL2_ID = "uuid-of-another-kind";
+  const TEST_CONTROL_ID = "non-empty-id";
   const goBackCell = {
     options: {
       "label": "Back Up",
@@ -29,30 +31,44 @@ describe("ActionBmwCodeDell render tests", () => {
       "bciAvId": 12612
     }
   };
+  const goBackCell2 = {
+    options: {
+      "label": "Back Up non-empty aria-controls",
+      "rowStart": "3",
+      "rowSpan": "2",
+      "columnStart": "2",
+      "columnSpan": "1",
+      "bciAvId": 12612
+    }
+  };
 
   beforeAll(async () => {
+    // Note: no id provided for the element that palettes are rendered inside.
+    // The `aria-controls` attribute of the test CommandGoBackCell should be
+    // the empty string, at first.
     await initAdaptivePaletteGlobals();
   });
 
-  test("CommandGoBackCell rendering", async () => {
+  test("CommandGoBackCell rendering, empty aria-controls", async () => {
 
     render(html`
       <${CommandGoBackCell}
-        id="${TEST_CELL_ID}"
+        id="${TEST_CELL1_ID}"
         options=${goBackCell.options}
       />`
     );
 
-    // Check the rendered cell
+    // Check the rendered cell with TEST_CELL_ID1
     const button = await screen.findByRole("button", {name: goBackCell.options.label});
 
     // Check that the ActionBmwCodeCell/button is rendered and has the correct
     // attributes and text.
     expect(button).toBeVisible();
     expect(button).toBeValid();
-    expect(button.id).toBe(TEST_CELL_ID);
+    expect(button.id).toBe(TEST_CELL1_ID);
     expect(button.getAttribute("class")).toBe("btn-command");
     expect(button.textContent).toBe(goBackCell.options.label);
+    expect(button.getAttribute("aria-controls")).toBe("");
 
     // Check the grid cell styles.
     expect(button.style["grid-column"]).toBe("2 / span 1");
@@ -60,5 +76,20 @@ describe("ActionBmwCodeDell render tests", () => {
 
     // Check disabled state (should be enabled)
     expect(button.getAttribute("disabled")).toBe(null);
+  });
+
+  test("CommandGoBackCell rendering with non-empty aria-controls", async() => {
+    // Give the main palette rendering area a non-empty id.
+    adaptivePaletteGlobals.mainPaletteContainerId = TEST_CONTROL_ID;
+    render(html`
+      <${CommandGoBackCell}
+        id="${TEST_CELL2_ID}"
+        options=${goBackCell2.options}
+      />`
+    );
+
+    const button = await screen.findByRole("button", {name: goBackCell2.options.label});
+    expect(button.id).toBe(TEST_CELL2_ID);
+    expect(button.getAttribute("aria-controls")).toBe(TEST_CONTROL_ID);
   });
 });

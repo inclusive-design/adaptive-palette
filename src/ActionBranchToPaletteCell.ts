@@ -36,9 +36,9 @@ const navigateToPalette = async (event) => {
   const branchToPaletteName = button.getAttribute("data-branchto");
   const paletteDefinition = await paletteStore.getNamedPalette(branchToPaletteName, importPaletteFromJsonFile);
   if (paletteDefinition) {
-    const mainPaletteDisplayArea = document.getElementById("mainPaletteDisplayArea");
+    const displayElement = button.parentElement.parentElement;
     navigationStack.push(navigationStack.currentPalette);
-    render (html`<${Palette} json=${paletteDefinition}/>`, mainPaletteDisplayArea);
+    render (html`<${Palette} json=${paletteDefinition}/>`, displayElement);
     navigationStack.currentPalette = paletteDefinition;
   }
   else {

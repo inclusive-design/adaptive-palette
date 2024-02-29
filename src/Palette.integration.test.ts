@@ -148,9 +148,9 @@ describe("Palette integration test", () => {
 
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
-    // Pre-load `testLayerOnePalette` and avoid importing it from disk.
+    // Pre-load `testLayerOnePalette` to avoid importing it from a non-existent
+    // disk file.
     adaptivePaletteGlobals.paletteStore.addPalette(testLayerOnePalette);
-    render(html`<div id="mainPaletteDisplayArea" />`);
   });
 
   test("Cell coordinations among bmw action cells, input area, delete and clear buttons", async() => {

@@ -14,7 +14,7 @@ import { initAdaptivePaletteGlobals, adaptivePaletteGlobals} from "./GlobalData"
 import "./index.scss";
 
 // Initialize any globals used elsewhere in the code.
-await initAdaptivePaletteGlobals();
+await initAdaptivePaletteGlobals("mainPaletteDisplayArea");
 
 import { PaletteStore } from "./PaletteStore";
 import { Palette } from "./Palette";
