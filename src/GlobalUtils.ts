@@ -31,7 +31,7 @@ function generateGridStyle(columnStart: number, columnSpan: number, rowStart: nu
  * @param {String} text - The text to be announced.
  */
 function speak(text) {
-  // If the text-to-speech feature is unavailable, do nothing. This happens when running node tests. 
+  // If the text-to-speech feature is unavailable, do nothing. This happens when running node tests.
   if (!window.speechSynthesis) {
     return;
   }
@@ -45,7 +45,30 @@ function speak(text) {
   window.speechSynthesis.speak(utterThis);
 }
 
+/**
+ * Import a palette from the given json file using dynamic `import()`.
+ *
+ * Note:  There are restrictions regarding the arguments to `import()`:
+ * - the path must start with "./" or "../" and not be part of the argument,
+ * - the path must end with "/" and not be part of the argument,
+ * - the file name extension must be added here (not part of the argument)
+ * See the following for more information:
+ * https://github.com/rollup/plugins/tree/master/packages/dynamic-import-vars#limitations
+ *
+ * @param {String} jsonFile  - Name of the JSON file to load, without the
+ *                            ".json" extension (added herein).
+ * @param {String} path      - Path to the file to without any leading nor
+ *                             trailing "/".
+ * @return {JsonPaletteType} - The palette itself, or `null` if it could not be
+ *                             loaded.
+ */
+async function importPaletteFromJsonFile (jsonFile: string, path: string) {
+  const paletteJson = await import(`./${path}/${jsonFile}.json`);
+  return paletteJson;
+}
+
 export {
   generateGridStyle,
-  speak
+  speak,
+  importPaletteFromJsonFile
 };

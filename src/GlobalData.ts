@@ -79,28 +79,6 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
 }
 
 /**
- * Import a palette from the given json file using dynamic `import()`.
- *
- * Note:  There are restrictions regarding the arguments to `import()`:
- * - the path must start with "./" or "../" and not be part of the argument,
- * - the path must end with "/" and not be part of the argument,
- * - the file name extension must be added here (not part of the argument)
- * See the following for more information:
- * https://github.com/rollup/plugins/tree/master/packages/dynamic-import-vars#limitations
- *
- * @param {String} jsonFile  - Name of the JSON file to load, without the
- *                            ".json" extension (added herein).
- * @param {String} path      - Path to the file to without any leading nor
- *                             trailing "/".
- * @return {JsonPaletteType} - The palette itself, or `null` if it could not be
- *                             loaded.
- */
-export async function importPaletteFromJsonFile (jsonFile: string, path: string) {
-  const paletteJson = await import(`./${path}/${jsonFile}.json`);
-  return paletteJson;
-}
-
-/**
  * Palette shared states
  */
 // Create a context to pass the palette states to palette children components

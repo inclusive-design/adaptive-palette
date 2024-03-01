@@ -12,7 +12,8 @@
 import { render } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolCellType } from "./index.d";
-import { adaptivePaletteGlobals, importPaletteFromJsonFile } from "./GlobalData";
+import { adaptivePaletteGlobals } from "./GlobalData";
+import { importPaletteFromJsonFile } from "./GlobalUtils";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
 import { speak } from "./GlobalUtils";
