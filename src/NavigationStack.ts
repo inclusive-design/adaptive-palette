@@ -53,8 +53,8 @@ export class NavigationStack {
   /**
    * Pop and return the most recently pushed palette from the top of the
    * navigation stack.
-   * @return {JsonPaletteType} - reference to the popped palette; null if the stack is
-   *                     empty.
+   * @return {JsonPaletteType} - reference to the popped palette; null if the
+   *                             stack is empty.
    */
   pop () {
     if (this.isEmpty()) {
