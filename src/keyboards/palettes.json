@@ -35,7 +35,7 @@
   "myfamily-30a32c78-56fe-4622-9fba-0416b68d72fc": {
    "type": "ActionBranchToPaletteCell",
    "options": {
-     "label": "My Family",
+     "label": "Family",
      "bciAvId": 20572,
      "branchTo": "My Family Palette",
      "rowStart": 3,
@@ -49,7 +49,7 @@
     "options": {
       "label": "People",
       "branchTo": "People",
-      "bciAvId": 16161,
+      "bciAvId": 14646,
       "rowStart": 3,
       "rowSpan": 1,
       "columnStart": 6,
@@ -61,7 +61,7 @@
     "options": {
       "label": "BMW",
       "branchTo": "BMW Palette",
-      "bciAvId": 1,
+      "bciAvId": [ 8552, "/", 8563, "/", 8573 ],
       "rowStart": 3,
       "rowSpan": 1,
       "columnStart": 11,
