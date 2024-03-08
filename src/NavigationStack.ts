@@ -33,7 +33,7 @@ export class NavigationStack {
    * Report if the navigation stack is empty.
    * @return: `true` if the stack is empty; `false` otherwise.
    */
-  isEmpty () {
+  isEmpty (): boolean {
     return this.navigateBackStack.length === 0;
   }
 
@@ -43,7 +43,7 @@ export class NavigationStack {
    *                                     `undefined`, the navigation stack is
    *                                      left untouched.
    */
-  push (palette: JsonPaletteType) {
+  push (palette: JsonPaletteType): void {
     if (!palette) {
       return;
     }
@@ -56,7 +56,7 @@ export class NavigationStack {
    * @return {JsonPaletteType} - reference to the popped palette; null if the
    *                             stack is empty.
    */
-  pop () {
+  pop (): JsonPaletteType | null {
     if (this.isEmpty()) {
       return null;
     } else {
@@ -76,7 +76,7 @@ export class NavigationStack {
    *                             the given stack index is invalid -- negative or
    *                             greater than the size of the stack.
    */
-  peek (stackIndex:number = 0) {
+  peek (stackIndex:number = 0): JsonPaletteType | undefined {
     // Flip the index value since Array.push() puts the item at the end
     // of the array.
     let palette = undefined;
@@ -92,7 +92,7 @@ export class NavigationStack {
    * @return {JsonPaletteType} - Reference to the palette at the bottom of the
    *                             stack, or `undefined` if the stack is empty.
    */
-  peekLast () {
+  peekLast (): JsonPaletteType | undefined {
     if (this.isEmpty()) {
       return undefined;
     } else {
@@ -107,7 +107,7 @@ export class NavigationStack {
    *                            is about to be displayed.
    * @return {JsonPaletteType} - The most recently visited palette.
    */
-  popAndSetCurrent (currentPalette: JsonPaletteType) {
+  popAndSetCurrent (currentPalette: JsonPaletteType): JsonPaletteType | null {
     this.currentPalette = currentPalette;
     return this.pop();
   }
@@ -116,14 +116,14 @@ export class NavigationStack {
    * Empty the navigation stack and reset the current palette displayed.
    * @param {JsonPaletteType} - The palette that is currently displayed.
    */
-  flushReset (currentPalette: JsonPaletteType) {
+  flushReset (currentPalette: JsonPaletteType): void {
     this.currentPalette = currentPalette;
     this.navigateBackStack.length = 0;
   }
 
   /**
    * Accessor for setting the currently displayed palette.
-   * @return: {JsonPaletteType} - the current palette.
+   * @param: {JsonPaletteType} - the intended current palette.
    */
   set currentPalette (palette: JsonPaletteType) {
     this.currPalette = palette;

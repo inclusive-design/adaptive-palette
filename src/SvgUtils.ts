@@ -13,6 +13,13 @@ import { BlissSVGBuilder } from "bliss-svg-builder";
 import { BciAvIdType } from "./index.d";
 import { adaptivePaletteGlobals } from "./GlobalData";
 
+// The struture of an entry in the Blissary Id map.
+type BlissaryMapEntryType = {
+  blissaryId: number,
+  bciAvId: number,
+  blissSvgBuilderCode: string
+};
+
 /**
  * Convert the given `BciAvIdType` to a SVG builder code string.  If the
  * `BciAvIdType`argument is an array of BCI-AV-IDs and punctuation, concatenate
@@ -21,7 +28,7 @@ import { adaptivePaletteGlobals } from "./GlobalData";
  * @return {String} - The concatenation of the builder codes and punctuation,
  *                    e.g., "B106/B12".
  */
-export function bciAvIdToString (bciAvId: BciAvIdType) {
+export function bciAvIdToString (bciAvId: BciAvIdType): string {
   let finalCode = "";
   if (typeof bciAvId === "number") {
     const { blissSvgBuilderCode } = bciToBlissaryId(bciAvId);
@@ -50,7 +57,7 @@ export function bciAvIdToString (bciAvId: BciAvIdType) {
  * @return {BlissSVGBuilder} - The corresponding SVG markup, or `null`.
  */
 
-function getSvgBuilder (bciAvId: BciAvIdType) {
+function getSvgBuilder (bciAvId: BciAvIdType): BlissSVGBuilder {
   let builder;
   try {
     const svgBuilderArgument = bciAvIdToString(bciAvId);
@@ -73,7 +80,7 @@ function getSvgBuilder (bciAvId: BciAvIdType) {
  *                                `[ 12335, "/", 8499 ]`
  * @return {String} - The corresponding SVG markup, or `undefined`.
  */
-export function getSvgMarkupString (bciAvId: BciAvIdType) {
+export function getSvgMarkupString (bciAvId: BciAvIdType): string {
   const builder = getSvgBuilder(bciAvId);
   return ( builder ? builder.svgCode : undefined );
 }
@@ -87,12 +94,12 @@ export function getSvgMarkupString (bciAvId: BciAvIdType) {
  *                                `[ 12335, "/", 8499 ]`
  * @return {Element} - The corresponding SVG markup, or `undefined`.
  */
-export function getSvgElement (bciAvId: BciAvIdType) {
+export function getSvgElement (bciAvId: BciAvIdType): SVGElement {
   const builder = getSvgBuilder(bciAvId);
   return ( builder ? builder.svgElement : undefined );
 }
 
-export function bciToBlissaryId (bciAvId: number) {
+export function bciToBlissaryId (bciAvId: number): BlissaryMapEntryType {
   const { blissaryIdMap } = adaptivePaletteGlobals;
   return blissaryIdMap.find((entry) => entry.bciAvId === bciAvId);
 }

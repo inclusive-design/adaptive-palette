@@ -25,7 +25,7 @@ export class PaletteStore {
    * Report if the PaletteStore is empty.
    * @return: `true` if the store is empty; `false` otherwise.
    */
-  isEmpty () {
+  isEmpty (): boolean {
     return Object.keys(PaletteStore.paletteMap).length === 0;
   }
 
@@ -38,7 +38,7 @@ export class PaletteStore {
    * @param: {String} name             - Optional, the preferred name of th
    *                                     palette.
    */
-  addPalette (palette: JsonPaletteType, paletteName?: string) {
+  addPalette (palette: JsonPaletteType, paletteName?: string): void {
     if (!palette) {
       return;
     }
@@ -59,7 +59,7 @@ export class PaletteStore {
    * @param: {String} paletteName - The palette to remove.
    * @return {JsonPaletteType} reference to the removed palette.
    */
-  removePalette (paletteName: string) {
+  removePalette (paletteName: string): JsonPaletteType {
     if (this.isEmpty()) {
       return null;
     } else {
@@ -84,7 +84,7 @@ export class PaletteStore {
    * Accessor for a list of names of palettes in the store.
    * @return: {Array} of palette names.
    */
-  get paletteList() {
+  get paletteList(): string[] {
     return Object.keys(PaletteStore.paletteMap);
   }
 
@@ -98,7 +98,7 @@ export class PaletteStore {
    * @return {JsonPaletteType} reference to the named palette, or undefined if
    *                           no such palette.
    */
-  async getNamedPalette(paletteName: string, loadFunction?: (file:string, path:string) => Promise<JsonPaletteType>) {
+  async getNamedPalette(paletteName: string, loadFunction?: (file:string, path:string) => Promise<JsonPaletteType>): Promise<JsonPaletteType> {
     let palette = PaletteStore.paletteMap[paletteName];
     if (!palette && loadFunction) {
       palette = await loadFunction(

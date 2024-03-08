@@ -16,7 +16,7 @@ import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals } from "./GlobalData";
 import { CommandClearEncoding } from "./CommandClearEncoding";
 
-describe("CommandClearEncoding render tests", () => {
+describe("CommandClearEncoding render tests", (): void => {
 
   const TEST_CELL_ID = "command-del-last-encoding";
   const testCell = {
@@ -34,7 +34,7 @@ describe("CommandClearEncoding render tests", () => {
     await initAdaptivePaletteGlobals();
   });
 
-  test("CommandClearEncoding rendering", async () => {
+  test("CommandClearEncoding rendering", async (): Promise<void> => {
 
     render(html`
       <${CommandClearEncoding}

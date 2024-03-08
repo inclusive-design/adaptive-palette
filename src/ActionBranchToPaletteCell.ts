@@ -9,7 +9,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render } from "preact";
+import { render, VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolCellType } from "./index.d";
 import { adaptivePaletteGlobals } from "./GlobalData";
@@ -29,9 +29,9 @@ type ActionBranchToPalettePropsType = {
  * Event handler for an ActionBranchToPaletteCell button/cell that, when clicked,
  * finds and renders the palette referenced by this cell.
  */
-const navigateToPalette = async (event) => {
+const navigateToPalette = async (event: Event): Promise<void> => {
   const { paletteStore, navigationStack } = adaptivePaletteGlobals;
-  const button = event.currentTarget;
+  const button = event.currentTarget as HTMLElement;
   speak(button.innerText);
 
   const branchToPaletteName = button.getAttribute("data-branchto");
@@ -47,7 +47,7 @@ const navigateToPalette = async (event) => {
   }
 };
 
-export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType) {
+export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType): VNode {
   const {
     columnStart, columnSpan, rowStart, rowSpan, branchTo, bciAvId, label
   } = props.options;

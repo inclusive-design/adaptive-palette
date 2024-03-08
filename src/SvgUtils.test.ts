@@ -12,7 +12,7 @@
 import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
 import { bciToBlissaryId, bciAvIdToString } from "./SvgUtils";
 
-describe("SvgUtils module", () => {
+describe("SvgUtils module", (): void => {
 
   // The `singleBciAvId` is taken from the BMW json for "CONJ." The
   // `bciAvIdArray` is also from the BMW json file using the codes for
@@ -28,7 +28,7 @@ describe("SvgUtils module", () => {
     await initAdaptivePaletteGlobals();
   });
 
-  test("Retrieve blissary id from BCI-AV-ID", () => {
+  test("Retrieve blissary id from BCI-AV-ID", (): void => {
     const { blissaryIdMap } = adaptivePaletteGlobals;
 
     // Use the 100th entry in the map for testing.  There is nothing special
@@ -39,11 +39,11 @@ describe("SvgUtils module", () => {
     expect(result.blissaryId).toBe(blissaryIdMapEntry.blissaryId);
   });
 
-  test("No blissary id for unknown BCI-AV-ID", () => {
+  test("No blissary id for unknown BCI-AV-ID", (): void => {
     expect(bciToBlissaryId(invalidBciAvId)).toBe(undefined);
   });
 
-  test("Create svg builder argument", () => {
+  test("Create svg builder argument", (): void => {
     let result = bciAvIdToString(singleBciAvId);
     expect(result).toBe(expectedString);
 
@@ -51,7 +51,7 @@ describe("SvgUtils module", () => {
     expect(result).toBe(expectedConcatenation);
   });
 
-  test("Unknown BCI-AV-ID", () => {
+  test("Unknown BCI-AV-ID", (): void => {
     expect(() => { bciAvIdToString(invalidBciAvId); }).toThrow();
   });
 

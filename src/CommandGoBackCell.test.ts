@@ -16,7 +16,7 @@ import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
 import { CommandGoBackCell } from "./CommandGoBackCell";
 
-describe("CommandGoBackCell render tests", () => {
+describe("CommandGoBackCell render tests", (): void => {
 
   const TEST_CELL1_ID = "uuid-of-some-kind";
   const TEST_CELL2_ID = "uuid-of-another-kind";
@@ -49,7 +49,7 @@ describe("CommandGoBackCell render tests", () => {
     await initAdaptivePaletteGlobals();
   });
 
-  test("CommandGoBackCell rendering, empty aria-controls", async () => {
+  test("CommandGoBackCell rendering, empty aria-controls", async (): Promise<void> => {
 
     render(html`
       <${CommandGoBackCell}
@@ -78,7 +78,7 @@ describe("CommandGoBackCell render tests", () => {
     expect(button.getAttribute("disabled")).toBe(null);
   });
 
-  test("CommandGoBackCell rendering with non-empty aria-controls", async() => {
+  test("CommandGoBackCell rendering with non-empty aria-controls", async(): Promise<void> => {
     // Give the main palette rendering area a non-empty id.
     adaptivePaletteGlobals.mainPaletteContainerId = TEST_CONTROL_ID;
     render(html`

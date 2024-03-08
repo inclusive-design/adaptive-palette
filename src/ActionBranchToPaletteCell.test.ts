@@ -16,7 +16,7 @@ import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals } from "./GlobalData";
 import { ActionBranchToPaletteCell } from "./ActionBranchToPaletteCell";
 
-describe("ActionBranchToPaletteCell render tests", () => {
+describe("ActionBranchToPaletteCell render tests", (): void => {
 
   const TEST_CELL_ID = "uuid-of-some-kind";
   const goToPaletteCell = {
@@ -35,7 +35,7 @@ describe("ActionBranchToPaletteCell render tests", () => {
     await initAdaptivePaletteGlobals();
   });
 
-  test("ActionBranchToPaletteCell rendering", async () => {
+  test("ActionBranchToPaletteCell rendering", async (): Promise<void> => {
 
     render(html`
       <${ActionBranchToPaletteCell}

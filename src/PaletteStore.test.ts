@@ -9,9 +9,10 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+import { JsonPaletteType } from "./index.d";
 import { PaletteStore } from "./PaletteStore";
 
-describe("PaletteStore module", () => {
+describe("PaletteStore module", (): void => {
 
   const dummyPalette1 = {
     "name": "dummyPalette1",
@@ -90,7 +91,7 @@ describe("PaletteStore module", () => {
     "./path/to/mock_palette.json": mockPalette
   };
 
-  const loadPalette = async (file:string, path:string) => {
+  const loadPalette = async (file:string, path:string): Promise<JsonPaletteType> => {
     return FILE_PALETTE_MAP[`./${path}/${file}.json`];
   };
 
@@ -98,24 +99,24 @@ describe("PaletteStore module", () => {
   PaletteStore.paletteFileMap = PALETTE_FILE_MAP;
 
   // Tests start here
-  test("Empty PaletteStore", () => {
+  test("Empty PaletteStore", (): void => {
     expect(paletteStore.isEmpty()).toBe(true);
   });
 
-  test("Non-empty PaletteStore", () => {
+  test("Non-empty PaletteStore", (): void => {
     paletteStore.addPalette(dummyPalette1);
     expect(paletteStore.isEmpty()).toBe(false);
     expect(paletteStore.numPalettes).toBe(1);
     expect(paletteStore.paletteList).toEqual(["dummyPalette1"]);
   });
 
-  test("Add another palette", () => {
+  test("Add another palette", (): void  => {
     paletteStore.addPalette(dummyPalette2, dummyPalette2Name);
     expect(paletteStore.numPalettes).toBe(2);
     expect(paletteStore.paletteList).toEqual(["dummyPalette1", dummyPalette2Name]);
   });
 
-  test("Retrieve a palette, with and without a load function", async () => {
+  test("Retrieve a palette, with and without a load function", async (): Promise<void> => {
     let retrievedPalette = await paletteStore.getNamedPalette(dummyPalette2Name);
     expect(retrievedPalette).toBe(dummyPalette2);
 
@@ -136,7 +137,7 @@ describe("PaletteStore module", () => {
     expect(paletteStore.paletteList).toEqual(["dummyPalette1", dummyPalette2Name, "mockPalette"]);
   });
 
-  test("Delete a palette", async () => {
+  test("Delete a palette", async (): Promise<void> => {
     const numPalettes = paletteStore.numPalettes;
     const removedPalette = paletteStore.removePalette(dummyPalette1.name);
     expect(removedPalette).toBe(dummyPalette1);

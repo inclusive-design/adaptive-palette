@@ -9,6 +9,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+import { VNode } from "preact";
 import { html } from "htm/preact";
 import { JsonPaletteType } from "./index.d";
 import { cellTypeRegistry, adaptivePaletteGlobals, paletteStateProvider } from "./GlobalData";
@@ -26,7 +27,7 @@ type PalettePropsType = {
  * lists the positions, heights and widths of the cells in the palette.
  * @return {Object} - The row and column counts: `{ numRows: ..., numColumns: ...}`.
  */
-function countRowsColumns (paletteDefinition: JsonPaletteType) {
+function countRowsColumns (paletteDefinition: JsonPaletteType): Record<string, number> {
   let rowCount = 0;
   let colCount = 0;
   let rightColumn = 0;
@@ -46,7 +47,7 @@ function countRowsColumns (paletteDefinition: JsonPaletteType) {
   return { numRows: rowCount-1, numColumns: colCount-1 };
 }
 
-export function Palette (props: PalettePropsType) {
+export function Palette (props: PalettePropsType): VNode {
 
   const { paletteStore } = adaptivePaletteGlobals;
   const paletteDefinition = props.json;

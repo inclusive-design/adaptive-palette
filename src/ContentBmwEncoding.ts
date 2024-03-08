@@ -9,6 +9,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { usePaletteState } from "./GlobalData";
@@ -21,7 +22,7 @@ type ContentBmwEncodingProps = {
   options: ContentBmwEncodingType
 }
 
-export function ContentBmwEncoding (props: ContentBmwEncodingProps) {
+export function ContentBmwEncoding (props: ContentBmwEncodingProps): VNode {
   const paletteState = usePaletteState();
 
   const { id, options } = props;

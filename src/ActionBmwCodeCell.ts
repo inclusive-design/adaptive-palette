@@ -9,6 +9,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolCellType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
@@ -22,7 +23,7 @@ type ActionBmwCodeCellPropsType = {
   options: BlissSymbolCellType
 };
 
-export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType) {
+export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType): VNode {
   const paletteState = usePaletteState();
 
   const {

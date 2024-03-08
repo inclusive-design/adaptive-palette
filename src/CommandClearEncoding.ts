@@ -9,6 +9,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { usePaletteState } from "./GlobalData";
@@ -20,7 +21,7 @@ type CommandClearEncodingProps = {
   options: BlissSymbolCellType
 }
 
-export function CommandClearEncoding (props: CommandClearEncodingProps) {
+export function CommandClearEncoding (props: CommandClearEncodingProps): VNode {
   const { id, options } = props;
   const { label, bciAvId, columnStart, columnSpan, rowStart, rowSpan } = options;
 
@@ -29,7 +30,7 @@ export function CommandClearEncoding (props: CommandClearEncodingProps) {
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
-  const cellClicked = () => {
+  const cellClicked = (): void => {
     setFullEncoding([]);
     speak(label);
   };

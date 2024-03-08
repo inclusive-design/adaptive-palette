@@ -8,7 +8,7 @@
  * You may obtain a copy of the License at
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
-
+import { JsonPaletteType } from "./index.d";
 /**
  * Global Utility Functions
  */
@@ -21,7 +21,7 @@
  * @param {number} rowSpan - The number of rows that the item will span across.
  * @return {String} - The grid css.
  */
-function generateGridStyle(columnStart: number, columnSpan: number, rowStart: number, rowSpan: number) {
+function generateGridStyle(columnStart: number, columnSpan: number, rowStart: number, rowSpan: number): string {
   return `grid-column: ${columnStart} / span ${columnSpan};grid-row: ${rowStart} / span ${rowSpan};`;
 }
 
@@ -30,7 +30,7 @@ function generateGridStyle(columnStart: number, columnSpan: number, rowStart: nu
  * on, cancel it.
  * @param {String} text - The text to be announced.
  */
-function speak(text) {
+function speak(text): void {
   // If the text-to-speech feature is unavailable, do nothing. This happens when running node tests.
   if (!window.speechSynthesis) {
     return;
@@ -62,7 +62,7 @@ function speak(text) {
  * @return {JsonPaletteType} - The palette itself, or `null` if it could not be
  *                             loaded.
  */
-async function importPaletteFromJsonFile (jsonFile: string, path: string) {
+async function importPaletteFromJsonFile (jsonFile: string, path: string): Promise<JsonPaletteType> {
   const paletteJson = await import(`./${path}/${jsonFile}.json`);
   return paletteJson;
 }

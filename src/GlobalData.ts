@@ -14,7 +14,7 @@
  */
 
 import { html } from "htm/preact";
-import { createContext } from "preact";
+import { createContext, VNode } from "preact";
 import { useContext, useState } from "preact/hooks";
 import { EncodingType } from "./index.d";
 
@@ -58,7 +58,7 @@ export const adaptivePaletteGlobals = {
   mainPaletteContainerId: ""
 };
 
-export async function loadBlissaryIdMap () {
+export async function loadBlissaryIdMap (): Promise<object> {
   const response = await fetch(adaptivePaletteGlobals.blissaryIdMapUrl);
   return await response.json();
 }
@@ -73,7 +73,7 @@ export async function loadBlissaryIdMap () {
  *                                                empty string which denotes
  *                                                the `<body>delement.
  */
-export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string) {
+export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string): Promise<void> {
   adaptivePaletteGlobals.blissaryIdMap = await loadBlissaryIdMap();
   adaptivePaletteGlobals.mainPaletteContainerId = mainPaletteContainerId || "";
 }
@@ -94,7 +94,7 @@ const defaultPaletteStateContext = {
 const paletteStateContext = createContext<PaletteStateType>(defaultPaletteStateContext);
 
 // Create a provider component that will wrap the components needing access to the global states
-export function paletteStateProvider(props: {children}) {
+export function paletteStateProvider(props: {children}): VNode {
   const [fullEncoding, setFullEncoding] = useState([]);
 
   return html`
@@ -105,6 +105,6 @@ export function paletteStateProvider(props: {children}) {
 }
 
 // Create a custom hook to easily access the global states within components
-export function usePaletteState() {
+export function usePaletteState(): PaletteStateType {
   return useContext(paletteStateContext);
 }

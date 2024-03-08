@@ -9,7 +9,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render } from "preact";
+import { render, VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolCellType } from "./index.d";
 import { adaptivePaletteGlobals } from "./GlobalData";
@@ -29,9 +29,9 @@ type CommandGoBackCellPropsType = {
  * Event handler for an CommandGoBackCellPropsType button/cell that, when clicked,
  * goes back one palette.
  */
-const goBackToPalette = async (event) => {
+const goBackToPalette = async (event: Event): Promise<void> => {
   const { paletteStore, navigationStack } = adaptivePaletteGlobals;
-  const button = event.currentTarget;
+  const button = event.currentTarget as HTMLElement;
   speak(button.innerText);
 
   const paletteToGoBackTo = navigationStack.peek();
@@ -48,7 +48,7 @@ const goBackToPalette = async (event) => {
   }
 };
 
-export function CommandGoBackCell (props: CommandGoBackCellPropsType) {
+export function CommandGoBackCell (props: CommandGoBackCellPropsType): VNode {
 
   const {
     columnStart, columnSpan, rowStart, rowSpan, bciAvId, label

@@ -16,7 +16,7 @@ import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals } from "./GlobalData";
 import { Palette } from "./Palette";
 
-describe("Palette component", () => {
+describe("Palette component", (): void => {
 
   // The test palette defines three cells, but they collectively define a
   // palette of four rows and six columns.
@@ -68,11 +68,11 @@ describe("Palette component", () => {
   };
   const NUM_CELLS = Object.keys(testPalette.cells).length;
 
-  beforeAll(async () => {
+  beforeAll(async (): Promise<void> => {
     await initAdaptivePaletteGlobals();
   });
 
-  test("Render palette", async() => {
+  test("Render palette", async(): Promise<void> => {
 
     // render() the palette and then wait until its first cell is available to
     // ensure that the entire palette is in the DOM.

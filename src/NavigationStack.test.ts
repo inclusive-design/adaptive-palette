@@ -56,45 +56,45 @@ const testPalette2 = {
   }
 };
 
-describe("NavigationStack module - basics", () => {
+describe("NavigationStack module - basics", (): void => {
 
   const navigation = new NavigationStack();
 
-  test("Empty NavigationStack", () => {
+  test("Empty NavigationStack", (): void => {
     expect(navigation.isEmpty()).toBe(true);
     expect(navigation.currentPalette).toBe(null);
   });
 
-  test("Current palette accessors", () => {
+  test("Current palette accessors", (): void => {
     navigation.currentPalette = testPalette1;
     expect(navigation.currentPalette).toBe(testPalette1);
     navigation.currentPalette = null;
     expect(navigation.currentPalette).toBe(null);
   });
 
-  test("Flush and reset the navigation stack", () => {
+  test("Flush and reset the navigation stack", (): void => {
     navigation.flushReset(testPalette2);
     expect(navigation.isEmpty()).toBe(true);
     expect(navigation.currentPalette).toBe(testPalette2);
   });
 });
 
-describe("NavigationStack module - pushing and popping", () => {
+describe("NavigationStack module - pushing and popping", (): void => {
 
   const navigation = new NavigationStack();
 
-  beforeEach (() => {
+  beforeEach ((): void => {
     navigation.flushReset(null);
   });
 
-  test("Non-empty NavigationStack", () => {
+  test("Non-empty NavigationStack", (): void => {
     navigation.push(testPalette1);
     expect(navigation.isEmpty()).toBe(false);
     expect(navigation.peek()).toBe(testPalette1);
     expect(navigation.currentPalette).toBe(null);
   });
 
-  test("Pop the top of the stack", () => {
+  test("Pop the top of the stack", (): void => {
     navigation.push(testPalette1);
     const topPalette = navigation.pop();
     expect(topPalette).toBe(testPalette1);
@@ -103,7 +103,7 @@ describe("NavigationStack module - pushing and popping", () => {
     expect(navigation.currentPalette).toBe(null);
   });
 
-  test("Multiple layers and a current palette", () => {
+  test("Multiple layers and a current palette", (): void => {
     navigation.push(testPalette1);
     navigation.push(testPalette2);
     navigation.currentPalette = testPalette1;
@@ -113,7 +113,7 @@ describe("NavigationStack module - pushing and popping", () => {
     expect(navigation.currentPalette).toBe(testPalette1);
   });
 
-  test("Check invalid peek()", () => {
+  test("Check invalid peek()", (): void => {
     navigation.push(testPalette1);
     navigation.push(testPalette2);
     expect(navigation.isEmpty()).toBe(false);
@@ -121,7 +121,7 @@ describe("NavigationStack module - pushing and popping", () => {
     expect(navigation.peek(1024)).toBe(undefined);
   });
 
-  test("Check pop and set current utility function", () => {
+  test("Check pop and set current utility function", (): void => {
     navigation.currentPalette = testPalette1;
     navigation.push(testPalette1);
     navigation.push(testPalette2);
@@ -131,7 +131,7 @@ describe("NavigationStack module - pushing and popping", () => {
     expect(navigation.currentPalette).toBe(testPalette2);
   });
 
-  test("Check peeking at the bottom of the stack", () => {
+  test("Check peeking at the bottom of the stack", (): void => {
     expect(navigation.isEmpty()).toBe(true);
     expect(navigation.peekLast()).toBe(undefined);
     navigation.push(testPalette1);
