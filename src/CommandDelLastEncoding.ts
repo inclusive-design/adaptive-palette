@@ -23,7 +23,7 @@ type CommandDelLastEncodingProps = {
 
 export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNode {
   const { id, options } = props;
-  const { label, bciAvId, columnStart, columnSpan, rowStart, rowSpan } = options;
+  const { label, bciAvId, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
 
   const paletteState = usePaletteState();
 
@@ -37,7 +37,12 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNo
   };
 
   return html`
-    <button id="${id}" class="btn-command" style="${gridStyles}" onClick=${cellClicked}>
+    <button
+      id="${id}"
+      class="btn-command"
+      style="${gridStyles}"
+      aria-controls=${ariaControls}
+      onClick=${cellClicked}>
       <${BlissSymbol} bciAvId=${bciAvId} label=${label}/>
     </button>
   `;

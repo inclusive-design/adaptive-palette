@@ -26,7 +26,8 @@ describe("CommandDelLastEncoding render tests", (): void => {
       "rowStart": 2,
       "rowSpan": 1,
       "columnStart": 13,
-      "columnSpan": 1
+      "columnSpan": 1,
+      "ariaControls": "content-encoding-area"
     }
   };
 
@@ -57,6 +58,9 @@ describe("CommandDelLastEncoding render tests", (): void => {
     // Check the grid cell styles.
     expect(button.style["grid-column"]).toBe("13 / span 1");
     expect(button.style["grid-row"]).toBe("2 / span 1");
+
+    // Check aria-controls
+    expect(button.getAttribute("aria-controls")).toBe(testCell.options.ariaControls);
 
     // Check disabled state (should be enabled)
     expect(button.getAttribute("disabled")).toBe(null);

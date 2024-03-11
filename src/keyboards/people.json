@@ -18,7 +18,8 @@
             "rowStart": 2,
             "rowSpan": 1,
             "columnStart": 13,
-            "columnSpan": 1
+            "columnSpan": 1,
+            "ariaControls": "bmw-encoding-area"
         }
     },
     "command-clear-encoding": {
@@ -29,7 +30,8 @@
             "rowStart": 2,
             "rowSpan": 1,
             "columnStart": 14,
-            "columnSpan": 1
+            "columnSpan": 1,
+            "ariaControls": "bmw-encoding-area"
         }
     },
     "couple-30a32c78-56fe-4622-9fba-0416b68d72fc": {

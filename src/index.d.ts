@@ -18,7 +18,8 @@ export type BlissSymbolCellType = {
     rowStart: number,
     rowSpan: number,
     bciAvId: BciAvIdType,
-    branchTo?: string
+    branchTo?: string,
+    ariaControls?: string
 };
 
 export type ContentBmwEncodingType = {

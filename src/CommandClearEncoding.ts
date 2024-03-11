@@ -23,7 +23,7 @@ type CommandClearEncodingProps = {
 
 export function CommandClearEncoding (props: CommandClearEncodingProps): VNode {
   const { id, options } = props;
-  const { label, bciAvId, columnStart, columnSpan, rowStart, rowSpan } = options;
+  const { label, bciAvId, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
 
   const paletteState = usePaletteState();
   const setFullEncoding = paletteState?.setFullEncoding;
@@ -36,8 +36,13 @@ export function CommandClearEncoding (props: CommandClearEncodingProps): VNode {
   };
 
   return html`
-    <button id="${id}" class="btn-command" style="${gridStyles}" onClick=${cellClicked}>
-      <${BlissSymbol} bciAvId=${bciAvId} label=${label}/>
+    <button
+      id="${id}"
+      class="btn-command"
+      style="${gridStyles}"
+      aria-controls=${ariaControls}
+      onClick=${cellClicked}>
+      <${BlissSymbol} bciAvId=${bciAvId} label=${label} />
     </button>
   `;
 }
