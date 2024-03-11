@@ -19,9 +19,9 @@ await initAdaptivePaletteGlobals("mainPaletteDisplayArea");
 import { PaletteStore } from "./PaletteStore";
 import { Palette } from "./Palette";
 
-import paletteFileMap from "./keyboards/palette_file_map.json";
-import firstLayer from "./keyboards/palettes.json";
-import goBackCell from "./keyboards/backup_palette.json";
+import paletteFileMap from "./palettes/palette_file_map.json";
+import firstLayer from "./palettes/palettes.json";
+import goBackCell from "./palettes/backup_palette.json";
 
 PaletteStore.paletteFileMap = paletteFileMap;
 adaptivePaletteGlobals.paletteStore.addPalette(firstLayer);
