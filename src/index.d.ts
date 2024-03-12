@@ -11,23 +11,23 @@
 
 export type BciAvIdType = number | (string|number)[];
 
-export type BlissSymbolCellType = {
-    label: string,
-    columnStart: number,
-    columnSpan: number,
-    rowStart: number,
-    rowSpan: number,
-    bciAvId: BciAvIdType,
-    branchTo?: string,
-    ariaControls?: string
+export type BlissSymbolInfoType = {
+  label: string,
+  bciAvId: BciAvIdType
+}
+export type LayoutInfoType = {
+  columnStart: number,
+  columnSpan: number,
+  rowStart: number,
+  rowSpan: number,
 };
 
-export type ContentBmwEncodingType = {
-    columnStart: number,
-    columnSpan: number,
-    rowStart: number,
-    rowSpan: number,
+export type BranchToInfoType = {
+  branchTo: string,
+  ariaControls?: string
 };
+
+export type BlissSymbolCellType = LayoutInfoType & BranchToInfoType & BlissSymbolInfoType;
 
 export type JsonPaletteType = {
   name: string,
@@ -39,10 +39,10 @@ export type JsonPaletteType = {
   }
 };
 
-export type EncodingType = {
+export type ContentBmwEncodingType = LayoutInfoType;
+
+export type EncodingType = BlissSymbolInfoType & {
   id: string,
-  label: string,
-  bciAvId: BciAvIdType
 };
 
 export type PaletteFileMapType = {

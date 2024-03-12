@@ -19,7 +19,6 @@ import { BlissSymbol } from "./BlissSymbol";
 import { speak } from "./GlobalUtils";
 import "./ActionBranchToPaletteCell.scss";
 
-// TODO:  this is identical to `ActionBmwCodeCellPropsType`.  Should it be?
 type ActionBranchToPalettePropsType = {
   id: string,
   options: BlissSymbolCellType

@@ -11,7 +11,7 @@
 
 import { render, VNode } from "preact";
 import { html } from "htm/preact";
-import { BlissSymbolCellType } from "./index.d";
+import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { adaptivePaletteGlobals } from "./GlobalData";
 import { importPaletteFromJsonFile } from "./GlobalUtils";
 import { Palette } from "./Palette";
@@ -19,10 +19,9 @@ import { BlissSymbol } from "./BlissSymbol";
 import { speak } from "./GlobalUtils";
 import "./ActionBmwCodeCell.scss";
 
-// TODO:  this is identical to `ActionBmwCodeCellPropsType`.  Should it be?
 type CommandGoBackCellPropsType = {
   id: string,
-  options: BlissSymbolCellType
+  options: BlissSymbolInfoType & LayoutInfoType
 };
 
 /*

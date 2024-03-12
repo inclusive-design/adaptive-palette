@@ -13,12 +13,14 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { usePaletteState } from "./GlobalData";
-import { BlissSymbolCellType } from "./index.d";
+import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { generateGridStyle, speak } from "./GlobalUtils";
 
 type CommandClearEncodingProps = {
   id: string,
-  options: BlissSymbolCellType
+  options: BlissSymbolInfoType & LayoutInfoType & {
+    ariaControls: string
+  }
 }
 
 export function CommandClearEncoding (props: CommandClearEncodingProps): VNode {
