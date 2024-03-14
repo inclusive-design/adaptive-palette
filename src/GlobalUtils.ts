@@ -8,7 +8,7 @@
  * You may obtain a copy of the License at
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
-
+import { JsonPaletteType } from "./index.d";
 /**
  * Global Utility Functions
  */
@@ -21,7 +21,7 @@
  * @param {number} rowSpan - The number of rows that the item will span across.
  * @return {String} - The grid css.
  */
-function generateGridStyle(columnStart: number, columnSpan: number, rowStart: number, rowSpan: number) {
+function generateGridStyle(columnStart: number, columnSpan: number, rowStart: number, rowSpan: number): string {
   return `grid-column: ${columnStart} / span ${columnSpan};grid-row: ${rowStart} / span ${rowSpan};`;
 }
 
@@ -30,8 +30,8 @@ function generateGridStyle(columnStart: number, columnSpan: number, rowStart: nu
  * on, cancel it.
  * @param {String} text - The text to be announced.
  */
-function speak(text) {
-  // If the text-to-speech feature is unavailable, do nothing. This happens when running node tests. 
+function speak(text): void {
+  // If the text-to-speech feature is unavailable, do nothing. This happens when running node tests.
   if (!window.speechSynthesis) {
     return;
   }
@@ -45,7 +45,30 @@ function speak(text) {
   window.speechSynthesis.speak(utterThis);
 }
 
+/**
+ * Import a palette from the given json file using dynamic `import()`.
+ *
+ * Note:  There are restrictions regarding the arguments to `import()`:
+ * - the path must start with "./" or "../" and not be part of the argument,
+ * - the path must end with "/" and not be part of the argument,
+ * - the file name extension must be added here (not part of the argument)
+ * See the following for more information:
+ * https://github.com/rollup/plugins/tree/master/packages/dynamic-import-vars#limitations
+ *
+ * @param {String} jsonFile  - Name of the JSON file to load, without the
+ *                            ".json" extension (added herein).
+ * @param {String} path      - Path to the file to without any leading nor
+ *                             trailing "/".
+ * @return {JsonPaletteType} - The palette itself, or `null` if it could not be
+ *                             loaded.
+ */
+async function importPaletteFromJsonFile (jsonFile: string, path: string): Promise<JsonPaletteType> {
+  const paletteJson = await import(`./${path}/${jsonFile}.json`);
+  return paletteJson;
+}
+
 export {
   generateGridStyle,
-  speak
+  speak,
+  importPaletteFromJsonFile
 };

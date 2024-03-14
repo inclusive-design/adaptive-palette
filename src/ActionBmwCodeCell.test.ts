@@ -16,7 +16,7 @@ import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals } from "./GlobalData";
 import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
 
-describe("ActionBmwCodeDell render tests", () => {
+describe("ActionBmwCodeDell render tests", (): void => {
 
   const TEST_CELL_ID = "uuid-of-some-kind";
   const testCell = {
@@ -30,11 +30,11 @@ describe("ActionBmwCodeDell render tests", () => {
     }
   };
 
-  beforeAll(async () => {
+  beforeAll(async (): Promise<void> => {
     await initAdaptivePaletteGlobals();
   });
 
-  test("Single ActionBmwCodeCell rendering", async () => {
+  test("Single ActionBmwCodeCell rendering", async (): Promise<void> => {
 
     render(html`
       <${ActionBmwCodeCell}

@@ -10,13 +10,23 @@
  */
 import { render } from "preact";
 import { html } from "htm/preact";
-import { initAdaptivePaletteGlobals } from "./GlobalData";
+import { initAdaptivePaletteGlobals, adaptivePaletteGlobals} from "./GlobalData";
 import "./index.scss";
 
 // Initialize any globals used elsewhere in the code.
-await initAdaptivePaletteGlobals();
+await initAdaptivePaletteGlobals("mainPaletteDisplayArea");
 
+import { PaletteStore } from "./PaletteStore";
 import { Palette } from "./Palette";
-import bmwJson from "./keyboards/bmw_palette.json";
 
-render(html`<${Palette} json=${bmwJson}/>`, document.getElementById("bmwKeyCodes"));
+import paletteFileMap from "./palettes/palette_file_map.json";
+import firstLayer from "./palettes/palettes.json";
+import goBackCell from "./palettes/backup_palette.json";
+
+PaletteStore.paletteFileMap = paletteFileMap;
+adaptivePaletteGlobals.paletteStore.addPalette(firstLayer);
+adaptivePaletteGlobals.paletteStore.addPalette(goBackCell);
+
+adaptivePaletteGlobals.navigationStack.currentPalette = firstLayer;
+render(html`<${Palette} json=${goBackCell} />`, document.getElementById("backup_palette"));
+render(html`<${Palette} json=${firstLayer}/>`, document.getElementById("mainPaletteDisplayArea"));

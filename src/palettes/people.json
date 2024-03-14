@@ -1,0 +1,171 @@
+{
+  "name": "People",
+  "cells": {
+    "bmw-encoding-area": {
+        "type": "ContentBmwEncoding",
+        "options": {
+            "rowStart": 2,
+            "rowSpan": 1,
+            "columnStart": 1,
+            "columnSpan": 12
+        }
+    },
+    "command-del-last-encoding": {
+        "type": "CommandDelLastEncoding",
+        "options": {
+            "label": "Delete",
+            "bciAvId": 12613,
+            "rowStart": 2,
+            "rowSpan": 1,
+            "columnStart": 13,
+            "columnSpan": 1,
+            "ariaControls": "bmw-encoding-area"
+        }
+    },
+    "command-clear-encoding": {
+        "type": "CommandClearEncoding",
+        "options": {
+            "label": "Clear",
+            "bciAvId": 13665,
+            "rowStart": 2,
+            "rowSpan": 1,
+            "columnStart": 14,
+            "columnSpan": 1,
+            "ariaControls": "bmw-encoding-area"
+        }
+    },
+    "couple-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Couple",
+          "bciAvId": 13426,
+          "rowStart": 3,
+          "rowSpan": 1,
+          "columnStart": 2,
+          "columnSpan": 4
+        }
+    },
+    "woman-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Woman",
+          "bciAvId": 18269,
+          "rowStart": 3,
+          "rowSpan": 1,
+          "columnStart": 6,
+          "columnSpan": 4
+        }
+    },
+    "assistant-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Assistant",
+          "bciAvId": 14706,
+          "rowStart": 3,
+          "rowSpan": 1,
+          "columnStart": 10,
+          "columnSpan": 4
+        }
+    },
+    "girl-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Girl",
+          "bciAvId":  14439 ,
+          "rowStart": 4,
+          "rowSpan": 1,
+          "columnStart": 2,
+          "columnSpan": 4
+        }
+    },
+    "person-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Person",
+          "bciAvId":  16161,
+          "rowStart": 4,
+          "rowSpan": 1,
+          "columnStart": 6,
+          "columnSpan": 4
+        }
+    },
+    "boy-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Boy",
+          "bciAvId":  12888,
+          "rowStart": 4,
+          "rowSpan": 1,
+          "columnStart": 10,
+          "columnSpan": 4
+        }
+    },
+    "crowd-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Crowd",
+          "bciAvId":  14646,
+          "rowStart": 5,
+          "rowSpan": 1,
+          "columnStart": 2,
+          "columnSpan": 4
+        }
+    },
+    "man-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Man",
+          "bciAvId":  15416,
+          "rowStart": 5,
+          "rowSpan": 1,
+          "columnStart": 6,
+          "columnSpan": 4
+        }
+    },
+    "police-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Police",
+          "bciAvId":  16217,
+          "rowStart": 5,
+          "rowSpan": 1,
+          "columnStart": 10,
+          "columnSpan": 4
+        }
+    },
+    "myfamily-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBranchToPaletteCell",
+      "options": {
+        "label": "My Family",
+        "branchTo": "My Family Palette",
+        "bciAvId": 20572,
+        "rowStart": 6,
+        "rowSpan": 1,
+        "columnStart": 6,
+        "columnSpan": 4
+      }
+    },
+    "back-up-10a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "CommandGoBackCell",
+      "options": {
+        "label": "Back Up",
+        "bciAvId":  12612,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "back-up-20a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "CommandGoBackCell",
+      "options": {
+        "label": "Back Up",
+        "bciAvId":  12612,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 14,
+        "columnSpan": 1
+      }
+    }
+  }
+}

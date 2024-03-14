@@ -9,6 +9,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+import { VNode } from "preact";
 import { html } from "htm/preact";
 import { getSvgElement } from "./SvgUtils";
 import { BciAvIdType } from "./index.d";
@@ -26,7 +27,7 @@ type BlissSymbolPropsType = {
   labelledBy?: string
 }
 
-export function BlissSymbol (props: BlissSymbolPropsType) {
+export function BlissSymbol (props: BlissSymbolPropsType): VNode {
   const { bciAvId, label, isPresentation, labelledBy } = props;
   const svgElement = getSvgElement(bciAvId);
 
@@ -35,7 +36,7 @@ export function BlissSymbol (props: BlissSymbolPropsType) {
     // Deal with aria markup, depending on whether the SVG is for presentation only or
     // associates with a labelled area.
     if (isPresentation === "true") {
-      svgElement.setAttribute("aria-hidden", true);
+      svgElement.setAttribute("aria-hidden", "true");
     } else {
       svgElement.setAttribute("role", `${GRAPHIC_ROLE}`);
       svgElement.setAttribute("aria-labelledby", labelledBy);

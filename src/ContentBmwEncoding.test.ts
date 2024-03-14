@@ -15,7 +15,7 @@ import { html } from "htm/preact";
 import { ContentBmwEncoding } from "./ContentBmwEncoding";
 import { initAdaptivePaletteGlobals } from "./GlobalData";
 
-test("The BMW Encoding content area is rendered correctly", async () => {
+test("The BMW Encoding content area is rendered correctly", async (): Promise<void> => {
   await initAdaptivePaletteGlobals();
 
   const cellId = "uuid-of-bmw-encoding-area";

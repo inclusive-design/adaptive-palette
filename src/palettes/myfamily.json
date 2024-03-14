@@ -1,0 +1,149 @@
+{
+  "name": "My Family Palette",
+  "cells": {
+    "bmw-encoding-area": {
+        "type": "ContentBmwEncoding",
+        "options": {
+            "rowStart": 2,
+            "rowSpan": 1,
+            "columnStart": 1,
+            "columnSpan": 12
+        }
+    },
+    "command-del-last-encoding": {
+        "type": "CommandDelLastEncoding",
+        "options": {
+            "label": "Delete",
+            "bciAvId": 12613,
+            "rowStart": 2,
+            "rowSpan": 1,
+            "columnStart": 13,
+            "columnSpan": 1,
+            "ariaControls": "bmw-encoding-area"
+        }
+    },
+    "command-clear-encoding": {
+        "type": "CommandClearEncoding",
+        "options": {
+            "label": "Clear",
+            "bciAvId": 13665,
+            "rowStart": 2,
+            "rowSpan": 1,
+            "columnStart": 14,
+            "columnSpan": 1,
+            "ariaControls": "bmw-encoding-area"
+        }
+    },
+    "aunt-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Aunt",
+          "bciAvId": 12596,
+          "rowStart": 3,
+          "rowSpan": 1,
+          "columnStart": 1,
+          "columnSpan": 5
+        }
+    },
+    "mother-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Mother",
+          "bciAvId": 15662,
+          "rowStart": 3,
+          "rowSpan": 1,
+          "columnStart": 6,
+          "columnSpan": 5
+        }
+    },
+    "cousinF-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Cousin",
+          "bciAvId": 25280,
+          "rowStart": 3,
+          "rowSpan": 1,
+          "columnStart": 11,
+          "columnSpan": 4
+        }
+    },
+    "sister-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Sister",
+          "bciAvId":  16994 ,
+          "rowStart": 4,
+          "rowSpan": 1,
+          "columnStart": 1,
+          "columnSpan": 5
+        }
+    },
+    "me-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Me",
+          "bciAvId":  14916,
+          "rowStart": 4,
+          "rowSpan": 1,
+          "columnStart": 6,
+          "columnSpan": 5
+        }
+    },
+    "brother-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Brother",
+          "bciAvId":  12909,
+          "rowStart": 4,
+          "rowSpan": 1,
+          "columnStart": 11,
+          "columnSpan": 4
+        }
+    },
+    "cousinM-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Cousin",
+          "bciAvId":  25279,
+          "rowStart": 5,
+          "rowSpan": 1,
+          "columnStart": 1,
+          "columnSpan": 5
+        }
+    },
+    "father-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Father",
+          "bciAvId":  14157,
+          "rowStart": 5,
+          "rowSpan": 1,
+          "columnStart": 6,
+          "columnSpan": 5
+        }
+    },
+    "uncle-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Uncle",
+          "bciAvId":  17967,
+          "rowStart": 5,
+          "rowSpan": 1,
+          "columnStart": 11,
+          "columnSpan": 4
+        }
+    },
+    "people-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+      "type": "ActionBranchToPaletteCell",
+      "options": {
+        "label": "People",
+        "branchTo": "People",
+        "bciAvId": 16161,
+        "rowStart": 6,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 14
+      }
+    }
+  }
+}

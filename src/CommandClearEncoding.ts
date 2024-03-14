@@ -9,34 +9,42 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { usePaletteState } from "./GlobalData";
-import { BlissSymbolCellType } from "./index.d";
+import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { generateGridStyle, speak } from "./GlobalUtils";
 
 type CommandClearEncodingProps = {
   id: string,
-  options: BlissSymbolCellType
+  options: BlissSymbolInfoType & LayoutInfoType & {
+    ariaControls: string
+  }
 }
 
-export function CommandClearEncoding (props: CommandClearEncodingProps) {
+export function CommandClearEncoding (props: CommandClearEncodingProps): VNode {
   const { id, options } = props;
-  const { label, bciAvId, columnStart, columnSpan, rowStart, rowSpan } = options;
+  const { label, bciAvId, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
 
   const paletteState = usePaletteState();
   const setFullEncoding = paletteState?.setFullEncoding;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
-  const cellClicked = () => {
+  const cellClicked = (): void => {
     setFullEncoding([]);
     speak(label);
   };
 
   return html`
-    <button id="${id}" class="btn-command" style="${gridStyles}" onClick=${cellClicked}>
-      <${BlissSymbol} bciAvId=${bciAvId} label=${label}/>
+    <button
+      id="${id}"
+      class="btn-command"
+      style="${gridStyles}"
+      aria-controls=${ariaControls}
+      onClick=${cellClicked}>
+      <${BlissSymbol} bciAvId=${bciAvId} label=${label} />
     </button>
   `;
 }

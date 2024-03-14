@@ -16,7 +16,7 @@ import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals } from "./GlobalData";
 import { BlissSymbol, GRAPHIC_ROLE } from "./BlissSymbol";
 
-describe("BlissSymbol render tests", () => {
+describe("BlissSymbol render tests", (): void => {
   const singleBciAvId = {
     bciAvId: 12335,
     label: "VERB"
@@ -34,7 +34,7 @@ describe("BlissSymbol render tests", () => {
     await initAdaptivePaletteGlobals();
   });
 
-  test(`BlissSymbol defined by a single BCI_AV_ID (${singleBciAvId.label})`, async () => {
+  test(`BlissSymbol defined by a single BCI_AV_ID (${singleBciAvId.label})`, async (): Promise<void> => {
     render(html`
       <${BlissSymbol}
         bciAvId="${singleBciAvId.bciAvId}"
@@ -52,7 +52,7 @@ describe("BlissSymbol render tests", () => {
     expect(parentChildren[0].nodeName).toBe("svg");
   });
 
-  test("BlissSymbol when the SVG is unknown", async () => {
+  test("BlissSymbol when the SVG is unknown", async (): Promise<void> => {
     render(html`
       <${BlissSymbol}
         bciAvId="${UNKNOWN_BCI_AV_ID}"
@@ -67,7 +67,7 @@ describe("BlissSymbol render tests", () => {
     expect(svgElement).toBe(null);
   });
 
-  test(`BlissSymbol defined by an of BCI_AV_IDs (${arrayBciAvId.label})`, async () => {
+  test(`BlissSymbol defined by an of BCI_AV_IDs (${arrayBciAvId.label})`, async (): Promise<void> => {
     render(html`
       <${BlissSymbol}
         bciAvId="${arrayBciAvId.bciAvId}"
@@ -83,7 +83,7 @@ describe("BlissSymbol render tests", () => {
     expect(parentChildren[0].nodeName).toBe("svg");
   });
 
-  test("BlissSymbol aria: when svg has no role)", async () => {
+  test("BlissSymbol aria: when svg has no role)", async (): Promise<void> => {
     render(html`
       <${BlissSymbol}
         bciAvId="${arrayBciAvId.bciAvId}"
@@ -98,7 +98,7 @@ describe("BlissSymbol render tests", () => {
     expect(svgElement.getAttribute("aria-labelledby")).toBe(null);
   });
 
-  test("BlissSymbol aria: when svg has a graphic role)", async () => {
+  test("BlissSymbol aria: when svg has a graphic role)", async (): Promise<void> => {
     render(html`
       <${BlissSymbol}
         bciAvId="${arrayBciAvId.bciAvId}"
