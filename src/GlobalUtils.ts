@@ -66,6 +66,9 @@ async function importPaletteFromJsonFile (jsonFile: string): Promise<JsonPalette
   // mitigate the warning while ensuring the code remains sensible.
   // See https://github.com/rollup/plugins/tree/master/packages/dynamic-import-vars#limitations
   // for supported dynamic import formats.
+  // Note: the file extension ".json" needs to be concatenated separately for the dynamic
+  // import of JSON files to work properly.
+  // See https://github.com/rollup/plugins/tree/master/packages/dynamic-import-vars#limitations
   const paletteJson = await import(/* @vite-ignore */`${jsonFile}` + ".json");
   return paletteJson;
 }
