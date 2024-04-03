@@ -46,6 +46,5 @@ export type EncodingType = BlissSymbolInfoType & {
 };
 
 export type PaletteFileMapType = {
-  paletteName: string,
-  filePath: string
+  [paletteName: string, filePath: string]
 }

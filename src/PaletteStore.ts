@@ -9,7 +9,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { JsonPaletteType } from "./index.d";
+import { JsonPaletteType, PaletteFileMapType } from "./index.d";
 
 export class PaletteStore {
 
@@ -19,7 +19,7 @@ export class PaletteStore {
   static paletteMap = {};
 
   // Singleton map of palette names and their files.
-  static paletteFileMap; PaletteFileMapType = {};
+  static paletteFileMap: PaletteFileMapType = {};
 
   /**
    * Report if the PaletteStore is empty.
