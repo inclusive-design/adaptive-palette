@@ -22,11 +22,14 @@ import { Palette } from "./Palette";
 import paletteFileMap from "./palettes/palette_file_map.json";
 import firstLayer from "./palettes/palettes.json";
 import goBackCell from "./palettes/backup_palette.json";
+import outputArea from "./palettes/output_area.json";
 
 PaletteStore.paletteFileMap = paletteFileMap;
 adaptivePaletteGlobals.paletteStore.addPalette(firstLayer);
 adaptivePaletteGlobals.paletteStore.addPalette(goBackCell);
+adaptivePaletteGlobals.paletteStore.addPalette(outputArea);
 
 adaptivePaletteGlobals.navigationStack.currentPalette = firstLayer;
+render(html`<${Palette} json=${outputArea} />`, document.getElementById("output_palette"));
 render(html`<${Palette} json=${goBackCell} />`, document.getElementById("backup_palette"));
 render(html`<${Palette} json=${firstLayer}/>`, document.getElementById("mainPaletteDisplayArea"));
