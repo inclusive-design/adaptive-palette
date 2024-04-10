@@ -13,11 +13,7 @@
  * Populate and export global data
  */
 
-import { html } from "htm/preact";
-import { createContext, VNode } from "preact";
-import { useContext, useState } from "preact/hooks";
 import { signal } from "@preact/signals";
-import { EncodingType } from "./index.d";
 
 /**
  * The map between cell types (string) and actual components that render corresponding cells
