@@ -78,6 +78,6 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
 /**
  * Signal for updating the contents of the ContentBmwEncoding area.  The value
  * of the signal is the current array of EncodingType objects to display in the
- * ContentBmwEncoding area.
+ * ContentBmwEncoding area, an empty array to begin with.
  */
 export const changeEncodingContents = signal([]);
