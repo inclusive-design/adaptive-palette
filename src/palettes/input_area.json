@@ -1,5 +1,5 @@
 {
-  "name": "Output Area",
+  "name": "Input Area",
   "cells": {
     "bmw-encoding-area": {
       "type": "ContentBmwEncoding",
