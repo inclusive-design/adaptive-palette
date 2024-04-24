@@ -13,7 +13,7 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
-import { usePaletteState } from "./GlobalData";
+import { changeEncodingContents } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
 import "./ActionBmwCodeCell.scss";
 
@@ -24,8 +24,6 @@ type ActionBmwCodeCellPropsType = {
 };
 
 export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType): VNode {
-  const paletteState = usePaletteState();
-
   const {
     columnStart, columnSpan, rowStart, rowSpan, bciAvId, label
   } = props.options;
@@ -38,8 +36,7 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType): VNode {
       "label": props.options.label,
       "bciAvId": props.options.bciAvId
     };
-    const fullEncoding = paletteState.fullEncoding;
-    paletteState.setFullEncoding([...fullEncoding, payload]);
+    changeEncodingContents.value = [...changeEncodingContents.value, payload];
     speak(props.options.label);
   };
 

@@ -12,7 +12,7 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
-import { usePaletteState } from "./GlobalData";
+import { changeEncodingContents } from "./GlobalData";
 import { ContentBmwEncodingType } from "./index.d";
 import { generateGridStyle } from "./GlobalUtils";
 import "./ContentBmwEncoding.scss";
@@ -23,8 +23,6 @@ type ContentBmwEncodingProps = {
 }
 
 export function ContentBmwEncoding (props: ContentBmwEncodingProps): VNode {
-  const paletteState = usePaletteState();
-
   const { id, options } = props;
   const { columnStart, columnSpan, rowStart, rowSpan } = options;
 
@@ -32,7 +30,7 @@ export function ContentBmwEncoding (props: ContentBmwEncodingProps): VNode {
 
   return html`
     <div id="${id}" class="bmwEncodingArea" role="textbox" aria-label="Input Area" aria-readonly="true" style="${gridStyles}">
-      ${paletteState.fullEncoding.map((payload) => html`
+      ${changeEncodingContents.value.map((payload) => html`
         <div class="blissSymbol"><${BlissSymbol} bciAvId=${payload.bciAvId} label=${payload.label} isPresentation="true" /></div>
       `)}
     </div>
