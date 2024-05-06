@@ -13,10 +13,7 @@
  * Populate and export global data
  */
 
-import { html } from "htm/preact";
-import { createContext, VNode } from "preact";
-import { useContext, useState } from "preact/hooks";
-import { EncodingType } from "./index.d";
+import { signal } from "@preact/signals";
 
 /**
  * The map between cell types (string) and actual components that render corresponding cells
@@ -79,32 +76,8 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
 }
 
 /**
- * Palette shared states
+ * Signal for updating the contents of the ContentBmwEncoding area.  The value
+ * of the signal is the current array of EncodingType objects to display in the
+ * ContentBmwEncoding area, an empty array to begin with.
  */
-// Create a context to pass the palette states to palette children components
-type PaletteStateType = {
-  fullEncoding: EncodingType[],
-  setFullEncoding: (param: object[]) => void
-};
-
-const defaultPaletteStateContext = {
-  fullEncoding: [],
-  setFullEncoding: () => {}
-};
-const paletteStateContext = createContext<PaletteStateType>(defaultPaletteStateContext);
-
-// Create a provider component that will wrap the components needing access to the global states
-export function paletteStateProvider(props: {children}): VNode {
-  const [fullEncoding, setFullEncoding] = useState([]);
-
-  return html`
-    <${paletteStateContext.Provider} value=${{ fullEncoding, setFullEncoding }}>
-      ${props.children}
-    </${paletteStateContext.Provider}>
-  `;
-}
-
-// Create a custom hook to easily access the global states within components
-export function usePaletteState(): PaletteStateType {
-  return useContext(paletteStateContext);
-}
+export const changeEncodingContents = signal([]);

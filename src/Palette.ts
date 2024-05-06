@@ -12,7 +12,7 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { JsonPaletteType } from "./index.d";
-import { cellTypeRegistry, adaptivePaletteGlobals, paletteStateProvider } from "./GlobalData";
+import { cellTypeRegistry, adaptivePaletteGlobals } from "./GlobalData";
 import "./Palette.scss";
 
 type PalettePropsType = {
@@ -72,13 +72,11 @@ export function Palette (props: PalettePropsType): VNode {
   paletteStore.addPalette(paletteDefinition);
 
   return html`
-  <${paletteStateProvider}>
     <div
       data-palettename="${paletteDefinition.name}"
       class="paletteContainer"
       style="grid-template-columns: repeat(${rowsCols.numColumns}, 1fr);">
         ${theCells}
     </div>
-  </${paletteStateProvider}>
   `;
 }

@@ -12,7 +12,7 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
-import { usePaletteState } from "./GlobalData";
+import { changeEncodingContents } from "./GlobalData";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { generateGridStyle, speak } from "./GlobalUtils";
 
@@ -27,14 +27,12 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNo
   const { id, options } = props;
   const { label, bciAvId, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
 
-  const paletteState = usePaletteState();
-
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
-    const newEncoding = [...paletteState.fullEncoding];
-    newEncoding.pop();
-    paletteState.setFullEncoding(newEncoding);
+    const newEncodingContents = [...changeEncodingContents.value];
+    newEncodingContents.pop();
+    changeEncodingContents.value = newEncodingContents;
     speak(label);
   };
 
