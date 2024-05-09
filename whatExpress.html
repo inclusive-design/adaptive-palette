@@ -1,0 +1,97 @@
+<html>
+<head>
+<title>Experimenting with Ollama (phi-3) in a Browser</title>
+<script>
+
+  const ollamaService = "http://localhost:11434";
+
+  // Handle click on "Ask" button
+  function askClicked(theButton) {
+    const single = "Answer with a single grammatically correct sentence."
+    console.debug("Button clicked");
+    // Empty out the response area
+    document.getElementById("phi3Output").innerText = "Working...";
+
+
+    console.debug(`Service: ${ollamaService}`);
+    const serviceCheck = fetch(ollamaService);
+    serviceCheck.then(function (checkResult) {
+      checkResult.text().then( function (textResult) {
+        console.debug(textResult);
+      });
+    });
+    if (theButton && theButton.id === "single") {
+      executeAsk(single);
+    }
+    else {
+      executeAsk();
+    }
+  };
+
+  // Function for passing the chat prompt to phi-3 using ollama service.
+  async function queryChat (query) {
+    const chatUrl = `${ollamaService}/api/chat`;
+    console.debug(`chatUrl is ${chatUrl}`);
+    const message = { role: "user", content: query };
+    const response = await fetch(chatUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "phi3",
+        messages: [message],
+        stream: true
+      })
+    });
+    console.log(`response status: ${response.status}`);
+    return response;
+  };
+
+  // Handle the "Ask" button press
+  async function executeAsk (addSingleToPrompt) {
+    let promptText = document.getElementById("prompt").value;
+    if (addSingleToPrompt) {
+      promptText += addSingleToPrompt;
+    }
+    console.debug(`executeAsk(): prompt is "${promptText}"`);
+    response = await queryChat(promptText);
+    outputResult(response, document.getElementById("phi3Output"), "No Result");
+  }
+
+  // Process the response from the ollama service and put it on the web page
+  async function outputResult(response, outputEl, defaultOutput) {
+    // TODO: response is of type 'application/nd-json'.  Either figure
+    // a way to configure ollama to return plain json or use response.ndjson()
+    // function.
+    const responseString = await response.text();
+    const arrayOfParts = responseString.split("\n");
+
+    let phi3Output = "";
+    arrayOfParts.forEach(function (part) {
+      try {
+        const aPart = JSON.parse(part);
+        console.debug(aPart.message.content);
+        phi3Output += `${aPart.message.content}`;
+      }
+      catch (error) {
+        console.error(error.message);
+      }
+    });
+    outputEl.innerText = phi3Output;
+  };
+
+</script>
+</head>
+<body>
+<h1>Experimenting with Ollama (phi-3) in a Browser</h1>
+<p>
+  <label for="prompt">Prompt:</label><br>
+  <textarea type="text" id="prompt" rows="4" cols="50"></textarea><br>
+  <button onclick="askClicked()">Ask</button>
+  <button onclick="askClicked(this)" id="single">Anwser with a single grammatically correct sentence</button>
+<p id="phi3Output">
+THIS PARAGRPAPH INTENTIONALLY LEFT BLANK
+</p>
+</body>
+</html>
