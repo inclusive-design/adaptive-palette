@@ -73,3 +73,12 @@ To preview the production build, run:
 ```bash
 npm run preview
 ```
+
+## Demonstrations
+
+The sub-folder `demos` contains code for a number of demonstrations.  See each
+demonstration's README for instructions on how to run that demo.
+
+- [Ollama Chat Service](./demos/Ollama%20Chat%20Service/README.md): a web-app
+  that runs on `localhost` for sending queries to an Ollama chatbot service,
+  also running on `localhost`.

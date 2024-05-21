@@ -9,16 +9,11 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import ollama from 'ollama/browser';
-
-console.debug("%O", ollama);
-console.debug(`Ollama import: ${window.ollama}`);
-
-const ollamaService = "http://localhost:11434";
+import ollama from "ollama/browser";
 
 // Handle click on "Ask" buttons
 function askClicked(event) {
-  const singleSentence = "Answer with a single grammatically correct sentence."
+  const singleSentence = "Answer with a single grammatically correct sentence.";
   // Empty out the response area
   document.getElementById("ollamaOutput").innerText = "Working...";
   if (event.target.id === "singleSentence") {
@@ -27,7 +22,7 @@ function askClicked(event) {
   else {
     executeAsk();
   }
-};
+}
 
 // Function for passing the chat prompt using ollama service.
 async function queryChat (query) {
@@ -38,7 +33,7 @@ async function queryChat (query) {
     stream: true
   });
   return response;
-};
+}
 
 // Handle the "Ask" button press
 async function executeAsk (addSingleToPrompt) {
@@ -52,14 +47,14 @@ async function executeAsk (addSingleToPrompt) {
 }
 
 // Process the response from the ollama service and put it on the web page
-async function outputResult(response, outputEl, defaultOutput) {
+async function outputResult(response, outputEl) {
   let LlmOutput = "";
   for await (const aPart of response) {
     console.debug(aPart.message.content);
     LlmOutput += aPart.message.content;
   }
   outputEl.innerText = LlmOutput;
-};
+}
 
 document.getElementById("justAsk").addEventListener("click", askClicked);
 document.getElementById("singleSentence").addEventListener("click", askClicked);
