@@ -1,6 +1,6 @@
 # Ollama Chat Service Demo
 
-There are two demonstrations of the chat web-app that uses Ollama as an LLM chat
+There are two demonstrations of the chat web-app that use Ollama as an LLM chat
 service.  The following instructions describe how to set up a local Ollama
 service with which the web-app can interact, send queries, and show the chat
 service's responses.
@@ -50,9 +50,9 @@ web-app, the above library must be installed.
 In the adaptive palette main directory, execute this command line instruction to
 install the ollama JavaScript package:
 
-</code>
-$ npm install ollama
-</code>
+```text
+npm install ollama
+```
 
 As with the previous version of the web-app, the web-app chat client needs to be
 launched:
@@ -70,7 +70,7 @@ browser:
 
 ## How to Chat
 
-There are two ways to chat with Ollama.  Any text added to the text field of the
+There are two ways to chat with Ollama.  All text added to the text field of the
 chat web-app client is prefixed with the question "What does this express:"
 That is, if the text box contains:
 
@@ -84,10 +84,10 @@ then the full prompt sent to the LLM is:
 What does this express: "Horse brown eat quickly oats dried"?
 ```
 
-Pressing the "Ask" button, will send the query exactly as shown above.  If the
+Pressing the "Ask" button will send the query exactly as shown above.  If the
 "Answer with a single grammatically correct sentence" button is pressed, then
-the query sent to the LLM service is modified in an attempt to have it return a
-single sentence, like so:
+the query sent to the LLM service is modified in an attempt to have the LLM
+return a single sentence, like so:
 
 ```text
 What does this express: "Horse brown eat quickly oats dried"?  Answer
