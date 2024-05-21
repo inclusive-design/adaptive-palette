@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
+ * Copyright 2024 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -15,29 +15,21 @@ console.debug("%O", ollama);
 console.debug(`Ollama import: ${window.ollama}`);
 
 const ollamaService = "http://localhost:11434";
-console.debug(`ollamaService is ${ollamaService}`);
 
-function foobar(x) {
-  return x;
-}
-console.log(foobar(5));
-
-// Handle click on "Ask" button
+// Handle click on "Ask" buttons
 function askClicked(event) {
-  const single = "Answer with a single grammatically correct sentence."
-  console.debug("Button clicked");
+  const singleSentence = "Answer with a single grammatically correct sentence."
   // Empty out the response area
-  document.getElementById("phi3Output").innerText = "Working...";
-  debugger;
-  if (event.target.id === "single") {
-    executeAsk(single);
+  document.getElementById("ollamaOutput").innerText = "Working...";
+  if (event.target.id === "singleSentence") {
+    executeAsk(singleSentence);
   }
   else {
     executeAsk();
   }
 };
 
-// Function for passing the chat prompt to phi-3 using ollama service.
+// Function for passing the chat prompt using ollama service.
 async function queryChat (query) {
   const message = { role: "user", content: query };
   const response = await ollama.chat({
@@ -45,8 +37,6 @@ async function queryChat (query) {
     messages: [message],
     stream: true
   });
-  console.log(`response status: ${response.status}`);
-  debugger;
   return response;
 };
 
@@ -57,34 +47,20 @@ async function executeAsk (addSingleToPrompt) {
     promptText += addSingleToPrompt;
   }
   console.debug(`executeAsk(): prompt is "${promptText}"`);
-  response = await queryChat(promptText);
-  outputResult(response, document.getElementById("phi3Output"), "No Result");
+  const response = await queryChat(promptText);
+  outputResult(response, document.getElementById("ollamaOutput"), "No Result");
 }
 
 // Process the response from the ollama service and put it on the web page
 async function outputResult(response, outputEl, defaultOutput) {
-  // TODO: response is of type 'application/nd-json'.  Either figure
-  // a way to configure ollama to return plain json or use response.ndjson()
-  // function.
-  const responseString = await response.text();
-  const arrayOfParts = responseString.split("\n");
-
-  let phi3Output = "";
-  arrayOfParts.forEach(function (part) {
-    try {
-      const aPart = JSON.parse(part);
-      console.debug(aPart.message.content);
-      phi3Output += `${aPart.message.content}`;
-    }
-    catch (error) {
-      console.error(error.message);
-    }
-  });
-  outputEl.innerText = phi3Output;
+  let LlmOutput = "";
+  for await (const aPart of response) {
+    console.debug(aPart.message.content);
+    LlmOutput += aPart.message.content;
+  }
+  outputEl.innerText = LlmOutput;
 };
 
-debugger;
-
 document.getElementById("justAsk").addEventListener("click", askClicked);
-document.getElementById("single").addEventListener("click", askClicked);
+document.getElementById("singleSentence").addEventListener("click", askClicked);
 
