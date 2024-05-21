@@ -31,7 +31,7 @@ However, the demo web-app must be launched in the same way as the main Adaptive
 Palette application:
 
 ```text
-\$ npm run dev
+npm run dev
 ```
 
 See the [Start a Development Server](../../README.md#start-a-development-server)
@@ -50,15 +50,15 @@ web-app, the above library must be installed.
 In the adaptive palette main directory, execute this command line instruction to
 install the ollama JavaScript package:
 
-```text
-\$ npm install ollama
-```
+</code>
+$ npm install ollama
+</code>
 
 As with the previous version of the web-app, the web-app chat client needs to be
 launched:
 
 ```text
-\$ npm run dev
+npm run dev
 ```
 
 See the [Start a Development Server](../../README.md#start-a-development-server)
