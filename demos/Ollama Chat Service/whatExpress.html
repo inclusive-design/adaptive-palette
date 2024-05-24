@@ -1,9 +1,56 @@
 <html>
 <head>
-<title>Experimenting with Ollama (phi-3) in a Browser</title>
+<title>Experimenting with Ollama in a Browser</title>
 <script>
 
   const ollamaService = "http://localhost:11434";
+  const failedToGetResponse = "Failed to get a response from Ollama *shrug*.";
+
+  // Default name of model used (aka, none).  Set in setSelectedModel() handler.
+  let nameOfModelToUse = "";
+
+  // Function to retrieve a list of LLM's available from the service
+  async function getModelNames () {
+    const modelListUrl = `${ollamaService}/api/tags`;
+    let modelNames = [];
+    try {
+      const response = await fetch(modelListUrl);
+      const list = await response.json();
+      // Structure is { "models": [ ... ] }.
+      // See https://github.com/ollama/ollama/blob/main/docs/api.md#list-local-models
+      list.models.forEach( (model) => {
+        modelNames.push(model.name);
+      });
+    }
+    catch (error) {
+      console.debug(error);
+    }
+    return modelNames;
+  }
+
+  // Initialize the model <select> element's options.
+  async function initModelSelect () {
+    const modelNames = await getModelNames();
+    const selectElement = document.getElementById("modelSelect");
+    if (modelNames.length === 0) {
+      selectElement.add(new Option("No Available Models"));
+    }
+    else {
+      modelNames.forEach( (aName) => {
+          selectElement.add(new Option(aName));
+      });
+    }
+    // The `nameOfModelToUse` is the empty string even after the <select> is
+    // initialized.  Set `nameOfModelToUse` to the shown <option>, which is the
+    // first one.
+    nameOfModelToUse = selectElement.item(0).label;
+  }
+
+  // Handle model select element when a new selection is made.
+  function setSelectedModel () {
+    const selectElement = document.getElementById("modelSelect");
+    nameOfModelToUse = selectElement.selectedOptions[0].label;
+  }
 
   // Handle click on "Ask" button
   function askClicked(theButton) {
@@ -11,7 +58,6 @@
     console.debug("Button clicked");
     // Empty out the response area
     document.getElementById("ollamaOutput").innerText = "Working...";
-
 
     console.debug(`Service: ${ollamaService}`);
     const serviceCheck = fetch(ollamaService);
@@ -33,18 +79,24 @@
     const chatUrl = `${ollamaService}/api/chat`;
     console.debug(`chatUrl is ${chatUrl}`);
     const message = { role: "user", content: query };
-    const response = await fetch(chatUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "phi3",
-        messages: [message],
-        stream: true
-      })
-    });
-    console.log(`response status: ${response.status}`);
+    let resposne = null;
+    try {
+      response = await fetch(chatUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: nameOfModelToUse,
+          messages: [message],
+          stream: true
+        })
+      });
+      console.log(`response status: ${response.status}`);
+    }
+    catch (error) {
+      console.error(error);
+    }
     return response;
   };
 
@@ -61,30 +113,42 @@
 
   // Process the response from the ollama service and put it on the web page
   async function outputResult(response, outputEl, defaultOutput) {
-    // TODO: response is of type 'application/nd-json'.  Either figure
-    // a way to configure ollama to return plain json or use response.ndjson()
-    // function.
-    const responseString = await response.text();
-    const arrayOfParts = responseString.split("\n");
-
+    // Response is of type 'application/nd-json'.  Turn it into plain text and
+    // split it into an array of strings based on the newlines.  It might be
+    // worthwhile to see if Ollama can be configured to return plain json.
     let ollamaOutput = "";
-    arrayOfParts.forEach(function (part) {
-      try {
-        const aPart = JSON.parse(part);
-        console.debug(aPart.message.content);
-        ollamaOutput += `${aPart.message.content}`;
-      }
-      catch (error) {
-        console.error(error.message);
-      }
-    });
+    if (response) {
+      const responseString = await response.text();
+      const arrayOfParts = responseString.split("\n");
+
+      arrayOfParts.forEach(function (part) {
+        try {
+          const aPart = JSON.parse(part);
+          console.debug(aPart.message.content);
+          ollamaOutput += `${aPart.message.content}`;
+        }
+        catch (error) {
+          console.error(error.message);
+          if (ollamaOutput.length === 0) {
+            ollamaOutput = failedToGetResponse;
+          }
+        }
+      });
+    }
+    else {
+      ollamaOutput = failedToGetResponse;
+    }
     outputEl.innerText = ollamaOutput;
   };
 
 </script>
 </head>
-<body>
-<h1>Experimenting with Ollama (phi-3) in a Browser</h1>
+<body onload="initModelSelect()">
+<h1>Experimenting with Ollama in a Browser</h1>
+<p>
+  <label for="modelSelect">Choose a model:</label>
+  <select id="modelSelect" onchange="setSelectedModel()"></select>
+</p>
 <p>
   <label for="prompt">Prompt:</label><br>
   <textarea type="text" id="prompt" rows="4" cols="50"></textarea><br>
