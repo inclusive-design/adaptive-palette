@@ -10,7 +10,7 @@
     const single = "Answer with a single grammatically correct sentence."
     console.debug("Button clicked");
     // Empty out the response area
-    document.getElementById("phi3Output").innerText = "Working...";
+    document.getElementById("ollamaOutput").innerText = "Working...";
 
 
     console.debug(`Service: ${ollamaService}`);
@@ -56,7 +56,7 @@
     }
     console.debug(`executeAsk(): prompt is "${promptText}"`);
     response = await queryChat(promptText);
-    outputResult(response, document.getElementById("phi3Output"), "No Result");
+    outputResult(response, document.getElementById("ollamaOutput"), "No Result");
   }
 
   // Process the response from the ollama service and put it on the web page
@@ -67,18 +67,18 @@
     const responseString = await response.text();
     const arrayOfParts = responseString.split("\n");
 
-    let phi3Output = "";
+    let ollamaOutput = "";
     arrayOfParts.forEach(function (part) {
       try {
         const aPart = JSON.parse(part);
         console.debug(aPart.message.content);
-        phi3Output += `${aPart.message.content}`;
+        ollamaOutput += `${aPart.message.content}`;
       }
       catch (error) {
         console.error(error.message);
       }
     });
-    outputEl.innerText = phi3Output;
+    outputEl.innerText = ollamaOutput;
   };
 
 </script>
@@ -90,7 +90,7 @@
   <textarea type="text" id="prompt" rows="4" cols="50"></textarea><br>
   <button onclick="askClicked()">Ask</button>
   <button onclick="askClicked(this)" id="single">Answer with a single grammatically correct sentence</button>
-<p id="phi3Output">
+<p id="ollamaOutput">
 THIS PARAGRPAPH INTENTIONALLY LEFT BLANK
 </p>
 </body>

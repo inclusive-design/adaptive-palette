@@ -21,14 +21,22 @@ steps.
 
 There are two versions of the web-app.  They appear identical within the browser
 window, but the details of how they interact with the Ollama service are
-different.  Instructions for running each is given in what follows.
+different.  The differences between the two, and the instructions for running
+each is given in what follows.
 
 ### What is Expressed?
 
 The `whatExpress.html` web-app uses the browser's built-in `fetch()` function to
-send queries to the Ollama service.  Nothing further needs to be installed.
-However, the demo web-app must be launched in the same way as the main Adaptive
-Palette application:
+send queries to the Ollama service.  The advantage is that no other support
+library or code needs to be installed.  The disadvantage is that setting up the
+parameters for `fetch()` is a little more involved.  It is necessary to set
+up the request headers, specify that it is a `POST` request, specify the
+Ollama service endpoint, the `Content-Type`, and properly set up the body.  The
+second web-app, discussed in the next section, uses a library that hides these
+details when interacting with the Ollama service.
+
+The demo web-app is launched in the same way as the main Adaptive Palette
+application:
 
 ```text
 npm run dev
@@ -44,8 +52,12 @@ browser:
 ### Ollama Chat
 
 The `ollama.html` web-app uses the [Ollama browser API](https://github.com/ollama/ollama-js/?tab=readme-ov-file#browser-usage)
-for communication with the Ollama service.  In order to run this version of the
-web-app, the above library must be installed.
+for communication with the Ollama service, using the library's `chat()` function
+instead of calling `fetch()` directly. The advantage of this approach is that
+sending the query is more straightforward, configuring and passing an object
+that is essentially the body of the request.  The disadvantages are that
+Ollama's browser library must be installed, and the necessary items are included
+using `import` statements in the JavaScript code itself.
 
 In the adaptive palette main directory, execute this command line instruction to
 install the ollama JavaScript package:
@@ -70,6 +82,9 @@ browser:
 
 ## How to Chat
 
+The following describes how to use the web-app regardless of which one is
+tested.
+
 There are two ways to chat with Ollama.  All text added to the text field of the
 chat web-app client is prefixed with the question "What does this express:"
 That is, if the text box contains:
@@ -84,12 +99,18 @@ then the full prompt sent to the LLM is:
 What does this express: "Horse brown eat quickly oats dried"?
 ```
 
-Pressing the "Ask" button will send the query exactly as shown above.  If the
-"Answer with a single grammatically correct sentence" button is pressed, then
-the query sent to the LLM service is modified in an attempt to have the LLM
+Pressing the "Ask" button will send the query exactly as shown above.  The reply
+will likely be somwhat wordy.  Ollama will offer an analysis of how it
+understands the chat query, how the query might be improved, and it will
+end with a response.
+
+If the "Answer with a single grammatically correct sentence" button is pressed,
+then the query sent to the LLM service is modified in an attempt to have the LLM
 return a single sentence, like so:
 
 ```text
 What does this express: "Horse brown eat quickly oats dried"?  Answer
 with a single grammatically correct sentence.
 ```
+
+Ollama will likely respond with a single sentence for this query.
