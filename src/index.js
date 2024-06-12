@@ -19,10 +19,20 @@ await initAdaptivePaletteGlobals("mainPaletteDisplayArea");
 import { PaletteStore } from "./PaletteStore";
 import { Palette } from "./Palette";
 
-import paletteFileMap from "./palettes/palette_file_map.json";
-import firstLayer from "./palettes/palettes.json";
-import goBackCell from "./palettes/backup_palette.json";
-import inputArea from "./palettes/input_area.json";
+const paletteFileMapResponse = await fetch("/palettes/palette_file_map.json");
+console.log("paletteFileMapResponse: ", paletteFileMapResponse);
+const paletteFileMap = await paletteFileMapResponse.json();
+console.log("paletteFileMap: ", paletteFileMap);
+const firstLayerResponse = await fetch("/palettes/palettes.json");
+const firstLayer = await firstLayerResponse.json();
+const goBackCellResponse = await fetch("/palettes/backup_palette.json");
+const goBackCell = await goBackCellResponse.json();
+const inputAreaResponse = await fetch("/palettes/input_area.json");
+const inputArea = await inputAreaResponse.json();
+// import paletteFileMap from "./palettes/palette_file_map.json";
+// import firstLayer from "./palettes/palettes.json";
+// import goBackCell from "./palettes/backup_palette.json";
+// import inputArea from "./palettes/input_area.json";
 
 PaletteStore.paletteFileMap = paletteFileMap;
 adaptivePaletteGlobals.paletteStore.addPalette(firstLayer);
