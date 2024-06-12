@@ -13,7 +13,7 @@ import { render, VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { adaptivePaletteGlobals } from "./GlobalData";
-import { importPaletteFromJsonFile } from "./GlobalUtils";
+import { loadPaletteFromJsonFile } from "./GlobalUtils";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
 import { speak } from "./GlobalUtils";
@@ -35,7 +35,7 @@ const goBackToPalette = async (event: Event): Promise<void> => {
 
   const paletteToGoBackTo = navigationStack.peek();
   if (paletteToGoBackTo) {
-    const paletteDefinition = await paletteStore.getNamedPalette(paletteToGoBackTo.name, importPaletteFromJsonFile);
+    const paletteDefinition = await paletteStore.getNamedPalette(paletteToGoBackTo.name, loadPaletteFromJsonFile);
     if (paletteDefinition) {
       const paletteContainer = document.getElementById(button.getAttribute("aria-controls")) || document.body;
       navigationStack.popAndSetCurrent(paletteDefinition);
