@@ -15,6 +15,7 @@
     "@preact/signals": "^1.2.3",
     "bliss-svg-builder": "^0.1.0-alpha.4",
     "htm": "^3.1.1",
+    "ollama": "^0.5.0",
     "preact": "^10.13.1",
     "sass": "^1.65.1",
     "whatwg-fetch": "^3.6.19"

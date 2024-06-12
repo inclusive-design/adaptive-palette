@@ -1,0 +1,186 @@
+<html>
+<head>
+<title>Experimenting with Ollama in a Browser (fetch() version)</title>
+<script>
+
+  const ollamaService = "http://localhost:11434";
+  const failedToGetResponse = "Failed to get a response from Ollama *shrug*.";
+
+  // Default name of model used (aka, none).  Set in setSelectedModel() handler.
+  let nameOfModelToUse = "";
+
+  // Function to retrieve a list of LLM's available from the service
+  async function getModelNames () {
+    const modelListUrl = `${ollamaService}/api/tags`;
+    let modelNames = [];
+    try {
+      const response = await fetch(modelListUrl);
+      const list = await response.json();
+      // Structure is { "models": [ ... ] }.
+      // See https://github.com/ollama/ollama/blob/main/docs/api.md#list-local-models
+      list.models.forEach( (model) => {
+        modelNames.push(model.name);
+      });
+    }
+    catch (error) {
+      console.debug(error);
+    }
+    return modelNames;
+  }
+
+  // Initialize the model <select> element's options.
+  async function initModelSelect () {
+    const modelNames = await getModelNames();
+    const selectElement = document.getElementById("modelSelect");
+    if (modelNames.length === 0) {
+      selectElement.add(new Option("No Available Models"));
+    }
+    else {
+      modelNames.forEach( (aName) => {
+          selectElement.add(new Option(aName));
+      });
+    }
+    // The `nameOfModelToUse` is the empty string even after the <select> is
+    // initialized.  Set `nameOfModelToUse` to the shown <option>, which is the
+    // first one.
+    nameOfModelToUse = selectElement.item(0).label;
+
+    // Make sure the enabled state of the "Ask" buttons is correct.  This is
+    // mostly for a refresh of the page.
+    setAskButtonsEnabledState();
+  }
+
+  // Handle model select element when a new selection is made.
+  function setSelectedModel () {
+    const selectElement = document.getElementById("modelSelect");
+    nameOfModelToUse = selectElement.selectedOptions[0].label;
+  }
+
+  // Check if the input <textarea> is empty.
+  function isTextInputEmpty() {
+    const textArea = document.getElementById("prompt");
+    return textArea.value.trim() === "";
+  }
+
+  // Enable/disable "Ask" buttons depending on whether the prompt input has
+  // any text in it and if there are any LLMs to query.
+  function setAskButtonsEnabledState() {
+    const askButton = document.getElementById("justAsk");
+    const askSingleButton = document.getElementById("single");
+    if (isTextInputEmpty() || nameOfModelToUse === "No Available Models") {
+      askButton.setAttribute("disabled", "disabled");
+      askSingleButton.setAttribute("disabled", "disabled");
+    }
+    else {
+      askButton.removeAttribute("disabled");
+      askSingleButton.removeAttribute("disabled");
+    }
+  }
+
+  // Handle click on "Ask" button
+  function askClicked(theButton) {
+    const single = "Answer with a single grammatically correct sentence."
+    console.debug("Button clicked");
+    // Empty out the response area
+    document.getElementById("ollamaOutput").innerText = "Working...";
+
+    console.debug(`Service: ${ollamaService}`);
+    const serviceCheck = fetch(ollamaService);
+    serviceCheck.then(function (checkResult) {
+      checkResult.text().then( function (textResult) {
+        console.debug(textResult);
+      });
+    });
+    if (theButton && theButton.id === "single") {
+      executeAsk(single);
+    }
+    else {
+      executeAsk();
+    }
+  };
+
+  // Function for passing the chat prompt to the LLM using ollama service.
+  async function queryChat (query) {
+    const chatUrl = `${ollamaService}/api/chat`;
+    console.debug(`chatUrl is ${chatUrl}`);
+    const message = { role: "user", content: query };
+    let resposne = null;
+    try {
+      response = await fetch(chatUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: nameOfModelToUse,
+          messages: [message],
+          stream: true
+        })
+      });
+      console.log(`response status: ${response.status}`);
+    }
+    catch (error) {
+      console.error(error);
+    }
+    return response;
+  };
+
+  // Handle the "Ask" button press
+  async function executeAsk (addSingleToPrompt) {
+    let promptText = document.getElementById("prompt").value;
+    if (addSingleToPrompt) {
+      promptText += addSingleToPrompt;
+    }
+    console.debug(`executeAsk(): prompt is "${promptText}"`);
+    response = await queryChat(promptText);
+    outputResult(response, document.getElementById("ollamaOutput"), "No Result");
+  }
+
+  // Process the response from the ollama service and put it on the web page
+  async function outputResult(response, outputEl, defaultOutput) {
+    // Response is of type 'application/nd-json'.  Turn it into plain text and
+    // split it into an array of strings based on the newlines.  It might be
+    // worthwhile to see if Ollama can be configured to return plain json.
+    let ollamaOutput = "";
+    if (response) {
+      const responseString = await response.text();
+      const arrayOfParts = responseString.split("\n");
+
+      arrayOfParts.forEach(function (part) {
+        try {
+          const aPart = JSON.parse(part);
+          console.debug(aPart.message.content);
+          ollamaOutput += `${aPart.message.content}`;
+        }
+        catch (error) {
+          console.error(error.message);
+          if (ollamaOutput.length === 0) {
+            ollamaOutput = failedToGetResponse;
+          }
+        }
+      });
+    }
+    else {
+      ollamaOutput = failedToGetResponse;
+    }
+    outputEl.innerText = ollamaOutput;
+  };
+
+</script>
+</head>
+<body onload="initModelSelect()">
+<h1>Experimenting with Ollama in a Browser (fetch() version)</h1>
+<p>
+  <label for="modelSelect">Choose a model:</label>
+  <select id="modelSelect" onchange="setSelectedModel()"></select>
+</p>
+<p>
+  <label for="prompt">Prompt:</label><br>
+  <textarea type="text" id="prompt" rows="4" cols="50" oninput="setAskButtonsEnabledState()"></textarea><br>
+  <button onclick="askClicked()" id="justAsk" disabled>Ask</button>
+  <button onclick="askClicked(this)" id="single" disabled>Answer with a single grammatically correct sentence</button>
+<p id="ollamaOutput">
+THIS PARAGRPAPH INTENTIONALLY LEFT BLANK
+</p>
+</body>
+</html>
