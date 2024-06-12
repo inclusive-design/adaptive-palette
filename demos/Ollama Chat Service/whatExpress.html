@@ -44,12 +44,37 @@
     // initialized.  Set `nameOfModelToUse` to the shown <option>, which is the
     // first one.
     nameOfModelToUse = selectElement.item(0).label;
+
+    // Make sure the enabled state of the "Ask" buttons is correct.  This is
+    // mostly for a refresh of the page.
+    setAskButtonsEnabledState();
   }
 
   // Handle model select element when a new selection is made.
   function setSelectedModel () {
     const selectElement = document.getElementById("modelSelect");
     nameOfModelToUse = selectElement.selectedOptions[0].label;
+  }
+
+  // Check if the input <textarea> is empty.
+  function isTextInputEmpty() {
+    const textArea = document.getElementById("prompt");
+    return textArea.value.trim() === "";
+  }
+
+  // Enable/disable "Ask" buttons depending on whether the prompt input has
+  // any text in it and if there are any LLMs to query.
+  function setAskButtonsEnabledState() {
+    const askButton = document.getElementById("justAsk");
+    const askSingleButton = document.getElementById("single");
+    if (isTextInputEmpty() || nameOfModelToUse === "No Available Models") {
+      askButton.setAttribute("disabled", "disabled");
+      askSingleButton.setAttribute("disabled", "disabled");
+    }
+    else {
+      askButton.removeAttribute("disabled");
+      askSingleButton.removeAttribute("disabled");
+    }
   }
 
   // Handle click on "Ask" button
@@ -74,7 +99,7 @@
     }
   };
 
-  // Function for passing the chat prompt to phi-3 using ollama service.
+  // Function for passing the chat prompt to the LLM using ollama service.
   async function queryChat (query) {
     const chatUrl = `${ollamaService}/api/chat`;
     console.debug(`chatUrl is ${chatUrl}`);
@@ -151,9 +176,9 @@
 </p>
 <p>
   <label for="prompt">Prompt:</label><br>
-  <textarea type="text" id="prompt" rows="4" cols="50"></textarea><br>
-  <button onclick="askClicked()">Ask</button>
-  <button onclick="askClicked(this)" id="single">Answer with a single grammatically correct sentence</button>
+  <textarea type="text" id="prompt" rows="4" cols="50" oninput="setAskButtonsEnabledState()"></textarea><br>
+  <button onclick="askClicked()" id="justAsk" disabled>Ask</button>
+  <button onclick="askClicked(this)" id="single" disabled>Answer with a single grammatically correct sentence</button>
 <p id="ollamaOutput">
 THIS PARAGRPAPH INTENTIONALLY LEFT BLANK
 </p>

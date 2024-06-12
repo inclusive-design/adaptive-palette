@@ -22,12 +22,12 @@ window, differing in the details of how they interact with the Ollama service.
 The differences between the two, and the instructions for running each is given
 in the next sections.
 
-### What is Expressed?
+### Chat using `fetch()`
 
 The `whatExpress.html` web-app uses the browser's built-in `fetch()` function to
 send queries to the Ollama service.  The advantage is that no other support
 library or code needs to be installed.  The disadvantages are that setting up
-the parameters for `fetch()` and deconstructing the response are a little more
+the parameters for `fetch()` and managing the response are a little more
 involved.  In terms of the request, it is necessary to provide the request
 headers, specify that it is a `POST` request, make the request of the correct
 Ollama service endpoint, set the `Content-Type`, and properly set up the body
@@ -51,7 +51,7 @@ Once the development server is running, open this `localhost` url from within a
 browser:
 [`http://localhost:3000/demos/Ollama%20Chat%20Service/whatExpress.html`](http://localhost:3000/demos/Ollama%20Chat%20Service/whatExpress.html)
 
-### Ollama Chat
+### Chat using Ollama Client Library
 
 The `ollama.html` web-app uses the [Ollama browser API](https://github.com/ollama/ollama-js/?tab=readme-ov-file#browser-usage)
 for communication with the Ollama service, using the library's `chat()` function

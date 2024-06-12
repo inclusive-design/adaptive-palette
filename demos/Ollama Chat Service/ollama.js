@@ -46,6 +46,10 @@ async function initModelSelect () {
   // first one.  Note that it could be "No Avaialable Models".  In that case,
   // all chat queries will fail with an error meesage.
   nameOfModelToUse = selectElement.item(0).label;
+
+  // Make sure the enabled state of the "Ask" buttons is correct.  This is
+  // mostly for a refresh of the page.
+  setAskButtonsEnabledState();
 }
 
 // Handle model select element when a new selection is made.
@@ -99,9 +103,32 @@ async function outputResult(response, outputEl) {
   outputEl.innerText = LlmOutput;
 }
 
-document.getElementById("justAsk").addEventListener("click", askClicked);
-document.getElementById("singleSentence").addEventListener("click", askClicked);
+// Check if the input <textarea> is empty.
+function isTextInputEmpty() {
+  return promptTextArea.value.trim() === "";
+}
+
+// Enable/diable "Ask" buttons depending on whether the prompt input has
+// any text in it or if there is an LLM to query.
+function setAskButtonsEnabledState() {
+  if (isTextInputEmpty() || nameOfModelToUse === "No Available Models") {
+    justAskButton.setAttribute("disabled", "disabled");
+    singleSentenceButton.setAttribute("disabled", "disabled");
+  }
+  else {
+    justAskButton.removeAttribute("disabled");
+    singleSentenceButton.removeAttribute("disabled");
+  }
+}
+
+const justAskButton = document.getElementById("justAsk");
+const singleSentenceButton = document.getElementById("singleSentence");
+const promptTextArea = document.getElementById("prompt");
+
+justAskButton.addEventListener("click", askClicked);
+singleSentenceButton.addEventListener("click", askClicked);
 document.getElementById("modelSelect").addEventListener("change", setSelectedModel);
+promptTextArea.addEventListener("input", setAskButtonsEnabledState);
 
 // Set up the model <select> element
 initModelSelect();
