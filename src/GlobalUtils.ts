@@ -47,10 +47,10 @@ function speak(text): void {
 }
 
 /**
- * Load a palette from the given JSON file using `fetch()`. The location of the 
+ * Load a palette from the given JSON file using `fetch()`. The location of the
  * JSON file is provided as a variable. If the loading fails, a console error with
  * detailed error message is reported.
- * 
+ *
  * @param {String} jsonFilePath - Path of the JSON file to load, without the
  *                                ".json" extension (added herein).
  * @return {JsonPaletteType}    - The palette itself, or `null` if it could not be
