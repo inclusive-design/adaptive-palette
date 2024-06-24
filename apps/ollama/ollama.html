@@ -1,0 +1,33 @@
+<html>
+<head>
+  <title>Experimenting with Ollama in a Browser (Ollama Client Library version)</title>
+</head>
+<body>
+  <script type="module">
+    import "./ollama.js";
+  </script>
+  <h1>Experimenting with Ollama in a Browser (Ollama Client Library version)</h1>
+  <fieldset>
+    <legend>LLMs</legend>
+    <p>
+      <input type="checkbox" id="allModels">
+      <label for="allModels">Show results for all models</label>, or
+    </p>
+    <p>
+      <label for="modelSelect">Choose a model:</label>
+      <select id="modelSelect"></select>
+    </p>
+  </fieldset>
+  <p>
+    <label for="prompt">What does this express: ?</label><br>
+    <textarea type="text" id="prompt" rows="4" cols="50"></textarea><br>
+  </p>
+  <p>
+    <button id="justAsk" disabled>Ask</button>
+    <button id="singleSentence" disabled>Answer with a single grammatically correct sentence</button>
+  </p>
+  <p id="ollamaOutput">
+  THIS PARAGRPAPH INTENTIONALLY LEFT BLANK
+  </p>
+</body>
+</html>
