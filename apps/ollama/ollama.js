@@ -265,6 +265,17 @@ function createOutputSection(modelName) {
   return paragraph;
 }
 
+/**
+ * Flush all of the model sections contents -- remove the sections.
+ */
+async function flushModelOutputSections () {
+  const names = await getModelNames();
+  names.forEach((modelName) => {
+    document.getElementById(`section_${modelName}`)?.remove();
+  });
+  document.getElementById("ollamaOutput").innerText = "";
+}
+
 const justAskButton = document.getElementById("justAsk");
 const singleSentenceButton = document.getElementById("singleSentence");
 const promptTextArea = document.getElementById("prompt");
@@ -273,6 +284,7 @@ justAskButton.addEventListener("click", askClicked);
 singleSentenceButton.addEventListener("click", askClicked);
 document.getElementById("modelSelect").addEventListener("change", setSelectedModel);
 document.getElementById("allModels").addEventListener("click", useAllModels);
+document.getElementById("flushModelSections").addEventListener("click", flushModelOutputSections);
 promptTextArea.addEventListener("input", setAskButtonsEnabledState);
 
 // Set up the model <select> element
