@@ -14,8 +14,13 @@ import ollama from "ollama/browser";
 // Default name of model used (aka, none).  Set in setSelectedModel() handler.
 let nameOfModelToUse = "";
 const USE_ALL_MODELS = "useAllModels";
+const NO_AVAILABLE_MODELS = "No Available Models";
+const OUTPUT_DIV_TEMPLATE = "<div>"
 
-// Function to retrieve a list of LLM's available from the service
+/**
+ * Retrieve a list of LLMs available from the service
+ * @return {Array}    - Array of the names of the available models.
+ */
 async function getModelNames () {
   let modelNames = [];
   try {
@@ -30,7 +35,15 @@ async function getModelNames () {
   return modelNames;
 }
 
-// Initialize the model <select> element's options.
+/**
+ * Initialize the model <select> element's options:
+ * - set the <select>'s options,
+ * - enable/disable the <select> based on the use-all-models checkbox,
+ * - set the `nmeeOfModelToUse` variable to one of:
+ *   - a single model name,
+ *   - `USE_ALL_MODELS`,
+ *   - `NO_AVAILABLE_MODELS`
+ */
 async function initModelSelect () {
   const selectElement = document.getElementById("modelSelect");
   const modelNames = await getModelNames();
@@ -57,8 +70,14 @@ async function initModelSelect () {
   setAskButtonsEnabledState();
 }
 
-// Set the enabled state of the model <select> based on the checked state of
-// the "all models" checkbox.
+/**
+ * Set the enabled state of the model <select> based on the checked state of
+ * the "use all models" checkbox.
+ * @return {Object} - An object containing a boolean and a reference to the
+ *                    <select> DOM element.  The boolean is `true` if the
+ *                    "use all models" checkbox is checked, and `false`
+ *                    otherwise.
+ */
 function enableDisableModelSelect () {
   const selectElement = document.getElementById("modelSelect");
   const allModelsCheckbox = document.getElementById("allModels");
@@ -72,24 +91,35 @@ function enableDisableModelSelect () {
   return { useAllModels: allModelsCheckbox.checked, selectEl: selectElement };
 }
 
-// Handle model select element when a new selection is made.
+/**
+ * Handle model select element when a new selection is made.  Set the value of
+ * `nameOfModelToUse` based on the selection.
+ */
 function setSelectedModel () {
   const selectElement = document.getElementById("modelSelect");
   nameOfModelToUse = selectElement.selectedOptions[0].label;
 }
 
-// Handle the "use all models" checkbox
+/**
+ * Handle clicke on the "use all models" checkbox.  This will eneable or disbale
+ * the models <select> element and reset `nameOfModelToUse` as appropriate.
+ */
 function useAllModels () {
-  const allModelsChecked = enableDisableModelSelect();
-  if (allModelsChecked.useAllModels) {
+  const allModelsStatus = enableDisableModelSelect();
+  if (allModelsStatus.useAllModels) {
     nameOfModelToUse = USE_ALL_MODELS;
   }
   else {
-    nameOfModelToUse = allModelsChecked.selectEl.selectedOptions[0].label;
+    nameOfModelToUse = allModelsStatus.selectEl.selectedOptions[0].label;
   }
 }
 
-// Handle click on "Ask" buttons
+/**
+ * Handle click on both of the "Ask" buttons.  The two buttons are "Ask" and
+ * "Answer with a single grammatically correct sentence".
+ * @param {Event} event - The event that invoked the "Ask" button.  The `target`
+ *                        member determine which "Ask" button was invoked.
+ */
 function askClicked(event) {
   const singleSentence = "Answer with a single grammatically correct sentence.";
   // Empty out the response area
@@ -102,29 +132,52 @@ function askClicked(event) {
   }
 }
 
-// Function for passing the chat prompt using ollama service.
-async function queryChat (query) {
+/**
+ * Function for passing the chat prompt to the ollama service.
+ * @param {String} query      - The prompt string to query the service with.
+ * @param {String} modelName  - The name of the LLM to query.
+ * @return {Object}           - The response from the service.
+ */
+async function queryChat (query, modelName) {
   const message = { role: "user", content: query };
   const response = await ollama.chat({
-    model: nameOfModelToUse,
+    model: modelName,
     messages: [message],
     stream: true
   });
   return response;
 }
 
-// Handle the "Ask" button press
+/**
+ * Handle the "Ask" button press by contructing a prompt from the text area
+ * input and which of the "Ask" buttons was pressed.  Query the service with
+ * that prompt, and output the result to the bottom of the page.
+ * @param {String} addSingleToPrompt -  Optional text to append to the
+ *                                      prompt, e.g., "Answer with a single
+ *                                      grammatically correct sentence".
+ */
 async function executeAsk (addSingleToPrompt) {
   let promptText = document.getElementById("prompt").value;
   if (addSingleToPrompt) {
     promptText += addSingleToPrompt;
   }
   console.debug(`executeAsk(): prompt is "${promptText}"`);
-  const response = await queryChat(promptText);
-  outputResult(response, document.getElementById("ollamaOutput"), "No Result");
+  if (document.getElementById("allModels").checked) {
+    queryEachModel(promptText);
+  }
+  else {
+    const response = await queryChat(promptText, nameOfModelToUse);
+    outputResult(response, document.getElementById("ollamaOutput"), "No Result");
+  }
 }
 
-// Process the response from the ollama service and put it on the web page
+/**
+ * Process the response from the ollama service and add it to the web page.
+ * @param {Array} response -    Array of objects contains an ordered set of
+ *                              parts.
+ * @param {Element} outputEl -  The DOM element to put the entire resonse
+ *                              message into.
+ */
 async function outputResult(response, outputEl) {
   let LlmOutput = "";
   for await (const aPart of response) {
@@ -134,13 +187,18 @@ async function outputResult(response, outputEl) {
   outputEl.innerText = LlmOutput;
 }
 
-// Check if the input <textarea> is empty.
+/**
+ * Check if the input <textarea> is empty.
+ * @return {Boolean} -  `true` if the <textarea> is empty; `false` otherwise.
+ */
 function isTextInputEmpty() {
   return promptTextArea.value.trim() === "";
 }
 
-// Enable/diable "Ask" buttons depending on whether the prompt input has
-// any text in it or if there is an LLM to query.
+/**
+ * Enable/diable "Ask" buttons depending on whether (1) the prompt input has any
+ * text in it or (2) if there is an LLM to query.
+ */
 function setAskButtonsEnabledState() {
   if (isTextInputEmpty() || nameOfModelToUse === "No Available Models") {
     justAskButton.setAttribute("disabled", "disabled");
@@ -150,6 +208,44 @@ function setAskButtonsEnabledState() {
     justAskButton.removeAttribute("disabled");
     singleSentenceButton.removeAttribute("disabled");
   }
+}
+
+/**
+ * Loop through the available models, passing the same prompt to each, and
+ * add the response to the document.
+ * @param {String} promppText - The prompt to query each model with.
+ */
+async function queryEachModel (promptText) {
+  const names = await getModelNames();
+  names.forEach ((modelName) => {
+     queryChat(promptText, modelName)
+     .then((response) => {
+       const outputEl = createOutputSection(modelName);
+       outputResult(response, outputEl, "No Result");
+     });
+  });
+}
+
+/**
+ * Create a section for outputting the results of querying one LLM.
+ * @param {String} modelName  - The name of the model, used for a heading
+ * @return {Element}          - The DOM element where the response for the
+ *                              model will be output to.
+ */
+function createOutputSection(modelName) {
+  const sectionEl = document.createElement("section");
+  document.body.appendChild(sectionEl);
+
+  const heading = document.createElement("h2");
+  sectionEl.appendChild(heading);
+  heading.append(`${modelName}`);
+
+  const paragraph = document.createElement("p");
+  paragraph.setAttribute("id", modelName);
+  paragraph.append("Working ...");
+  sectionEl.appendChild(paragraph);
+
+  return paragraph;
 }
 
 const justAskButton = document.getElementById("justAsk");
