@@ -157,6 +157,7 @@ async function queryChat (query, modelName) {
  *                                      grammatically correct sentence".
  */
 async function executeAsk (addSingleToPrompt) {
+  const modelInSelect = document.getElementById("modelSelect").selectedOptions[0].label;
   let promptText = document.getElementById("prompt").value;
   if (addSingleToPrompt) {
     promptText += addSingleToPrompt;
@@ -165,16 +166,18 @@ async function executeAsk (addSingleToPrompt) {
   if (document.getElementById("allModels").checked) {
     queryEachModel(promptText);
   }
-  else {
-    const response = await queryChat(promptText, nameOfModelToUse);
+  else if (modelInSelect !== NO_AVAILABLE_MODELS) {
+    const response = await queryChat(promptText, modelInSelect);
     outputResult(response, document.getElementById("ollamaOutput"), "No Result");
+  }
+  else {
+    outputResult([], document.getElementById("ollamaOutput"), "No Result");
   }
 }
 
 /**
  * Process the response from the ollama service and add it to the web page.
- * @param {Array} response -    Array of objects contains an ordered set of
- *                              parts.
+ * @param {Array} response -    Array of objects, an ordered set of parts.
  * @param {Element} outputEl -  The DOM element to put the entire resonse
  *                              message into.
  */
@@ -184,7 +187,12 @@ async function outputResult(response, outputEl) {
     console.debug(aPart.message.content);
     LlmOutput += aPart.message.content;
   }
-  outputEl.innerText = LlmOutput;
+  if (LlmOutput === "") {
+    outputEl.innerText = "LLM gave no results";
+  }
+  else {
+    outputEl.innerText = LlmOutput;
+  }
 }
 
 /**
@@ -233,18 +241,27 @@ async function queryEachModel (promptText) {
  *                              model will be output to.
  */
 function createOutputSection(modelName) {
-  const sectionEl = document.createElement("section");
-  document.body.appendChild(sectionEl);
+  let sectionEl = document.getElementById(`section_${modelName}`);
+  let paragraph = null;
+  if (!sectionEl) {
+    sectionEl = document.createElement("section");
+    document.body.appendChild(sectionEl);
+    sectionEl.setAttribute("id", `section_${modelName}`);
 
-  const heading = document.createElement("h2");
-  sectionEl.appendChild(heading);
-  heading.append(`${modelName}`);
+    const heading = document.createElement("h2");
+    sectionEl.appendChild(heading);
+    heading.append(`${modelName}`);
 
-  const paragraph = document.createElement("p");
-  paragraph.setAttribute("id", modelName);
-  paragraph.append("Working ...");
-  sectionEl.appendChild(paragraph);
-
+    paragraph = document.createElement("p");
+    paragraph.setAttribute("id", `${modelName}_output`);
+    paragraph.append("Working ...");
+    sectionEl.appendChild(paragraph);
+  }
+  else {
+    // Rationale: if <esction id=secton_modelName ...> exists, it was created
+    // the last time and, hence, so was its inner <p id=modelNmae_output ...>
+    paragraph = document.getElementById(`${modelName}_output`);
+  }
   return paragraph;
 }
 
