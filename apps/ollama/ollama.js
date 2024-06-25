@@ -15,7 +15,6 @@ import ollama from "ollama/browser";
 let nameOfModelToUse = "";
 const USE_ALL_MODELS = "useAllModels";
 const NO_AVAILABLE_MODELS = "No Available Models";
-const OUTPUT_DIV_TEMPLATE = "<div>"
 
 /**
  * Retrieve a list of LLMs available from the service
@@ -226,11 +225,11 @@ function setAskButtonsEnabledState() {
 async function queryEachModel (promptText) {
   const names = await getModelNames();
   names.forEach ((modelName) => {
-     queryChat(promptText, modelName)
-     .then((response) => {
-       const outputEl = createOutputSection(modelName);
-       outputResult(response, outputEl, "No Result");
-     });
+    queryChat(promptText, modelName)
+      .then((response) => {
+        const outputEl = createOutputSection(modelName);
+        outputResult(response, outputEl, "No Result");
+      });
   });
 }
 
