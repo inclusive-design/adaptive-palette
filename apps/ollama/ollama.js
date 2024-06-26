@@ -138,11 +138,22 @@ function askClicked(event) {
  * @return {Object}           - The response from the service.
  */
 async function queryChat (query, modelName) {
-  const message = { role: "user", content: query };
+  let messageArray = [];
+  const textFromSystemPrompt = document.getElementById("systemPrompt").value.trim();
+  if (textFromSystemPrompt !== "") {
+    messageArray.push({
+      role: "system",
+      content: textFromSystemPrompt
+    });
+    console.debug(`queryChat(): system prompt is: "${textFromSystemPrompt}")`);
+  }
+  messageArray.push({ role: "user", content: query });
   const response = await ollama.chat({
     model: modelName,
-    messages: [message],
-    stream: true
+    messages: messageArray,
+    raw: true,
+    stream: true,
+    keep_alive: 15
   });
   return response;
 }
@@ -255,6 +266,7 @@ function createOutputSection(modelName) {
     paragraph.setAttribute("id", `${modelName}_output`);
     paragraph.append("Working ...");
     sectionEl.appendChild(paragraph);
+    paragraph.scrollIntoView(false);
   }
   else {
     // Rationale: if <esction id=secton_modelName ...> exists, it was created
