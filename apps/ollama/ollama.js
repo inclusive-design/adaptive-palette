@@ -38,7 +38,7 @@ async function getModelNames () {
  * Initialize the model <select> element's options:
  * - set the <select>'s options,
  * - enable/disable the <select> based on the use-all-models checkbox,
- * - set the `nmeeOfModelToUse` variable to one of:
+ * - set the `nameOfModelToUse` variable to one of:
  *   - a single model name,
  *   - `USE_ALL_MODELS`,
  *   - `NO_AVAILABLE_MODELS`
@@ -269,7 +269,7 @@ function createOutputSection(modelName) {
     paragraph.scrollIntoView(false);
   }
   else {
-    // Rationale: if <esction id=secton_modelName ...> exists, it was created
+    // Rationale: if <section id=section_modelName ...> exists, it was created
     // the last time and, hence, so was its inner <p id=modelNmae_output ...>
     paragraph = document.getElementById(`${modelName}_output`);
   }
