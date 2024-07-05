@@ -72,10 +72,8 @@ async function initModelSelect () {
 /**
  * Set the enabled state of the model <select> based on the checked state of
  * the "use all models" checkbox.
- * @return {Object} - An object containing a boolean and a reference to the
- *                    <select> DOM element.  The boolean is `true` if the
- *                    "use all models" checkbox is checked, and `false`
- *                    otherwise.
+ * @return {Boolean} - `true` if the "use all models" checkbox is checked;
+ *                     `false` otherwise.
  */
 function enableDisableModelSelect () {
   const selectElement = document.getElementById("modelSelect");
@@ -87,7 +85,7 @@ function enableDisableModelSelect () {
     selectElement.removeAttribute("disabled");
   }
   // Return the checked state of the checkbox and the select element itself
-  return { useAllModels: allModelsCheckbox.checked, selectEl: selectElement };
+  return allModelsCheckbox.checked;
 }
 
 /**
@@ -103,13 +101,13 @@ function setSelectedModel () {
  * Handle clicke on the "use all models" checkbox.  This will eneable or disbale
  * the models <select> element and reset `nameOfModelToUse` as appropriate.
  */
-function useAllModels () {
-  const allModelsStatus = enableDisableModelSelect();
-  if (allModelsStatus.useAllModels) {
+function useAllModelsClicked () {
+  const allModelsChecked = enableDisableModelSelect();
+  if (allModelsChecked) {
     nameOfModelToUse = USE_ALL_MODELS;
   }
   else {
-    nameOfModelToUse = allModelsStatus.selectEl.selectedOptions[0].label;
+    nameOfModelToUse = document.getElementById("modelSelect").selectedOptions[0].label;
   }
 }
 
@@ -187,18 +185,20 @@ async function executeAsk (addSingleToPrompt) {
 
 /**
  * Process the response from the ollama service and add it to the web page.
- * @param {Array} response -    Array of objects, an ordered set of parts.
- * @param {Element} outputEl -  The DOM element to put the entire resonse
- *                              message into.
+ * @param {Array} response    -  Array of objects, an ordered set of parts.
+ * @param {Element} outputEl  -  The DOM element to put the entire resonse
+ *                               message into.
+ * @param {String} defaultMsg -  Optional default msssage when the `response`
+ *                               is empty.
  */
-async function outputResult(response, outputEl) {
+async function outputResult(response, outputEl, defaultMsg) {
   let LlmOutput = "";
   for await (const aPart of response) {
     console.debug(aPart.message.content);
     LlmOutput += aPart.message.content;
   }
   if (LlmOutput === "") {
-    outputEl.innerText = "LLM gave no results";
+    outputEl.innerText = ( defaultMsg === undefined ? "LLM gave no results" : defaultMsg);
   }
   else {
     outputEl.innerText = LlmOutput;
@@ -231,15 +231,24 @@ function setAskButtonsEnabledState() {
 /**
  * Loop through the available models, passing the same prompt to each, and
  * add the response to the document.
- * @param {String} promppText - The prompt to query each model with.
+ * @param {String} promptText - The prompt to query each model with.
+ * @return {Number}           - The number of LLMs queried.
  */
 async function queryEachModel (promptText) {
   const names = await getModelNames();
+  let count = 0;
   names.forEach ((modelName) => {
     queryChat(promptText, modelName)
-      .then((response) => {
+      .then(async (response) => {
         const outputEl = createOutputSection(modelName);
-        outputResult(response, outputEl, "No Result");
+        await outputResult(response, outputEl, "No Result");
+        count++;
+
+        // Clear the general "Working..." message after all models have been
+        // queried
+        if (count === names.length) {
+          outputResult([], document.getElementById("ollamaOutput"), "");
+        }
       });
   });
 }
@@ -294,7 +303,7 @@ const promptTextArea = document.getElementById("prompt");
 justAskButton.addEventListener("click", askClicked);
 singleSentenceButton.addEventListener("click", askClicked);
 document.getElementById("modelSelect").addEventListener("change", setSelectedModel);
-document.getElementById("allModels").addEventListener("click", useAllModels);
+document.getElementById("allModels").addEventListener("click", useAllModelsClicked);
 document.getElementById("flushModelSections").addEventListener("click", flushModelOutputSections);
 promptTextArea.addEventListener("input", setAskButtonsEnabledState);
 
