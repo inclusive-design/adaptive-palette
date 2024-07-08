@@ -192,16 +192,15 @@ async function executeAsk (addSingleToPrompt) {
  *                               is empty.
  */
 async function outputResult(response, outputEl, defaultMsg) {
-  let LlmOutput = "";
+  outputEl.innerText = "";
   for await (const aPart of response) {
     console.debug(aPart.message.content);
-    LlmOutput += aPart.message.content;
+    outputEl.innerText += aPart.message.content;
+    outputEl.scrollIntoView(false);
   }
-  if (LlmOutput === "") {
+  if (outputEl.innerText === "") {
     outputEl.innerText = ( defaultMsg === undefined ? "LLM gave no results" : defaultMsg);
-  }
-  else {
-    outputEl.innerText = LlmOutput;
+    outputEl.scrollIntoView(false);
   }
 }
 
@@ -247,7 +246,7 @@ async function queryEachModel (promptText) {
         // Clear the general "Working..." message after all models have been
         // queried
         if (count === names.length) {
-          outputResult([], document.getElementById("ollamaOutput"), "");
+          document.getElementById("ollamaOutput").innerText = "";
         }
       });
   });
