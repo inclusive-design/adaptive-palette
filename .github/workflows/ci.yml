@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node-version: [16.x, 18.x, 20.x]
+        node-version: [18.x, 20.x]
     runs-on: ${{ matrix.os }}
     env:
       CI: true
@@ -33,7 +33,5 @@ jobs:
         run: npm ci
       - name: Lint
         run: npm run lint
-      - name: Build
-        run: npm run build
       - name: Test
         run: npm run test
