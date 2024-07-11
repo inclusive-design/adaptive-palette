@@ -3,7 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "vite build; node src/server/server.js",
+    "start": "run-s start:client start:server",
+    "start:client": "vite build",
+    "start:server": "node src/server/server.js",
     "dev": "run-p dev:*",
     "dev:client": "vite build --watch",
     "dev:server": "nodemon src/server/server.js",
