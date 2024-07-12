@@ -1,9 +1,9 @@
 # Ollama Chat Service Demo
 
-This folder contains a demonstration of a chat web-app that use Ollama as an LLM
-chat service.  The following instructions describe how to set up a local Ollama
-service with which the web-app demo can interact, send queries, and show the
-chat service's responses.
+This folder contains a demonstration of a chat web-app that usex Ollama as an
+LLM chat service.  The following instructions describe how to set up a local
+Ollama service with which the web-app demo can interact, send queries, and show
+the chat service's responses.
 
 ## Ollama Service
 
