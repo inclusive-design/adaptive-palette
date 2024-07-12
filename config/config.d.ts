@@ -8,10 +8,8 @@
  * https://github.com/inclusive-design/baby-bliss-bot/blob/main/LICENSE
  */
 
-/* global process */
-
-export const config = {
+export const config: {
   server: {
-    port: process.env.PORT || 3000
-  }
+    port: number;
+  };
 };

@@ -9,6 +9,7 @@ export default defineConfig({
   },
   build: {
     sourcemap: true,
-    target: "esnext"
+    target: "esnext",
+    outDir: "dist/client"
   }
 });
