@@ -76,9 +76,14 @@ npm run preview
 
 ## Demonstrations
 
-The sub-folder `demos` contains code for a number of demonstrations.  See each
-demonstration's README for instructions on how to run that demo.
+The sub-folder [`demos`](./demos) contains code for a number of demonstrations.
+These are short examples.  The [`apps`](./apps) folder contains more fully
+built-out application examples.  See the respective READMEs for instructions on
+how to run the software.
 
-- [Ollama Chat Service](./demos/Ollama%20Chat%20Service/README.md): a web-app
-  that runs on `localhost` for sending queries to an Ollama chatbot service,
-  also running on `localhost`.
+- [Ollama Chat Service Demo](./demos/Ollama%20Chat%20Service/README.md): a
+  simple web-app that runs on `localhost` for sending queries to an Ollama
+  chatbot service  also running on `localhost`.
+- [Ollama Chat Web-App](./apps/ollama/README.md): a chat application running on
+  `localhost` that provides access to multiple LLMs using the Ollams localhost
+  web service.
