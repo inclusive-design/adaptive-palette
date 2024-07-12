@@ -1,9 +1,9 @@
 # Ollama Chat Service Demo
 
-There are two demonstrations of the chat web-app that use Ollama as an LLM chat
-service.  The following instructions describe how to set up a local Ollama
-service with which the web-app can interact, send queries, and show the chat
-service's responses.
+This folder contains a demonstration of a chat web-app that use Ollama as an LLM
+chat service.  The following instructions describe how to set up a local Ollama
+service with which the web-app demo can interact, send queries, and show the
+chat service's responses.
 
 ## Ollama Service
 
@@ -17,25 +17,23 @@ steps.
 
 ## Chat Web-App
 
-There are two versions of the web-app.  They appear identical within the browser
-window, differing in the details of how they interact with the Ollama service.
-The differences between the two, and the instructions for running each is given
-in the next sections.
+There are two ways to make requests of the Ollama service. The demo uses the
+browsers' built-in `fetch()` function.  The other method is to use the Ollama
+client library, discussed briefly in the section following the next section.
 
 ### Chat using `fetch()`
 
-The `whatExpress.html` web-app uses the browser's built-in `fetch()` function to
-send queries to the Ollama service.  The advantage is that no other support
-library or code needs to be installed.  The disadvantages are that setting up
-the parameters for `fetch()` and managing the response are a little more
-involved.  In terms of the request, it is necessary to provide the request
-headers, specify that it is a `POST` request, make the request of the correct
-Ollama service endpoint, set the `Content-Type`, and properly set up the body
-payload. For the chat end-point, the response is a special type of JSON, namely
-`json-nd` that must be parsed and processed to retrieve the actual AI's text to
-show on the web page. The second web-app, discussed in the next section, uses a
-library that hides a lot of these details when interacting with the Ollama
-service.
+The `whatExpress.html` web-app uses `fetch()` to send queries to the Ollama
+service.  The advantage is that no other support library or code needs to be
+installed.  The disadvantages are that setting up the parameters for `fetch()`
+and managing the response are a little more involved.  In terms of the request,
+it is necessary to provide the request headers, specify that it is a `POST`
+request, make the request of the correct Ollama service endpoint, set the
+`Content-Type`, and properly set up the body payload. For the chat end-point,
+the response is a special type of JSON, namely `json-nd` that must be parsed and
+processed to retrieve the actual AI's text to show on the web page. Using a
+client library, briefly discussed in the next section, hides a lot of these
+details when interacting with Ollama.
 
 The demo web-app is launched in the same way as the main Adaptive Palette
 application:
@@ -53,46 +51,33 @@ browser:
 
 ### Chat using Ollama Client Library
 
-The `ollama.html` web-app uses the [Ollama browser API](https://github.com/ollama/ollama-js/?tab=readme-ov-file#browser-usage)
+There is an [Ollama browser API](https://github.com/ollama/ollama-js/?tab=readme-ov-file#browser-usage)
 for communication with the Ollama service, using the library's `chat()` function
-instead of calling `fetch()` directly. The advantage of this approach is that
-sending the query is more straightforward, configuring and passing an object
-that is essentially the body of the request.  The response from `chat()` in this
-case is an array of strings that can be concatenated for showing the AI's text
-on the web page.  The disadvantages are that Ollama's browser library must be
+instead of making raw calls to `fetch()` directly. The advantage of this
+approach is that sending a query, or different types of queries, is more
+straightforward, configuring and passing an object that is essentially the body
+of the request.  The response from `chat()` in this case is an array of strings
+that can be concatenated for showing the AI's text on the web page.
+Alternatively, the library provides a streaming response such that as the LLM
+provides further output, it can be taken and added incrementally to the display
+instead of waiting for the LLM to finish and displaying the response all at
+once.
+
+The disadvantages are that Ollama's browser library must be
 installed, and the necessary objects and functions must be included using
-`import` statements in the JavaScript code itself.
+`import` statements in the app's JavaScript code.
 
-In the adaptive palette main directory, execute this command line instruction to
-install the ollama JavaScript package:
-
-```text
-npm install ollama
-```
-
-As with the previous version of the web-app, the web-app chat client needs to be
-launched:
-
-```text
-npm run dev
-```
-
-See the [Start a Development Server](../../README.md#start-a-development-server)
-section in the main README document for more details.
-
-Once the development server is running, open this `localhost` url from within a
-browser:
-[`http://localhost:3000/demos/Ollama%20Chat%20Service/ollama.html`](http://localhost:3000/demos/Ollama%20Chat%20Service/ollama.html)
+Using the library is exemplified by the "Using Ollama with LLMs Running Locally"
+web app in the [`apps/ollama`](../../apps/ollama) folder.  See its
+[README](../../apps/ollama/README.md) for further instructions.
 
 ## How to Chat
 
-The following describes how to use the web-app regardless of which one is
-tested.
-
-Near the top is a pull-down menu for selecting the language model to use for the
-chat. If no action is taken, the language model shown will be the one that is
-used. If no language models are shown in the pull-down, follow
-Ollama's [Model Library](https://github.com/ollama/ollama?tab=readme-ov-file#model-library)
+Near the top of the demo is a pull-down menu for selecting the language model to
+use for the chat. If no action is taken, the language model shown will be the
+one that is used. If no language models are shown in the pull-down, follow
+Ollama's [Model
+Library](https://github.com/ollama/ollama?tab=readme-ov-file#model-library)
 instructions to install language models.
 
 There are two ways to chat with Ollama.  All text added to the text field of the
