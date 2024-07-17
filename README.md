@@ -29,9 +29,15 @@ npm ci
 
 ## Development
 
-### Start a Development Server
+### Start a Server
 
-To start a local web server for development that every change to the source code
+To start a local web server, run:
+
+```bash
+npm start
+```
+
+To start a local web server for **development** that every change to the source code
 will be watched and redeployed,
 run:
 
@@ -55,23 +61,6 @@ To run tests, run:
 
 ```bash
 npm test
-```
-
-## Production Build
-
-To generate a production build, run:
-
-```bash
-npm run build
-```
-
-Upon completion, you'll have a new dist/ folder which can be deployed directly
-to a server.
-
-To preview the production build, run:
-
-```bash
-npm run preview
 ```
 
 ## Demonstrations
