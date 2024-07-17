@@ -6,3 +6,6 @@ dist
 .vscode/*
 !.vscode/extensions.json
 .DS_Store
+
+# Application files and folders
+vectorStore

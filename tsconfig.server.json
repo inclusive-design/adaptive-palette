@@ -8,10 +8,14 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "alwaysStrict": true,
+    "skipLibCheck": true,
     "outDir": "./dist/server"
   },
   "include": [
     "config/**/*",
     "src/server/**/*"
+  ],
+  "exclude": [
+    "node_modules/**/*"
   ]
 }
