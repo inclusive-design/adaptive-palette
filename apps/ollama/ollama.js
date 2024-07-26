@@ -98,7 +98,7 @@ function setSelectedModel () {
 }
 
 /**
- * Handle clicke on the "use all models" checkbox.  This will eneable or disbale
+ * Handle click on the "use all models" checkbox.  This will eneable or disbale
  * the models <select> element and reset `nameOfModelToUse` as appropriate.
  */
 function useAllModelsClicked () {
@@ -196,11 +196,11 @@ async function outputResult(response, outputEl, defaultMsg) {
   for await (const aPart of response) {
     console.debug(aPart.message.content);
     outputEl.innerText += aPart.message.content;
-    outputEl.scrollIntoView(false);
+    document.body.scrollIntoView({behavior: "smooth", block: "end"});
   }
   if (outputEl.innerText === "") {
     outputEl.innerText = ( defaultMsg === undefined ? "LLM gave no results" : defaultMsg);
-    outputEl.scrollIntoView(false);
+    document.body.scrollIntoView({behavior: "smooth", block: "end"});
   }
 }
 
@@ -244,9 +244,10 @@ async function queryEachModel (promptText) {
         count++;
 
         // Clear the general "Working..." message after all models have been
-        // queried
+        // queried, and scroll to the bottom
         if (count === names.length) {
-          document.getElementById("ollamaOutput").innerText = "";
+          outputResult([], document.getElementById("ollamaOutput"), "");
+          document.body.scrollTop = document.body.scrollHeight;
         }
       });
   });
@@ -274,7 +275,6 @@ function createOutputSection(modelName) {
     paragraph.setAttribute("id", `${modelName}_output`);
     paragraph.append("Working ...");
     sectionEl.appendChild(paragraph);
-    paragraph.scrollIntoView(false);
   }
   else {
     // Rationale: if <section id=section_modelName ...> exists, it was created
