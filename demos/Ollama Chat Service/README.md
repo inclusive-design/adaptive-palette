@@ -1,6 +1,6 @@
 # Ollama Chat Service Demo
 
-This folder contains a demonstration of a chat web-app that usex Ollama as an
+This folder contains a demonstration of a chat web-app that uses Ollama as an
 LLM chat service.  The following instructions describe how to set up a local
 Ollama service with which the web-app demo can interact, send queries, and show
 the chat service's responses.
@@ -27,33 +27,34 @@ The `whatExpress.html` web-app uses `fetch()` to send queries to the Ollama
 service.  The advantage is that no other support library or code needs to be
 installed.  The disadvantages are that setting up the parameters for `fetch()`
 and managing the response are a little more involved.  In terms of the request,
-it is necessary to provide the request headers, specify that it is a `POST`
-request, make the request of the correct Ollama service endpoint, set the
-`Content-Type`, and properly set up the body payload. For the chat end-point,
-the response is a special type of JSON, namely `json-nd` that must be parsed and
-processed to retrieve the actual AI's text to show on the web page. Using a
-client library, briefly discussed in the next section, hides a lot of these
-details when interacting with Ollama.
+it is necessary to:
 
-The demo web-app is launched in the same way as the main Adaptive Palette
-application:
+- provide the request headers,
+- specify that it is a `POST` request,
+- make the request of the correct Ollama service endpoint,
+- set the `Content-Type`, and
+- properly set up the body payload.
+
+For the chat end-point, the response is a special type of JSON, namely `json-nd`
+that must be parsed and processed to retrieve the actual AI's text to show on
+the web page. Using a client library, briefly discussed in the next section,
+hides a lot of these details when interacting with Ollama.
+
+The demo web-app is launched using the following command:
 
 ```text
-npm run dev
+npm run serveLocalDemos
 ```
-
-See the [Start a Development Server](../../README.md#start-a-development-server)
-section in the main README document for more details.
 
 Once the development server is running, open this `localhost` url from within a
 browser:
-[`http://localhost:3000/demos/Ollama%20Chat%20Service/whatExpress.html`](http://localhost:3000/demos/Ollama%20Chat%20Service/whatExpress.html)
+[`http://localhost:5174/demos/Ollama%20Chat%20Service/whatExpress.html`](http://localhost:5174/demos/Ollama%20Chat%20Service/whatExpress.html)
 
 ### Chat using Ollama Client Library
 
 There is an [Ollama browser API](https://github.com/ollama/ollama-js/?tab=readme-ov-file#browser-usage)
 for communication with the Ollama service, using the library's `chat()` function
-instead of making raw calls to `fetch()` directly. The advantage of this
+instead of making raw requests using `fetch()`. The advantage of this
 approach is that sending a query, or different types of queries, is more
 straightforward, configuring and passing an object that is essentially the body
 of the request.  The response from `chat()` in this case is an array of strings
