@@ -11,6 +11,8 @@
     "dev:watchClient": "vite build --watch",
     "dev:watchServer": "tsc --project tsconfig.server.json --watch",
     "start:devServer": "nodemon dist/server/src/server/server.js",
+    "serveLocalApps": "vite dev ./apps --port 5173 --base '/apps'",
+    "serveLocalDemos": "vite dev ./demos --port 5174 --base '/demos'",
     "lint": "run-p lint:*",
     "lint:js": "eslint .",
     "lint:markdown": "markdownlint-cli2 \"./**/*.md\" \"#node_modules\" \"#dist\"",
