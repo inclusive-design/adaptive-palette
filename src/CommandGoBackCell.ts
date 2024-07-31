@@ -34,15 +34,15 @@ const goBackToPalette = async (event: Event): Promise<void> => {
   speak(button.innerText);
 
   const paletteToGoBackTo = navigationStack.peek();
-  if (paletteToGoBackTo) {
-    const paletteDefinition = await paletteStore.getNamedPalette(paletteToGoBackTo.name, loadPaletteFromJsonFile);
+  if (paletteToGoBackTo && paletteToGoBackTo.palette) {
+    const paletteDefinition = await paletteStore.getNamedPalette(paletteToGoBackTo.palette.name, loadPaletteFromJsonFile);
     if (paletteDefinition) {
-      const paletteContainer = document.getElementById(button.getAttribute("aria-controls")) || document.body;
-      navigationStack.popAndSetCurrent(paletteDefinition);
+      const paletteContainer = paletteToGoBackTo.htmlElement || document.getElementById(button.getAttribute("aria-controls")) || document.body;
+      navigationStack.popAndSetCurrent(paletteToGoBackTo);
       render (html`<${Palette} json=${paletteDefinition}/>`, paletteContainer);
     }
     else {
-      console.error(`goBackToPalette():  Unable to locate the palette definition for ${paletteToGoBackTo}`);
+      console.error(`goBackToPalette():  Unable to locate the palette definition for ${paletteToGoBackTo.palette.name}`);
     }
   }
 };

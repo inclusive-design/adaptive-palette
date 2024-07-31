@@ -158,7 +158,7 @@ describe("Palette integration test", () => {
     // insure that the entire palette is in the DOM.
     render(html`<${Palette} json=${testPalette}/>`);
     const navStack = adaptivePaletteGlobals.navigationStack;
-    navStack.currentPalette = testPalette;
+    navStack.currentPalette = { palette: testPalette, htmlElement: document.body };
 
     const firstCell = await screen.findByText("First Cell");
     expect(firstCell).toBeInTheDocument();
@@ -198,18 +198,22 @@ describe("Palette integration test", () => {
     fireEvent.click(clearButton);
     expect(contentArea.childNodes.length).toBe(0);
 
-    // Trigger forward navigation
-    const goForwardButton = await screen.findByText("Go To");
+    // Trigger forward navigation.
+    // Note: the element whose text is "Go To" is actually a <div> within the
+    // <button> of interest.  The button is that <div>'s parent.  Similarly
+    // for the "Back Up" button.
+    const goForwardButton = (await screen.findByText("Go To")).parentElement;
+
     fireEvent.click(goForwardButton);
-    const goBackButton = await waitFor(() => screen.findByText("Back Up"));
+    const goBackButton = (await waitFor(() => screen.findByText("Back Up"))).parentElement;
     expect(goBackButton).toBeInTheDocument();
-    expect(navStack.currentPalette).toBe(testLayerOnePalette);
-    expect(navStack.peek()).toBe(testPalette);
+    expect(navStack.currentPalette.palette).toBe(testLayerOnePalette);
+    expect(navStack.peek().palette).toBe(testPalette);
 
     // Trigger go-back navigation
     fireEvent.click(goBackButton);
     await waitFor(() => expect(firstCell).toBeInTheDocument());
-    expect(navStack.currentPalette).toBe(testPalette);
+    expect(navStack.currentPalette.palette).toBe(testPalette);
     expect(navStack.isEmpty()).toBe(true);
   });
 });

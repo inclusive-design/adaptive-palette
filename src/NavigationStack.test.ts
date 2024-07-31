@@ -9,7 +9,13 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+import { render, screen } from "@testing-library/preact";
+import "@testing-library/jest-dom";
+import { html } from "htm/preact";
+
 import { NavigationStack } from "./NavigationStack";
+
+const RENDERING_TEST_ID = "renderingDiv";
 
 const testPalette1 = {
   "name": "testPalette1",
@@ -56,9 +62,16 @@ const testPalette2 = {
   }
 };
 
+
 describe("NavigationStack module - basics", (): void => {
 
   const navigation = new NavigationStack();
+  let renderingElement;
+
+  beforeAll(async (): Promise<void> => {
+    render(html`<div data-testid="${RENDERING_TEST_ID}">Rendering div</div>`);
+    renderingElement = await screen.findByTestId(RENDERING_TEST_ID);
+  });
 
   test("Empty NavigationStack", (): void => {
     expect(navigation.isEmpty()).toBe(true);
@@ -66,76 +79,90 @@ describe("NavigationStack module - basics", (): void => {
   });
 
   test("Current palette accessors", (): void => {
-    navigation.currentPalette = testPalette1;
-    expect(navigation.currentPalette).toBe(testPalette1);
+    const testStackItem1 = {
+      palette: testPalette1,
+      htmlElement: renderingElement
+    };
+    navigation.currentPalette = testStackItem1;
+    expect(navigation.currentPalette).toBe(testStackItem1);
     navigation.currentPalette = null;
     expect(navigation.currentPalette).toBe(null);
   });
 
   test("Flush and reset the navigation stack", (): void => {
-    navigation.flushReset(testPalette2);
+    const testStackItem2 = {
+      palette: testPalette2,
+      htmlElement: renderingElement
+    };
+    navigation.flushReset(testStackItem2);
     expect(navigation.isEmpty()).toBe(true);
-    expect(navigation.currentPalette).toBe(testPalette2);
+    expect(navigation.currentPalette).toBe(testStackItem2);
   });
 });
 
 describe("NavigationStack module - pushing and popping", (): void => {
 
   const navigation = new NavigationStack();
+  let renderingElement, testStackItem1, testStackItem2;
 
-  beforeEach ((): void => {
-    navigation.flushReset(null);
+  beforeAll(async (): Promise<void> => {
+    render(html`<div data-testid="${RENDERING_TEST_ID}">Rendering div</div>`);
+    renderingElement = await screen.findByTestId(RENDERING_TEST_ID);
+    testStackItem1 = { palette: testPalette1, htmlElement: renderingElement };
+    testStackItem2 = { palette: testPalette2, htmlElement: renderingElement };
   });
 
   test("Non-empty NavigationStack", (): void => {
-    navigation.push(testPalette1);
+    navigation.push(testStackItem1);
     expect(navigation.isEmpty()).toBe(false);
-    expect(navigation.peek()).toBe(testPalette1);
+    expect(navigation.peek()).toBe(testStackItem1);
     expect(navigation.currentPalette).toBe(null);
   });
 
   test("Pop the top of the stack", (): void => {
-    navigation.push(testPalette1);
+    navigation.flushReset(null);
+    navigation.push(testStackItem1);
     const topPalette = navigation.pop();
-    expect(topPalette).toBe(testPalette1);
+    expect(topPalette).toBe(testStackItem1);
     expect(navigation.isEmpty()).toBe(true);
     // The current palette should be unaffected by a pop operation.
     expect(navigation.currentPalette).toBe(null);
   });
 
   test("Multiple layers and a current palette", (): void => {
-    navigation.push(testPalette1);
-    navigation.push(testPalette2);
-    navigation.currentPalette = testPalette1;
+    navigation.push(testStackItem1);
+    navigation.push(testStackItem2);
+    navigation.currentPalette = testStackItem1;
     expect(navigation.isEmpty()).toBe(false);
-    expect(navigation.peek()).toBe(testPalette2);
-    expect(navigation.peek(1)).toBe(testPalette1);
-    expect(navigation.currentPalette).toBe(testPalette1);
+    expect(navigation.peek()).toBe(testStackItem2);
+    expect(navigation.peek(1)).toBe(testStackItem1);
+    expect(navigation.currentPalette).toBe(testStackItem1);
   });
 
   test("Check invalid peek()", (): void => {
-    navigation.push(testPalette1);
-    navigation.push(testPalette2);
+    navigation.push(testStackItem1);
+    navigation.push(testStackItem2);
     expect(navigation.isEmpty()).toBe(false);
     expect(navigation.peek(-1)).toBe(undefined);
     expect(navigation.peek(1024)).toBe(undefined);
   });
 
   test("Check pop and set current utility function", (): void => {
-    navigation.currentPalette = testPalette1;
-    navigation.push(testPalette1);
-    navigation.push(testPalette2);
-    const poppedPalette = navigation.popAndSetCurrent(testPalette2);
-    expect(poppedPalette).toBe(testPalette2);
-    expect(navigation.peek()).toBe(testPalette1);
-    expect(navigation.currentPalette).toBe(testPalette2);
+    navigation.currentPalette = testStackItem1;
+    navigation.push(testStackItem1);
+    navigation.push(testStackItem2);
+    const poppedPalette = navigation.popAndSetCurrent(testStackItem2);
+    expect(poppedPalette).toBe(testStackItem2);
+    expect(navigation.peek()).toBe(testStackItem1);
+    expect(navigation.currentPalette).toBe(testStackItem2);
   });
 
   test("Check peeking at the bottom of the stack", (): void => {
+    navigation.flushReset(null);
     expect(navigation.isEmpty()).toBe(true);
     expect(navigation.peekLast()).toBe(undefined);
-    navigation.push(testPalette1);
-    navigation.push(testPalette2);
-    expect(navigation.peekLast()).toBe(testPalette1);
+    navigation.push(testStackItem1);
+    navigation.push(testStackItem2);
+    expect(navigation.peekLast()).toBe(testStackItem1);
   });
 });
