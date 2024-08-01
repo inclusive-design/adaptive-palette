@@ -48,3 +48,10 @@ export type EncodingType = BlissSymbolInfoType & {
 export type PaletteFileMapType = {
   [paletteName: string]: string
 }
+
+// Items pushed to the navigation stack.  The first field is the palette to go
+// back to, the second field is where to render it in the document.
+export type NavStackItemType = {
+  palette: JsonPaletteType,
+  htmlElement: HTMLElement
+}
