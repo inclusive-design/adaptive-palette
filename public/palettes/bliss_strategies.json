@@ -1,0 +1,192 @@
+{
+  "name": "Bliss Strategies",
+  "cells": {
+    "abstract-37848ed0-cbff-450b-bb55-f91a0d1bebb0": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "abstract",
+        "bciAvId": 27001,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "answer-b7ed0181-bd57-4389-b2f1-b65baf09822d": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "answer",
+        "bciAvId": 12393,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "belongs-with-2cd58e48-1a85-4acf-bc70-1c509c346cdd": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "belongs with",
+        "bciAvId": [12663, "/", 8993],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "combine-indicator-4b96fbf1-37fb-41e5-a5b5-05097e158e33": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "combine (indicator)",
+        "bciAvId": 13382,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "command-025a1cd8-73d9-4fff-bb83-f4664a7e1b8c": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "command",
+        "bciAvId": 8483,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "generalization-af769fa5-09d7-4e63-bf2e-d6e08fdcd446": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "generalization",
+        "bciAvId": 14430,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 6,
+        "columnSpan": 1
+      }
+    },
+    "group-of-3097898d-fa15-41cc-8848-af26d001e92e": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "group of",
+        "bciAvId": 14647,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 7,
+        "columnSpan": 1
+      }
+    },
+    "intensity-25f26791-580b-425e-8a16-3fc5b4bbc7d1": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "intensity",
+        "bciAvId": 14947,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 8,
+        "columnSpan": 1
+      }
+    },
+    "metaphor-94eddd4b-9e86-4f87-a80e-2b3254cd0426": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "metaphor",
+        "bciAvId": 15460,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 9,
+        "columnSpan": 1
+      }
+    },
+    "not-94eddd4b-9e86-4f87-a80e-2b3254cd0426": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "not",
+        "bciAvId": 15733,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "opposite-a13f5d63-c4bb-4080-b256-add0a5171739": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "opposite",
+        "bciAvId": 15927,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "meaning-d0c38fc5-6f27-4aec-9e0e-46a3a5e2c12f": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "meaning",
+        "bciAvId": 15441,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "rhymes-with-4f8a3e5b-ddbd-42a3-ba37-b00aa8923df7": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "rhymes (with)",
+        "bciAvId": [16502, "/", 8993],
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "same-0dac5ebd-9fdb-4aa8-a80b-ed607e43a445": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "same",
+        "bciAvId": 25368,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "similar-sound-8481d07c-cbbf-4a9c-acdd-d7de99ee05b4": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "similar sound",
+        "bciAvId": 16986,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 6,
+        "columnSpan": 1
+      }
+    },
+    "similar-to-6005ae50-b518-4a2a-9106-0f48b8b3453c": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "similar (to)",
+        "bciAvId": 16984,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 7,
+        "columnSpan": 1
+      }
+    },
+    "type-31efeefe-5d7a-471b-bcc0-1bc311699328": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "type",
+        "bciAvId": 17961,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 8,
+        "columnSpan": 1
+      }
+    }
+  }
+}
