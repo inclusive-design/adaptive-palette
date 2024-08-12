@@ -71,8 +71,21 @@ built-out application examples.  See the respective READMEs for instructions on
 how to run the software.
 
 - [Ollama Chat Web-App](./apps/ollama/README.md): a chat application running on
-  `localhost` that provides access to multiple LLMs using the Ollams localhost
+  `localhost` that provides access to multiple LLMs using the Ollama localhost
   web service.
 - [Ollama Chat Service Demo](./demos/Ollama%20Chat%20Service/README.md): a
   simple web-app that runs on `localhost` for sending queries to an Ollama
   chatbot service also running on `localhost`.
+
+## Cloudflare
+
+The adaptive-palette can be served as a production preview using [Cloudflare Pages](https://developers.cloudflare.com/pages/),
+specifically using the [Git integration guide](https://developers.cloudflare.com/pages/get-started/git-integration/).
+You will need to have your own [Cloudflare account](https://www.cloudflare.com/)
+to do this.
+
+In the "Deployment details" for the preview, use the following for the "Build
+command" and "Build output directory" settings:
+
+- Build command: `npm run build:client`
+- Build output directory:: `/dist/client`
