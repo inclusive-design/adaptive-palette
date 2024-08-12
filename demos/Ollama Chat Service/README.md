@@ -19,7 +19,7 @@ steps.
 
 There are two ways to make requests of the Ollama service. The demo uses the
 browsers' built-in `fetch()` function.  The other method is to use the Ollama
-client library, discussed briefly in the section following the next section.
+client library.  These are discussed in the next two sections.
 
 ### Chat using `fetch()`
 
@@ -43,12 +43,12 @@ hides a lot of these details when interacting with Ollama.
 The demo web-app is launched using the following command:
 
 ```text
-npm run serveLocalDemos
+npm run serveAppsDemos
 ```
 
 Once the development server is running, open this `localhost` url from within a
 browser:
-[`http://localhost:5174/demos/Ollama%20Chat%20Service/whatExpress.html`](http://localhost:5174/demos/Ollama%20Chat%20Service/whatExpress.html)
+[`http://localhost:5173/demos/Ollama%20Chat%20Service/whatExpress.html`](http://localhost:5174/demos/Ollama%20Chat%20Service/whatExpress.html)
 
 ### Chat using Ollama Client Library
 
@@ -56,13 +56,12 @@ There is an [Ollama browser API](https://github.com/ollama/ollama-js/?tab=readme
 for communication with the Ollama service, using the library's `chat()` function
 instead of making raw requests using `fetch()`. The advantage of this
 approach is that sending a query, or different types of queries, is more
-straightforward, configuring and passing an object that is essentially the body
+straightforward that involves passing an object that is essentially the body
 of the request.  The response from `chat()` in this case is an array of strings
-that can be concatenated for showing the AI's text on the web page.
-Alternatively, the library provides a streaming response such that as the LLM
-provides further output, it can be taken and added incrementally to the display
-instead of waiting for the LLM to finish and displaying the response all at
-once.
+that can be concatenated to show the AI's text on the web page.  Alternatively,
+the library provides a streaming response such that as the LLM provides further
+output, it can be taken and added incrementally to the display instead of
+waiting for the LLM to finish and displaying the response all at once.
 
 The disadvantages are that Ollama's browser library must be
 installed, and the necessary objects and functions must be included using
