@@ -1,6 +1,17 @@
 {
   "name": "Bliss Strategies",
   "cells": {
+    "bliss-strategies-7c33c282-4103-4c1e-a872-e97ebd6468ea": {
+      "type": "LabelCell",
+      "options": {
+        "label": "Bliss Strategies",
+        "bciAvId": 23031,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
     "abstract-37848ed0-cbff-450b-bb55-f91a0d1bebb0": {
       "type": "ActionBmwCodeCell",
       "options": {
@@ -8,7 +19,7 @@
         "bciAvId": 27001,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 1,
+        "columnStart": 2,
         "columnSpan": 1
       }
     },
@@ -19,7 +30,7 @@
         "bciAvId": 12393,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 2,
+        "columnStart": 3,
         "columnSpan": 1
       }
     },
@@ -27,10 +38,10 @@
       "type": "ActionBmwCodeCell",
       "options": {
         "label": "belongs with",
-        "bciAvId": [12663, "/", 8993],
+        "bciAvId": [12663, ";", 8993],
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 3,
+        "columnStart": 4,
         "columnSpan": 1
       }
     },
@@ -41,7 +52,7 @@
         "bciAvId": 13382,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 4,
+        "columnStart": 5,
         "columnSpan": 1
       }
     },
@@ -52,7 +63,7 @@
         "bciAvId": 8483,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 5,
+        "columnStart": 6,
         "columnSpan": 1
       }
     },
@@ -63,7 +74,7 @@
         "bciAvId": 14430,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 6,
+        "columnStart": 7,
         "columnSpan": 1
       }
     },
@@ -74,7 +85,7 @@
         "bciAvId": 14647,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 7,
+        "columnStart": 8,
         "columnSpan": 1
       }
     },
@@ -85,7 +96,7 @@
         "bciAvId": 14947,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 8,
+        "columnStart": 9,
         "columnSpan": 1
       }
     },
@@ -94,9 +105,9 @@
       "options": {
         "label": "metaphor",
         "bciAvId": 15460,
-        "rowStart": 1,
+        "rowStart": 2,
         "rowSpan": 1,
-        "columnStart": 9,
+        "columnStart": 1,
         "columnSpan": 1
       }
     },
@@ -107,7 +118,7 @@
         "bciAvId": 15733,
         "rowStart": 2,
         "rowSpan": 1,
-        "columnStart": 1,
+        "columnStart": 2,
         "columnSpan": 1
       }
     },
@@ -118,7 +129,7 @@
         "bciAvId": 15927,
         "rowStart": 2,
         "rowSpan": 1,
-        "columnStart": 2,
+        "columnStart": 3,
         "columnSpan": 1
       }
     },
@@ -129,7 +140,7 @@
         "bciAvId": 15441,
         "rowStart": 2,
         "rowSpan": 1,
-        "columnStart": 3,
+        "columnStart": 4,
         "columnSpan": 1
       }
     },
@@ -137,10 +148,10 @@
       "type": "ActionBmwCodeCell",
       "options": {
         "label": "rhymes (with)",
-        "bciAvId": [16502, "/", 8993],
+        "bciAvId": [16502, ";", 8993],
         "rowStart": 2,
         "rowSpan": 1,
-        "columnStart": 4,
+        "columnStart": 5,
         "columnSpan": 1
       }
     },
@@ -151,7 +162,7 @@
         "bciAvId": 25368,
         "rowStart": 2,
         "rowSpan": 1,
-        "columnStart": 5,
+        "columnStart": 6,
         "columnSpan": 1
       }
     },
@@ -162,7 +173,7 @@
         "bciAvId": 16986,
         "rowStart": 2,
         "rowSpan": 1,
-        "columnStart": 6,
+        "columnStart": 7,
         "columnSpan": 1
       }
     },
@@ -173,7 +184,7 @@
         "bciAvId": 16984,
         "rowStart": 2,
         "rowSpan": 1,
-        "columnStart": 7,
+        "columnStart": 8,
         "columnSpan": 1
       }
     },
@@ -184,7 +195,7 @@
         "bciAvId": 17961,
         "rowStart": 2,
         "rowSpan": 1,
-        "columnStart": 8,
+        "columnStart": 9,
         "columnSpan": 1
       }
     }

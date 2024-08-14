@@ -1,6 +1,17 @@
 {
   "name": "Strategies",
   "cells": {
+    "strategies-label-6057d056-db6a-4f73-8259-0d28566e7388": {
+      "type": "LabelCell",
+      "options": {
+        "label": "Strategy",
+        "bciAvId": 25814,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
     "bliss-37863659-0289-4c4d-a88f-e33e6582f565": {
       "type": "ActionBranchToPaletteCell",
       "options": {
@@ -9,7 +20,7 @@
         "bciAvId": 23031,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 0,
+        "columnStart": 2,
         "columnSpan": 1
       }
     },
@@ -21,7 +32,7 @@
         "bciAvId": 27060,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 2,
+        "columnStart": 3,
         "columSpan": 1
       }
     },
@@ -33,7 +44,7 @@
         "bciAvId": 16742,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 3,
+        "columnStart": 4,
         "columSpan": 1
       }
     },
@@ -45,7 +56,7 @@
         "bciAvId": [29003, "/", 18267, "/", 16172],
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 4,
+        "columnStart": 5,
         "columSpan": 1
       }
     },
@@ -57,7 +68,7 @@
         "bciAvId": 16445,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 5,
+        "columnStart": 6,
         "columSpan": 1
       }
     },
@@ -69,7 +80,7 @@
         "bciAvId": 16445,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 6,
+        "columnStart": 7,
         "columSpan": 1
       }
     }

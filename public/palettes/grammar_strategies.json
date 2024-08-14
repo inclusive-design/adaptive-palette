@@ -1,6 +1,17 @@
 {
   "name": "Grammar Strategies",
   "cells": {
+    "grammar-strategies-56f542cf-0b58-4713-84d1-4772170e43f2": {
+      "type": "LabelCell",
+      "options": {
+        "label": "Grammar Strategies",
+        "bciAvId": 27060,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
     "adjective-ab6e667a-807f-42f6-80aa-10d69582389b": {
       "type": "ActionBmwCodeCell",
       "options": {
@@ -8,7 +19,7 @@
         "bciAvId": 27002,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 1,
+        "columnStart": 2,
         "columnSpan": 1
       }
     },
@@ -19,7 +30,7 @@
         "bciAvId": 27003,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 2,
+        "columnStart": 3,
         "columnSpan": 1
       }
     },
@@ -30,7 +41,7 @@
         "bciAvId": 27096,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 3,
+        "columnStart": 4,
         "columnSpan": 1
       }
     },
@@ -41,7 +52,7 @@
         "bciAvId": 9011,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 5,
+        "columnStart": 6,
         "columnSpan": 1
       }
     },
@@ -52,7 +63,7 @@
         "bciAvId": 27152,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 4,
+        "columnStart": 5,
         "columnSpan": 1
       }
     }

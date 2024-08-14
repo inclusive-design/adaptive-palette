@@ -1,14 +1,25 @@
 {
   "name": "Search Strategies",
   "cells": {
+    "search-strategies-4a922731-9781-4ab5-a645-4176d6d8edb9": {
+      "type": "LabelCell",
+      "options": {
+        "label": "Search Strategies",
+        "bciAvId": 16742,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
     "word-that-means-4a922731-9781-4ab5-a645-4176d6d8edb9": {
       "type": "ActionBmwCodeCell",
       "options": {
         "label": "Word that means",
-        "bciAvId": [18272, "/",  16482 , "/", 15441],
+        "bciAvId": [18272, "/",  16482 , "/", 15441, ";", 8999, ";", 9004 ],
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 1,
+        "columnStart": 2,
         "columnSpan": 1
       }
     },
@@ -16,10 +27,10 @@
       "type": "ActionBmwCodeCell",
       "options": {
         "label": "Minspeak personal associations",
-        "bciAvId": [16752, "/", 12663, "/", 13380],
+        "bciAvId": [16752, ";", 8998, "/", 12663, "/", 13380, ";", 9011 ],
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 2,
+        "columnStart": 3,
         "columnSpan": 1
       }
     },
@@ -28,11 +39,11 @@
       "options": {
         "label": "Personal conventions",
         "bciAvId": [
-          16752, "/", 12663, "/", 13382, "/", 12334, "/", 12354, "/", 13382
+          16752, ";", 8998, "/", 12663, "/", 13382, "/", 12334, ";", 9011, "/", 12354, "/", 13382
         ],
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 3,
+        "columnStart": 4,
         "columnSpan": 1
       }
     }
