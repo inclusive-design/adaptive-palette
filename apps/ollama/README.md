@@ -5,7 +5,7 @@ that the locally hosted Ollama chat web-app can send queries, and show the
 ollama service's responses from querying one or more LLMs.
 
 A reason for running the service and the applications on `localhost` is privacy.
- Since the user's prompts are handled by an LLM or LLMs running locally, no user
+Since the user's prompts are handled by an LLM or LLMs running locally, no user
 information is sent to the cloud; it all remains on the user's local machine.
 
 ## Ollama Service Set Up
@@ -44,15 +44,12 @@ npm install ollama
 Launch the web-app chat client using the command:
 
 ```text
-npm run dev
+npm run serveAppsDemos
 ```
-
-See the [Start a Development Server](../../README.md#start-a-development-server)
-section in the main README document for more details.
 
 Once the development server is running, open this `localhost` url from within a
 browser:
-[`http://localhost:3000/apps/ollama/ollama.html`](http://localhost:3000/apps/ollama/ollama.html)
+[`http://localhost:5173/apps/ollama/ollama.html`](http://localhost:5173/apps/ollama/ollama.html)
 
 ## How to Chat
 
