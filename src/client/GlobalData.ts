@@ -24,6 +24,7 @@ import { CommandGoBackCell } from "./CommandGoBackCell";
 import { ContentBmwEncoding } from "./ContentBmwEncoding";
 import { CommandClearEncoding } from "./CommandClearEncoding";
 import { CommandDelLastEncoding } from "./CommandDelLastEncoding";
+import { LabelCell } from "./LabelCell";
 import { PaletteStore } from "./PaletteStore";
 import { NavigationStack } from "./NavigationStack";
 
@@ -33,7 +34,8 @@ export const cellTypeRegistry = {
   "CommandGoBackCell": CommandGoBackCell,
   "ContentBmwEncoding": ContentBmwEncoding,
   "CommandClearEncoding": CommandClearEncoding,
-  "CommandDelLastEncoding": CommandDelLastEncoding
+  "CommandDelLastEncoding": CommandDelLastEncoding,
+  "LabelCell": LabelCell
 };
 
 /**
