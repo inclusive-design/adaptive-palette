@@ -9,7 +9,7 @@
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
-        "columnSpan": 1
+        "columnSpan": 5
       }
     },
     "adjective-ab6e667a-807f-42f6-80aa-10d69582389b": {
@@ -17,9 +17,9 @@
       "options": {
         "label": "adjective",
         "bciAvId": 27002,
-        "rowStart": 1,
+        "rowStart": 2,
         "rowSpan": 1,
-        "columnStart": 2,
+        "columnStart": 1,
         "columnSpan": 1
       }
     },
@@ -28,9 +28,9 @@
       "options": {
         "label": "adverb",
         "bciAvId": 27003,
-        "rowStart": 1,
+        "rowStart": 2,
         "rowSpan": 1,
-        "columnStart": 3,
+        "columnStart": 2,
         "columnSpan": 1
       }
     },
@@ -39,9 +39,9 @@
       "options": {
         "label": "noun",
         "bciAvId": 27096,
-        "rowStart": 1,
+        "rowStart": 2,
         "rowSpan": 1,
-        "columnStart": 4,
+        "columnStart": 3,
         "columnSpan": 1
       }
     },
@@ -50,9 +50,9 @@
       "options": {
         "label": "plural",
         "bciAvId": 9011,
-        "rowStart": 1,
+        "rowStart": 2,
         "rowSpan": 1,
-        "columnStart": 6,
+        "columnStart": 4,
         "columnSpan": 1
       }
     },
@@ -61,7 +61,7 @@
       "options": {
         "label": "verb",
         "bciAvId": 27152,
-        "rowStart": 1,
+        "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
         "columnSpan": 1

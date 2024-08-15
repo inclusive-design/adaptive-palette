@@ -9,7 +9,7 @@
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
-        "columnSpan": 1
+        "columnSpan": 6
       }
     },
     "bliss-37863659-0289-4c4d-a88f-e33e6582f565": {
@@ -18,9 +18,9 @@
         "label": "Bliss strategies",
         "branchTo": "Bliss Strategies",
         "bciAvId": 23031,
-        "rowStart": 1,
+        "rowStart": 2,
         "rowSpan": 1,
-        "columnStart": 2,
+        "columnStart": 1,
         "columnSpan": 1
       }
     },
@@ -30,10 +30,10 @@
         "label": "Grammar strategies",
         "branchTo": "Grammar Strategies",
         "bciAvId": 27060,
-        "rowStart": 1,
+        "rowStart": 2,
         "rowSpan": 1,
-        "columnStart": 3,
-        "columSpan": 1
+        "columnStart": 2,
+        "columnSpan": 1
       }
     },
     "search-529841cf-3370-4365-b04e-ac88b0f0d5f2": {
@@ -42,10 +42,10 @@
         "label": "Search strategies",
         "branchTo": "Search Strategies",
         "bciAvId": 16742,
-        "rowStart": 1,
+        "rowStart": 2,
         "rowSpan": 1,
-        "columnStart": 4,
-        "columSpan": 1
+        "columnStart": 3,
+        "columnSpan": 1
       }
     },
     "augment-14de9078-6f8d-489e-ac6e-27cee440722d": {
@@ -53,11 +53,11 @@
       "options": {
         "label": "Augment with pictures",
         "branchTo": "Augmentative Strategies",
-        "bciAvId": [29003, "/", 18267, "/", 16172],
-        "rowStart": 1,
+        "bciAvId": [29003, "/", 18267, "/", 16172, ";", 9011],
+        "rowStart": 2,
         "rowSpan": 1,
-        "columnStart": 5,
-        "columSpan": 1
+        "columnStart": 4,
+        "columnSpan": 1
       }
     },
     "personal-a9cbb381-ad44-4af0-a24c-515fc5587b9d": {
@@ -66,10 +66,10 @@
         "label": "Personal conventions",
         "branchTo": "Personal Strategies",
         "bciAvId": 16445,
-        "rowStart": 1,
+        "rowStart": 2,
         "rowSpan": 1,
-        "columnStart": 6,
-        "columSpan": 1
+        "columnStart": 5,
+        "columnSpan": 1
       }
     },
     "personal2-a9cbb381-ad44-4af0-a24c-515fc5587b9d": {
@@ -78,10 +78,10 @@
         "label": "Personal conventions 2",
         "branchTo": "Personal Strategies 2",
         "bciAvId": 16445,
-        "rowStart": 1,
+        "rowStart": 2,
         "rowSpan": 1,
-        "columnStart": 7,
-        "columSpan": 1
+        "columnStart": 6,
+        "columnSpan": 1
       }
     }
   }
