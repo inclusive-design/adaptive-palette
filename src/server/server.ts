@@ -30,3 +30,9 @@ app.use(serveStatic(path.join(__dirname, "../../../client")));
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+app.get("/health", (req, res) => {
+  res.json({
+    status: "healthy"
+  });
+});
