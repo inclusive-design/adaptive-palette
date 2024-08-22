@@ -64,3 +64,9 @@ if (config.rag.enableRag) {
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+app.get("/health", (req, res) => {
+  res.json({
+    status: "healthy"
+  });
+});

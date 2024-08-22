@@ -10,7 +10,8 @@
     "dev": "run-p dev:* start:devServer",
     "dev:watchClient": "vite build --watch",
     "dev:watchServer": "tsc --project tsconfig.server.json --watch",
-    "start:devServer": "nodemon dist/server/src/server/server.js",
+    "start:devServer": "wait-on dist/server/src/server/server.js && nodemon dist/server/src/server/server.js",
+    "serveAppsDemos": "vite --port 5173",
     "lint": "run-p lint:*",
     "lint:js": "eslint .",
     "lint:markdown": "markdownlint-cli2 \"./**/*.md\" \"#node_modules\" \"#dist\"",
@@ -49,6 +50,7 @@
     "ts-jest": "^29.2.2",
     "typescript": "^5.5.3",
     "vite": "^5.3.3",
-    "whatwg-fetch": "^3.6.20"
+    "whatwg-fetch": "^3.6.20",
+    "wait-on": "^8.0.0"
   }
 }

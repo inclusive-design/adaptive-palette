@@ -2,7 +2,11 @@
 
 The following instructions describe how to set up a local Ollama service such
 that the locally hosted Ollama chat web-app can send queries, and show the
-ollama service's responses.
+ollama service's responses from querying one or more LLMs.
+
+A reason for running the service and the applications on `localhost` is privacy.
+Since the user's prompts are handled by an LLM or LLMs running locally, no user
+information is sent to the cloud; it all remains on the user's local machine.
 
 ## Ollama Service Set Up
 
@@ -25,9 +29,10 @@ steps.
 
 The `ollama.html` web-app uses the [Ollama browser API](https://github.com/ollama/ollama-js/?tab=readme-ov-file#browser-usage)
 for communication with the Ollama service, using the library's `chat()`
-function.  The response from `chat()` in this case is an array of JSON
-structures each containing a part of the textual response from the LLM.  These
-are concatenated together and then displayed on the web page.
+function. The response from `chat()`  is an array of JSON structures each
+containing a part of the textual response from the LLM.  These are streamed from
+ollama and added incrementally to the display area(s) on the web page as the
+LLM(s) provides them.
 
 In the adaptive palette main directory, execute this command line instruction to
 install the ollama JavaScript package:
@@ -39,20 +44,16 @@ npm install ollama
 Launch the web-app chat client using the command:
 
 ```text
-npm run dev
+npm run serveAppsDemos
 ```
-
-See the [Start a Development Server](../../README.md#start-a-development-server)
-section in the main README document for more details.
 
 Once the development server is running, open this `localhost` url from within a
 browser:
-[`http://localhost:3000/apps/ollama/ollama.html`](http://localhost:3000/apps/ollama/ollama.html)
+[`http://localhost:5173/apps/ollama/ollama.html`](http://localhost:5173/apps/ollama/ollama.html)
 
 ## How to Chat
 
-The following describes how to use the web-app regardless of which one is
-tested.
+The following describes how to use the features of the web-app.
 
 There is a pull-down menu near the top of the "LLM Settings" that selects the
 language model to use for the chat. If no action is taken, the language model
@@ -97,4 +98,5 @@ What does this express: "Horse brown eat quickly oats dried"?  Answer
 with a single grammatically correct sentence.
 ```
 
-Ollama will likely respond with a single sentence for this query.
+Ollama will likely respond with a single sentence for this query.  The response
+is incrementally added to the web page as parts of it are provided by ollama.
