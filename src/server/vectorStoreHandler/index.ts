@@ -33,7 +33,7 @@ const load = async (vectorStoreDir: string): Promise<FaissStore> => {
     );
     return vectorStore;
   } catch (error) {
-    console.error("An error occurred during loading vector database: ", error);
+    console.log("An error occurred during loading vector database: ", error);
     throw new Error(`Failed to load vector database: ${error}`);
   }
 };
@@ -48,13 +48,13 @@ const load = async (vectorStoreDir: string): Promise<FaissStore> => {
 const similaritySearch = async (
   vectorStore: FaissStore,
   query: string,
-  topK?: number
+  topK: number = 4
 ): Promise<unknown[]> => {
   try {
     const results = await vectorStore.similaritySearch(query, topK);
     return results;
   } catch (error) {
-    console.error("An error occurred during similarity search: ", error);
+    console.log("An error occurred during similarity search: ", error);
     throw new Error(`Failed to execute similarity search: ${error}`);
   }
 };

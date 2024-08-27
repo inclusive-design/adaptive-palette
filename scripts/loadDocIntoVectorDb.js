@@ -74,7 +74,7 @@ const loaded_vectorStore = await FaissStore.load(saveDbLocation,
 );
 console.log("Loaded.");
 
-// Search for the most similar document
+// Test the loaded store with a similarity search
 const result = await loaded_vectorStore.similaritySearch("Roy nephew", 3);
 console.log("===== Test Result: Similarity search on the phrase \"Roy nephew\" =====");
 console.log(result);

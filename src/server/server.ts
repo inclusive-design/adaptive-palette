@@ -55,7 +55,7 @@ if (config.rag.enableRag) {
     } catch (error) {
       res.status(500).json({
         isError: true,
-        error: error.message
+        error: error
       });
     }
   });
