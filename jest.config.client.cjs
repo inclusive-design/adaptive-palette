@@ -18,6 +18,6 @@ module.exports = {
   transformIgnorePatterns: ["<rootDir>/dist/"],
   moduleFileExtensions: ["mjs", "js", "jsx", "ts", "tsx", "json", "node"],
   moduleNameMapper: {
-     "^.+\\.(css|less|scss)$": "babel-jest"
+    "^.+\\.(css|less|scss)$": "babel-jest"
   },
 };
