@@ -26,9 +26,6 @@ jobs:
           node --version
           echo NPM:
           npm --version
-      - name: NPM audit
-        continue-on-error: true
-        run: npm audit
       - name: NPM install (ci)
         run: npm ci
       - name: Lint
