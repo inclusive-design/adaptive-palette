@@ -9,7 +9,7 @@
  */
 
 /**
- * This script is to load a given user document into the FAISS vector datastore.
+ * This script is to load a given user document into the FAISS vector store.
  * Usage: node scripts/loadDocIntoVectorDb.js userDocumentLocation saveDbLocation
  * Example: node scripts/loadDocIntoVectorDb.js user_doc.txt ./vectorStore
  */
@@ -50,10 +50,10 @@ const textSplitter = new RecursiveCharacterTextSplitter({
   chunkOverlap: 20,
 });
 const splits = await textSplitter.splitDocuments(docs);
-console.log("Splitted.");
+console.log("Split.");
 
 // Load the docs into the vector store
-console.log("Loading the splitted document into Faiss...");
+console.log("Loading the split document into Faiss...");
 const vectorStore = await FaissStore.fromDocuments(
   splits,
   new HuggingFaceTransformersEmbeddings({

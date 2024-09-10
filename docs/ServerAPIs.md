@@ -32,38 +32,18 @@ A JSON object indicating the server's health status. For example:
 
 The `status` field currently only returns the value `"healthy"`.
 
-## Query Pre-loaded Vector Database (POST `/query-vector`)
+## Query Pre-loaded Vector Store (POST `/query-vector`)
 
 ### Description
 
-This endpoint allows you to query the vector database used in the application. It's primarily intended for testing
+This endpoint allows you to query the vector store used in the application. It's primarily intended for testing
 and verification purposes, not for client-side use. The endpoint accepts a query string and returns the top 4 matches
 from the database.
 
 ### Pre-requisites
 
-Before using this endpoint, ensure you've completed the following one-time setup:
-
-1. **Load a document into the vector database**
-   Use the [`scripts/loadDocIntoVectorDb.js`](../scripts/loadDocIntoVectorDb.js) script to populate the vector database.
-   Run the following command from the project root directory:
-
-   ```bash
-   node scripts/loadDocIntoVectorDb.js [location-of-document] [target-dir-of-vector-db]
-   ```
-
-2. **Configure the application**
-   Update the [config/config.ts](../config/config.ts) file to specify the path to the vector database directory:
-
-   ```typescript
-   export const config = {
-     // ... other configurations
-     rag: {
-       vectorStoreDir: "[path-to-vector-db-directory]"
-     }
-     ...
-   };
-   ```
+Before using this endpoint, make sure you've completed one-time setup that enables RAG in the system by following the
+instruction in the [Enable RAG](../README.md#enable-rag) section in the README.
 
 ### Request
 

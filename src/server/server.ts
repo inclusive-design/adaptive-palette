@@ -30,7 +30,7 @@ app.use(express.json());
 // Serve static files from the root dist directory
 app.use(serveStatic(path.join(__dirname, "../../../client")));
 
-// If the `enableRag` flag is on, load the vector data store into a global variable.
+// If the `enableRag` flag is on, load the vector store into a global variable.
 // Note: The `/query-vector` endpoint is for the testing purpose. It should be removed
 // when RAG is included in the AAC users' message processing.
 if (config.rag.enableRag) {
@@ -40,11 +40,11 @@ if (config.rag.enableRag) {
   try {
     vectorStore = await vectorStoreHandler.load(config.rag.vectorStoreDir);
   } catch (error) {
-    console.error("An error occurred while loading the vector database: ", error);
+    console.error("An error occurred while loading the vector store: ", error);
     throw error;
   }
 
-  // Route to search the vector database
+  // Route to search the vector store
   app.post("/query-vector", async (req, res) => {
     const { query } = req.body;
 

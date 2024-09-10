@@ -33,8 +33,8 @@ const load = async (vectorStoreDir: string): Promise<FaissStore> => {
     );
     return vectorStore;
   } catch (error) {
-    console.log("An error occurred during loading vector database: ", error);
-    throw new Error(`Failed to load vector database: ${error}`);
+    console.log("An error occurred during loading vector store: ", error);
+    throw new Error(`Failed to load vector store: ${error}`);
   }
 };
 

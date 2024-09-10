@@ -47,6 +47,46 @@ npm run dev
 
 The website will be available at [http://localhost:3000](http://localhost:3000).
 
+### Enable RAG
+
+RAG (Retrieval-Augmented Generation) is an AI technique designed to enhance the accuracy of generative models by
+incorporating factual knowledge from external sources. It requires loading factual knowledge into a vector store
+that will be quried to provide relevant information to the language model as a context.
+
+By default, the use of RAG is turned off in the system. The `enableRAG` flag is set to `false` by default in the
+[config/config.ts](./config/config.ts).
+
+Follow these steps to complete a one-time setup to enable RAG in the system:
+
+1. **Load a document into the vector store**
+   Use the [`scripts/loadDocIntoVectorDb.js`](./scripts/loadDocIntoVectorDb.js) script to populate the vector store.
+   Run the following command from the project root directory:
+
+   ```bash
+   node scripts/loadDocIntoVectorDb.js [location-of-document] [target-dir-of-vector-db]
+   ```
+
+2. **Configure the application**
+   Update the [config/config.ts](./config/config.ts) file to specify the path to the vector store directory and set
+   the flag `enableRag` to `true`:
+
+   ```typescript
+   export const config = {
+     // ... other configurations
+     rag: {
+      enableRag: true,
+       vectorStoreDir: "[path-to-vector-db-directory]"
+     }
+     ...
+   };
+   ```
+
+   **Note**: The `vectorStoreDir` is defaulted to `./vectorStore`. Modify the value to match where your vector store
+   is located. When a relative path is used, the path is relative to the project root directory.
+
+3. **Restart the server**
+   Follow the instruction in the [Start a Server](./README.md#start-a-server) section.
+
 ### Lint
 
 To lint the source code, run:

@@ -34,10 +34,10 @@ describe("Test vectorStoreHandler", () => {
       if (type && type.constructor && (type.constructor.name === "Float32Array" || type.constructor.name === "BigInt64Array")) {
         return true;
       }
-    
+
       return originalImplementation(type);
     }) as unknown as (arg: unknown) => arg is unknown[];
-    
+
     // Verify every result element
     const verifyResults = (results: unknown[]) => {
       results.forEach((item) => {
@@ -46,7 +46,7 @@ describe("Test vectorStoreHandler", () => {
         expect(item).toHaveProperty("metadata.loc");
       });
     };
-    
+
     it("should perform the search with a vector store by returning default 4 top matches", async () => {
       const vectorStore = await vectorStoreHandler.load(__dirname + "/testVectorStore");
       const results = await vectorStoreHandler.similaritySearch(vectorStore, "roy");
