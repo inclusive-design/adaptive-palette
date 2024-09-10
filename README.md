@@ -59,6 +59,7 @@ By default, the use of RAG is turned off in the system. The `enableRAG` flag is 
 Follow these steps to complete a one-time setup to enable RAG in the system:
 
 1. **Load a document into the vector store**
+
    Use the [`scripts/loadDocIntoVectorDb.js`](./scripts/loadDocIntoVectorDb.js) script to populate the vector store.
    Run the following command from the project root directory:
 
@@ -67,6 +68,7 @@ Follow these steps to complete a one-time setup to enable RAG in the system:
    ```
 
 2. **Configure the application**
+
    Update the [config/config.ts](./config/config.ts) file to specify the path to the vector store directory and set
    the flag `enableRag` to `true`:
 
@@ -85,6 +87,7 @@ Follow these steps to complete a one-time setup to enable RAG in the system:
    is located. When a relative path is used, the path is relative to the project root directory.
 
 3. **Restart the server**
+
    Follow the instruction in the [Start a Server](./README.md#start-a-server) section.
 
 ### Lint
