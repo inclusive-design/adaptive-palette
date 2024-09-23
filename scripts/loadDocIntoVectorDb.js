@@ -76,5 +76,5 @@ console.log("Loaded.");
 
 // Test the loaded store with a similarity search
 const result = await loaded_vectorStore.similaritySearch("Roy nephew", 3);
-console.log("===== Test Result: Similarity search on the phrase \"Roy nephew\" =====");
+console.log(`===== Test Result: Similarity search on the phrase "Roy nephew" found ${result.length} results (expected 3).=====`);
 console.log(result);

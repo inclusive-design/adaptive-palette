@@ -53,7 +53,7 @@ RAG (Retrieval-Augmented Generation) is an AI technique designed to enhance the 
 incorporating factual knowledge from external sources. It requires loading factual knowledge into a vector store
 that will be quried to provide relevant information to the language model as a context.
 
-By default, the use of RAG is turned off in the system. The `enableRAG` flag is set to `false` by default in the
+By default, the use of RAG is turned off in the system. The `enableRag` flag is set to `false` by default in the
 [config/config.ts](./config/config.ts).
 
 Follow these steps to complete a one-time setup to enable RAG in the system:
@@ -83,7 +83,7 @@ Follow these steps to complete a one-time setup to enable RAG in the system:
    };
    ```
 
-   **Note**: The `vectorStoreDir` is defaulted to `./vectorStore`. Modify the value to match where your vector store
+   **Note**: The `vectorStoreDir` defaults to `./vectorStore`. Modify the value to match where your vector store
    is located. When a relative path is used, the path is relative to the project root directory.
 
 3. **Restart the server**
