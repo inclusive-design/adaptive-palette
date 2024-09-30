@@ -132,3 +132,8 @@ command" and "Build output directory" settings:
 
 - Build command: `npm run build:client`
 - Build output directory:: `/dist/client`
+
+## Utility Scripts
+
+- [Load a document into a vector databbase (`scripts/loadDocIntoVectorDb.js`)](./scripts/loadDocIntoVectorDb.js)
+- [Generate a palette JSON file (`scripts/paletteJsonGenerator.js`)](./scripts/loadDocIntoVectorDb.js)
