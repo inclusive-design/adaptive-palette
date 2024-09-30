@@ -1,0 +1,71 @@
+{
+  "name": "Grammar Strategies",
+  "cells": {
+    "grammar-strategies-56f542cf-0b58-4713-84d1-4772170e43f2": {
+      "type": "LabelCell",
+      "options": {
+        "label": "Grammar Strategies",
+        "bciAvId": 27060,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 5
+      }
+    },
+    "adjective-ab6e667a-807f-42f6-80aa-10d69582389b": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "adjective",
+        "bciAvId": 27002,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "adverb-d67d8cdd-eb28-4a88-99fb-1da2da4b91db": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "adverb",
+        "bciAvId": 27003,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "noun-a8e94a5b-e87e-4129-8d36-2b1eb126b422": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "noun",
+        "bciAvId": 27096,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "plural-a843e08e-b92a-4e51-bbe9-24d8f9694fd0": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "plural",
+        "bciAvId": 9011,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "verb-8ae2dfb4-f95e-4a37-9f9c-f18dff198dbc": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "verb",
+        "bciAvId": 27152,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    }
+  }
+}

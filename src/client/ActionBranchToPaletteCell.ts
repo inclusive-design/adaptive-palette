@@ -33,13 +33,15 @@ const navigateToPalette = async (event: Event): Promise<void> => {
   const button = event.currentTarget as HTMLElement;
   speak(button.innerText);
 
+  const buttonsPaletteName = button.parentElement.getAttribute("data-palettename");
   const branchToPaletteName = button.getAttribute("data-branchto");
   const paletteDefinition = await paletteStore.getNamedPalette(branchToPaletteName, loadPaletteFromJsonFile);
   if (paletteDefinition) {
     const displayElement = button.parentElement.parentElement;
-    navigationStack.push(navigationStack.currentPalette);
+    const goBackPalette = await paletteStore.getNamedPalette(buttonsPaletteName);
+    navigationStack.push({ palette: goBackPalette, htmlElement: displayElement });
     render (html`<${Palette} json=${paletteDefinition}/>`, displayElement);
-    navigationStack.currentPalette = paletteDefinition;
+    navigationStack.currentPalette = { palette: paletteDefinition, htmlElement: displayElement };
   }
   else {
     console.error(`navigateToPalette():  Unable to locate the palette definition for ${branchToPaletteName}`);

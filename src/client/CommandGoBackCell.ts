@@ -34,15 +34,15 @@ const goBackToPalette = async (event: Event): Promise<void> => {
   speak(button.innerText);
 
   const paletteToGoBackTo = navigationStack.peek();
-  if (paletteToGoBackTo) {
-    const paletteDefinition = await paletteStore.getNamedPalette(paletteToGoBackTo.name, loadPaletteFromJsonFile);
+  if (paletteToGoBackTo && paletteToGoBackTo.palette) {
+    const paletteDefinition = await paletteStore.getNamedPalette(paletteToGoBackTo.palette.name, loadPaletteFromJsonFile);
     if (paletteDefinition) {
-      const paletteContainer = document.getElementById(button.getAttribute("aria-controls")) || document.body;
-      navigationStack.popAndSetCurrent(paletteDefinition);
+      const paletteContainer = paletteToGoBackTo.htmlElement || document.body;
+      navigationStack.popAndSetCurrent(paletteToGoBackTo);
       render (html`<${Palette} json=${paletteDefinition}/>`, paletteContainer);
     }
     else {
-      console.error(`goBackToPalette():  Unable to locate the palette definition for ${paletteToGoBackTo}`);
+      console.error(`goBackToPalette():  Unable to locate the palette definition for ${paletteToGoBackTo.palette.name}`);
     }
   }
 };
@@ -52,7 +52,6 @@ export function CommandGoBackCell (props: CommandGoBackCellPropsType): VNode {
   const {
     columnStart, columnSpan, rowStart, rowSpan, bciAvId, label
   } = props.options;
-  const ariaControlsId = adaptivePaletteGlobals.mainPaletteContainerId;
 
   const gridStyles = `
     grid-column: ${columnStart} / span ${columnSpan};
@@ -62,7 +61,7 @@ export function CommandGoBackCell (props: CommandGoBackCellPropsType): VNode {
   return html`
     <button
       id="${props.id}" class="btn-command" style="${gridStyles}"
-      aria-controls="${ariaControlsId}" onClick=${goBackToPalette}>
+      onClick=${goBackToPalette}>
       <${BlissSymbol} bciAvId=${bciAvId} label=${label} />
     </button>
   `;

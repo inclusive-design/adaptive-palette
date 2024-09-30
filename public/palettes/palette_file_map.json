@@ -2,5 +2,9 @@
   "My Family Palette": "/palettes/myfamily.json",
   "People": "/palettes/people.json",
   "BMW Palette": "/palettes/bmw_palette.json",
-  "Palettes": "/palettes/palettes.json"
+  "Palettes": "/palettes/palettes.json",
+  "Strategies": "/palettes/strategies.json",
+  "Grammar Strategies": "/palettes/grammar_strategies.json",
+  "Search Strategies": "/palettes/search_strategies.json",
+  "Bliss Strategies": "/palettes/bliss_strategies.json"
 }
