@@ -1,4 +1,7 @@
-# Developer Documentation
+# Client-side Developer Documentation
+
+This document provides technical instructions for developers who use Preact to
+build the adaptive palette client side.
 
 ## How to render a palette
 

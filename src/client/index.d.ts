@@ -46,7 +46,7 @@ export type EncodingType = BlissSymbolInfoType & {
 };
 
 export type PaletteFileMapType = {
-  [paletteName: string, filePath: string]
+  [paletteName: string]: string
 }
 
 // Items pushed to the navigation stack.  The first field is the palette to go
