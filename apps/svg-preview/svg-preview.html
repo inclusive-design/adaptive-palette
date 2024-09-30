@@ -1,0 +1,31 @@
+<html>
+<head>
+  <title>Bliss SVG Previewer</title>
+  <style>
+    svg {
+      border: 2px solid gray;
+      background: GhostWhite;
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import "./svg-preview.ts";
+  </script>
+  <h1>Bliss SVG Previewer</h1>
+  <p>
+    The encoding string entered below is a space separated sequence of BCI-AV
+    identfiers and separators such as "/" and ";".  The sequence can be as
+    simple as a single BCI-AV identifier.
+  <p>
+    <label for="bciAvIdType">Encoding:</label><br>
+    <input type="text" id="bciAvIdType" size="40">
+  </p>
+  <p>
+    <button id="preview">Preview</button>
+  </p>
+  <p>
+  <p>Symbol will be displayed below:</p>
+  <p id="display"></p>
+</body>
+</html>
