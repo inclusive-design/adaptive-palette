@@ -12,4 +12,8 @@ export const config: {
   server: {
     port: number;
   };
+  rag: {
+    enableRag: boolean;
+    vectorStoreDir: string;
+  };
 };

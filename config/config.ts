@@ -13,5 +13,9 @@
 export const config = {
   server: {
     port: process.env.PORT ? parseInt(process.env.PORT, 10) : 3000
+  },
+  rag: {
+    enableRag: false,
+    vectorStoreDir: "./vectorStore"
   }
 };
