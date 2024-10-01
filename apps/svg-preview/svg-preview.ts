@@ -35,28 +35,37 @@ function getAndDisplayBliss () {
     displayElement.innerText = "Please input an encoding";
   }
   else {
-    // Remove any commas, double or single quotes, then split into an array.
-    const encodingArray = inputString.replace(/[,"']/g,"").split(" ");
-    // Loop to convert all the number strings into integers, e.g., "5" => 5.
-    // Regarding `isNan()`: it returns false for anything number-like and true
-    // for any punctuation.  For example, the string "5" and the number 5 are
-    // not NaN, but "/" is NaN.
+    const encodingArray = inputString
+      .replace(/["']/g,"")    // remove all quotation marks
+      .replace(/\s\s+/g, " ") // reduce all whitespace to a single space
+      .split(" ");            // create an array of strings
+    // Loop to remove any trailing commas from a string in the array, and to
+    // convert all the number strings into integers, e.g., "5" => 5.
+    // Regarding `parseInt()/isNaN()`: any item that is a number or number-like
+    // is not `NaN`, but punctuation is.  For example, the string "5" and the
+    // number 5 both parse to a numeric value, but "/" is parsed to `NaN`.
     encodingArray.forEach( (item, index, array) => {
-      if (!isNaN(item)) {
-        array[index] = parseInt(item);
+      item = item.replace(/,+$/, "");   // remove any trailing commas
+      const value = parseInt(item);
+      if (isNaN(value)) {
+        array[index] = item;
+      }
+      else {
+        array[index] = value;
       }
     });
     console.debug(encodingArray);
     blissSvgEl = getSvgElement(encodingArray) || undefinedSpanEl;
-  }
-  // If the `displayElement` has a child from a previous run, replace it with
-  // the latest result.
-  const childToReplace = displayElement.children[0];
-  if (childToReplace) {
-    displayElement.replaceChild(blissSvgEl, childToReplace);
-  }
-  else {
-    displayElement.appendChild(blissSvgEl);
+
+    // If the `displayElement` has a child from a previous run, replace it with
+    // the latest result, otherwise add a new child.
+    const childToReplace = displayElement.children[0];
+    if (childToReplace) {
+      displayElement.replaceChild(blissSvgEl, childToReplace);
+    }
+    else {
+      displayElement.appendChild(blissSvgEl);
+    }
   }
 }
 
