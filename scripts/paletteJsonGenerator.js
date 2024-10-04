@@ -55,22 +55,8 @@ if (process.argv.length !== 4) {
 const blissGlossJsonFile = process.argv[2];
 const paletteJsonFile = process.argv[3];
 
-// Fetch the W3C's Bliss {ID, gloss} map, and Hannes' blissary ID map.
-// Note that this will throw an error if the remote access fails.
-const blissDataMaps = {};
-try {
-  let fetchResponse = await fetch("https://w3c.github.io/aac-registry/data/blissymbolics.json");
-  blissDataMaps.blissGlosses = await fetchResponse.json();
-  fetchResponse = await fetch("https://raw.githubusercontent.com/hlridge/Bliss-Blissary-BCI-ID-Map/main/blissary_to_bci_mapping.json");
-  blissDataMaps.blissaryIdMap = await fetchResponse.json();
-}
-catch (error) {
-  console.error(`Error fetching either Bliss gloss or Blissary ID map: ${error.message}`);
-  process.exit(1);
-}
-
 // Configurable options
-const palette_labels = [["indicator_(action)", "indicator_(active)", "indicator_(adverb)"], ["FOO"]];
+const palette_labels = [["indicator_(action)", "indicator_(active)", "indicator_(adverb)"], ["food", "BAR"]];
 const start_row = 2;
 const start_column = 1;
 const type = "ActionBmwCodeCell";
@@ -91,20 +77,20 @@ const final_json = {
 // End of configurable options
 
 // // Read and parse the Bliss gloss JSON file
-// let bliss_gloss;
-// try {
-//   bliss_gloss = JSON.parse(fs.readFileSync(blissGlossJsonFile, "utf8"));
-// } catch (error) {
-//   console.error(`Error reading ${blissGlossJsonFile}: ${error.message}`);
-//   process.exit(1);
-// }
+let bliss_gloss;
+try {
+  bliss_gloss = JSON.parse(fs.readFileSync(blissGlossJsonFile, "utf8"));
+} catch (error) {
+  console.error(`Error reading ${blissGlossJsonFile}: ${error.message}`);
+  process.exit(1);
+}
 
 /**
  * Finds the BCI AV ID for a given label
  * @param {string} label - The label to find the BCI AV ID for
  * @param {blissGlosses} Array - Array of objects:
  *                        { bciav: number, english: string }
- * @returns {number} The BCI AV ID
+ * @returns {Object} The BCI AV ID
  * @throws {Error} If no BCI AV ID is found for the label
  */
 function findBciAvId(label, blissGlosses) {
@@ -112,14 +98,21 @@ function findBciAvId(label, blissGlosses) {
   if (label in specialEncodings) {
     return specialEncodings[label];
   }
+  const matches = {};
   // Search for the label in the Bliss gloss
+  console.log(`For label ${label}:`);
   for (const gloss of blissGlosses) {
-    if (gloss.english.includes(label)) {
-      return parseInt(gloss.bciav);
+    if (gloss.description.includes(label)) {
+      matches[gloss.id] = gloss.description;
+      console.log(`\tFound match: ${matches[gloss.id]}, bci-av-id: ${gloss.id}`);
     }
   }
   // If no BCI AV ID is found, throw an error
-  throw new Error(`BciAvId not found for label: ${label}`);
+  if (Object.keys(matches).length === 0) {
+    throw new Error(`BciAvId not found for label: ${label}`);
+  }
+  console.log("");
+  return matches;
 }
 
 // Array to store any errors that occur during processing
@@ -131,14 +124,13 @@ palette_labels.forEach((row, rowIndex) => {
     const current_row = start_row + rowIndex;
     const current_column = start_column + colIndex;
 
-    // Create a cell object for the current label, using a default "Unknown"
-    // `bci_av_id` (21298).  If the correct ID is found, it replaces the
-    // "Unknown" id.  If not found,
+    // Create a cell object for the current label, leaving the `bciAvId` field
+    // undefined for now.
     const cell = {
       type: type,
       options: {
         label: label,
-        bciAvId: 21298,
+        bciAvId: undefined,
         rowStart: current_row,
         rowSpan: 1,
         columnStart: current_column,
@@ -146,15 +138,20 @@ palette_labels.forEach((row, rowIndex) => {
       }
     };
     try {
-      // Find the BCI AV ID for the current label
-      cell.options.bciAvId = findBciAvId(label, blissDataMaps.blissGlosses);
+      // Find the BCI AV IDs for the current label.  Use the first one for the
+      // palette
+      const matches = findBciAvId(label, bliss_gloss);
+      cell.options.bciAvId = Object.values(matches)[0];
     }
     catch (error) {
       // If an error occurs, add it to the errors array
       errors.push(error.message);
 
-      // Change the label to inidcate that this cell is not right yet.
-      cell.options.label += " UNKNOWN";
+      // Change the label to indicate that this cell is not right yet.  The
+      // `bciAvId` encoding means "not found".
+      cell.options.label += " NOT FOUND";
+      cell.options.bciAvId = [ 15733, "/", 14133, ";", 9004, "/", 25570];
+      // "not found"             not,        eye + past action +   hidden thing
     }
     final_json.cells[`${label}-${uuidv4()}`] = cell;
   });
