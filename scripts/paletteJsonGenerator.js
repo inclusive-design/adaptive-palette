@@ -51,7 +51,6 @@ if (process.argv.length !== 3) {
 }
 
 // Parse input arguments
-const blissGlossJsonFile = process.argv[2];
 const paletteJsonFile = process.argv[2];
 
 // Configurable options
@@ -80,7 +79,6 @@ let bliss_gloss;
 try {
   const fetchResponse = await fetch("https://raw.githubusercontent.com/cindyli/baby-bliss-bot/refs/heads/feat/bmw/data/bliss_symbol_explanations.json");
   bliss_gloss = await fetchResponse.json();
-  var x = 5;
 } catch (error) {
   console.error(`Error fetching 'bliss_symbol_explanations.json': ${error.message}`);
   process.exit(1);
