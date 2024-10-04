@@ -4,14 +4,13 @@
  * This script generates a JSON file for a palette based on a two-dimensional array of labels.
  * It uses a Bliss gloss JSON file to map labels to BCI AV IDs.
  *
- * Usage: node scripts/paletteJsonGenerator.js <blissGlossJsonFile> <paletteJsonFile>
+ * Usage: node scripts/paletteJsonGenerator.js <paletteJsonFile>
  *
  * Arguments:
- *   blissGlossJsonFile: Path to the input Bliss gloss JSON file
  *   paletteJsonFile: Path to the output palette JSON file
  *
  * Example:
- *   node scripts/paletteJsonGenerator.js data/bliss_gloss.json output/palette.json
+ *   node scripts/paletteJsonGenerator.js output/palette.json
  *
  * Configurable Options:
  *   palette_labels: A 2D array representing the layout of labels in the palette.
@@ -46,14 +45,14 @@ import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 
 // Check for correct number of command-line arguments
-if (process.argv.length !== 4) {
-  console.log("Usage: node scripts/paletteJsonGenerator.js blissGlossJsonFile paletteJsonFile");
+if (process.argv.length !== 3) {
+  console.log("Usage: node scripts/paletteJsonGenerator.js paletteJsonFile");
   process.exit(1);
 }
 
 // Parse input arguments
 const blissGlossJsonFile = process.argv[2];
-const paletteJsonFile = process.argv[3];
+const paletteJsonFile = process.argv[2];
 
 // Configurable options
 const palette_labels = [["indicator_(action)", "indicator_(active)", "indicator_(adverb)"], ["food", "BAR"]];
@@ -76,12 +75,14 @@ const final_json = {
 };
 // End of configurable options
 
-// // Read and parse the Bliss gloss JSON file
+// Read and parse the Bliss gloss JSON file
 let bliss_gloss;
 try {
-  bliss_gloss = JSON.parse(fs.readFileSync(blissGlossJsonFile, "utf8"));
+  const fetchResponse = await fetch("https://raw.githubusercontent.com/cindyli/baby-bliss-bot/refs/heads/feat/bmw/data/bliss_symbol_explanations.json");
+  bliss_gloss = await fetchResponse.json();
+  var x = 5;
 } catch (error) {
-  console.error(`Error reading ${blissGlossJsonFile}: ${error.message}`);
+  console.error(`Error fetching 'bliss_symbol_explanations.json': ${error.message}`);
   process.exit(1);
 }
 
