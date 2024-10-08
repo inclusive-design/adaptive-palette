@@ -24,7 +24,6 @@ if (process.argv.length !== 4) {
   console.log("Usage: node scripts/loadDocIntoVectorDb.js userDocumentLocation saveDbLocation");
   process.exit(1);
 }
-console.log(process.argv.length + "; 3: " + process.argv[3] + "; 4: " + process.argv[4]);
 const fileLocation = process.argv[2];
 const saveDbLocation = process.argv[3];
 
