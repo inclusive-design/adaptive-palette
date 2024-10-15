@@ -108,11 +108,14 @@ let errors = [];
 
 // Process each label in the palette_labels array
 export function processPaletteLabels (palette_labels, start_row, start_column) {
-  // Initialize palette to return
+  // Initialize palette to return, the matches, and the error list
   const final_json = {
     "name": palette_name,
     "cells": {}
   };
+  const matchByLabel = [];
+  errors.length = 0;
+
   palette_labels.forEach((row, rowIndex) => {
     row.forEach((label, colIndex) => {
       const current_row = start_row + rowIndex;
@@ -132,11 +135,25 @@ export function processPaletteLabels (palette_labels, start_row, start_column) {
         }
       };
       try {
-        // Find the BCI AV IDs for the current label.  Use the first one for the
-        // palette
-        const matches = findBciAvId(label, bliss_gloss);
-        cell.options.bciAvId = matches[0].bciAvId;
-        // TODO: show the all of the matches shomewhere.
+        // If the "label" isa BCI AV ID (a number), just use it, but find its
+        // label
+        cell.options.bciAvId = parseInt(label);
+        if (!isNaN(cell.options.bciAvId)) {
+          for (const gloss of bliss_gloss) {
+            if (gloss.id === label) {
+              cell.options.label = gloss["description"];
+              break;
+            }
+          }
+        }
+        else {
+          // Find the BCI AV IDs for the current label.  Use the first one for the
+          // palette
+          const matches = findBciAvId(label, bliss_gloss);
+          cell.options.bciAvId = matches[0].bciAvId;
+          matchByLabel.push({ label: matches });
+          // TODO: show the all of the matches somewhere.
+        }
       }
       catch (error) {
         // If an error occurs, add it to the errors array
@@ -151,6 +168,5 @@ export function processPaletteLabels (palette_labels, start_row, start_column) {
       final_json.cells[`${label}-${uuidv4()}`] = cell;
     });
   });
-  return final_json;
+  return { paletteJson: final_json, matches: matchByLabel, errors: errors };
 }
-
