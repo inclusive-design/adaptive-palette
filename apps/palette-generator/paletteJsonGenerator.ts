@@ -76,8 +76,8 @@ export async function fetchBlissGlossJson () {
 /**
  * Finds the BCI AV ID for a given label
  * @param {string} label - The label to find the BCI AV ID for
- * @param {blissGlosses} Array - Array of objects contina BCI AV IDs, an their
- *                       glosses: { id: number, dscription: string }
+ * @param {blissGlosses} Array - Array of objects contina BCI AV IDs, and their
+ *                       glosses: { id: number, description: string }
  * @returns {Array} An array of matching BCK AV IDs
  * @throws {Error} If no BCI AV ID is found for the label
  */
@@ -101,6 +101,22 @@ function findBciAvId(label, blissGlosses) {
   }
   console.log("");
   return matches;
+}
+
+/**
+ * Finds full item for a given BCI AV ID
+ * @param {string} BCI AV ID - A string version of the id.
+ * @param {blissGlosses} Array - Array of objects contina BCI AV IDs, and their
+ *                               glosses: { id: number, description: string }
+ * @returns {Object} The object that matches the given BCI AV ID
+ * @throws {Error} If the given BCI AV ID is invalid (not in the gloss)
+ */
+function findByBciAvId (bciAvId: string, blissGlosses: array) {
+  const theEntry = blissGlosses.find((entry) => (entry.id === bciAvId));
+  if (theEntry === undefined) {
+    throw new Error(`BciAvId not found for BCI AV ID: ${bciAvId}`);
+  }
+  return theEntry;
 }
 
 // Array to store any errors that occur during processing
@@ -135,16 +151,12 @@ export function processPaletteLabels (palette_labels, start_row, start_column) {
         }
       };
       try {
-        // If the "label" isa BCI AV ID (a number), just use it, but find its
-        // label
+        // If the "label" is a BCI AV ID (a number), just use it for the
+        // `bciAvId`.  Even so, find its description from the `bliss_gloss`
         cell.options.bciAvId = parseInt(label);
         if (!isNaN(cell.options.bciAvId)) {
-          for (const gloss of bliss_gloss) {
-            if (gloss.id === label) {
-              cell.options.label = gloss["description"];
-              break;
-            }
-          }
+          const glossEntry = findByBciAvId(label, bliss_gloss);
+          cell.options.label = glossEntry["description"];
         }
         else {
           // Find the BCI AV IDs for the current label.  Use the first one for the
