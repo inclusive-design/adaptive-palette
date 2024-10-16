@@ -43,6 +43,8 @@
 
 import { v4 as uuidv4 } from "uuid";
 
+const BLANK_CELL_LABEL = "BLANK";
+
 // Configurable options -- get from UI
 const palette_name = "No name Palette";
 const type = "ActionBmwCodeCell";
@@ -135,6 +137,10 @@ export function processPaletteLabels (palette_labels, start_row, start_column) {
       const current_row = start_row + rowIndex;
       const current_column = start_column + colIndex;
 
+      // Handle empty cells by advancing to the next item
+      if (label === BLANK_CELL_LABEL) {
+        return;
+      }
       // Create a cell object for the current label, leaving the `bciAvId` field
       // undefined for now.
       const cell = {
