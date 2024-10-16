@@ -1,0 +1,47 @@
+<html>
+<head>
+  <title>Palette Generator</title>
+</head>
+<body style="background-color: white;">
+  <script type="module">
+    import "./palette-generator.ts";
+  </script>
+  <h1>Palette Generator</h1>
+  <div style="width:50%">
+    <fieldset>
+      <legend>Settings</legend>
+      <p>
+        <label for="paletteName">Palette name:</label><br>
+        <input type="text" id="paletteName" value="palette">
+      </p>
+      <p>
+        <label for="rowStart">Starting row (>=1):</label><br>
+        <input type="number" id="rowStart" min="1" max="100" value="1">
+      </p>
+      <p>
+        <label for="colStart">Starting column (>=1):</label><br>
+        <input type="number" id="colStart" min="1" max="100" value="1">
+    </fieldset>
+    <p>
+      List the items in each row, one line per row.  Each row consists of a set
+      of glosses separated by a space.
+    </p>
+      <label for="glossInput">Glosses:</label><br>
+      <textarea type="text" id="glossInput" rows="10" cols="175"></textarea>
+    </p>
+  </div>
+  <p>
+    <button id="generatePalette">Generate palette</button>
+    <button id="savePalette">Save palette</button><br>
+    Will save as the palette's name (see above) with a ".json" extension
+    <p id="saveMessage"></p>
+  </p>
+  <p><button id="clearPaletteDisplay">Clear Palette</button></p>
+  <div id="paletteDisplay" style="border: 2px solid black;"></div>
+  <h2>Matches:</h2>
+  <div id="mainMatchesisplay"></div>
+  <h2>Errors:</h2>
+  <p id="noErrors" style="display:none">No errors</p>
+  <ul id="errorList"></ul>
+</body>
+</html>
