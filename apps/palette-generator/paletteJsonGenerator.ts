@@ -41,14 +41,10 @@
  * }
  */
 
-import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 
 // Configurable options -- get from UI
 const palette_name = "No name Palette";
-const palette_labels = [];
-const start_row = 1;
-const start_column = 1;
 const type = "ActionBmwCodeCell";
 
 // Special encodings for labels that don't follow the standard mapping
@@ -120,7 +116,7 @@ function findByBciAvId (bciAvId: string, blissGlosses: array) {
 }
 
 // Array to store any errors that occur during processing
-let errors = [];
+const errors = [];
 
 // Process each label in the palette_labels array
 export function processPaletteLabels (palette_labels, start_row, start_column) {
@@ -163,8 +159,9 @@ export function processPaletteLabels (palette_labels, start_row, start_column) {
           // palette
           const matches = findBciAvId(label, bliss_gloss);
           cell.options.bciAvId = matches[0].bciAvId;
-          matchByLabel.push({ label: matches });
-          // TODO: show the all of the matches somewhere.
+          const labelMatch = {};
+          labelMatch[label] = matches;
+          matchByLabel.push(labelMatch);
         }
       }
       catch (error) {
@@ -175,7 +172,7 @@ export function processPaletteLabels (palette_labels, start_row, start_column) {
         // `bciAvId` encoding means "not found".
         cell.options.label += " NOT FOUND";
         cell.options.bciAvId = [ 15733, "/", 14133, ";", 9004, "/", 25570];
-        // "not found"             not,        eye + past action +   hidden thing
+        // "not found"             not,        eye + past action +  hidden thing
       }
       final_json.cells[`${label}-${uuidv4()}`] = cell;
     });
