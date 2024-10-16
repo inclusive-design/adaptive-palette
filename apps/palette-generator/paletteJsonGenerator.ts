@@ -86,7 +86,9 @@ function findBciAvId(label, blissGlosses) {
   // Search for the label in the Bliss gloss
   console.log(`For label ${label}:`);
   for (const gloss of blissGlosses) {
-    if (gloss.description.includes(label)) {
+    // Try an exact match or a word match
+    const wordMatch = new RegExp("\\b" + `${label}` + "\\b");
+    if ((label === gloss.description) || wordMatch.test(gloss.description)) {
       matches.push({ bciAvId: parseInt(gloss.id), label: gloss.description });
       console.log(`\tFound match: ${gloss.description}, bci-av-id: ${gloss.id}`);
     }
