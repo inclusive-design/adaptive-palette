@@ -90,7 +90,7 @@ function clearPaletteDisplay () {
 async function savePalette () {
   const palette = await adaptivePaletteGlobals.paletteStore.getNamedPalette(currentPaletteName);
   if (palette) {
-    const paletteString = JSON.stringify(palette);
+    const paletteString = JSON.stringify(palette, null, 2);
     const paletteBlob = new Blob([paletteString], { type: "text/json" });
     const saveLink = document.createElement("a");
     saveLink.href = URL.createObjectURL(paletteBlob);
