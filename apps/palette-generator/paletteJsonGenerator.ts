@@ -11,6 +11,8 @@
 import { v4 as uuidv4 } from "uuid";
 
 const BLANK_CELL_LABEL = "BLANK";
+const SVG_PREFIX = "SVG:";
+const SVG_SUFFIX = ":SVG";
 
 // Configurable options -- ideally provided by the UI
 const palette_name = "No name Palette";
@@ -36,6 +38,29 @@ export async function fetchBlissGlossJson () {
     console.error(`Error fetching 'bliss_symbol_explanations.json': ${error.message}`);
   }
   return bliss_gloss;
+}
+
+/**
+ * Test for the presencs of a string that encodes SVG builder information.  Such
+ * strings begin with "SVG:" and end with ":SVG".
+ * @parma {string} - the string to test.
+ * @returns {boolean}
+ */
+function isSvgBuilderString (theString) {
+  return theString.startsWith(SVG_PREFIX) && theString.endsWith(SVG_SUFFIX);
+}
+
+/**
+ * Converts a string that encodes the information required by the SvgUtils
+ * (svg builder) to the proper format -- an array of bliss-svg specifications
+ * @param {string} svgBuilderString - The string to convert
+ * @return {Array} An array of the specifiers required by the SvgUtils
+ * @throws {Error} If the encoding is not well formed.
+ */
+function convertSvgBuilderString (theString) {
+  // Replace the SVG prefix and suffix strings with square brackers (array)
+  theString = theString.replace(SVG_PREFIX, "[").replace(SVG_SUFFIX,"]");
+  return JSON.parse(theString);
 }
 
 /**
@@ -108,12 +133,15 @@ function findByBciAvId (bciAvId: string, blissGlosses: array) {
  * boundary".  For more information, see:
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions/Assertions
  *
- * There are two special cases of labels:
+ * There are three special cases of labels:
  * 1. A number where the match will be against the BCI AV IDs in the gloss, not
  *    the gloss strings themselves. If the number provided is not a match to an
  *    existing BCI AV ID, a "not found" result is output.
  * 2. The string "BLANK" is interpretted as a blank cell in the palette.  The
  *    gloss is not consulted in this case, and the column index is increased.
+ * 3. The string begins with "SVG:" and ends with ":SVG", and the rest is a
+ *    series of Svg Builder specifiers, e.g.,
+ *    'SVG:14183,"/",25777,"/","W8W:0,8":SVG' (specifies a wavy line).
  *
  * @param {Array} palette_labels - Array of arrays of label strings, numbers,
  *                                 and "BLANK" for searching the gloss for
@@ -149,6 +177,7 @@ export function processPaletteLabels (palette_labels, start_row, start_column) {
       if (label === BLANK_CELL_LABEL) {
         return;
       }
+
       // Create a cell object for the current label, leaving the `bciAvId` field
       // undefined for now.
       const cell = {
@@ -163,21 +192,28 @@ export function processPaletteLabels (palette_labels, start_row, start_column) {
         }
       };
       try {
-        // If the "label" is a BCI AV ID (a number), just use it for the
-        // `bciAvId`.  Even so, find its description from the `bliss_gloss`
-        cell.options.bciAvId = parseInt(label);
-        if (!isNaN(cell.options.bciAvId)) {
-          const glossEntry = findByBciAvId(label, bliss_gloss);
-          cell.options.label = glossEntry["description"];
+        // If the `label` is an Svg Builder string, convert it to the proper
+        // array version of the `bciAvId`, but it won't have a label
+        if (isSvgBuilderString(label)) {
+          cell.options.bciAvId = convertSvgBuilderString(label);
         }
         else {
-          // Find the BCI AV IDs for the current label.  Use the first match for
-          // the palette
-          const matches = findBciAvId(label, bliss_gloss);
-          cell.options.bciAvId = matches[0].bciAvId;
-          const labelMatch = {};
-          labelMatch[label] = matches;
-          matchByLabel.push(labelMatch);
+          // If the "label" is a BCI AV ID (a number), just use it for the
+          // `bciAvId`.  Even so, find its description from the `bliss_gloss`
+          cell.options.bciAvId = parseInt(label);
+          if (!isNaN(cell.options.bciAvId)) {
+            const glossEntry = findByBciAvId(label, bliss_gloss);
+            cell.options.label = glossEntry["description"];
+          }
+          else {
+            // Find the BCI AV IDs for the current label.  Use the first match for
+            // the palette
+            const matches = findBciAvId(label, bliss_gloss);
+            cell.options.bciAvId = matches[0].bciAvId;
+            const labelMatch = {};
+            labelMatch[label] = matches;
+            matchByLabel.push(labelMatch);
+          }
         }
       }
       catch (error) {
