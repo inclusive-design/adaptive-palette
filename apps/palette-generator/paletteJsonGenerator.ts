@@ -92,9 +92,6 @@ function findByBciAvId (bciAvId: string, blissGlosses: array) {
   return theEntry;
 }
 
-// Array to store any errors that occur during processing
-const errors = [];
-
 /**
  * Given an array of arrays of labels, find matches in the Bliss gloss and use
  * the first such match to build a palette cell for the symbol found. The
@@ -141,7 +138,7 @@ export function processPaletteLabels (palette_labels, start_row, start_column) {
     "cells": {}
   };
   const matchByLabel = [];
-  errors.length = 0;
+  const errors = [];
 
   palette_labels.forEach((row, rowIndex) => {
     row.forEach((label, colIndex) => {
