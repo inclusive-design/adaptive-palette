@@ -13,6 +13,7 @@ import { v4 as uuidv4 } from "uuid";
 const BLANK_CELL_LABEL = "BLANK";
 const SVG_PREFIX = "SVG:";
 const SVG_SUFFIX = ":SVG";
+const LABEL_MARKER = "LABEL:";
 
 // Configurable options -- ideally provided by the UI
 const palette_name = "No name Palette";
@@ -60,7 +61,13 @@ function isSvgBuilderString (theString) {
 function convertSvgBuilderString (theString) {
   // Replace the SVG prefix and suffix strings with square brackers (array)
   theString = theString.replace(SVG_PREFIX, "[").replace(SVG_SUFFIX,"]");
-  return JSON.parse(theString);
+  const svgArray = JSON.parse(theString);
+  const lastEntry = svgArray[svgArray.length-1];
+  let theLabel = theString;
+  if (lastEntry.startsWith(LABEL_MARKER)) {
+    theLabel = svgArray.pop().replace(LABEL_MARKER, "").replace("_", " ");
+  }
+  return { svgArray: svgArray, label: theLabel };
 }
 
 /**
@@ -195,7 +202,9 @@ export function processPaletteLabels (palette_labels, start_row, start_column) {
         // If the `label` is an Svg Builder string, convert it to the proper
         // array version of the `bciAvId`, but it won't have a label
         if (isSvgBuilderString(label)) {
-          cell.options.bciAvId = convertSvgBuilderString(label);
+          const svgInfo = convertSvgBuilderString(label);
+          cell.options.bciAvId = svgInfo.svgArray;
+          cell.options.label = svgInfo.label;
         }
         else {
           // If the "label" is a BCI AV ID (a number), just use it for the
