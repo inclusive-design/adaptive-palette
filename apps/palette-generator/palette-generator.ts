@@ -42,7 +42,7 @@ function handleGenerateDisplayButton () {
 
   // Display the palette and report the errors.
   // (Note: that the `Palette` Preact component will add the palette to the
-  // PaletteStore)
+  // `PaletteStore`)
   render(html`<${Palette} json=${lookupResults.paletteJson} />`, paletteDisplay);
   reportMatches(lookupResults.matches);
   reportErrors(lookupResults.errors);
@@ -74,13 +74,20 @@ function makeGlossesArrays () {
 }
 
 /**
- * Erase the palette area, and remove the palette from the PaletteStore.
+ * Clear:
+ * - the palette rendering aree,
+ * - the palette store,
+ * - reset the palette name,
+ * - clear the save message, and
+ * - clear the matches and error reports.
  */
 function clearPaletteDisplay () {
-  document.getElementById("paletteDisplay").innerText = "";
-  document.getElementById("saveMessage").innerTest = "";
+  render(html``, paletteDisplay);
   adaptivePaletteGlobals.paletteStore.removePalette(currentPaletteName);
   currentPaletteName = "";
+  document.getElementById("saveMessage").innerText = "";
+  document.getElementById("mainMatchesDisplay").innerText = "";
+  document.getElementById("errorList").innerText = "";
 }
 
 /**
@@ -113,7 +120,7 @@ async function savePalette () {
  */
 function reportMatches(allMatches) {
   // Empty out any previous report
-  const mainMatchesEl = document.getElementById("mainMatchesisplay");
+  const mainMatchesEl = document.getElementById("mainMatchesDisplay");
   mainMatchesEl.innerText = "";
   allMatches.forEach((aLabel) => {
     const dl = document.createElement("dl");
@@ -161,7 +168,6 @@ function reportErrors(errors) {
       errorListEl.append(listItem);
     });
   }
-  document.body.scrollTop = document.body.scrollHeight;
 }
 
 // HTML UI Elements
