@@ -53,15 +53,20 @@ function isSvgBuilderString (theString) {
 
 /**
  * Converts a string that encodes the information required by the SvgUtils
- * (svg builder) to the proper format -- an array of bliss-svg specifications
- * @param {string} svgBuilderString - The string to convert
- * @return {Array} An array of the specifiers required by the SvgUtils
+ * (svg builder) to the proper format -- an array of bliss-svg specifications.
+ * Also checks for the presence of a specified label, using `LABEL_MARKER`, and
+ * parses that part of the string out as the label to use with this svg string.
+ * @param {string} svgBuilderString - The string to convert.
+ * @return {Object} - An array of the specifiers required by the SvgUtils and
+ *                    the textual label for the symbol:
+ *                    { svgArray: {array}, label: {string} }
  * @throws {Error} If the encoding is not well formed.
  */
 function convertSvgBuilderString (theString) {
   // Replace the SVG prefix and suffix strings with square brackers (array)
   theString = theString.replace(SVG_PREFIX, "[").replace(SVG_SUFFIX,"]");
   const svgArray = JSON.parse(theString);
+  // Check for the optional label at the end of the array
   const lastEntry = svgArray[svgArray.length-1];
   let theLabel = theString;
   if (lastEntry.startsWith(LABEL_MARKER)) {
@@ -207,18 +212,23 @@ export function processPaletteLabels (palette_labels, start_row, start_column) {
           cell.options.label = svgInfo.label;
         }
         else {
+          // Split on `LABEL_MARKER`.  Result is an array.
+          const labelSplits = label.split(LABEL_MARKER);
+          label = labelSplits[0];
+          const actualLabel = labelSplits[1]?.replace("_", " ");
           // If the "label" is a BCI AV ID (a number), just use it for the
           // `bciAvId`.  Even so, find its description from the `bliss_gloss`
           cell.options.bciAvId = parseInt(label);
           if (!isNaN(cell.options.bciAvId)) {
             const glossEntry = findByBciAvId(label, bliss_gloss);
-            cell.options.label = glossEntry["description"];
+            cell.options.label = actualLabel || glossEntry["description"];
           }
           else {
-            // Find the BCI AV IDs for the current label.  Use the first match for
-            // the palette
+            // Find the BCI AV IDs for the current label.  Use the first match
+            // for the palette
             const matches = findBciAvId(label, bliss_gloss);
             cell.options.bciAvId = matches[0].bciAvId;
+            cell.options.label = actualLabel || label;
             const labelMatch = {};
             labelMatch[label] = matches;
             matchByLabel.push(labelMatch);
