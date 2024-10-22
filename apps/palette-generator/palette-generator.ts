@@ -28,6 +28,8 @@ const MAX_MATCHES_OUTPUT = 7;
  * 1. Retrieve the lines of text -- the glosses == as an array of arrays.
  * 2. Create the palette JSON structure based on those glosses
  * 3. Display the palette
+ * 4. Report all of the matches for each input
+ * 5. Report any errors.
  */
 function handleGenerateDisplayButton () {
   const glossesArray = makeGlossesArrays();
@@ -46,6 +48,7 @@ function handleGenerateDisplayButton () {
   render(html`<${Palette} json=${lookupResults.paletteJson} />`, paletteDisplay);
   reportMatches(lookupResults.matches);
   reportErrors(lookupResults.errors);
+  document.getElementById("savePalette").removeAttribute("disabled");
 }
 
 /**
@@ -86,6 +89,7 @@ function clearPaletteDisplay () {
   adaptivePaletteGlobals.paletteStore.removePalette(currentPaletteName);
   currentPaletteName = "";
   document.getElementById("saveMessage").innerText = "";
+  document.getElementById("savePalette").setAttribute("disabled", "disabled");
   document.getElementById("mainMatchesDisplay").innerText = "";
   document.getElementById("errorList").innerText = "";
 }

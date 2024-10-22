@@ -1,8 +1,30 @@
 <html>
 <head>
   <title>Palette Generator</title>
+  <style>
+    /*
+     * Needed to override palette button styles.
+     * TODO: modify palette's index.scss to add a class specifically for palette
+     * buttons, something like `button.palette { ... }`.`
+     */
+    button.usual {
+      text-transform: none;
+      overflow: visible;
+      font-family: serif;
+      font-size: inherit;
+      margin: 0;
+      padding-top: 0.25em;
+      padding-left: 0.25em;
+      padding-right: 0.25em;
+      padding-bottom: 0.25em;
+      color: #000;
+    }
+    button.usual:disabled {
+      pointer-events: none;
+    }
+  </style>
 </head>
-<body style="background-color: white;">
+<body style="background-color: white; margin-left: 1em;">
   <script type="module">
     import "./palette-generator.ts";
   </script>
@@ -31,12 +53,12 @@
     </p>
   </div>
   <p>
-    <button id="generatePalette">Generate palette</button>
-    <button id="savePalette">Save palette</button><br>
+    <button id="generatePalette" class="usual">Generate palette</button>
+    <button id="savePalette" class="usual" disabled>Save palette</button><br>
     Will save as the palette's name (see above) with a ".json" extension
     <p id="saveMessage"></p>
   </p>
-  <p><button id="clearPaletteDisplay">Clear Palette</button></p>
+  <p><button id="clearPaletteDisplay" class="usual">Clear Palette</button></p>
   <div id="paletteDisplay" style="border: 2px solid black;"></div>
   <h2>Matches:</h2>
   <div id="mainMatchesDisplay"></div>
