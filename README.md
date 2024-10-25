@@ -116,6 +116,10 @@ how to run the software.
 - [Ollama Chat Web-App](./apps/ollama/README.md): a chat application running on
   `localhost` that provides access to multiple LLMs using the Ollama localhost
   web service.
+- [Palette Generator Web-App](./apps/palette-generator/README.md): an
+  application for generating and saving a palette using the Bliss gloss.  By
+  providing a set of gloss words, BCI AV IDs, or svg builder strings, the Bliss
+  gloss is searched and a palette is generated based on matches found.
 - [Ollama Chat Service Demo](./demos/Ollama%20Chat%20Service/README.md): a
   simple web-app that runs on `localhost` for sending queries to an Ollama
   chatbot service also running on `localhost`.
