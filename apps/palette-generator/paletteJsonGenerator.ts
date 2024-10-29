@@ -69,7 +69,7 @@ function convertSvgBuilderString (theString) {
   // Check for the optional label at the end of the array
   const lastEntry = svgArray[svgArray.length-1];
   let theLabel = theString;
-  if (lastEntry.startsWith(LABEL_MARKER)) {
+  if (typeof lastEntry === "string" && lastEntry.startsWith(LABEL_MARKER)) {
     theLabel = svgArray.pop().replace(LABEL_MARKER, "").replace("_", " ");
   }
   return { svgArray: svgArray, label: theLabel };
