@@ -21,16 +21,20 @@ import { PaletteStore } from "./PaletteStore";
 import { Palette } from "./Palette";
 
 const paletteFileMap = await loadPaletteFromJsonFile("/palettes/palette_file_map.json");
+debugger;
 const firstLayer = await loadPaletteFromJsonFile("/palettes/palettes.json");
 const goBackCell = await loadPaletteFromJsonFile("/palettes/backup_palette.json");
 const inputArea = await loadPaletteFromJsonFile("/palettes/input_area.json");
+const indicators = await loadPaletteFromJsonFile("/palettes/indicators.json");
 
 PaletteStore.paletteFileMap = paletteFileMap;
 adaptivePaletteGlobals.paletteStore.addPalette(firstLayer);
 adaptivePaletteGlobals.paletteStore.addPalette(goBackCell);
 adaptivePaletteGlobals.paletteStore.addPalette(inputArea);
+adaptivePaletteGlobals.paletteStore.addPalette(indicators);
 
 adaptivePaletteGlobals.navigationStack.currentPalette = firstLayer;
 render(html`<${Palette} json=${inputArea} />`, document.getElementById("input_palette"));
 render(html`<${Palette} json=${goBackCell} />`, document.getElementById("backup_palette"));
+render(html`<${Palette} json=${indicators} />`, document.getElementById("indicators"));
 render(html`<${Palette} json=${firstLayer}/>`, document.getElementById("mainPaletteDisplayArea"));
