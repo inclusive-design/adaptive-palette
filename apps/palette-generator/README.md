@@ -32,9 +32,11 @@ The next section, "Glosses" is a text area where each line of text describes one
 row of the palette cells.  Spaces are used for separate cells so the text used
 to specify a cell cannot contain any spaces.
 
-There are three types of input allowed here:
+There are four types of input allowed:
 
-- a single word, such as "heart", "dog", or "singer",
+- a string that is a single word such as "heart" or "dog", or a string that
+  matches part or all of a gloss entry, e.g., "indicator_".  As shown in this
+  last example, the string can include an underscore character (\_),
 - a single number that is the BCI AV ID of a specific Bliss symbol,
 - the text "BLANK" will result in an empty blank cell,
 - an SVG string as required by the [bliss-svg-builder](https://github.com/hlridge/bliss-svg-builder)
@@ -44,18 +46,28 @@ There are three types of input allowed here:
 For the case of a single word or single BCI AV ID, the label to display can be
 given by immediately appending "LABEL:*label\_text*" to the word or number. The
 *label\_text* will be used as the label for the cell instead of the usual gloss
-for the symbol.  Any underscore characters in the *label\_text* will be replaced
-with a single space.   For example "clothLABEL:cross_hatches" will result in the
-the label "cross hatches"; and "23641LABEL:ruin" will give "ruin" as the label
-instead of the official gloss "ruin,wreck,wreckage\_(building)\_(1)".
+for the symbol.  The `label\_text` cannot have any whitespace within it, since
+whitespace is used to indicate a new cell in the palette.  If white space is
+needed, use an underscore.  Any underscore characters in the *label\_text* is
+replaced with a single space.   For example "clothLABEL:cross_hatches" will
+result in the the label "cross hatches"; and "23641LABEL:ruin" will give "ruin"
+as the label instead of the official gloss
+"ruin,wreck,wreckage\_(building)\_(1)".
 
 The SVG string is marked by "SVG:" at the beginning of the string and ":SVG" at
 the end. What lies between is a set of comma separated BCI AVI IDs, and quoted
-strings that are parsed by the svg builder.  If the string "LABEL:*label\_text"
-occurs immediately before the closing ":SVG" marker, it will be used as the
-label for the cell, and is truncated from the rest of the string before the
-remainder is sent to the builder.  The rules for the syntax of this "LABEL" is
-the same as those for words and ids as described in the previous paragraph.
+strings that are parsed by the svg builder.  No spaces are allowed within an
+SVG string.  If the string "LABEL:*label\_text" occurs immediately before the
+closing ":SVG" marker, it will be used as the label for the cell, and is
+truncated from the rest of the string before the remainder is sent to the
+builder.  The rules for the syntax of this "LABEL" is the same as those for
+words and ids as described in the previous paragraph.  Examples of an SVG
+string, the symbol for ruin, are:
+
+```text
+SVG:14905,"/",24883:SVG
+SVG:14905,"/",24883,"LABEL:ruin":SVG
+```
 
 ### Generate Palette
 
@@ -85,9 +97,10 @@ clicking the "Generate palette" button again.
 ### Save Palette
 
 Clicking the "Save palette" button will export a palette definition JSON file
-and save it into the user's "Downloads" folder.  The name of the file will be
-the palette's name with a ".json" extension.  For example, if the palette name
-is "People", then the file created is "People.json".
+and save it to disk where the browser saves file downloads, typically the
+"Downloads" folder.  The name of the file will be the palette's name with a
+".json" extension.  For example, if the palette name is "People", then the file
+created is "People.json".
 
 ### Clear Palette
 

@@ -16,7 +16,6 @@ const SVG_SUFFIX = ":SVG";
 const LABEL_MARKER = "LABEL:";
 
 // Configurable options -- ideally provided by the UI
-const palette_name = "No name Palette";
 const type = "ActionBmwCodeCell";
 
 // Special encodings for labels that don't follow the standard mapping
@@ -33,7 +32,7 @@ let bliss_gloss;
 export async function fetchBlissGlossJson () {
   // Read and parse the Bliss gloss JSON file
   try {
-    const fetchResponse = await fetch("https://raw.githubusercontent.com/cindyli/baby-bliss-bot/refs/heads/feat/bmw/data/bliss_symbol_explanations.json");
+    const fetchResponse = await fetch("http://localhost:5173/data/bliss_symbol_explanations.json");
     bliss_gloss = await fetchResponse.json();
   } catch (error) {
     console.error(`Error fetching 'bliss_symbol_explanations.json': ${error.message}`);
@@ -132,9 +131,9 @@ function findByBciAvId (bciAvId: string, blissGlosses: array) {
 /**
  * Given an array of arrays of labels, find matches in the Bliss gloss and use
  * the first such match to build a palette cell for the symbol found. The
- * placement of that symbol within the palette depends on the `start_row` and
- * `start_column` parameters. The first item in the first array of labels is
- * placed at `(start_row, start_column)`.  The column index is advanced by one
+ * placement of that symbol within the palette depends on the `startRow` and
+ * `startColumn` parameters. The first item in the first array of labels is
+ * placed at `(startRow, startColumn)`.  The column index is advanced by one
  * for every other label in that array.  The row index is advance by one for
  * every array of labels in the input.
  *
@@ -155,11 +154,12 @@ function findByBciAvId (bciAvId: string, blissGlosses: array) {
  *    series of Svg Builder specifiers, e.g.,
  *    'SVG:14183,"/",25777,"/","W8W:0,8":SVG' (specifies a wavy line).
  *
- * @param {Array} palette_labels - Array of arrays of label strings, numbers,
+ * @param {Array} paletteLabels - Array of arrays of label strings, numbers,
  *                                 and "BLANK" for searching the gloss for
  *                                 matching Bliss symbols
- * @param {number} start_row - The row index of the top left cell of the palette
- * @param {number} start_column - The column index of the top left cell of the
+ * @param {String} paletteName - The name for the palette.
+ * @param {number} startRow - The row index of the top left cell of the palette
+ * @param {number} startColumn - The column index of the top left cell of the
  *                                palette
  * @return {Object} - an object with the following structure:
  * {
@@ -171,19 +171,19 @@ function findByBciAvId (bciAvId: string, blissGlosses: array) {
  *            was no match in the gloss
  * }
  */
-export function processPaletteLabels (palette_labels, start_row, start_column) {
+export function processPaletteLabels (paletteLabels, paletteName, startRow, startColumn) {
   // Initialize palette to return, the matches, and the error list
-  const final_json = {
-    "name": palette_name,
+  const finalJson = {
+    "name": paletteName,
     "cells": {}
   };
   const matchByLabel = [];
   const errors = [];
 
-  palette_labels.forEach((row, rowIndex) => {
+  paletteLabels.forEach((row, rowIndex) => {
     row.forEach((label, colIndex) => {
-      const current_row = start_row + rowIndex;
-      const current_column = start_column + colIndex;
+      const current_row = startRow + rowIndex;
+      const current_column = startColumn + colIndex;
 
       // Handle empty cells by advancing to the next item
       if (label === BLANK_CELL_LABEL) {
@@ -245,8 +245,8 @@ export function processPaletteLabels (palette_labels, start_row, start_column) {
         cell.options.bciAvId = [ 15733, "/", 14133, ";", 9004, "/", 25570];
         // "not found"             not,        eye + past action +  hidden thing
       }
-      final_json.cells[`${label}-${uuidv4()}`] = cell;
+      finalJson.cells[`${label}-${uuidv4()}`] = cell;
     });
   });
-  return { paletteJson: final_json, matches: matchByLabel, errors: errors };
+  return { paletteJson: finalJson, matches: matchByLabel, errors: errors };
 }

@@ -32,15 +32,20 @@ const MAX_MATCHES_OUTPUT = 7;
  * 5. Report any errors.
  */
 function handleGenerateDisplayButton () {
+  // Remove any previously generated palette.
+  adaptivePaletteGlobals.paletteStore.removePalette(currentPaletteName);
+
   const glossesArray = makeGlossesArrays();
   if (glossesArray.length === 0) {
     paletteDisplay.innertText = "<p>Missing glosses ?</p>";
   }
   const lookupResults = processPaletteLabels(
-    glossesArray, parseInt(rowStart.value), parseInt(colStart.value)
+    glossesArray,
+    paletteName.value,
+    parseInt(rowStart.value),
+    parseInt(colStart.value)
   );
-  lookupResults.paletteJson.name = paletteName.value;
-  currentPaletteName = paletteName.value;
+  currentPaletteName = lookupResults.paletteJson.name;
 
   // Display the palette and report the errors.
   // (Note: that the `Palette` Preact component will add the palette to the
@@ -109,7 +114,7 @@ async function savePalette () {
     saveLink.click();
     setTimeout(() => {
       URL.revokeObjectURL(saveLink.href);
-      document.getElementById("saveMessage").innerText = `Saved to Download folder as "${palette.name}.json"`;
+      document.getElementById("saveMessage").innerText = `Saved to downloads folder as "${palette.name}.json"`;
     }, 6000);
   }
 }

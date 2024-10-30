@@ -140,4 +140,3 @@ command" and "Build output directory" settings:
 ## Utility Scripts
 
 - [Load a document into a vector databbase (`scripts/loadDocIntoVectorDb.js`)](./scripts/loadDocIntoVectorDb.js)
-- [Generate a palette JSON file (`scripts/paletteJsonGenerator.js`)](./scripts/loadDocIntoVectorDb.js)
