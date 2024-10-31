@@ -57,7 +57,18 @@ function handleGenerateDisplayButton () {
 }
 
 /**
- * Grab all the texts from `glossInput` text area and convetr it into arrays,
+ * Handle changes to the text field where the user inputs the name of the
+ * palette.  This limits the chance of the user altering the name and the
+ * the save operation uses an out-of-date name.
+ */
+
+async function handleNameChange () {
+  const palette = await adaptivePaletteGlobals.paletteStore.getNamedPalette(currentPaletteName);
+  updatePaletteName(palette, paletteName.value);
+}
+
+/**
+ * Grab all the texts from `glossInput` text area and converts it into arrays,
  * one array per line.  Each line represents one row of the palette. Return
  * an array of these arrays.
  * @return {Array} - Array of arrays of glosses, where each inner array is one
@@ -106,6 +117,8 @@ function clearPaletteDisplay () {
 async function savePalette () {
   const palette = await adaptivePaletteGlobals.paletteStore.getNamedPalette(currentPaletteName);
   if (palette) {
+    // Double check that the name did not change.
+    updatePaletteName(palette, paletteName.value);
     const paletteString = JSON.stringify(palette, null, 2);
     const paletteBlob = new Blob([paletteString], { type: "text/json" });
     const saveLink = document.createElement("a");
@@ -116,6 +129,23 @@ async function savePalette () {
       URL.revokeObjectURL(saveLink.href);
       document.getElementById("saveMessage").innerText = `Saved to downloads folder as "${palette.name}.json"`;
     }, 6000);
+  }
+}
+
+/**
+ * Central function for updating strings and objects if the current palette's
+ * name is out of sync with respect to the text input field where the user
+ * types in a name.  If no palette is provided, or the names match, this is a
+ * no-op.
+ * @param {Palette} palette - the palette in question.
+ * @param {String} nameFromUI - the name in the text field input.
+ */
+function updatePaletteName (palette, nameFromUI) {
+  if (palette?.name !== nameFromUI) {
+    adaptivePaletteGlobals.paletteStore.removePalette(palette.name);
+    palette.name = nameFromUI;
+    currentPaletteName = nameFromUI;
+    adaptivePaletteGlobals.paletteStore.addPalette(palette);
   }
 }
 
@@ -188,5 +218,6 @@ const paletteDisplay = document.getElementById("paletteDisplay");
 
 // Listeners
 generatePalette.addEventListener("click", handleGenerateDisplayButton);
+paletteName.addEventListener("change", handleNameChange);
 document.getElementById("clearPaletteDisplay").addEventListener("click", clearPaletteDisplay);
 document.getElementById("savePalette").addEventListener("click", savePalette);
