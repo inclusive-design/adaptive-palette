@@ -161,28 +161,28 @@ function reportMatches(allMatches) {
   // Empty out any previous report
   const mainMatchesEl = document.getElementById("mainMatchesDisplay");
   mainMatchesEl.innerText = "";
-  allMatches.forEach((aLabel) => {
+  allMatches.forEach((aMatch) => {
     const dl = document.createElement("dl");
     mainMatchesEl.append(dl);
     const dt = document.createElement("dt");
     dl.append(dt);
-    const matchLabel = Object.keys(aLabel)[0];
-    dt.innerText = matchLabel;
+    const matchString = Object.keys(aMatch)[0];
+    dt.innerText = matchString;
 
-    const matchesForLabel = aLabel[matchLabel];
-    for (let i = 0; i < MAX_MATCHES_OUTPUT && i < matchesForLabel.length; i++) {
-      const match = matchesForLabel[i];
-      let dd = document.createElement("dd");
-      dl.append(dd);
-      dd.innerText = match.bciAvId;
-      dd = document.createElement("dd");
-      dl.append(dd);
-      dd.innerText = match.label;
-    }
-    if (matchesForLabel.length > MAX_MATCHES_OUTPUT) {
+    const matchesForString = aMatch[matchString];
+    for (let i = 0; i < MAX_MATCHES_OUTPUT && i < matchesForString.length; i++) {
+      const match = matchesForString[i];
       const dd = document.createElement("dd");
       dl.append(dd);
-      dd.innerText = `${matchesForLabel.length - MAX_MATCHES_OUTPUT} more matches ...`;
+      dd.innerText = `${match.bciAvId}: ${match.label}`;
+      //       dd = document.createElement("dd");
+      //       dl.append(dd);
+      //       dd.innerText = match.label;
+    }
+    if (matchesForString.length > MAX_MATCHES_OUTPUT) {
+      const dd = document.createElement("dd");
+      dl.append(dd);
+      dd.innerText = `${matchesForString.length - MAX_MATCHES_OUTPUT} more matches ...`;
     }
   });
 }
