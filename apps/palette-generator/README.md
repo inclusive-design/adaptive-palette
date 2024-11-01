@@ -26,13 +26,13 @@ The two number fields "Starting row" and "Starting column" allow you to specify
 the top left corner of the palette.  The default values are row 1, column 1, and
 they refer to the position of the first cell in the first row of the palette.
 
-### Glosses
+### Search for matches
 
-The next section, "Glosses" is a text area where each line of text describes one
-row of the palette cells.  Spaces are used for separate cells so the text used
-to specify a cell cannot contain any spaces.
+The next section, "Search for matches" is a text area where each line of text
+describes one row of palette cells.  Spaces are used for separate cells so the
+text used to specify a cell cannot contain any spaces.
 
-There are four types of input allowed:
+There are four types of input items allowed:
 
 - a string that is a single word such as "heart" or "dog", or a string that
   matches part or all of a gloss entry, e.g., "indicator_".  As shown in this
@@ -43,14 +43,14 @@ There are four types of input allowed:
   that specifies component BCI AV IDs and shapes that the builder uses to create
   the SVG graphic.  More about the structure of this string is given below.
 
-The svg-builder string is marked by "SVG:" at the beginning of the string and
+An svg-builder string is marked by "SVG:" at the beginning of the string and
 ":SVG" at the end. What lies between is a set of comma separated BCI AVI IDs,
 and quoted strings that are parsed by the svg builder.  No spaces are allowed
 within an SVG string.  Some examples of svg-builder strings:
 
 ```text
 SVG:14905,"/",24883:SVG // "building" (14905) followed by "deletion" (24833) = "ruin"
-SVG:13166,";",9011:SVG  // "child" (13166) with the plural indicator above (9011) = "children"
+SVG:13166,";",9011:SVG  // "child" (13166) with plural indicator above (9011) = "children"
 ```
 
 A user defined label for a cell can be specified for a word, ID, or an
@@ -113,19 +113,17 @@ matches and error listings.
 #### Matches
 
 The "Matches" section is a list of all of the matches that were found for each
-item in the "Glosses" input text area.  Each item is listed separately where the
-head of the listing is a copy of the input word.  Under this word is a list of
-BCI AV IDs and their glosses where a word in the gloss matched.  For example, if
-the input word was "cloth", two gloss entries are reported.  One is a symbol for
-cloth in the sense of fabric with BCI AV ID 13365, and the other is a symbol for
-drying rack, BCI AV ID 26161:
+item in the "Search for matches" input text area.  Each item is listed
+separately where the head of the listing is a copy of the input word.  The
+matches for each word are a list of the BCI AVI IDs and their glosses where a
+word in the gloss matched.  For example, if the input word was "cloth", two
+gloss entries are reported.  One is a symbol for cloth in the sense of fabric
+(BCI AV ID 13365), and the other is a symbol for drying rack (BCI AV ID 26161):
 
 ```text
 cloth
-    13365
-    cloth,fabric,material,textile,net
-    26161
-    drying_rack_(cloth)
+    13365: cloth,fabric,material,textile,net
+    26161: drying_rack_(cloth)
 ```
 
 If the Bliss symbol drawn in the preview palette is incorrect, the matches can
