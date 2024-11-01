@@ -10,7 +10,7 @@
  */
 import { v4 as uuidv4 } from "uuid";
 
-const BLANK_CELL_LABEL = "BLANK";
+const BLANK_CELL = "BLANK";
 const SVG_PREFIX = "SVG:";
 const SVG_SUFFIX = ":SVG";
 const LABEL_MARKER = "LABEL:";
@@ -42,8 +42,8 @@ export async function fetchBlissGlossJson () {
 
 /**
  * Test for the presencs of a string that encodes SVG builder information.  Such
- * strings begin with "SVG:" and end with ":SVG".
- * @parma {string} - the string to test.
+ * strings begin with "SVG:" and ends with ":SVG"
+ * @param {string} - the string to test.
  * @returns {boolean}
  */
 function isSvgBuilderString (theString) {
@@ -53,25 +53,14 @@ function isSvgBuilderString (theString) {
 /**
  * Converts a string that encodes the information required by the SvgUtils
  * (svg builder) to the proper format -- an array of bliss-svg specifications.
- * Also checks for the presence of a specified label, using `LABEL_MARKER`, and
- * parses that part of the string out as the label to use with this svg string.
  * @param {string} svgBuilderString - The string to convert.
- * @return {Object} - An array of the specifiers required by the SvgUtils and
- *                    the textual label for the symbol:
- *                    { svgArray: {array}, label: {string} }
- * @throws {Error} If the encoding is not well formed.
+ * @return {Array} - An array of the specifiers required by the SvgUtils.
+ * @throws {Error} - If the encoding is not well formed.
  */
 function convertSvgBuilderString (theString) {
   // Replace the SVG prefix and suffix strings with square brackers (array)
   theString = theString.replace(SVG_PREFIX, "[").replace(SVG_SUFFIX,"]");
-  const svgArray = JSON.parse(theString);
-  // Check for the optional label at the end of the array
-  const lastEntry = svgArray[svgArray.length-1];
-  let theLabel = theString;
-  if (typeof lastEntry === "string" && lastEntry.startsWith(LABEL_MARKER)) {
-    theLabel = svgArray.pop().replace(LABEL_MARKER, "").replace("_", " ");
-  }
-  return { svgArray: svgArray, label: theLabel };
+  return JSON.parse(theString);
 }
 
 /**
@@ -177,25 +166,24 @@ export function processPaletteLabels (paletteLabels, paletteName, startRow, star
     "name": paletteName,
     "cells": {}
   };
-  const matchByLabel = [];
+  const matchByInfoString = [];
   const errors = [];
 
   paletteLabels.forEach((row, rowIndex) => {
-    row.forEach((label, colIndex) => {
+    row.forEach((infoString, colIndex) => {
       const current_row = startRow + rowIndex;
       const current_column = startColumn + colIndex;
 
       // Handle empty cells by advancing to the next item
-      if (label === BLANK_CELL_LABEL) {
+      if (infoString.startsWith(BLANK_CELL)) {
         return;
       }
-
-      // Create a cell object for the current label, leaving the `bciAvId` field
-      // undefined for now.
+      // Create a cell object for the current anInput, leaving the `bciAvId`
+      // field undefined for now.
       const cell = {
         type: type,
         options: {
-          label: label,
+          label: infoString,
           bciAvId: undefined,
           rowStart: current_row,
           rowSpan: 1,
@@ -204,34 +192,35 @@ export function processPaletteLabels (paletteLabels, paletteName, startRow, star
         }
       };
       try {
-        // If the `label` is an Svg Builder string, convert it to the proper
-        // array version of the `bciAvId`, but it won't have a label
-        if (isSvgBuilderString(label)) {
-          const svgInfo = convertSvgBuilderString(label);
-          cell.options.bciAvId = svgInfo.svgArray;
-          cell.options.label = svgInfo.label;
+        // Split on `LABEL_MARKER`.  Result is an array, but if there is no
+        // `LABEL_MARKER` it is an array of one element.
+        const labelSplits = infoString.split(LABEL_MARKER);
+        infoString = labelSplits[0];
+        const actualLabel = labelSplits[1]?.replace("_", " ");
+
+        // If the `infoString` is an Svg Builder string, convert it to the
+        // proper array version of the `bciAvId`, but it won't have a label
+        if (isSvgBuilderString(infoString)) {
+          cell.options.bciAvId = convertSvgBuilderString(infoString);
+          cell.options.label = actualLabel || "";
         }
         else {
-          // Split on `LABEL_MARKER`.  Result is an array.
-          const labelSplits = label.split(LABEL_MARKER);
-          label = labelSplits[0];
-          const actualLabel = labelSplits[1]?.replace("_", " ");
-          // If the "label" is a BCI AV ID (a number), just use it for the
+          // If the `infoString` is a BCI AV ID (a number), just use it for the
           // `bciAvId`.  Even so, find its description from the `bliss_gloss`
-          cell.options.bciAvId = parseInt(label);
+          cell.options.bciAvId = parseInt(infoString);
           if (!isNaN(cell.options.bciAvId)) {
-            const glossEntry = findByBciAvId(label, bliss_gloss);
+            const glossEntry = findByBciAvId(infoString, bliss_gloss);
             cell.options.label = actualLabel || glossEntry["description"];
           }
           else {
-            // Find the BCI AV IDs for the current label.  Use the first match
-            // for the palette
-            const matches = findBciAvId(label, bliss_gloss);
+            // Find the BCI AV IDs for the current infoString.  Use the first
+            // match for the palette
+            const matches = findBciAvId(infoString, bliss_gloss);
             cell.options.bciAvId = matches[0].bciAvId;
-            cell.options.label = actualLabel || label;
-            const labelMatch = {};
-            labelMatch[label] = matches;
-            matchByLabel.push(labelMatch);
+            cell.options.label = actualLabel || infoString;
+            const inputMatches = {};
+            inputMatches[infoString] = matches;
+            matchByInfoString.push(inputMatches);
           }
         }
       }
@@ -239,14 +228,14 @@ export function processPaletteLabels (paletteLabels, paletteName, startRow, star
         // If an error occurs, add it to the errors array
         errors.push(error.message);
 
-        // Change the label to indicate that this cell is not right yet.  The
-        // `bciAvId` encoding means "not found".
+        // Change the cell label to indicate that this cell is not right yet.
+        // The `bciAvId` encoding means "not found".
         cell.options.label += " NOT FOUND";
         cell.options.bciAvId = [ 15733, "/", 14133, ";", 9004, "/", 25570];
         // "not found"             not,        eye + past action +  hidden thing
       }
-      finalJson.cells[`${label}-${uuidv4()}`] = cell;
+      finalJson.cells[`${infoString}-${uuidv4()}`] = cell;
     });
   });
-  return { paletteJson: finalJson, matches: matchByLabel, errors: errors };
+  return { paletteJson: finalJson, matches: matchByInfoString, errors: errors };
 }

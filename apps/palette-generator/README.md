@@ -39,34 +39,35 @@ There are four types of input allowed:
   last example, the string can include an underscore character (\_),
 - a single number that is the BCI AV ID of a specific Bliss symbol,
 - the text "BLANK" will result in an empty blank cell,
-- an SVG string as required by the [bliss-svg-builder](https://github.com/hlridge/bliss-svg-builder)
+- an svg-builder string as required by the [bliss-svg-builder](https://github.com/hlridge/bliss-svg-builder)
   that specifies component BCI AV IDs and shapes that the builder uses to create
   the SVG graphic.  More about the structure of this string is given below.
 
-For the case of a single word or single BCI AV ID, the label to display can be
-given by immediately appending "LABEL:*label\_text*" to the word or number. The
-*label\_text* will be used as the label for the cell instead of the usual gloss
-for the symbol.  The `label\_text` cannot have any whitespace within it, since
-whitespace is used to indicate a new cell in the palette.  If white space is
-needed, use an underscore.  Any underscore characters in the *label\_text* is
-replaced with a single space.   For example "clothLABEL:cross_hatches" will
-result in the the label "cross hatches"; and "23641LABEL:ruin" will give "ruin"
-as the label instead of the official gloss
-"ruin,wreck,wreckage\_(building)\_(1)".
-
-The SVG string is marked by "SVG:" at the beginning of the string and ":SVG" at
-the end. What lies between is a set of comma separated BCI AVI IDs, and quoted
-strings that are parsed by the svg builder.  No spaces are allowed within an
-SVG string.  If the string "LABEL:*label\_text" occurs immediately before the
-closing ":SVG" marker, it will be used as the label for the cell, and is
-truncated from the rest of the string before the remainder is sent to the
-builder.  The rules for the syntax of this "LABEL" is the same as those for
-words and ids as described in the previous paragraph.  Examples of an SVG
-string, the symbol for ruin, are:
+The svg-builder string is marked by "SVG:" at the beginning of the string and
+":SVG" at the end. What lies between is a set of comma separated BCI AVI IDs,
+and quoted strings that are parsed by the svg builder.  No spaces are allowed
+within an SVG string.  Some examples of svg-builder strings:
 
 ```text
-SVG:14905,"/",24883:SVG
-SVG:14905,"/",24883,"LABEL:ruin":SVG
+SVG:14905,"/",24883:SVG // "building" (14905) followed by "deletion" (24833) = "ruin"
+SVG:13166,";",9011:SVG  // "child" (13166) with the plural indicator above (9011) = "children"
+```
+
+A user defined label for a cell can be specified for a word, ID, or an
+svg-builder string. User defined labels cannot be added to `BLANK` cells. The
+label to display is given by immediately appending "LABEL:*label\_text*" to the
+word, number, or svg-builder string. The *label\_text* will be used as the label
+for the cell instead of the usual gloss for the symbol. Note that this is the
+only way to specify a cell's label for svg-builder strings.  The `label\_text`
+cannot have any whitespace within it, since whitespace is used to indicate a new
+cell in the palette.  If white space is needed, use an underscore.  Any
+underscore characters in the *label\_text* are replaced with a single space.
+Some examples follow:
+
+```text
+clothLABEL:cross_hatches             // cell label is "cross hatches"
+23641LABEL:ruin                      // cell label is "ruin"; official gloss is "ruin,wreck,wreckage\_(building)\_(1)
+SVG:13166,";",9011:SVGLABEL:children // cell label is "children"
 ```
 
 ### Generate Palette
