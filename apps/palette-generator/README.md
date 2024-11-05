@@ -12,7 +12,7 @@ npm run serveAppsDemos
 
 Once the development server is running, open this `localhost` url from within a
 browser:
-[`http://localhost:5173/apps/palette-generator/palette-generator.html`](http://localhost:5173/apps/palette-generator/palette-generator.html)
+[`http://localhost:5173/apps/palette-generator/`](http://localhost:5173/apps/palette-generator/)
 
 ## How to Use
 

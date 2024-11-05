@@ -15,18 +15,8 @@ const SVG_PREFIX = "SVG:";
 const SVG_SUFFIX = ":SVG";
 const LABEL_MARKER = "LABEL:";
 
-// Configurable options -- ideally provided by the UI
+// Configurable options -- TODO: provide by the UI
 const type = "ActionBmwCodeCell";
-
-// Special encodings for labels that don't follow the standard mapping
-const specialEncodings = {
-  // Add any special label-to-BciAvId mappings here
-  // Example:
-  // "specialLabel1": 12345
-  // "specialLabel2": [12345, "/", 23456]
-};
-
-// End of configurable options
 
 let bliss_gloss;
 export async function fetchBlissGlossJson () {
@@ -77,10 +67,6 @@ function convertSvgBuilderString (theString) {
  * @throws {Error} If no BCI AV ID is found for the label.
  */
 function findBciAvId(label, blissGlosses) {
-  // Check if the label has a special encoding
-  if (label in specialEncodings) {
-    return specialEncodings[label];
-  }
   const matches = [];
   // Search for the label in the Bliss gloss
   console.log(`For label ${label}:`);
@@ -96,7 +82,6 @@ function findBciAvId(label, blissGlosses) {
   if (matches.length === 0) {
     throw new Error(`BciAvId not found for label: ${label}`);
   }
-  console.log("");
   return matches;
 }
 

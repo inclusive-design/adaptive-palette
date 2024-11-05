@@ -175,9 +175,6 @@ function reportMatches(allMatches) {
       const dd = document.createElement("dd");
       dl.append(dd);
       dd.innerText = `${match.bciAvId}: ${match.label}`;
-      //       dd = document.createElement("dd");
-      //       dl.append(dd);
-      //       dd.innerText = match.label;
     }
     if (matchesForString.length > MAX_MATCHES_OUTPUT) {
       const dd = document.createElement("dd");
