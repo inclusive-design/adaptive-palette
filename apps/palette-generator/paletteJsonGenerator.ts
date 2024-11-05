@@ -181,7 +181,7 @@ export function processPaletteLabels (paletteLabels, paletteName, startRow, star
         // `LABEL_MARKER` it is an array of one element.
         const labelSplits = infoString.split(LABEL_MARKER);
         infoString = labelSplits[0];
-        const actualLabel = labelSplits[1]?.replace("_", " ");
+        const actualLabel = labelSplits[1]?.replace(/_/g, " ");
 
         // If the `infoString` is an Svg Builder string, convert it to the
         // proper array version of the `bciAvId`, but it won't have a label
