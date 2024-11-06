@@ -33,7 +33,11 @@ const MAX_MATCHES_OUTPUT = 7;
 function initCellTypesSelect () {
   const cellTypesSelect = document.getElementById("cellTypes");
   Object.keys(cellTypeRegistry).forEach ((cellType) => {
-    cellTypesSelect.add(new Option(cellType));
+    // The "cell" type `ContentBmwEncoding` is for an array of symbols within
+    // a content area, not for cell within a palette.  Avoid for now.
+    if (cellType !== "ContentBmwEncoding") {
+      cellTypesSelect.add(new Option(cellType));
+    }
   });
   cellTypesSelect.addEventListener("change", async () => {
     const palette = await adaptivePaletteGlobals.paletteStore.getNamedPalette(currentPaletteName);
