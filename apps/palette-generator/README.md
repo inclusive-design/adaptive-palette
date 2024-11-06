@@ -26,6 +26,11 @@ The two number fields "Starting row" and "Starting column" allow you to specify
 the top left corner of the palette.  The default values are row 1, column 1, and
 they refer to the position of the first cell in the first row of the palette.
 
+The "Type of cell" select allows you to specify or modify the kind of cells that
+make up the palette.  Note that _all_ of the cells are set to this type; there
+is no way to have a mixture of cell types.  A future version of the application
+will address this limitation.
+
 ### Search for matches
 
 The next section, "Search for matches" is a text area where each line of text
@@ -55,13 +60,13 @@ SVG:13166,";",9011:SVG  // "child" (13166) with plural indicator above (9011) = 
 
 A user defined label for a cell can be specified for a word, ID, or an
 svg-builder string. User defined labels cannot be added to `BLANK` cells. The
-label to display is given by immediately appending "LABEL:*label\_text*" to the
-word, number, or svg-builder string. The *label\_text* will be used as the label
+label to display is given by immediately appending "LABEL:_label\_text_" to the
+word, number, or svg-builder string. The _label\_text_ will be used as the label
 for the cell instead of the usual gloss for the symbol. Note that this is the
-only way to specify a cell's label for svg-builder strings.  The `label\_text`
+only way to specify a cell's label for svg-builder strings.  The _label\_text_
 cannot have any whitespace within it, since whitespace is used to indicate a new
 cell in the palette.  If white space is needed, use an underscore.  Any
-underscore characters in the *label\_text* are replaced with a single space.
+underscore characters in the _label\_text_ are replaced with a single space.
 Some examples follow:
 
 ```text
@@ -88,7 +93,7 @@ If the cell description string is an svg-builder string, the gloss is not
 consulted. This has the consequence that the cell will not have a label since
 the svg-builder does not know what the label is.  Usually, however, if the user
 knows the svg-builder string, they likely know the name of the symbol it
-constructs, and can provide a label using the "LABEL:*label\_text*" technique.
+constructs, and can provide a label using the "LABEL:_label\_text_" technique.
 
 For each match found, a cell is constructed and added to the appropriate row and
 the entire palette is shown on screen.  It can be inspected for errors.

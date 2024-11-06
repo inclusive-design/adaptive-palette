@@ -11,10 +11,13 @@
 
 import { render } from "preact";
 import { html } from "htm/preact";
-import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "../../src/client/GlobalData";
 import { Palette } from "../../src/client/Palette";
 import { processPaletteLabels, fetchBlissGlossJson } from "./paletteJsonGenerator";
 import "../../src/client/index.scss";
+import {
+  initAdaptivePaletteGlobals, adaptivePaletteGlobals, cellTypeRegistry
+} from "../../src/client/GlobalData";
+
 
 // Initialize any globals used elsewhere in the code.
 await initAdaptivePaletteGlobals("paletteDisplay");
@@ -22,6 +25,37 @@ await fetchBlissGlossJson();
 let currentPaletteName = "";
 
 const MAX_MATCHES_OUTPUT = 7;
+
+/**
+ * Populate the cell type <select> element using the `cellTypeRegistry` and
+ * set up a handler to adjust the palette for changes in the cell type.
+ */
+function initCellTypesSelect () {
+  const cellTypesSelect = document.getElementById("cellTypes");
+  Object.keys(cellTypeRegistry).forEach ((cellType) => {
+    cellTypesSelect.add(new Option(cellType));
+  });
+  cellTypesSelect.addEventListener("change", async () => {
+    const palette = await adaptivePaletteGlobals.paletteStore.getNamedPalette(currentPaletteName);
+    updatePaletteCells(palette, cellTypesSelect.selectedOptions[0].value);
+  });
+}
+
+/**
+ * Given a new cell type, change all of the palette's cells to that type, and
+ * re-render the palette.
+ * @param {Palette} palette - the palette in question.
+ * @param {String} cellType - the cell type to set all of the `palette`'s cells
+ *                            to.
+ */
+function updatePaletteCells (palette, cellType) {
+  if (palette && cellType) {
+    Object.keys(palette.cells).forEach((id) => {
+      palette.cells[id].type = cellType;
+    });
+    render(html`<${Palette} json=${palette} />`, paletteDisplay);
+  }
+};
 
 /**
  * Handle the "Generate palette" button clicks.
@@ -37,13 +71,14 @@ function handleGenerateDisplayButton () {
 
   const glossesArray = makeGlossesArrays();
   if (glossesArray.length === 0) {
-    paletteDisplay.innertText = "<p>Missing glosses ?</p>";
+    paletteDisplay.innerText = "<p>Missing glosses ?</p>";
   }
   const lookupResults = processPaletteLabels(
     glossesArray,
     paletteName.value,
     parseInt(rowStart.value),
-    parseInt(colStart.value)
+    parseInt(colStart.value),
+    document.getElementById("cellTypes").selectedOptions[0].value
   );
   currentPaletteName = lookupResults.paletteJson.name;
 
@@ -218,3 +253,5 @@ generatePalette.addEventListener("click", handleGenerateDisplayButton);
 paletteName.addEventListener("change", handleNameChange);
 document.getElementById("clearPaletteDisplay").addEventListener("click", clearPaletteDisplay);
 document.getElementById("savePalette").addEventListener("click", savePalette);
+
+initCellTypesSelect();

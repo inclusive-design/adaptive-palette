@@ -15,9 +15,6 @@ const SVG_PREFIX = "SVG:";
 const SVG_SUFFIX = ":SVG";
 const LABEL_MARKER = "LABEL:";
 
-// Configurable options -- TODO: provide by the UI
-const type = "ActionBmwCodeCell";
-
 let bliss_gloss;
 export async function fetchBlissGlossJson () {
   // Read and parse the Bliss gloss JSON file
@@ -135,6 +132,7 @@ function findByBciAvId (bciAvId: string, blissGlosses: array) {
  * @param {number} startRow - The row index of the top left cell of the palette
  * @param {number} startColumn - The column index of the top left cell of the
  *                                palette
+ * @param {String} cellType - The type to use for each cell.
  * @return {Object} - an object with the following structure:
  * {
  *    paletteJson: the JSON representation of the palette (type {Palette})
@@ -145,7 +143,7 @@ function findByBciAvId (bciAvId: string, blissGlosses: array) {
  *            was no match in the gloss
  * }
  */
-export function processPaletteLabels (paletteLabels, paletteName, startRow, startColumn) {
+export function processPaletteLabels (paletteLabels, paletteName, startRow, startColumn, cellType) {
   // Initialize palette to return, the matches, and the error list
   const finalJson = {
     "name": paletteName,
@@ -166,7 +164,7 @@ export function processPaletteLabels (paletteLabels, paletteName, startRow, star
       // Create a cell object for the current anInput, leaving the `bciAvId`
       // field undefined for now.
       const cell = {
-        type: type,
+        type: cellType,
         options: {
           label: infoString,
           bciAvId: undefined,
