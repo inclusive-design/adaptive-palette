@@ -1,0 +1,159 @@
+<html>
+<head>
+  <title>Palette Generator</title>
+  <style>
+    /*
+     * Needed to override palette button styles.
+     * TODO: modify palette's index.scss to add a class specifically for palette
+     * buttons, something like `button.palette { ... }`.`
+     */
+    button.usual {
+      text-transform: none;
+      overflow: visible;
+      font-family: serif;
+      font-size: inherit;
+      margin: 0;
+      padding-top: 0.25em;
+      padding-left: 0.25em;
+      padding-right: 0.25em;
+      padding-bottom: 0.25em;
+      color: #000;
+    }
+    button.usual:disabled {
+      pointer-events: none;
+    }
+    button.usual:hover {
+      background-color: darkGray;
+    }
+  </style>
+</head>
+<body style="background-color: white; margin-left: 1em;">
+  <script type="module">
+    import "./palette-generator.ts";
+  </script>
+  <h1>Palette Generator</h1>
+  <div style="width:50%">
+    <fieldset>
+      <legend>Settings</legend>
+      <p>
+        <label for="paletteName">Palette name:</label><br>
+        <input type="text" id="paletteName" value="palette">
+      </p>
+      <p>
+        <label for="rowStart">Starting row (>=1):</label><br>
+        <input type="number" id="rowStart" min="1" max="100" value="1">
+      </p>
+      <p>
+        <label for="colStart">Starting column (>=1):</label><br>
+        <input type="number" id="colStart" min="1" max="100" value="1">
+      </p>
+      <p>
+        <label for="cellTypes">Type of cell:</label>
+        <select id="cellTypes"></select>
+    </fieldset>
+  </div>
+  <p>
+    <label for="glossInput">Search for matches:</label><br>
+    <textarea type="text" id="glossInput" rows="10" cols="175">
+BLANK 25605             25605LABEL:ruin
+indicator_(action)      indicator_(action)LABEL:verb
+SVG:13166,";",9011:SVG  SVG:13166,";",9011:SVGLABEL:children
+    </textarea>
+  </p>
+  <details>
+    <summary>How to specify matches</summary>
+    <p>
+      List the items to search for in the "Search for matches:" text box above.
+      Each line corresponds to a row in the generated palette.  Items are
+      separated by spaces and each item specifies a single cell.  Each item is
+      one of:
+    </p>
+    <ul>
+      <li>
+        BLANK (all capitals), for a empty blank cell,
+      </li>
+      <li>
+        BCI AV ID, one of the official identifiers of a Bliss character or
+        Bliss word (Bliss symbol),
+         <ul>
+           <li>The cell's label is the gloss associated with the Bliss symbol.
+           </li>
+         </ul>
+      </li>
+      <li>
+        A single word or words separated by underscores.  The glossary is
+        searched for words that match, or for a partial or exact match with the
+        gloss of an individual Bliss symbol.  Mutitple matches are possible,
+        but only the first match is displayed in the preview.
+         <ul>
+           <li>The label is the given single word or underscore separated words.
+           </li>
+         </ul>
+      </li>
+      <li>
+        An svg-builder string, as defined by the <a href="https://github.com/hlridge/bliss-svg-builder">bliss-svg-builder</a>,
+        that defines the SVG image to use for the symbol,
+         <ul>
+           <li>The cell will have no label.</li>
+         </ul>
+      </li>
+    </ul>
+    <p>
+      Except for BLANK cells, you can optionally specify a label for each type of
+      item.  Append
+      <code>LABEL:<span style="font-style: italic;">label_text</span></code> to
+      the end of the item.  The <code style="font-style: italic;">label_text</code>
+      cannot have any spaces.  If spaces are needed, use an underscore, "_" where
+      the underscores will be replaced with spaces. Some examples:
+    </p>
+    <ul>
+      <li><code>25605LABEL:ruin</code> will find the symbol whose BCI AV ID is
+          "25605".  The cell's label is "ruin".
+          <ul>
+            <li>
+              If the <code>LABEL:ruin</code> is not appended, the label is the
+              gloss for 25605, namely, "ruin,wreck,wreckage_(building)_(1)".
+            </li>
+          </ul>
+      </li>
+      <li><code>indicator_(action)LABEL:verb</code> will find the
+          symbol whose gloss is "indicator_(action)".  The cell's label is "verb".
+            <ul>
+              <li>
+                If the <code>LABEL:verb</code> is not appended, the label
+                is the given underscore separated words, i.e. "indicator_(verb)".
+              </li>
+            </ul>
+      </li>
+      <li><code>SVG:13166,";",9011:SVGLABEL:children</code> will generate the
+          an SVG image that combines the symbols that mean "child" and "plural".
+          The cell's label is "children".
+            <ul>
+              <li>
+                  If no <code>LABEL:</code>is provided, the cell will have no
+                  label.
+              </li>
+            </ul>
+      </li>
+    </ul>
+    <p>
+      When the page loads the first time, the above examples are shown in the
+      "Search for matches" text box.  Press "Generate palette" button to
+      preview the palette and see the list of matehes below the preview.
+    </p>
+  </details>
+  <p>
+    <button id="generatePalette" class="usual">Generate palette</button>
+    <button id="savePalette" class="usual" disabled>Save palette</button><br>
+    Will save as the palette's name with a ".json" extension
+    <p id="saveMessage"></p>
+  </p>
+  <p><button id="clearPaletteDisplay" class="usual">Clear palette display</button></p>
+  <div id="paletteDisplay" style="border: 2px solid black;"></div>
+  <h2>Matches:</h2>
+  <div id="mainMatchesDisplay"></div>
+  <h2>Errors:</h2>
+  <p id="noErrors" style="display:none">No errors</p>
+  <ul id="errorList"></ul>
+</body>
+</html>
