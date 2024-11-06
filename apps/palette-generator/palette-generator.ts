@@ -34,7 +34,7 @@ function initCellTypesSelect () {
   const cellTypesSelect = document.getElementById("cellTypes");
   Object.keys(cellTypeRegistry).forEach ((cellType) => {
     // The "cell" type `ContentBmwEncoding` is for an array of symbols within
-    // a content area, not for cell within a palette.  Avoid for now.
+    // a content area, not for cells within a palette.  Avoid for now.
     if (cellType !== "ContentBmwEncoding") {
       cellTypesSelect.add(new Option(cellType));
     }
