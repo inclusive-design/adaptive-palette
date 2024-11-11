@@ -51,7 +51,7 @@ describe("ActionIndicatorCell render tests", (): void => {
     expect(button).toBeVisible();
     expect(button).toBeValid();
     expect(button.id).toBe(TEST_CELL_ID);
-    expect(button.getAttribute("class")).toBe("ActionIndicatorCell");
+    expect(button.getAttribute("class")).toBe("actionIndicatorCell");
     expect(button.textContent).toBe(testCell.options.label);
 
     // Check the grid cell styles.

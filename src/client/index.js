@@ -21,7 +21,6 @@ import { PaletteStore } from "./PaletteStore";
 import { Palette } from "./Palette";
 
 const paletteFileMap = await loadPaletteFromJsonFile("/palettes/palette_file_map.json");
-debugger;
 const firstLayer = await loadPaletteFromJsonFile("/palettes/palettes.json");
 const goBackCell = await loadPaletteFromJsonFile("/palettes/backup_palette.json");
 const inputArea = await loadPaletteFromJsonFile("/palettes/input_area.json");
