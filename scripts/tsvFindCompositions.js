@@ -34,7 +34,7 @@
  *  - A new version of the main Bliss symbol JSON file where the character and
  *    composition information in `blissSymbolComposition.json` has been added.
  *
- * Usage: node scripts/tsvFileCompositions.js
+ * Usage: node scripts/tsvFindCompositions.js
  */
 
 
