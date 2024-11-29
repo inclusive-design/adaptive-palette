@@ -9,6 +9,35 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+/**
+ * Most Bliss symbols are created by combining other Bliss symbols into new
+ * ones. The composition of many Bliss symbols is documented; one such document
+ * is the BCI-AV Composition Analysis spreadsheet:
+ * https://docs.google.com/spreadsheets/d/1zdTAeoY5gTNoUs8hvPuHC3-obInmoiUFKh2ttp97HKw/
+ *
+ * This script is to used to find the composition details given in a TSV file
+ * and merge it with the main Bliss symbol JSON file.  The script assumes the
+ * following files are in the `data` directory:
+ * - `./data/bliss_symbol_explanations.json`
+ *  - This is the main Bliss symbol JSON file containing information such as the
+ *    BCI AV ID, a dsecription of the sybmol (the gloss), etc.
+ * - `./data/BciAvCompositionAnalysis.tsv`
+ *   - This is a TSV file derived from the BCI-AV Composition Analysis
+ *     spreadsheet.
+ *
+ * The script creates or updates these files:
+ * - `./data/blissSymbolComposition.json`
+ *   - An array of Bliss symbols identified by their Bliss BCI AV ID, and
+ *     capturing (1) their `compositionIds` and (2) whether the symbol is a
+ *     Bliss-character or not.
+ * - `./data/bliss_symbol_explanations.json`
+ *  - A new version of the main Bliss symbol JSON file where the character and
+ *    composition information in `blissSymbolComposition.json` has been added.
+ *
+ * Usage: node scripts/tsvFileCompositions.js
+ */
+
+
 import { open, writeFile } from "fs/promises";
 import blissSymbols from "../data/bliss_symbol_explanations.json" assert {type: "json"};
 
@@ -30,7 +59,7 @@ const COMPOSE_START = 4;
  */
 async function findCompositions () {
   const tsvFile = await open("./data/BciAvCompositionAnalysis.tsv");
-  const compositions = []
+  const compositions = [];
   let firstLine = true;
   for await (const aLine of tsvFile.readLines()) {
     // Ignore the first line -- the column names.
@@ -42,7 +71,7 @@ async function findCompositions () {
     // would remove some Bliss-character declarations.  That declaration is
     // either "Y" or "".  The latter empty string is significant.
     const cells = aLine.split("\t");
-    const aComposition = {}
+    const aComposition = {};
     aComposition.id = parseInt(cells[BCI_ID]);
     aComposition.gloss = cells[GLOSS];
     aComposition.isCharacter = ( cells[IS_CHARACTER] === "Y" ? true : false );
@@ -57,7 +86,6 @@ async function findCompositions () {
     if (composingIds.length > 0 && !checkCompRepeats(aComposition.id, composingIds)) {
       aComposition.composingIds = composingIds;
     }
-    console.log(JSON.stringify(aComposition));
     compositions.push(aComposition);
   }
   return compositions;
@@ -101,11 +129,9 @@ function mergeAndSave(compositions, mainBlissSymbols, filePath) {
     }
     else {
       blissRecord.isCharacter = aComposition.isCharacter;
-      console.log(`${aComposition.id}: ${aComposition.gloss}, ${aComposition.composingIds}`);
       if (aComposition.composingIds) {
         blissRecord.composingIds = aComposition.composingIds;
       }
-      console.log(`${blissRecord.id}: ${blissRecord.isCharacter}, ${blissRecord.composingIds}`);
     }
   });
   // Save to disk
@@ -134,7 +160,7 @@ async function saveJsonToFile (filePath, jsonData) {
 async function main () {
   const compositions = await findCompositions();
   await saveJsonToFile("./data/blissSymbolComposition.json", compositions);
-  mergeAndSave(compositions, blissSymbols, "./data/blissSymbolsJson.json")
+  mergeAndSave(compositions, blissSymbols, "./data/bliss_symbol_explanations.json");
   console.log("Done!");
 }
 
