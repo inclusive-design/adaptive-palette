@@ -20,7 +20,7 @@
  * following files are in the `data` directory:
  * - `./data/bliss_symbol_explanations.json`
  *  - This is the main Bliss symbol JSON file containing information such as the
- *    BCI AV ID, a dsecription of the sybmol (the gloss), etc.
+ *    BCI AV ID, a dsecription of the symbol (the gloss), etc.
  * - `./data/BciAvCompositionAnalysis.tsv`
  *   - This is a TSV file derived from the BCI-AV Composition Analysis
  *     spreadsheet.
@@ -36,7 +36,6 @@
  *
  * Usage: node scripts/tsvFindCompositions.js
  */
-
 
 import { open, writeFile } from "fs/promises";
 import blissSymbols from "../data/bliss_symbol_explanations.json" assert {type: "json"};
