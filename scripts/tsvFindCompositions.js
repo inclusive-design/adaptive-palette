@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
+ * Copyright 2024 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -25,14 +25,10 @@
  *   - This is a TSV file derived from the BCI-AV Composition Analysis
  *     spreadsheet.
  *
- * The script creates or updates these files:
- * - `./data/blissSymbolComposition.json`
- *   - An array of Bliss symbols identified by their Bliss BCI AV ID, and
- *     capturing (1) their `compositionIds` and (2) whether the symbol is a
- *     Bliss-character or not.
+ * The script loads and modifies the main Bliss information file:
  * - `./data/bliss_symbol_explanations.json`
- *  - A new version of the main Bliss symbol JSON file where the character and
- *    composition information in `blissSymbolComposition.json` has been added.
+ *  - The character and composition information found in
+ *    `./data/BciAvCompositionAnalysis.tsv` is merged into this main Bliss file.
  *
  * Usage: node scripts/tsvFindCompositions.js
  */
@@ -49,15 +45,24 @@ const GLOSS = 2;
 const IS_CHARACTER = 3;
 const COMPOSE_START = 4;
 
+// The TSV input file containing the composistion and Bliss-character status
+// information.
+const COMPOSTION_ANALYSIS_TSV = "./data/BciAvCompositionAnalysis.tsv";
+
+// The main Bliss information json file.  The composistion and Bliss-character
+// status is merged into it.
+const MAIN_BLISS_JSON = "./data/bliss_symbol_explanations.json";
+
 /**
- * Main entry point that loads the tsv file, and associates each BCI AV with an
- * array of symbol IDs that it is composed out of.  It also stores whether the
+ * Load the tsv file and associate each BCI AV ID found within it with an
+ * array of symbol IDs that it is composed out of. Also store whether the
  * symbol is a Bliss-character and its gloss.
- * @return {Array} an array of objects with this structure:
- *                 { id, gloss, isCharacter, composition }
+ * @param {String} - The path to a TSV file to consult
+ * @return {Array} - an array of objects with this structure:
+ *                 { id, gloss, isCharacter, composingIds }
  */
-async function findCompositions () {
-  const tsvFile = await open("./data/BciAvCompositionAnalysis.tsv");
+async function findCompositions (tsvFileInput) {
+  const tsvFile = await open(tsvFileInput);
   const compositions = [];
   let firstLine = true;
   for await (const aLine of tsvFile.readLines()) {
@@ -157,9 +162,8 @@ async function saveJsonToFile (filePath, jsonData) {
  * Merge the composition data with the main `bliss_symbol_explanations.json`
  */
 async function main () {
-  const compositions = await findCompositions();
-  await saveJsonToFile("./data/blissSymbolComposition.json", compositions);
-  mergeAndSave(compositions, blissSymbols, "./data/bliss_symbol_explanations.json");
+  const compositions = await findCompositions(COMPOSTION_ANALYSIS_TSV);
+  mergeAndSave(compositions, blissSymbols, MAIN_BLISS_JSON);
   console.log("Done!");
 }
 

@@ -140,3 +140,4 @@ command" and "Build output directory" settings:
 ## Utility Scripts
 
 - [Load a document into a vector databbase (`scripts/loadDocIntoVectorDb.js`)](./scripts/loadDocIntoVectorDb.js)
+- [Retrieve and store Bliss-character status and composition information (`scripts/tsvFindCompositions.js`)](./scripts/tsvFindCompositions.js)
