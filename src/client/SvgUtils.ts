@@ -20,6 +20,7 @@ type BlissaryMapEntryType = {
   blissSvgBuilderCode: string
 };
 
+// Regular expressions for patterns within a Blissary SVG builder string.
 export const KERN_PATTERN          = /K:-?\d+/;
 export const BLISS_LETTER_PATTERN  = /X[a-zA-Z]/;  // may not work e.g., Greek
 export const SEMICOLON_PATTERN     = /B\d+;/;
@@ -28,13 +29,14 @@ export const SLASH_SEPARATOR       = /(\/)/;
 export const SEMICOLON_SEPARATOR   = /(;)/;
 
 /**
- * Get SVG builder string information associated with a single numerical
- * BCI-AV-ID, specifically its Blissary ID, its Blissary SVG builder string, and
- * an equivalent BciAvIdType where the Blissary IDs are replaced with the
- * BCI-AV-IDs.  Return a `BlissSymbolComposition` object, or `undefined`.
+ * Retrieve an SVG builder string information associated with a single numerical
+ * BCI-AV-ID.  Specifically find its Blissary ID, its Blissary SVG builder
+ * string, and create an equivalent BlissSymbolComposition where the Blissary
+ * IDs are replaced with the BCI-AV-IDs.  Return a `BlissSymbolComposition`
+ * or `undefined`.
  * @param {BciAvIdType} bciAvId - The BciAvIdType to convert, must be a
  *                                single number ID, not an array.
- * @return {BlissComposition} - ??
+ * @return {BlissComposition}
  */
 export function makeBlissComposition (bciAvId: number): BlissSymbolComposition {
   let result = undefined;
@@ -49,19 +51,22 @@ export function makeBlissComposition (bciAvId: number): BlissSymbolComposition {
 }
 
 /**
- * Gvien a Blissary map entry, create a `BciAvIdType` from its `bliss`
+ * Given a Blissary map entry, create a `BciAvIdType` from its Blissary SVG
+ * builder string.
+ * @param {String} blissSvgBuilderCode - Blissary SVG builder string as defined
+ * @return {BciAvIdType}
  */
 export function makeBciAvIdType (blissSvgBuilderCode: string): BciAvIdType {
   const bciAvIdType = [];
   const splits = blissSvgBuilderCode.split(SLASH_SEPARATOR);
   splits.forEach((aSplit) => {
-    // These patterns remain intact
+    // These patterns remain intact -- no conversion
     if (KERN_PATTERN.test(aSplit) || BLISS_LETTER_PATTERN.test(aSplit) || SLASH_SEPARATOR.test(aSplit)) {
       bciAvIdType.push(aSplit);
     }
     else if (SEMICOLON_PATTERN.test(aSplit)) {
       // The structure of a semicolon svg string when split gives a three-member
-      // array: [B<blissaryId>, ";", B<blissaryId>]
+      // array: [Blissary ID, ";", Blissary ID]
       const semiColonSplits = aSplit.split(SEMICOLON_SEPARATOR);
       let entry = blissaryToBciAvId(parseInt(semiColonSplits[0].slice(1)));
       bciAvIdType.push(entry.bciAvId);
@@ -69,7 +74,9 @@ export function makeBciAvIdType (blissSvgBuilderCode: string): BciAvIdType {
       entry = blissaryToBciAvId(parseInt(semiColonSplits[2].slice(1)));
       bciAvIdType.push(entry.bciAvId);
     }
-    // Everything else is a Blissary ID.  Convert it to a BCI-AV-ID
+    // Everything else is a Blissary ID in the form of a string "B<digits>".
+    // Slice of the "B" prefix, convert the rest to an integer and then convert
+    // that to a BCI-AV-ID.
     else {
       const numericalId = parseInt(aSplit.slice(1));
       const blissaryMapEntry = blissaryToBciAvId(numericalId);
