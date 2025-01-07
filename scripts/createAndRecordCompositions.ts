@@ -10,10 +10,10 @@
  */
 
 /**
- * This script uses the Blissary BCI-AV-ID map to generate BciAvTypes that
- * encode the composition of Bliss-words.  The composition information is then
- * attached to each entry in the `bliss_symbol_explanations.json` file.  The
- * latter file is overwritten with the new information.
+ * This one-time script uses the Blissary BCI-AV-ID map to generate BciAvTypes
+ * that encode the composition of Bliss-words.  The composition information is
+ * then attached to each entry in the `bliss_symbol_explanations.json` file.
+ * The latter file is overwritten with the new information.
  *
  * Running the script makes use of `vite-node` with `npx`.  That allows this
  * TypeScript script to run using node js, and to properly link with other
