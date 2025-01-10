@@ -75571,28 +75571,28 @@
     "description": "indicator_(continuous_form)",
     "pos": "GREY",
     "explanation": "(horizontal line [quarter-sized]:  may be placed above a symbol to show that it is representing a verb in continuous form in a natural language.)",
-    "isCharacter": false
+    "isCharacter": true
   },
   {
     "id": "28044",
     "description": "indicator_(plural,definite)",
     "pos": "GREY",
     "explanation": "Indicator (plural + definite)",
-    "isCharacter": false
+    "isCharacter": true
   },
   {
     "id": "28045",
     "description": "indicator_(thing,definite)",
     "pos": "GREY",
     "explanation": "Indicator (thing + definite)",
-    "isCharacter": false
+    "isCharacter": true
   },
   {
     "id": "28046",
     "description": "indicator_(thing,plural,definite)",
     "pos": "GREY",
     "explanation": "Indicator (thing + plural + definite)",
-    "isCharacter": false
+    "isCharacter": true
   },
   {
     "id": "28047",
