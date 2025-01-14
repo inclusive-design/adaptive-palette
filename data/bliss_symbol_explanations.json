@@ -1073,7 +1073,7 @@
     "description": "aid,device,support",
     "pos": "YELLOW",
     "explanation": "(help + thing indicator: concrete thing that aids or supports a person. The symbol is the concrete form of help.)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       14704,
       ";",
@@ -1189,7 +1189,7 @@
     "description": "alphabet,letters_(lowercase)_(Latin_alphabet)",
     "pos": "YELLOW",
     "explanation": "(a_(lowercase) + b_(lowercase) + c_(lowercase): first three letters of the English alphabet, representing the entire alphabet) - Character (superimposed)",
-    "isCharacter": true,
+    "isCharacter": "true",
     "composition": [
       "Xa",
       "/",
@@ -3530,7 +3530,7 @@
     "description": "brain",
     "pos": "YELLOW",
     "explanation": "(mind + thing indicator: organ of the body. The symbol is the concrete form of mind.)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       15471,
       ";",
@@ -5175,7 +5175,7 @@
     "description": "clock,timepiece",
     "pos": "YELLOW",
     "explanation": "(time + thing indicator: object for telling time.The symbol is the concrete form of time.)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       17732,
       ";",
@@ -5330,7 +5330,7 @@
     "description": "colour",
     "pos": "YELLOW",
     "explanation": "(eye + earth [half-sized]: what the eye receives from things on earth)",
-    "isCharacter": false
+    "isCharacter": true
   },
   {
     "id": "13378",
@@ -5720,7 +5720,7 @@
     "description": "copy,duplicate",
     "pos": "YELLOW",
     "explanation": "(to repeat + thing indicator)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       24934,
       ";",
@@ -5872,7 +5872,7 @@
     "description": "couple_(two_persons)",
     "pos": "BLUE",
     "explanation": "(person + person)",
-    "isCharacter": false
+    "isCharacter": true
   },
   {
     "id": "13427",
@@ -6133,7 +6133,7 @@
     "description": "creature,being",
     "pos": "YELLOW",
     "explanation": "(life + thing indicator: a living creature. The symbol is the concrete form of life.)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       15206,
       ";",
@@ -11146,7 +11146,7 @@
     "description": "heart",
     "pos": "YELLOW",
     "explanation": "(feeling + thing indicator: organ of the body. The symbol is the concrete form of feeling, emotion.)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       14164,
       ";",
@@ -12252,7 +12252,7 @@
     "description": "into",
     "pos": "WHITE",
     "explanation": "(forward + enclosure: the arrow is entering the enclosure)  - Character (superimposed)",
-    "isCharacter": false
+    "isCharacter": true
   },
   {
     "id": "14953",
@@ -15031,7 +15031,7 @@
     "description": "multitude",
     "pos": "YELLOW",
     "explanation": "(multiplication + thing indicator: large number of people or things. The symbol is the concrete form of multiplication.)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       15673,
       ";",
@@ -15366,7 +15366,7 @@
     "description": "hypodermic_needle",
     "pos": "YELLOW",
     "explanation": "(hypodermic_needlepoint + thing indicator: or semantically more reasonable; syringe + pointer, to needlepoint)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       25573,
       ";",
@@ -16201,7 +16201,7 @@
     "description": "other,another_(person)",
     "pos": "BLUE",
     "explanation": "(person [modification] + 2: referring to a second person)",
-    "isCharacter": false
+    "isCharacter": true
   },
   {
     "id": "15939",
@@ -16446,7 +16446,7 @@
     "description": "pair",
     "pos": "YELLOW",
     "explanation": "(2 + thing indicator: two items)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       8498,
       ";",
@@ -19198,7 +19198,7 @@
     "description": "roof,cover",
     "pos": "YELLOW",
     "explanation": "(protection + thing indicator: thing that provides protective cover. The symbol is the concrete form of protection.)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       16420,
       ";",
@@ -19334,7 +19334,7 @@
     "description": "ruler,measuring_stick,tapeline,tape_measure",
     "pos": "YELLOW",
     "explanation": "(measurement + thing indicator)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       15443,
       ";",
@@ -19978,7 +19978,7 @@
     "description": "self,oneself,ego_(person)",
     "pos": "BLUE",
     "explanation": "(1 + person [modification]: referring to oneself as person number one)",
-    "isCharacter": false
+    "isCharacter": true
   },
   {
     "id": "16753",
@@ -21173,7 +21173,7 @@
     "description": "slide",
     "pos": "YELLOW",
     "explanation": "(downward and forward + thing indicator: thing for sliding)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       13871,
       ";",
@@ -22960,7 +22960,7 @@
     "description": "swing",
     "pos": "YELLOW",
     "explanation": "(swing,swinging + thing indicator: thing to swing upon)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       25406,
       ";",
@@ -23036,7 +23036,7 @@
     "description": "syringe",
     "pos": "YELLOW",
     "explanation": "(injection + thing indicator)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       14941,
       ";",
@@ -23754,7 +23754,7 @@
     "description": "thermometer",
     "pos": "YELLOW",
     "explanation": "(temperature + thing indicator: The symbol is the concrete form of temperature)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       17520,
       ";",
@@ -25004,7 +25004,7 @@
     "description": "unit,example,sample,for_example,e.g.",
     "pos": "YELLOW",
     "explanation": "(1 + thing indicator: a single item)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       8497,
       ";",
@@ -25068,7 +25068,7 @@
     "description": "up_and_down_(OLD)",
     "pos": "WHITE",
     "explanation": "(up + down)  SUPERSEDED SYNONYM  See up_and_down 20524",
-    "isCharacter": false
+    "isCharacter": true
   },
   {
     "id": "17985",
@@ -25930,7 +25930,7 @@
     "description": "weight_(a)",
     "pos": "YELLOW",
     "explanation": "(weight + thing indicator)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       18221,
       ";",
@@ -27004,7 +27004,7 @@
     "description": "cross_(a)",
     "pos": "YELLOW",
     "explanation": "(cross + thing indicator)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       13613,
       ";",
@@ -27030,7 +27030,7 @@
     "description": "star_of_David_(a)",
     "pos": "YELLOW",
     "explanation": "(star_of_David + thing indicator)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       17251,
       ";",
@@ -27148,7 +27148,7 @@
     "description": "mirror",
     "pos": "YELLOW",
     "explanation": "(reflection + thing indicator: a ray of light is reflected by a mirror)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       22384,
       ";",
@@ -30998,7 +30998,7 @@
     "description": "central_nervous_system,CNS",
     "pos": "YELLOW",
     "explanation": "(brain_signal + thing indicator: system consisting of brain and spinal cord which is activated by electrical impulses)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       25434,
       ";",
@@ -32396,7 +32396,7 @@
     "description": "arrow",
     "pos": "YELLOW",
     "explanation": "(forward + thing indicator)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       14390,
       ";",
@@ -37048,7 +37048,7 @@
     "description": "must_(a)",
     "pos": "YELLOW",
     "explanation": "(mind + strong [modification]: the use of the power of the mind, and/or physical strength, to make something happen)  - Character (superimposed)",
-    "isCharacter": false
+    "isCharacter": true
   },
   {
     "id": "22915",
@@ -38084,7 +38084,7 @@
     "description": "eaves",
     "pos": "YELLOW",
     "explanation": "(protection_with_pointer + thing indicator: roof with a pointer to the eaves)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       25598,
       ";",
@@ -38336,7 +38336,7 @@
     "description": "gauge,gage,meter",
     "pos": "YELLOW",
     "explanation": "(scale,measurement + thing indicator)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       24806,
       ";",
@@ -47089,7 +47089,7 @@
     "description": "adding,additive",
     "pos": "YELLOW",
     "explanation": "(addition + thing indicator)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       12339,
       ";",
@@ -47562,7 +47562,7 @@
     "description": "bomb,explosive",
     "pos": "YELLOW",
     "explanation": "(explosion + thing indicator)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       14132,
       ";",
@@ -47574,7 +47574,7 @@
     "description": "bow",
     "pos": "YELLOW",
     "explanation": "(curve + thing indicator: bow, as in \"bow and arrow\", etc.)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       13627,
       ";",
@@ -49519,7 +49519,7 @@
     "description": "linear_thing_(horizontal),bar",
     "pos": "YELLOW",
     "explanation": "(horizontal line + thing indicator)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       17449,
       ";",
@@ -52894,7 +52894,7 @@
     "description": "organism",
     "pos": "YELLOW",
     "explanation": "(being + thing indicator)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       24443,
       ";",
@@ -53126,7 +53126,7 @@
     "description": "sink,basin",
     "pos": "YELLOW",
     "explanation": "(bath,washing + thing indicator)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       16992,
       ";",
@@ -54000,7 +54000,7 @@
     "description": "exchanger",
     "pos": "YELLOW",
     "explanation": "(exchange + thing indicator)  - (character with thing indicator)  To be used with specifiers, e.g., heat exchanger, air exchanger, etc.",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       25555,
       ";",
@@ -54900,7 +54900,7 @@
     "description": "receiver",
     "pos": "YELLOW",
     "explanation": "(receiving + thing indicator)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       24727,
       ";",
@@ -55689,7 +55689,7 @@
     "description": "man-made_item,artefact,artifact,product",
     "pos": "YELLOW",
     "explanation": "(making,production,fashioning + thing indicator)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       23583,
       ";",
@@ -57434,7 +57434,7 @@
     "description": "alphabet,letters_(uppercase)_(Latin_alphabet)",
     "pos": "YELLOW",
     "explanation": "(A_(uppercase) + B_(uppercase) + C_(uppercase): first three letters of the English alphabet, representing the entire alphabet)  - Character (superimposed)",
-    "isCharacter": true,
+    "isCharacter": "true",
     "composition": [
       "XA",
       "/",
@@ -66515,7 +66515,7 @@
     "description": "set_square",
     "pos": "YELLOW",
     "explanation": "(angle_(right),right_angle + thing indicator)  - (character with thing indicator)",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       16674,
       ";",
@@ -70033,7 +70033,7 @@
     "description": "attempt,effort,try",
     "pos": "YELLOW",
     "explanation": "(forward + difficulty: forward move, with difficulty)",
-    "isCharacter": false
+    "isCharacter": true
   },
   {
     "id": "26127",
@@ -73235,7 +73235,7 @@
     "description": "crumbs",
     "pos": "YELLOW",
     "explanation": "four particles [modification, two in high and two in low positions]: indicating crumbs",
-    "isCharacter": false
+    "isCharacter": true
   },
   {
     "id": "27032",
@@ -75133,7 +75133,7 @@
     "description": "climate_change",
     "pos": "YELLOW",
     "explanation": "(climate [contraction] + development)",
-    "isCharacter": false
+    "isCharacter": true
   },
   {
     "id": "28011",
@@ -76527,7 +76527,7 @@
     "description": "eraser",
     "pos": "YELLOW",
     "explanation": "(destroy + thing indicator) Character",
-    "isCharacter": true,
+    "isCharacter": "false",
     "composition": [
       24883,
       ";",
