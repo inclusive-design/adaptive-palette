@@ -10,7 +10,10 @@
  */
 
 import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
-import { bciToBlissaryId, bciAvIdToString, makeBciAvIdType, makeBlissComposition } from "./SvgUtils";
+import {
+  bciToBlissaryId, bciAvIdToString, makeBciAvIdType, makeBlissComposition,
+  isIndicatorId, findIndicators, isModifierId, findClassifierFromLeft
+} from "./SvgUtils";
 
 describe("SvgUtils module", (): void => {
 
@@ -29,8 +32,12 @@ describe("SvgUtils module", (): void => {
     13134, ";", 8993, "/", "K:-2", "/", 15732, "/", 15666
   ];
   const abcBciAvId = 12366;
-  const abcBlissarySvgBuilderStr = "Xa/Xb/Xc";                    // "a b c"
+  const abcBlissarySvgBuilderStr = "Xa/Xb/Xc";                    // "abc"
   const expectedBciAvIdAbc = [ "Xa", "/", "Xb", "/", "Xc" ];
+  const indicatorId = 8999;                                       // future action indicator
+  const nonIndicatorId = 12334;                                   // action
+  const modifierId = 8515;                                        // "5" (5 items or 5th)
+  const nonModifierId = 28043;                                    // conitnuous indicator
 
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
@@ -76,5 +83,42 @@ describe("SvgUtils module", (): void => {
     composition = makeBlissComposition(abcBciAvId);
     expect(composition.bciAvId).toBe(abcBciAvId);
     expect(composition.bciComposition).toEqual(expectedBciAvIdAbc);
+  });
+
+  test("Check for indicator or modifier BCI-AV-ID", (): void => {
+    expect(isIndicatorId(indicatorId)).toEqual(true);
+    expect(isIndicatorId(nonIndicatorId)).toEqual(false);
+    expect(isModifierId(modifierId)).toEqual(true);
+    expect(isModifierId(nonModifierId)).toEqual(false);
+  });
+
+  test("Find indicator positions", (): void => {
+    // The test BCI-AV-ID `expectedBciAvIdRevive` contains an action indicator
+    // over the first symbol "cause".
+    let indicatorPositions = findIndicators(expectedBciAvIdRevive);
+    expect(indicatorPositions.length).toEqual(1);
+    expect(indicatorPositions).toEqual([2]);
+
+    // `expectedBciAvIdAbc` has no indictors.  `singleBciAvId` is a single
+    // number BCI-AV-ID and has no indicators.
+    indicatorPositions = findIndicators(expectedBciAvIdAbc);
+    expect(indicatorPositions.length).toEqual(0);
+    indicatorPositions = findIndicators(singleBciAvId);
+    expect(indicatorPositions.length).toEqual(0);
+  });
+
+  test("Find first symbol after a modifier", (): void => {
+    // Prefix the `expectedBciAvIdRevive` with the `modifierId` modifier.
+    let modifiedRevive = [modifierId, "/", ...expectedBciAvIdRevive];
+    expect(findClassifierFromLeft(modifiedRevive)).toEqual(2);
+
+    // Prefix again but two modifiers and a modifier suffix.
+    modifiedRevive = [modifierId, "/", modifierId, "/", ...expectedBciAvIdRevive, "/", modifierId];
+    expect(findClassifierFromLeft(modifiedRevive)).toEqual(4);
+
+    // The original `expectedBciAvIdRevive` has no modifiers; also a single
+    // BCI-AV-ID has no modifiers (or it is one).
+    expect(findClassifierFromLeft(expectedBciAvIdRevive)).toEqual(0);
+    expect(findClassifierFromLeft(singleBciAvId)).toEqual(0);
   });
 });

@@ -62,50 +62,6 @@ export async function loadBlissaryIdMap (): Promise<object> {
   return await response.json();
 }
 
-// Ranges and list for all the indicator sybmols.  The range values are the
-// minimum and maximum BCI AV ID.
-export const indicatorIds = {
-  range1: [8993, 9011],
-  range2: [24667, 24679],
-  range3: [28043, 28046],
-  list: [24665, 24807, 25458]
-};
-
-/*
- * Evaluate if the given integer matches the BCI AV ID of one of hte indicator
- * symbols.
- * @param {number} bciAvId - The number form of a BciAvIdType
- * @return {boolean}
- */
-function isIndicatorId (bciAvId: number): boolean {
-  return (
-    (bciAvId >= indicatorIds.range1[0] && bciAvId <= indicatorIds.range1[1]) ||
-    (bciAvId >= indicatorIds.range2[0] && bciAvId <= indicatorIds.range2[1]) ||
-    (bciAvId >= indicatorIds.range3[0] && bciAvId <= indicatorIds.range3[1]) ||
-    indicatorIds.list.includes(bciAvId)
-  );
-}
-
-/*
- * Function to check for one or more indicators in the array form of a
- * BciAvIdType.
- * @param {Array} bciAvId - The array form of a BciAvIdType, a mixture of
- *                          integers and strings.
- * @return {Array} - the positions of the indicator(s).  An empty array is
- *                   returned if there are no indicators.
- */
-export function findIndicators (bciAvId: (string|number)[]): number[] {
-  const positions = [];
-  bciAvId.forEach((item, index) => {
-    if (typeof item === "number") {
-      if (isIndicatorId(item)) {
-        positions.push(index);
-      }
-    }
-  });
-  return positions;
-}
-
 /**
  * Initialize the `adaptivePaletteGlobals` structure.
  * @param {HTMLElement} mainPaletteContainerId  - Optional argument specifying
