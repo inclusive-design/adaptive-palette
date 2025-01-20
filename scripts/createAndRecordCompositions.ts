@@ -22,12 +22,12 @@
  * the `npm` global directory, e.g. `~/.npm/...` on macOS. See:
  * https://www.npmjs.com/package/vite-node
  *
- * The script will re-write `./data/bliss_symbol_explanations.json` as well
- * log two items on the console:
- * 1. The Bliss symbols whose composition is identical to its BCI-AV-ID.  There
+ * The script will re-write `./public/data/bliss_symbol_explanations.json` as
+ * well as log two items on the console:
+ * 1. The Bliss symbols whose composition is identical to their BCI-AV-ID. There
  *    are slighlty more than 1000.  They are loggged as "Ignored" and the entry
- *    in the json file has not `composition` field.
- * 2. The Bliss symbols that have not defined composition.  There are three.
+ *    in the json file has no `composition` field.
+ * 2. The Bliss symbols that have no defined composition.  There are three.
  * This information can be redirected to a file of the user's choosing.
  *
  * Usage: npx vite-node scripts/createAndRecordCompositions.ts [> logFile]
@@ -35,12 +35,12 @@
 
 import { makeBlissComposition } from "../src/client/SvgUtils.ts";
 import { initAdaptivePaletteGlobals } from "../src/client/GlobalData.ts";
-import blissSymbols from "../data/bliss_symbol_explanations.json";
+import blissSymbols from "../public/data/bliss_symbol_explanations.json";
 
 import { writeFileSync } from "fs";
 import { join } from "path";
 
-const OUTPUT_FILE = "../data/bliss_symbol_explanations.json";
+const OUTPUT_FILE = "../public/data/bliss_symbol_explanations.json";
 
 /*
  * Loop through the Bliss symbol entries in `bliss_symbol_explanations.json`:
