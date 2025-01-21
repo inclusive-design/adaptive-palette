@@ -10,7 +10,7 @@
  */
 
 import { BlissSVGBuilder } from "bliss-svg-builder";
-import { BciAvIdType, BlissSymbolComposition } from "./index.d";
+import { BciAvIdType, BciAvIdCompositonType } from "./index.d";
 import { adaptivePaletteGlobals } from "./GlobalData";
 
 // The struture of an entry in the Blissary Id map.
@@ -54,14 +54,14 @@ export const SEMICOLON_SEPARATOR   = /(;)/;
 /**
  * Retrieve an SVG builder string information associated with a single numerical
  * BCI-AV-ID.  Specifically find its Blissary ID, its Blissary SVG builder
- * string, and create an equivalent BlissSymbolComposition where the Blissary
- * IDs are replaced with the BCI-AV-IDs.  Return a `BlissSymbolComposition`
+ * string, and create an equivalent BciAvIdCompositonType where the Blissary
+ * IDs are replaced with the BCI-AV-IDs.  Return a `BciAvIdCompositonType`
  * or `undefined`.
  * @param {BciAvIdType} bciAvId - The BciAvIdType to convert, must be a
  *                                single number ID, not an array.
  * @return {BlissComposition}
  */
-export function makeBlissComposition (bciAvId: number): BlissSymbolComposition {
+export function makeBlissComposition (bciAvId: number): BciAvIdCompositonType {
   let result = undefined;
   const blissaryMapEntry = bciToBlissaryId(bciAvId);
   if (blissaryMapEntry) {
@@ -224,10 +224,10 @@ export function bciAvIdToString (bciAvId: BciAvIdType): string {
 /**
  * Retrieve ths composition of a single id BCI AV ID.  If the argument is the
  * array form of a BciAvIdType or if the id has not composition, this returns
- * undefined.  Otherwise, it returns a BlissSymbolComposition, which is the
+ * undefined.  Otherwise, it returns a BciAvIdCompositonType, which is the
  * original single id BCI AV ID and its composition array.
  */
-export function bciAvIdToComposition (bciAvId: BciAvIdType): BlissSymbolComposition {
+export function bciAvIdToComposition (bciAvId: BciAvIdType): BciAvIdCompositonType {
   let result = undefined;
   if (typeof bciAvId === "number") {
     const bciAvSymbol = adaptivePaletteGlobals.bciAvSymbols.find( (symbol) => {
