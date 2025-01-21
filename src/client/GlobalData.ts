@@ -12,8 +12,9 @@
 /**
  * Populate and export global data
  */
-
 import { signal } from "@preact/signals";
+
+import bliss_symbols from "../../public/data/bliss_symbol_explanations.json";
 
 /**
  * The map between cell types (string) and actual components that render corresponding cells
@@ -47,6 +48,7 @@ export const adaptivePaletteGlobals = {
   // builder.  The map itself is set asynchronously.
   blissaryIdMapUrl: "https://raw.githubusercontent.com/hlridge/Bliss-Blissary-BCI-ID-Map/main/blissary_to_bci_mapping.json",
   blissaryIdMap: null,
+  bciAvSymbols: bliss_symbols,
   paletteStore: new PaletteStore(),
   navigationStack: new NavigationStack(),
 

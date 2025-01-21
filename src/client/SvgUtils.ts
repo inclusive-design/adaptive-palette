@@ -194,7 +194,9 @@ export function findClassifierFromLeft (bciAvId: BciAvIdType): number {
 /**
  * Convert the given `BciAvIdType` to a SVG builder code string.  If the
  * `BciAvIdType`argument is an array of BCI-AV-IDs and punctuation, concatenate
- * the array into a string of builder code strings and punctuation marks.
+ * the array into a string of builder code strings and punctuation marks.  If
+ * the argument is a single numeric BCI-AV-ID, retrieve its composition if any
+ * and use that.  If not composition, use the single id value.
  * @param {BciAvIdType} bciAvId - The BciAvIdType to convert.
  * @return {String} - The concatenation of the builder codes and punctuation,
  *                    e.g., "B106/B12".
@@ -217,6 +219,25 @@ export function bciAvIdToString (bciAvId: BciAvIdType): string {
     });
   }
   return finalCode;
+}
+
+/**
+ * Retrieve ths composition of a single id BCI AV ID.  If the argument is the
+ * array form of a BciAvIdType or if the id has not composition, this returns
+ * undefined.  Otherwise, it returns a BlissSymbolComposition, which is the
+ * original single id BCI AV ID and its composition array.
+ */
+export function bciAvIdToComposition (bciAvId: BciAvIdType): BlissSymbolComposition {
+  let result = undefined;
+  if (typeof bciAvId === "number") {
+    const bciAvSymbol = adaptivePaletteGlobals.bciAvSymbols.find( (symbol) => {
+      return parseInt(symbol.id) === bciAvId;
+    });
+    if (bciAvSymbol && bciAvSymbol.composition) {
+      result = { bciAvId: bciAvId, bciComposition: bciAvSymbol.composition };
+    }
+  }
+  return result;
 }
 
 /**

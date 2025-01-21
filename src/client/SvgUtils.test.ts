@@ -8,11 +8,11 @@
  * You may obtain a copy of the License at
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
-
 import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
 import {
   bciToBlissaryId, bciAvIdToString, makeBciAvIdType, makeBlissComposition,
-  isIndicatorId, findIndicators, isModifierId, findClassifierFromLeft
+  isIndicatorId, findIndicators, isModifierId, findClassifierFromLeft,
+  bciAvIdToComposition
 } from "./SvgUtils";
 
 describe("SvgUtils module", (): void => {
@@ -112,7 +112,7 @@ describe("SvgUtils module", (): void => {
     let modifiedRevive = [modifierId, "/", ...expectedBciAvIdRevive];
     expect(findClassifierFromLeft(modifiedRevive)).toEqual(2);
 
-    // Prefix again but two modifiers and a modifier suffix.
+    // Prefix again with two modifiers and a modifier suffix.
     modifiedRevive = [modifierId, "/", modifierId, "/", ...expectedBciAvIdRevive, "/", modifierId];
     expect(findClassifierFromLeft(modifiedRevive)).toEqual(4);
 
@@ -120,5 +120,24 @@ describe("SvgUtils module", (): void => {
     // BCI-AV-ID has no modifiers (or it is one).
     expect(findClassifierFromLeft(expectedBciAvIdRevive)).toEqual(0);
     expect(findClassifierFromLeft(singleBciAvId)).toEqual(0);
+  });
+
+  test("Retrieve composition of single valued BCI-AV-ID", (): void => {
+    const composition = bciAvIdToComposition(reviveBciAvId);
+    expect(composition).not.toBeUndefined();
+    expect(composition.bciAvId).toBe(reviveBciAvId);
+    expect(composition.bciComposition).toEqual(expectedBciAvIdRevive);
+  });
+
+  test("Retrieve composition of single valued BCI-AV-ID", (): void => {
+    const composition = bciAvIdToComposition(reviveBciAvId);
+    expect(composition).not.toBeUndefined();
+    expect(composition.bciAvId).toBe(reviveBciAvId);
+    expect(composition.bciComposition).toEqual(expectedBciAvIdRevive);
+  });
+
+  test("Retrieve undefined composition of array form of BCI-AV-ID", (): void => {
+    const composition = bciAvIdToComposition(expectedBciAvIdRevive);
+    expect(composition).toBeUndefined();
   });
 });
