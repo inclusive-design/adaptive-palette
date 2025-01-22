@@ -10,7 +10,7 @@
  */
 
 import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
-import { bciToBlissaryId, bciAvIdToString } from "./SvgUtils";
+import { bciToBlissaryId, bciAvIdToString, makeBciAvIdType, makeBlissComposition } from "./SvgUtils";
 
 describe("SvgUtils module", (): void => {
 
@@ -18,11 +18,19 @@ describe("SvgUtils module", (): void => {
   // `bciAvIdArray` is also from the BMW json file using the codes for
   // "VERB+EN".  The `expectedX` constants are based on a manual lookup of the
   // blissary ids.
-  const singleBciAvId = 23409;                // CONJ.
+  const singleBciAvId = 23409;                                    // CONJ.
   const expectedString = "B823";
-  const bciAvIdArray =[ 12335, "/", 8499 ];   // VERB+EN
+  const bciAvIdArray = [ 12335, "/", 8499 ];                      // VERB+EN
   const expectedConcatenation = "B106/B12";
   const invalidBciAvId = 1;
+  const reviveBciAvId = 12585;
+  const reviveBlissarySvgBuilderStr = "B206;B81/K:-2/B473/B457";
+  const expectedBciAvIdRevive = [
+    13134, ";", 8993, "/", "K:-2", "/", 15732, "/", 15666
+  ];
+  const abcBciAvId = 12366;
+  const abcBlissarySvgBuilderStr = "Xa/Xb/Xc";                    // "a b c"
+  const expectedBciAvIdAbc = [ "Xa", "/", "Xb", "/", "Xc" ];
 
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
@@ -55,4 +63,18 @@ describe("SvgUtils module", (): void => {
     expect(() => { bciAvIdToString(invalidBciAvId); }).toThrow();
   });
 
+  test("Create a BciAvIdType from a Blissry SVG builder string", (): void => {
+    expect(makeBciAvIdType(reviveBlissarySvgBuilderStr)).toEqual(expectedBciAvIdRevive);
+    expect(makeBciAvIdType(abcBlissarySvgBuilderStr)).toEqual(expectedBciAvIdAbc);
+  });
+
+  test("Make Bliss composition", (): void => {
+    let composition = makeBlissComposition(reviveBciAvId);
+    expect(composition.bciAvId).toBe(reviveBciAvId);
+    expect(composition.bciComposition).toEqual(expectedBciAvIdRevive);
+
+    composition = makeBlissComposition(abcBciAvId);
+    expect(composition.bciAvId).toBe(abcBciAvId);
+    expect(composition.bciComposition).toEqual(expectedBciAvIdAbc);
+  });
 });
