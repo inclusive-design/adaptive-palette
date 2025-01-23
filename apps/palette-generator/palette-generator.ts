@@ -213,7 +213,11 @@ function reportMatches(allMatches) {
       const match = matchesForString[i];
       const dd = document.createElement("dd");
       dl.append(dd);
-      dd.innerText = `${match.bciAvId}: ${match.label}`;
+      let compositionString = "";
+      if (match.composition) {
+        compositionString = `, '${match.composition.join("")}'`;
+      }
+      dd.innerText = `${match.bciAvId}: ${match.label}${compositionString}`;
     }
     if (matchesForString.length > MAX_MATCHES_OUTPUT) {
       const dd = document.createElement("dd");

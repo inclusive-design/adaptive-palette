@@ -89,7 +89,11 @@ function findBciAvId(label, blissGlosses) {
     // Try an exact match or a word match
     const wordMatch = new RegExp("\\b" + `${label}` + "\\b");
     if ((label === gloss.description) || wordMatch.test(gloss.description)) {
-      matches.push({ bciAvId: parseInt(gloss.id), label: gloss.description });
+      matches.push({
+        bciAvId: parseInt(gloss.id),
+        label: gloss.description,
+        composition: gloss.composition
+      });
       console.log(`\tFound match: ${gloss.description}, bci-av-id: ${gloss.id}`);
     }
   }
@@ -167,7 +171,7 @@ export function processPaletteLabels (paletteLabels, paletteName, startRow, star
     "name": paletteName,
     "cells": {}
   };
-  const matchByInfoString = [];
+  const matchByInfoArray = [];
   const errors = [];
 
   paletteLabels.forEach((row, rowIndex) => {
@@ -221,7 +225,7 @@ export function processPaletteLabels (paletteLabels, paletteName, startRow, star
             cell.options.label = actualLabel || infoString;
             const inputMatches = {};
             inputMatches[infoString] = matches;
-            matchByInfoString.push(inputMatches);
+            matchByInfoArray.push(inputMatches);
           }
         }
       }
@@ -238,5 +242,5 @@ export function processPaletteLabels (paletteLabels, paletteName, startRow, star
       finalJson.cells[`${infoString}-${uuidv4()}`] = cell;
     });
   });
-  return { paletteJson: finalJson, matches: matchByInfoString, errors: errors };
+  return { paletteJson: finalJson, matches: matchByInfoArray, errors: errors };
 }
