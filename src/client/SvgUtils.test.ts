@@ -10,7 +10,10 @@
  */
 
 import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
-import { bciToBlissaryId, bciAvIdToString, makeBciAvIdType, makeBlissComposition } from "./SvgUtils";
+import {
+  bciToBlissaryId, bciAvIdToString, makeBciAvIdType, makeBlissComposition,
+  BLISSARY_PATTERN_KEY, BCIAV_PATTERN_KEY
+} from "./SvgUtils";
 
 describe("SvgUtils module", (): void => {
 
@@ -28,8 +31,10 @@ describe("SvgUtils module", (): void => {
   const expectedBciAvIdRevive = [
     13134, ";", 8993, "/", "K:-2", "/", 15732, "/", 15666
   ];
+  const reviveBciSvgBuilderStr = "13134;8993/K:-2/15732/15666";
   const abcBciAvId = 12366;
   const abcBlissarySvgBuilderStr = "Xa/Xb/Xc";                    // "a b c"
+  const abcBciAvSvgBuilderStr    = "Xa/Xb/Xc";                    // "a b c"
   const expectedBciAvIdAbc = [ "Xa", "/", "Xb", "/", "Xc" ];
 
   beforeAll(async () => {
@@ -66,6 +71,14 @@ describe("SvgUtils module", (): void => {
   test("Create a BciAvIdType from a Blissry SVG builder string", (): void => {
     expect(makeBciAvIdType(reviveBlissarySvgBuilderStr)).toEqual(expectedBciAvIdRevive);
     expect(makeBciAvIdType(abcBlissarySvgBuilderStr)).toEqual(expectedBciAvIdAbc);
+    // Using blissary pattern key, explicitly
+    expect(makeBciAvIdType(reviveBlissarySvgBuilderStr, BLISSARY_PATTERN_KEY)).toEqual(expectedBciAvIdRevive);
+    expect(makeBciAvIdType(abcBlissarySvgBuilderStr, BLISSARY_PATTERN_KEY)).toEqual(expectedBciAvIdAbc);
+  });
+
+  test("Create a BciAvIdType from a BCI-AV SVG builder string", (): void => {
+    expect(makeBciAvIdType(reviveBciSvgBuilderStr, BCIAV_PATTERN_KEY)).toEqual(expectedBciAvIdRevive);
+    expect(makeBciAvIdType(abcBciAvSvgBuilderStr, BCIAV_PATTERN_KEY)).toEqual(expectedBciAvIdAbc);
   });
 
   test("Make Bliss composition", (): void => {

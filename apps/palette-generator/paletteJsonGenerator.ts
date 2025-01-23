@@ -9,6 +9,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 import { v4 as uuidv4 } from "uuid";
+import { makeBciAvIdType, BCIAV_PATTERN_KEY } from "../../src/client/SvgUtils";
 
 const BLANK_CELL = "BLANK";
 const SVG_PREFIX = "SVG:";
@@ -45,9 +46,26 @@ function isSvgBuilderString (theString) {
  * @throws {Error} - If the encoding is not well formed.
  */
 function convertSvgBuilderString (theString) {
-  // Replace the SVG prefix and suffix strings with square brackers (array)
-  theString = theString.replace(SVG_PREFIX, "[").replace(SVG_SUFFIX,"]");
-  return JSON.parse(theString);
+  let result;
+  // Two forms, one with commas and one without:
+  // - commas:
+  //   Replace the SVG prefix and suffix with "[" and "]", then parse the array.
+  //   e.g., 'SVG:13166,";",9011:SVG' -> '[13166,";",9011]'
+  // - no commas:
+  //   Treat as an SVG composition string and use makeBciAvIdType() to convert
+  //   it to the array form.
+  //   e.g., 'SVG:13166;9011:SVG' -> '[13166,";",9011]'
+  if (theString.indexOf(",") !== -1) {
+    // Replace the SVG prefix and suffix strings with square brackers (array)
+    theString = theString.replace(SVG_PREFIX, "[").replace(SVG_SUFFIX,"]");
+    result = JSON.parse(theString);
+  }
+  else {
+    // Remove the SVG prefix and suffix
+    theString = theString.replace(SVG_PREFIX, "").replace(SVG_SUFFIX,"");
+    result = makeBciAvIdType(theString, BCIAV_PATTERN_KEY);
+  }
+  return result;
 }
 
 /**
