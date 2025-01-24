@@ -58,7 +58,6 @@ function speak(text): void {
  */
 async function loadPaletteFromJsonFile (jsonFilePath: string): Promise<JsonPaletteType> {
   try {
-    console.log(`loadPaletteFromJsonFile(): file path is ${jsonFilePath}`);
     const response = await fetch(jsonFilePath);
     if (!response.ok) {
       console.error(`Error loading ${jsonFilePath}: ${response.status}`);
