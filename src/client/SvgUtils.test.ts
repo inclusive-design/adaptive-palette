@@ -21,9 +21,9 @@ describe("SvgUtils module", (): void => {
   // `bciAvIdArray` is also from the BMW json file using the codes for
   // "VERB+EN".  The `expectedX` constants are based on a manual lookup of the
   // blissary ids.
-  const singleBciAvId = 23409;                                    // CONJ.
+  const singleBciAvId = 23409;                        // CONJ.
   const expectedString = "B823";
-  const bciAvIdArray = [ 12335, "/", 8499 ];                      // VERB+EN
+  const bciAvIdArray = [ 12335, "/", 8499 ];          // VERB+EN
   const expectedConcatenation = "B106/B12";
   const invalidBciAvId = 1;
   const reviveBciAvId = 12585;
@@ -32,16 +32,18 @@ describe("SvgUtils module", (): void => {
     13134, ";", 8993, "/", "K:-2", "/", 15732, "/", 15666
   ];
   const abcBciAvId = 12366;
-  const abcBlissarySvgBuilderStr = "Xa/Xb/Xc";                    // "abc"
+  const abcBlissarySvgBuilderStr = "Xa/Xb/Xc";        // "abc"
   const expectedBciAvIdAbc = [ "Xa", "/", "Xb", "/", "Xc" ];
-  const indicatorId = 8999;                                       // future action indicator
-  const nonIndicatorId = 12334;                                   // action
-  const modifierId = 8515;                                        // "5" (5 items or 5th)
-  const nonModifierId = 28043;                                    // conitnuous indicator
+  const indicatorId = 8999;                           // future action indicator
+  const nonIndicatorId = 12334;                       // action
+  const modifierId = 8515;                            // "5" (5 items or 5th)
+  const nonModifierId = 28043;                        // continuous indicator
 
+  // Github test runs suggested that more that 5000 msec was needed for these
+  // tests, so increased timeout to 7000.
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
-  });
+  }, 7000);
 
   test("Retrieve blissary id from BCI-AV-ID", (): void => {
     const { blissaryIdMap } = adaptivePaletteGlobals;
