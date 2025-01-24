@@ -12,14 +12,16 @@
 /**
  * Populate and export global data
  */
-
 import { signal } from "@preact/signals";
+
+import bliss_symbols from "../../public/data/bliss_symbol_explanations.json";
 
 /**
  * The map between cell types (string) and actual components that render corresponding cells
  */
 import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
 import { ActionBranchToPaletteCell } from "./ActionBranchToPaletteCell";
+import { ActionIndicatorCell } from "./ActionIndicatorCell";
 import { CommandGoBackCell } from "./CommandGoBackCell";
 import { ContentBmwEncoding } from "./ContentBmwEncoding";
 import { CommandClearEncoding } from "./CommandClearEncoding";
@@ -30,6 +32,7 @@ import { NavigationStack } from "./NavigationStack";
 export const cellTypeRegistry = {
   "ActionBmwCodeCell": ActionBmwCodeCell,
   "ActionBranchToPaletteCell": ActionBranchToPaletteCell,
+  "ActionIndicatorCell": ActionIndicatorCell,
   "CommandGoBackCell": CommandGoBackCell,
   "ContentBmwEncoding": ContentBmwEncoding,
   "CommandClearEncoding": CommandClearEncoding,
@@ -45,6 +48,7 @@ export const adaptivePaletteGlobals = {
   // builder.  The map itself is set asynchronously.
   blissaryIdMapUrl: "https://raw.githubusercontent.com/hlridge/Bliss-Blissary-BCI-ID-Map/main/blissary_to_bci_mapping.json",
   blissaryIdMap: null,
+  bciAvSymbols: bliss_symbols,
   paletteStore: new PaletteStore(),
   navigationStack: new NavigationStack(),
 

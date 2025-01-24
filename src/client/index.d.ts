@@ -58,7 +58,7 @@ export type NavStackItemType = {
 
 // A type for storing the BCI AV ID, and its composition as an SVG builder
 // array in terms of the BCI AV IDs and their separators.
-export type BlissSymbolComposition = {
+export type BciAvIdCompositonType = {
   bciAvId: number,
   bciComposition: (string|number)[]
 };
