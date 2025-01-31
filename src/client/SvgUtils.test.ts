@@ -10,10 +10,9 @@
  */
 import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
 import {
-  bciToBlissaryId, bciAvIdToString, makeBciAvIdType, makeBlissComposition,
-  isIndicatorId, findIndicators, isModifierId, findClassifierFromLeft,
-  bciAvIdToComposition, findBciAvSymbol, decomposeBciAvId, BLISSARY_PATTERN_KEY,
-  BCIAV_PATTERN_KEY
+  bciToBlissaryId, bciAvIdToString, makeBciAvIdType, isIndicatorId,
+  findIndicators, isModifierId, findClassifierFromLeft, findBciAvSymbol,
+  decomposeBciAvId, BLISSARY_PATTERN_KEY, BCIAV_PATTERN_KEY
 } from "./SvgUtils";
 
 describe("SvgUtils module", (): void => {
@@ -27,13 +26,11 @@ describe("SvgUtils module", (): void => {
   const bciAvIdArray = [ 12335, "/", 8499 ];          // VERB+EN
   const expectedConcatenation = "B106/B12";
   const invalidBciAvId = 1;
-  const reviveBciAvId = 12585;
   const reviveBlissarySvgBuilderStr = "B206;B81/K:-2/B473/B457";
   const expectedBciAvIdRevive = [
     13134, ";", 8993, "/", "K:-2", "/", 15732, "/", 15666
   ];
   const reviveBciSvgBuilderStr = "13134;8993/K:-2/15732/15666";
-  const abcBciAvId = 12366;
   const abcBlissarySvgBuilderStr = "Xa/Xb/Xc";        // "a b c"
   const abcBciAvSvgBuilderStr    = "Xa/Xb/Xc";        // "a b c"
   const expectedBciAvIdAbc = [ "Xa", "/", "Xb", "/", "Xc" ];
@@ -90,16 +87,6 @@ describe("SvgUtils module", (): void => {
     expect(makeBciAvIdType(abcBciAvSvgBuilderStr, BCIAV_PATTERN_KEY)).toEqual(expectedBciAvIdAbc);
   });
 
-  test("Make Bliss composition", (): void => {
-    let composition = makeBlissComposition(reviveBciAvId);
-    expect(composition.bciAvId).toBe(reviveBciAvId);
-    expect(composition.bciComposition).toEqual(expectedBciAvIdRevive);
-
-    composition = makeBlissComposition(abcBciAvId);
-    expect(composition.bciAvId).toBe(abcBciAvId);
-    expect(composition.bciComposition).toEqual(expectedBciAvIdAbc);
-  });
-
   test("Check for indicator or modifier BCI-AV-ID", (): void => {
     expect(isIndicatorId(indicatorId)).toEqual(true);
     expect(isIndicatorId(nonIndicatorId)).toEqual(false);
@@ -135,25 +122,6 @@ describe("SvgUtils module", (): void => {
     // BCI-AV-ID has no modifiers (or it is one).
     expect(findClassifierFromLeft(expectedBciAvIdRevive)).toEqual(0);
     expect(findClassifierFromLeft(singleBciAvId)).toEqual(0);
-  });
-
-  test("Retrieve composition of single valued BCI-AV-ID", (): void => {
-    const composition = bciAvIdToComposition(reviveBciAvId);
-    expect(composition).not.toBeUndefined();
-    expect(composition.bciAvId).toBe(reviveBciAvId);
-    expect(composition.bciComposition).toEqual(expectedBciAvIdRevive);
-  });
-
-  test("Retrieve composition of single valued BCI-AV-ID", (): void => {
-    const composition = bciAvIdToComposition(reviveBciAvId);
-    expect(composition).not.toBeUndefined();
-    expect(composition.bciAvId).toBe(reviveBciAvId);
-    expect(composition.bciComposition).toEqual(expectedBciAvIdRevive);
-  });
-
-  test("Retrieve undefined composition of array form of BCI-AV-ID", (): void => {
-    const composition = bciAvIdToComposition(expectedBciAvIdRevive);
-    expect(composition).toBeUndefined();
   });
 
   test("Check finding full symbol information", (): void => {

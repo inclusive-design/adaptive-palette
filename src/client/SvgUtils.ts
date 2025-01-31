@@ -10,7 +10,7 @@
  */
 
 import { BlissSVGBuilder } from "bliss-svg-builder";
-import { BciAvIdType, BciAvIdCompositonType } from "./index.d";
+import { BciAvIdType } from "./index.d";
 import { adaptivePaletteGlobals } from "./GlobalData";
 
 // The struture of an entry in the Blissary Id map.
@@ -57,28 +57,6 @@ export const SEMICOLON_PATTERNS     = {
 };
 export const BLISSARY_PATTERN_KEY   = "blissary";
 export const BCIAV_PATTERN_KEY      = "bciAv";
-
-/**
- * Retrieve an SVG builder string information associated with a single numerical
- * BCI-AV-ID.  Specifically find its Blissary ID, its Blissary SVG builder
- * string, and create an equivalent BciAvIdCompositonType where the Blissary
- * IDs are replaced with the BCI-AV-IDs.  Return a `BciAvIdCompositonType`
- * or `undefined`.
- * @param {BciAvIdType} bciAvId - The BciAvIdType to convert, must be a
- *                                single number ID, not an array.
- * @return {BlissComposition}
- */
-export function makeBlissComposition (bciAvId: number): BciAvIdCompositonType {
-  let result = undefined;
-  const blissaryMapEntry = bciToBlissaryId(bciAvId);
-  if (blissaryMapEntry) {
-    result = {
-      bciAvId: blissaryMapEntry.bciAvId,
-      bciComposition: makeBciAvIdType(blissaryMapEntry.blissSvgBuilderCode)
-    };
-  }
-  return result;
-}
 
 /**
  * Given a Blissary map entry, create a `BciAvIdType` from its SVG builder
@@ -259,26 +237,6 @@ export function findBciAvSymbol (bciAvId: BciAvIdType) {
   return adaptivePaletteGlobals.bciAvSymbols.find( (symbol) => {
     return parseInt(symbol.id) === bciAvId;
   });
-}
-
-/**
- * Retrieve ths composition of a single id BCI AV ID.  If the argument is the
- * array form of a BciAvIdType or if the id has no composition, this returns
- * `undefined`.  Otherwise, it returns a BciAvIdCompositonType, which is the
- * original single id BCI AV ID and its composition array.
- *
- * @param {BciAvIdType} - A single BCI AV ID whose composition is sought.
- * @return {BciAvIdCompositonType} - The given BCI AV ID and its composition,
- *                                   or `undefined` if there is no such ID or
- *                                   the input is not a single ID.
- */
-export function bciAvIdToComposition (bciAvId: BciAvIdType): BciAvIdCompositonType {
-  let result = undefined;
-  const bciAvSymbol = findBciAvSymbol(bciAvId);
-  if (bciAvSymbol && bciAvSymbol.composition) {
-    result = { bciAvId: bciAvId, bciComposition: bciAvSymbol.composition };
-  }
-  return result;
 }
 
 /**
