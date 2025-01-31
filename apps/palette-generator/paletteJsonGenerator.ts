@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Inclusive Design Research Centre, OCAD University
+ * Copyright 2024-2025 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -9,7 +9,9 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 import { v4 as uuidv4 } from "uuid";
-import { makeBciAvIdType, BCIAV_PATTERN_KEY } from "../../src/client/SvgUtils";
+import {
+  makeBciAvIdType, BCIAV_PATTERN_KEY, BLISSARY_PATTERN_KEY, decomposeBciAvId
+} from "../../src/client/SvgUtils";
 
 const BLANK_CELL = "BLANK";
 const SVG_PREFIX = "SVG:";
@@ -41,24 +43,37 @@ function isSvgBuilderString (theString) {
 /**
  * Converts a string that encodes the information required by the SvgUtils
  * (svg builder) to the proper format -- an array of bliss-svg specifications.
+ * Three forms are accepted:
+ * - Comma separated, e.g., 'SVG:13166,";",9011:SVG',
+ * - BCI-AV-ID codes and separators: 'SVG:13166;9011:SVG'
+ * - Blissary codes and separators: 'SVG:B220;B99:SVG
  * @param {string} svgBuilderString - The string to convert.
  * @return {Array} - An array of the specifiers required by the SvgUtils.
  * @throws {Error} - If the encoding is not well formed.
  */
 function convertSvgBuilderString (theString) {
   let result;
-  // Two forms, one with commas and one without:
+  // Three forms, one with commas and one without:
   // - commas:
   //   Replace the SVG prefix and suffix with "[" and "]", then parse the array.
   //   e.g., 'SVG:13166,";",9011:SVG' -> '[13166,";",9011]'
-  // - no commas:
+  // - no commas, using BCI AV IDs:
   //   Treat as an SVG composition string and use makeBciAvIdType() to convert
   //   it to the array form.
   //   e.g., 'SVG:13166;9011:SVG' -> '[13166,";",9011]'
+  // - no commas, using Blissary IDs:
+  //   Treat as an SVG composition string and use makeBciAvIdType() to convert
+  //   it to the array form.
+  //   e.g., 'SVG:B220;B99:SVG' -> '[13166,";",9011]'
   if (theString.indexOf(",") !== -1) {
     // Replace the SVG prefix and suffix strings with square brackers (array)
     theString = theString.replace(SVG_PREFIX, "[").replace(SVG_SUFFIX,"]");
     result = JSON.parse(theString);
+  }
+  else if (theString.indexOf("B") !== -1) {
+    // Remove the SVG prefix and suffix
+    theString = theString.replace(SVG_PREFIX, "").replace(SVG_SUFFIX,"");
+    result = makeBciAvIdType(theString, BLISSARY_PATTERN_KEY);
   }
   else {
     // Remove the SVG prefix and suffix
@@ -89,10 +104,27 @@ function findBciAvId(label, blissGlosses) {
     // Try an exact match or a word match
     const wordMatch = new RegExp("\\b" + `${label}` + "\\b");
     if ((label === gloss.description) || wordMatch.test(gloss.description)) {
+      // Get the composition of all the parts of the symbol's compostion or
+      // its ID.  But if the `fullComposition` is the same as the original
+      // ignore it.
+      const glossId = parseInt(gloss.id);
+      let fullComposition = undefined;
+      let equalCompositions = false;
+      if (gloss.composition) {
+        fullComposition = decomposeBciAvId(gloss.composition);
+        equalCompositions = fullComposition.join("") === gloss.composition.join("");
+      }
+      else {
+        fullComposition = decomposeBciAvId(glossId);
+        if (fullComposition && fullComposition.length === 1) {
+          equalCompositions = fullComposition[0] === glossId;
+        }
+      }
       matches.push({
-        bciAvId: parseInt(gloss.id),
+        bciAvId: glossId,
         label: gloss.description,
-        composition: gloss.composition
+        composition: gloss.composition,
+        fullComposition: ( equalCompositions ? undefined : fullComposition )
       });
       console.log(`\tFound match: ${gloss.description}, bci-av-id: ${gloss.id}`);
     }
@@ -183,8 +215,8 @@ export function processPaletteLabels (paletteLabels, paletteName, startRow, star
       if (infoString.startsWith(BLANK_CELL)) {
         return;
       }
-      // Create a cell object for the current anInput, leaving the `bciAvId`
-      // field undefined for now.
+      // Create a cell object for the current `infoString`, leaving the
+      // `bciAvId` field undefined for now.
       const cell = {
         type: cellType,
         options: {

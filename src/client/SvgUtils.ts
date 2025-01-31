@@ -247,22 +247,99 @@ export function bciAvIdToString (bciAvId: BciAvIdType): string {
 }
 
 /**
+ * Utility function to find the given single BCI-AV-ID within the
+ * `adaptivePaletteGlobals.bciAvSymbols` data structure (part of global data).
+ *
+ * @param {BciAvIdType} bciAvId - The number form of a BciAvIdType
+ * @return {Object} - The full information about the given BCI-AV-ID, or
+ *                    `undefined` if there is no such ID or the input is not
+ *                    a single ID.
+ */
+export function findBciAvSymbol (bciAvId: BciAvIdType) {
+  return adaptivePaletteGlobals.bciAvSymbols.find( (symbol) => {
+    return parseInt(symbol.id) === bciAvId;
+  });
+}
+
+/**
  * Retrieve ths composition of a single id BCI AV ID.  If the argument is the
- * array form of a BciAvIdType or if the id has not composition, this returns
- * undefined.  Otherwise, it returns a BciAvIdCompositonType, which is the
+ * array form of a BciAvIdType or if the id has no composition, this returns
+ * `undefined`.  Otherwise, it returns a BciAvIdCompositonType, which is the
  * original single id BCI AV ID and its composition array.
+ *
+ * @param {BciAvIdType} - A single BCI AV ID whose composition is sought.
+ * @return {BciAvIdCompositonType} - The given BCI AV ID and its composition,
+ *                                   or `undefined` if there is no such ID or
+ *                                   the input is not a single ID.
  */
 export function bciAvIdToComposition (bciAvId: BciAvIdType): BciAvIdCompositonType {
   let result = undefined;
-  if (typeof bciAvId === "number") {
-    const bciAvSymbol = adaptivePaletteGlobals.bciAvSymbols.find( (symbol) => {
-      return parseInt(symbol.id) === bciAvId;
-    });
-    if (bciAvSymbol && bciAvSymbol.composition) {
-      result = { bciAvId: bciAvId, bciComposition: bciAvSymbol.composition };
-    }
+  const bciAvSymbol = findBciAvSymbol(bciAvId);
+  if (bciAvSymbol && bciAvSymbol.composition) {
+    result = { bciAvId: bciAvId, bciComposition: bciAvSymbol.composition };
   }
   return result;
+}
+
+/**
+ * Given a `BciAvIdType`, find the composition of each single ID in the passed
+ * in parameter.  Note that this recursive.  The decomposition stops when a
+ * single ID is either a Bliss-character or has no composition.
+ *
+ * @param (BciAvIdType) bciAvId - The `BciAvIdType` to process.
+ * @return {BciAvIdType} - The fully dcomposed `BciAvIdType` or  `undefined` if
+ *                         there is no match to any BCI-AV-ID
+ */
+export function decomposeBciAvId (bciAvId: BciAvIdType): BciAvIdType {
+  if (typeof bciAvId === "number") {
+    // `bciAvId` is a single number.
+    const bciAvSymbol = findBciAvSymbol(bciAvId);
+    if (bciAvSymbol) {
+      if (bciAvSymbol.isCharacter) {
+        return [bciAvId];
+      }
+      else if (!bciAvSymbol.composition) {
+        return [bciAvId];
+      }
+      else {
+        return loopDecompose(bciAvSymbol.composition);
+      }
+    }
+    else {
+      // No corressponding symbol found in `adaptivePaletteGlobals.bciAvSymbols`
+      return undefined;
+    }
+  }
+  else {
+    // `bciAvId` is an array
+    return loopDecompose(bciAvId);
+  }
+}
+
+/**
+ * Local helper for `decomposeBciAvId()` to loop through a BciAvIdType array
+ * and calls `decomposeBciAvId()` for each single number BciAvIdType.  Note that
+ * this is recursive in the sense that it calls `decomposeBciAvId()` which, in
+ * turn, can call this function.
+ *
+ * @param {BciAvIdType} bciAvIdArray - The array form of an BCI-AV-ID
+ * @return {BciAvIdType} - The full decomposition for the given `bciAvIdArray`
+ */
+function loopDecompose (bciAvIdArray: BciAvIdType): BciAvIdType {
+  let resultArray = [];
+  if (bciAvIdArray.constructor === Array) {
+    bciAvIdArray.forEach( (part) => {
+      // This tests that `part` is not a separator, not e.g., "/", or ";"
+      if (typeof part === "number") {
+        resultArray = resultArray.concat(decomposeBciAvId(part));
+      }
+      // Keep `part` separators as they are.
+      else {
+        resultArray.push(part);
+      }
+    });
+  }
+  return resultArray;
 }
 
 /**

@@ -15,9 +15,8 @@ import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
-import { bciAvIdToComposition } from "./SvgUtils";
+import { decomposeBciAvId } from "./SvgUtils";
 import "./ActionBmwCodeCell.scss";
-
 
 type ActionBmwCodeCellPropsType = {
   id: string,
@@ -30,13 +29,13 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType): VNode {
   } = props.options;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
-  const composition = bciAvIdToComposition(props.options.bciAvId);
 
   const cellClicked = () => {
+    const composition = decomposeBciAvId(bciAvId);
     const payload = {
       "id": props.id,
       "label": props.options.label,
-      "bciAvId": ( composition ? composition.bciComposition : props.options.bciAvId )
+      "bciAvId": ( composition ? composition : props.options.bciAvId )
     };
     changeEncodingContents.value = [...changeEncodingContents.value, payload];
     speak(props.options.label);

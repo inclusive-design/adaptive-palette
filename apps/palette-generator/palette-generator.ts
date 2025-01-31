@@ -217,6 +217,9 @@ function reportMatches(allMatches) {
       if (match.composition) {
         compositionString = `, '${match.composition.join("")}'`;
       }
+      if (match.fullComposition) {
+        compositionString += ` (${match.fullComposition.join("")});`;
+      }
       dd.innerText = `${match.bciAvId}: ${match.label}${compositionString}`;
     }
     if (matchesForString.length > MAX_MATCHES_OUTPUT) {

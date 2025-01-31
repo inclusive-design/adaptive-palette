@@ -3,5 +3,6 @@
   "People": "/palettes/people.json",
   "BMW Palette": "/palettes/bmw_palette.json",
   "Palettes": "/palettes/palettes.json",
-  "Indicators": "/palettes/indicators.json"
+  "Indicators": "/palettes/indicators.json",
+  "top_palette": "/palettes/top_palette.json"
 }
