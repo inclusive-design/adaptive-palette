@@ -58,6 +58,8 @@
 BLANK 25605             25605LABEL:ruin
 indicator_(action)      indicator_(action)LABEL:verb
 SVG:13166,";",9011:SVG  SVG:13166,";",9011:SVGLABEL:children
+SVG:13166;9011:SVG      SVG:13166;9011:SVGLABEL:children
+SVG:B220;B99:SVG        SVG:B220;B99:SVGLABEL:children
     </textarea>
   </p>
   <details>
@@ -121,19 +123,24 @@ SVG:13166,";",9011:SVG  SVG:13166,";",9011:SVGLABEL:children
             <ul>
               <li>
                 If the <code>LABEL:verb</code> is not appended, the label
-                is the given underscore separated words, i.e. "indicator_(verb)".
+                is the given underscore separated words, i.e.
+                "indicator_(action)".
               </li>
             </ul>
       </li>
       <li><code>SVG:13166,";",9011:SVGLABEL:children</code> will generate the
-          an SVG image that combines the symbols that mean "child" and "plural".
-          The cell's label is "children".
-            <ul>
-              <li>
-                  If no <code>LABEL:</code>is provided, the cell will have no
-                  label.
-              </li>
-            </ul>
+          SVG image that combines the symbols that mean "child" and "plural".
+          The cell's label is "children".  If no <code>LABEL:</code>is provided,
+          the cell will have no label.
+      </li>
+      <li><code>SVG:13166;9011:SVGLABEL:children</code> will likewise generate
+          the SVG image that combines the symbols that mean "child" and
+          "plural".  The cell's label is "children".
+      </li>
+      <li><code>SVG:B220;B99:SVGLABEL:children</code> will alse generate
+          the SVG image that combines the symbols that mean "child" and
+          "plural".  However, the identifiers in this SVG builder string are
+          blissary identifiers.
       </li>
     </ul>
     <p>
