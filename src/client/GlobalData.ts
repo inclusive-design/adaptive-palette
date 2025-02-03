@@ -14,6 +14,16 @@
  */
 import { signal } from "@preact/signals";
 
+// NOTE: this import causes a warning serving the application using the `vite`
+// server.  The warning suggests to *not* us the `public` folder but to use
+// the `src` folder instead.  However, this code is also served using node
+// express and it is in the proper location for that envionment.  A copy of the
+// warning follows:
+// "Assets in public directory cannot be imported from JavaScript.
+//  If you intend to import that asset, put the file in the src directory, and use /src/data/bliss_symbol_explanations.json instead of /public/data/bliss_symbol_explanations.json.
+//  If you intend to use the URL of that asset, use /data/bliss_symbol_explanations.json?url.
+//  Files in the public directory are served at the root path.
+//  Instead of /public/data/bliss_symbol_explanations.json, use /data/bliss_symbol_explanations.json."
 import bliss_symbols from "../../public/data/bliss_symbol_explanations.json";
 
 /**
