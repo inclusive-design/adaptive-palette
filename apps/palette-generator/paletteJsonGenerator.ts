@@ -22,7 +22,7 @@ let bliss_gloss;
 export async function fetchBlissGlossJson () {
   // Read and parse the Bliss gloss JSON file
   try {
-    const fetchResponse = await fetch("http://localhost:5173/public/data/bliss_symbol_explanations.json");
+    const fetchResponse = await fetch("/data/bliss_symbol_explanations.json");
     bliss_gloss = await fetchResponse.json();
   } catch (error) {
     console.error(`Error fetching 'bliss_symbol_explanations.json': ${error.message}`);
