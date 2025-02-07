@@ -30,6 +30,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
   const indicatorBciAvId = props.options.bciAvId;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
+  const disabled = changeEncodingContents.value.length === 0;
 
   const cellClicked = () => {
     // Get the last symbol in the editing area and find the locations to replace
@@ -76,7 +77,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
   };
 
   return html`
-    <button id="${props.id}" class="actionIndicatorCell" style="${gridStyles}" onClick=${cellClicked}>
+    <button id="${props.id}" class="actionIndicatorCell" style="${gridStyles}" onClick=${cellClicked} disabled="${disabled}">
       <${BlissSymbol}
         bciAvId=${indicatorBciAvId}
         label=${label}

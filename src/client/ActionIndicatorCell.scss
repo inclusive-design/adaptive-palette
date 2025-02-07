@@ -15,3 +15,10 @@
   padding-inline: 0.5rem;
   text-align: center;
 }
+
+.actionIndicatorCell:disabled {
+  border: 2px solid blue;
+  background-color: silver;
+  padding-inline: 0.5rem;
+  text-align: center;
+}
