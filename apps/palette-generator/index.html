@@ -25,7 +25,13 @@
     button.usual:hover {
       background-color: darkGray;
     }
+    .margin-bottom {
+      margin-bottom: 1em;
+    }
   </style>
+  <script>
+
+  </script>
 </head>
 <body style="background-color: white; margin-left: 1em;">
   <script type="module">
@@ -112,7 +118,7 @@ SVG:B220;B99:SVG        SVG:B220;B99:SVGLABEL:children
       <li><code>25605LABEL:ruin</code> will find the symbol whose BCI AV ID is
           "25605".  The cell's label is "ruin".
           <ul>
-            <li>
+            <li class="margin-bottom">
               If the <code>LABEL:ruin</code> is not appended, the label is the
               gloss for 25605, namely, "ruin,wreck,wreckage_(building)_(1)".
             </li>
@@ -121,23 +127,23 @@ SVG:B220;B99:SVG        SVG:B220;B99:SVGLABEL:children
       <li><code>indicator_(action)LABEL:verb</code> will find the
           symbol whose gloss is "indicator_(action)".  The cell's label is "verb".
             <ul>
-              <li>
+              <li class="margin-bottom">
                 If the <code>LABEL:verb</code> is not appended, the label
                 is the given underscore separated words, i.e.
                 "indicator_(action)".
               </li>
             </ul>
       </li>
-      <li><code>SVG:13166,";",9011:SVGLABEL:children</code> will generate the
+      <li class="margin-bottom"><code>SVG:13166,";",9011:SVGLABEL:children</code> will generate the
           SVG image that combines the symbols that mean "child" and "plural".
           The cell's label is "children".  If no <code>LABEL:</code>is provided,
           the cell will have no label.
       </li>
-      <li><code>SVG:13166;9011:SVGLABEL:children</code> will likewise generate
+      <li class="margin-bottom"><code>SVG:13166;9011:SVGLABEL:children</code> will likewise generate
           the SVG image that combines the symbols that mean "child" and
           "plural".  The cell's label is "children".
       </li>
-      <li><code>SVG:B220;B99:SVGLABEL:children</code> will alse generate
+      <li class="margin-bottom"><code>SVG:B220;B99:SVGLABEL:children</code> will alse generate
           the SVG image that combines the symbols that mean "child" and
           "plural".  However, the identifiers in this SVG builder string are
           blissary identifiers.
@@ -148,6 +154,36 @@ SVG:B220;B99:SVG        SVG:B220;B99:SVGLABEL:children
       "Search for matches" text box.  Press "Generate palette" button to
       preview the palette and see the list of matehes below the preview.
     </p>
+    <h2>SVG Builder String Syntax</h2>
+    <p>
+      The two main parts of an SVG builder string are the BCI-AV-ID numbers
+      and several kinds of separators.  The separator characters and how they
+      affect the rendering of the symbols are noted below.  The terminology is
+      taken from <a target="_blank" href="https://www.blissymbolics.org/images/bliss-fundamental-rules-2020-06-16.pdf#page=4">The Fundamental Rules of Blissymbolics</a>,
+      Sections 3.3, 3.6, and 3.7.
+    </p>
+    <dl>
+      <dt>/ - forward slash</dt>
+      <dd>Normal space between Bliss symbols in a Bliss-word (BLISSYMBOL HALF SPACE).</dd>
+      <dd>Example: 12378/25582</dd>
+      <dd class="margin-bottom"><span id="slashExample"></span></dd>
+
+      <dt>; - semi-colon</dt>
+      <dd>Superimpose the symbol following the semi-colon onto the previous symbol.  Used frequently for indicators.</dd>
+      <dd>Example: 12378;9011/25582</dd>
+      <dd class="margin-bottom"><span id="semicolonExample"></span></dd>
+
+      <dt>K:-2 - kerning</dt>
+      <dd>Quarter space between symbols (BLISSYMBOL QUARTER SPACE)</dd>
+      <dd>Example: 14164/K:-2/16164</dd>
+      <dd class="margin-bottom"><span id="kerningExample"></span></dd>
+
+      <dt>X&lt;single letter&gt; - letter</dt>
+      <dd>X must be followed by a single letter, e.g. "a".  The result is the Blissymbol for that letter.</dd>
+      <dd>Example: XH/Xo/Xl/Xl/Xi/Xs</dd>
+      <dd class="margin-bottom"><span id="XExample"></span></dd>
+    </dl>
+    <hr>
   </details>
   <p>
     <button id="generatePalette" class="usual">Generate palette</button>

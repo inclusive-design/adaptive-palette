@@ -12,6 +12,7 @@
 import { render } from "preact";
 import { html } from "htm/preact";
 import { Palette } from "../../src/client/Palette";
+import { BlissSymbol } from "../../src/client/BlissSymbol";
 import { processPaletteLabels, fetchBlissGlossJson } from "./paletteJsonGenerator";
 import "../../src/client/index.scss";
 import {
@@ -43,6 +44,51 @@ function initCellTypesSelect () {
     const palette = await adaptivePaletteGlobals.paletteStore.getNamedPalette(currentPaletteName);
     updatePaletteCells(palette, cellTypesSelect.selectedOptions[0].value);
   });
+}
+
+/**
+ * Render the inline Blissymbol examples
+ */
+function renderExamples() {
+  // Slash example
+  render(html`
+    <${BlissSymbol}
+      bciAvId=${[ 12378, "/", 25582 ]}
+      label="slash - half space between symbols (raccoon)"
+      isPresentation=false
+      labelledBy="slashExampleLabel"
+    />
+    `, document.getElementById("slashExample"));
+
+  // Semi-colon example
+  render(html`
+    <${BlissSymbol}
+      bciAvId=${[ 12378, ";", 9011, "/", 25582 ]}
+      label="semi-colon - superimpose plural indicator symbol (raccoons)"
+      isPresentation=false
+      labelledBy="semicolonExampleLabel"
+    />
+  `, document.getElementById("semicolonExample"));
+
+  // Kerning example
+  render(html`
+    <${BlissSymbol}
+      bciAvId=${[ 14164, "/", "K:-2", "/", 16164 ]}
+      label="kerning - quarter space between symbols (pain)"
+      isPresentation=false
+      labelledBy="kerningExampleLabel"
+    />
+  `, document.getElementById("kerningExample"));
+
+  // X example
+  render(html`
+    <${BlissSymbol}
+      bciAvId=${[ "XH", "/", "Xo", "/", "Xl", "/", "Xl", "/", "Xi", "/", "Xs" ]}
+      label="'X' for letters - (Hollis)"
+      isPresentation=false
+      labelledBy="XExampleLabel"
+    />
+  `, document.getElementById("XExample"));
 }
 
 /**
@@ -266,3 +312,4 @@ document.getElementById("clearPaletteDisplay").addEventListener("click", clearPa
 document.getElementById("savePalette").addEventListener("click", savePalette);
 
 initCellTypesSelect();
+renderExamples();
