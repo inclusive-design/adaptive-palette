@@ -1,0 +1,60 @@
+{
+  "name": "indicators",
+  "cells": {
+    "indicator_(plural)-cc946113-c70a-4abe-ab70-fb87d80412ab": {
+      "type": "ActionIndicatorCell",
+      "options": {
+        "label": "plural",
+        "bciAvId": 9011,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "indicator_(description)-6989dcab-c15e-4fea-affd-5504b6caddde": {
+      "type": "ActionIndicatorCell",
+      "options": {
+        "label": "adjective",
+        "bciAvId": 8998,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "indicator_(adverb)-882e024d-31e8-4c75-8f7a-98a07bb1aa80": {
+      "type": "ActionIndicatorCell",
+      "options": {
+        "label": "adverb",
+        "bciAvId": 24665,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "thing-24d41b74-dd66-491c-8954-00feaab40aab": {
+      "type": "ActionIndicatorCell",
+      "options": {
+        "label": "noun",
+        "bciAvId": 9009,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "action-c549fc7b-b6cd-4c2c-b151-15cf9afbfee3": {
+      "type": "ActionIndicatorCell",
+      "options": {
+        "label": "action",
+        "bciAvId": 8993,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    }
+  }
+}

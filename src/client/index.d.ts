@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2025 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -55,10 +55,3 @@ export type NavStackItemType = {
   palette: JsonPaletteType,
   htmlElement: HTMLElement
 }
-
-// A type for storing the BCI AV ID, and its composition as an SVG builder
-// array in terms of the BCI AV IDs and their separators.
-export type BlissSymbolComposition = {
-  bciAvId: number,
-  bciComposition: (string|number)[]
-};

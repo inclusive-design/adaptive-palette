@@ -45,17 +45,22 @@ There are four types of input items allowed:
 - a single number that is the BCI AV ID of a specific Bliss symbol,
 - the text "BLANK" will result in an empty blank cell,
 - an svg-builder string as required by the [bliss-svg-builder](https://github.com/hlridge/bliss-svg-builder)
-  that specifies component BCI AV IDs and shapes that the builder uses to create
-  the SVG graphic.  More about the structure of this string is given below.
+  that specifies component BCI AV IDs or Blissary IDs that the builder uses to
+  create the SVG graphic.  More about the structure of this string is given below.
 
 An svg-builder string is marked by "SVG:" at the beginning of the string and
-":SVG" at the end. What lies between is a set of comma separated BCI AVI IDs,
-and quoted strings that are parsed by the svg builder.  No spaces are allowed
-within an SVG string.  Some examples of svg-builder strings:
+":SVG" at the end. What lies between is a set of comma separated BCI AVI IDs or
+Blissary IDs, and quoted strings that are parsed by the svg builder.  No spaces
+are allowed within an SVG string.  Note that mixing BCI AV IDs and Blissary IDs
+in the same SVG string is not supported.
+
+Some examples of svg-builder strings:
 
 ```text
 SVG:14905,"/",24883:SVG // "building" (14905) followed by "deletion" (24833) = "ruin"
 SVG:13166,";",9011:SVG  // "child" (13166) with plural indicator above (9011) = "children"
+SVG:13166;9011:SVG      // "child" (13166) with plural indicator above (9011) = "children"
+SVG:B220;B99:SVG        // "child" (B220) with plural indicator above (B99) = "children"
 ```
 
 A user defined label for a cell can be specified for a word, ID, or an
@@ -120,15 +125,19 @@ matches and error listings.
 The "Matches" section is a list of all of the matches that were found for each
 item in the "Search for matches" input text area.  Each item is listed
 separately where the head of the listing is a copy of the input word.  The
-matches for each word are a list of the BCI AVI IDs and their glosses where a
-word in the gloss matched.  For example, if the input word was "cloth", two
-gloss entries are reported.  One is a symbol for cloth in the sense of fabric
-(BCI AV ID 13365), and the other is a symbol for drying rack (BCI AV ID 26161):
+matches for each word are a list of the BCI AVI IDs, their glosses, and their
+full decomposition if the match is a Bliss-word composed from a sequence of
+Bliss-characters.  For example, if the input word was "cloth", two gloss entries
+are reported.  One is a symbol for cloth in the sense of fabric (BCI AV ID
+13365), and the other is a symbol for "drying rack" (BCI AV ID 26161).  Its
+composition is shown as '17445/23859/13365', the BCI AV IDs for the
+Bliss-characters "structure,construction", "dryness,drought", and
+"cloth,fabric,material,textile,net":
 
 ```text
 cloth
     13365: cloth,fabric,material,textile,net
-    26161: drying_rack_(cloth)
+    26161: drying_rack_(cloth), '17445/23859/13365'
 ```
 
 If the Bliss symbol drawn in the preview palette is incorrect, the matches can
@@ -142,17 +151,5 @@ nor for svg builder strings.
 
 #### Errors
 
-The "Errors" section includes errors that arise from searching the gloss entries
+The "Errors" section describe errors that arise from searching the gloss entries
 or for invalid svg builder strings.
-
-### Notes
-
-The Bliss ID and gloss data source used by the generator is a large [JSON
-file](https://raw.githubusercontent.com/cindyli/baby-bliss-bot/refs/heads/feat/bmw/data/bliss_symbol_explanations.json)
-developed as part of a branch of the [baby-bliss-bot repository](https://github.com/inclusive-design/baby-bliss-bot/).
-This branch has not been committed to the main repository as of this writing.
-
-An alternative is a similar
-[file](https://w3c.github.io/aac-registry/data/blissymbolics.json) under
-development at the W3C.  This is part of the [W3C Alternative and Augmented Communication (AAC) Symbol Registry](https://www.w3.org/TR/aac-registry/)
-project; however, it also has draft status.

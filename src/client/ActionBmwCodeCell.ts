@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2025 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -15,8 +15,8 @@ import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
+import { decomposeBciAvId } from "./SvgUtils";
 import "./ActionBmwCodeCell.scss";
-
 
 type ActionBmwCodeCellPropsType = {
   id: string,
@@ -31,10 +31,11 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType): VNode {
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = () => {
+    const composition = decomposeBciAvId(bciAvId);
     const payload = {
       "id": props.id,
       "label": props.options.label,
-      "bciAvId": props.options.bciAvId
+      "bciAvId": ( composition ? composition : props.options.bciAvId )
     };
     changeEncodingContents.value = [...changeEncodingContents.value, payload];
     speak(props.options.label);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Inclusive Design Research Centre, OCAD University
+ * Copyright 2024-2025 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -9,6 +9,9 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 import { v4 as uuidv4 } from "uuid";
+import {
+  makeBciAvIdType, BCIAV_PATTERN_KEY, BLISSARY_PATTERN_KEY, decomposeBciAvId
+} from "../../src/client/SvgUtils";
 
 const BLANK_CELL = "BLANK";
 const SVG_PREFIX = "SVG:";
@@ -19,7 +22,7 @@ let bliss_gloss;
 export async function fetchBlissGlossJson () {
   // Read and parse the Bliss gloss JSON file
   try {
-    const fetchResponse = await fetch("http://localhost:5173/data/bliss_symbol_explanations.json");
+    const fetchResponse = await fetch("/data/bliss_symbol_explanations.json");
     bliss_gloss = await fetchResponse.json();
   } catch (error) {
     console.error(`Error fetching 'bliss_symbol_explanations.json': ${error.message}`);
@@ -40,14 +43,44 @@ function isSvgBuilderString (theString) {
 /**
  * Converts a string that encodes the information required by the SvgUtils
  * (svg builder) to the proper format -- an array of bliss-svg specifications.
+ * Three forms are accepted:
+ * - Comma separated, e.g., 'SVG:13166,";",9011:SVG',
+ * - BCI-AV-ID codes and separators: 'SVG:13166;9011:SVG'
+ * - Blissary codes and separators: 'SVG:B220;B99:SVG
  * @param {string} svgBuilderString - The string to convert.
  * @return {Array} - An array of the specifiers required by the SvgUtils.
  * @throws {Error} - If the encoding is not well formed.
  */
 function convertSvgBuilderString (theString) {
-  // Replace the SVG prefix and suffix strings with square brackers (array)
-  theString = theString.replace(SVG_PREFIX, "[").replace(SVG_SUFFIX,"]");
-  return JSON.parse(theString);
+  let result;
+  // Three forms, one with commas and one without:
+  // - commas:
+  //   Replace the SVG prefix and suffix with "[" and "]", then parse the array.
+  //   e.g., 'SVG:13166,";",9011:SVG' -> '[13166,";",9011]'
+  // - no commas, using BCI AV IDs:
+  //   Treat as an SVG composition string and use makeBciAvIdType() to convert
+  //   it to the array form.
+  //   e.g., 'SVG:13166;9011:SVG' -> '[13166,";",9011]'
+  // - no commas, using Blissary IDs:
+  //   Treat as an SVG composition string and use makeBciAvIdType() to convert
+  //   it to the array form.
+  //   e.g., 'SVG:B220;B99:SVG' -> '[13166,";",9011]'
+  if (theString.indexOf(",") !== -1) {
+    // Replace the SVG prefix and suffix strings with square brackers (array)
+    theString = theString.replace(SVG_PREFIX, "[").replace(SVG_SUFFIX,"]");
+    result = JSON.parse(theString);
+  }
+  else if (theString.indexOf("B") !== -1) {
+    // Remove the SVG prefix and suffix
+    theString = theString.replace(SVG_PREFIX, "").replace(SVG_SUFFIX,"");
+    result = makeBciAvIdType(theString, BLISSARY_PATTERN_KEY);
+  }
+  else {
+    // Remove the SVG prefix and suffix
+    theString = theString.replace(SVG_PREFIX, "").replace(SVG_SUFFIX,"");
+    result = makeBciAvIdType(theString, BCIAV_PATTERN_KEY);
+  }
+  return result;
 }
 
 /**
@@ -71,7 +104,28 @@ function findBciAvId(label, blissGlosses) {
     // Try an exact match or a word match
     const wordMatch = new RegExp("\\b" + `${label}` + "\\b");
     if ((label === gloss.description) || wordMatch.test(gloss.description)) {
-      matches.push({ bciAvId: parseInt(gloss.id), label: gloss.description });
+      // Get the composition of all the parts of the symbol's compostion or
+      // its ID.  But if the `fullComposition` is the same as the original
+      // ignore it.
+      const glossId = parseInt(gloss.id);
+      let fullComposition = undefined;
+      let equalCompositions = false;
+      if (gloss.composition) {
+        fullComposition = decomposeBciAvId(gloss.composition);
+        equalCompositions = fullComposition.join("") === gloss.composition.join("");
+      }
+      else {
+        fullComposition = decomposeBciAvId(glossId);
+        if (fullComposition && fullComposition.length === 1) {
+          equalCompositions = fullComposition[0] === glossId;
+        }
+      }
+      matches.push({
+        bciAvId: glossId,
+        label: gloss.description,
+        composition: gloss.composition,
+        fullComposition: ( equalCompositions ? undefined : fullComposition )
+      });
       console.log(`\tFound match: ${gloss.description}, bci-av-id: ${gloss.id}`);
     }
   }
@@ -149,7 +203,7 @@ export function processPaletteLabels (paletteLabels, paletteName, startRow, star
     "name": paletteName,
     "cells": {}
   };
-  const matchByInfoString = [];
+  const matchByInfoArray = [];
   const errors = [];
 
   paletteLabels.forEach((row, rowIndex) => {
@@ -161,8 +215,8 @@ export function processPaletteLabels (paletteLabels, paletteName, startRow, star
       if (infoString.startsWith(BLANK_CELL)) {
         return;
       }
-      // Create a cell object for the current anInput, leaving the `bciAvId`
-      // field undefined for now.
+      // Create a cell object for the current `infoString`, leaving the
+      // `bciAvId` field undefined for now.
       const cell = {
         type: cellType,
         options: {
@@ -203,7 +257,7 @@ export function processPaletteLabels (paletteLabels, paletteName, startRow, star
             cell.options.label = actualLabel || infoString;
             const inputMatches = {};
             inputMatches[infoString] = matches;
-            matchByInfoString.push(inputMatches);
+            matchByInfoArray.push(inputMatches);
           }
         }
       }
@@ -220,5 +274,5 @@ export function processPaletteLabels (paletteLabels, paletteName, startRow, star
       finalJson.cells[`${infoString}-${uuidv4()}`] = cell;
     });
   });
-  return { paletteJson: finalJson, matches: matchByInfoString, errors: errors };
+  return { paletteJson: finalJson, matches: matchByInfoArray, errors: errors };
 }

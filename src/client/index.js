@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2025 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -24,13 +24,16 @@ const paletteFileMap = await loadPaletteFromJsonFile("/palettes/palette_file_map
 const firstLayer = await loadPaletteFromJsonFile("/palettes/palettes.json");
 const goBackCell = await loadPaletteFromJsonFile("/palettes/backup_palette.json");
 const inputArea = await loadPaletteFromJsonFile("/palettes/input_area.json");
+const topPalette = await loadPaletteFromJsonFile("/palettes/top_palette.json");
 
 PaletteStore.paletteFileMap = paletteFileMap;
 adaptivePaletteGlobals.paletteStore.addPalette(firstLayer);
 adaptivePaletteGlobals.paletteStore.addPalette(goBackCell);
 adaptivePaletteGlobals.paletteStore.addPalette(inputArea);
+adaptivePaletteGlobals.paletteStore.addPalette(topPalette);
 
 adaptivePaletteGlobals.navigationStack.currentPalette = firstLayer;
 render(html`<${Palette} json=${inputArea} />`, document.getElementById("input_palette"));
 render(html`<${Palette} json=${goBackCell} />`, document.getElementById("backup_palette"));
+render(html`<${Palette} json=${topPalette} />`, document.getElementById("indicators"));
 render(html`<${Palette} json=${firstLayer}/>`, document.getElementById("mainPaletteDisplayArea"));
