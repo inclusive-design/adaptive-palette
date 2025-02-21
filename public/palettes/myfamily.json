@@ -100,13 +100,24 @@
           "columnSpan": 4
         }
     },
+    "bark-5c0e4a85-ccc0-4b43-8b89-dc54ac739543": {
+      "type": "ActionBmwCodeCell",
+        "options": {
+          "label": "Bark",
+          "bciAvId":  [ 15666, ";", 8993, "/", 12380 ],
+          "rowStart": 7,
+          "rowSpan": 1,
+          "columnStart": 1,
+          "columnSpan": 2
+        }
+    },
     "people-30a32c78-56fe-4622-9fba-0416b68d72fc": {
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "People",
         "branchTo": "People",
         "bciAvId": 16161,
-        "rowStart": 6,
+        "rowStart": 8,
         "rowSpan": 1,
         "columnStart": 1,
         "columnSpan": 14
