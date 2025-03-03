@@ -50,6 +50,7 @@ const modifierIds = {
 export const KERN_PATTERN           = /K:-?\d+/;
 export const BLISS_LETTER_PATTERN   = /X[a-zA-Z]/;  // may not work e.g., Greek
 export const SLASH_SEPARATOR        = /(\/)/;
+export const DOUBLE_SLASH_SEPARATOR = /(\/\/)/;
 export const SEMICOLON_SEPARATOR    = /(;)/;
 export const SEMICOLON_PATTERNS     = {
   blissary: /B\d+;/,
@@ -71,42 +72,51 @@ export const BCIAV_PATTERN_KEY      = "bciAv";
  */
 export function makeBciAvIdType (blissSvgBuilderCode: string, patternKey: string = BLISSARY_PATTERN_KEY): BciAvIdType {
   const bciAvIdType = [];
-  const splits = blissSvgBuilderCode.split(SLASH_SEPARATOR);
-  splits.forEach((aSplit) => {
-    // These patterns remain intact -- no conversion
-    if (KERN_PATTERN.test(aSplit) || BLISS_LETTER_PATTERN.test(aSplit) || SLASH_SEPARATOR.test(aSplit)) {
-      bciAvIdType.push(aSplit);
+  const words = blissSvgBuilderCode.split(DOUBLE_SLASH_SEPARATOR);
+  words.forEach( (word) => {
+    // Keep any double-slashes intact
+    if (word.match(DOUBLE_SLASH_SEPARATOR)) {
+      bciAvIdType.push(word);
     }
-    else if (SEMICOLON_PATTERNS[patternKey].test(aSplit)) {
-      // The structure of a semicolon svg string when split gives a three-member
-      // array: [Blissary ID, ";", Blissary ID]
-      const semiColonSplits = aSplit.split(SEMICOLON_SEPARATOR);
-      if (patternKey === BLISSARY_PATTERN_KEY) {
-        let entry = blissaryToBciAvId(parseInt(semiColonSplits[0].slice(1)));
-        bciAvIdType.push(entry.bciAvId);
-        bciAvIdType.push(";");
-        entry = blissaryToBciAvId(parseInt(semiColonSplits[2].slice(1)));
-        bciAvIdType.push(entry.bciAvId);
-      }
-      else {
-        bciAvIdType.push(parseInt(semiColonSplits[0]));
-        bciAvIdType.push(";");
-        bciAvIdType.push(parseInt(semiColonSplits[2]));
-      }
-    }
-    // Everything else is either a Blissary ID in the form of a string
-    // "B<digits>" or a BCI-AV-ID in the form of "<digits". Slice off the "B"
-    // prefix, convert the rest to an integer and then convert that to a
-    // BCI-AV-ID as needed
     else {
-      if (patternKey === "blissary") {
-        const numericalId = parseInt(aSplit.slice(1));
-        const blissaryMapEntry = blissaryToBciAvId(numericalId);
-        bciAvIdType.push(blissaryMapEntry.bciAvId);
-      }
-      else {
-        bciAvIdType.push(parseInt(aSplit));
-      }
+      const splits = word.split(SLASH_SEPARATOR);
+      splits.forEach((aSplit) => {
+        // These patterns remain intact -- no conversion
+        if (KERN_PATTERN.test(aSplit) || BLISS_LETTER_PATTERN.test(aSplit) || SLASH_SEPARATOR.test(aSplit)) {
+          bciAvIdType.push(aSplit);
+        }
+        else if (SEMICOLON_PATTERNS[patternKey].test(aSplit)) {
+          // The structure of a semicolon svg string when split gives a three-member
+          // array: [ID, ";", ID]
+          const semiColonSplits = aSplit.split(SEMICOLON_SEPARATOR);
+          if (patternKey === BLISSARY_PATTERN_KEY) {
+            let entry = blissaryToBciAvId(parseInt(semiColonSplits[0].slice(1)));
+            bciAvIdType.push(entry.bciAvId);
+            bciAvIdType.push(";");
+            entry = blissaryToBciAvId(parseInt(semiColonSplits[2].slice(1)));
+            bciAvIdType.push(entry.bciAvId);
+          }
+          else {
+            bciAvIdType.push(parseInt(semiColonSplits[0]));
+            bciAvIdType.push(";");
+            bciAvIdType.push(parseInt(semiColonSplits[2]));
+          }
+        }
+        // Everything else is either a Blissary ID in the form of a string
+        // "B<digits>" or a BCI-AV-ID in the form of "<digits>". Slice off the
+        // "B" prefix, convert the rest to an integer and then convert that to a
+        // BCI-AV-ID as needed
+        else {
+          if (patternKey === "blissary") {
+            const numericalId = parseInt(aSplit.slice(1));
+            const blissaryMapEntry = blissaryToBciAvId(numericalId);
+            bciAvIdType.push(blissaryMapEntry.bciAvId);
+          }
+          else {
+            bciAvIdType.push(parseInt(aSplit));
+          }
+        }
+      });
     }
   });
   return bciAvIdType;
@@ -241,7 +251,7 @@ export function findBciAvSymbol (bciAvId: BciAvIdType) {
 
 /**
  * Given a `BciAvIdType`, find the composition of each single ID in the passed
- * in parameter.  Note that this recursive.  The decomposition stops when a
+ * in parameter.  Note that this is recursive.  The decomposition stops when a
  * single ID is either a Bliss-character or has no composition.
  *
  * @param (BciAvIdType) bciAvId - The `BciAvIdType` to process.
