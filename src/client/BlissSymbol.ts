@@ -38,7 +38,6 @@ export function BlissSymbol (props: BlissSymbolPropsType): VNode {
   }
   else {
     const wordStrings = bciAvId.join("").split("//");
-    console.debug(wordStrings);
     wordStrings.forEach( (aString) => {
       bciAvIdWordArray.push(makeBciAvIdType(aString, BCIAV_PATTERN_KEY));
     });
@@ -52,24 +51,26 @@ export function BlissSymbol (props: BlissSymbolPropsType): VNode {
   // 3. Concatenate the svgElements to svg markup strings
   let svgMarkupString = "";
   svgElements.forEach( (svgElement, index) => {
-    // Deal with aria markup, depending on whether the SVG is for presentation only or
-    // associates with a labelled area.
-    if (isPresentation === "true") {
-      svgElement.setAttribute("aria-hidden", "true");
-    } else {
-      svgElement.setAttribute("role", `${GRAPHIC_ROLE}`);
-      svgElement.setAttribute("aria-labelledby", labelledBy);
+    if (svgElement) {
+      // Deal with aria markup, depending on whether the SVG is for presentation only or
+      // associates with a labelled area.
+      if (isPresentation === "true") {
+        svgElement.setAttribute("aria-hidden", "true");
+      } else {
+        svgElement.setAttribute("role", `${GRAPHIC_ROLE}`);
+        svgElement.setAttribute("aria-labelledby", labelledBy);
+      }
+      // Add padding to right of <svg> for inter-word spacing (for all but the
+      // last symbol)
+      if (index < svgElements.length-1) {
+        svgElement.setAttribute("class", "inter-word-padding");
+      }
+      svgMarkupString += svgElement.outerHTML;
     }
-    // Add padding to right of <svg> for inter-word spacing (for all but the
-    // last symbol)
-    if (index < svgElements.length-1) {
-      svgElement.setAttribute("class", "inter-word-padding");
-    }
-    svgMarkupString += svgElement.outerHTML;
   });
 
   // Original code below, before the above HACK
-/*  const svgElement = getSvgElement(bciAvId);
+  /*const svgElement = getSvgElement(bciAvId);
 
   let svgMarkupString = "";
   if (svgElement) {
