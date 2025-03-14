@@ -33,7 +33,10 @@ describe("SvgUtils module", (): void => {
   const expectedBciAvIdRevive = [
     13134, ";", 8993, "/", "K:-2", "/", 15732, "/", 15666
   ];
-  const reviveBciSvgBuilderStr = "13134;8993/K:-2/15732/15666";
+  const reviveBciSvgBuilderStr    = "13134;8993/K:-2/15732/15666";
+  const badBciSvgBuilderStr       = "asdffr;1214343";
+  const badBlissarySvgBuilderStr  = "asdffr;B1214343";
+  const expectBciAvTypeBadResult  = [];
 
   const abcBlissarySvgBuilderStr = "Xa/Xb/Xc";        // "a b c"
   const abcBciAvSvgBuilderStr    = "Xa/Xb/Xc";        // "a b c"
@@ -97,6 +100,13 @@ describe("SvgUtils module", (): void => {
   test("Create a BciAvIdType from a BCI-AV SVG builder string", (): void => {
     expect(makeBciAvIdType(reviveBciSvgBuilderStr, BCIAV_PATTERN_KEY)).toEqual(expectedBciAvIdRevive);
     expect(makeBciAvIdType(abcBciAvSvgBuilderStr, BCIAV_PATTERN_KEY)).toEqual(expectedBciAvIdAbc);
+  });
+
+  test("Check makeBciAvIdType() when passing an invalid input", (): void => {
+    expect(makeBciAvIdType(badBciSvgBuilderStr, BCIAV_PATTERN_KEY)).toEqual(expectBciAvTypeBadResult);
+    expect(makeBciAvIdType(badBlissarySvgBuilderStr, BLISSARY_PATTERN_KEY)).toEqual(expectBciAvTypeBadResult);
+    expect(makeBciAvIdType("", BCIAV_PATTERN_KEY)).toEqual(expectBciAvTypeBadResult);
+    expect(makeBciAvIdType("", BLISSARY_PATTERN_KEY)).toEqual(expectBciAvTypeBadResult);
   });
 
   test("Check for indicator or modifier BCI-AV-ID", (): void => {

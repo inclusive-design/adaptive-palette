@@ -109,11 +109,16 @@ export function makeBciAvIdType (blissSvgBuilderCode: string, patternKey: string
         else {
           if (patternKey === "blissary") {
             const numericalId = parseInt(aSplit.slice(1));
-            const blissaryMapEntry = blissaryToBciAvId(numericalId);
-            bciAvIdType.push(blissaryMapEntry.bciAvId);
+            if (!isNaN(numericalId)) {
+              const blissaryMapEntry = blissaryToBciAvId(numericalId);
+              bciAvIdType.push(blissaryMapEntry.bciAvId);
+            }
           }
           else {
-            bciAvIdType.push(parseInt(aSplit));
+            const numericalId = parseInt(aSplit);
+            if (!isNaN(numericalId)) {
+              bciAvIdType.push(numericalId);
+            }
           }
         }
       });
