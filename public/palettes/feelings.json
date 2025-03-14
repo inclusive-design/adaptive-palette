@@ -1,0 +1,225 @@
+{
+  "name": "feelings",
+  "cells": {
+    "angry-669439ba-51da-458e-a038-af07da9d6534": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "angry",
+        "bciAvId": 12377,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "frustrated-14d4298d-029d-44fd-9245-ccd22b052794": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "frustrated",
+        "bciAvId": 14408,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "mean-25f86b70-2c80-4d84-8d83-a3245b59c281": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "mean",
+        "bciAvId": 15439,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "painful-57dd2a90-af40-425b-b0fd-de418d011bb9": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "painful",
+        "bciAvId": 15955,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "sick-6af182e9-8f1d-4bac-a958-c908137541ca": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "sick",
+        "bciAvId": 16973,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "tired-da03c54b-21d8-427c-a54a-6c50f9d82f33": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "tired",
+        "bciAvId": 17735,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "hungry-a2f56b75-ac34-4cdb-b6a1-55dffbadc29c": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "hungry",
+        "bciAvId": 14912,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "thirsty-ceb465a1-c2b3-4893-a042-c884e0024456": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "thirsty",
+        "bciAvId": 17719,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "lonely-4da25bf1-f863-49e4-a8cc-1efb94a49639": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "lonely",
+        "bciAvId": 15228,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "strange-6ace27c1-b42d-4732-92a3-58cf6da5eebd": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "strange",
+        "bciAvId": 17274,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "wrong-3ec1be9b-e48c-4266-ac5a-8931afb48296": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "wrong",
+        "bciAvId": 12615,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "smart-e11e9e88-9988-44be-8127-5ba50968559b": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "smart",
+        "bciAvId": 17015,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "stupid-06c0f109-414d-48c3-abcb-39737660fec8": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "stupid",
+        "bciAvId": 17447,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "interesting-1fe32ccc-3aa6-430b-b517-84dd8dd576ac": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "interesting",
+        "bciAvId": 14948,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "important-365a2f25-7aeb-4120-8546-d41922576f41": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "important",
+        "bciAvId": 14930,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "certain-dbbb60e0-8ae6-4626-ae14-f141d833b7dc": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "certain",
+        "bciAvId": 24049,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "careful-1a6a3c90-fed2-4364-83b4-d68fbdcadffe": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "careful",
+        "bciAvId": 13123,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "dangerous-342a6c2f-e4ad-4635-aedc-0d987e77e674": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "dangerous",
+        "bciAvId": 13633,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "together-8407f998-bce8-4286-b55f-e755be605f2c": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "together",
+        "bciAvId": 17746,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "dead-9df35a98-7266-4a40-ac10-12ad6ee7eb94": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "dead",
+        "bciAvId": 13642,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    }
+  }
+}

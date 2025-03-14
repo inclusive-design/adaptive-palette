@@ -1,0 +1,225 @@
+{
+  "name": "a_an",
+  "cells": {
+    "12321-316f5f66-fefb-42cf-a3be-ecd740e89952": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "a, an",
+        "bciAvId": 12321,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "the-d505dbee-8548-4fa9-bcea-307e1fe13bcd": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "the",
+        "bciAvId": 17700,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "all-12d8cad0-e240-4fa4-9b09-2094645d41c5": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "all",
+        "bciAvId": 12360,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "nothing-3a0eaecb-adfd-4fd5-abbd-40233afd7b48": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "nothing",
+        "bciAvId": 23907,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "16482-768ea9ad-ef63-4e50-88a8-eae0a33db127": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "who, which, that",
+        "bciAvId": 16482,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "in-a8ff5e03-6d85-4537-850e-7d9bb21a87ca": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "in",
+        "bciAvId": 14932,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "12656-35b560fc-3eae-4390-994b-175b965ba9f9": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "before, in front of",
+        "bciAvId": 12656,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "15948-71b9661e-70f6-4100-9b5c-d728ce075c98": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "over, above",
+        "bciAvId": 15948,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "between-b3ba4bd5-251b-49e2-81d1-0d16ead45761": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "between",
+        "bciAvId": 12669,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "15943-1c63ce3f-fc7a-4bf1-a621-3efe2e8bcdde": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "out",
+        "bciAvId": 15943,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "about-073cee15-3749-400a-969f-03e488f488c9": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "about, of",
+        "bciAvId": 12324,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "by-33947b54-2d00-427f-a601-c1d3fafc9cfd": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "by, of",
+        "bciAvId": 13100,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "14382-ae206296-eda4-498c-999c-a0bdc927cfea": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "for",
+        "bciAvId": 14382,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "against-db15d1e0-f5d4-42a2-a318-02ccb85fb55c": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "against",
+        "bciAvId": 12351,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "at-80549e83-1f39-4b0d-9f12-7a6b41e90a89": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "at",
+        "bciAvId": 12591,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "up-cb5a1412-be40-4b4a-9a12-500854277567": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "up",
+        "bciAvId": 17983,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "14390-45600488-a86a-4c10-8b4e-bee254647803": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "forward",
+        "bciAvId": 14390,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "17739-b745a7e2-b209-4ca7-a172-745565518163": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "to",
+        "bciAvId": 17739,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "from-15583bf8-a936-407c-8295-6816ccbe593b": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "from",
+        "bciAvId": 14403,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "15918-06a4a3c8-efd2-4c8d-9554-b5a299aebdc1": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "on",
+        "bciAvId": 15918,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    }
+  }
+}

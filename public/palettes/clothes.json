@@ -1,0 +1,225 @@
+{
+  "name": "clothes",
+  "cells": {
+    "clothing-5bae4c70-8c3a-4435-b9ff-fe4cc91561c4": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "clothing",
+        "bciAvId": 13366,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "coat-8a19b78d-d8d1-449d-8a6a-9f92daee1b81": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "coat, sweater",
+        "bciAvId": 13371,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "underwear-5d9c70fe-9f90-4432-aba7-ff152e55fa28": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "underwear",
+        "bciAvId": 17974,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "16957-5ac2aeaf-5867-4dc0-a7f9-399ecf2de65e": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "shirt, blouse",
+        "bciAvId": 16957,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "dress-e183cae1-b6ae-40d4-8e74-00b0b3318a15": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "dress",
+        "bciAvId": 13876,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "pants-259c07c3-5558-40af-969b-87b6ae7dfb6d": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "pants",
+        "bciAvId": 15961,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "stocking-d05acf49-a877-4b11-a353-fa59e5bc4ea3": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "stockings",
+        "bciAvId": 17264,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "shoe-3440ced5-2b69-425c-bb72-e6cbaa4cac19": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "shoes",
+        "bciAvId": 16959,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "14682-5915ab90-9953-4020-97b1-50600fcbb7a7": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "hat, cap",
+        "bciAvId": 14682,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "helmet-7ec727f1-223c-43cd-b452-278c65d0bf36": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "helmet",
+        "bciAvId": 21615,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "14446-ffb13774-a561-4cbc-9803-d475c05fa905": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "gloves",
+        "bciAvId": 14446,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "pillow-de637704-c47e-416e-8709-507ce60eae67": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "pillow",
+        "bciAvId": 16177,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "blanket-1009a027-e488-4ed0-9d01-d0c2a3f0e9d3": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "blanket",
+        "bciAvId": 12854,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "napkin-2bb74661-7f6b-457a-8eb5-dffd2efd256d": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "napkin",
+        "bciAvId": 15692,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "bib-e94e3e06-f3e4-489f-8702-f1a63c90d37a": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "bib",
+        "bciAvId": 12833,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "money-1208321b-1caa-49de-abec-90dd0b57817a": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "money",
+        "bciAvId": 15484,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "clock-2d753ecf-4f31-4e42-9e90-7e8bd6a5e583": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "clock",
+        "bciAvId": [ 17732, ";", 9009 ],
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "glasses-3a718fd3-0267-404c-8d16-6b4807924ca8": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "glasses",
+        "bciAvId": 14443,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "brush-52ae37c2-60f7-4d16-9c43-a1a48f41c80d": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "brush",
+        "bciAvId": 12912,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "jewellery-2be15542-a572-4b0c-9988-20865079d05c": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "jewellery",
+        "bciAvId": 24826,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    }
+  }
+}

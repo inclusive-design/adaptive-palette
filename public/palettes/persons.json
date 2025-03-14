@@ -1,0 +1,277 @@
+{
+  "name": "persons",
+  "cells": {
+    "16161-d9f276a6-9c36-4539-a561-2411d287a6b8": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "person",
+        "bciAvId": 16161,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "SVG:16161/8497:SVG-5b9bcfeb-5509-4d56-a049-dd92aa0eda6f": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "I, me",
+        "bciAvId": [
+          16161,
+          "/",
+          8497
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "SVG:16161/8498:SVG-a67e5d5b-9469-4064-bd38-29fb980a3809": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "you",
+        "bciAvId": [
+          16161,
+          "/",
+          8498
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "SVG:15416/8499:SVG-f6931c58-1245-428b-b34d-1f98657ea1fa": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "he, him",
+        "bciAvId": [
+          15416,
+          "/",
+          8499
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "SVG:18269/8499:SVG-18913806-589b-4db9-a2e7-6b46d346a7b1": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "she, her",
+        "bciAvId": [
+          18269,
+          "/",
+          8499
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "SVG:16161;9011/8497:SVG-a5d10b13-704e-41d3-898e-11d889b954bd": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "we, us",
+        "bciAvId": [
+          16161,
+          ";",
+          9011,
+          "/",
+          8497
+        ],
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "SVG:16161/8498:SVG-30061001-ac28-487d-a3c5-7770ffb515a7": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "you",
+        "bciAvId": [
+          16161,
+          ";",
+          9011,
+          "/",
+          8498
+        ],
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "SVG:16161;9011/8499:SVG-777ee528-1fab-423a-aa03-bbf8138a31fa": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "they, them",
+        "bciAvId": [
+          16161,
+          ";",
+          9011,
+          "/",
+          8499
+        ],
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "SVG:12321/16161:SVG-c5886757-099c-4da0-87c2-7fabc64ac8fb": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "anyone",
+        "bciAvId": [
+          12321,
+          "/",
+          16161
+        ],
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "SVG:16161/8497/12663:SVG-ecbf0d4b-3f71-4d0e-8ea9-8abd437be2b8": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "mine",
+        "bciAvId": [
+          16161,
+          "/",
+          8497,
+          "/",
+          12663
+        ],
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "family-5b1fe881-6dbb-4ae0-a114-2836ffeff17c": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "family",
+        "bciAvId": 13427,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "father-a5dac0dd-fb0d-41cc-922a-978c8fef2589": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "father",
+        "bciAvId": 14157,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "mother-275bf6be-3b6c-448b-83af-d01d0279d0ad": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "mother",
+        "bciAvId": 15662,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "SVG:17209/8498:SVG-a959e65d-763c-486e-b234-0ac942e0a516": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "brother",
+        "bciAvId": [
+          17209,
+          "/",
+          8498
+        ],
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "SVG:13638/8498:SVG-c9a7dd0c-fddf-44cc-a308-782d3d0e02e1": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "sister",
+        "bciAvId": [
+          13638,
+          "/",
+          8498
+        ],
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "relative-4f2ee3ae-e5e5-4196-af21-098335b9516e": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "relative",
+        "bciAvId": 16481,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "grandfather-573f707c-fdfe-4115-b274-12118b748220": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "grandfather",
+        "bciAvId": 14626,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "grandmother-8d3410f9-a7a1-41a5-82e1-c42344b036e0": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "grandmother",
+        "bciAvId": 14629,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "uncle-7b4b2622-5079-4459-8921-2ea16dde7243": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "uncle",
+        "bciAvId": 17967,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "aunt-61d42772-0fd2-4e33-aa5d-ba9d5883cdc3": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "aunt",
+        "bciAvId": 12596,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    }
+  }
+}
