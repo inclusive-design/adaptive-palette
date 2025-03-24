@@ -104,6 +104,17 @@
         "columnSpan": 1
       }
     },
+    "concretething-indicator-5a6ebbeb-202a-41ff-bca0-fba69ddd95ee": {
+      "type": "ActionIndicatorCell",
+      "options": {
+        "label": "concrete thing",
+        "bciAvId": 9009 ,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 10,
+        "columnSpan": 1
+      }
+    },
     "command-indicator-f3aec80d-6f5f-4a31-a488-34754eb32052": {
       "type": "ActionIndicatorCell",
       "options": {
@@ -111,18 +122,18 @@
         "bciAvId": 24670 ,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 10,
+        "columnStart": 11,
         "columnSpan": 1
       }
     },
-    "remvoe-indicator-ce71d580-2712-44b8-9daf-7e894295d827": {
+    "remove-indicator-ce71d580-2712-44b8-9daf-7e894295d827": {
       "type": "ActionRemoveIndicatorCell",
       "options": {
         "label": "remove indicator",
         "bciAvId": [ 17448, "//", 14430, "/", 8993,  "/", 8998 ],
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 11,
+        "columnStart": 12,
         "columnSpan": 1
       }
     }
