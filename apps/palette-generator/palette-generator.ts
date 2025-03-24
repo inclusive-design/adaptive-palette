@@ -70,10 +70,10 @@ function renderExamples() {
     />
   `, document.getElementById("semicolonExample"));
 
-  // Kerning example
+  // Kerning example (relative kerning)
   render(html`
     <${BlissSymbol}
-      bciAvId=${[ 14164, "/", "K:-2", "/", 16164 ]}
+      bciAvId=${[ 14164, "/", "RK:-2", "/", 16164 ]}
       label="kerning - quarter space between symbols (pain)"
       isPresentation=false
       labelledBy="kerningExampleLabel"

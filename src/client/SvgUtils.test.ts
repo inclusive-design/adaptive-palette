@@ -12,7 +12,7 @@ import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData
 import {
   bciToBlissaryId, bciAvIdToString, makeBciAvIdType, isIndicatorId,
   findIndicators, isModifierId, findClassifierFromLeft, findBciAvSymbol,
-  decomposeBciAvId, BLISSARY_PATTERN_KEY, BCIAV_PATTERN_KEY
+  decomposeBciAvId, BLISSARY_PATTERN_KEY, BCIAV_PATTERN_KEY, getSvgElement
 } from "./SvgUtils";
 
 describe("SvgUtils module", (): void => {
@@ -26,11 +26,11 @@ describe("SvgUtils module", (): void => {
   const bciAvIdArray = [ 12335, "/", 8499 ];          // VERB+EN
   const expectedConcatenation = "B106/B12";
   const invalidBciAvId = 1;
-  const reviveBlissarySvgBuilderStr = "B206;B81/K:-2/B473/B457";
+  const reviveBlissarySvgBuilderStr = "B206;B81/RK:-2/B473/B457";
   const expectedBciAvIdRevive = [
-    13134, ";", 8993, "/", "K:-2", "/", 15732, "/", 15666
+    13134, ";", 8993, "/", "RK:-2", "/", 15732, "/", 15666
   ];
-  const reviveBciSvgBuilderStr = "13134;8993/K:-2/15732/15666";
+  const reviveBciSvgBuilderStr = "13134;8993/RK:-2/15732/15666";
   const abcBlissarySvgBuilderStr = "Xa/Xb/Xc";        // "a b c"
   const abcBciAvSvgBuilderStr    = "Xa/Xb/Xc";        // "a b c"
   const expectedBciAvIdAbc = [ "Xa", "/", "Xb", "/", "Xc" ];
@@ -39,7 +39,8 @@ describe("SvgUtils module", (): void => {
   const modifierId = 8515;                            // "5" (5 items or 5th)
   const nonModifierId = 28043;                        // continuous indicator
   const dontKnow = [ 15161, "/", 15733];
-  const fullDontKonw = [15162,";",8993,"/",15474,"/",14947];
+  const fullDontKnow = [15162,";",8993,"/",15474,"/",14947];
+  const blissWordSeparator = [ 17448, "//", 14430, "/", 8993,  "/", 8998 ];
 
   // Github test runs suggested that more that 5000 msec was needed for these
   // tests, so increased timeout to 7000.
@@ -140,6 +141,26 @@ describe("SvgUtils module", (): void => {
     expect(decomposeBciAvId(singleBciAvId)).toEqual([singleBciAvId]);
     expect(decomposeBciAvId(invalidBciAvId)).toEqual(undefined);
     expect(decomposeBciAvId(bciAvIdArray)).toEqual(bciAvIdArray);
-    expect(decomposeBciAvId(dontKnow)).toEqual(fullDontKonw);
+    expect(decomposeBciAvId(dontKnow)).toEqual(fullDontKnow);
+  });
+
+  test("Get SVG Element for single BCI AV ID", (): void => {
+    expect(getSvgElement(singleBciAvId)).toBeDefined();
+  });
+
+  test("Get SVG Element for invalidBciAvId BCI AV ID", (): void => {
+    expect(getSvgElement(invalidBciAvId)).not.toBeDefined();
+  });
+
+  test("Get SVG Element for BCI AV ID suing slash, semi-colon, and kern codes", (): void => {
+    expect(getSvgElement(expectedBciAvIdRevive)).toBeDefined();
+  });
+
+  test("Get SVG Element for BCI AV ID suing double-slash code", (): void => {
+    expect(getSvgElement(blissWordSeparator)).toBeDefined();
+  });
+
+  test("Get SVG Element for BCI AV ID X code", (): void => {
+    expect(getSvgElement(expectedBciAvIdAbc)).toBeDefined();
   });
 });
