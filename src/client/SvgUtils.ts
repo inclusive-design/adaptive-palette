@@ -142,7 +142,6 @@ function makeBciAviIdTypeFromWords(svgBuilderCodes: Array<string>, patternKey: s
   // Build up the contents of `bciAvIdType` based on each Bliss-word in the
   // `svgBuilderCodes` array
   svgBuilderCodes.forEach( (wordCode) => {
-    console.debug(`makeBciAviIdTypeFromWords(1): ${wordCode}`);
     if (DOUBLE_SLASH_SEPARATOR.test(wordCode)) {
       bciAvIdType.push(wordCode);
     }
