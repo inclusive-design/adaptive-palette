@@ -50,6 +50,7 @@ const modifierIds = {
 export const KERN_PATTERN           = /[AR]K:-?\d+/;
 export const BLISS_LETTER_PATTERN   = /X[a-zA-Z]/;  // may not work e.g., Greek
 export const SLASH_SEPARATOR        = /(\/)/;
+export const DOUBLE_SLASH_SEPARATOR = /(\/\/)/;
 export const SEMICOLON_SEPARATOR    = /(;)/;
 export const SEMICOLON_PATTERNS     = {
   blissary: /B\d+;/,
@@ -71,6 +72,12 @@ export const BCIAV_PATTERN_KEY      = "bciAv";
  */
 export function makeBciAvIdType (blissSvgBuilderCode: string, patternKey: string = BLISSARY_PATTERN_KEY): BciAvIdType {
   const bciAvIdType = [];
+  // First check for the multiple Bliss-word separator.  If present deal with
+  // each word separately.
+  if (DOUBLE_SLASH_SEPARATOR.test(blissSvgBuilderCode)) {
+    return makeBciAviIdTypeFromWords(blissSvgBuilderCode.split(DOUBLE_SLASH_SEPARATOR), patternKey);
+  }
+  // `blissSvgBuilderCode` is a slingle Bliss-word.
   const splits = blissSvgBuilderCode.split(SLASH_SEPARATOR);
   splits.forEach((aSplit) => {
     // These patterns remain intact -- no conversion
@@ -107,6 +114,40 @@ export function makeBciAvIdType (blissSvgBuilderCode: string, patternKey: string
       else {
         bciAvIdType.push(parseInt(aSplit));
       }
+    }
+  });
+  return bciAvIdType;
+}
+
+/**
+ * Given an array of svg-builder code strings where each element represents a
+ * single Bliss-word, create a `BciAvIdType` representation of that word.
+ * The builder strings in the array can either contain Blissary IDs or
+ * BCI AV IDs, but not both. The second parameter specifies which kind of
+ * identifiers are used in the strings.
+ *
+ * Note that this is typically called from `makeBciAvIdType()` when it is
+ * passed an svg builder string that contains multiple words, denoted by a
+ * double slash separator, "//".  For each word, this calls `makeBciAvIdType()`
+ * with just a single word build string.  The is somewhat recursive where the
+ * two functions call each other.
+ * @param {String} blissSvgBuilderCode - SVG builder string to convert.
+ * @param {String} patternKey - Either BLISSARY_PATTERN_KEY or
+ *                              BCIAV_PATTERN_KEY.  The default is
+ *                              BLISSARY_PATTERN_KEY
+ * @return {BciAvIdType}
+ */
+function makeBciAviIdTypeFromWords(svgBuilderCodes: Array<string>, patternKey: string): BciAvIdType {
+  let bciAvIdType = [];
+  // Build up the contents of `bciAvIdType` based on each Bliss-word in the
+  // `svgBuilderCodes` array
+  svgBuilderCodes.forEach( (wordCode) => {
+    console.debug(`makeBciAviIdTypeFromWords(1): ${wordCode}`);
+    if (DOUBLE_SLASH_SEPARATOR.test(wordCode)) {
+      bciAvIdType.push(wordCode);
+    }
+    else {
+      bciAvIdType = bciAvIdType.concat(makeBciAvIdType(wordCode, patternKey));
     }
   });
   return bciAvIdType;

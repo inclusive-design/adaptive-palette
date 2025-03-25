@@ -12,7 +12,8 @@ import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData
 import {
   bciToBlissaryId, bciAvIdToString, makeBciAvIdType, isIndicatorId,
   findIndicators, isModifierId, findClassifierFromLeft, findBciAvSymbol,
-  decomposeBciAvId, BLISSARY_PATTERN_KEY, BCIAV_PATTERN_KEY, getSvgElement
+  decomposeBciAvId, BLISSARY_PATTERN_KEY, BCIAV_PATTERN_KEY,
+  getSvgElement, getSvgMarkupString
 } from "./SvgUtils";
 
 describe("SvgUtils module", (): void => {
@@ -34,13 +35,15 @@ describe("SvgUtils module", (): void => {
   const abcBlissarySvgBuilderStr = "Xa/Xb/Xc";        // "a b c"
   const abcBciAvSvgBuilderStr    = "Xa/Xb/Xc";        // "a b c"
   const expectedBciAvIdAbc = [ "Xa", "/", "Xb", "/", "Xc" ];
+  const multiWordBlissaryBuilderStr = "B2505//B348/B81/B86";
+  const multiWordBciAvIdBuilderStr = "17448//14430/8993/8998";
+  const expectedMultiWordBciAvid = [ 17448, "//", 14430, "/", 8993,  "/", 8998 ];
   const indicatorId = 8999;                           // future action indicator
   const nonIndicatorId = 12334;                       // action
   const modifierId = 8515;                            // "5" (5 items or 5th)
   const nonModifierId = 28043;                        // continuous indicator
   const dontKnow = [ 15161, "/", 15733];
   const fullDontKnow = [15162,";",8993,"/",15474,"/",14947];
-  const blissWordSeparator = [ 17448, "//", 14430, "/", 8993,  "/", 8998 ];
 
   // Github test runs suggested that more that 5000 msec was needed for these
   // tests, so increased timeout to 7000.
@@ -78,14 +81,17 @@ describe("SvgUtils module", (): void => {
   test("Create a BciAvIdType from a Blissry SVG builder string", (): void => {
     expect(makeBciAvIdType(reviveBlissarySvgBuilderStr)).toEqual(expectedBciAvIdRevive);
     expect(makeBciAvIdType(abcBlissarySvgBuilderStr)).toEqual(expectedBciAvIdAbc);
+    expect(makeBciAvIdType(multiWordBlissaryBuilderStr)).toEqual(expectedMultiWordBciAvid);
     // Using blissary pattern key, explicitly
     expect(makeBciAvIdType(reviveBlissarySvgBuilderStr, BLISSARY_PATTERN_KEY)).toEqual(expectedBciAvIdRevive);
     expect(makeBciAvIdType(abcBlissarySvgBuilderStr, BLISSARY_PATTERN_KEY)).toEqual(expectedBciAvIdAbc);
+    expect(makeBciAvIdType(multiWordBlissaryBuilderStr, BLISSARY_PATTERN_KEY)).toEqual(expectedMultiWordBciAvid);
   });
 
   test("Create a BciAvIdType from a BCI-AV SVG builder string", (): void => {
     expect(makeBciAvIdType(reviveBciSvgBuilderStr, BCIAV_PATTERN_KEY)).toEqual(expectedBciAvIdRevive);
     expect(makeBciAvIdType(abcBciAvSvgBuilderStr, BCIAV_PATTERN_KEY)).toEqual(expectedBciAvIdAbc);
+    expect(makeBciAvIdType(multiWordBciAvIdBuilderStr, BCIAV_PATTERN_KEY)).toEqual(expectedMultiWordBciAvid);
   });
 
   test("Check for indicator or modifier BCI-AV-ID", (): void => {
@@ -144,23 +150,28 @@ describe("SvgUtils module", (): void => {
     expect(decomposeBciAvId(dontKnow)).toEqual(fullDontKnow);
   });
 
-  test("Get SVG Element for single BCI AV ID", (): void => {
+  test("Get SVG Element and markup for single BCI AV ID", (): void => {
     expect(getSvgElement(singleBciAvId)).toBeDefined();
+    expect(getSvgMarkupString(singleBciAvId)).toBeDefined();
   });
 
-  test("Get SVG Element for invalidBciAvId BCI AV ID", (): void => {
+  test("Get SVG Element and markup for invalidBciAvId BCI AV ID", (): void => {
     expect(getSvgElement(invalidBciAvId)).not.toBeDefined();
+    expect(getSvgMarkupString(invalidBciAvId)).not.toBeDefined();
   });
 
-  test("Get SVG Element for BCI AV ID suing slash, semi-colon, and kern codes", (): void => {
+  test("Get SVG Element and markup for BCI AV ID using slash, semi-colon, and kern codes", (): void => {
     expect(getSvgElement(expectedBciAvIdRevive)).toBeDefined();
+    expect(getSvgMarkupString(expectedBciAvIdRevive)).toBeDefined();
   });
 
-  test("Get SVG Element for BCI AV ID suing double-slash code", (): void => {
-    expect(getSvgElement(blissWordSeparator)).toBeDefined();
+  test("Get SVG Element and markup for BCI AV ID using double-slash code", (): void => {
+    expect(getSvgElement(expectedMultiWordBciAvid)).toBeDefined();
+    expect(getSvgMarkupString(expectedMultiWordBciAvid)).toBeDefined();
   });
 
-  test("Get SVG Element for BCI AV ID X code", (): void => {
-    expect(getSvgElement(expectedBciAvIdAbc)).toBeDefined();
+  test("Get SVG Element and markup for BCI AV ID using X code", (): void => {
+    expect(getSvgElement(expectedMultiWordBciAvid)).toBeDefined();
+    expect(getSvgMarkupString(expectedMultiWordBciAvid)).toBeDefined();
   });
 });
