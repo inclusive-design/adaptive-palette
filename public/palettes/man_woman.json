@@ -1,280 +1,224 @@
 {
-  "name": "bliss_symbol",
+  "name": "man_woman",
   "cells": {
-    "blissymbol-406066ca-8db2-4681-9d24-038c7fa68418": {
+    "man-2d68d262-b971-489a-a07e-18126abae7bf": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "blissymbol",
-        "bciAvId": 12857,
+        "label": "man",
+        "bciAvId": 15416,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
         "columnSpan": 1
       }
     },
-    "SVG:15972/15172:SVG-e26a1c36-69ef-4ef1-94b8-80395e16ef52": {
+    "woman-939e630b-a216-4606-81ca-0cc88430b5f6": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "word",
-        "bciAvId": [
-          15972,
-          "/",
-          15172
-        ],
+        "label": "woman",
+        "bciAvId": 18269,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
         "columnSpan": 1
       }
     },
-    "SVG:13365/25552:SVG-53e6e7ab-8493-41fd-a21e-6ce6c158f47f": {
+    "boy-a6dca0d6-f7cd-401c-9972-b7cebf6de5c2": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "internet",
-        "bciAvId": [
-          13365,
-          "/",
-          25552
-        ],
+        "label": "boy",
+        "bciAvId": 12888,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
         "columnSpan": 1
       }
     },
-    "SVG:16445/24884:SVG-ca3eb63a-b38f-485f-ae82-21cc7137bbb9": {
+    "girl-adb6d363-0d49-490f-91bc-815057126952": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "problem",
-        "bciAvId": [
-          16445,
-          "/",
-          24884
-        ],
+        "label": "girl",
+        "bciAvId": 14439,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
         "columnSpan": 1
       }
     },
-    "idea-ca8e04ef-6cb7-4d03-860a-38504c9be04c": {
+    "self-1365ab30-bc8f-482b-be93-5ae20c3b1cd2": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "idea",
-        "bciAvId": 14926,
+        "label": "self",
+        "bciAvId": 16752,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
         "columnSpan": 1
       }
     },
-    "secret-09a34cd6-467e-4c19-bc26-bb1d0b06ef1d": {
+    "baby-2fa768dc-a09f-4867-8cee-d7a65880a452": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "secret",
-        "bciAvId": 16745,
+        "label": "baby",
+        "bciAvId": 12603,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
         "columnSpan": 1
       }
     },
-    "gathering-68b2fb14-490b-4b9f-87e5-3046c04334e8": {
+    "child-800d3b9b-4b8b-4c16-9fbe-5d8b5d57c622": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "gathering",
-        "bciAvId": 14427,
+        "label": "child",
+        "bciAvId": 13166,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
         "columnSpan": 1
       }
     },
-    "SVG:14427/14164/17983:SVG-a4e9db80-a438-40d2-a311-b2745425879a": {
+    "teenager-9ca7577c-7405-4727-b714-07c8230fb8ba": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "party",
-        "bciAvId": [
-          14427,
-          "/",
-          14164,
-          "/",
-          17983
-        ],
+        "label": "teenager",
+        "bciAvId": 17516,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
         "columnSpan": 1
       }
     },
-    "SVG:14427/24916:SVG-14e6eba0-4d99-44ab-bb54-76953716120a": {
+    "adult-0f00bed5-e4e0-4c5c-8850-9ca9ceb365df": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "club",
-        "bciAvId": [
-          14427,
-          "/",
-          24916
-        ],
+        "label": "adult",
+        "bciAvId": 12341,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
         "columnSpan": 1
       }
     },
-    "SVG:12335/24916:SVG-4a350a02-8124-43f7-9dac-f6b83b649566": {
+    "people-235fdf8c-8a5b-465d-951c-0d7b68c3e513": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "hobby",
-        "bciAvId": [
-          12335,
-          "/",
-          24916
-        ],
+        "label": "people",
+        "bciAvId": 14646,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
         "columnSpan": 1
       }
     },
-    "SVG:17717/24903:SVG-387930ba-f1a4-468b-8eef-2acb338be88c": {
+    "friend-e847c5fe-f778-468a-b00b-51c7d916aee1": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "gift",
-        "bciAvId": [
-          17717,
-          "/",
-          24903
-        ],
+        "label": "friend",
+        "bciAvId": 14401,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
         "columnSpan": 1
       }
     },
-    "SVG:17717/12335/RK:-2/14164/17983:SVG-fec5dd2c-a626-4614-a50a-34d097447391": {
+    "visitor-e459b392-5c25-4f50-be03-5257deb48c74": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "toy",
-        "bciAvId": [
-          17717,
-          "/",
-          12335,
-          "/",
-          "RK:-2",
-          "/",
-          14164,
-          "/",
-          17983
-        ],
+        "label": "visitor",
+        "bciAvId": 18018,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
         "columnSpan": 1
       }
     },
-    "SVG:12335/RK:-2/14164:SVG-455a003c-8e4f-44c3-84f9-bfcdfa2feb10": {
+    "15418-7f17845a-7d42-4cd6-af26-0710ed203fff": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "play, game",
-        "bciAvId": [
-          12335,
-          "/",
-          "RK:-2",
-          "/",
-          14164
-        ],
+        "label": "boss, manager",
+        "bciAvId": 15418,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
         "columnSpan": 1
       }
     },
-    "ball-b221c79f-b19a-4d7b-9d97-7e4f381b97e8": {
+    "teacher-37880c51-6c30-4100-a8f5-e8b1ff9df96a": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "ball",
-        "bciAvId": 12621,
+        "label": "teacher",
+        "bciAvId": 17513,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
         "columnSpan": 1
       }
     },
-    "camera-f88a8ea9-e30c-4748-883a-dee4173f4478": {
+    "assistant-11da6fdf-0204-4b3b-9542-a921079b07cf": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "camera",
-        "bciAvId": 13111,
+        "label": "assistant",
+        "bciAvId": 14706,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
         "columnSpan": 1
       }
     },
-    "SVG:14133/13934:SVG-0975cedb-1fbd-4663-9836-20ad7be95f42": {
+    "therapist-5ef4736b-f66c-432c-bcfd-47898d4681f5": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "picture",
-        "bciAvId": [
-          14133,
-          "/",
-          13934
-        ],
+        "label": "therapist",
+        "bciAvId": 20516,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
         "columnSpan": 1
       }
     },
-    "SVG:13894/15682:SVG-7b5f0b8b-7b44-4b30-9d1c-02387141411a": {
+    "doctor-9ede1485-1edf-4410-b7d4-f0eb673cfbc7": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "music",
-        "bciAvId": [
-          13894,
-          "/",
-          15682
-        ],
+        "label": "doctor",
+        "bciAvId": 13861,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
         "columnSpan": 1
       }
     },
-    "SVG:20518/20517/16194:SVG-e1f710ee-a34d-4c12-97f1-ad4c6bcebf8e": {
+    "nurse-351287c3-fb08-45b6-aa63-88897a72ef76": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "gymnastics",
-        "bciAvId": [
-          20518,
-          "/",
-          20517,
-          "/",
-          16194
-        ],
+        "label": "nurse",
+        "bciAvId": 15905,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
         "columnSpan": 1
       }
     },
-    "20518-fcb10429-90fe-4e2e-85f4-6641acf9611f": {
+    "SVG:16161/16420:SVG-99db1e45-7d6c-4dbe-af0a-fe481302038a": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "sport",
-        "bciAvId": 20518,
+        "label": "police officer",
+        "bciAvId": [
+          16161,
+          "/",
+          16420
+        ],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
         "columnSpan": 1
       }
     },
-    "16451-2a4a259e-f275-4034-a0f2-2c77b9b96314": {
+    "God-f653e999-1176-4a3b-82b7-a7b673a03bad": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "race",
-        "bciAvId": 16451,
+        "label": "God",
+        "bciAvId": 14451,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

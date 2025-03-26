@@ -1,280 +1,220 @@
 {
-  "name": "bliss_symbol",
+  "name": "environment",
   "cells": {
-    "blissymbol-406066ca-8db2-4681-9d24-038c7fa68418": {
+    "environment-d30b2a55-6441-4a9e-91c6-6ff94d9055f5": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "blissymbol",
-        "bciAvId": 12857,
+        "label": "environment",
+        "bciAvId": 13942,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
         "columnSpan": 1
       }
     },
-    "SVG:15972/15172:SVG-e26a1c36-69ef-4ef1-94b8-80395e16ef52": {
+    "animal-8a9c533c-7444-4a29-b51b-172c449dc9cc": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "word",
-        "bciAvId": [
-          15972,
-          "/",
-          15172
-        ],
+        "label": "animal",
+        "bciAvId": 12378,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
         "columnSpan": 1
       }
     },
-    "SVG:13365/25552:SVG-53e6e7ab-8493-41fd-a21e-6ce6c158f47f": {
+    "bird-fe74addd-6a8f-4933-b344-d6db9aaa2021": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "internet",
-        "bciAvId": [
-          13365,
-          "/",
-          25552
-        ],
+        "label": "bird",
+        "bciAvId": 12837,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
         "columnSpan": 1
       }
     },
-    "SVG:16445/24884:SVG-ca3eb63a-b38f-485f-ae82-21cc7137bbb9": {
+    "14188-ea061fad-51f9-401a-99cf-cc94c14243d7": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "problem",
-        "bciAvId": [
-          16445,
-          "/",
-          24884
-        ],
+        "label": "fish",
+        "bciAvId": 14188,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
         "columnSpan": 1
       }
     },
-    "idea-ca8e04ef-6cb7-4d03-860a-38504c9be04c": {
+    "snake-729e6161-8240-430a-be14-1f52b8fb1e7b": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "idea",
-        "bciAvId": 14926,
+        "label": "snake",
+        "bciAvId": 17189,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
         "columnSpan": 1
       }
     },
-    "secret-09a34cd6-467e-4c19-bc26-bb1d0b06ef1d": {
+    "insect-491cb585-175a-4545-8bd7-f8d5c9bbd41f": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "secret",
-        "bciAvId": 16745,
+        "label": "insect",
+        "bciAvId": 14943,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
         "columnSpan": 1
       }
     },
-    "gathering-68b2fb14-490b-4b9f-87e5-3046c04334e8": {
+    "tree-e937a330-884d-4461-a463-5e1adaf64417": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "gathering",
-        "bciAvId": 14427,
+        "label": "tree",
+        "bciAvId": 17775,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
         "columnSpan": 1
       }
     },
-    "SVG:14427/14164/17983:SVG-a4e9db80-a438-40d2-a311-b2745425879a": {
+    "14205-278f3af6-bd56-4beb-a24c-1b77feda5d20": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "party",
-        "bciAvId": [
-          14427,
-          "/",
-          14164,
-          "/",
-          17983
-        ],
+        "label": "flower",
+        "bciAvId": 14205,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
         "columnSpan": 1
       }
     },
-    "SVG:14427/24916:SVG-14e6eba0-4d99-44ab-bb54-76953716120a": {
+    "seed-59289a3e-b1e2-4536-aa4c-10a1968d23db": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "club",
-        "bciAvId": [
-          14427,
-          "/",
-          24916
-        ],
+        "label": "seed",
+        "bciAvId": 16749,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
         "columnSpan": 1
       }
     },
-    "SVG:12335/24916:SVG-4a350a02-8124-43f7-9dac-f6b83b649566": {
+    "forest-09181440-3290-4a5e-bcfb-a2519b79fd7d": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "hobby",
-        "bciAvId": [
-          12335,
-          "/",
-          24916
-        ],
+        "label": "forest",
+        "bciAvId": 14386,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
         "columnSpan": 1
       }
     },
-    "SVG:17717/24903:SVG-387930ba-f1a4-468b-8eef-2acb338be88c": {
+    "lake-4be0ae47-5147-4707-8538-642688463973": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "gift",
-        "bciAvId": [
-          17717,
-          "/",
-          24903
-        ],
+        "label": "lake",
+        "bciAvId": 15168,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
         "columnSpan": 1
       }
     },
-    "SVG:17717/12335/RK:-2/14164/17983:SVG-fec5dd2c-a626-4614-a50a-34d097447391": {
+    "island-4a054d6c-da20-4c81-877f-9382dc6c2d0a": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "toy",
-        "bciAvId": [
-          17717,
-          "/",
-          12335,
-          "/",
-          "RK:-2",
-          "/",
-          14164,
-          "/",
-          17983
-        ],
+        "label": "island",
+        "bciAvId": 14958,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
         "columnSpan": 1
       }
     },
-    "SVG:12335/RK:-2/14164:SVG-455a003c-8e4f-44c3-84f9-bfcdfa2feb10": {
+    "ice-1cca8af1-7f44-4038-b2fc-eeabf3c00b25": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "play, game",
-        "bciAvId": [
-          12335,
-          "/",
-          "RK:-2",
-          "/",
-          14164
-        ],
+        "label": "ice",
+        "bciAvId": 14919,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
         "columnSpan": 1
       }
     },
-    "ball-b221c79f-b19a-4d7b-9d97-7e4f381b97e8": {
+    "18209-be8db39d-0951-49d3-919f-d0bfcb8d7fcc": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "ball",
-        "bciAvId": 12621,
+        "label": "water",
+        "bciAvId": 18209,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
         "columnSpan": 1
       }
     },
-    "camera-f88a8ea9-e30c-4748-883a-dee4173f4478": {
+    "fire-fd7eda87-a602-426f-a6e0-dd52674c2d7d": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "camera",
-        "bciAvId": 13111,
+        "label": "fire",
+        "bciAvId": 14183,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
         "columnSpan": 1
       }
     },
-    "SVG:14133/13934:SVG-0975cedb-1fbd-4663-9836-20ad7be95f42": {
+    "mountain-920465e4-a39e-4284-92d3-67e9b5efd261": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "picture",
-        "bciAvId": [
-          14133,
-          "/",
-          13934
-        ],
+        "label": "mountain",
+        "bciAvId": 15663,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
         "columnSpan": 1
       }
     },
-    "SVG:13894/15682:SVG-7b5f0b8b-7b44-4b30-9d1c-02387141411a": {
+    "land-d5abecbd-696f-48c5-9542-b5bfa73c4f68": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "music",
-        "bciAvId": [
-          13894,
-          "/",
-          15682
-        ],
+        "label": "land",
+        "bciAvId": 13901,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
         "columnSpan": 1
       }
     },
-    "SVG:20518/20517/16194:SVG-e1f710ee-a34d-4c12-97f1-ad4c6bcebf8e": {
+    "sky-a6d9a61a-9c63-4e62-b0e3-bdc7f9ca3acc": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "gymnastics",
-        "bciAvId": [
-          20518,
-          "/",
-          20517,
-          "/",
-          16194
-        ],
+        "label": "sky",
+        "bciAvId": 17006,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
         "columnSpan": 1
       }
     },
-    "20518-fcb10429-90fe-4e2e-85f4-6641acf9611f": {
+    "sun-239b15c1-9e4f-4759-a1b3-03d28db9fd1b": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "sport",
-        "bciAvId": 20518,
+        "label": "sun",
+        "bciAvId": 17462,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
         "columnSpan": 1
       }
     },
-    "16451-2a4a259e-f275-4034-a0f2-2c77b9b96314": {
+    "star-5c413cb0-291a-437c-be9f-6c4107a73665": {
       "type": "ActionBmwCodeCell",
       "options": {
-        "label": "race",
-        "bciAvId": 16451,
+        "label": "star",
+        "bciAvId": 17252,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,
