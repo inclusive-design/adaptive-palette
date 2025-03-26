@@ -47,7 +47,7 @@ const modifierIds = {
 // their BCI-AV-ID equivalents.  Note that only the semicolon and identifier
 // patterns are different. Blissary identifiers always begin with a "B" followed
 // by numerals, whereas BCI-AV-ID are numerals only.
-export const KERN_PATTERN           = /K:-?\d+/;
+export const KERN_PATTERN           = /[AR]K:-?\d+/;
 export const BLISS_LETTER_PATTERN   = /X[a-zA-Z]/;  // may not work e.g., Greek
 export const SLASH_SEPARATOR        = /(\/)/;
 export const DOUBLE_SLASH_SEPARATOR = /(\/\/)/;
@@ -60,11 +60,11 @@ export const BLISSARY_PATTERN_KEY   = "blissary";
 export const BCIAV_PATTERN_KEY      = "bciAv";
 
 /**
- * Given a Blissary map entry, create a `BciAvIdType` from its SVG builder
- * string, usually the Blissary builder string.  The optional second parameter
- * allows the caller to specify that the identifiers in the builder string
- * are BCI-AV-IDs.
- * @param {String} blissSvgBuilderCode - SVG builder string as defined
+ * Given an svg-builder code string, create a `BciAvIdType`.  The builder string
+ * can either contain Blissary IDs or BCI AV IDs, but not both. The optional
+ * second parameter allows the caller to specify which kind of identifiers are
+ * in the builder string.
+ * @param {String} blissSvgBuilderCode - SVG builder string to convert.
  * @param {String} patternKey - Optional, either BLISSARY_PATTERN_KEY or
  *                              BCIAV_PATTERN_KEY.  The default is
  *                              BLISSARY_PATTERN_KEY
