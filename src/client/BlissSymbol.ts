@@ -11,7 +11,7 @@
 
 import { VNode } from "preact";
 import { html } from "htm/preact";
-import { getSvgElement, makeBciAvIdType, BCIAV_PATTERN_KEY } from "./SvgUtils";
+import { getSvgElement } from "./SvgUtils";
 import { BciAvIdType } from "./index.d";
 
 export const GRAPHIC_ROLE = "graphic-symbol img";
@@ -29,48 +29,7 @@ type BlissSymbolPropsType = {
 
 export function BlissSymbol (props: BlissSymbolPropsType): VNode {
   const { bciAvId, label, isPresentation, labelledBy } = props;
-
-  // HACK for handling multiple words
-  // 1. Split the bciAvId array into separate word arrays based on "//"
-  const bciAvIdWordArray = [];
-  if (typeof bciAvId === "number"){
-    bciAvIdWordArray.push(bciAvId);   // just a single number
-  }
-  else {
-    const wordStrings = bciAvId.join("").split("//");
-    wordStrings.forEach( (aString) => {
-      bciAvIdWordArray.push(makeBciAvIdType(aString, BCIAV_PATTERN_KEY));
-    });
-  }
-  // 2. convert each `wordBciAvId` to an `svgElement`.
-  const svgElements = [];
-  bciAvIdWordArray.forEach( (wordBciAvId) => {
-    svgElements.push(getSvgElement(wordBciAvId));
-  });
-
-  // 3. Concatenate the svgElements to svg markup strings
-  let svgMarkupString = "";
-  svgElements.forEach( (svgElement, index) => {
-    if (svgElement) {
-      // Deal with aria markup, depending on whether the SVG is for presentation only or
-      // associates with a labelled area.
-      if (isPresentation === "true") {
-        svgElement.setAttribute("aria-hidden", "true");
-      } else {
-        svgElement.setAttribute("role", `${GRAPHIC_ROLE}`);
-        svgElement.setAttribute("aria-labelledby", labelledBy);
-      }
-      // Add padding to right of <svg> for inter-word spacing (for all but the
-      // last symbol)
-      if (index < svgElements.length-1) {
-        svgElement.setAttribute("class", "inter-word-padding");
-      }
-      svgMarkupString += svgElement.outerHTML;
-    }
-  });
-
-  // Original code below, before the above HACK
-  /*const svgElement = getSvgElement(bciAvId);
+  const svgElement = getSvgElement(bciAvId);
 
   let svgMarkupString = "";
   if (svgElement) {
@@ -83,7 +42,7 @@ export function BlissSymbol (props: BlissSymbolPropsType): VNode {
       svgElement.setAttribute("aria-labelledby", labelledBy);
     }
     svgMarkupString = svgElement.outerHTML;
-  }*/
+  }
 
   // The coercion to `any` and assignment to `raw` is _only_ for the unit
   // tests to avoid the error:
