@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Inclusive Design Research Centre, OCAD University
+ * Copyright 2024-2025 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -10,29 +10,12 @@
  */
 
 import ollama from "ollama/browser";
+import { getModelNames, queryChat } from "./ollamaApi";
 
 // Default name of model used (aka, none).  Set in setSelectedModel() handler.
 let nameOfModelToUse = "";
 const USE_ALL_MODELS = "useAllModels";
 const NO_AVAILABLE_MODELS = "No Available Models";
-
-/**
- * Retrieve a list of LLMs available from the service
- * @return {Array}    - Array of the names of the available models.
- */
-async function getModelNames () {
-  let modelNames = [];
-  try {
-    const list = await ollama.list();
-    list.models.forEach( (model) => {
-      modelNames.push(model.name);
-    });
-  }
-  catch (error) {
-    console.debug(error);
-  }
-  return modelNames;
-}
 
 /**
  * Initialize the model <select> element's options:
@@ -130,33 +113,6 @@ function askClicked(event) {
 }
 
 /**
- * Function for passing the chat prompt to the ollama service.
- * @param {String} query      - The prompt string to query the service with.
- * @param {String} modelName  - The name of the LLM to query.
- * @return {Object}           - The response from the service.
- */
-async function queryChat (query, modelName) {
-  let messageArray = [];
-  const textFromSystemPrompt = document.getElementById("systemPrompt").value.trim();
-  if (textFromSystemPrompt !== "") {
-    messageArray.push({
-      role: "system",
-      content: textFromSystemPrompt
-    });
-    console.debug(`queryChat(): system prompt is: "${textFromSystemPrompt}")`);
-  }
-  messageArray.push({ role: "user", content: query });
-  const response = await ollama.chat({
-    model: modelName,
-    messages: messageArray,
-    raw: true,
-    stream: true,
-    keep_alive: 15
-  });
-  return response;
-}
-
-/**
  * Handle the "Ask" button press by contructing a prompt from the text area
  * input and which of the "Ask" buttons was pressed.  Query the service with
  * that prompt, and output the result to the bottom of the page.
@@ -175,7 +131,8 @@ async function executeAsk (addSingleToPrompt) {
     queryEachModel(promptText);
   }
   else if (modelInSelect !== NO_AVAILABLE_MODELS) {
-    const response = await queryChat(promptText, modelInSelect);
+    const textFromSystemPrompt = document.getElementById("systemPrompt").value.trim();
+    const response = await queryChat(promptText, modelInSelect, textFromSystemPrompt);
     outputResult(response, document.getElementById("ollamaOutput"), "No Result");
   }
   else {
@@ -237,7 +194,8 @@ async function queryEachModel (promptText) {
   const names = await getModelNames();
   let count = 0;
   names.forEach ((modelName) => {
-    queryChat(promptText, modelName)
+    const textFromSystemPrompt = document.getElementById("systemPrompt").value.trim();
+    queryChat(promptText, modelName, textFromSystemPrompt)
       .then(async (response) => {
         const outputEl = createOutputSection(modelName);
         await outputResult(response, outputEl, "No Result");
