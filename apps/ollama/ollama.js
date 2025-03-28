@@ -10,7 +10,7 @@
  */
 
 import ollama from "ollama/browser";
-import { getModelNames, queryChat } from "./ollamaApi";
+import { getModelNames, queryChat } from "../../src/client/ollamaApi";
 
 // Default name of model used (aka, none).  Set in setSelectedModel() handler.
 let nameOfModelToUse = "";
