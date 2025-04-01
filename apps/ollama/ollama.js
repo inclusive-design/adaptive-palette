@@ -8,14 +8,13 @@
  * You may obtain a copy of the License at
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
-
-import ollama from "ollama/browser";
 import { getModelNames, queryChat } from "../../src/client/ollamaApi";
 
 // Default name of model used (aka, none).  Set in setSelectedModel() handler.
 let nameOfModelToUse = "";
 const USE_ALL_MODELS = "useAllModels";
 const NO_AVAILABLE_MODELS = "No Available Models";
+const STREAM_RESPONSE = true;
 
 /**
  * Initialize the model <select> element's options:
@@ -132,7 +131,10 @@ async function executeAsk (addSingleToPrompt) {
   }
   else if (modelInSelect !== NO_AVAILABLE_MODELS) {
     const textFromSystemPrompt = document.getElementById("systemPrompt").value.trim();
-    const response = await queryChat(promptText, modelInSelect, textFromSystemPrompt);
+    console.debug(`executeAsk(): promptText: ${promptText}`);
+    console.debug(`  textFromSystemPrompt: ${textFromSystemPrompt}`);
+    console.debug(`  modelInSelect: ${modelInSelect}`);
+    const response = await queryChat(promptText, modelInSelect, STREAM_RESPONSE, textFromSystemPrompt);
     outputResult(response, document.getElementById("ollamaOutput"), "No Result");
   }
   else {
@@ -195,7 +197,7 @@ async function queryEachModel (promptText) {
   let count = 0;
   names.forEach ((modelName) => {
     const textFromSystemPrompt = document.getElementById("systemPrompt").value.trim();
-    queryChat(promptText, modelName, textFromSystemPrompt)
+    queryChat(promptText, modelName, STREAM_RESPONSE, textFromSystemPrompt)
       .then(async (response) => {
         const outputEl = createOutputSection(modelName);
         await outputResult(response, outputEl, "No Result");
