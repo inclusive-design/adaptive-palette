@@ -97,3 +97,10 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
  * ContentBmwEncoding area, an empty array to begin with.
  */
 export const changeEncodingContents = signal([]);
+
+/**
+ * Signal for updating the contents of the SentenceCompletion area.  The value
+ * of the signal is the current array of sentences that are offered as possible
+ * completions.
+ */
+export const sentenceCompletionsSignal = signal([]);
