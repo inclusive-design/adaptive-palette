@@ -19,6 +19,8 @@ await initAdaptivePaletteGlobals("mainPaletteDisplayArea");
 
 import { PaletteStore } from "./PaletteStore";
 import { Palette } from "./Palette";
+import { CommandTelegraphicCompletions } from "./CommandTelegraphicCompletions";
+import { SentenceCompletionsPalette } from "./SentenceCompletionsPalette";
 
 const paletteFileMap = await loadPaletteFromJsonFile("/palettes/palette_file_map.json");
 const firstLayer = await loadPaletteFromJsonFile("/palettes/palettes.json");
@@ -36,4 +38,9 @@ adaptivePaletteGlobals.navigationStack.currentPalette = firstLayer;
 render(html`<${Palette} json=${inputArea} />`, document.getElementById("input_palette"));
 render(html`<${Palette} json=${goBackCell} />`, document.getElementById("backup_palette"));
 render(html`<${Palette} json=${topPalette} />`, document.getElementById("indicators"));
-render(html`<${Palette} json=${firstLayer}/>`, document.getElementById("mainPaletteDisplayArea"));
+render(html`<${Palette} json=${firstLayer} />`, document.getElementById("mainPaletteDisplayArea"));
+render(
+  html`<${CommandTelegraphicCompletions} model="llama3.1:latest" stream=false systemPrompt="foo"/>`,
+  document.getElementById("askForLlmSuggestiongs")
+);
+render(html`<${SentenceCompletionsPalette} />`, document.getElementById("llm_suggestions"));

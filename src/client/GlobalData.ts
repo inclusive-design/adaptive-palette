@@ -33,6 +33,7 @@ import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
 import { ActionBranchToPaletteCell } from "./ActionBranchToPaletteCell";
 import { ActionIndicatorCell } from "./ActionIndicatorCell";
 import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
+import { ActionTextCell } from "./ActionTextCell";
 import { CommandGoBackCell } from "./CommandGoBackCell";
 import { ContentBmwEncoding } from "./ContentBmwEncoding";
 import { CommandClearEncoding } from "./CommandClearEncoding";
@@ -45,6 +46,7 @@ export const cellTypeRegistry = {
   "ActionBranchToPaletteCell": ActionBranchToPaletteCell,
   "ActionIndicatorCell": ActionIndicatorCell,
   "ActionRemoveIndicatorCell": ActionRemoveIndicatorCell,
+  "ActionTextCell": ActionTextCell,
   "CommandGoBackCell": CommandGoBackCell,
   "ContentBmwEncoding": ContentBmwEncoding,
   "CommandClearEncoding": CommandClearEncoding,
