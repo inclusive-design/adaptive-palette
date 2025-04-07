@@ -21,6 +21,7 @@ import { PaletteStore } from "./PaletteStore";
 import { Palette } from "./Palette";
 import { CommandTelegraphicCompletions } from "./CommandTelegraphicCompletions";
 import { SentenceCompletionsPalette } from "./SentenceCompletionsPalette";
+import { DialogPromptEntries } from "./DialogPromptEntries";
 
 const paletteFileMap = await loadPaletteFromJsonFile("/palettes/palette_file_map.json");
 const firstLayer = await loadPaletteFromJsonFile("/palettes/palettes.json");
@@ -39,8 +40,9 @@ render(html`<${Palette} json=${inputArea} />`, document.getElementById("input_pa
 render(html`<${Palette} json=${goBackCell} />`, document.getElementById("backup_palette"));
 render(html`<${Palette} json=${topPalette} />`, document.getElementById("indicators"));
 render(html`<${Palette} json=${firstLayer} />`, document.getElementById("mainPaletteDisplayArea"));
+render(html`<${DialogPromptEntries} />`, document.getElementById("llm_prompt"));
 render(
   html`<${CommandTelegraphicCompletions} model="llama3.1:latest" stream=false systemPrompt="foo"/>`,
-  document.getElementById("askForLlmSuggestiongs")
+  document.getElementById("askForLlmSuggestions")
 );
 render(html`<${SentenceCompletionsPalette} />`, document.getElementById("llm_suggestions"));

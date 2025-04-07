@@ -37,7 +37,8 @@ export function CommandTelegraphicCompletions (props: CommandTelegraphicCompleti
 
   // Handler for getting completions from ollama and into the
   // `sentenceCompletionsSignal` signal's value.
-  const getTelegraphicCompletions = async (): void => {
+  const getTelegraphicCompletions = async (event): void => {
+    event.preventDefault();
     // Empty out the response area
     sentenceCompletionsSignal.value = ["Working ..."];
 
@@ -46,8 +47,9 @@ export function CommandTelegraphicCompletions (props: CommandTelegraphicCompleti
     changeEncodingContents.value.forEach( (value) => {
       labelText.push(value.label);
     });
+    const systemPrompt = document.getElementById("systemPrompt").value;
     const response = await queryChat(
-      labelText.join(" "), MODEL_NAME, STREAM_RESPONSE, SYSTEM_PROMPT
+      labelText.join(" "), MODEL_NAME, STREAM_RESPONSE, systemPrompt
     );
     // Parse the query response messages into an array of strings.  Note that
     // with Llama3.1 each message is one of the suggested sentence completions.
