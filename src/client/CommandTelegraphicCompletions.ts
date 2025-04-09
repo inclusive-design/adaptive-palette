@@ -15,24 +15,15 @@ import { html } from "htm/preact";
 import { changeEncodingContents, sentenceCompletionsSignal } from "./GlobalData";
 import { queryChat } from "./ollamaApi";
 
-// TODO: ? put these in the `CommandTelegraphicCompletionsProps` ?
-const MODEL_NAME = "llama3.1:latest";
-const STREAM_RESPONSE = false;
-const SYSTEM_PROMPT = "Convert the telegraphic speech to a single sentence.  \
-  Give the top five best answers.  Answer with a single grammatically correct\
-  sentence.  Number the five answers clearly.  Do not add a preamble like,\
-  'Here are the top five answers.'";
-
 type CommandTelegraphicCompletionsProps = {
   id: string,
   model: string,
   stream: boolean,
-  systemPrompt: string
 };
 
 export function CommandTelegraphicCompletions (props: CommandTelegraphicCompletionsProps): VNode {
 
-  const { model, stream, systemPrompt} = props;
+  const { model, stream } = props;
   console.log(`CommandTelegraphicCompletions(), props: ${model}, ${stream}, ${systemPrompt}`);
 
   // Handler for getting completions from ollama and into the
@@ -49,7 +40,7 @@ export function CommandTelegraphicCompletions (props: CommandTelegraphicCompleti
     });
     const systemPrompt = document.getElementById("systemPrompt").value;
     const response = await queryChat(
-      labelText.join(" "), MODEL_NAME, STREAM_RESPONSE, systemPrompt
+      labelText.join(" "), model, stream, systemPrompt
     );
     // Parse the query response messages into an array of strings.  Note that
     // with Llama3.1 each message is one of the suggested sentence completions.

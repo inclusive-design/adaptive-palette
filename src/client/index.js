@@ -42,7 +42,11 @@ render(html`<${Palette} json=${topPalette} />`, document.getElementById("indicat
 render(html`<${Palette} json=${firstLayer} />`, document.getElementById("mainPaletteDisplayArea"));
 render(html`<${DialogPromptEntries} />`, document.getElementById("llm_prompt"));
 render(
-  html`<${CommandTelegraphicCompletions} model="llama3.1:latest" stream=false systemPrompt="foo"/>`,
+  html`<${CommandTelegraphicCompletions} model="llama3.1:latest" stream=false />`,
   document.getElementById("askForLlmSuggestions")
 );
 render(html`<${SentenceCompletionsPalette} />`, document.getElementById("llm_suggestions"));
+
+// Form for entering SVG strings
+import { ActionSvgEntryField } from "./ActionSvgEntryField";
+render(html`<${ActionSvgEntryField} />`, document.getElementById("svgBuilderStringEntry"));

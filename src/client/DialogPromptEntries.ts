@@ -9,39 +9,58 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
+import { render, VNode } from "preact";
 import { html } from "htm/preact";
 
-import { CommandTelegraphicCompletions } from "./CommandTelegraphicCompletions";
-
 const prompts = {
-  "Default": "Convert the telegraphic speech to a single sentence. Give the top five best answers.  Answer with a single grammatically correct sentence.  Number the five answers clearly.  Do not add a preamble like, 'Here are the top five answers.'",
+  "What express": "What does this express?",
+  "Single Sentence": "Convert the telegraphic speech to a single sentence. Give the top five best answers.  Answer with a single grammatically correct sentence.  Number the five answers clearly.  Do not add a preamble like, 'Here are the top five answers.'",
 };
 
 export function DialogPromptEntries (): VNode {
 
-  // Start with the default prompt.
-  let promptName = "Default";
-  let thePrompt = prompts[promptName];
+  // If this is the first time the prompt <select> is rendered, use the default
+  // prompt.  Otherwise, use the currently selected item.
+  let thePrompt = prompts["What express"];
+  const theSelect = document.getElementById("promptSelect");
+  if (theSelect) {
+    thePrompt = theSelect.selectedOptions[0].label;
+    console.log(`DialogPromptEntries() at start, prompt is ${thePrompt}`);
+  }
 
-  const formSubmit = event => {
+  // Create <options>
+  const options = [];
+  Object.keys(prompts).forEach( (key) => {
+    options.push(html`<option value="${prompts[key]}">${key}</option>`);
+  });
+
+  const formSubmit = (event) => {
+    event.preventDefault();
+    const promptNameFromField = document.getElementById("promptName").value;
+    const promptToSave = document.getElementById("systemPrompt").value;
+    if (promptNameFromField.length > 0 && promptToSave.length > 0) {
+      console.log(`Saving ${promptNameFromField}: ${promptToSave}`);
+      prompts[promptNameFromField] = promptToSave;
+    }
     console.log("form submitted");
+    // TODO redraw the select.  The following seems wrong.  Consider another
+    // Preact component that is just the select?
+    render(html`<${DialogPromptEntries} />`, document.getElementById("llm_prompt"));
   };
 
   const onSelectChange = (event) => {
     event.preventDefault();
-    thePrompt = event.currentTarget.value;
-    document.getElementById("systemPrompt").value = thePrompt;
-  }
+    document.getElementById("systemPrompt").value = event.currentTarget.value;
+  };
 
   return html`
-    <form style="display:inline-grid;" onSubmit=${formSubmit}>
+    <form style="display:inline-grid; background:white" onSubmit=${formSubmit}>
       <fieldset style="display:inline-grid;" >
         <legend>Enter a prompt or choose one from the list</legend>
         <p>
           <label for="promptSelect">Choose a prompt:</label>
-            <select id="promptSelect">
-              <option value="${thePrompt}">${promptName}</option>
+            <select id="promptSelect" onchange=${onSelectChange}>
+              ${options}
             </select>
         </p>
         <p>
@@ -55,49 +74,4 @@ export function DialogPromptEntries (): VNode {
       </fieldset>
     </form>
   `;
-//         <${CommandTelegraphicCompletions} model="llama3.1:latest" stream=false systemPrompt="${thePrompt}" />
-
-//     <label for="promptSelect">Choose a prompt:</label>
-//     <select id="promptSelect" >
-//     <option value="None">None</option>
-//     </select><br/>
-//     <button>Save above prompt as:</button>
-//     <input id="promptName" type="text"/>
-
-
-
-//     <form style="display:inline-grid;" onSubmit=${formSubmit}>
-//       <fieldset>
-//        <legend>Enter a prompt or choose one from the list</legend>
-//        <p>
-//          <label>Prompt:</label>
-//         <textarea id="systemPrompt" name="systemPrompt" rows="4" cols="100" />
-//         </p>
-//         <p>
-//       </fieldset>
-//     </form>
-
 }
-
-// Preact issues:
-// 1. Cannot use <br> within a <form> element
-// 2. Cannot use a variable to assign @value of a <textarea>, e.g. value=${const defaultPrompt}
-// 3. The inline-grid style on <form> element is soft of ignore.
-//     <form style="display:inline-grid;" onSubmit=${formSubmit}>
-//       <fieldset style="display:inline-grid;" >
-//         <legend>Enter a prompt or choose one from the list</legend>
-//         <p>
-//           <label for="systemPrompt">Prompt:</label><br>
-//           <textarea name="systemPrompt" rows="4" cols="100" value=${defaultPrompt} />
-//         </p>
-//         <p>
-//           <button>Save prompt as:</button>
-//           <input id="promptName" type="text"/>
-//           <label for="promptSelect">Choose a prompt:</label>
-//           <select id="promptSelect">
-//             <option value="None">None</option>
-//           </select>
-//         </p>
-//       </fieldset>
-//     </form>
-

@@ -8,9 +8,20 @@
   </head>
   <body>
     <h2>Palettes</h1>
-    <div id="llm_prompt" style="display:inline-grid;"></div>
-    <div id="askForLlmSuggestions"></div>
-   <div id="llm_suggestions" style="color: white; background-color: black"></div>
+    <!--
+      Expandable forms for the prompts and the SVG builder strings.
+    -->
+    <details style="margin-left: 0.5em; display:inline-grid;">
+      <summary style="color:white">Prompt Dialog</summary>
+      <div id="llm_prompt" style="display:inline-grid;"></div>
+    </details>
+    <details style="margin-left: 0.5em; display:inline-grid">
+      <summary style="color:white">SVG Entry</summary>
+      <div id="svgBuilderStringEntry" style="display:inline-grid;"></div>
+    </details>
+    </div>
+    <div id="askForLlmSuggestions" style="margin-left: 0.5em;"></div>
+    <div id="llm_suggestions" style="color: white; background-color: black; margin-left:0.5em"></div>
     <div id="backupArea">
       <div id="backup_palette"></div>
     </div>
