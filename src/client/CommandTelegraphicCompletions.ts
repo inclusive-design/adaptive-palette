@@ -18,13 +18,15 @@ import { queryChat } from "./ollamaApi";
 type CommandTelegraphicCompletionsProps = {
   id: string,
   model: string,
+  // This does not strictly work in thet the true/false values are passed by
+  // Preact as strings, "true" or "false"
   stream: boolean,
 };
 
 export function CommandTelegraphicCompletions (props: CommandTelegraphicCompletionsProps): VNode {
 
   const { model, stream } = props;
-  console.log(`CommandTelegraphicCompletions(), props: ${model}, ${stream}, ${systemPrompt}`);
+  const streamAsBoolean = ( stream === "true" ? true : false );
 
   // Handler for getting completions from ollama and into the
   // `sentenceCompletionsSignal` signal's value.
@@ -40,7 +42,7 @@ export function CommandTelegraphicCompletions (props: CommandTelegraphicCompleti
     });
     const systemPrompt = document.getElementById("systemPrompt").value;
     const response = await queryChat(
-      labelText.join(" "), model, stream, systemPrompt
+      labelText.join(" "), model, streamAsBoolean, systemPrompt
     );
     // Parse the query response messages into an array of strings.  Note that
     // with Llama3.1 each message is one of the suggested sentence completions.
