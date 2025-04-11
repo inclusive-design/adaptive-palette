@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
+ * Copyright 2025 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -14,6 +14,7 @@ import { html } from "htm/preact";
 
 import { changeEncodingContents, sentenceCompletionsSignal } from "./GlobalData";
 import { queryChat } from "./ollamaApi";
+import "./CommandTelegraphicCompletions.scss";
 
 type CommandTelegraphicCompletionsProps = {
   id: string,
@@ -57,12 +58,12 @@ export function CommandTelegraphicCompletions (props: CommandTelegraphicCompleti
   };
 
   return html`
-    <p>
-      <button onClick=${getTelegraphicCompletions} style="font-size: 1em;">
+    <p class="commandTelegraphicCompletions">
+      <button onClick=${getTelegraphicCompletions}>
         Telegraphic Completions
       </button>
       <span style="visibility: hidden">F</span>
-      <button onClick=${removeSuggestions} style="font-size: 1em;">
+      <button onClick=${removeSuggestions}>
         Cancel
       </button>
     </p>

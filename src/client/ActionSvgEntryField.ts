@@ -14,6 +14,7 @@ import { html } from "htm/preact";
 import { changeEncodingContents } from "./GlobalData";
 import { makeBciAvIdType, decomposeBciAvId, BLISSARY_PATTERN_KEY, BCIAV_PATTERN_KEY } from "./SvgUtils";
 import { speak } from "./GlobalUtils";
+import "./ActionSvgEntryField.scss";
 
 /**
  * Converts a string that encodes the information required by the SvgUtils
@@ -30,7 +31,7 @@ import { speak } from "./GlobalUtils";
  */
 function convertSvgBuilderString (theString): BciAvIdType {
   let result = null;
-  // Three forms, one with commas and one without:
+  // Two forms, one with commas and one without:
   // - BCI AV IDs with separators:
   //   Treat as an SVG composition string and use makeBciAvIdType() to convert
   //   it to the array form.
@@ -73,7 +74,7 @@ export function ActionSvgEntryField (): VNode {
   };
 
   return html`
-    <form onSubmit=${svgToSymbol} style="width:25em; background:white">
+    <form onSubmit=${svgToSymbol} class="actionSvgEntryField">
       <fieldset>
         <legend >Enter symbol using SVG builder string</legend>
         <p>
