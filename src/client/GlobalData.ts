@@ -65,6 +65,10 @@ export const adaptivePaletteGlobals = {
   bciAvSymbols: bliss_symbols,
   paletteStore: new PaletteStore(),
   navigationStack: new NavigationStack(),
+  systemPrompts: {
+    "What express": "What does this express? Give the top five answers.  Do not add a preamble like, 'Here are the top five answers.'",
+    "Single Sentence": "Convert the telegraphic speech to a single sentence. Give the top five best answers.  Answer with a single grammatically correct sentence.  Number the five answers clearly.  Do not add a preamble like, 'Here are the top five answers.'",
+  },
 
   // `id` attribute of the HTML element area where the main palette is
   // displayed, set by initAdaptivePaletteGlobals().  It defaults to the empty
@@ -91,6 +95,12 @@ export async function loadBlissaryIdMap (): Promise<object> {
 export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string): Promise<void> {
   adaptivePaletteGlobals.blissaryIdMap = await loadBlissaryIdMap();
   adaptivePaletteGlobals.mainPaletteContainerId = mainPaletteContainerId || "";
+
+  // Set up the system prompts.  (NOTE: [JS]:  would prefer that one could set
+  // an entire object as an item called "adaptivePaletteSystemPrompts").
+  Object.keys(adaptivePaletteGlobals.systemPrompts).forEach( (key) => {
+    window.localStorage.setItem(key, adaptivePaletteGlobals.systemPrompts[key]);
+  });
 }
 
 /**

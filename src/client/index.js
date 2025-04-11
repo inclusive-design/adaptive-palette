@@ -10,7 +10,7 @@
  */
 import { render } from "preact";
 import { html } from "htm/preact";
-import { initAdaptivePaletteGlobals, adaptivePaletteGlobals} from "./GlobalData";
+import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
 import { loadPaletteFromJsonFile } from "./GlobalUtils";
 import "./index.scss";
 
