@@ -16,12 +16,15 @@ import { changeEncodingContents, sentenceCompletionsSignal } from "./GlobalData"
 import { queryChat } from "./ollamaApi";
 import "./CommandTelegraphicCompletions.scss";
 
+export const TELEGRPAHIC_BUTTON_LABEL = "Telegraphic Completions";
+export const CANCEL_BUTTON_LABEL = "Cancel";
+
 type CommandTelegraphicCompletionsProps = {
   id: string,
   model: string,
-  // This does not strictly work in thet the true/false values are passed by
-  // Preact as strings, "true" or "false"
-  stream: boolean,
+  // This should be a boolean type, but for Preact/html the type of the value is
+  // string.  It should be "true" or "false".
+  stream: ("true" | "false")
 };
 
 export function CommandTelegraphicCompletions (props: CommandTelegraphicCompletionsProps): VNode {
@@ -31,7 +34,7 @@ export function CommandTelegraphicCompletions (props: CommandTelegraphicCompleti
 
   // Handler for getting completions from ollama and into the
   // `sentenceCompletionsSignal` signal's value.
-  const getTelegraphicCompletions = async (event): void => {
+  const getTelegraphicCompletions = async (event): Promise<void> => {
     event.preventDefault();
     // Empty out the response area
     sentenceCompletionsSignal.value = ["Working ..."];
@@ -41,7 +44,7 @@ export function CommandTelegraphicCompletions (props: CommandTelegraphicCompleti
     changeEncodingContents.value.forEach( (value) => {
       labelText.push(value.label);
     });
-    const systemPrompt = document.getElementById("systemPrompt").value;
+    const systemPrompt = (document.getElementById("systemPrompt") as HTMLTextAreaElement).value;
     const response = await queryChat(
       labelText.join(" "), model, streamAsBoolean, systemPrompt
     );
@@ -60,11 +63,11 @@ export function CommandTelegraphicCompletions (props: CommandTelegraphicCompleti
   return html`
     <p class="commandTelegraphicCompletions">
       <button onClick=${getTelegraphicCompletions}>
-        Telegraphic Completions
+        ${TELEGRPAHIC_BUTTON_LABEL}
       </button>
       <span style="visibility: hidden">F</span>
       <button onClick=${removeSuggestions}>
-        Cancel
+        ${CANCEL_BUTTON_LABEL}
       </button>
     </p>
   `;

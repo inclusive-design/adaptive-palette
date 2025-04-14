@@ -42,7 +42,7 @@ export function DialogPromptEntries (props: DialogPromptEntriesProps): VNode {
   // `selectSelectedIndex` or (2) from the <select>'s current `selectedIndex`
   // property.
   let thePrompt = "";
-  const theSelect = document.getElementById("promptSelect");
+  const theSelect = document.getElementById("promptSelect") as HTMLSelectElement;
   if (theSelect) {
     if (promptName && selectSelectedIndex !== -1) {
       thePrompt = window.localStorage.getItem(promptName);
@@ -61,8 +61,8 @@ export function DialogPromptEntries (props: DialogPromptEntriesProps): VNode {
 
   const savePrompt = (event) => {
     event.preventDefault();
-    const promptNameFromField = document.getElementById("promptName").value;
-    const promptToSave = document.getElementById("systemPrompt").value;
+    const promptNameFromField = (document.getElementById("promptName") as HTMLInputElement).value;
+    const promptToSave = (document.getElementById("systemPrompt") as HTMLTextAreaElement).value;
     if (promptNameFromField.length > 0 && promptToSave.length > 0) {
       const localStore = window.localStorage;
       console.debug(`Saving ${promptNameFromField}: ${promptToSave}`);
@@ -75,7 +75,7 @@ export function DialogPromptEntries (props: DialogPromptEntriesProps): VNode {
 
   const onSelectChange = (event) => {
     event.preventDefault();
-    document.getElementById("systemPrompt").value = event.currentTarget.value;
+    (document.getElementById("systemPrompt") as HTMLTextAreaElement).value = event.currentTarget.value;
   };
 
   return html`

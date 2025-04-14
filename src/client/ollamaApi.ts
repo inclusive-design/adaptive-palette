@@ -77,28 +77,29 @@ export async function queryChat (query: string, modelName: string, streamResp: b
   // What does work, instead, is an if/else construct to set the `stream`
   // property explicitly to `true` or `false`.
   //
-  const response = await ollama.chat({
-    model: modelName,
-    messages: messageArray,
-    stream: streamResp,
-    keep_alive: 15
-  });
-  //let response;
-  //if (streamResp) {
-  //  response = await ollama.chat({
+  console.debug(`streamResp: ${streamResp}, ${typeof streamResp}`);
+  //   const response = await ollama.chat({
   //    model: modelName,
   //    messages: messageArray,
-  //    stream: true,
-  //    keep_alive: 15
-  //  });
-  //}
-  //else {
-  //  response = await ollama.chat({
-  //    model: modelName,
-  //    messages: messageArray,
-  //    stream: false,
-  //    keep_alive: 15
-  //  });
-  //}
+  //    stream: streamResp,
+  //   keep_alive: 15
+  //   });
+  let response;
+  if (streamResp) {
+    response = await ollama.chat({
+      model: modelName,
+      messages: messageArray,
+      stream: true,
+      keep_alive: 15
+    });
+  }
+  else {
+    response = await ollama.chat({
+      model: modelName,
+      messages: messageArray,
+      stream: false,
+      keep_alive: 15
+    });
+  }
   return response;
 }
