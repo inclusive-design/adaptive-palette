@@ -13,6 +13,11 @@ import { render, VNode } from "preact";
 import { html } from "htm/preact";
 import "./DialogPromptEntries.scss";
 
+export const SELECT_ID      = "promptSelect";
+export const TEXTAREA_ID    = "systemPrompt";
+export const SUBMIT_VALUE   = "Save above prompt as:";
+export const PROMPT_NAME_ID = "promptName";
+
 type DialogPromptEntriesProps = {
   promptName?: string
 }
@@ -61,7 +66,7 @@ export function DialogPromptEntries (props: DialogPromptEntriesProps): VNode {
 
   const savePrompt = (event) => {
     event.preventDefault();
-    const promptNameFromField = (document.getElementById("promptName") as HTMLInputElement).value;
+    const promptNameFromField = (document.getElementById(("promptName")) as HTMLInputElement).value;
     const promptToSave = (document.getElementById("systemPrompt") as HTMLTextAreaElement).value;
     if (promptNameFromField.length > 0 && promptToSave.length > 0) {
       const localStore = window.localStorage;
@@ -75,7 +80,7 @@ export function DialogPromptEntries (props: DialogPromptEntriesProps): VNode {
 
   const onSelectChange = (event) => {
     event.preventDefault();
-    (document.getElementById("systemPrompt") as HTMLTextAreaElement).value = event.currentTarget.value;
+    (document.getElementById(TEXTAREA_ID) as HTMLTextAreaElement).value = event.currentTarget.value;
   };
 
   return html`
@@ -83,17 +88,17 @@ export function DialogPromptEntries (props: DialogPromptEntriesProps): VNode {
       <fieldset>
         <legend>Enter a prompt or choose one from the list</legend>
         <p>
-          <label for="promptSelect">Choose a prompt:</label>
-            <select id="promptSelect" onchange=${onSelectChange}>
+          <label for="R{SELECT_ID}">Choose a prompt:</label>
+            <select id="${SELECT_ID}" onchange=${onSelectChange}>
               ${options}
             </select>
         </p>
         <p>
-          <label for="systemPrompt">Prompt:</label><br />
-          <textarea id="systemPrompt" name="systemPrompt" rows="4" cols="90" value=${thePrompt} />
+          <label for="${TEXTAREA_ID}">Prompt:</label><br />
+          <textarea id="${TEXTAREA_ID}" name="${TEXTAREA_ID}" rows="4" cols="90" value=${thePrompt} />
           <div>
-            <input type="submit" value="Save above prompt as:" />
-            <input id="promptName" type="text" style="margin-left: 1em" />
+            <input type="submit" value="${SUBMIT_VALUE}" />
+            <input id="${PROMPT_NAME_ID}" type="text" style="margin-left: 1em" />
           </div>
         </p>
       </fieldset>

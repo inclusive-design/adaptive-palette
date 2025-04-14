@@ -13,7 +13,9 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 
 import { changeEncodingContents, sentenceCompletionsSignal } from "./GlobalData";
+import { TEXTAREA_ID } from "./DialogPromptEntries";
 import { queryChat } from "./ollamaApi";
+
 import "./CommandTelegraphicCompletions.scss";
 
 export const TELEGRPAHIC_BUTTON_LABEL = "Telegraphic Completions";
@@ -44,7 +46,7 @@ export function CommandTelegraphicCompletions (props: CommandTelegraphicCompleti
     changeEncodingContents.value.forEach( (value) => {
       labelText.push(value.label);
     });
-    const systemPrompt = (document.getElementById("systemPrompt") as HTMLTextAreaElement).value;
+    const systemPrompt = (document.getElementById(TEXTAREA_ID) as HTMLTextAreaElement).value;
     const response = await queryChat(
       labelText.join(" "), model, streamAsBoolean, systemPrompt
     );
