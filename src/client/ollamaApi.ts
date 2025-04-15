@@ -82,7 +82,7 @@ export async function queryChat (query: string, modelName: string, streamResp: b
   //    model: modelName,
   //    messages: messageArray,
   //    stream: streamResp,
-  //   keep_alive: 15
+  //    keep_alive: 15
   //   });
   let response;
   if (streamResp) {
