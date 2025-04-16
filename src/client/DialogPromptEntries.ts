@@ -69,9 +69,7 @@ export function DialogPromptEntries (props: DialogPromptEntriesProps): VNode {
     const promptNameFromField = (document.getElementById(("promptName")) as HTMLInputElement).value;
     const promptToSave = (document.getElementById("systemPrompt") as HTMLTextAreaElement).value;
     if (promptNameFromField.length > 0 && promptToSave.length > 0) {
-      const localStore = window.localStorage;
-      console.debug(`Saving ${promptNameFromField}: ${promptToSave}`);
-      localStore.setItem(promptNameFromField, promptToSave);
+      window.localStorage.setItem(promptNameFromField, promptToSave);
 
       // Redraw the <form> so it includes and references the new prompt.
       render(html`<${DialogPromptEntries} promptName=${promptNameFromField}/>`, document.getElementById("llm_prompt"));
