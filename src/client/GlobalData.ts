@@ -31,6 +31,7 @@ import bliss_symbols from "../../public/data/bliss_symbol_explanations.json";
  */
 import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
 import { ActionBranchToPaletteCell } from "./ActionBranchToPaletteCell";
+import { ActionGlossSearchCell } from "./ActionGlossSearchCell";
 import { ActionIndicatorCell } from "./ActionIndicatorCell";
 import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
 import { ActionTextCell } from "./ActionTextCell";
@@ -44,6 +45,7 @@ import { NavigationStack } from "./NavigationStack";
 export const cellTypeRegistry = {
   "ActionBmwCodeCell": ActionBmwCodeCell,
   "ActionBranchToPaletteCell": ActionBranchToPaletteCell,
+  "ActionGlossSearchCell": ActionGlossSearchCell,
   "ActionIndicatorCell": ActionIndicatorCell,
   "ActionRemoveIndicatorCell": ActionRemoveIndicatorCell,
   "ActionTextCell": ActionTextCell,

@@ -50,3 +50,7 @@ render(html`<${SentenceCompletionsPalette} />`, document.getElementById("llm_sug
 // Form for entering SVG strings
 import { ActionSvgEntryField } from "./ActionSvgEntryField";
 render(html`<${ActionSvgEntryField} />`, document.getElementById("svgBuilderStringEntry"));
+
+// Form for searching the gloss
+import { ActionSearchGloss } from "./ActionSearchGloss";
+render(html`<${ActionSearchGloss} />`, document.getElementById("searchGloss"));
