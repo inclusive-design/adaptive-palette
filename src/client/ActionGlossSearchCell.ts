@@ -34,6 +34,13 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
     proposedLabel = props.options.label;
   }
   const composition = decomposeBciAvId(bciAvId);
+  let compositionString;
+  if (composition.constructor === Array) {
+    compositionString = composition.join("");
+  }
+  else {
+    compositionString = bciAvId.toString();
+  }
 
   const cellClicked = (event) => {
     console.debug(event.target);
@@ -63,7 +70,7 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
         />
       </button>
       <input id=input-${props.id} value=${proposedLabel} />
-      <span>${composition.join("")}</span>
+      <span>${compositionString}</span>
     </div>
   `;
 }
