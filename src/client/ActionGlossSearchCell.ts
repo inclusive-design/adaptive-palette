@@ -62,8 +62,8 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
           isPresentation=true
         />
       </button>
-      <input id=input-${props.id} style="display: block; margin: 0 auto; paddding: 0 0 0 1em" value=${proposedLabel} />
-      <span style="display: block; margin: 0 auto; paddding: 1em 0 0 1em">${composition.join("")}</span>
+      <input id=input-${props.id} value=${proposedLabel} />
+      <span>${composition.join("")}</span>
     </div>
   `;
 }
