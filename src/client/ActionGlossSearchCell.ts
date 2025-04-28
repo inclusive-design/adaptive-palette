@@ -16,7 +16,7 @@ import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
 import { decomposeBciAvId } from "./SvgUtils";
-import "./ActionBmwCodeCell.scss";
+import "./ActionGlossSearchCell.scss";
 
 type ActionGlossSearchCellPropsType = {
   id: string,
@@ -33,6 +33,7 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
   if (proposedLabel.length === 0) {
     proposedLabel = props.options.label;
   }
+  const composition = decomposeBciAvId(bciAvId);
 
   const cellClicked = (event) => {
     console.debug(event.target);
@@ -53,13 +54,16 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
   };
 
   return html`
-    <button id="${props.id}" class="actionBmwCodeCell" style="${gridStyles}" onClick=${cellClicked}>
-      <${BlissSymbol}
-        bciAvId=${bciAvId}
-        label=${label}
-        isPresentation=true
-      />
-    <input id=input-${props.id} value=${proposedLabel}  />
-    </button>
+    <div style="${gridStyles}" class="actionGlossSearchCell">
+      <button id="${props.id}" onClick=${cellClicked}>
+        <${BlissSymbol}
+          bciAvId=${bciAvId}
+          label=${label}
+          isPresentation=true
+        />
+      </button>
+      <input id=input-${props.id} style="display: block; margin: 0 auto; paddding: 0 0 0 1em" value=${proposedLabel} />
+      <span style="display: block; margin: 0 auto; paddding: 1em 0 0 1em">${composition.join("")}</span>
+    </div>
   `;
 }
