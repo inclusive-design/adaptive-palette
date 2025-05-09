@@ -91,7 +91,7 @@ export function findCompositionsUsingId (bciId: number) {
         label: symbol.description,
         composition: symbol.composition,
         fullComposition: ( symbol.composition ? decomposeBciAvId(symbol.composition) : undefined )
-      })
+      });
     }
     else if (symbol.composition) {
       const fullComposition = decomposeBciAvId(symbol.composition);
