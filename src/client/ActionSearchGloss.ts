@@ -12,7 +12,7 @@
 import { render, VNode } from "preact";
 import { html } from "htm/preact";
 
-import { findBciAvId } from "./BciAvUtils";
+import { findBciAvId, findCompositionsUsingId } from "./BciAvUtils";
 import { GlossSearchPalette } from "./GlossSearchPalette";
 
 const GLOSS_ENTRY_FIELD_ID = "glossSearchField";
@@ -32,7 +32,13 @@ export function ActionSearchGloss (): VNode {
     }
     else {
       noSearchTerm = false;
-      matches = findBciAvId(searchText);
+      const numberId = Number(searchText);
+      if (isNaN(numberId)) {
+        matches = findBciAvId(searchText);
+      }
+      else {
+        matches = findCompositionsUsingId(numberId);
+      }
     }
     console.debug(`Search term? ${noSearchTerm}, found ${matches.length} matches`);
     render(

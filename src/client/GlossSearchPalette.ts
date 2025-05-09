@@ -43,7 +43,8 @@ export function makeMatchesPalette (glossMatches, searchTerm, startRow, startCol
     "cells": {}
   };
   // Make the palette square, and at least one cell wide.
-  const numCols = 1 + glossMatches.length / 3;
+  const numCols = 5;
+  //  const numCols = 1 + glossMatches.length / 3;
   let rowIndex = 0;
   let colIndex = 0;
 

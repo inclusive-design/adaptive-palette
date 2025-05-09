@@ -25,7 +25,7 @@ import { decomposeBciAvId } from "./SvgUtils";
  *
  * @param {string} label - The label to use to search for matches in the gloss.
  * @returns {Array} An array of objects whose gloss matches the given label:
- *                  { id: {number}, description: {string}, ... }, or an empty
+ *                  { bciAvId, label, composition, fullComposition}, or an empty
  *                  array if no BCI AV ID is found for the label.
  */
 export function findBciAvId(label) {
@@ -63,6 +63,46 @@ export function findBciAvId(label) {
         const lastMatch = matches[matches.length - 1];
         if (lastMatch.fullComposition) {
           console.debug(`${lastMatch.label} has a defined fullComposition: '${fullComposition.join("")}'`);
+        }
+      }
+    }
+  }
+  return matches;
+}
+
+/**
+ * Find symbols where the given single BCI AV ID is part of the composiiton
+ * of other symbols.
+ * @param {number} bciId - The BCI AV ID to search symbols' compositions
+ *                                for matches.
+ * @returns {Array} An array of objects whose `composition` contains the given
+ *                  `bciId`:
+ *                  { bciAvId, label, composition, fullComposition}, or an empty
+ *                  array if no mathches are found.
+ */
+export function findCompositionsUsingId (bciId: number) {
+  const matches = [];
+  for (const symbol of adaptivePaletteGlobals.bciAvSymbols) {
+    const symbolId = parseInt(symbol.id);
+    // Add the symbol itself
+    if (symbolId === bciId) {
+      matches.push({
+        bciAvId: symbolId,
+        label: symbol.description,
+        composition: symbol.composition,
+        fullComposition: ( symbol.composition ? decomposeBciAvId(symbol.composition) : undefined )
+      })
+    }
+    else if (symbol.composition) {
+      const fullComposition = decomposeBciAvId(symbol.composition);
+      for (const member of fullComposition) {
+        if (member === bciId) {
+          matches.push({
+            bciAvId: symbolId,
+            label: symbol.description,
+            composition: symbol.composition,
+            fullComposition: fullComposition
+          });
         }
       }
     }
