@@ -95,14 +95,16 @@ export function findCompositionsUsingId (bciId: number) {
     }
     else if (symbol.composition) {
       const fullComposition = decomposeBciAvId(symbol.composition);
-      for (const member of fullComposition) {
-        if (member === bciId) {
-          matches.push({
-            bciAvId: symbolId,
-            label: symbol.description,
-            composition: symbol.composition,
-            fullComposition: fullComposition
-          });
+      if (fullComposition?.constructor === Array) {
+        for (const member of fullComposition) {
+          if (member === bciId) {
+            matches.push({
+              bciAvId: symbolId,
+              label: symbol.description,
+              composition: symbol.composition,
+              fullComposition: fullComposition
+            });
+          }
         }
       }
     }
