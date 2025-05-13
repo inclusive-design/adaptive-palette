@@ -36,4 +36,31 @@ adaptivePaletteGlobals.navigationStack.currentPalette = firstLayer;
 render(html`<${Palette} json=${inputArea} />`, document.getElementById("input_palette"));
 render(html`<${Palette} json=${goBackCell} />`, document.getElementById("backup_palette"));
 render(html`<${Palette} json=${topPalette} />`, document.getElementById("indicators"));
-render(html`<${Palette} json=${firstLayer}/>`, document.getElementById("mainPaletteDisplayArea"));
+render(html`<${Palette} json=${firstLayer} />`, document.getElementById("mainPaletteDisplayArea"));
+
+// Window keydown listener for a global "go back" keystroke
+window.addEventListener("keydown", (event) => {
+  if (event.code === "Backquote") {
+    // If focus was not on a textual input element, press the go-back button
+    if (!elementAllowsTextEntry(event.target)) {
+      const goBackButton = document.getElementById("back-up-30a32c78-56fe-4622-9fba-0416b68d72fc");
+      const clickEvent = new MouseEvent(
+        "click", { "view": window, "bubbles": true, "cancelable": false }
+      );
+      goBackButton.dispatchEvent(clickEvent);
+    }
+  }
+});
+
+function elementAllowsTextEntry (element) {
+  return (
+    (element.type === "text") || (element.type === "email") ||
+    (element.type === "month") || (element.type === "number") ||
+    (element.type === "password") || (element.type === "search") ||
+    (element.type === "tel") || (element.type === "url") ||
+    (element.type === "week") ||
+    (element instanceof HTMLTextAreaElement) ||
+    (element instanceof HTMLSelectElement) ||
+    (element.getAttribute("role") === "textbox")
+  );
+}
