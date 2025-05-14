@@ -11,7 +11,7 @@
 
 import { VNode } from "preact";
 import { html } from "htm/preact";
-import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
+import { BlissSymbolInfoType, EncodingType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
@@ -25,7 +25,7 @@ type ActionIndicatorCodeCellPropsType = {
 
 // Given an array of symbols, find the positions of the last symbol's indicators
 // if any.
-function lastSymbolIndicatorPositions (symbolArray) {
+function lastSymbolIndicatorPositions (symbolArray: Array<EncodingType>) {
   let indicatorPositions = [];
   if (symbolArray.length !== 0) {
     const lastSymbolBciAvId = symbolArray[symbolArray.length-1].bciAvId;
