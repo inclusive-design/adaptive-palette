@@ -15,6 +15,7 @@ import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
 import { Palette } from "./Palette";
+import { goBackImpl } from "./CommandGoBackCell";
 
 describe("Palette integration test", () => {
 
@@ -202,17 +203,42 @@ describe("Palette integration test", () => {
     // Note: the element whose text is "Go To" is actually a <div> within the
     // <button> of interest.  The button is that <div>'s parent.  Similarly
     // for the "Back Up" button.
-    const goForwardButton = (await screen.findByText("Go To")).parentElement;
+    let goForwardButton = (await screen.findByText("Go To")).parentElement;
 
     fireEvent.click(goForwardButton);
-    const goBackButton = (await waitFor(() => screen.findByText("Back Up"))).parentElement;
+    let goBackButton = (await waitFor(() => screen.findByText("Back Up"))).parentElement;
     expect(goBackButton).toBeInTheDocument();
     expect(navStack.currentPalette.palette).toBe(testLayerOnePalette);
     expect(navStack.peek().palette).toBe(testPalette);
 
-    // Trigger go-back navigation
+    // Trigger go-back navigation by clicking the `goBackButon`
     fireEvent.click(goBackButton);
     await waitFor(() => expect(firstCell).toBeInTheDocument());
+    expect(navStack.currentPalette.palette).toBe(testPalette);
+    expect(navStack.isEmpty()).toBe(true);
+
+    // Go forward again, then trigger go-back navigation by calling the go-back
+    // function.  This is a way of testing that go-back functionality is
+    // available to other kinds of events such as a key press.
+    goForwardButton = (await screen.findByText("Go To")).parentElement;
+    expect(goForwardButton).toBeInTheDocument();
+    fireEvent.click(goForwardButton);
+    goBackButton = (await waitFor(() => screen.findByText("Back Up"))).parentElement;
+    expect(navStack.currentPalette.palette).toBe(testLayerOnePalette);
+    expect(navStack.peek().palette).toBe(testPalette);
+    await goBackImpl();
+    expect(navStack.currentPalette.palette).toBe(testPalette);
+    expect(navStack.isEmpty()).toBe(true);
+
+    // Go forward once again, then trigger go-back navigation by calling the
+    // go-back function, this time passing a container element id.
+    goForwardButton = (await screen.findByText("Go To")).parentElement;
+    expect(goForwardButton).toBeInTheDocument();
+    fireEvent.click(goForwardButton);
+    goBackButton = (await waitFor(() => screen.findByText("Back Up"))).parentElement;
+    expect(navStack.currentPalette.palette).toBe(testLayerOnePalette);
+    expect(navStack.peek().palette).toBe(testPalette);
+    await goBackImpl(goBackButton.getAttribute("aria-controls"));
     expect(navStack.currentPalette.palette).toBe(testPalette);
     expect(navStack.isEmpty()).toBe(true);
   });
