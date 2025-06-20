@@ -51,7 +51,6 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
   // last symbol in the encoding contents array.
   const indicatorPosition = lastSymbolIndicatorPosition(changeEncodingContents.value);
   const disabled = indicatorPosition === -1;
-  console.debug(`indicatorPosition: ${indicatorPosition}, disabled: ${disabled}`)
 
   const cellClicked = () => {
     // Get the last symbol in the editing area and find the location of any
