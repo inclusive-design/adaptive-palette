@@ -333,4 +333,37 @@ describe("Palette integration test", () => {
     expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(false);
   });
 
+  test("ActionRemoveIndicator disabled state depending on the last symbol in the content area", async() => {
+    // Setup: add the `testPalette` to the document as well as the indicator
+    // strip.  Make sure the content area is empty.
+    //
+    render(html`<${Palette} json=${testPalette}/>`);
+    render(html`<${Palette} json=${testIndicatorPalette}/>`);
+    const clearButton = await screen.findByText("Clear");
+    fireEvent.click(clearButton);
+    const contentArea = await screen.findByLabelText("Input Area");
+    expect(contentArea.childNodes.length).toBe(0);
+
+    // Add the symbol in the first cell to the contents and add a plural
+    // indicator to it.  The remove-indicator button should be enabled.
+    const firstCell = await screen.findByText("First Cell");
+    const addPluralButton = await screen.findByText("plural");
+    const removeIndicatorButton = await screen.findByText("remove indicator");
+    fireEvent.click(firstCell);
+    fireEvent.click(addPluralButton);
+    const firstSymbol = changeEncodingContents.value[0];
+    expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(true);
+    expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
+
+    // Add a second symbol to the contents, one without an indicator.  The
+    // remove-indicator button should change to disabled.
+    fireEvent.click(firstCell);
+    expect(removeIndicatorButton.getAttribute("disabled")).toBeDefined();
+
+    // Delete the last symbol.  The remaining symbol will still an indicator,
+    // and the remove-indicator button should change to enabled.
+    const deleteButton = await screen.findByText("Delete");
+    fireEvent.click(deleteButton);
+    expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
+  });
 });
