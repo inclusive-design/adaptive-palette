@@ -23,15 +23,20 @@ type ActionIndicatorCodeCellPropsType = {
   options: BlissSymbolInfoType & LayoutInfoType
 };
 
-// Given an array of symbols, find the positions of the last symbol's indicators
-// if any.
-function lastSymbolIndicatorPositions (symbolArray: Array<EncodingType>) {
+/*
+ * Given an array of symbols, find the position of the last symbol's indicator
+ * if any.
+ * @param {Array<EncodingType} symbolArray: Array of symbol encodings
+ * @return {number} - The index of the indicator in the symbols BciAvType, or
+ *                    -1 if there is no indicator.
+ */
+function lastSymbolIndicatorPosition (symbolArray: Array<EncodingType>): number {
   let indicatorPositions = [];
   if (symbolArray.length !== 0) {
     const lastSymbolBciAvId = symbolArray[symbolArray.length-1].bciAvId;
     indicatorPositions = findIndicators(lastSymbolBciAvId);
   }
-  return indicatorPositions;
+  return ( indicatorPositions.length === 0 ? -1 : indicatorPositions[0]);
 }
 
 export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsType): VNode {
@@ -44,22 +49,21 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
 
   // Enable the remove-indicator button only if there is an indicator on the
   // last symbol in the encoding contents array.
-  const indicators = lastSymbolIndicatorPositions(changeEncodingContents.value);
-  const disabled = indicators.length === 0;
+  const indicatorPosition = lastSymbolIndicatorPosition(changeEncodingContents.value);
+  const disabled = indicatorPosition === -1;
+  console.debug(`indicatorPosition: ${indicatorPosition}, disabled: ${disabled}`)
 
   const cellClicked = () => {
-    // Get the last symbol in the editing area and find the locations of any
-    // existing indicator(s) to remove them.
+    // Get the last symbol in the editing area and find the location of any
+    // existing indicator to remove.
+    const indicatorIndex = lastSymbolIndicatorPosition(changeEncodingContents.value);
     const allButLastSymbol = [...changeEncodingContents.value];
     const lastSymbol = allButLastSymbol.pop();
     let newBciAvId = lastSymbol.bciAvId;
-    const indicatorPositions = findIndicators(newBciAvId);
-    indicatorPositions.forEach((position) => {
-      newBciAvId = [
-        ...newBciAvId.slice(0, position-1),
-        ...newBciAvId.slice(position+1)
-      ];
-    });
+    newBciAvId = [
+      ...newBciAvId.slice(0, indicatorIndex-1),
+      ...newBciAvId.slice(indicatorIndex+1)
+    ];
     const payload = {
       "id": lastSymbol.id + props.id,
       "label": lastSymbol.label,
