@@ -13,7 +13,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/preact";
 import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 
-import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
+import { initAdaptivePaletteGlobals, adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
 import { Palette } from "./Palette";
 import { goBackImpl } from "./CommandGoBackCell";
 
@@ -147,6 +147,48 @@ describe("Palette integration test", () => {
     }
   };
 
+  // Indicator "tool bar" palette
+  const PLURAL_INDICATOR_ID = 9011;
+  const ACTION_INDICATOR_ID = 8993;
+  const testIndicatorPalette = {
+    "name": "indicator tool bar",
+    "cells": {
+      "SVG:9011:SVG-fb89740b-0a1a-4fcb-8275-bdaabe32a5dc": {
+        "type": "ActionIndicatorCell",
+        "options": {
+          "label": "plural",
+          "bciAvId": PLURAL_INDICATOR_ID,
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 8,
+          "columnSpan": 1
+        }
+      },
+      "action-49abcd96-b0af-4c66-8400-b9a0cb3a20c8": {
+        "type": "ActionIndicatorCell",
+        "options": {
+          "label": "action",
+          "bciAvId": ACTION_INDICATOR_ID,
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 4,
+          "columnSpan": 1
+        }
+      },
+      "remove-indicator-ce71d580-2712-44b8-9daf-7e894295d827": {
+        "type": "ActionRemoveIndicatorCell",
+        "options": {
+          "label": "remove indicator",
+          "bciAvId": [ 17448, "//", 14430, "/", 8993,  "/", 8998 ],
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 12,
+          "columnSpan": 1
+        }
+      }
+    }
+  };
+
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
     // Pre-load `testLayerOnePalette` to avoid importing it from a non-existent
@@ -198,6 +240,12 @@ describe("Palette integration test", () => {
     const clearButton = await screen.findByText("Clear");
     fireEvent.click(clearButton);
     expect(contentArea.childNodes.length).toBe(0);
+  });
+
+  test("Navigation to other layers, and going back", async() => {
+    render(html`<${Palette} json=${testPalette}/>`);
+    const navStack = adaptivePaletteGlobals.navigationStack;
+    const firstCell = await screen.findByText("First Cell");
 
     // Trigger forward navigation.
     // Note: the element whose text is "Go To" is actually a <div> within the
@@ -242,4 +290,47 @@ describe("Palette integration test", () => {
     expect(navStack.currentPalette.palette).toBe(testPalette);
     expect(navStack.isEmpty()).toBe(true);
   });
+
+  test("Coordination among adding, replacing, and removing indicators", async() => {
+    // Setup: add the testPalette of symbols to the document as well as the
+    // indicator strip.  Find the first symbol cell and the plural indicator
+    // in their palettes and click the first cell to add it to the
+    // content area.
+    //
+    render(html`<${Palette} json=${testPalette}/>`);
+    render(html`<${Palette} json=${testIndicatorPalette}/>`);
+    const firstCell = await screen.findByText("First Cell");
+    const addPluralButton = await screen.findByText("plural");
+    expect(firstCell).toBeInTheDocument();
+    expect(addPluralButton).toBeInTheDocument();
+    fireEvent.click(firstCell);
+    let firstSymbol = changeEncodingContents.value[0];
+    expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(false);
+    expect(firstSymbol.bciAvId.includes(ACTION_INDICATOR_ID)).toBe(false);
+
+    // Click the `addPluralButton` and check that the plural indicator has been
+    // added to the symbol in the content area.
+    fireEvent.click(addPluralButton);
+    firstSymbol = changeEncodingContents.value[0];
+    expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(true);
+    expect(firstSymbol.bciAvId.includes(ACTION_INDICATOR_ID)).toBe(false);
+
+    // Find and click the add-action-indicator button and check that the
+    // plural indicator has been replaced with the action indicator.
+    const addActionButton = await screen.findByText("action");
+    fireEvent.click(addActionButton);
+    firstSymbol = changeEncodingContents.value[0];
+    expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(false);
+    expect(firstSymbol.bciAvId.includes(ACTION_INDICATOR_ID)).toBe(true);
+
+    // Find and click the remove-indicator button and check that the
+    // action indicator has been removed (and that there is no plural idnicator
+    // either).
+    const removeIndicatorButton = await screen.findByText("remove indicator");
+    fireEvent.click(removeIndicatorButton);
+    firstSymbol = changeEncodingContents.value[0];
+    expect(firstSymbol.bciAvId.includes(ACTION_INDICATOR_ID)).toBe(false);
+    expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(false);
+  });
+
 });
