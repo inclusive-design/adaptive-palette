@@ -1,0 +1,245 @@
+{
+  "name": "room",
+  "cells": {
+    "room-fb8333f1-9503-4b2e-860f-e4b9484a69c9": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "room",
+        "bciAvId": 16687,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "toilet-a2c9560b-1c95-438b-ae59-158eb0244d88": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "toilet",
+        "bciAvId": 17747,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "kitchen-58f988cc-c1bf-4334-9a17-7bb2114a3bfd": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "kitchen",
+        "bciAvId": 15154,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "stairs-83d0c2d6-dfa6-4be3-b64d-f1b14243edf6": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "stairs",
+        "bciAvId": 17247,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "window-9acaee93-4bc9-4975-a856-e2b2ae19ff7e": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "window",
+        "bciAvId": 18256,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "table-e9e58272-5849-473d-9f6a-503fb9352c62": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "table",
+        "bciAvId": 17493,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "chair-1dafd24e-e34e-45a4-846b-8e0e20fd5ab3": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "chair",
+        "bciAvId": 13148,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "bed-f6531901-cfb5-4c44-b961-ec2e6733f348": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "bed",
+        "bciAvId": 12649,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "shelf-ac58c403-9c79-4bad-a39a-d5326c855111": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "shelf",
+        "bciAvId": 16953,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "SVG:22384;9009:SVG-50f7838f-0d36-444e-8193-180212d16cb1": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "mirror",
+        "bciAvId": [
+          22384,
+          ";",
+          9009
+        ],
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "cupboard-12f87ad6-ca72-4b5f-9598-abb8e715f560": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "cupboard",
+        "bciAvId": 13622,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "13162-6767cbb3-4e7a-475e-93d0-c4dbe9b3a646": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "chest of drawers",
+        "bciAvId": 13162,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "stove-3af7de67-902e-489c-ad1d-49ec8a4a51e2": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "stove",
+        "bciAvId": 17273,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "electricity-c89e8ae2-582b-4788-812b-f1157b22bb25": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "electricity",
+        "bciAvId": 13918,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "battery-238230eb-cc4a-4135-9cbe-dea8605663f4": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "battery",
+        "bciAvId": 12638,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "SVG:15208;9009/13918:SVG-40c5fe7d-11b4-4c89-a546-5584e3bbe76c": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "lamp",
+        "bciAvId": [
+          15208,
+          ";",
+          9009,
+          "/",
+          13918
+        ],
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "bottle-9ff174ef-2a52-4f55-a91f-740bba8281c8": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "bottle",
+        "bciAvId": 12880,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "SVG:16736;8993:SVG-d92c78c2-1c15-48bb-ac88-0453573932cc": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "scissors",
+        "bciAvId": [
+          16736,
+          ";",
+          8993
+        ],
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "needle-a471a3ba-1000-4a41-aa4f-5926e6bbf57e": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "needle",
+        "bciAvId": 15703,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "SVG:15214;9009/23409:SVG-86847431-86ff-455e-b561-71657672e853": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "strap",
+        "bciAvId": [
+          15214,
+          ";",
+          9009,
+          "/",
+          23409
+        ],
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    }
+  }
+}

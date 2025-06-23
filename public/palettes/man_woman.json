@@ -1,0 +1,229 @@
+{
+  "name": "man_woman",
+  "cells": {
+    "man-2d68d262-b971-489a-a07e-18126abae7bf": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "man",
+        "bciAvId": 15416,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "woman-939e630b-a216-4606-81ca-0cc88430b5f6": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "woman",
+        "bciAvId": 18269,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "boy-a6dca0d6-f7cd-401c-9972-b7cebf6de5c2": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "boy",
+        "bciAvId": 12888,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "girl-adb6d363-0d49-490f-91bc-815057126952": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "girl",
+        "bciAvId": 14439,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "self-1365ab30-bc8f-482b-be93-5ae20c3b1cd2": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "self",
+        "bciAvId": 16752,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "baby-2fa768dc-a09f-4867-8cee-d7a65880a452": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "baby",
+        "bciAvId": 12603,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "child-800d3b9b-4b8b-4c16-9fbe-5d8b5d57c622": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "child",
+        "bciAvId": 13166,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "teenager-9ca7577c-7405-4727-b714-07c8230fb8ba": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "teenager",
+        "bciAvId": 17516,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "adult-0f00bed5-e4e0-4c5c-8850-9ca9ceb365df": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "adult",
+        "bciAvId": 12341,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "people-235fdf8c-8a5b-465d-951c-0d7b68c3e513": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "people",
+        "bciAvId": 14646,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "friend-e847c5fe-f778-468a-b00b-51c7d916aee1": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "friend",
+        "bciAvId": 14401,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "visitor-e459b392-5c25-4f50-be03-5257deb48c74": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "visitor",
+        "bciAvId": 18018,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "15418-7f17845a-7d42-4cd6-af26-0710ed203fff": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "boss, manager",
+        "bciAvId": 15418,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "teacher-37880c51-6c30-4100-a8f5-e8b1ff9df96a": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "teacher",
+        "bciAvId": 17513,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "assistant-11da6fdf-0204-4b3b-9542-a921079b07cf": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "assistant",
+        "bciAvId": 14706,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "therapist-5ef4736b-f66c-432c-bcfd-47898d4681f5": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "therapist",
+        "bciAvId": 20516,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "doctor-9ede1485-1edf-4410-b7d4-f0eb673cfbc7": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "doctor",
+        "bciAvId": 13861,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "nurse-351287c3-fb08-45b6-aa63-88897a72ef76": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "nurse",
+        "bciAvId": 15905,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "SVG:16161/16420:SVG-99db1e45-7d6c-4dbe-af0a-fe481302038a": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "police officer",
+        "bciAvId": [
+          16161,
+          "/",
+          16420
+        ],
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "God-f653e999-1176-4a3b-82b7-a7b673a03bad": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "God",
+        "bciAvId": 14451,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    }
+  }
+}

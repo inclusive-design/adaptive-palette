@@ -1,0 +1,225 @@
+{
+  "name": "food",
+  "cells": {
+    "14377-d2c75912-d868-43ea-be41-fb6ee4d9815e": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "food",
+        "bciAvId": 14377,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "dessert-69eafd82-e6cb-46ff-a828-59600145ff7e": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "dessert",
+        "bciAvId": 13664,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "bread-57200e00-2e6c-4e45-8c93-045bccacb5df": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "bread",
+        "bciAvId": 12895,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "bun-680b3263-539c-4943-8c28-5aefe0971985": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "bun",
+        "bciAvId": 16683,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "cookie-9d0b4a84-b741-4208-8573-8dddaaea1d2a": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "cookie",
+        "bciAvId": 13409,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "sandwich-e145d140-ad91-4659-b40f-f300910d419a": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "sandwich",
+        "bciAvId": 16718,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "17238-b7f218e1-487e-4caa-b01b-f4ed3553ea3c": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "spread",
+        "bciAvId": 17238,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "20522-83d9f747-360e-42fc-8ee4-f5222054ef56": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "sauce",
+        "bciAvId": 20522,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "marmalade-a1795a63-476f-4227-837e-500de5917003": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "marmalade",
+        "bciAvId": 14965,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "cheese-f1e9cf3b-9e58-45bb-a2ba-fbba8020a6fd": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "cheese",
+        "bciAvId": 13157,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "meat-6cc338e6-5b31-49f8-a81c-ba6b01a4043c": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "meat",
+        "bciAvId": 15444,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "sausage-d57d6d2f-8f63-424e-9c82-71a7d86e5cbd": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "sausage",
+        "bciAvId": 16726,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "hamburger-fd492e2b-86e4-437b-8263-849e3bf1c968": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "hamburger",
+        "bciAvId": 20770,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "pizza-10c83e60-142a-4a33-b920-b4cf79ec6a48": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "pizza",
+        "bciAvId": 16192,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "pasta-708fd14d-cbc0-4f50-a7a3-6a45cd244865": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "pasta",
+        "bciAvId": 22129,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "pie-8539876e-84a8-4ebb-8bc8-4330ee5b3290": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "pie",
+        "bciAvId": 16173,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "13912-a113a7c7-2c86-4a23-815c-82c09a484e13": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "egg",
+        "bciAvId": 13912,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "salad-84cdbdc6-5186-45cc-ae5c-042e1c34f565": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "salad",
+        "bciAvId": 16709,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "soup-c520508c-a890-4b4b-8bc7-71360b9e0131": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "soup",
+        "bciAvId": 17218,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "25681-d972bb3b-5978-479a-b0e5-b32f61bfc499": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "shellfish",
+        "bciAvId": 25681,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    }
+  }
+}

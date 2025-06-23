@@ -13,8 +13,9 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/preact";
 import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 
-import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
+import { initAdaptivePaletteGlobals, adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
 import { Palette } from "./Palette";
+import { goBackImpl } from "./CommandGoBackCell";
 
 describe("Palette integration test", () => {
 
@@ -146,6 +147,48 @@ describe("Palette integration test", () => {
     }
   };
 
+  // Indicator "tool bar" palette
+  const PLURAL_INDICATOR_ID = 9011;
+  const ACTION_INDICATOR_ID = 8993;
+  const testIndicatorPalette = {
+    "name": "indicator tool bar",
+    "cells": {
+      "SVG:9011:SVG-fb89740b-0a1a-4fcb-8275-bdaabe32a5dc": {
+        "type": "ActionIndicatorCell",
+        "options": {
+          "label": "plural",
+          "bciAvId": PLURAL_INDICATOR_ID,
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 8,
+          "columnSpan": 1
+        }
+      },
+      "action-49abcd96-b0af-4c66-8400-b9a0cb3a20c8": {
+        "type": "ActionIndicatorCell",
+        "options": {
+          "label": "action",
+          "bciAvId": ACTION_INDICATOR_ID,
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 4,
+          "columnSpan": 1
+        }
+      },
+      "remove-indicator-ce71d580-2712-44b8-9daf-7e894295d827": {
+        "type": "ActionRemoveIndicatorCell",
+        "options": {
+          "label": "remove indicator",
+          "bciAvId": [ 17448, "//", 14430, "/", 8993,  "/", 8998 ],
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 12,
+          "columnSpan": 1
+        }
+      }
+    }
+  };
+
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
     // Pre-load `testLayerOnePalette` to avoid importing it from a non-existent
@@ -197,23 +240,130 @@ describe("Palette integration test", () => {
     const clearButton = await screen.findByText("Clear");
     fireEvent.click(clearButton);
     expect(contentArea.childNodes.length).toBe(0);
+  });
+
+  test("Navigation to other layers, and going back", async() => {
+    render(html`<${Palette} json=${testPalette}/>`);
+    const navStack = adaptivePaletteGlobals.navigationStack;
+    const firstCell = await screen.findByText("First Cell");
 
     // Trigger forward navigation.
     // Note: the element whose text is "Go To" is actually a <div> within the
     // <button> of interest.  The button is that <div>'s parent.  Similarly
     // for the "Back Up" button.
-    const goForwardButton = (await screen.findByText("Go To")).parentElement;
+    let goForwardButton = (await screen.findByText("Go To")).parentElement;
 
     fireEvent.click(goForwardButton);
-    const goBackButton = (await waitFor(() => screen.findByText("Back Up"))).parentElement;
+    let goBackButton = (await waitFor(() => screen.findByText("Back Up"))).parentElement;
     expect(goBackButton).toBeInTheDocument();
     expect(navStack.currentPalette.palette).toBe(testLayerOnePalette);
     expect(navStack.peek().palette).toBe(testPalette);
 
-    // Trigger go-back navigation
+    // Trigger go-back navigation by clicking the `goBackButon`
     fireEvent.click(goBackButton);
     await waitFor(() => expect(firstCell).toBeInTheDocument());
     expect(navStack.currentPalette.palette).toBe(testPalette);
     expect(navStack.isEmpty()).toBe(true);
+
+    // Go forward again, then trigger go-back navigation by calling the go-back
+    // function.  This is a way of testing that go-back functionality is
+    // available to other kinds of events such as a key press.
+    goForwardButton = (await screen.findByText("Go To")).parentElement;
+    expect(goForwardButton).toBeInTheDocument();
+    fireEvent.click(goForwardButton);
+    goBackButton = (await waitFor(() => screen.findByText("Back Up"))).parentElement;
+    expect(navStack.currentPalette.palette).toBe(testLayerOnePalette);
+    expect(navStack.peek().palette).toBe(testPalette);
+    await goBackImpl();
+    expect(navStack.currentPalette.palette).toBe(testPalette);
+    expect(navStack.isEmpty()).toBe(true);
+
+    // Go forward once again, then trigger go-back navigation by calling the
+    // go-back function, this time passing a container element id.
+    goForwardButton = (await screen.findByText("Go To")).parentElement;
+    expect(goForwardButton).toBeInTheDocument();
+    fireEvent.click(goForwardButton);
+    goBackButton = (await waitFor(() => screen.findByText("Back Up"))).parentElement;
+    expect(navStack.currentPalette.palette).toBe(testLayerOnePalette);
+    expect(navStack.peek().palette).toBe(testPalette);
+    await goBackImpl(goBackButton.getAttribute("aria-controls"));
+    expect(navStack.currentPalette.palette).toBe(testPalette);
+    expect(navStack.isEmpty()).toBe(true);
+  });
+
+  test("Coordination among adding, replacing, and removing indicators", async() => {
+    // Setup: add the testPalette of symbols to the document as well as the
+    // indicator strip.  Find the first symbol cell and the plural indicator
+    // in their palettes and click the first cell to add it to the
+    // content area.
+    //
+    render(html`<${Palette} json=${testPalette}/>`);
+    render(html`<${Palette} json=${testIndicatorPalette}/>`);
+    const firstCell = await screen.findByText("First Cell");
+    const addPluralButton = await screen.findByText("plural");
+    expect(firstCell).toBeInTheDocument();
+    expect(addPluralButton).toBeInTheDocument();
+    fireEvent.click(firstCell);
+    let firstSymbol = changeEncodingContents.value[0];
+    expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(false);
+    expect(firstSymbol.bciAvId.includes(ACTION_INDICATOR_ID)).toBe(false);
+
+    // Click the `addPluralButton` and check that the plural indicator has been
+    // added to the symbol in the content area.
+    fireEvent.click(addPluralButton);
+    firstSymbol = changeEncodingContents.value[0];
+    expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(true);
+    expect(firstSymbol.bciAvId.includes(ACTION_INDICATOR_ID)).toBe(false);
+
+    // Find and click the add-action-indicator button and check that the
+    // plural indicator has been replaced with the action indicator.
+    const addActionButton = await screen.findByText("action");
+    fireEvent.click(addActionButton);
+    firstSymbol = changeEncodingContents.value[0];
+    expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(false);
+    expect(firstSymbol.bciAvId.includes(ACTION_INDICATOR_ID)).toBe(true);
+
+    // Find and click the remove-indicator button and check that the
+    // action indicator has been removed (and that there is no plural idnicator
+    // either).
+    const removeIndicatorButton = await screen.findByText("remove indicator");
+    fireEvent.click(removeIndicatorButton);
+    firstSymbol = changeEncodingContents.value[0];
+    expect(firstSymbol.bciAvId.includes(ACTION_INDICATOR_ID)).toBe(false);
+    expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(false);
+  });
+
+  test("ActionRemoveIndicator disabled state depending on the last symbol in the content area", async() => {
+    // Setup: add the `testPalette` to the document as well as the indicator
+    // strip.  Make sure the content area is empty.
+    //
+    render(html`<${Palette} json=${testPalette}/>`);
+    render(html`<${Palette} json=${testIndicatorPalette}/>`);
+    const clearButton = await screen.findByText("Clear");
+    fireEvent.click(clearButton);
+    const contentArea = await screen.findByLabelText("Input Area");
+    expect(contentArea.childNodes.length).toBe(0);
+
+    // Add the symbol in the first cell to the contents and add a plural
+    // indicator to it.  The remove-indicator button should be enabled.
+    const firstCell = await screen.findByText("First Cell");
+    const addPluralButton = await screen.findByText("plural");
+    const removeIndicatorButton = await screen.findByText("remove indicator");
+    fireEvent.click(firstCell);
+    fireEvent.click(addPluralButton);
+    const firstSymbol = changeEncodingContents.value[0];
+    expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(true);
+    expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
+
+    // Add a second symbol to the contents, one without an indicator.  The
+    // remove-indicator button should change to disabled.
+    fireEvent.click(firstCell);
+    expect(removeIndicatorButton.getAttribute("disabled")).toBeDefined();
+
+    // Delete the last symbol.  The remaining symbol will still an indicator,
+    // and the remove-indicator button should change to enabled.
+    const deleteButton = await screen.findByText("Delete");
+    fireEvent.click(deleteButton);
+    expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
   });
 });

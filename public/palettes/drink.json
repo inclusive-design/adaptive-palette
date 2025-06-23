@@ -1,0 +1,233 @@
+{
+  "name": "drink",
+  "cells": {
+    "drink-4a8207f1-1a13-4ac8-bd31-ba2050a2b548": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "drink",
+        "bciAvId": 13881,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "milk-0bf61f76-1e87-4d7f-a96f-d687c6e17999": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "milk",
+        "bciAvId": 15468,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "SVG:13881/14405:SVG-ac9f9165-fafd-4ce1-9342-152786f25ae6": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "fruit juice",
+        "bciAvId": [
+          13881,
+          "/",
+          14405
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "SVG:13881/14424:SVG-e05e0ad5-c651-4392-a7a4-f17c5a3deb26": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "fizzy drink",
+        "bciAvId": [
+          13881,
+          "/",
+          14424
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "liquor-0357797e-b0f6-43b6-a856-2687015042b8": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "liquor",
+        "bciAvId": 12359,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "coffee-c9020e64-7113-4fc1-b622-2a5da14716cf": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "coffee",
+        "bciAvId": 13373,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "tea-267029bb-4455-44a1-a4d7-6f8013ec7b69": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "tea",
+        "bciAvId": 17511,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "salt-0c45ccf8-bdb4-4bf2-8f1c-51e719a5f9d9": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "salt",
+        "bciAvId": 26235,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "sugar-758fdbad-c681-45d4-b63a-739a6c94aa70": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "sugar",
+        "bciAvId": 17453,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "flavouring-c479af0f-f772-4b15-a687-b36cd2563b4f": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "flavouring",
+        "bciAvId": 14198,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "yoghurt-bd29cfe5-c48c-4fe5-8673-0bbe10015389": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "yoghurt",
+        "bciAvId": 18296,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "18004-275ef9fa-e91b-4206-8cb7-a24206dd688c": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "vegetable",
+        "bciAvId": 18004,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "14405-3432ed49-e58f-4216-8515-4ae6959d9632": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "fruit",
+        "bciAvId": 14405,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "14921-8e20b95c-cb69-4826-b664-ab682aa31c2e": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "ice cream",
+        "bciAvId": 14921,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "22376-75711b3e-bd22-43ef-87de-3614f17fe8a8": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "candy",
+        "bciAvId": 22376,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "straw-bd0a1300-3533-4bf3-92a7-b900d65d5642": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "straw",
+        "bciAvId": 17277,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "glass-7a88ddfd-ef77-4dbe-820f-a9cfb1956985": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "glass",
+        "bciAvId": 14442,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "dish-e331e64e-89a3-4ad5-9c58-6e2278790658": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "dish",
+        "bciAvId": 13690,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "spoon-a3a84a12-5120-46a7-91c6-59b53c73cbd4": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "spoon",
+        "bciAvId": 17233,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "knife-b3bc6e9d-5b5d-43c3-abd4-96b39d93a388": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "knife",
+        "bciAvId": 15159,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    }
+  }
+}

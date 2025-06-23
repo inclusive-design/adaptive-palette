@@ -1,0 +1,235 @@
+{
+  "name": "body_related",
+  "cells": {
+    "SVG:12870:SVG-b7f42886-c260-408a-90ab-11f1d5bd6a44": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "body",
+        "bciAvId": [
+          12870
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "14689-9a19d0a3-8afb-4d74-8db1-dbe214f9edb1": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "head",
+        "bciAvId": 14689,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "SVG:14661:SVG-72911ecb-47e3-43f0-b171-ea7225bd06a6": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "hair",
+        "bciAvId": [
+          14661
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "ear-24c227e5-a7fa-4652-b43e-402dc9c4982e": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "ear",
+        "bciAvId": 13894,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "eye-57f2f1b5-ef20-4b6b-a1e3-d22b6b5fcc52": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "eye",
+        "bciAvId": 14133,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "nose-3741c35b-0e76-41aa-81f9-c4e7b7ca9208": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "nose",
+        "bciAvId": 15732,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "15666-49419fc6-3f27-48f4-acbd-594dde32cced": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "mouth",
+        "bciAvId": 15666,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "teeth-21a03a13-7557-4a59-bdb2-48f31b56c93b": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "teeth",
+        "bciAvId": 17517,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "SVG:15699:SVG-2917e8b4-557f-4f5e-9712-6b21cb3ef346": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "neck",
+        "bciAvId": [
+          15699
+        ],
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "hand-4b2e74c9-7c4e-4bca-9232-3af87739f893": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "hand",
+        "bciAvId": 14667,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "stomach-09b5da0a-7a26-4e55-8f3c-a25343dd8009": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "stomach",
+        "bciAvId": 17265,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "SVG:12609:SVG-cf3b1ff9-3d18-4fa1-89c9-026f4e15782c": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "back (body)",
+        "bciAvId": [
+          12609
+        ],
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "buttocks-794dfa42-d9f2-47ef-97ab-89892834cff1": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "buttocks",
+        "bciAvId": 13097,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "leg-f30381c5-e8fa-4999-b155-5b70b590ddee": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "leg",
+        "bciAvId": 15188,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "foot-febfa2f9-6614-4f1e-8978-fab05d6715e9": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "foot",
+        "bciAvId": 14379,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "arm-cd6ec228-b0b7-44d7-8de2-9007170de098": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "arm",
+        "bciAvId": 12577,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "hug-eac489d5-b77a-44fb-be83-e92ded379ee6": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "hug",
+        "bciAvId": 14909,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "SVG:24816:SVG-70bf1069-8074-40cf-bdbf-fd1b84e5f30e": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "massage",
+        "bciAvId": [
+          24816
+        ],
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "makeup-7d1b95be-b1a4-4de3-be1c-3db093e36354": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "makeup",
+        "bciAvId": 15413,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "medicine-2a6a4edd-a6e1-4ef2-aa70-b09c68bb7814": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "medicine",
+        "bciAvId": 15448,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    }
+  }
+}

@@ -10,8 +10,9 @@
  */
 import { render } from "preact";
 import { html } from "htm/preact";
-import { initAdaptivePaletteGlobals, adaptivePaletteGlobals} from "./GlobalData";
-import { loadPaletteFromJsonFile } from "./GlobalUtils";
+import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
+import { loadPaletteFromJsonFile, speak } from "./GlobalUtils";
+import { goBackImpl } from "./CommandGoBackCell";
 import "./index.scss";
 
 // Initialize any globals used elsewhere in the code.
@@ -36,4 +37,29 @@ adaptivePaletteGlobals.navigationStack.currentPalette = firstLayer;
 render(html`<${Palette} json=${inputArea} />`, document.getElementById("input_palette"));
 render(html`<${Palette} json=${goBackCell} />`, document.getElementById("backup_palette"));
 render(html`<${Palette} json=${topPalette} />`, document.getElementById("indicators"));
-render(html`<${Palette} json=${firstLayer}/>`, document.getElementById("mainPaletteDisplayArea"));
+render(html`<${Palette} json=${firstLayer} />`, document.getElementById("mainPaletteDisplayArea"));
+
+// Window keydown listener for a global "go back" keystroke
+window.addEventListener("keydown", (event) => {
+  if (event.code === "Backquote") {
+    // If focus was not on a textual input element, go back up one layer in the
+    // palette navigation
+    if (!elementAllowsTextEntry(event.target)) {
+      speak("Go back");
+      goBackImpl();
+    }
+  }
+});
+
+function elementAllowsTextEntry (element) {
+  return (
+    (element.type === "text") || (element.type === "email") ||
+    (element.type === "month") || (element.type === "number") ||
+    (element.type === "password") || (element.type === "search") ||
+    (element.type === "tel") || (element.type === "url") ||
+    (element.type === "week") ||
+    (element instanceof HTMLTextAreaElement) ||
+    (element instanceof HTMLSelectElement) ||
+    (element.getAttribute("role") === "textbox")
+  );
+}

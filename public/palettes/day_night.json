@@ -1,0 +1,245 @@
+{
+  "name": "day_night",
+  "cells": {
+    "day-3b5ec0a4-c93e-4861-91f0-112a789bd420": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "day",
+        "bciAvId": 13639,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "night-61167498-c4b5-424c-bee0-c03512017a00": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "night",
+        "bciAvId": 15719,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "15656-5ad202e9-26f5-4865-a5b8-70c3f0202aca": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "early morning",
+        "bciAvId": 15656,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "evening-4191a142-05ed-48d7-967f-5e43b0682048": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "evening",
+        "bciAvId": 13950,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "16497-30d2a461-ad9c-42ae-8ea8-9a5856b5edb5": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "break",
+        "bciAvId": 16497,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "SVG:13639/12656/8497/RK:-1/8498:SVG-29bd3a10-5d95-4f11-8e5b-70b8a327fce0": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "morning",
+        "bciAvId": [
+          13639,
+          "/",
+          12656,
+          "/",
+          8497,
+          "/",
+          "RK:-1",
+          "/",
+          8498
+        ],
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "SVG:13639/12348/8497/RK:-1/8498:SVG-93420f56-e764-4a90-b385-4a8fd4d02593": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "afternoon",
+        "bciAvId": [
+          13639,
+          "/",
+          12348,
+          "/",
+          8497,
+          "/",
+          "RK:-1",
+          "/",
+          8498
+        ],
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "yesterday-75885a45-628a-4b7a-9f2c-4e625bb4556c": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "yesterday",
+        "bciAvId": 18295,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "today-2f0e80e2-2652-45e3-a4ff-47ec741dd0cb": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "today",
+        "bciAvId": 17744,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "tomorrow-6a3e3192-0d39-42dc-9d80-4bcbae15878c": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "tomorrow",
+        "bciAvId": 17750,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "17464-facf4214-7483-4345-b7b6-1dcd1b7c2b39": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "Sunday",
+        "bciAvId": 17464,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "Monday_(OLD)-b8e5437c-09c7-4905-94ec-e0190b4ba7ed": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "Monday",
+        "bciAvId": 15483,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "Tuesday_(OLD)-a07f11a7-b637-41b5-a84b-c32dd1103799": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "Tuesday",
+        "bciAvId": 17790,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "Wednesday_(OLD)-a2ad3556-5830-4d13-9f92-457c9db85752": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "Wednesday",
+        "bciAvId": 18216,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "Thursday_(OLD)-02af2c1e-2777-4de9-95ce-da62599e8009": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "Thursday",
+        "bciAvId": 17728,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "Friday_(OLD)-074416bd-ff00-485e-9b8c-8029f1f470a1": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "Friday",
+        "bciAvId": 14400,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "Saturday_(OLD)-2f18d27d-a6b2-402b-9f0c-aac65e8f23e0": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "Saturday",
+        "bciAvId": 16722,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "weekend-9069d41b-0af5-4f44-b28e-4542c050259f": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "weekend",
+        "bciAvId": 25217,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "past-7cdf3321-edb8-467c-931f-49153357d4ed": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "past",
+        "bciAvId": 12352,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "future-81014ef7-cf3f-4506-9fea-f7883a7414b5": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "future",
+        "bciAvId": 14417,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    }
+  }
+}

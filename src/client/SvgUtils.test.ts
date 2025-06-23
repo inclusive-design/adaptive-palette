@@ -24,26 +24,43 @@ describe("SvgUtils module", (): void => {
   // blissary ids.
   const singleBciAvId = 23409;                        // CONJ.
   const expectedString = "B823";
+
   const bciAvIdArray = [ 12335, "/", 8499 ];          // VERB+EN
   const expectedConcatenation = "B106/B12";
+
   const invalidBciAvId = 1;
+
   const reviveBlissarySvgBuilderStr = "B206;B81/RK:-2/B473/B457";
   const expectedBciAvIdRevive = [
     13134, ";", 8993, "/", "RK:-2", "/", 15732, "/", 15666
   ];
   const reviveBciSvgBuilderStr = "13134;8993/RK:-2/15732/15666";
+
+  const badBciSvgBuilderStr       = "asdffr;1214343";
+  const badBlissarySvgBuilderStr  = "asdffr;B1214343";
+  const expectBciAvTypeBadResult  = [];
+
   const abcBlissarySvgBuilderStr = "Xa/Xb/Xc";        // "a b c"
   const abcBciAvSvgBuilderStr    = "Xa/Xb/Xc";        // "a b c"
   const expectedBciAvIdAbc = [ "Xa", "/", "Xb", "/", "Xc" ];
+
   const multiWordBlissaryBuilderStr = "B2505//B348/B81/B86";
   const multiWordBciAvIdBuilderStr = "17448//14430/8993/8998";
   const expectedMultiWordBciAvid = [ 17448, "//", 14430, "/", 8993,  "/", 8998 ];
-  const indicatorId = 8999;                           // future action indicator
-  const nonIndicatorId = 12334;                       // action
+
+  const indicatorId = 8999;                           // "future action" indicator
+  const nonIndicatorId = 12334;                       // "action" indicator
   const modifierId = 8515;                            // "5" (5 items or 5th)
-  const nonModifierId = 28043;                        // continuous indicator
+  const nonModifierId = 28043;                        // "continuous" indicator
   const dontKnow = [ 15161, "/", 15733];
   const fullDontKnow = [15162,";",8993,"/",15474,"/",14947];
+
+  // Gloss for symbol is "remove indicator".  The `shortTwoWordBciAvId` uses
+  // the single BCI AV ID for the "remove" symbol.
+  const twoWordBciAvIdString = "17449;8993//14430/8993/8998";
+  const twoWordBlissaryString = "B634;B81//B348/B81/B86";
+  const twoWordBciAvId = [ 17449, ";", 8993, "//", 14430, "/", 8993, "/", 8998 ];
+  const shortTwoWordBciAvId = [ 17448, "//", 14430, "/", 8993, "/", 8998 ];
 
   // Github test runs suggested that more that 5000 msec was needed for these
   // tests, so increased timeout to 7000.
@@ -92,6 +109,13 @@ describe("SvgUtils module", (): void => {
     expect(makeBciAvIdType(reviveBciSvgBuilderStr, BCIAV_PATTERN_KEY)).toEqual(expectedBciAvIdRevive);
     expect(makeBciAvIdType(abcBciAvSvgBuilderStr, BCIAV_PATTERN_KEY)).toEqual(expectedBciAvIdAbc);
     expect(makeBciAvIdType(multiWordBciAvIdBuilderStr, BCIAV_PATTERN_KEY)).toEqual(expectedMultiWordBciAvid);
+  });
+
+  test("Check makeBciAvIdType() when passing an invalid input", (): void => {
+    expect(makeBciAvIdType(badBciSvgBuilderStr, BCIAV_PATTERN_KEY)).toEqual(expectBciAvTypeBadResult);
+    expect(makeBciAvIdType(badBlissarySvgBuilderStr, BLISSARY_PATTERN_KEY)).toEqual(expectBciAvTypeBadResult);
+    expect(makeBciAvIdType("", BCIAV_PATTERN_KEY)).toEqual(expectBciAvTypeBadResult);
+    expect(makeBciAvIdType("", BLISSARY_PATTERN_KEY)).toEqual(expectBciAvTypeBadResult);
   });
 
   test("Check for indicator or modifier BCI-AV-ID", (): void => {
@@ -173,5 +197,13 @@ describe("SvgUtils module", (): void => {
   test("Get SVG Element and markup for BCI AV ID using X code", (): void => {
     expect(getSvgElement(expectedMultiWordBciAvid)).toBeDefined();
     expect(getSvgMarkupString(expectedMultiWordBciAvid)).toBeDefined();
+  });
+
+  test("Multiword using '//'", (): void => {
+    expect(bciAvIdToString(twoWordBciAvId)).toBe(twoWordBlissaryString);
+    expect(makeBciAvIdType(twoWordBciAvIdString, BCIAV_PATTERN_KEY)).toEqual(twoWordBciAvId);
+    expect(makeBciAvIdType(twoWordBlissaryString, BLISSARY_PATTERN_KEY)).toEqual(twoWordBciAvId);
+    expect(makeBciAvIdType(twoWordBlissaryString)).toEqual(twoWordBciAvId);
+    expect(decomposeBciAvId(shortTwoWordBciAvId)).toEqual(twoWordBciAvId);
   });
 });

@@ -1,0 +1,247 @@
+{
+  "name": "questions",
+  "cells": {
+    "question-564eb155-3fad-4f78-a8de-53f3abe0dade": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "question",
+        "bciAvId": 12588,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "SVG:18229/16161:SVG-3c056790-cba5-4211-83fc-f74e21906337": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "who",
+        "bciAvId": [
+          18229,
+          "/",
+          16161
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "SVG:18229/17717:SVG-6c0f67dc-0bb1-41f7-b0aa-30ce0abbc05e": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "what",
+        "bciAvId": [
+          18229,
+          "/",
+          17717
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "SVG:18229/15972:SVG-e8ee53f4-0dd1-4e23-b5fa-6251a111ac20": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "which",
+        "bciAvId": [
+          18229,
+          "/",
+          15972
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "not-30decffe-f997-42cc-8f97-ff9834606ff6": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "not",
+        "bciAvId": 15733,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "SVG:18235:SVG-ccfde996-f996-425e-b909-ff854db8da76": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "when",
+        "bciAvId": [
+          18235
+        ],
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "SVG:18237:SVG-6f79c379-fbac-4111-ae24-eaf2d450fb81": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "where",
+        "bciAvId": [
+          18237
+        ],
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "SVG:14907:SVG-9210650a-f9ec-46bf-ad01-bcfead107365": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "how",
+        "bciAvId": [
+          14907
+        ],
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "why-d5569973-738a-42ea-a1fc-a298c2815d3b": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "why",
+        "bciAvId": 18249,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "maybe-af44ead8-ed63-4d8f-b2c7-bb173deb96bc": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "maybe",
+        "bciAvId": 16226,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "SVG:24309:SVG-df036dda-46d9-43b5-b5e8-71c9a57baf4f": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "that",
+        "bciAvId": [
+          24309
+        ],
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "but-5d4f48fd-aba6-4508-bb2f-e6b3b086a0f7": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "but",
+        "bciAvId": 13094,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "SVG:17708:SVG-4b1b3ebf-c4af-44f3-a7de-2eb5c6a498a6": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "so",
+        "bciAvId": [
+          17708
+        ],
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "with-68bfc0b8-55d2-482f-b982-6af4369dad73": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "with",
+        "bciAvId": 18267,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "and-44e824f2-4daf-48e1-845b-04bdef919a37": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "and",
+        "bciAvId": 12374,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "ago-4a7e6af1-248a-432c-b46b-36b3d4c91bff": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "ago",
+        "bciAvId": 12352,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "now-de18a3e5-eec9-4966-9754-51d4a809fb10": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "now",
+        "bciAvId": 15736,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "then-bf45efa1-48e9-4c2f-be5f-4f9bd632ed5e": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "then",
+        "bciAvId": 17705,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "again-4c8884cc-41e0-46c9-8dac-0fcbc7199ce3": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "again",
+        "bciAvId": 12350,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "or-1489c193-f289-4b2e-939c-f2200d7e1bf2": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "or",
+        "bciAvId": 15929,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    }
+  }
+}

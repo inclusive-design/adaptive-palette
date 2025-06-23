@@ -1,0 +1,233 @@
+{
+  "name": "much_many",
+  "cells": {
+    "SVG:14647;8998:SVG-e89b3882-8ee9-4333-93c3-96797acc9f0e": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "much, many",
+        "bciAvId": [
+          14647,
+          ";",
+          8998
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "more-3b297ebf-af86-4c9c-9ebd-52bca604956b": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "more",
+        "bciAvId": 15654,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "most-df2c24d7-b462-4e15-9414-a40715c9e3a8": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "most",
+        "bciAvId": 15661,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "near-34a4a7ec-fa08-40a9-89ef-44cf6283c3e2": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "near",
+        "bciAvId": 15697,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "different-bf91bb2a-d425-42b2-adb6-28fa4c56c245": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "different",
+        "bciAvId": 13675,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "happy-ffed8179-301d-40cd-9dc0-ab5c9668d24d": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "happy",
+        "bciAvId": 14676,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "sad-15f53049-5932-4abe-a874-98f718929a3f": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "sad",
+        "bciAvId": 16702,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "upset-2103a241-fc1c-48cb-b934-0ca9c275324d": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "upset",
+        "bciAvId": 17985,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "afraid-ae6bf750-3376-4678-b396-3d90df7a1725": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "afraid",
+        "bciAvId": 12347,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "anxious-137f32a3-4f51-4131-b2c6-ea906963e61a": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "anxious",
+        "bciAvId": 12398,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "good-7983d11b-cc44-49a1-a2dd-b5ec79cf3a0d": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "good",
+        "bciAvId": 12645,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "bad-afe3deff-5ad1-474a-bd48-db20e24b33f4": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "bad",
+        "bciAvId": 12615,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "beautiful-64f4afdd-b99b-4edf-87ae-4a558c74fa4d": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "beautiful",
+        "bciAvId": 12645,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "funny-2c770a3c-37f3-4f0f-b7ab-064e7bba9ce7": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "funny",
+        "bciAvId": 14414,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "boring-87a9305b-8f5d-4f70-ab53-942a3c6f75ed": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "boring",
+        "bciAvId": 24827,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "nice-c41d989c-9d13-46c3-87bb-70f3693d7083": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "nice",
+        "bciAvId": 15717,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "troublesome-ca8bd297-a475-4a1b-a933-cbbbe480af14": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "troublesome",
+        "bciAvId": 24821,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "communication-24e7a935-acee-45c9-b15f-f882da7e4154": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "communication",
+        "bciAvId": 13390,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "uncomfortable-ee70cb85-5274-4936-b9c2-0440041152f4": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "uncomfortable",
+        "bciAvId": 17968,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "SVG:15399;8998:SVG-4cff7099-775c-4e78-b744-7da9956a2601": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "in love",
+        "bciAvId": [
+          15399,
+          ";",
+          8998
+        ],
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    }
+  }
+}

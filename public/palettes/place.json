@@ -1,0 +1,289 @@
+{
+  "name": "place",
+  "cells": {
+    "place-74c43981-d15f-4d5b-85a8-fb6b2be4ec5d": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "place",
+        "bciAvId": 16193,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "house-aadb086e-1a63-45f6-b000-2e1ae3c5bbc3": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "house",
+        "bciAvId": 14905,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "SVG:14905/14164:SVG-686a58d0-cca2-42b0-85a1-c2e742c3931e": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "home",
+        "bciAvId": [
+          14905,
+          "/",
+          14164
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "SVG:14905/14932/14905:SVG-c81ffbf3-a115-48c8-b139-c56ae1499ea0": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "flat",
+        "bciAvId": [
+          14905,
+          "/",
+          14932,
+          "/",
+          14905
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "SVG:14905/14647/16161:SVG-c925a0ef-b0f1-432f-9391-019f6143174b": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "group home",
+        "bciAvId": [
+          14905,
+          "/",
+          14647,
+          "/",
+          16161
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "SVG:14905/24903/15162:SVG-35a48772-a177-428d-be6e-ef7299b0aff9": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "school",
+        "bciAvId": [
+          14905,
+          "/",
+          24903,
+          "/",
+          15162
+        ],
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "SVG:14905/12335/14396:SVG-7f885d39-9e8d-456b-93c1-9ba2b809a890": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "after school center",
+        "bciAvId": [
+          14905,
+          "/",
+          12335,
+          "/",
+          14396
+        ],
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "SVG:14905/25555/18273:SVG-b3f0f1e6-be93-4bd5-9f04-57a77b9bcad1": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "day center",
+        "bciAvId": [
+          14905,
+          "/",
+          25555,
+          "/",
+          18273
+        ],
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "SVG:14905/18273:SVG-371bf652-2b8f-428e-8480-0580668332bd": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "working place",
+        "bciAvId": [
+          14905,
+          "/",
+          18273
+        ],
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "street-886e465a-a066-41b9-8b1a-2d8cf855995f": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "street",
+        "bciAvId": 17441,
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "SVG:14905/15198:SVG-a59d0b47-34bd-447a-9bd5-54db43346db1": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "post office",
+        "bciAvId": [
+          14905,
+          "/",
+          15198
+        ],
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "SVG:14905/15484:SVG-c3c1cdf3-53f7-44c9-85ff-6cf2d33b0413": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "bank",
+        "bciAvId": [
+          14905,
+          "/",
+          15484
+        ],
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "SVG:14905/24920:SVG-c5913758-9a31-49dc-a730-50304bf88d29": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "hospital",
+        "bciAvId": [
+          14905,
+          "/",
+          24920
+        ],
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "SVG:14905/14133/13894:SVG-302051f2-c4f0-4af0-96d2-9f22581810ac": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "theatre",
+        "bciAvId": [
+          14905,
+          "/",
+          14133,
+          "/",
+          13894
+        ],
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "SVG:14905/17717;9011/24916:SVG-39072e42-f5a4-4940-a9e9-1ee0bd513015": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "museum",
+        "bciAvId": [
+          14905,
+          "/",
+          17717,
+          ";",
+          9011,
+          "/",
+          24916
+        ],
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "shop-55c8b5b5-07a2-426b-ac00-6bc923c1c1f8": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "shop",
+        "bciAvId": 23223,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "restaurant-92af369c-a72f-49d1-9153-f55936210013": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "restaurant",
+        "bciAvId": 16498,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "farm-2247213d-8e67-4e43-9803-800db831f171": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "farm",
+        "bciAvId": 14151,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "garden-daba9dfa-749d-4ad6-8fbd-9d7dc150c9a6": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "garden",
+        "bciAvId": 14422,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "countryside-c786700b-ec9e-409b-a5b8-0a072454ff9d": {
+      "type": "ActionBmwCodeCell",
+      "options": {
+        "label": "countryside",
+        "bciAvId": 13424,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    }
+  }
+}
