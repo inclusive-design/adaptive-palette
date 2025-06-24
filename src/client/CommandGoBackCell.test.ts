@@ -21,7 +21,7 @@ describe("CommandGoBackCell render tests", (): void => {
   const TEST_CELL1_ID = "uuid-of-some-kind";
   const TEST_CELL2_ID = "uuid-of-another-kind";
   const TEST_CONTROL_ID = "non-empty-id";
-  const goBackCell = {
+  const goBackCellNoAriaControls = {
     options: {
       "label": "Back Up",
       "rowStart": "3",
@@ -31,7 +31,7 @@ describe("CommandGoBackCell render tests", (): void => {
       "bciAvId": 12612
     }
   };
-  const goBackCell2 = {
+  const goBackCellAriaControls = {
     options: {
       "label": "Back Up non-empty aria-controls",
       "rowStart": "3",
@@ -54,12 +54,12 @@ describe("CommandGoBackCell render tests", (): void => {
     render(html`
       <${CommandGoBackCell}
         id="${TEST_CELL1_ID}"
-        options=${goBackCell.options}
+        options=${goBackCellNoAriaControls.options}
       />`
     );
 
     // Check the rendered cell with TEST_CELL_ID1
-    const button = await screen.findByRole("button", {name: goBackCell.options.label});
+    const button = await screen.findByRole("button", {name: goBackCellNoAriaControls.options.label});
 
     // Check that the ActionBmwCodeCell/button is rendered and has the correct
     // attributes and text.
@@ -67,7 +67,7 @@ describe("CommandGoBackCell render tests", (): void => {
     expect(button).toBeValid();
     expect(button.id).toBe(TEST_CELL1_ID);
     expect(button.getAttribute("class")).toBe("btn-command");
-    expect(button.textContent).toBe(goBackCell.options.label);
+    expect(button.textContent).toBe(goBackCellNoAriaControls.options.label);
     expect(button.getAttribute("aria-controls")).toBe("");
 
     // Check the grid cell styles.
@@ -84,11 +84,11 @@ describe("CommandGoBackCell render tests", (): void => {
     render(html`
       <${CommandGoBackCell}
         id="${TEST_CELL2_ID}"
-        options=${goBackCell2.options}
+        options=${goBackCellAriaControls.options}
       />`
     );
 
-    const button = await screen.findByRole("button", {name: goBackCell2.options.label});
+    const button = await screen.findByRole("button", {name: goBackCellAriaControls.options.label});
     expect(button.id).toBe(TEST_CELL2_ID);
     expect(button.getAttribute("aria-controls")).toBe(TEST_CONTROL_ID);
   });

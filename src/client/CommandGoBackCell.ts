@@ -25,26 +25,44 @@ type CommandGoBackCellPropsType = {
 };
 
 /*
- * Event handler for an CommandGoBackCellPropsType button/cell that, when clicked,
- * goes back one palette.
+ * The implementation of the function invoked by, for example, activating a
+ * CommandGoBackCell button/cell.  This determines which palette to go back to
+ * by consulting the navigation stack, adjusts the stack accordingly, and
+ * calls upon the palette-to-go-back-to to render itself.  The
+ * `defaultContaineId` parameter is optional fallback and is only used if the
+ * navigation stack entry does not specify an HTMLElement in which to render
+ * the palette.  If not given, and the navigation stack also does not specify
+ * a rendering container, then the container defaults to the document's
+ * `body` element.
+ * @param defaultContaineId {string} - Optional id of the HTMLELement in which
+ *                                     to render the palette if none is
+ *                                     specified in the navigation stack entry.
  */
-const goBackToPalette = async (event: Event): Promise<void> => {
+export async function goBackImpl (defaultContaineId?: string ): Promise<void> {
   const { paletteStore, navigationStack } = adaptivePaletteGlobals;
-  const button = event.currentTarget as HTMLElement;
-  speak(button.innerText);
 
   const paletteToGoBackTo = navigationStack.peek();
   if (paletteToGoBackTo && paletteToGoBackTo.palette) {
     const paletteDefinition = await paletteStore.getNamedPalette(paletteToGoBackTo.palette.name, loadPaletteFromJsonFile);
     if (paletteDefinition) {
-      const paletteContainer = paletteToGoBackTo.htmlElement || document.getElementById(button.getAttribute("aria-controls")) || document.body;
+      const paletteContainer = paletteToGoBackTo.htmlElement || document.getElementById(defaultContaineId) || document.body;
       navigationStack.popAndSetCurrent(paletteToGoBackTo);
       render (html`<${Palette} json=${paletteDefinition}/>`, paletteContainer);
     }
     else {
-      console.error(`goBackToPalette():  Unable to locate the palette definition for ${paletteToGoBackTo.palette.name}`);
+      console.error(`goBackImpl(): Unable to locate the palette definition for ${paletteToGoBackTo.palette.name}`);
     }
   }
+};
+
+/*
+ * Event handler for an CommandGoBackCellPropsType button/cell that, when
+ * clicked, goes back one palette.
+ */
+const goBackToPalette = async (event: Event): Promise<void> => {
+  const button = event.currentTarget as HTMLElement;
+  speak(button.innerText);
+  return goBackImpl(button.getAttribute("aria-controls"));
 };
 
 export function CommandGoBackCell (props: CommandGoBackCellPropsType): VNode {

@@ -11,7 +11,8 @@
 import { render } from "preact";
 import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
-import { loadPaletteFromJsonFile } from "./GlobalUtils";
+import { loadPaletteFromJsonFile, speak } from "./GlobalUtils";
+import { goBackImpl } from "./CommandGoBackCell";
 import "./index.scss";
 
 // Initialize any globals used elsewhere in the code.
@@ -59,13 +60,11 @@ render(html`<${ActionSearchGloss} />`, document.getElementById("searchGloss"));
 // Window keydown listener for a global "go back" keystroke
 window.addEventListener("keydown", (event) => {
   if (event.code === "Backquote") {
-    // If focus was not on a textual input element, press the go-back button
+    // If focus was not on a textual input element, go back up one layer in the
+    // palette navigation
     if (!elementAllowsTextEntry(event.target)) {
-      const goBackButton = document.getElementById("back-up-30a32c78-56fe-4622-9fba-0416b68d72fc");
-      const clickEvent = new MouseEvent(
-        "click", { "view": window, "bubbles": true, "cancelable": false }
-      );
-      goBackButton.dispatchEvent(clickEvent);
+      speak("Go back");
+      goBackImpl();
     }
   }
 });
