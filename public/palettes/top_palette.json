@@ -1,22 +1,22 @@
 {
   "name": "top_palette",
   "cells": {
-    "SVG:18294:SVG-83498953-875a-4f8a-9abc-bb2a992ad023": {
+    "SVG:12374/14947/14947:SVG-83498953-875a-4f8a-9abc-bb2a992ad023": {
       "type": "ActionBmwCodeCell",
       "options": {
         "label": "yes",
-        "bciAvId": 18294,
+        "bciAvId": [ 12374, "/", 14947, "/", 14947 ],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
         "columnSpan": 1
       }
     },
-    "SVG:15722:SVG-29984eee-0f35-4b91-a2d6-d6c2051b175c": {
+    "SVG:15474/14947/14947:SVG-29984eee-0f35-4b91-a2d6-d6c2051b175c": {
       "type": "ActionBmwCodeCell",
       "options": {
         "label": "no",
-        "bciAvId": 15722,
+        "bciAvId": [ 15474, "/", 14947, "/", 14947 ],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -30,7 +30,9 @@
         "bciAvId": [
           15161,
           "/",
-          15733
+          15474,
+          "/",
+          14947
         ],
         "rowStart": 1,
         "rowSpan": 1,
