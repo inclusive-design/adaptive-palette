@@ -61,7 +61,7 @@
       "type": "ActionBmwCodeCell",
       "options": {
         "label": "not",
-        "bciAvId": 15733,
+        "bciAvId": [ 15474, "/", 14947 ],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
