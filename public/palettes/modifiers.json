@@ -1,0 +1,179 @@
+{
+  "name": "modifiers",
+  "cells": {
+    "SVG:14647;8998:SVG-55b0d772-98ae-42b9-a7ca-1185eae78a98": {
+      "type": "ActionPreModifierCell",
+      "options": {
+        "label": "many",
+        "bciAvId": [
+          14647,
+          ";",
+          8998
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "intensity-afbf07dc-2512-447e-82b7-c7b82f6f314d": {
+      "type": "ActionPostModifierCell",
+      "options": {
+        "label": "intensity",
+        "bciAvId": 14947,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "minus-83d8d9b9-adf3-4b27-a436-9b215c7f56f9": {
+      "type": "ActionPreModifierCell",
+      "options": {
+        "label": "without",
+        "bciAvId": 15474,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "opposite-463497c8-75f2-4acf-9c30-1f1059c1847e": {
+      "type": "ActionPreModifierCell",
+      "options": {
+        "label": "opposite of",
+        "bciAvId": 15927,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "generalization-2309ec5f-6c52-4fa1-bf9e-ad0659462183": {
+      "type": "ActionPreModifierCell",
+      "options": {
+        "label": "generalization",
+        "bciAvId": 14430,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "SVG:15972:SVG-569bfd0f-31f8-44db-8d43-411ca7062ecd": {
+      "type": "ActionPreModifierCell",
+      "options": {
+        "label": "part of",
+        "bciAvId": [
+          15972
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 6,
+        "columnSpan": 1
+      }
+    },
+    "SVG:24879;8998:SVG-9ec7177a-216d-4778-a46b-5857a302c8cf": {
+      "type": "ActionPreModifierCell",
+      "options": {
+        "label": "more",
+        "bciAvId": [
+          24879,
+          ";",
+          8998
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 7,
+        "columnSpan": 1
+      }
+    },
+    "SVG:24944;8998:SVG-e5cc91dc-3b08-410c-a702-388fe10abf9b": {
+      "type": "ActionPreModifierCell",
+      "options": {
+        "label": "most",
+        "bciAvId": [
+          24944,
+          ";",
+          8998
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 8,
+        "columnSpan": 1
+      }
+    },
+    "metaphor-dcaa52eb-dd53-4e72-9d81-d5837581fe91": {
+      "type": "ActionPreModifierCell",
+      "options": {
+        "label": "metaphor",
+        "bciAvId": 15460,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 9,
+        "columnSpan": 1
+      }
+    },
+    "SVG:21624:SVG-57b37a75-2211-4e5c-803c-7bd517e35e4e": {
+      "type": "ActionPreModifierCell",
+      "options": {
+        "label": "Bliss name",
+        "bciAvId": [
+          21624
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 10,
+        "columnSpan": 1
+      }
+    },
+    "slang-c12389ea-9051-4db1-97fa-e3a03225edf3": {
+      "type": "ActionPreModifierCell",
+      "options": {
+        "label": "slang",
+        "bciAvId": 24961,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 11,
+        "columnSpan": 1
+      }
+    },
+    "SVG:24962:SVG-7406eba7-0e5d-427e-b45c-685f29cdcf86": {
+      "type": "ActionPreModifierCell",
+      "options": {
+        "label": "coarse slang",
+        "bciAvId": [
+          24962
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 12,
+        "columnSpan": 1
+      }
+    },
+    "SVG:12663:SVG-b86796b4-f99a-43f7-b0fe-1ef8354a8d73": {
+      "type": "ActionPostModifierCell",
+      "options": {
+        "label": "belongs to",
+        "bciAvId": [
+          12663
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 13,
+        "columnSpan": 1
+      }
+    },
+    "combine_marker-c4a69b52-e23f-4c4b-bd1b-2f5d9a4d4906": {
+      "type": "ActionCombineModifierCell",
+      "options": {
+        "label": "combine marker",
+        "bciAvId": 13382,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 14,
+        "columnSpan": 1
+      }
+    }
+  }
+}

@@ -29,5 +29,6 @@
   "early_time": "/palettes/early_time.json",
   "environment": "/palettes/environment.json",
   "time": "/palettes/time.json",
-  "day_night": "/palettes/day_night.json"
+  "day_night": "/palettes/day_night.json",
+  "modifiers": "/palettes/modifiers.json"
 }
