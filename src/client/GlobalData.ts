@@ -36,6 +36,7 @@ import { ActionIndicatorCell } from "./ActionIndicatorCell";
 import { ActionPreModifierCell } from "./ActionPreModifierCell";
 import { ActionPostModifierCell } from "./ActionPostModifierCell";
 import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
+import { ActionRemoveModifierCell } from "./ActionRemoveModifierCell";
 import { CommandGoBackCell } from "./CommandGoBackCell";
 import { ContentBmwEncoding } from "./ContentBmwEncoding";
 import { CommandClearEncoding } from "./CommandClearEncoding";
@@ -51,6 +52,7 @@ export const cellTypeRegistry = {
   "ActionPreModifierCell": ActionPreModifierCell,
   "ActionPostModifierCell": ActionPostModifierCell,
   "ActionRemoveIndicatorCell": ActionRemoveIndicatorCell,
+  "ActionRemoveModifierCell": ActionRemoveModifierCell,
   "CommandGoBackCell": CommandGoBackCell,
   "ContentBmwEncoding": ContentBmwEncoding,
   "CommandClearEncoding": CommandClearEncoding,

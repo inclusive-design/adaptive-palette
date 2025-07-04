@@ -15,7 +15,6 @@ import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
-import { findClassifierFromLeft } from "./SvgUtils";
 import "./ActionModifierCell.scss";
 
 type ActionModifierCodeCellPropsType = {
@@ -41,15 +40,17 @@ const MOST_MODIFIER = 24944;
  */
 function checkModifierForIndicator (modifierToCheck: Array<number|string>): Array<number|string> {
   if (modifierToCheck.indexOf(MANY_MODIFIER) !== -1) {
-    modifierToCheck = [ MANY_MODIFIER ];
+    return [ MANY_MODIFIER ];
   }
   else if (modifierToCheck.indexOf(MORE_MODIFIER) !== -1) {
-    modifierToCheck = [ MORE_MODIFIER ];
+    return [ MORE_MODIFIER ];
   }
   else if (modifierToCheck.indexOf(MOST_MODIFIER) !== -1){
-    modifierToCheck = [ MOST_MODIFIER ];
+    return [ MOST_MODIFIER ];
   }
-  return modifierToCheck;
+  else {
+    return modifierToCheck;
+  }
 }
 
 /*
