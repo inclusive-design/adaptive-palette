@@ -74,31 +74,15 @@ export function ActionPreModifierCell (props: ActionModifierCodeCellPropsType): 
   const cellClicked = () => {
     const modifierWithoutIndicator = checkModifierForIndicator(modifierBciAvId);
 
-    // Get the last symbol in the editing area and find the locations to replace
-    // any existing indicator.
+    // Get the last symbol in the editing area and prepend the modifier.
     const allButLastSymbol = [...changeEncodingContents.value];
     const lastSymbol = allButLastSymbol.pop();
-    let newBciAvId = lastSymbol.bciAvId;
-    if (newBciAvId.constructor === Array) {
-      const classifierIndex = findClassifierFromLeft(newBciAvId);
-
-      // TODO (JS): find a way to count any modifiers that currently precede
-      // the classifier for cases where a maximum are allowed.
-      // Case where modifier *precedes* the symbol (classifier) it modifies:
-      // 1. `classifierIndex` is the index of the classifier in the array,
-      // 2. copy everything up to the classifier,
-      // 2. insert the modifier symbol and a "/" separator just before the classifier,
-      // 4. insert the rest of the array as it was.
-      newBciAvId = [
-        ...newBciAvId.slice(0, classifierIndex),
-        ...modifierWithoutIndicator, "/",
-        ...newBciAvId.slice(classifierIndex)
-      ];
-    }
-    // The BCI AV ID is a single identifier, not an svg builder array.
-    else {
-      newBciAvId = [ modifierWithoutIndicator, "/", newBciAvId ];
-    }
+    let newBciAvId = (
+      typeof lastSymbol.bciAvId === "number" ?
+        [lastSymbol.bciAvId] :
+        lastSymbol.bciAvId
+    );
+    newBciAvId = [ ...modifierWithoutIndicator, "/", ...newBciAvId ];
     const payload = {
       "id": lastSymbol.id + props.id,
       "label": `${props.options.label} ${lastSymbol.label}`,
