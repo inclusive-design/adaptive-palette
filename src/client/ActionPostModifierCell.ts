@@ -52,14 +52,11 @@ export function ActionPostModifierCell (props: ActionModifierCodeCellPropsType):
         lastSymbol.bciAvId
     );
     newBciAvId = [ ...newBciAvId, "/", ...modifierBciAvId ];
-    const modifierStartPosition = newBciAvId.length - modifierBciAvId.length;
 
-    // Push the current modifier information to the `modifierInfo` aspect of the
-    // `lastSymbol`, tracking the order in which the modifiers were added, this
-    // being the latest.
+    // Push the current modifier information onto the `modifierInfo` of the
+    // `lastSymbol`, tracking the order in which the modifiers were added.
     lastSymbol.modifierInfo.push({
       modifierId: modifierBciAvId,
-      startPosition: modifierStartPosition,
       modifierGloss: label,
       isPrepended: false
     });

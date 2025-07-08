@@ -11,11 +11,10 @@
 
 import { VNode } from "preact";
 import { html } from "htm/preact";
-import { BlissSymbolInfoType, BciAvIdType, LayoutInfoType } from "./index.d";
+import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
-import { isModifierId } from "./SvgUtils";
 import "./ActionIndicatorCell.scss";
 
 type ActionRemoveModifierPropsType = {
@@ -38,6 +37,8 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
     const lastValue = changeEncodingContents.value[changeEncodingContents.value.length - 1];
     disabled = lastValue.modifierInfo.length === 0;
   }
+
+  // Handle the request to remove the last placed modifier.
   const cellClicked = () => {
     // Get the last symbol in the editing area, and create an initial
     // `newBciAvId` and `newLabel`.
@@ -60,20 +61,15 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
         // ... the modifier is the first symbol in the `newBciAvId`.  Remove it
         // plus the following "/"
         newBciAvId = newBciAvId.slice(removeInfo.modifierId.length + 1);
-
-        // Update the start positions of any remaining modifiers (only applies
-        // when removing prepended modifiers).  Note: the "+1" is to account
-        // for the "/" following the removed modifier's bciAvId.
-        lastSymbol.modifierInfo.forEach( (item) => {
-          item.startPosition -= removeInfo.modifierId.length+1;
-        });
       }
       // If the last modifier added was appended to the end ...
       else {
         // ... the modifier is the last symbol in the `newBciAvId`.  Remove it
         // from the end of the array.  Note: the "-1" is to account for the
         // "/" preceding the modfier's bciAvId.
-        newBciAvId = newBciAvId.slice(0, removeInfo.startPosition-1);
+        newBciAvId = newBciAvId.slice(
+          0, newBciAvId.length - removeInfo.modifierId.length - 1
+        );
       }
       newLabel = newLabel.replace(removeInfo.modifierGloss, "").trim();
     }

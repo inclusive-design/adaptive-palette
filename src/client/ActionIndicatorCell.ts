@@ -70,7 +70,8 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       // is the same as before, but is spoken aloud with the indicator label.
       "id": lastSymbol.id + props.id,
       "label": lastSymbol.label,
-      "bciAvId": newBciAvId
+      "bciAvId": newBciAvId,
+      "modifierInfo": lastSymbol.modifierInfo
     };
     changeEncodingContents.value = [...allButLastSymbol, payload];
     speak(`${lastSymbol.label}, ${props.options.label}`);
