@@ -75,7 +75,8 @@ export function ActionPreModifierCell (props: ActionModifierCodeCellPropsType): 
   const cellClicked = () => {
     const modifierWithoutIndicator = checkModifierForIndicator(modifierBciAvId);
 
-    // Get the last symbol in the editing area and prepend the modifier.
+    // Get the last symbol in the editing area and its list of previously added
+    // modifiers.
     const allButLastSymbol = [...changeEncodingContents.value];
     const lastSymbol = allButLastSymbol.pop();
     let newBciAvId = (
@@ -84,10 +85,29 @@ export function ActionPreModifierCell (props: ActionModifierCodeCellPropsType): 
         lastSymbol.bciAvId
     );
     newBciAvId = [ ...modifierWithoutIndicator, "/", ...newBciAvId ];
+
+    // Update any current modifier positions in the `lastSymbol` whenever
+    // a new modifer is prepended. Since it is added to the beginning of the
+    // `newBciAvId`, all previously added modifiers are shifted to the right.
+    // Add the length of the latest modifier plus 1 to each modifier position
+    // since, when a modifier is added, a "/" is also added.
+    lastSymbol.modifierInfo.forEach( (item) => {
+      item.startPosition += modifierWithoutIndicator.length + 1;
+    });
+
+    // Push the current modifier information to the `modifierInfo` aspect of the
+    // `lastSymbol` to track that it is the last one added (at this point).
+    lastSymbol.modifierInfo.push({
+      modifierId: modifierWithoutIndicator,
+      startPosition: 0,
+      modifierGloss: label,
+      isPrepended: true
+    });
     const payload = {
       "id": lastSymbol.id + props.id,
       "label": `${props.options.label} ${lastSymbol.label}`,
-      "bciAvId": newBciAvId
+      "bciAvId": newBciAvId,
+      "modifierInfo": lastSymbol.modifierInfo
     };
     changeEncodingContents.value = [...allButLastSymbol, payload];
     speak(payload.label);

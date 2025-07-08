@@ -23,30 +23,6 @@ type ActionRemoveModifierPropsType = {
   options: BlissSymbolInfoType & LayoutInfoType
 };
 
-/**
- * Determine is there are any modifiers in the current BciAvIType
- * @param {BciAvIdType} bciAvId - A symbol that potentially has one or more
- *                                modifiers
- * @return {boolean} - `true` if there are any modifiers in the given symbol;
- *                     `false` otherwise.
- */
-function hasModifier (bciAvId: BciAvIdType): boolean {
-  if (typeof bciAvId === "number") {
-    bciAvId = [ bciAvId ];
-  }
-  let hasMod = false;
-  for (let i = 0; i < bciAvId.length; i++) {
-    const element = bciAvId[i];
-    if (typeof element === "number") {
-      if (isModifierId(Number(bciAvId[i]))) {
-        hasMod = true;
-        break;
-      }
-    }
-  }
-  return hasMod;
-}
-
 export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType): VNode {
   const {
     columnStart, columnSpan, rowStart, rowSpan, label
@@ -60,11 +36,11 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   let disabled = true;
   if (changeEncodingContents.value.length !== 0) {
     const lastValue = changeEncodingContents.value[changeEncodingContents.value.length - 1];
-    disabled = !hasModifier(lastValue.bciAvId);
+    disabled = lastValue.modifierInfo.length === 0;
   }
   const cellClicked = () => {
-    // Get the last symbol in the editing area and find the location of any
-    // existing modifier starting from the left
+    // Get the last symbol in the editing area, and create an initial
+    // `newBciAvId` and `newLabel`.
     const allButLastSymbol = [...changeEncodingContents.value];
     const lastSymbol = allButLastSymbol.pop();
     let newBciAvId = (
@@ -72,32 +48,43 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
         [lastSymbol.bciAvId] :
         lastSymbol.bciAvId
     );
-    // Note: findIndex() returns undefined (falsey) if there is no modifier.
-    const modIndex = lastSymbol.bciAvId.findIndex(isModifierId);
-    if (modIndex !== undefined) {
-      // `modIndex` is either the first element (index 0) for modifiers that are
-      // prepended, or somewhere in the middle of the array.  In the first case,
-      // just slice of the first two elements, the modifier and the following
-      // "/".
-      if (modIndex === 0) {
-        newBciAvId = newBciAvId.slice(2);
+    let newLabel = lastSymbol.label;
+
+    // Check for any modifier to remove -- if the symbol has no modifiers,
+    // leave the `newBciAvId` as is.
+    const removeInfo = lastSymbol.modifierInfo.pop();
+    if (removeInfo) {
+      // Either the last modifer added was prepended to the beginning or
+      // appended to the end. If it was prepended ...
+      if (removeInfo.isPrepended) {
+        // ... the modifier is the first symbol in the `newBciAvId`.  Remove it
+        // plus the following "/"
+        newBciAvId = newBciAvId.slice(removeInfo.modifierId.length + 1);
+
+        // Update the start positions of any remaining modifiers (only applies
+        // when removing prepended modifiers).  Note: the "+1" is to account
+        // for the "/" following the removed modifier's bciAvId.
+        lastSymbol.modifierInfo.forEach( (item) => {
+          item.startPosition -= removeInfo.modifierId.length+1;
+        });
       }
-      // If somewhere in the middle, slice off two middle elements: the "/" and
-      // the modifier
+      // If the last modifier added was appended to the end ...
       else {
-        newBciAvId = [
-          ...newBciAvId.slice(0, modIndex-1),
-          ...newBciAvId.slice(modIndex+1)
-        ];
+        // ... the modifier is the last symbol in the `newBciAvId`.  Remove it
+        // from the end of the array.  Note: the "-1" is to account for the
+        // "/" preceding the modfier's bciAvId.
+        newBciAvId = newBciAvId.slice(0, removeInfo.startPosition-1);
       }
-      const payload = {
-        "id": lastSymbol.id,
-        "label": lastSymbol.label,  // How to massage label??? (Id-to-string map)
-        "bciAvId": newBciAvId
-      };
-      changeEncodingContents.value = [...allButLastSymbol, payload];
-      speak("modifier removed");
+      newLabel = newLabel.replace(removeInfo.modifierGloss, "").trim();
     }
+    const payload = {
+      "id": lastSymbol.id,
+      "label": newLabel,
+      "bciAvId": newBciAvId,
+      "modifierInfo": lastSymbol.modifierInfo
+    };
+    changeEncodingContents.value = [...allButLastSymbol, payload];
+    speak(newLabel);
   };
 
   return html`

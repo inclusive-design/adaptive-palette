@@ -52,14 +52,22 @@ export function ActionPostModifierCell (props: ActionModifierCodeCellPropsType):
         lastSymbol.bciAvId
     );
     newBciAvId = [ ...newBciAvId, "/", ...modifierBciAvId ];
+    const modifierStartPosition = newBciAvId.length - modifierBciAvId.length;
 
+    // Push the current modifier information to the `modifierInfo` aspect of the
+    // `lastSymbol`, tracking the order in which the modifiers were added, this
+    // being the latest.
+    lastSymbol.modifierInfo.push({
+      modifierId: modifierBciAvId,
+      startPosition: modifierStartPosition,
+      modifierGloss: label,
+      isPrepended: false
+    });
     const payload = {
-      // TODO:  what should the following two fields be?  For now the ID is
-      // the combination of the previous symbol plus the indicator.  The label
-      // is the same as before, but is spoken aloud with the indicator label.
       "id": lastSymbol.id + props.id,
       "label": lastSymbol.label,
-      "bciAvId": newBciAvId
+      "bciAvId": newBciAvId,
+      "modifierInfo": lastSymbol.modifierInfo
     };
     changeEncodingContents.value = [...allButLastSymbol, payload];
     speak(`${lastSymbol.label}, ${props.options.label}`);
