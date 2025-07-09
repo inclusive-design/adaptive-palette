@@ -57,7 +57,8 @@ export function ActionSvgEntryField (): VNode {
         const payload = {
           "id": bciAvId,
           "label": formData.get("symbolLabel"),
-          "bciAvId": composition
+          "bciAvId": composition,
+          "modifierInfo": []    // TODO: create an accurate modiferInfo from the `bciAvId`
         };
         changeEncodingContents.value = [...changeEncodingContents.value, payload];
         speak(payload.label);

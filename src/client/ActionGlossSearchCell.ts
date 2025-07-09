@@ -54,7 +54,8 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
     const payload = {
       "id": props.id,
       "label": theLabel,
-      "bciAvId": ( composition ? composition : props.options.bciAvId )
+      "bciAvId": ( composition ? composition : props.options.bciAvId ),
+      "modifierInfo": [] // TODO: create an accurate modiferInfo from the `props.id`
     };
     changeEncodingContents.value = [...changeEncodingContents.value, payload];
     speak(theLabel);
