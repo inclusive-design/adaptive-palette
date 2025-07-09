@@ -181,6 +181,59 @@ export function isModifierId (bciAvId: number): boolean {
 }
 
 /*
+ * Examine a bliss-word's BCI AV ID looking for modifiers and create a
+ * `modifierInfo` array for each modifier charaacter in the bliss-word.
+ *
+ * @param {BciAvIdType} bciAvId - the BCI AV ID to examine
+ * @return {Array} - an array containing information about each modifier in the
+ *                   `bciAvId`:  the modifier's own BCI AV ID, its gloss, and
+ *                   whether it is prepended or appended to the main bliss-word.
+ *                  If there are no modifiers, an empty array is returned.
+ *
+ */
+export function createModifierInfo (bciAvId: BciAvIdType): Array<object> {
+  const modifierInfo = [];
+
+  if (bciAvId.constructor === Array) {
+    const classifierIndex = findClassifierFromLeft(bciAvId);
+    // Loop from the left up to the classifier getting information about each
+    // prepended modifier.
+    let prependedModifiers = [];
+    for (let i = 0; i < classifierIndex; i++) {
+      const currentBciAvId = bciAvId[i];
+      if( (typeof currentBciAvId === "number") && isModifierId (Number(currentBciAvId))) {
+        const modifierSymbol = findBciAvSymbol(currentBciAvId);
+        prependedModifiers.push({
+          modifierId: [currentBciAvId],
+          modifierGloss: modifierSymbol.description,
+          isPrepended: true
+        });
+      }
+    }
+    // The `prependedModifiers` were push()ed from left to right, but it's better
+    // if they are in reverse order for removal, i.e., remove from the left-most
+    // inwards
+    prependedModifiers = prependedModifiers.reverse();
+    modifierInfo.push(...prependedModifiers);
+
+    // Loop from the right up to the classifier, gettting information about each
+    // appended modifier.
+    for (let i = classifierIndex + 1; i < bciAvId.length; i++) {
+      const currentBciAvId = bciAvId[i];
+      if( (typeof currentBciAvId === "number") && isModifierId (Number(currentBciAvId))) {
+        const modifierSymbol = findBciAvSymbol(currentBciAvId);
+        modifierInfo.push({
+          modifierId: [currentBciAvId],
+          modifierGloss: modifierSymbol.description,
+          isPrepended: false
+        });
+      }
+    }
+  }
+  return modifierInfo;
+}
+
+/*
  * Find the position of the first non-modifier symbol starting from left.  This
  * should be a classifier symbol.  If the single number form of a BciAvIdType is
  * provided, then 0 (zero) is returned.
