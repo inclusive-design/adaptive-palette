@@ -15,7 +15,7 @@ import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
-import { decomposeBciAvId } from "./SvgUtils";
+import { decomposeBciAvId, createModifierInfo } from "./SvgUtils";
 import "./ActionBmwCodeCell.scss";
 
 type ActionBmwCodeCellPropsType = {
@@ -33,13 +33,12 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType): VNode {
   const cellClicked = () => {
     const composition = decomposeBciAvId(bciAvId);
     // The payload includes an empty `modifierInfo` for this new symbol.
-    // TODO: examine the `composition` for any existing modifiers to add them
-    // to the `modifierInfo` array
+    const payloadBciAvId = ( composition ? composition : props.options.bciAvId );
     const payload = {
       "id": props.id,
       "label": props.options.label,
-      "bciAvId": ( composition ? composition : props.options.bciAvId ),
-      "modifierInfo": []
+      "bciAvId": payloadBciAvId,
+      "modifierInfo": createModifierInfo(payloadBciAvId)
     };
     changeEncodingContents.value = [...changeEncodingContents.value, payload];
     speak(props.options.label);
