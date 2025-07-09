@@ -15,7 +15,7 @@ import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
-import { decomposeBciAvId } from "./SvgUtils";
+import { decomposeBciAvId, createModifierInfo } from "./SvgUtils";
 import "./ActionGlossSearchCell.scss";
 
 type ActionGlossSearchCellPropsType = {
@@ -51,11 +51,12 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
     const composition = decomposeBciAvId(bciAvId);
     const labelInput = document.getElementById(`input-${props.id}`) as HTMLInputElement;
     const theLabel = labelInput.value;
+    const payloadBciAvId = ( composition ? composition : props.options.bciAvId );
     const payload = {
       "id": props.id,
       "label": theLabel,
-      "bciAvId": ( composition ? composition : props.options.bciAvId ),
-      "modifierInfo": [] // TODO: create an accurate modiferInfo from the `props.id`
+      "bciAvId": payloadBciAvId,
+      "modifierInfo": createModifierInfo(payloadBciAvId)
     };
     changeEncodingContents.value = [...changeEncodingContents.value, payload];
     speak(theLabel);

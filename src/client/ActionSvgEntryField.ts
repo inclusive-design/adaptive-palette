@@ -14,7 +14,7 @@ import { html } from "htm/preact";
 
 import { BciAvIdType } from "./index.d";
 import { changeEncodingContents } from "./GlobalData";
-import { makeBciAvIdType, decomposeBciAvId, BLISSARY_PATTERN_KEY, BCIAV_PATTERN_KEY } from "./SvgUtils";
+import { makeBciAvIdType, decomposeBciAvId, createModifierInfo, BLISSARY_PATTERN_KEY, BCIAV_PATTERN_KEY } from "./SvgUtils";
 import { speak } from "./GlobalUtils";
 import "./ActionSvgEntryField.scss";
 
@@ -58,7 +58,7 @@ export function ActionSvgEntryField (): VNode {
           "id": bciAvId,
           "label": formData.get("symbolLabel"),
           "bciAvId": composition,
-          "modifierInfo": []    // TODO: create an accurate modiferInfo from the `bciAvId`
+          "modifierInfo": createModifierInfo(composition)
         };
         changeEncodingContents.value = [...changeEncodingContents.value, payload];
         speak(payload.label);
