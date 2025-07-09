@@ -29,18 +29,21 @@ const firstLayer = await loadPaletteFromJsonFile("/palettes/palettes.json");
 const goBackCell = await loadPaletteFromJsonFile("/palettes/backup_palette.json");
 const inputArea = await loadPaletteFromJsonFile("/palettes/input_area.json");
 const topPalette = await loadPaletteFromJsonFile("/palettes/top_palette.json");
+const modifiersPalette = await loadPaletteFromJsonFile("/palettes/modifiers.json");
 
 PaletteStore.paletteFileMap = paletteFileMap;
 adaptivePaletteGlobals.paletteStore.addPalette(firstLayer);
 adaptivePaletteGlobals.paletteStore.addPalette(goBackCell);
 adaptivePaletteGlobals.paletteStore.addPalette(inputArea);
 adaptivePaletteGlobals.paletteStore.addPalette(topPalette);
+adaptivePaletteGlobals.paletteStore.addPalette(modifiersPalette);
 
 adaptivePaletteGlobals.navigationStack.currentPalette = firstLayer;
 render(html`<${Palette} json=${inputArea} />`, document.getElementById("input_palette"));
 render(html`<${Palette} json=${goBackCell} />`, document.getElementById("backup_palette"));
 render(html`<${Palette} json=${topPalette} />`, document.getElementById("indicators"));
 render(html`<${Palette} json=${firstLayer} />`, document.getElementById("mainPaletteDisplayArea"));
+render(html`<${Palette} json=${modifiersPalette} />`, document.getElementById("modifiers"));
 
 render(html`<${DialogPromptEntries} />`, document.getElementById("llm_prompt"));
 render(
