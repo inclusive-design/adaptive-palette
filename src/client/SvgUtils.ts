@@ -49,7 +49,9 @@ const modifierIds = {
 // by numerals, whereas BCI-AV-ID are numerals only.
 export const KERN_PATTERN           = /[AR]K:-?\d+/;
 export const BLISS_LETTER_PATTERN   = /X[a-zA-Z]/;  // may not work e.g., Greek
+export const SLASH_PATTERN          = new RegExp("/");
 export const SLASH_SEPARATOR        = /(\/)/;
+export const DOUBLE_SLASH_PATTERN   = new RegExp("//");
 export const DOUBLE_SLASH_SEPARATOR = /(\/\/)/;
 export const SEMICOLON_SEPARATOR    = /(;)/;
 export const SEMICOLON_PATTERNS     = {
@@ -181,6 +183,41 @@ export function isModifierId (bciAvId: number): boolean {
 }
 
 /*
+ * Given a Bliss-word, find and return all of the modifiers either at the
+ * beginning of the word or at the end.
+ * @param {BciAvIdType} wordId - The bliss-word's Svg builder array.
+ * @param {boolean} prepended  - either search from the the beginning or from the
+ *                               end of the word.
+ * @return {array} - a list of prepended or appended modifier symbols.
+ */
+function getModifiersInWord (wordId: BciAvIdType, prepended: boolean): Array<object> {
+  const addedModifiers = [];
+  if (Array.isArray(wordId)) {
+    const wordIdCopy = wordId.slice();
+    // Process appended modifiers from last to first
+    if (!prepended) {
+      wordIdCopy.reverse();
+    }
+    wordIdCopy.every( (currentBciAvId) => {
+      if(typeof currentBciAvId === "number") {
+        if (isModifierId (Number(currentBciAvId))) {
+          const modifierSymbol = findBciAvSymbol(currentBciAvId);
+          addedModifiers.push({
+            modifierId: [currentBciAvId],
+            modifierGloss: modifierSymbol.description,
+            isPrepended: prepended
+          });
+        }
+        else {
+          return false;  // "break" out of the every() function.
+        }
+      }
+    });
+  }
+  return addedModifiers;
+}
+
+/*
  * Examine a bliss-word's BCI AV ID looking for modifiers and create a
  * `modifierInfo` array for each modifier charaacter in the bliss-word.
  *
@@ -194,42 +231,15 @@ export function isModifierId (bciAvId: number): boolean {
 export function createModifierInfo (bciAvId: BciAvIdType): Array<object> {
   const modifierInfo = [];
 
-  if (bciAvId.constructor === Array) {
-    const classifierIndex = findClassifierFromLeft(bciAvId);
-    // Loop from the left up to the classifier getting information about each
-    // prepended modifier.
-    let prependedModifiers = [];
-    for (let i = 0; i < classifierIndex; i++) {
-      const currentBciAvId = bciAvId[i];
-      if( (typeof currentBciAvId === "number") && isModifierId (Number(currentBciAvId))) {
-        const modifierSymbol = findBciAvSymbol(currentBciAvId);
-        prependedModifiers.push({
-          modifierId: [currentBciAvId],
-          modifierGloss: modifierSymbol.description,
-          isPrepended: true
-        });
-      }
-    }
-    // The `prependedModifiers` were push()ed from left to right, but it's better
-    // if they are in reverse order for removal, i.e., remove from the left-most
-    // inwards
-    prependedModifiers = prependedModifiers.reverse();
-    modifierInfo.push(...prependedModifiers);
+  const prependedModifiers = getModifiersInWord(bciAvId, true);
+  // The order of the added modifiers is from left to right, but they need to
+  // to be in reverse order for removal.
+  prependedModifiers.reverse();
+  modifierInfo.push(...prependedModifiers);
 
-    // Loop from the right up to the classifier, gettting information about each
-    // appended modifier.
-    for (let i = classifierIndex + 1; i < bciAvId.length; i++) {
-      const currentBciAvId = bciAvId[i];
-      if( (typeof currentBciAvId === "number") && isModifierId (Number(currentBciAvId))) {
-        const modifierSymbol = findBciAvSymbol(currentBciAvId);
-        modifierInfo.push({
-          modifierId: [currentBciAvId],
-          modifierGloss: modifierSymbol.description,
-          isPrepended: false
-        });
-      }
-    }
-  }
+  const appendedModifiers = getModifiersInWord(bciAvId, false);
+  appendedModifiers.reverse();
+  modifierInfo.push(...appendedModifiers);
   return modifierInfo;
 }
 
