@@ -62,12 +62,12 @@ export function ActionPostModifierCell (props: ActionModifierCodeCellPropsType):
     });
     const payload = {
       "id": lastSymbol.id + props.id,
-      "label": lastSymbol.label,
+      "label": `${label} ${lastSymbol.label}`,
       "bciAvId": newBciAvId,
       "modifierInfo": lastSymbol.modifierInfo
     };
     changeEncodingContents.value = [...allButLastSymbol, payload];
-    speak(`${lastSymbol.label}, ${props.options.label}`);
+    speak(`${label} ${lastSymbol.label}`);
   };
 
   return html`
