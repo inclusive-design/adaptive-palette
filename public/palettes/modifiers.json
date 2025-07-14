@@ -4,7 +4,7 @@
     "SVG:14647;8998:SVG-55b0d772-98ae-42b9-a7ca-1185eae78a98": {
       "type": "ActionPreModifierCell",
       "options": {
-        "label": "many",
+        "label": "group of",
         "bciAvId": [
           14647,
           ";",
@@ -19,7 +19,7 @@
     "intensity-afbf07dc-2512-447e-82b7-c7b82f6f314d": {
       "type": "ActionPostModifierCell",
       "options": {
-        "label": "intensity",
+        "label": "very",
         "bciAvId": 14947,
         "rowStart": 1,
         "rowSpan": 1,
