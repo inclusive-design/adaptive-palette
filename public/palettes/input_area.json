@@ -14,7 +14,7 @@
       "type": "CommandDelLastEncoding",
       "options": {
           "label": "Delete",
-          "bciAvId": 12613,
+          "bciAvId": [ 24883, ";", 24670 ],
           "rowStart": 2,
           "rowSpan": 1,
           "columnStart": 13,
@@ -26,7 +26,7 @@
       "type": "CommandClearEncoding",
       "options": {
           "label": "Delete all",
-          "bciAvId": [ 13665, "//", 12360 ],
+          "bciAvId": [ 24883, ";", 24670, "//", 12360 ],
           "rowStart": 2,
           "rowSpan": 1,
           "columnStart": 14,
