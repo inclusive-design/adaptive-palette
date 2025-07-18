@@ -5,13 +5,18 @@ html {
 }
 
 body {
-  background-color: green;
+  background-color: #1fcecb;  /* robin's egg-shell blue */
   margin: 0;
   font-family: 'Roboto', sans-serif;
+  display: grid;
+  row-gap: 0.5rem;
+  margin-left: 1em;
+  margin-top: 1em;
+  margin-right: 1em;
 }
 
 button {
-    border-radius: 0.2rem;
+    border-radius: 1rem;
     color: darkmagenta;
     padding-bottom: 0.5rem;
 
@@ -37,4 +42,21 @@ svg {
 
 svg.inter-word-padding {
   padding-right: 1rem;
+}
+
+.paletteContainer {
+    height: 100%;
+}
+
+/*
+ * A div that contains two divs that:
+ * - are arranged in one row,
+ * - the first div is in the first column but needs less horizontal space
+ * - the second div is in the second column but needs the majority of the
+ *   horizontal space
+ */
+.oneRow {
+  display: grid;
+  grid-template-columns: 0.1fr 1fr;
+  column-gap: 0.5em;
 }
