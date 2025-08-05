@@ -13,7 +13,7 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
-import { changeEncodingContents } from "./GlobalData";
+import { changeEncodingContents, cursorPositionSignal } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
 import { decomposeBciAvId, createModifierInfo } from "./SvgUtils";
 import "./ActionBmwCodeCell.scss";
@@ -41,6 +41,8 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType): VNode {
       "modifierInfo": createModifierInfo(payloadBciAvId)
     };
     changeEncodingContents.value = [...changeEncodingContents.value, payload];
+    cursorPositionSignal.value = changeEncodingContents.value.length - 1;
+
     speak(props.options.label);
   };
 

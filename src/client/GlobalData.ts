@@ -39,6 +39,8 @@ import { ActionPostModifierCell } from "./ActionPostModifierCell";
 import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
 import { ActionRemoveModifierCell } from "./ActionRemoveModifierCell";
 import { ActionTextCell } from "./ActionTextCell";
+import { CommandCursorBackward } from "./CommandCursorBackward";
+import { CommandCursorForward } from "./CommandCursorForward";
 import { CommandGoBackCell } from "./CommandGoBackCell";
 import { ContentBmwEncoding } from "./ContentBmwEncoding";
 import { CommandClearEncoding } from "./CommandClearEncoding";
@@ -57,6 +59,8 @@ export const cellTypeRegistry = {
   "ActionRemoveIndicatorCell": ActionRemoveIndicatorCell,
   "ActionRemoveModifierCell": ActionRemoveModifierCell,
   "ActionTextCell": ActionTextCell,
+  "CommandCursorBackward": CommandCursorBackward,
+  "CommandCursorForward": CommandCursorForward,
   "CommandGoBackCell": CommandGoBackCell,
   "ContentBmwEncoding": ContentBmwEncoding,
   "CommandClearEncoding": CommandClearEncoding,
@@ -126,3 +130,8 @@ export const changeEncodingContents = signal([]);
  * completions.
  */
 export const sentenceCompletionsSignal = signal([]);
+
+/**
+ * Signal for when the cursor moves.
+ */
+export const cursorPositionSignal = signal(-1);
