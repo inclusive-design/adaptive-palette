@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 Inclusive Design Research Centre, OCAD University
+ * Copyright 2025 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -12,26 +12,25 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
-import { changeEncodingContents, cursorPositionSignal } from "./GlobalData";
+import { changeEncodingContents } from "./GlobalData";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { generateGridStyle, speak } from "./GlobalUtils";
 import { INPUT_AREA_ID } from "./ContentBmwEncoding";
 
-type CommandDelLastEncodingProps = {
-  id: string,
-  options: BlissSymbolInfoType & LayoutInfoType & {
-    ariaControls: string
-  }
-}
+const CURSOR_CARET_ID = "cursorCaret";
+
+type CursorPropsType = {
+  containerEl: HTMLElement
+};
 
 /**
  * Determing if the cursor is within the symbol input area in the DOM.
- * @param {HTMLElement}   - The input area element.
+ * @param {HTMLElement} inputAreaEl - The input area element.
  * @return {HTMLElement} - if in the input area, return the HTMLElement
  *                         associated with the cursor.  Otherwise, return
  *                         `null`.
  */
-function isCursorInInputArea (inputAreaEl: HTMLElement): HTMLElement {
+export function isCursorInInputArea (inputAreaEl: HTMLElement): HTMLElement {
   let result = null;
 
   // If the `anchorNode` of the selection is the input area, technically
@@ -63,19 +62,8 @@ function isCursorInInputArea (inputAreaEl: HTMLElement): HTMLElement {
  *                         within input area's children HTMLCollection.
  *                         Otherwise, return `-1`.
  */
-function getSymbolIndexAtCursor (inputAreaEl: HTMLElement): number {
-  const childArray = Array.from(inputAreaEl.children);
-  let caretIndex = childArray.length - 1;
-
-  for (let i = 0; i < childArray.length; i++) {
-    const childEl = childArray[i];
-    if (childEl.className.includes("cursorCaret")) {
-      caretIndex = i;
-      break;
-    }
-  }
-  return caretIndex;
-  /*  let result = -1;
+export function getSymbolIndexAtCursor (inputAreaEl: HTMLElement): number {
+  let result = -1;
 
   const baseEl = isCursorInInputArea(inputAreaEl);
   if (baseEl) {
@@ -96,43 +84,10 @@ function getSymbolIndexAtCursor (inputAreaEl: HTMLElement): number {
     }
   }
   return result;
-  */
 }
 
-export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNode {
-  const { id, options } = props;
-  const { label, bciAvId, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
-
-  const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
-
-  const cellClicked = (): void => {
-    const newEncodingContents = [...changeEncodingContents.value];
-    const symbolIndex = getSymbolIndexAtCursor(document.getElementById(INPUT_AREA_ID));
-
-    // If no symbol was found at the cursor, remove the last symbol
-    if (symbolIndex === -1) {
-      newEncodingContents.pop();
-    }
-    // Copy everything from the beginning to the `symbolIndex`, and then
-    // everything thereafter
-    else {
-      newEncodingContents.splice(symbolIndex, 1);
-    }
-    changeEncodingContents.value = newEncodingContents;
-    if (cursorPositionSignal.value !== symbolIndex - 1) {
-      cursorPositionSignal.value = symbolIndex - 1;
-    }
-    speak(label);
-  };
-
+export function Cursor (props: CursorPropsType): VNode {
   return html`
-    <button
-      id="${id}"
-      class="btn-command"
-      style="${gridStyles}"
-      aria-controls=${ariaControls}
-      onClick=${cellClicked}>
-      <${BlissSymbol} bciAvId=${bciAvId} label=${label}/>
-    </button>
+    <span id="${CURSOR_CARET_ID}">|</span>
   `;
 }

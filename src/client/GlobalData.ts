@@ -33,6 +33,8 @@ import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
 import { ActionBranchToPaletteCell } from "./ActionBranchToPaletteCell";
 import { ActionIndicatorCell } from "./ActionIndicatorCell";
 import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
+import { CommandCursorBackward } from "./CommandCursorBackward";
+import { CommandCursorForward } from "./CommandCursorForward";
 import { CommandGoBackCell } from "./CommandGoBackCell";
 import { ContentBmwEncoding } from "./ContentBmwEncoding";
 import { CommandClearEncoding } from "./CommandClearEncoding";
@@ -45,6 +47,8 @@ export const cellTypeRegistry = {
   "ActionBranchToPaletteCell": ActionBranchToPaletteCell,
   "ActionIndicatorCell": ActionIndicatorCell,
   "ActionRemoveIndicatorCell": ActionRemoveIndicatorCell,
+  "CommandCursorBackward": CommandCursorBackward,
+  "CommandCursorForward": CommandCursorForward,
   "CommandGoBackCell": CommandGoBackCell,
   "ContentBmwEncoding": ContentBmwEncoding,
   "CommandClearEncoding": CommandClearEncoding,
@@ -97,3 +101,8 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
  * ContentBmwEncoding area, an empty array to begin with.
  */
 export const changeEncodingContents = signal([]);
+
+/**
+ * Signal for when the cursor moves.
+ */
+export const cursorPositionSignal = signal(-1);
