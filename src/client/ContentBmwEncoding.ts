@@ -12,9 +12,9 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
-import { changeEncodingContents, cursorPositionSignal } from "./GlobalData";
+import { changeEncodingContents } from "./GlobalData";
 import { getSymbolIndexAtCursor } from "./Cursor";
-import { ContentBmwEncodingType } from "./index.d";
+import { ContentBmwEncodingType, EncodingType } from "./index.d";
 import { generateGridStyle } from "./GlobalUtils";
 import "./ContentBmwEncoding.scss";
 
@@ -25,7 +25,7 @@ type ContentBmwEncodingProps = {
   options: ContentBmwEncodingType
 }
 
-function generateMarkupArray (payloadArray, cursorPos: number): VNode {
+function generateMarkupArray (payloadArray: Array<EncodingType>, cursorPos: number): Array<VNode> {
   // If no `cursorPos` specified, or it's outside of the array of symbols,
   // set it to after the last symbol.
   if (cursorPos === 0) {
@@ -60,12 +60,15 @@ export function ContentBmwEncoding (props: ContentBmwEncodingProps): VNode {
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
   const contentsMarkupArray = generateMarkupArray(
-    changeEncodingContents.value, cursorPositionSignal.value
+    changeEncodingContents.value.payloads, changeEncodingContents.value.caretPosition
   );
 
   const inputAreaClicked = (): void => {
-    cursorPositionSignal.value = getSymbolIndexAtCursor(document.getElementById(INPUT_AREA_ID));
-    console.debug(`NEW cursor position: ${cursorPositionSignal.value}`);
+    changeEncodingContents.value = {
+      payloads: changeEncodingContents.value.payloads,
+      caretPosition: getSymbolIndexAtCursor(document.getElementById(INPUT_AREA_ID))
+    };
+    console.debug(`NEW cursor position: ${changeEncodingContents.value.caretPosition}`);
   };
 
   return html`

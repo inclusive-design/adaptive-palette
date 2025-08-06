@@ -13,7 +13,7 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
-import { changeEncodingContents, cursorPositionSignal } from "./GlobalData";
+import { changeEncodingContents } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
 import { decomposeBciAvId } from "./SvgUtils";
 import "./ActionBmwCodeCell.scss";
@@ -37,9 +37,13 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType): VNode {
       "label": props.options.label,
       "bciAvId": ( composition ? composition : props.options.bciAvId )
     };
-    changeEncodingContents.value = [...changeEncodingContents.value, payload];
-    cursorPositionSignal.value = changeEncodingContents.value.length - 1;
-
+    // When the `payloads` array is updated, the array's length will be one
+    // longer than it is currently.
+    const newCaretPosition = changeEncodingContents.value.payloads.length;
+    changeEncodingContents.value = {
+      payloads: [...changeEncodingContents.value.payloads, payload],
+      caretPosition: newCaretPosition
+    };
     speak(props.options.label);
   };
 

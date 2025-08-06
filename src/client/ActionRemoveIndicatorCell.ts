@@ -49,14 +49,14 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
 
   // Enable the remove-indicator button only if there is an indicator on the
   // last symbol in the encoding contents array.
-  const indicatorPosition = lastSymbolIndicatorPosition(changeEncodingContents.value);
+  const indicatorPosition = lastSymbolIndicatorPosition(changeEncodingContents.value.payloads);
   const disabled = indicatorPosition === -1;
 
   const cellClicked = () => {
     // Get the last symbol in the editing area and find the location of any
     // existing indicator to remove.
-    const indicatorIndex = lastSymbolIndicatorPosition(changeEncodingContents.value);
-    const allButLastSymbol = [...changeEncodingContents.value];
+    const indicatorIndex = lastSymbolIndicatorPosition(changeEncodingContents.value.payloads);
+    const allButLastSymbol = [...changeEncodingContents.value.payloads];
     const lastSymbol = allButLastSymbol.pop();
     let newBciAvId = lastSymbol.bciAvId;
     newBciAvId = [
@@ -68,7 +68,7 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
       "label": lastSymbol.label,
       "bciAvId": newBciAvId
     };
-    changeEncodingContents.value = [...allButLastSymbol, payload];
+    changeEncodingContents.value.payloads = [...allButLastSymbol, payload];
     speak(`${lastSymbol.label}`);
   };
 
