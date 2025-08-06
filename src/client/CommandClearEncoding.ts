@@ -30,7 +30,10 @@ export function CommandClearEncoding (props: CommandClearEncodingProps): VNode {
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
-    changeEncodingContents.value = [];
+    changeEncodingContents.value = {
+      payloads: [],
+      caretPosition: -1
+    };
     speak(label);
   };
 

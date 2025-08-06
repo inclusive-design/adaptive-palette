@@ -12,10 +12,9 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
-import { changeEncodingContents, cursorPositionSignal } from "./GlobalData";
+import { changeEncodingContents } from "./GlobalData";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { generateGridStyle, speak } from "./GlobalUtils";
-import { INPUT_AREA_ID } from "./ContentBmwEncoding";
 
 type CommandCursorBackwardProps = {
   id: string,
@@ -34,8 +33,11 @@ export function CommandCursorBackward (props: CommandCursorBackwardProps): VNode
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
-    if (cursorPositionSignal.value > 0) {
-      cursorPositionSignal.value = cursorPositionSignal.value - 1;
+    if (changeEncodingContents.value.caretPosition > 0) {
+      changeEncodingContents.value = {
+        payloads: changeEncodingContents.value.payloads,
+        caretPosition: changeEncodingContents.value.caretPosition - 1
+      };
     }
     speak(label);
   };

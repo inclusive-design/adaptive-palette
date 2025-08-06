@@ -58,7 +58,7 @@ describe("ActionIndicatorCell render tests", (): void => {
     expect(button.style["grid-column"]).toBe("2 / span 1");
     expect(button.style["grid-row"]).toBe("3 / span 2");
 
-    // Check disabled state.  `changeEncodingContents.value` is initialized
+    // Check disabled state.  `changeEncodingContents` is initialized
     // with an empty array, hence there should be a `disabled` attribute.
     expect(button.getAttribute("disabled")).toBeDefined();
   });
@@ -69,7 +69,7 @@ describe("ActionIndicatorCell render tests", (): void => {
     // entry area in the palette display) so the indicator cells will not be
     // disabled when rendered.  All the other properties are tested to make sure
     // that an enabled ActionIndicatorCell otherwise has the same output.
-    changeEncodingContents.value = [{
+    changeEncodingContents.value.payloads = [{
       id: "fake-id",
       label: "opposite",
       bciAvId: 15927
@@ -97,7 +97,7 @@ describe("ActionIndicatorCell render tests", (): void => {
     expect(button.style["grid-column"]).toBe("2 / span 1");
     expect(button.style["grid-row"]).toBe("3 / span 2");
 
-    // Check disabled state.  `changeEncodingContents.value` is initialized
+    // Check disabled state.  `changeEncodingContents` is initialized
     // with an empty array, hence there should be a `disabled` attribute.
     expect(button.getAttribute("disabled")).toBeNull();
   });

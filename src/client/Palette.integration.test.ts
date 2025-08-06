@@ -346,14 +346,14 @@ describe("Palette integration test", () => {
     expect(firstCell).toBeInTheDocument();
     expect(addPluralButton).toBeInTheDocument();
     fireEvent.click(firstCell);
-    let firstSymbol = changeEncodingContents.value[0];
+    let firstSymbol = changeEncodingContents.value.payloads[0];
     expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(false);
     expect(firstSymbol.bciAvId.includes(ACTION_INDICATOR_ID)).toBe(false);
 
     // Click the `addPluralButton` and check that the plural indicator has been
     // added to the symbol in the content area.
     fireEvent.click(addPluralButton);
-    firstSymbol = changeEncodingContents.value[0];
+    firstSymbol = changeEncodingContents.value.payloads[0];
     expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(true);
     expect(firstSymbol.bciAvId.includes(ACTION_INDICATOR_ID)).toBe(false);
 
@@ -361,7 +361,7 @@ describe("Palette integration test", () => {
     // plural indicator has been replaced with the action indicator.
     const addActionButton = await screen.findByText("action");
     fireEvent.click(addActionButton);
-    firstSymbol = changeEncodingContents.value[0];
+    firstSymbol = changeEncodingContents.value.payloads[0];
     expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(false);
     expect(firstSymbol.bciAvId.includes(ACTION_INDICATOR_ID)).toBe(true);
 
@@ -370,7 +370,7 @@ describe("Palette integration test", () => {
     // either).
     const removeIndicatorButton = await screen.findByText("remove indicator");
     fireEvent.click(removeIndicatorButton);
-    firstSymbol = changeEncodingContents.value[0];
+    firstSymbol = changeEncodingContents.value.payloads[0];
     expect(firstSymbol.bciAvId.includes(ACTION_INDICATOR_ID)).toBe(false);
     expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(false);
   });
@@ -393,7 +393,7 @@ describe("Palette integration test", () => {
     const removeIndicatorButton = await screen.findByText("remove indicator");
     fireEvent.click(firstCell);
     fireEvent.click(addPluralButton);
-    const firstSymbol = changeEncodingContents.value[0];
+    const firstSymbol = changeEncodingContents.value.payloads[0];
     expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(true);
     expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
 

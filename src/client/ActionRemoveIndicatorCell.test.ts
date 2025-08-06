@@ -71,7 +71,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     expect(removeIndicatorButton.style["grid-column"]).toBe("2 / span 1");
     expect(removeIndicatorButton.style["grid-row"]).toBe("3 / span 2");
 
-    // Check disabled state.  `changeEncodingContents.value` is initialized
+    // Check disabled state.  `changeEncodingContents` is initialized
     // with an empty array, hence there should be a `disabled` attribute.
     expect(removeIndicatorButton.getAttribute("disabled")).toBeDefined();
   });
@@ -81,7 +81,10 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     // Put a symbol into the `changeEncodingContents` that has no
     // indicator.  The rendered `ActionRemoveIndicatorCell` should remain
     // disabled since there is no indicator to remove.
-    changeEncodingContents.value = [blissWordNoIndicator];
+    changeEncodingContents.value = {
+      payloads: [blissWordNoIndicator],
+      caretPosition: 0
+    };
     render(html`
       <${ActionRemoveIndicatorCell}
         id="${TEST_CELL_ID}"
@@ -98,7 +101,12 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
   test("ActionIndicatorCell rendering, enabled", async (): Promise<void> => {
 
     // Add a symbol *with* an indicator and render the ActionIndicatorCell.
-    changeEncodingContents.value.push(blissWordWithIndicator);
+    const contentsToModify = changeEncodingContents.value.payloads;
+    contentsToModify.push(blissWordWithIndicator);
+    changeEncodingContents.value = {
+      payloads: contentsToModify,
+      caretPosition: changeEncodingContents.value.caretPosition
+    };
     render(html`
       <${ActionRemoveIndicatorCell}
         id="${TEST_CELL_ID}"
@@ -118,14 +126,20 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
 
     // Add two symbols, the last one with an indicator and render the
     // ActionIndicatorCell.
-    changeEncodingContents.value.push(blissWordNoIndicator);
-    changeEncodingContents.value.push(blissWordWithIndicator);
+    const contentsToModify = changeEncodingContents.value.payloads;
+    contentsToModify.push(blissWordNoIndicator);
+    contentsToModify.push(blissWordWithIndicator);
+    changeEncodingContents.value = {
+      payloads: contentsToModify,
+      caretPosition: contentsToModify.length - 1
+    };
     render(html`
       <${ActionRemoveIndicatorCell}
         id="${TEST_CELL_ID}"
         options=${testCell.options}
       />`
     );
+
     // Check that the ActionIndicatorCell/button is now enabled since the last
     // symbol in the encoding array has an indicator.
     const removeIndicatorButton = await screen.findByRole("button", {name: testCell.options.label});
@@ -136,7 +150,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     // has an indicator.
     fireEvent.click(removeIndicatorButton);
     expect(removeIndicatorButton.getAttribute("disabled")).toBeDefined();
-    const lastSymbol = changeEncodingContents.value[changeEncodingContents.value.length-1];
+    const lastSymbol = changeEncodingContents.value.payloads[changeEncodingContents.value.payloads.length-1];
     expect(lastSymbol.bciAvId).toStrictEqual(bciAvIdAfterIndicatorRemoval);
   });
 });
