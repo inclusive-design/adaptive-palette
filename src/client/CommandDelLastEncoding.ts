@@ -12,7 +12,7 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
-import { changeEncodingContents, cursorPositionSignal } from "./GlobalData";
+import { changeEncodingContents } from "./GlobalData";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { generateGridStyle, speak } from "./GlobalUtils";
 import { INPUT_AREA_ID } from "./ContentBmwEncoding";
@@ -22,37 +22,6 @@ type CommandDelLastEncodingProps = {
   options: BlissSymbolInfoType & LayoutInfoType & {
     ariaControls: string
   }
-}
-
-/**
- * Determing if the cursor is within the symbol input area in the DOM.
- * @param {HTMLElement}   - The input area element.
- * @return {HTMLElement} - if in the input area, return the HTMLElement
- *                         associated with the cursor.  Otherwise, return
- *                         `null`.
- */
-function isCursorInInputArea (inputAreaEl: HTMLElement): HTMLElement {
-  let result = null;
-
-  // If the `anchorNode` of the selection is the input area, technically
-  // we are not inside of it.  Do not search up the tree.
-  const anchorEl = document.getSelection().anchorNode;
-  if (anchorEl !== inputAreaEl) {
-    let currentEl = anchorEl;
-
-    // Loop up the DOM tree until either the input area is found as an ancestor
-    // or the `body` element is reached.
-    while (currentEl && currentEl !== document.body) {
-      if (currentEl === inputAreaEl) {
-        result = anchorEl;
-        break;
-      }
-      else {
-        currentEl = currentEl.parentElement;
-      }
-    }
-  }
-  return result;
 }
 
 /**
@@ -75,28 +44,6 @@ function getSymbolIndexAtCursor (inputAreaEl: HTMLElement): number {
     }
   }
   return caretIndex;
-  /*  let result = -1;
-
-  const baseEl = isCursorInInputArea(inputAreaEl);
-  if (baseEl) {
-    let currentEl = baseEl;
-
-    // Given a DOM node within the input area, search up the DOM tree for the
-    // input area until a bliss symbol element is found.  Then retrieve its
-    // index within the input area's children.
-    while (currentEl && currentEl !== inputAreaEl) {
-      if (currentEl.className === "blissSymbol") {
-        const childArray = Array.from(inputAreaEl.children);
-        result = childArray.indexOf(currentEl);
-        break;
-      }
-      else {
-        currentEl = currentEl.parentElement;
-      }
-    }
-  }
-  return result;
-  */
 }
 
 export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNode {
@@ -106,7 +53,7 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNo
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
-    const newEncodingContents = [...changeEncodingContents.value];
+    const newEncodingContents = [...changeEncodingContents.value.payloads];
     const symbolIndex = getSymbolIndexAtCursor(document.getElementById(INPUT_AREA_ID));
 
     // If no symbol was found at the cursor, remove the last symbol
@@ -118,10 +65,22 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNo
     else {
       newEncodingContents.splice(symbolIndex, 1);
     }
-    changeEncodingContents.value = newEncodingContents;
-    if (cursorPositionSignal.value !== symbolIndex - 1) {
-      cursorPositionSignal.value = symbolIndex - 1;
+    // Update the caret position as necessary and then update the signal's
+    // value.
+    let newCaretPosition = changeEncodingContents.value.caretPosition;
+    if (newEncodingContents.length === 0) {
+      newCaretPosition = -1;
     }
+    else if (symbolIndex - 1 < 0) {
+      newCaretPosition = 0;
+    }
+    else {
+      newCaretPosition = symbolIndex - 1;
+    }
+    changeEncodingContents.value = {
+      payloads: newEncodingContents,
+      caretPosition: newCaretPosition
+    };
     speak(label);
   };
 

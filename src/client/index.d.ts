@@ -55,3 +55,12 @@ export type NavStackItemType = {
   palette: JsonPaletteType,
   htmlElement: HTMLElement
 }
+
+/*
+ * Symbol input area has associated content and cursor position. Either or both
+ * can change
+ */
+export type ContentSignalData = {
+  payloads: [EncodingType],
+  caretPosition: number
+}
