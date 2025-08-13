@@ -70,14 +70,15 @@ export function ActionPreModifierCell (props: ActionModifierCodeCellPropsType): 
   );
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
-  const disabled = changeEncodingContents.value.length === 0;
+  const disabled = changeEncodingContents.value.payloads.length === 0;
 
   const cellClicked = () => {
     const modifierWithoutIndicator = checkModifierForIndicator(modifierBciAvId);
 
     // Get the last symbol in the editing area and its list of previously added
     // modifiers.
-    const allButLastSymbol = [...changeEncodingContents.value];
+    const allButLastSymbol = [...changeEncodingContents.value.payloads];
+    const caretPos = changeEncodingContents.value.caretPosition;
     const lastSymbol = allButLastSymbol.pop();
     let newBciAvId = (
       typeof lastSymbol.bciAvId === "number" ?
@@ -99,7 +100,11 @@ export function ActionPreModifierCell (props: ActionModifierCodeCellPropsType): 
       "bciAvId": newBciAvId,
       "modifierInfo": lastSymbol.modifierInfo
     };
-    changeEncodingContents.value = [...allButLastSymbol, payload];
+    const newContents = [...allButLastSymbol, payload];
+    changeEncodingContents.value = {
+      payloads: newContents,
+      caretPosition: caretPos
+    };
     speak(payload.label);
   };
 

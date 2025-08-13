@@ -39,12 +39,13 @@ export function ActionPostModifierCell (props: ActionModifierCodeCellPropsType):
   );
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
-  const disabled = changeEncodingContents.value.length === 0;
+  const disabled = changeEncodingContents.value.payloads.length === 0;
 
   const cellClicked = () => {
     // Get the last symbol in the editing area and find the locations to replace
     // any existing indicator.
-    const allButLastSymbol = [...changeEncodingContents.value];
+    const allButLastSymbol = [...changeEncodingContents.value.payloads];
+    const caretPos = changeEncodingContents.value.caretPosition;
     const lastSymbol = allButLastSymbol.pop();
     let newBciAvId = (
       typeof lastSymbol.bciAvId === "number" ?
@@ -66,7 +67,10 @@ export function ActionPostModifierCell (props: ActionModifierCodeCellPropsType):
       "bciAvId": newBciAvId,
       "modifierInfo": lastSymbol.modifierInfo
     };
-    changeEncodingContents.value = [...allButLastSymbol, payload];
+    changeEncodingContents.value = {
+      payloads: [...allButLastSymbol, payload],
+      caretPosition: caretPos
+    };
     speak(`${label} ${lastSymbol.label}`);
   };
 
