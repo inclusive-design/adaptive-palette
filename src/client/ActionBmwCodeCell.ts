@@ -40,13 +40,25 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType): VNode {
       "bciAvId": payloadBciAvId,
       "modifierInfo": createModifierInfo(payloadBciAvId)
     };
-    // When the `payloads` array is updated, the array's length will be one
-    // longer than it is currently.
-    const newCaretPosition = changeEncodingContents.value.payloads.length;
-    changeEncodingContents.value = {
-      payloads: [...changeEncodingContents.value.payloads, payload],
-      caretPosition: newCaretPosition
-    };
+    const{ caretPosition, payloads } = changeEncodingContents.value;
+    // If the `caretPosition` is the last symbol in the `payloads` array, append
+    // the new `payload`.  Otherwise the `caretPosition` is somwhere within the
+    // `payloads` -- put the new symbol right after the `caretPosition`.  In
+    // both cases add one to the caretPosition.
+    const newCaretPosition = caretPosition + 1;
+    if (caretPosition === payloads.length-1) {
+      changeEncodingContents.value = {
+        payloads: [...changeEncodingContents.value.payloads, payload],
+        caretPosition: newCaretPosition
+      };
+    }
+    else {
+      payloads.splice(newCaretPosition, 0, payload);
+      changeEncodingContents.value = {
+        payloads: payloads,
+        caretPosition: newCaretPosition
+      };
+    }
     speak(props.options.label);
   };
 
