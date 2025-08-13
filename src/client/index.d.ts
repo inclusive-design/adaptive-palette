@@ -60,7 +60,7 @@ export type NavStackItemType = {
  * Symbol input area has associated content and cursor position. Either or both
  * can change
  */
-export type ContentSignalData = {
-  payloads: [EncodingType],
+export type ContentSignalDataType = {
+  payloads: EncodingType[],
   caretPosition: number
 }
