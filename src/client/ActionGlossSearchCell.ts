@@ -58,7 +58,11 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
       "bciAvId": payloadBciAvId,
       "modifierInfo": createModifierInfo(payloadBciAvId)
     };
-    changeEncodingContents.value = [...changeEncodingContents.value, payload];
+    const newContents = [...changeEncodingContents.value.payloads, payload];
+    changeEncodingContents.value = {
+      payloads: newContents,
+      caretPosition: newContents.length - 1
+    };
     speak(theLabel);
   };
 

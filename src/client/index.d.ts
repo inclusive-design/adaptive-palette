@@ -56,11 +56,19 @@ export type NavStackItemType = {
   htmlElement: HTMLElement
 }
 
+// Extra information in a content payload structure when the symbol has
+// modifiers
+export type ModifierInfoType = {
+  modifierId: BciAvIdType,
+  modifierGloss: string,
+  isPrepended: boolean
+};
+
 /*
  * Symbol input area has associated content and cursor position. Either or both
  * can change
  */
 export type ContentSignalData = {
-  payloads: [EncodingType],
+  payloads: [EncodingType & ModifierInfoType?],
   caretPosition: number
 }

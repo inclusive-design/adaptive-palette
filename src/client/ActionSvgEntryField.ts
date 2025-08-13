@@ -60,7 +60,11 @@ export function ActionSvgEntryField (): VNode {
           "bciAvId": composition,
           "modifierInfo": createModifierInfo(composition)
         };
-        changeEncodingContents.value = [...changeEncodingContents.value, payload];
+        const newContent = [...changeEncodingContents.value.payloads, payload];
+        changeEncodingContents.value = {
+          payloads: newContent,
+          caretPosition: newContent.length - 1
+        };
         speak(payload.label);
       }
     }

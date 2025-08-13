@@ -436,33 +436,33 @@ describe("Palette integration test", () => {
     // Add "First Cell" to the `changeEncodingContents`.  There should be no
     // modifiers on it at this point.
     fireEvent.click(firstCell);
-    let firstSymbol = changeEncodingContents.value[0];
+    let firstSymbol = changeEncodingContents.value.payloads[0];
     expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(false);
     expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
     expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
 
     // Add the intensity modifer.
     fireEvent.click(addIntensityButton);
-    firstSymbol = changeEncodingContents.value[0];
+    firstSymbol = changeEncodingContents.value.payloads[0];
     expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(true);
     expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
     expect(removeModifierButton.getAttribute("disabled")).toBeNull();
 
     // Remove the intensity modifer.
     fireEvent.click(removeModifierButton);
-    firstSymbol = changeEncodingContents.value[0];
+    firstSymbol = changeEncodingContents.value.payloads[0];
     expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(false);
     expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
     expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
 
     // Add the intensity, and then the oppposite modifiers.
     fireEvent.click(addIntensityButton);
-    firstSymbol = changeEncodingContents.value[0];
+    firstSymbol = changeEncodingContents.value.payloads[0];
     expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(true);
     expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
     expect(removeModifierButton.getAttribute("disabled")).toBeNull();
     fireEvent.click(addOppositeButton);
-    firstSymbol = changeEncodingContents.value[0];
+    firstSymbol = changeEncodingContents.value.payloads[0];
     expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(true);
     expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(true);
     expect(removeModifierButton.getAttribute("disabled")).toBeNull();
@@ -470,7 +470,7 @@ describe("Palette integration test", () => {
     // Remove a modifier -- should be the last one added, the "opposite of"
     // modifier.
     fireEvent.click(removeModifierButton);
-    firstSymbol = changeEncodingContents.value[0];
+    firstSymbol = changeEncodingContents.value.payloads[0];
     expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(true);
     expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
     expect(removeModifierButton.getAttribute("disabled")).toBeNull();
@@ -479,7 +479,7 @@ describe("Palette integration test", () => {
     // there should be no more modifiers on the symbol and the remove button
     // should be disabled.
     fireEvent.click(removeModifierButton);
-    firstSymbol = changeEncodingContents.value[0];
+    firstSymbol = changeEncodingContents.value.payloads[0];
     expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(false);
     expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
     expect(removeModifierButton.getAttribute("disabled")).toBeDefined();

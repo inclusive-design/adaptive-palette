@@ -33,8 +33,8 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   // Disabled state of the remove button depends on if the last symbol in the
   // input field (if any) has a modifier.
   let disabled = true;
-  if (changeEncodingContents.value.length !== 0) {
-    const lastValue = changeEncodingContents.value[changeEncodingContents.value.length - 1];
+  if (changeEncodingContents.value.payloads.length !== 0) {
+    const lastValue = changeEncodingContents.value.payloads[changeEncodingContents.value.payloads.length - 1];
     disabled = lastValue.modifierInfo.length === 0;
   }
 
@@ -42,7 +42,8 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   const cellClicked = () => {
     // Get the last symbol in the editing area, and create an initial
     // `newBciAvId` and `newLabel`.
-    const allButLastSymbol = [...changeEncodingContents.value];
+    const allButLastSymbol = [...changeEncodingContents.value.payloads];
+    const caretPos = changeEncodingContents.value.caretPosition;
     const lastSymbol = allButLastSymbol.pop();
     let newBciAvId = (
       typeof lastSymbol.bciAvId === "number" ?
@@ -79,7 +80,10 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
       "bciAvId": newBciAvId,
       "modifierInfo": lastSymbol.modifierInfo
     };
-    changeEncodingContents.value = [...allButLastSymbol, payload];
+    changeEncodingContents.value = {
+      payloads: [...allButLastSymbol, payload],
+      caretPosition: caretPos
+    };
     speak(newLabel);
   };
 
