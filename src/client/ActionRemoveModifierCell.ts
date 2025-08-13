@@ -33,28 +33,27 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   // Disabled state of the remove button depends on if the last symbol in the
   // input field (if any) has a modifier.
   let disabled = true;
-  if (changeEncodingContents.value.payloads.length !== 0) {
-    const lastValue = changeEncodingContents.value.payloads[changeEncodingContents.value.payloads.length - 1];
-    disabled = lastValue.modifierInfo.length === 0;
+  const { payloads, caretPosition } = changeEncodingContents.value;
+  if (payloads.length !== 0) {
+    const caretSymbol = payloads[caretPosition];
+    disabled = caretSymbol.modifierInfo.length === 0;
   }
-
   // Handle the request to remove the last placed modifier.
   const cellClicked = () => {
     // Get the last symbol in the editing area, and create an initial
     // `newBciAvId` and `newLabel`.
-    const allButLastSymbol = [...changeEncodingContents.value.payloads];
-    const caretPos = changeEncodingContents.value.caretPosition;
-    const lastSymbol = allButLastSymbol.pop();
+    const { caretPosition, payloads } = changeEncodingContents.value;
+    const symbolToEdit = payloads[caretPosition];
     let newBciAvId = (
-      typeof lastSymbol.bciAvId === "number" ?
-        [lastSymbol.bciAvId] :
-        lastSymbol.bciAvId
+      typeof symbolToEdit.bciAvId === "number" ?
+        [symbolToEdit.bciAvId] :
+        symbolToEdit.bciAvId
     );
-    let newLabel = lastSymbol.label;
+    let newLabel = symbolToEdit.label;
 
     // Check for any modifier to remove -- if the symbol has no modifiers,
     // leave the `newBciAvId` as is.
-    const removeInfo = lastSymbol.modifierInfo.pop();
+    const removeInfo = symbolToEdit.modifierInfo.pop();
     if (removeInfo) {
       // Either the last modifer added was prepended to the beginning or
       // appended to the end. If it was prepended ...
@@ -74,15 +73,15 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
       }
       newLabel = newLabel.replace(removeInfo.modifierGloss, "").trim();
     }
-    const payload = {
-      "id": lastSymbol.id,
+    payloads[caretPosition] = {
+      "id": symbolToEdit.id,
       "label": newLabel,
       "bciAvId": newBciAvId,
-      "modifierInfo": lastSymbol.modifierInfo
+      "modifierInfo": symbolToEdit.modifierInfo
     };
     changeEncodingContents.value = {
-      payloads: [...allButLastSymbol, payload],
-      caretPosition: caretPos
+      payloads: payloads,
+      caretPosition: caretPosition
     };
     speak(newLabel);
   };

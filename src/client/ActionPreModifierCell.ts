@@ -75,37 +75,34 @@ export function ActionPreModifierCell (props: ActionModifierCodeCellPropsType): 
   const cellClicked = () => {
     const modifierWithoutIndicator = checkModifierForIndicator(modifierBciAvId);
 
-    // Get the last symbol in the editing area and its list of previously added
-    // modifiers.
-    const allButLastSymbol = [...changeEncodingContents.value.payloads];
-    const caretPos = changeEncodingContents.value.caretPosition;
-    const lastSymbol = allButLastSymbol.pop();
+    // Get the symbol in the editing area at the caret position.
+    const { caretPosition, payloads } = changeEncodingContents.value;
+    const symbolToEdit = payloads[caretPosition];
     let newBciAvId = (
-      typeof lastSymbol.bciAvId === "number" ?
-        [lastSymbol.bciAvId] :
-        lastSymbol.bciAvId
+      typeof symbolToEdit.bciAvId === "number" ?
+        [symbolToEdit.bciAvId] :
+        symbolToEdit.bciAvId
     );
     newBciAvId = [ ...modifierWithoutIndicator, "/", ...newBciAvId ];
 
     // Push the current modifier information to the `modifierInfo` aspect of the
-    // `lastSymbol` to track that it is the last one added (at this point).
-    lastSymbol.modifierInfo.push({
+    // `symbolToEdit` to track that it is the last one added (at this point).
+    symbolToEdit.modifierInfo.push({
       modifierId: modifierWithoutIndicator,
       modifierGloss: label,
       isPrepended: true
     });
-    const payload = {
-      "id": lastSymbol.id + props.id,
-      "label": `${props.options.label} ${lastSymbol.label}`,
+    payloads[caretPosition] = {
+      "id": symbolToEdit.id + props.id,
+      "label": `${props.options.label} ${symbolToEdit.label}`,
       "bciAvId": newBciAvId,
-      "modifierInfo": lastSymbol.modifierInfo
+      "modifierInfo": symbolToEdit.modifierInfo
     };
-    const newContents = [...allButLastSymbol, payload];
     changeEncodingContents.value = {
-      payloads: newContents,
-      caretPosition: caretPos
+      payloads: payloads,
+      caretPosition: caretPosition
     };
-    speak(payload.label);
+    speak(payloads[caretPosition].label);
   };
 
   return html`
