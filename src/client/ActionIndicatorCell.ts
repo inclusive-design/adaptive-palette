@@ -33,11 +33,11 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
   const disabled = changeEncodingContents.value.payloads.length === 0;
 
   const cellClicked = () => {
-    // Get the last symbol in the editing area and find the locations to replace
-    // any existing indicator.
-    const allButLastSymbol = [...changeEncodingContents.value.payloads];
-    const lastSymbol = allButLastSymbol.pop();
-    let newBciAvId = lastSymbol.bciAvId;
+    // Get the symbol at the caret position in the editing area and find the
+    // locations within it to replace any existing indicator.
+    const { caretPosition, payloads } = changeEncodingContents.value;
+    const symbolToEdit = payloads[caretPosition];
+    let newBciAvId = symbolToEdit.bciAvId;
     if (newBciAvId.constructor === Array) {
       const indicatorPositions = findIndicators(newBciAvId);
       const classifierIndex = findClassifierFromLeft(newBciAvId);
@@ -64,20 +64,20 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
     else {
       newBciAvId = [ newBciAvId, ";", indicatorBciAvId ];
     }
-    const payload = {
+    payloads[caretPosition] = {
       // TODO:  what should the following two fields be?  For now the ID is
       // the combination of the previous symbol plus the indicator.  The label
       // is the same as before, but is spoken aloud with the indicator label.
-      "id": lastSymbol.id + props.id,
-      "label": lastSymbol.label,
+      "id": symbolToEdit.id + props.id,
+      "label": symbolToEdit.label,
       "bciAvId": newBciAvId,
-      "modifierInfo": lastSymbol.modifierInfo
+      "modifierInfo": symbolToEdit.modifierInfo
     };
     changeEncodingContents.value = {
-      payloads: [...allButLastSymbol, payload],
-      caretPosition: changeEncodingContents.value.caretPosition
+      payloads: payloads,
+      caretPosition: caretPosition
     };
-    speak(`${lastSymbol.label}, ${props.options.label}`);
+    speak(`${symbolToEdit.label}, ${props.options.label}`);
   };
 
   return html`

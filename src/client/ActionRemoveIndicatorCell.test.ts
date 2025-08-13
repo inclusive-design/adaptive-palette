@@ -105,7 +105,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     contentsToModify.push(blissWordWithIndicator);
     changeEncodingContents.value = {
       payloads: contentsToModify,
-      caretPosition: changeEncodingContents.value.caretPosition
+      caretPosition: changeEncodingContents.value.caretPosition+1
     };
     render(html`
       <${ActionRemoveIndicatorCell}
