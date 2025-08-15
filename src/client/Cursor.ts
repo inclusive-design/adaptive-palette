@@ -11,16 +11,14 @@
 
 import { VNode } from "preact";
 import { html } from "htm/preact";
-import { BlissSymbol } from "./BlissSymbol";
-import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
-import { generateGridStyle, speak } from "./GlobalUtils";
-import { INPUT_AREA_ID } from "./ContentBmwEncoding";
 
 const CURSOR_CARET_ID = "cursorCaret";
 
+/*
 type CursorPropsType = {
   containerEl: HTMLElement
 };
+*/
 
 /**
  * Determing if the cursor is within the symbol input area in the DOM.
@@ -85,7 +83,7 @@ export function getSymbolIndexAtCursor (inputAreaEl: HTMLElement): number {
   return result;
 }
 
-export function Cursor (props: CursorPropsType): VNode {
+export function Cursor (/* props: CursorPropsType */): VNode {
   return html`
     <span id="${CURSOR_CARET_ID}">|</span>
   `;
