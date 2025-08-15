@@ -69,6 +69,6 @@ export type ModifierInfoType = {
  * can change
  */
 export type ContentSignalDataType = {
-  payloads: [EncodingType & ModifierInfoType?],
+  payloads: (EncodingType & ModifierInfoType?)[],
   caretPosition: number
-}
+};
