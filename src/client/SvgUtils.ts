@@ -36,7 +36,7 @@ const modifierIds = {
   // much, intensity, without, opposite, generalization, part of, ago, now, future
   semantic: [14647, 14947, 15474, 15927, 14430, 15972, 12352, 15736, 17705],
   // more, most, belongs to
-  grammatical: [15654, 15661, 12663],
+  grammatical: [24879, 24944, 12663],
   // range of the index numerals from 0 through 9. NOTE THIS IS A RANGE.
   numericRange: [8510, 8519],
   // metaphor, Blissname, slang, coarse slang
