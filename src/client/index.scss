@@ -10,9 +10,9 @@ body {
   font-family: 'Roboto', sans-serif;
   display: grid;
   row-gap: 0.5rem;
-  margin-left: 1em;
-  margin-top: 1em;
-  margin-right: 1em;
+  margin-left: 1rem;
+  margin-top: 1rem;
+  margin-right: 1rem;
 }
 
 button {
@@ -58,5 +58,5 @@ svg.inter-word-padding {
 .oneRow {
   display: grid;
   grid-template-columns: 0.1fr 1fr;
-  column-gap: 0.5em;
+  column-gap: 0.5rem;
 }

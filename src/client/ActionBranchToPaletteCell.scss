@@ -23,7 +23,7 @@
  */
 .foldedCorner {
   position: relative;
-  padding: 1em 1.5em;
+  padding: 1rem 1.5rem;
   overflow: hidden;
 
   :before {
@@ -31,7 +31,7 @@
     position: absolute;
     top: 0;
     right: 0;
-    border-width: 0 24px 24px 0;
+    border-width: 0 1.33rem 1.33rem 0;
     border-style: solid;
     border-top-color: #5fff00;
     border-right-color: #5fff00;

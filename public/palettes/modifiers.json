@@ -164,17 +164,6 @@
         "columnSpan": 1
       }
     },
-    "combine_marker-c4a69b52-e23f-4c4b-bd1b-2f5d9a4d4906": {
-      "type": "ActionCombineModifierCell",
-      "options": {
-        "label": "combine marker",
-        "bciAvId": 13382,
-        "rowStart": 1,
-        "rowSpan": 1,
-        "columnStart": 14,
-        "columnSpan": 1
-      }
-    },
     "remove_a_modifier-c4a69b52-e23f-4c4b-bd1b-2f5d9a4d4906": {
       "type": "ActionRemoveModifierCell",
       "options": {
@@ -182,8 +171,8 @@
         "bciAvId": [ 17448 ],
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 15,
-        "columnSpan": 1
+        "columnStart": 14,
+        "columnSpan": 2
       }
     }
   }
