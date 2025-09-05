@@ -91,6 +91,30 @@ describe("Palette integration test", () => {
           "columnStart": 4,
           "columnSpan": 1
         }
+      },
+      "command-cursor-forwards": {
+        "type": "CommandCursorForward",
+        "options": {
+          "label": "Forward",
+          "bciAvId": [ 14390, ";", 24670 ],
+          "rowStart": 2,
+          "rowSpan": 1,
+          "columnStart": 12,
+          "columnSpan": 1,
+          "ariaControls": "content-encoding-area"
+        }
+      },
+      "command-cursor-backwards": {
+        "type": "CommandCursorBackward",
+        "options": {
+          "label": "Backward",
+          "bciAvId": [ 12613, ";", 24670 ],
+          "rowStart": 2,
+          "rowSpan": 1,
+          "columnStart": 11,
+          "columnSpan": 1,
+          "ariaControls": "bmw-encoding-area"
+        }
       }
     }
   };
@@ -237,6 +261,10 @@ describe("Palette integration test", () => {
     // disk file.
     adaptivePaletteGlobals.paletteStore.addPalette(testLayerOnePalette);
   });
+
+  function debugLogChangeEncodingContents(preamble) {
+    console.debug(`INTEGRATION TEST, ${preamble}: %O`, changeEncodingContents.value);
+  };
 
   test("Cell coordinations among bmw action cells, input area, delete and clear buttons", async() => {
     // render() the palette and then wait until its first cell is available to
@@ -483,5 +511,100 @@ describe("Palette integration test", () => {
     expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(false);
     expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
     expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
+  });
+
+  test("Coordinating cursor movement and editing", async() => {
+    // Setup: add the `testPalette`, the indicator and modifier srtips
+    // Find the "clear all" button and activate it to clear out any
+    // contents in the content area.
+    render(html`<${Palette} json=${testPalette}/>`);
+    render(html`<${Palette} json=${testIndicatorPalette}/>`);
+    render(html`<${Palette} json=${testModifierPalette}/>`);
+    const clearButton = await screen.findByText("Clear");
+    fireEvent.click(clearButton);
+    const contentArea = await screen.findByLabelText("Input Area");
+    expect(contentArea.childNodes.length).toBe(0);
+    expect(changeEncodingContents.value.caretPosition).toBe(-1);
+
+    // Add three symbols to the content area.  The cursor posiiton should be
+    // after the third symbol (= 2).
+    const firstCell = await screen.findByText("First Cell");
+    fireEvent.click(firstCell);
+    const secondCell = await screen.findByText("Second Cell");
+    fireEvent.click(secondCell);
+    fireEvent.click(firstCell);
+    const cursorForward = await screen.findByText("Forward");
+    const cursorBackward = await screen.findByText("Backward");
+    debugLogChangeEncodingContents("FIRST");
+    expect(contentArea.childNodes.length).toBe(3);
+    expect(changeEncodingContents.value.caretPosition).toBe(2);
+
+    // Cannot move cursor forward since at the end (right most). Caret position
+    // should not change.
+    fireEvent.click(cursorForward);
+    debugLogChangeEncodingContents("CURSOR FORWARD AT RIGHT");
+    expect(changeEncodingContents.value.caretPosition).toBe(2);
+
+    // Move all the way to left -- click backward twice.  Caret position should
+    // be zero.
+    fireEvent.click(cursorBackward);
+    fireEvent.click(cursorBackward);
+    expect(changeEncodingContents.value.caretPosition).toBe(0);
+
+    // Move right one symbol.  Caret position should be 1, and the symbol itself
+    // should be secondCell's symbol.
+    fireEvent.click(cursorForward);
+    let symbolAtCaret = changeEncodingContents.value.payloads[1];
+    const paletteSecondCell = testPalette.cells["secondCell"];
+    expect(changeEncodingContents.value.caretPosition).toBe(1);
+    expect(symbolAtCaret.label).toBe(paletteSecondCell.options.label);
+    expect(symbolAtCaret.bciAvId).toStrictEqual([paletteSecondCell.options.bciAvId]);
+
+    // Add an indicator to the symbol at the cursor.  Caret position should not
+    // change, but symbol's bciAvId should now have a semi-colon.
+    const pluralButton = await screen.findByText("plural");
+    fireEvent.click(pluralButton);
+    symbolAtCaret = changeEncodingContents.value.payloads[1];
+    expect(changeEncodingContents.value.caretPosition).toBe(1);
+    expect(symbolAtCaret.label).toBe(paletteSecondCell.options.label);
+    expect(symbolAtCaret.bciAvId).toContain(";");
+
+    // Remove the indicator.  Caret position should not change, but the symbol's
+    // bciAvId should revert back to the original.
+    const removeIndicatorButton = await screen.findByText("remove indicator");
+    fireEvent.click(removeIndicatorButton);
+    symbolAtCaret = changeEncodingContents.value.payloads[1];
+    expect(changeEncodingContents.value.caretPosition).toBe(1);
+    expect(symbolAtCaret.label).toBe(paletteSecondCell.options.label);
+    expect(symbolAtCaret.bciAvId).toStrictEqual([paletteSecondCell.options.bciAvId]);
+
+    // Add a modifier to the symbol at the cursor.  Caret position should not
+    // change, but symbol's bciAvId should now have the modifier.
+    const oppositeButton = await screen.findByText("opposite of");
+    fireEvent.click(oppositeButton);
+    symbolAtCaret = changeEncodingContents.value.payloads[1];
+    expect(changeEncodingContents.value.caretPosition).toBe(1);
+    expect(symbolAtCaret.bciAvId).toContain(OPPOSITE_MODIFIER_ID);
+
+    // Remove the modifier.  Caret position should not change, but the symbol's
+    // bciAvId should revert back to the original.
+    const removeModifierButton = await screen.findByText("remove a modifier");
+    fireEvent.click(removeModifierButton);
+    symbolAtCaret = changeEncodingContents.value.payloads[1];
+    expect(changeEncodingContents.value.caretPosition).toBe(1);
+    expect(symbolAtCaret.label).toBe(paletteSecondCell.options.label);
+    expect(symbolAtCaret.bciAvId).toStrictEqual([paletteSecondCell.options.bciAvId]);
+
+    // Delete the symbol at the caret.  The caret position should move left by
+    // one, the number of symbols in the input area should now be 2, and the
+    // one at the caret should be firstCell's symbol.
+    const deleteButton = await screen.findByText("Delete");
+    fireEvent.click(deleteButton);
+    symbolAtCaret = changeEncodingContents.value.payloads[1];
+    const paletteFirstCell = testPalette.cells["firstCell"];
+    expect(changeEncodingContents.value.caretPosition).toBe(0);
+    expect(changeEncodingContents.value.payloads.length).toBe(2);
+    expect(symbolAtCaret.label).toBe(paletteFirstCell.options.label);
+    expect(symbolAtCaret.bciAvId).toStrictEqual(paletteFirstCell.options.bciAvId);
   });
 });

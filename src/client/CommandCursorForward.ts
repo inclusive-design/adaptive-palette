@@ -33,7 +33,7 @@ export function CommandCursorForward (props: CommandCursorForwardProps): VNode {
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
-    if (changeEncodingContents.value.caretPosition < changeEncodingContents.value.payloads.length) {
+    if (changeEncodingContents.value.caretPosition < changeEncodingContents.value.payloads.length - 1) {
       changeEncodingContents.value = {
         payloads: changeEncodingContents.value.payloads,
         caretPosition: changeEncodingContents.value.caretPosition + 1
