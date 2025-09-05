@@ -207,10 +207,19 @@ function getModifiersInWord (wordId: BciAvIdType, prepended: boolean): Array<obj
             modifierGloss: modifierSymbol.description,
             isPrepended: prepended
           });
+          return true;
         }
+        // `currentBciAvId` is a number, but not a modifier.  Assume that the
+        // sequence of modifiers has been processed and break out of the every()
+        // function.
         else {
-          return false;  // "break" out of the every() function.
+          return false;
         }
+      }
+      // `currentBciAvId` is not a number so skip it and get the next component
+      // of the id.
+      else {
+        return true;
       }
     });
   }
