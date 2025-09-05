@@ -25,19 +25,14 @@ type ContentBmwEncodingProps = {
   options: ContentBmwEncodingType
 }
 
-function generateMarkupArray (payloadArray: Array<EncodingType>, cursorPos: number): Array<VNode> {
-  // If no `cursorPos` specified, or it's outside of the array of symbols,
-  // set it to after the last symbol.
-  if (cursorPos === 0) {
-    console.debug("CursorPos is ZERO");
-  }
-  if ((cursorPos >= payloadArray.length) || (cursorPos < 0)) {
-    cursorPos = payloadArray.length - 1;
-    console.debug(`CursorPos is ${cursorPos}`);
+function generateMarkupArray (payloadArray: Array<EncodingType>, caretPos: number): Array<VNode> {
+  // If no `caretPos` is outside of the array of symbols, set it to after the
+  // last symbol.
+  if ((caretPos >= payloadArray.length) || (caretPos < 0)) {
+    caretPos = payloadArray.length - 1;
   }
   return payloadArray.map((payload, index) => {
-    console.debug(`index: ${index}, cursorPos: ${cursorPos}`);
-    if (index === cursorPos) {
+    if (index === caretPos) {
       return html`
         <div class="blissSymbol cursorCaret">
           <${BlissSymbol} bciAvId=${payload.bciAvId} label=${payload.label} isPresentation="true" />
@@ -68,7 +63,6 @@ export function ContentBmwEncoding (props: ContentBmwEncodingProps): VNode {
       payloads: changeEncodingContents.value.payloads,
       caretPosition: getSymbolIndexAtCursor(document.getElementById(INPUT_AREA_ID))
     };
-    console.debug(`NEW cursor position: ${changeEncodingContents.value.caretPosition}`);
   };
 
   return html`

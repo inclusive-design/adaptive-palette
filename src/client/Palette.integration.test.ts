@@ -262,10 +262,6 @@ describe("Palette integration test", () => {
     adaptivePaletteGlobals.paletteStore.addPalette(testLayerOnePalette);
   });
 
-  function debugLogChangeEncodingContents(preamble) {
-    console.debug(`INTEGRATION TEST, ${preamble}: %O`, changeEncodingContents.value);
-  };
-
   test("Cell coordinations among bmw action cells, input area, delete and clear buttons", async() => {
     // render() the palette and then wait until its first cell is available to
     // insure that the entire palette is in the DOM.
@@ -535,14 +531,12 @@ describe("Palette integration test", () => {
     fireEvent.click(firstCell);
     const cursorForward = await screen.findByText("Forward");
     const cursorBackward = await screen.findByText("Backward");
-    debugLogChangeEncodingContents("FIRST");
     expect(contentArea.childNodes.length).toBe(3);
     expect(changeEncodingContents.value.caretPosition).toBe(2);
 
     // Cannot move cursor forward since at the end (right most). Caret position
     // should not change.
     fireEvent.click(cursorForward);
-    debugLogChangeEncodingContents("CURSOR FORWARD AT RIGHT");
     expect(changeEncodingContents.value.caretPosition).toBe(2);
 
     // Move all the way to left -- click backward twice.  Caret position should
