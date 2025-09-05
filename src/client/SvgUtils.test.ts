@@ -242,9 +242,6 @@ describe("SvgUtils module", (): void => {
     expect(createModifierInfo(angryWithMuchBciAvId)).toEqual(angryModifierInfo);
     expect(createModifierInfo(smartWithIntensityBciAvId)).toEqual(smartModifierInfo);
     const modInfo = createModifierInfo(stupidWithOppositeIntensityBciAvId);
-    modInfo.forEach( (item) => {
-      console.debug("%O", item);
-    });
     expect(createModifierInfo(stupidWithOppositeIntensityBciAvId)).toEqual(stupidModifierInfo);
     expect(createModifierInfo(lonelyEmbeddedModifier)).toEqual([]);
   });
