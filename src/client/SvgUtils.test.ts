@@ -241,7 +241,6 @@ describe("SvgUtils module", (): void => {
   test("Get the modifier info array for each word", (): void => {
     expect(createModifierInfo(angryWithMuchBciAvId)).toEqual(angryModifierInfo);
     expect(createModifierInfo(smartWithIntensityBciAvId)).toEqual(smartModifierInfo);
-    const modInfo = createModifierInfo(stupidWithOppositeIntensityBciAvId);
     expect(createModifierInfo(stupidWithOppositeIntensityBciAvId)).toEqual(stupidModifierInfo);
     expect(createModifierInfo(lonelyEmbeddedModifier)).toEqual([]);
   });
