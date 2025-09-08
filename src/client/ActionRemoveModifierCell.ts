@@ -15,6 +15,7 @@ import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
+import { isSingleSymbol } from "./SvgUtils";
 import "./ActionIndicatorCell.scss";
 
 type ActionRemoveModifierPropsType = {
@@ -31,12 +32,13 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   // Disabled state of the remove button depends on if the last symbol in the
-  // input field (if any) has a modifier.
+  // input field (if any) has a modifier AND if there is more than one symbol in
+  // the encoding.
   let disabled = true;
   const { payloads, caretPosition } = changeEncodingContents.value;
   if (payloads.length !== 0) {
     const caretSymbol = payloads[caretPosition];
-    disabled = caretSymbol.modifierInfo.length === 0;
+    disabled = (caretSymbol.modifierInfo.length === 0) || isSingleSymbol(caretSymbol.bciAvId) ;
   }
   // Handle the request to remove the last placed modifier.
   const cellClicked = () => {
