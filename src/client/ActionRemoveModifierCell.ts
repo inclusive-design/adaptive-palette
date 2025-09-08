@@ -15,6 +15,7 @@ import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
+import { isSingleSymbol } from "./SvgUtils";
 import "./ActionIndicatorCell.scss";
 
 type ActionRemoveModifierPropsType = {
@@ -31,11 +32,12 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   // Disabled state of the remove button depends on if the last symbol in the
-  // input field (if any) has a modifier.
+  // input field (if any) has a modifier AND if there is more than one symbol in
+  // the encoding.
   let disabled = true;
   if (changeEncodingContents.value.length !== 0) {
     const lastValue = changeEncodingContents.value[changeEncodingContents.value.length - 1];
-    disabled = lastValue.modifierInfo.length === 0;
+    disabled = (lastValue.modifierInfo.length === 0) || isSingleSymbol(lastValue.bciAvId) ;
   }
 
   // Handle the request to remove the last placed modifier.

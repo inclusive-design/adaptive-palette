@@ -13,7 +13,7 @@ import {
   bciToBlissaryId, bciAvIdToString, makeBciAvIdType, isIndicatorId,
   findIndicators, isModifierId, findClassifierFromLeft, findBciAvSymbol,
   decomposeBciAvId, BLISSARY_PATTERN_KEY, BCIAV_PATTERN_KEY,
-  getSvgElement, getSvgMarkupString, createModifierInfo
+  getSvgElement, getSvgMarkupString, createModifierInfo, isSingleSymbol
 } from "./SvgUtils";
 
 describe("SvgUtils module", (): void => {
@@ -92,6 +92,8 @@ describe("SvgUtils module", (): void => {
     isPrepended: false
   }];
   const lonelyEmbeddedModifier = [ 14164, ";", 8998, "/", 15474, "/", 16161 ];
+  const withoutAsCharacter = [ 15474 ];
+  const smartAsWord = [ 15471, ";", 8998 ];
 
   // Github test runs suggested that more that 5000 msec was needed for these
   // tests, so increased timeout to 7000.
@@ -243,5 +245,13 @@ describe("SvgUtils module", (): void => {
     expect(createModifierInfo(smartWithIntensityBciAvId)).toEqual(smartModifierInfo);
     expect(createModifierInfo(stupidWithOppositeIntensityBciAvId)).toEqual(stupidModifierInfo);
     expect(createModifierInfo(lonelyEmbeddedModifier)).toEqual([]);
+  });
+
+  test("Check BciAvIdTypes for single symbols", (): void => {
+    expect(isSingleSymbol(indicatorId)).toBe(true);
+    expect(isSingleSymbol(bciAvIdArray)).toBe(false);
+    expect(isSingleSymbol(smartWithIntensityBciAvId)).toBe(false);
+    expect(isSingleSymbol(withoutAsCharacter)).toBe(true);
+    expect(isSingleSymbol(smartAsWord)).toBe(true);
   });
 });
