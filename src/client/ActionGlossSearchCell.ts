@@ -15,7 +15,7 @@ import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
-import { decomposeBciAvId, createModifierInfo } from "./SvgUtils";
+import { decomposeBciAvId } from "./SvgUtils";
 import "./ActionGlossSearchCell.scss";
 
 type ActionGlossSearchCellPropsType = {
@@ -56,7 +56,7 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
       "id": props.id,
       "label": theLabel,
       "bciAvId": payloadBciAvId,
-      "modifierInfo": createModifierInfo(payloadBciAvId)
+      "modifierInfo": []
     };
     const newContents = [...changeEncodingContents.value.payloads, payload];
     changeEncodingContents.value = {
