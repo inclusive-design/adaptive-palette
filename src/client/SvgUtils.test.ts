@@ -13,7 +13,7 @@ import {
   bciToBlissaryId, bciAvIdToString, makeBciAvIdType, isIndicatorId,
   findIndicators, isModifierId, findClassifierFromLeft, findBciAvSymbol,
   decomposeBciAvId, BLISSARY_PATTERN_KEY, BCIAV_PATTERN_KEY,
-  getSvgElement, getSvgMarkupString, createModifierInfo, isSingleSymbol
+  getSvgElement, getSvgMarkupString, isSingleSymbol
 } from "./SvgUtils";
 
 describe("SvgUtils module", (): void => {
@@ -62,36 +62,9 @@ describe("SvgUtils module", (): void => {
   const twoWordBciAvId = [ 17449, ";", 8993, "//", 14430, "/", 8993, "/", 8998 ];
   const shortTwoWordBciAvId = [ 17448, "//", 14430, "/", 8993, "/", 8998 ];
 
-  // Bliss-words for creating modifier information about them. "Angry" has the
-  // modifier "much" prepended, "smart" with "intensity" appended, and "stupid",
-  // with "opposite" prepended and "intensity" appended.  Finally, while
-  // "lonely" has a modifier, it is in the middle of a word and should be
-  // ignored.
-  const angryWithMuchBciAvId = [ 14647, "/", 14164, ";", 8998, "/", 15928 ];
-  const angryModifierInfo = [{
-    modifierId: [ 14647 ],
-    modifierGloss: "group_of,much_of,many_of,quantity_of",
-    isPrepended: true
-  }];
+  // Bliss-words for checking if they are single symbols or not, by the presence
+  // of a "/" test.
   const smartWithIntensityBciAvId = [ 15471, ";", 8998, "/", 14947 ];
-  const smartModifierInfo = [{
-    modifierId: [ 14947 ],
-    modifierGloss: "intensity",
-    isPrepended: false
-  }];
-  const stupidWithOppositeIntensityBciAvId = [
-    15927, "/", 15471, ";", 8998, "/", 14947
-  ];
-  const stupidModifierInfo = [{
-    modifierId: [ 15927 ],
-    modifierGloss: "opposite_meaning,opposite_of,opposite",
-    isPrepended: true
-  }, {
-    modifierId: [ 14947 ],
-    modifierGloss: "intensity",
-    isPrepended: false
-  }];
-  const lonelyEmbeddedModifier = [ 14164, ";", 8998, "/", 15474, "/", 16161 ];
   const withoutAsCharacter = [ 15474 ];
   const smartAsWord = [ 15471, ";", 8998 ];
 
@@ -238,13 +211,6 @@ describe("SvgUtils module", (): void => {
     expect(makeBciAvIdType(twoWordBlissaryString, BLISSARY_PATTERN_KEY)).toEqual(twoWordBciAvId);
     expect(makeBciAvIdType(twoWordBlissaryString)).toEqual(twoWordBciAvId);
     expect(decomposeBciAvId(shortTwoWordBciAvId)).toEqual(twoWordBciAvId);
-  });
-
-  test("Get the modifier info array for each word", (): void => {
-    expect(createModifierInfo(angryWithMuchBciAvId)).toEqual(angryModifierInfo);
-    expect(createModifierInfo(smartWithIntensityBciAvId)).toEqual(smartModifierInfo);
-    expect(createModifierInfo(stupidWithOppositeIntensityBciAvId)).toEqual(stupidModifierInfo);
-    expect(createModifierInfo(lonelyEmbeddedModifier)).toEqual([]);
   });
 
   test("Check BciAvIdTypes for single symbols", (): void => {
