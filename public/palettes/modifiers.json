@@ -1,21 +1,6 @@
 {
   "name": "modifiers",
   "cells": {
-    "SVG:14647;8998:SVG-55b0d772-98ae-42b9-a7ca-1185eae78a98": {
-      "type": "ActionPreModifierCell",
-      "options": {
-        "label": "group of",
-        "bciAvId": [
-          14647,
-          ";",
-          8998
-        ],
-        "rowStart": 1,
-        "rowSpan": 1,
-        "columnStart": 1,
-        "columnSpan": 1
-      }
-    },
     "intensity-afbf07dc-2512-447e-82b7-c7b82f6f314d": {
       "type": "ActionPostModifierCell",
       "options": {
@@ -23,7 +8,7 @@
         "bciAvId": 14947,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 2,
+        "columnStart": 1,
         "columnSpan": 1
       }
     },
@@ -34,7 +19,7 @@
         "bciAvId": 15474,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 3,
+        "columnStart": 2,
         "columnSpan": 1
       }
     },
@@ -45,7 +30,7 @@
         "bciAvId": 15927,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 4,
+        "columnStart": 3,
         "columnSpan": 1
       }
     },
@@ -56,7 +41,7 @@
         "bciAvId": 14430,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 5,
+        "columnStart": 4,
         "columnSpan": 1
       }
     },
@@ -69,6 +54,17 @@
         ],
         "rowStart": 1,
         "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "SVG:14647;8998:SVG-55b0d772-98ae-42b9-a7ca-1185eae78a98": {
+      "type": "ActionPreModifierCell",
+      "options": {
+        "label": "group/many/much",
+        "bciAvId": [ 14647 ],
+        "rowStart": 1,
+        "rowSpan": 1,
         "columnStart": 6,
         "columnSpan": 1
       }
@@ -77,11 +73,7 @@
       "type": "ActionPreModifierCell",
       "options": {
         "label": "more",
-        "bciAvId": [
-          24879,
-          ";",
-          8998
-        ],
+        "bciAvId": [ 24879 ],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 7,
@@ -92,11 +84,7 @@
       "type": "ActionPreModifierCell",
       "options": {
         "label": "most",
-        "bciAvId": [
-          24944,
-          ";",
-          8998
-        ],
+        "bciAvId": [ 24944 ],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 8,

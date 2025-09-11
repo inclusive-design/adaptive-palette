@@ -22,37 +22,6 @@ type ActionModifierCodeCellPropsType = {
   options: BlissSymbolInfoType & LayoutInfoType
 };
 
-// For these modifier symbols, the indicator that they normally have must be
-// removed when used as a modifier.  The correct form of the BciAvIdType are
-// given here.
-const MANY_MODIFIER = 14647;
-const MORE_MODIFIER = 24879;
-const MOST_MODIFIER = 24944;
-
-/**
- * Function for checking for the modifier symbols that have an indicator as part
- * of their makeup, and returning a new BciAvIdType without the indicator.
- * @param {Array} modifierToCheck - Array form of the modifier's BciAvIdType
- * @return {Array} - If the given modifier has an indicator as part of its
- *                   composition, the return is the array form of its
- *                   BciAvIdType without the indicator.  Otherwise, it is
- *                   returned unmodified.
- */
-function checkModifierForIndicator (modifierToCheck: Array<number|string>): Array<number|string> {
-  if (modifierToCheck.indexOf(MANY_MODIFIER) !== -1) {
-    return [ MANY_MODIFIER ];
-  }
-  else if (modifierToCheck.indexOf(MORE_MODIFIER) !== -1) {
-    return [ MORE_MODIFIER ];
-  }
-  else if (modifierToCheck.indexOf(MOST_MODIFIER) !== -1){
-    return [ MOST_MODIFIER ];
-  }
-  else {
-    return modifierToCheck;
-  }
-}
-
 /*
  * A "pre" modifier is a modifier symbol that is prepended to the current symbol
  * in the input area
@@ -73,8 +42,6 @@ export function ActionPreModifierCell (props: ActionModifierCodeCellPropsType): 
   const disabled = changeEncodingContents.value.payloads.length === 0;
 
   const cellClicked = () => {
-    const modifierWithoutIndicator = checkModifierForIndicator(modifierBciAvId);
-
     // Get the symbol in the editing area at the caret position.
     const { caretPosition, payloads } = changeEncodingContents.value;
     const symbolToEdit = payloads[caretPosition];
@@ -83,12 +50,12 @@ export function ActionPreModifierCell (props: ActionModifierCodeCellPropsType): 
         [symbolToEdit.bciAvId] :
         symbolToEdit.bciAvId
     );
-    newBciAvId = [ ...modifierWithoutIndicator, "/", ...newBciAvId ];
+    newBciAvId = [ ...modifierBciAvId, "/", ...newBciAvId ];
 
     // Push the current modifier information to the `modifierInfo` aspect of the
     // `symbolToEdit` to track that it is the last one added (at this point).
     symbolToEdit.modifierInfo.push({
-      modifierId: modifierWithoutIndicator,
+      modifierId: modifierBciAvId,
       modifierGloss: label,
       isPrepended: true
     });
