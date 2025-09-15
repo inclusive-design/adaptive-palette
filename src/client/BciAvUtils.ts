@@ -104,6 +104,9 @@ export function findCompositionsUsingId (bciId: number) {
               composition: symbol.composition,
               fullComposition: fullComposition
             });
+            // It's enough to find one occurrence of `bciId` in the
+            // `fullComposition` to record this `symbol`.
+            break;
           }
         }
       }
