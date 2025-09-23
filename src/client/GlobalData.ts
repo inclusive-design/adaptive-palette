@@ -103,7 +103,6 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
   adaptivePaletteGlobals.mainPaletteContainerId = mainPaletteContainerId || "";
 }
 
-//export const changeEncodingContents = signal([]);
 /**
  * Signal for updating the contents of the ContentBmwEncoding area.  The value
  * of the signal is the current array of EncodingType objects to display in the
@@ -114,8 +113,3 @@ export const changeEncodingContents = signal({
   payloads: [],
   caretPosition: -1
 });
-
-/**
- * Signal for when the cursor moves.
- */
-//export const cursorPositionSignal = signal(-1);
