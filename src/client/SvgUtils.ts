@@ -205,7 +205,8 @@ export function isSingleSymbol (bciAvId: BciAvIdType): boolean {
 /*
  * Find the position of the first non-modifier symbol starting from left.  This
  * should be a classifier symbol.  If the single number form of a BciAvIdType is
- * provided, then 0 (zero) is returned.
+ * provided, then 0 (zero) is returned.  If the entire sequence of symbols has
+ * been processed, and none are left, then 0 (zero) is returned.
  * @param {BciAvIdType} bciAvId - The array form of a BciAvIdType is a mixture
  *                                of integers and strings.
  * @return {number} - the index of the symbol just after the last modifier.
@@ -226,6 +227,9 @@ export function findClassifierFromLeft (bciAvId: BciAvIdType): number {
           break;
         }
       }
+    }
+    if (rightMost >= bciAvId.length) {
+      rightMost = 0;
     }
   }
   return rightMost;

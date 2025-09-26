@@ -54,6 +54,7 @@ describe("SvgUtils module", (): void => {
   const nonModifierId = 28043;                        // "continuous" indicator
   const dontKnow = [ 15161, "/", 15733];
   const fullDontKnow = [15162,";",8993,"/",15474,"/",14947];
+  const noHasNoModifiers = [ 15474, "/", 14947, "/", 14947 ]; // -!!
 
   // Gloss for symbol is "remove indicator".  The `shortTwoWordBciAvId` uses
   // the single BCI AV ID for the "remove" symbol.
@@ -159,6 +160,11 @@ describe("SvgUtils module", (): void => {
     // BCI-AV-ID has no modifiers (or it is one).
     expect(findClassifierFromLeft(expectedBciAvIdRevive)).toEqual(0);
     expect(findClassifierFromLeft(singleBciAvId)).toEqual(0);
+
+    // The symbol for "no", which looks like -!!, appears to be made of all
+    // modifier symbols, but the negative sign is the classifier.  So,
+    // `findClassifierFromLeft()` should return zero in this case.
+    expect(findClassifierFromLeft(noHasNoModifiers)).toEqual(0);
   });
 
   test("Check finding full symbol information", (): void => {
