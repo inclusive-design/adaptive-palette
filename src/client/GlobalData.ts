@@ -106,10 +106,9 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
 /**
  * Signal for updating the contents of the ContentBmwEncoding area.  The value
  * of the signal is the current array of EncodingType objects to display in the
- * ContentBmwEncoding area, an empty array to begin with; and the position of
- * the caret
+ * ContentBmwEncoding area and the position of the caret
  */
 export const changeEncodingContents = signal({
   payloads: [],
-  caretPosition: -1
+  caretPosition: -1,
 });

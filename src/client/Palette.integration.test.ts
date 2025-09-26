@@ -510,7 +510,7 @@ describe("Palette integration test", () => {
   });
 
   test("Coordinating cursor movement and editing", async() => {
-    // Setup: add the `testPalette`, the indicator and modifier srtips
+    // Setup: add the `testPalette`, the indicator and modifier strips
     // Find the "clear all" button and activate it to clear out any
     // contents in the content area.
     render(html`<${Palette} json=${testPalette}/>`);
@@ -518,7 +518,7 @@ describe("Palette integration test", () => {
     render(html`<${Palette} json=${testModifierPalette}/>`);
     const clearButton = await screen.findByText("Clear");
     fireEvent.click(clearButton);
-    const contentArea = await screen.findByLabelText("Input Area");
+    let contentArea = await screen.findByLabelText("Input Area");
     expect(contentArea.childNodes.length).toBe(0);
     expect(changeEncodingContents.value.caretPosition).toBe(-1);
 
@@ -592,6 +592,7 @@ describe("Palette integration test", () => {
     // Delete the symbol at the caret.  The caret position should move left by
     // one, the number of symbols in the input area should now be 2, and the
     // one at the caret should be firstCell's symbol.
+    expect(contentArea.childElementCount).not.toBe(0);
     const deleteButton = await screen.findByText("Delete");
     fireEvent.click(deleteButton);
     symbolAtCaret = changeEncodingContents.value.payloads[1];
@@ -600,5 +601,17 @@ describe("Palette integration test", () => {
     expect(changeEncodingContents.value.payloads.length).toBe(2);
     expect(symbolAtCaret.label).toBe(paletteFirstCell.options.label);
     expect(symbolAtCaret.bciAvId).toStrictEqual(paletteFirstCell.options.bciAvId);
+
+    // Move the caret to -1.  Since there are symbols in the display, this
+    // should change the display to show an insert before the first symbol.
+    changeEncodingContents.value = {
+      caretPosition: -1,
+      payloads: changeEncodingContents.value.payloads
+    };
+    contentArea = await screen.findByLabelText("Input Area");
+    expect(changeEncodingContents.value.payloads.length).not.toBe(0);
+    expect(changeEncodingContents.value.caretPosition).toBe(-1);
+    expect(contentArea.childElementCount).not.toBe(0);
+    expect(contentArea.children[0].className.includes("insertionCaret")).toBe(true);
   });
 });

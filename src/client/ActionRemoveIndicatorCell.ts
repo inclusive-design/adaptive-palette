@@ -24,16 +24,16 @@ type ActionIndicatorCodeCellPropsType = {
 };
 
 /*
- * Given an array of symbols, using the symbol at the caret, find the position
- * of the caret symbol's indicator, if any.
+ * Given an array of symbols examine the symbol at the caret position to find
+ * its indicator, if any.
  * @param {ContentSignalDataType} symbols: Array of symbols and caret position.
- * @return {number} - The index of the indicator in the caret symbol's
- *                    BciAvType, or -1 if it has no indicator.
+ * @return {number} - The index of the indicator in the symbol's BciAvType, or
+ *                    -1 if it has no indicator.
  */
 function caretSymbolIndicatorPosition (symbols: ContentSignalDataType): number {
   let indicatorPositions = [];
   const { payloads, caretPosition } = symbols;
-  if (payloads.length !== 0) {
+  if (payloads.length !== 0 && caretPosition !== -1) {
     const caretSymbolBciAvId = payloads[caretPosition].bciAvId;
     indicatorPositions = findIndicators(caretSymbolBciAvId);
   }

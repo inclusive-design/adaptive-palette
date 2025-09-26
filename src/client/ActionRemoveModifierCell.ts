@@ -36,7 +36,7 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   // the encoding.
   let disabled = true;
   const { payloads, caretPosition } = changeEncodingContents.value;
-  if (payloads.length !== 0) {
+  if (payloads.length !== 0 && caretPosition !== -1) {
     const caretSymbol = payloads[caretPosition];
     disabled = (caretSymbol.modifierInfo.length === 0) || isSingleSymbol(caretSymbol.bciAvId) ;
   }
