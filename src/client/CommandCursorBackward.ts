@@ -35,11 +35,13 @@ export function CommandCursorBackward (props: CommandCursorBackwardProps): VNode
   const cellClicked = (): void => {
     // Move the caret position back one.  Note that the new caretPostion can
     // equal -1 indicating that the caret is before the first symbol in the
-    // `payloads` array.
-    changeEncodingContents.value = {
-      payloads: changeEncodingContents.value.payloads,
-      caretPosition: changeEncodingContents.value.caretPosition - 1
-    };
+    // `payloads` array.  But, it cannot be less than -1.
+    if (changeEncodingContents.value.caretPosition > -1) {
+      changeEncodingContents.value = {
+        payloads: changeEncodingContents.value.payloads,
+        caretPosition: changeEncodingContents.value.caretPosition - 1
+      };
+    }
     speak(label);
   };
 
