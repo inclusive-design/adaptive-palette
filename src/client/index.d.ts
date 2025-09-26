@@ -65,8 +65,8 @@ export type ModifierInfoType = {
 };
 
 /*
- * Symbol input area has associated content and cursor position. Either or both
- * can change
+ * Symbol input area has associated content and caret position. Either or both
+ * can change.
  */
 export type ContentSignalDataType = {
   payloads: (EncodingType & ModifierInfoType?)[],
