@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
+ * Copyright 2025 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -16,24 +16,32 @@ import { changeEncodingContents } from "./GlobalData";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { generateGridStyle, speak } from "./GlobalUtils";
 
-type CommandClearEncodingProps = {
+type CommandCursorBackwardProps = {
   id: string,
   options: BlissSymbolInfoType & LayoutInfoType & {
     ariaControls: string
   }
 }
 
-export function CommandClearEncoding (props: CommandClearEncodingProps): VNode {
+// BCI-AV-ID "backward": 12613: "move backward": 12613;24670
+// BCI-AV-ID "forward": 14390; "move forward": 14390;24670
+
+export function CommandCursorBackward (props: CommandCursorBackwardProps): VNode {
   const { id, options } = props;
   const { label, bciAvId, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
-    changeEncodingContents.value = {
-      payloads: [],
-      caretPosition: -1
-    };
+    // Move the caret position back one.  Note that the new caretPostion can
+    // equal -1 indicating that the caret is before the first symbol in the
+    // `payloads` array.  But, it cannot be less than -1.
+    if (changeEncodingContents.value.caretPosition > -1) {
+      changeEncodingContents.value = {
+        payloads: changeEncodingContents.value.payloads,
+        caretPosition: changeEncodingContents.value.caretPosition - 1
+      };
+    }
     speak(label);
   };
 
@@ -44,7 +52,7 @@ export function CommandClearEncoding (props: CommandClearEncodingProps): VNode {
       style="${gridStyles}"
       aria-controls=${ariaControls}
       onClick=${cellClicked}>
-      <${BlissSymbol} bciAvId=${bciAvId} label=${label} />
+      <${BlissSymbol} bciAvId=${bciAvId} label=${label}/>
     </button>
   `;
 }
