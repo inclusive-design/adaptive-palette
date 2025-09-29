@@ -39,7 +39,7 @@ export function ActionPreModifierCell (props: ActionModifierCodeCellPropsType): 
   );
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
-  const disabled = changeEncodingContents.value.payloads.length === 0;
+  const disabled = changeEncodingContents.value.caretPosition === -1;
 
   const cellClicked = () => {
     // Get the symbol in the editing area at the caret position.

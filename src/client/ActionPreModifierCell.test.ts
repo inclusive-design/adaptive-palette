@@ -85,7 +85,7 @@ describe("ActionPreModifierCell render tests", (): void => {
       />`
     );
     // Check the rendered cell
-    const button = await screen.findByRole("button", {name: testCell.options.label});
+    let button = await screen.findByRole("button", {name: testCell.options.label});
 
     // Check that the ActionPreModifierCell/button is rendered and has the correct
     // attributes and text.
@@ -102,6 +102,12 @@ describe("ActionPreModifierCell render tests", (): void => {
     // Check disabled state.  `changeEncodingContents` is initialized
     // with a symbol, hence there should be a `disabled` attribute.
     expect(button.getAttribute("disabled")).toBeNull();
+
+    // Move the caret to the beginning of th input.  The ActionPreModifierCell
+    // should become disabled.
+    changeEncodingContents.value.caretPosition = -1;
+    button = await screen.findByRole("button", {name: testCell.options.label});
+    expect(button.getAttribute("disabled")).toBeDefined();
   });
 
 });

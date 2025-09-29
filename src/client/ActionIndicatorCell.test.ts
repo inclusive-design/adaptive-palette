@@ -69,11 +69,14 @@ describe("ActionIndicatorCell render tests", (): void => {
     // entry area in the palette display) so the indicator cells will not be
     // disabled when rendered.  All the other properties are tested to make sure
     // that an enabled ActionIndicatorCell otherwise has the same output.
-    changeEncodingContents.value.payloads = [{
-      id: "fake-id",
-      label: "opposite",
-      bciAvId: 15927
-    }];
+    changeEncodingContents.value = {
+      payloads: [{
+        id: "fake-id",
+        label: "opposite",
+        bciAvId: 15927
+      }],
+      caretPosition: 0  // put the caret on the "fake-id" symbol
+    };
 
     render(html`
       <${ActionIndicatorCell}
@@ -83,7 +86,7 @@ describe("ActionIndicatorCell render tests", (): void => {
     );
 
     // Check the rendered cell
-    const button = await screen.findByRole("button", {name: testCell.options.label});
+    let button = await screen.findByRole("button", {name: testCell.options.label});
 
     // Check that the ActionIndicatorCell/button is rendered and has the correct
     // attributes and text.
@@ -97,9 +100,15 @@ describe("ActionIndicatorCell render tests", (): void => {
     expect(button.style["grid-column"]).toBe("2 / span 1");
     expect(button.style["grid-row"]).toBe("3 / span 2");
 
-    // Check disabled state.  `changeEncodingContents` is initialized
+    // Check disabled state. `changeEncodingContents` is initialized
     // with an empty array, hence there should be a `disabled` attribute.
     expect(button.getAttribute("disabled")).toBeNull();
+
+    // Move the caret to the beginning of th input.  The ActionIndicatorCell
+    // should become disabled.
+    changeEncodingContents.value.caretPosition = -1;
+    button = await screen.findByRole("button", {name: testCell.options.label});
+    expect(button.getAttribute("disabled")).toBeDefined();
   });
 
 });
