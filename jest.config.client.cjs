@@ -19,5 +19,5 @@ module.exports = {
   moduleFileExtensions: ["mjs", "js", "jsx", "ts", "tsx", "json", "node"],
   moduleNameMapper: {
     "^.+\\.(css|less|scss)$": "babel-jest"
-  },
+  }
 };
