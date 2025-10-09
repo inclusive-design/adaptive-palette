@@ -104,7 +104,7 @@ describe("ActionIndicatorCell render tests", (): void => {
     // with an empty array, hence there should be a `disabled` attribute.
     expect(button.getAttribute("disabled")).toBeNull();
 
-    // Move the caret to the beginning of th input.  The ActionIndicatorCell
+    // Move the caret to the beginning of the input.  The ActionIndicatorCell
     // should become disabled.
     changeEncodingContents.value.caretPosition = -1;
     button = await screen.findByRole("button", {name: testCell.options.label});
