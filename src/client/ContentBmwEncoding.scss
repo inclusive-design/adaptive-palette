@@ -24,22 +24,23 @@
   }
 
   .cursorCaret {
-    border-right: 2px solid black;
     background-color: yellow;
+    padding-right: 2px;
     border-right: 2px solid black;
-    animation: blink 1s;
-    animation-iteration-count: 100;
+    animation: caretBlink 1s;
+    animation-iteration-count: infinite;
   }
 
   .insertionCaret {
+    padding-left: 2px;
     border-left: 2px solid black;
-    animation: blink 1s;
-    animation-iteration-count: 100;
+    animation: caretBlink 1s;
+    animation-iteration-count: infinite;
   }
 }
 
-@keyframes blink {
+@keyframes caretBlink {
   50% {
-    border-color: #ff0000;
+    border-color: #ffffff;
   }
 }
