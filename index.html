@@ -15,7 +15,7 @@
         <summary style="color:white">Prompt Dialog</summary>
         <div id="llm_prompt" style="display:inline-grid;"></div>
       </details>
-      <details style="margin-left: 0.5em; display:inline-grid">
+      <details style="margin-left: 0.5em;">
         <summary style="color:white">SVG Entry</summary>
         <div id="svgBuilderStringEntry" style="display:inline-grid;"></div>
       </details>
@@ -27,25 +27,29 @@
     <!--
       Expandable forms for the prompts and the SVG builder strings.
     -->
-    <div id="searchGloss" style="display:inline-grid;"></div>
-    <div id="searchGlossResults"></div>
+    <div style="display:none;">
+      <div id="searchGloss" style="display:inline-grid;"></div>
+      <div id="searchGlossResults"></div>
+    </div>
     <div id="inputArea">
       <div id="input_palette"></div>
     </div>
 
-    <div class="oneRow">
-      <div id="backup_palette"></div>
+    <div>
       <div id="indicators"></div>
     </div>
     <div>
       <div id="modifiers"></div>
     </div>
     <div>&nbsp;</div>
-    <div id="mainPaletteDisplayArea">
-      <script type="module">
-        import "./src/client/index.js";
-      </script>
+    <div class="oneRow">
+      <div id="backup_palette"></div>
+      <div id="mainPaletteDisplayArea">
+        <script type="module">
+          import "./src/client/index.js";
+        </script>
+      </div>
+      <div>&nbsp;</div>
     </div>
-    <div>&nbsp;</div>
   </body>
 </html>

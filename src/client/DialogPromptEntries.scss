@@ -12,4 +12,9 @@
 form.dialogPromptEntries {
   display: inline-grid;
   background:white;
+  font-size: 16pt;
+
+  textarea, select, input  {
+    font-size: 16pt;
+  }
 }

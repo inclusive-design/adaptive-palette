@@ -30,5 +30,6 @@
   "environment": "/palettes/environment.json",
   "time": "/palettes/time.json",
   "day_night": "/palettes/day_night.json",
-  "modifiers": "/palettes/modifiers.json"
+  "modifiers": "/palettes/modifiers.json",
+  "tel_speeches": "/palettes/telegraphic_speeches.json"
 }

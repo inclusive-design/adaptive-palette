@@ -82,6 +82,7 @@ export const adaptivePaletteGlobals = {
   systemPrompts: {
     "What express": "What does this express? Give the top five answers.  Do not add a preamble like, 'Here are the top five answers.'",
     "Single Sentence": "Convert the telegraphic speech to a single sentence. Give the top five best answers.  Answer with a single grammatically correct sentence.  Number the five answers clearly.  Do not add a preamble like, 'Here are the top five answers.'",
+    "Single Sentence Young": "Convert the telegraphic speech to a single sentence. Give the top five best answers.  Answer with a single grammatically correct sentence in the style of an elementary school aged child, using the first person singular.  Number the five answers clearly.  Do not add a preamble like, 'Here are the top five answers.'",
   },
 
   // `id` attribute of the HTML element area where the main palette is
