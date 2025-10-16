@@ -14,7 +14,7 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle, speak, wordGrammar } from "./GlobalUtils";
 import { findIndicators, findClassifierFromLeft } from "./SvgUtils";
 import "./ActionIndicatorCell.scss";
 
@@ -64,12 +64,13 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
     else {
       newBciAvId = [ newBciAvId, ";", indicatorBciAvId ];
     }
+    const grammaticalLabel = wordGrammar(symbolToEdit.label, indicatorBciAvId as number);
     payloads[caretPosition] = {
       // TODO:  what should the following two fields be?  For now the ID is
       // the combination of the previous symbol plus the indicator.  The label
       // is the same as before, but is spoken aloud with the indicator label.
       "id": symbolToEdit.id + props.id,
-      "label": symbolToEdit.label,
+      "label": grammaticalLabel,
       "bciAvId": newBciAvId,
       "modifierInfo": symbolToEdit.modifierInfo
     };
@@ -77,7 +78,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       payloads: payloads,
       caretPosition: caretPosition
     };
-    speak(`${symbolToEdit.label}, ${props.options.label}`);
+    speak(`${grammaticalLabel}, ${props.options.label}`);
   };
 
   return html`

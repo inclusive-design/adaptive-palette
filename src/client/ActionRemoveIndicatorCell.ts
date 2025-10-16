@@ -14,7 +14,7 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType, ContentSignalDataType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle, speak, wordGrammar } from "./GlobalUtils";
 import { findIndicators } from "./SvgUtils";
 import "./ActionIndicatorCell.scss";
 
@@ -64,9 +64,12 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
       ...newBciAvId.slice(0, indicatorIndex-1),
       ...newBciAvId.slice(indicatorIndex+1)
     ];
+    const grammaticalWord = wordGrammar(
+      symbolToEdit.label, symbolToEdit.bciAvId[indicatorIndex] as number, false
+    );
     payloads[caretPosition] = {
       "id": symbolToEdit.id + props.id,
-      "label": symbolToEdit.label,
+      "label": grammaticalWord,
       "bciAvId": newBciAvId,
       "modifierInfo": symbolToEdit.modifierInfo
     };
@@ -74,7 +77,7 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
       payloads: payloads,
       caretPosition: caretPosition
     };
-    speak(`${symbolToEdit.label}`);
+    speak(`${grammaticalWord}`);
   };
 
   return html`
