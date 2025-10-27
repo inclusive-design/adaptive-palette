@@ -11,7 +11,7 @@
 import { render } from "preact";
 import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
-import { loadPaletteFromJsonFile, speak } from "./GlobalUtils";
+import { loadPaletteFromJsonFile } from "./GlobalUtils";
 import { goBackImpl } from "./CommandGoBackCell";
 import "./index.scss";
 
@@ -66,7 +66,7 @@ window.addEventListener("keydown", (event) => {
     // If focus was not on a textual input element, go back up one layer in the
     // palette navigation
     if (!elementAllowsTextEntry(event.target)) {
-      speak("Go back");
+      adaptivePaletteGlobals.buttonClick.play();
       goBackImpl();
     }
   }

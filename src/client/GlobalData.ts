@@ -15,7 +15,7 @@
 import { signal } from "@preact/signals";
 
 // NOTE: this import causes a warning serving the application using the `vite`
-// server.  The warning suggests to *not* us the `public` folder but to use
+// server.  The warning suggests to *not* use the `public` folder but to use
 // the `src` folder instead.  However, this code is also served using node
 // express and it is in the proper location for that envionment.  A copy of the
 // warning follows:
@@ -84,6 +84,7 @@ export const adaptivePaletteGlobals = {
     "Single Sentence": "Convert the telegraphic speech to a single sentence. Give the top five best answers.  Answer with a single grammatically correct sentence.  Number the five answers clearly.  Do not add a preamble like, 'Here are the top five answers.'",
     "Single Sentence Young": "Convert the telegraphic speech to a single sentence. Give the top five best answers.  Answer with a single grammatically correct sentence in the style of an elementary school aged child, using the first person singular.  Number the five answers clearly.  Do not add a preamble like, 'Here are the top five answers.'",
   },
+  buttonClick: new Audio("/data/navigate.mp3"),
 
   // `id` attribute of the HTML element area where the main palette is
   // displayed, set by initAdaptivePaletteGlobals().  It defaults to the empty
