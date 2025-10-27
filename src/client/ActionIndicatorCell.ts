@@ -64,11 +64,15 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
     else {
       newBciAvId = [ newBciAvId, ";", indicatorBciAvId ];
     }
-    const grammaticalLabel = wordGrammar(symbolToEdit.label, indicatorBciAvId as number);
+    // Try to transform the gloss to fit with the indicator.  If nothing
+    // changes, add the label of the indicator, e.g., "plural".
+    let grammaticalLabel = wordGrammar(symbolToEdit.label, indicatorBciAvId as number);
+    if (grammaticalLabel === symbolToEdit.label) {
+      grammaticalLabel = `${symbolToEdit.label}, ${props.options.label}`;
+    }
     payloads[caretPosition] = {
-      // TODO:  what should the following two fields be?  For now the ID is
-      // the combination of the previous symbol plus the indicator.  The label
-      // is the same as before, but is spoken aloud with the indicator label.
+      // TODO:  what should for the "id"?  For now it is the combination of the
+      // previous symbol plus the indicator.
       "id": symbolToEdit.id + props.id,
       "label": grammaticalLabel,
       "bciAvId": newBciAvId,
@@ -78,7 +82,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       payloads: payloads,
       caretPosition: caretPosition
     };
-    speak(`${grammaticalLabel}, ${props.options.label}`);
+    speak(`${grammaticalLabel}`);
   };
 
   return html`

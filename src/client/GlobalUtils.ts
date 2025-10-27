@@ -71,8 +71,9 @@ async function loadPaletteFromJsonFile (jsonFilePath: string): Promise<JsonPalet
 }
 
 // Collections of indicators used by `wordGrammar()` below.  Note that the
-// plural,
-const PLURAL_INDICATORS = [ 9011, 28044, 28046 ];
+// `PLURAL_INDICATORS` includes the basic plural, the concrete thing plural,
+// the definite plural, and the concrete thing definite plural.
+const PLURAL_INDICATORS = [ 9011, 9010, 28044, 28046 ];
 
 // Some of the verb indicators.  There a many more
 // action/infinitive, future, past, command, present
@@ -120,7 +121,7 @@ function wordGrammar (wordToModify: string, indicatorId: number, added: boolean 
       }
     }
     else {
-      // If removing a verb indicator, try to turn the word back into a "noun"
+      // If removing a verb indicator, try turning the word back into a "noun"
       // (gerund), e.g. "walk" -> "walking".
       result = doc.verbs().toGerund().text();
     }
@@ -131,6 +132,9 @@ function wordGrammar (wordToModify: string, indicatorId: number, added: boolean 
   if (result.length === 0) {
     result = wordToModify;
   }
+  // If the gloss has a comma in it to begin with, Compromise sometimes adds
+  // extra, e.g. "has, have" -> "has,, had".  Remove the extra comma(s).
+  result = result.replace(/,,+/, ",");
   return result;
 }
 
