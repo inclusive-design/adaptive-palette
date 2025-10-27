@@ -84,3 +84,25 @@ function elementAllowsTextEntry (element) {
     (element.getAttribute("role") === "textbox")
   );
 }
+
+// "Secret" keydown listener for showing/hiding the hidden SVG builder entry UI
+// and find-by-gloss dialog
+window.addEventListener("keydown", (event) => {
+  console.log(`Kebyoard event, key is '${event.key}', code is '${event.code}'`);
+  if (event.ctrlKey && event.metaKey && (event.code == "Space")) {
+    console.log("Detected full combo");
+    toggleDisplay("SvgEntryDalog");
+    toggleDisplay("SearchGlossDialog");
+  }
+});
+
+function toggleDisplay (elementId) {
+  const visibleStyle = document.getElementById(elementId).style;
+  if (visibleStyle.display === "block") {
+    visibleStyle.display = "none";
+  }
+  else {
+    visibleStyle.display = "block";
+  }
+}
+
