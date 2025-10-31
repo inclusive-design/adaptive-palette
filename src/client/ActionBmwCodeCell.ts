@@ -14,7 +14,7 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle, speak, insertWordAtCaret } from "./GlobalUtils";
 import { decomposeBciAvId } from "./SvgUtils";
 import "./ActionBmwCodeCell.scss";
 
@@ -41,24 +41,7 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType): VNode {
       "modifierInfo": []
     };
     const{ caretPosition, payloads } = changeEncodingContents.value;
-    // If the `caretPosition` is the last symbol in the `payloads` array, append
-    // the new `payload`, or if the `caretPosition` is somwhere within the
-    // `payloads` -- put the new symbol right after the `caretPosition`.  In
-    // both cases add one to the caretPosition.
-    const newCaretPosition = caretPosition + 1;
-    if (caretPosition === payloads.length-1) {
-      changeEncodingContents.value = {
-        payloads: [...changeEncodingContents.value.payloads, payload],
-        caretPosition: newCaretPosition
-      };
-    }
-    else {
-      payloads.splice(newCaretPosition, 0, payload);
-      changeEncodingContents.value = {
-        payloads: payloads,
-        caretPosition: newCaretPosition
-      };
-    }
+    changeEncodingContents.value = insertWordAtCaret(payload, payloads, caretPosition);
     speak(props.options.label);
   };
 

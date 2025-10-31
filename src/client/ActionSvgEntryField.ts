@@ -15,7 +15,7 @@ import { html } from "htm/preact";
 import { BciAvIdType } from "./index.d";
 import { changeEncodingContents } from "./GlobalData";
 import { makeBciAvIdType, decomposeBciAvId, createModifierInfo, BLISSARY_PATTERN_KEY, BCIAV_PATTERN_KEY } from "./SvgUtils";
-import { speak } from "./GlobalUtils";
+import { speak, insertWordAtCaret } from "./GlobalUtils";
 import "./ActionSvgEntryField.scss";
 
 export const SVG_ENTRY_FIELD_ID    = "svgEntryField";
@@ -60,11 +60,9 @@ export function ActionSvgEntryField (): VNode {
           "bciAvId": composition,
           "modifierInfo": createModifierInfo(composition)
         };
-        const newContent = [...changeEncodingContents.value.payloads, payload];
-        changeEncodingContents.value = {
-          payloads: newContent,
-          caretPosition: newContent.length - 1
-        };
+        changeEncodingContents.value = insertWordAtCaret(
+          payload, changeEncodingContents.value.payloads, changeEncodingContents.value.caretPosition
+        );
         speak(payload.label);
       }
     }

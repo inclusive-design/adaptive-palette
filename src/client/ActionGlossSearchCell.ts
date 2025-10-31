@@ -14,7 +14,7 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle, speak, insertWordAtCaret } from "./GlobalUtils";
 import { decomposeBciAvId, createModifierInfo } from "./SvgUtils";
 import "./ActionGlossSearchCell.scss";
 
@@ -58,11 +58,9 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
       "bciAvId": payloadBciAvId,
       "modifierInfo": createModifierInfo(payloadBciAvId)
     };
-    const newContents = [...changeEncodingContents.value.payloads, payload];
-    changeEncodingContents.value = {
-      payloads: newContents,
-      caretPosition: newContents.length - 1
-    };
+    changeEncodingContents.value = insertWordAtCaret(
+      payload, changeEncodingContents.value.payloads, changeEncodingContents.value.caretPosition
+    );
     speak(theLabel);
   };
 
