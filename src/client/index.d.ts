@@ -68,7 +68,10 @@ export type ModifierInfoType = {
  * Symbol input area has associated content and caret position. Either or both
  * can change.
  */
+export type SymbolEncodingType = EncodingType & {
+  modifierInfo?: ModifierInfoType[]
+}
 export type ContentSignalDataType = {
-  payloads: (EncodingType & ModifierInfoType?)[],
+  payloads: SymbolEncodingType[],
   caretPosition: number
 };
