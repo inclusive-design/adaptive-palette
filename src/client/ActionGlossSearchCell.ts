@@ -29,9 +29,19 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
   } = props.options;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
-  let proposedLabel = label.split(":")[0];
-  if (proposedLabel.length === 0) {
-    proposedLabel = props.options.label;
+  // The label has the form "searchTerm: gloss".  Check if the searchTerm part
+  // is a number.  If so, replace it with the `bciAvId`, which is the id of the
+  // symbol found when searching for all of the symbols that contain the
+  // searched-for symbol.
+  let actualLabel = label;
+  const [ searchTerm, glossPart ] = label.split(":");
+  let proposedGloss = searchTerm;
+  if (proposedGloss.length === 0) {
+    proposedGloss = label;
+  }
+  else if (typeof parseInt(searchTerm) === "number") {
+    actualLabel = `${bciAvId}: ${glossPart}`;
+    proposedGloss = glossPart;
   }
   const composition = decomposeBciAvId(bciAvId);
   let compositionString;
@@ -69,11 +79,11 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
       <button id="${props.id}" onClick=${cellClicked}>
         <${BlissSymbol}
           bciAvId=${bciAvId}
-          label=${label}
+          label=${actualLabel}
           isPresentation=true
         />
       </button>
-      <input id=input-${props.id} value=${proposedLabel} />
+      <input id=input-${props.id} value=${proposedGloss} />
       <span>${compositionString}</span>
     </div>
   `;
