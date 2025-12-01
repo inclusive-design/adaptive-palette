@@ -10,74 +10,15 @@
  */
 
 import { VNode } from "preact";
-import { html } from "htm/preact";
-import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
-import { BlissSymbol } from "./BlissSymbol";
-import { changeEncodingContents } from "./GlobalData";
-import { generateGridStyle, speak } from "./GlobalUtils";
-import "./ActionModifierCell.scss";
+import { ActionModifierCodeCellPropsType, ActionModifierCellCommon }
+  from "./ActionModifierCellCommon";
 
-type ActionModifierCodeCellPropsType = {
-  id: string,
-  options: BlissSymbolInfoType & LayoutInfoType
-};
+const PREPENDED = true;
 
 /*
  * A "pre" modifier is a modifier symbol that is prepended to the current symbol
- * in the input area
+ * in the input area.
  */
 export function ActionPreModifierCell (props: ActionModifierCodeCellPropsType): VNode {
-  const {
-    columnStart, columnSpan, rowStart, rowSpan, label
-  } = props.options;
-
-  // Get the modifier BCI AV ID and make sure it's an array.
-  const modifierBciAvId = (
-    typeof props.options.bciAvId === "number" ?
-      [props.options.bciAvId] :
-      props.options.bciAvId
-  );
-
-  const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
-  const disabled = changeEncodingContents.value.length === 0;
-
-  const cellClicked = () => {
-    // Get the last symbol in the editing area and its list of previously added
-    // modifiers.
-    const allButLastSymbol = [...changeEncodingContents.value];
-    const lastSymbol = allButLastSymbol.pop();
-    let newBciAvId = (
-      typeof lastSymbol.bciAvId === "number" ?
-        [lastSymbol.bciAvId] :
-        lastSymbol.bciAvId
-    );
-    newBciAvId = [ ...modifierBciAvId, "/", ...newBciAvId ];
-
-    // Push the current modifier information to the `modifierInfo` aspect of the
-    // `lastSymbol` to track that it is the last one added (at this point).
-    lastSymbol.modifierInfo.push({
-      modifierId: modifierBciAvId,
-      modifierGloss: label,
-      isPrepended: true
-    });
-    const payload = {
-      "id": lastSymbol.id + props.id,
-      "label": `${props.options.label} ${lastSymbol.label}`,
-      "bciAvId": newBciAvId,
-      "modifierInfo": lastSymbol.modifierInfo
-    };
-    changeEncodingContents.value = [...allButLastSymbol, payload];
-    speak(payload.label);
-  };
-
-  return html`
-    <button id="${props.id}" class="actionModifierCell" style="${gridStyles}" onClick=${cellClicked} disabled="${disabled}">
-      <${BlissSymbol}
-        bciAvId=${modifierBciAvId}
-        label=${label}
-        isPresentation=true
-      />
-    </button>
-  `;
+  return ActionModifierCellCommon(props, PREPENDED);
 }
-
