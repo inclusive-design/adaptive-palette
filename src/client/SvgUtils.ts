@@ -183,26 +183,6 @@ export function isModifierId (bciAvId: number): boolean {
 }
 
 /*
- * Given an array of BCI AV IDs, determine if it contains more than one
- * "symbol". In this context:
- * - return `true` if there is only one ID in the array,
- * - return `true` if there is an ID plus an indicator ID only,
- * - return `false`, otherwise.
- * The test involves looking for at least one "/" (`SLASH_SEPARATOR`) in the
- * array.  If none, then there is only one symbol.
- * @param {BciAvIdType} - The BCI AV ID to examine
- * @return {boolean}
- */
-export function isSingleSymbol (bciAvId: BciAvIdType): boolean {
-  if (typeof bciAvId === "number" ) {
-    return true;
-  }
-  else {
-    return !SLASH_SEPARATOR.test(bciAvId.join(""));
-  }
-}
-
-/*
  * Find the position of the first non-modifier symbol starting from left.  This
  * should be a classifier symbol.  If the single number form of a BciAvIdType is
  * provided, then 0 (zero) is returned.  If the entire sequence of symbols has
