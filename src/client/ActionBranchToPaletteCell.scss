@@ -10,8 +10,8 @@
  */
 
 .actionBranchToPaletteCell {
-  border: 2px solid blue;
-  background-color: chartreuse;
+  border: 3px solid blue;
+  background-color: white;
   padding-inline: 0.5rem;
   text-align: center;
 }
@@ -33,10 +33,10 @@
     right: 0;
     border-width: 0 1.33rem 1.33rem 0;
     border-style: solid;
-    border-top-color: #5fff00;
-    border-right-color: #5fff00;
-    border-bottom-color: #658E15;
-    border-left-color: #658E15;
+    border-top-color: lightgray;
+    border-right-color: lightgray;
+    border-bottom-color: black;
+    border-left-color: black;
     background: #658E15;
     -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
     -moz-box-shadow: 0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);

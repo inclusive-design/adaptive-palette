@@ -17,6 +17,7 @@
   display: flex;
   overflow: auto; /* Add scrollbar when content overflows */
   white-space: nowrap;
+  font-weight: bold;
 
   .blissSymbol {
     margin: 0 0.5rem;
