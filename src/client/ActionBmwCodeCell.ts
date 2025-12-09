@@ -32,10 +32,13 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType): VNode {
 
   const cellClicked = () => {
     const composition = decomposeBciAvId(bciAvId);
+    // The payload includes an empty `modifierInfo` for this new symbol.
+    const payloadBciAvId = ( composition ? composition : props.options.bciAvId );
     const payload = {
       "id": props.id,
       "label": props.options.label,
-      "bciAvId": ( composition ? composition : props.options.bciAvId )
+      "bciAvId": payloadBciAvId,
+      "modifierInfo": []
     };
     changeEncodingContents.value = [...changeEncodingContents.value, payload];
     speak(props.options.label);

@@ -189,6 +189,48 @@ describe("Palette integration test", () => {
     }
   };
 
+  // Modifier "tool bar" palette
+  const OPPOSITE_MODIFIER_ID = 15927;
+  const INTENSITY_MODIFIER_ID = 14947;
+  const testModifierPalette = {
+    "name": "modifier tool bar",
+    "cells": {
+      "opposite-15927-9eb5b1c4-afca-455b-bfb5-d896e8afb3e9": {
+        "type": "ActionPreModifierCell",
+        "options": {
+          "label": "opposite of",
+          "bciAvId": OPPOSITE_MODIFIER_ID,
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 1,
+          "columnSpan": 1
+        }
+      },
+      "intensity-14947-30e39aea-b045-4082-b07b-43c0b92be8dd": {
+        "type": "ActionPostModifierCell",
+        "options": {
+          "label": "intensity",
+          "bciAvId": INTENSITY_MODIFIER_ID,
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 2,
+          "columnSpan": 1
+        }
+      },
+      "remove_a_modifier-c4a69b52-e23f-4c4b-bd1b-2f5d9a4d4906": {
+        "type": "ActionRemoveModifierCell",
+        "options": {
+          "label": "remove a modifier",
+          "bciAvId": [ 17448 ],
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 15,
+          "columnSpan": 1
+        }
+      }
+    }
+  };
+
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
     // Pre-load `testLayerOnePalette` to avoid importing it from a non-existent
@@ -365,5 +407,81 @@ describe("Palette integration test", () => {
     const deleteButton = await screen.findByText("Delete");
     fireEvent.click(deleteButton);
     expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
+  });
+
+  test("Coordinating adding and remove modifiers", async() => {
+    // Setup: add the `testPalette` to the document as well as the modifier
+    // strip.  Find the "clear all" button and activate it to clear out any
+    // contents in the content area.
+    render(html`<${Palette} json=${testPalette}/>`);
+    render(html`<${Palette} json=${testModifierPalette}/>`);
+    const clearButton = await screen.findByText("Clear");
+    fireEvent.click(clearButton);
+    const contentArea = await screen.findByLabelText("Input Area");
+    expect(contentArea.childNodes.length).toBe(0);
+
+    // Get the "First Cell", and the "intensity" and "oppositve" modifier
+    // buttons, and the "remove a modifier" button.  The remove modifier should
+    // be disabled.
+    const firstCell = await screen.findByText("First Cell");
+    const addIntensityButton = await screen.findByText("intensity");
+    const addOppositeButton = await screen.findByText("opposite of");
+    const removeModifierButton = await screen.findByText("remove a modifier");
+    expect(firstCell).toBeInTheDocument();
+    expect(addIntensityButton).toBeInTheDocument();
+    expect(addOppositeButton).toBeInTheDocument();
+    expect(removeModifierButton).toBeInTheDocument();
+    expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
+
+    // Add "First Cell" to the `changeEncodingContents`.  There should be no
+    // modifiers on it at this point.
+    fireEvent.click(firstCell);
+    let firstSymbol = changeEncodingContents.value[0];
+    expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(false);
+    expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
+
+    // Add the intensity modifer.
+    fireEvent.click(addIntensityButton);
+    firstSymbol = changeEncodingContents.value[0];
+    expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(true);
+    expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect(removeModifierButton.getAttribute("disabled")).toBeNull();
+
+    // Remove the intensity modifer.
+    fireEvent.click(removeModifierButton);
+    firstSymbol = changeEncodingContents.value[0];
+    expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(false);
+    expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
+
+    // Add the intensity, and then the oppposite modifiers.
+    fireEvent.click(addIntensityButton);
+    firstSymbol = changeEncodingContents.value[0];
+    expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(true);
+    expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect(removeModifierButton.getAttribute("disabled")).toBeNull();
+    fireEvent.click(addOppositeButton);
+    firstSymbol = changeEncodingContents.value[0];
+    expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(true);
+    expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(true);
+    expect(removeModifierButton.getAttribute("disabled")).toBeNull();
+
+    // Remove a modifier -- should be the last one added, the "opposite of"
+    // modifier.
+    fireEvent.click(removeModifierButton);
+    firstSymbol = changeEncodingContents.value[0];
+    expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(true);
+    expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect(removeModifierButton.getAttribute("disabled")).toBeNull();
+
+    // Remove another modifier -- should be the "intensity" modifier.  Also,
+    // there should be no more modifiers on the symbol and the remove button
+    // should be disabled.
+    fireEvent.click(removeModifierButton);
+    firstSymbol = changeEncodingContents.value[0];
+    expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(false);
+    expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
   });
 });

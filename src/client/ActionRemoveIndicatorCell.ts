@@ -66,7 +66,8 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
     const payload = {
       "id": lastSymbol.id + props.id,
       "label": lastSymbol.label,
-      "bciAvId": newBciAvId
+      "bciAvId": newBciAvId,
+      "modifierInfo": lastSymbol.modifierInfo
     };
     changeEncodingContents.value = [...allButLastSymbol, payload];
     speak(`${lastSymbol.label}`);

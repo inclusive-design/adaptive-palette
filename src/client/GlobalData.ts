@@ -32,7 +32,10 @@ import bliss_symbols from "../../public/data/bliss_symbol_explanations.json";
 import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
 import { ActionBranchToPaletteCell } from "./ActionBranchToPaletteCell";
 import { ActionIndicatorCell } from "./ActionIndicatorCell";
+import { ActionPreModifierCell } from "./ActionPreModifierCell";
+import { ActionPostModifierCell } from "./ActionPostModifierCell";
 import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
+import { ActionRemoveModifierCell } from "./ActionRemoveModifierCell";
 import { CommandGoBackCell } from "./CommandGoBackCell";
 import { ContentBmwEncoding } from "./ContentBmwEncoding";
 import { CommandClearEncoding } from "./CommandClearEncoding";
@@ -44,7 +47,10 @@ export const cellTypeRegistry = {
   "ActionBmwCodeCell": ActionBmwCodeCell,
   "ActionBranchToPaletteCell": ActionBranchToPaletteCell,
   "ActionIndicatorCell": ActionIndicatorCell,
+  "ActionPreModifierCell": ActionPreModifierCell,
+  "ActionPostModifierCell": ActionPostModifierCell,
   "ActionRemoveIndicatorCell": ActionRemoveIndicatorCell,
+  "ActionRemoveModifierCell": ActionRemoveModifierCell,
   "CommandGoBackCell": CommandGoBackCell,
   "ContentBmwEncoding": ContentBmwEncoding,
   "CommandClearEncoding": CommandClearEncoding,
