@@ -95,7 +95,7 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     expect(removeModifierButton.style["grid-column"]).toBe("2 / span 1");
     expect(removeModifierButton.style["grid-row"]).toBe("3 / span 2");
 
-    // Check disabled state.  `changeEncodingContents.value` is initialized
+    // Check disabled state.  `changeEncodingContents` is initialized
     // with an empty array, hence there should be a `disabled` attribute.
     expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
   });
@@ -105,7 +105,10 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     // Put a symbol into the `changeEncodingContents` that has no
     // modifier.  The rendered `ActionRemoveModifierCell` should remain
     // disabled since there is no modifier to remove.
-    changeEncodingContents.value = [blissWordNoModifier];
+    changeEncodingContents.value = {
+      payloads: [blissWordNoModifier],
+      caretPosition: 0
+    };
     render(html`
       <${ActionRemoveModifierCell}
         id="${TEST_CELL_ID}"
@@ -122,7 +125,12 @@ describe("ActionRemoveModifierCell render tests", (): void => {
   test("ActionRemoveModifierCell rendering, enabled (prepended modifier)", async (): Promise<void> => {
 
     // Add a symbol *with* a prepended modifier and render the ActionRemoveModifierCell.
-    changeEncodingContents.value.push(blissWordWithPreModifier);
+    const newContents = changeEncodingContents.value.payloads;
+    newContents.push(blissWordWithPreModifier);
+    changeEncodingContents.value = {
+      payloads: newContents,
+      caretPosition: newContents.length - 1
+    };
     render(html`
       <${ActionRemoveModifierCell}
         id="${TEST_CELL_ID}"
@@ -142,8 +150,13 @@ describe("ActionRemoveModifierCell render tests", (): void => {
 
     // Add two symbols, the last one with a modifier and render the
     // ActionRemoveModifierCell.
-    changeEncodingContents.value.push(blissWordNoModifier);
-    changeEncodingContents.value.push(blissWordWithPreModifier);
+    const newContents = changeEncodingContents.value.payloads;
+    newContents.push(blissWordNoModifier);
+    newContents.push(blissWordWithPreModifier);
+    changeEncodingContents.value = {
+      payloads: newContents,
+      caretPosition: newContents.length - 1
+    };
     render(html`
       <${ActionRemoveModifierCell}
         id="${TEST_CELL_ID}"
@@ -160,7 +173,7 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     // has a modifier.
     fireEvent.click(removeModifierButton);
     expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
-    const lastSymbol = changeEncodingContents.value[changeEncodingContents.value.length-1];
+    const lastSymbol = changeEncodingContents.value.payloads[changeEncodingContents.value.payloads.length-1];
     expect(lastSymbol.bciAvId).toStrictEqual(bciAvIdAfterPreModifierRemoval);
   });
 
@@ -168,8 +181,13 @@ describe("ActionRemoveModifierCell render tests", (): void => {
 
     // Add two symbols, the last one with a modifier and render the
     // ActionRemoveModifierCell.
-    changeEncodingContents.value.push(blissWordNoModifier);
-    changeEncodingContents.value.push(blissWordPrePostModifiers);
+    const newContents = changeEncodingContents.value.payloads;
+    newContents.push(blissWordNoModifier);
+    newContents.push(blissWordPrePostModifiers);
+    changeEncodingContents.value = {
+      payloads: newContents,
+      caretPosition: newContents.length - 1
+    };
     render(html`
       <${ActionRemoveModifierCell}
         id="${TEST_CELL_ID}"
@@ -186,14 +204,14 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     // modifier.
     fireEvent.click(removeModifierButton);
     expect(removeModifierButton.getAttribute("disabled")).toBeNull();
-    let lastSymbol = changeEncodingContents.value[changeEncodingContents.value.length-1];
+    let lastSymbol = changeEncodingContents.value.payloads[changeEncodingContents.value.payloads.length-1];
     expect(lastSymbol.bciAvId).toStrictEqual(bciAvIdAfterOneModifierRemoved);
 
     // Remove the last modifier.  Now the `ActionRemoveModifierCell` should be
     // disabled.  Check that the symbol itself no longer has any modifiers.
     fireEvent.click(removeModifierButton);
     expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
-    lastSymbol = changeEncodingContents.value[changeEncodingContents.value.length-1];
+    lastSymbol = changeEncodingContents.value.payloads[changeEncodingContents.value.payloads.length-1];
     expect(lastSymbol.bciAvId).toStrictEqual(bciAvIdAfterBothModifiersRemoved);
   });
 });

@@ -36,6 +36,8 @@ import { ActionPreModifierCell } from "./ActionPreModifierCell";
 import { ActionPostModifierCell } from "./ActionPostModifierCell";
 import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
 import { ActionRemoveModifierCell } from "./ActionRemoveModifierCell";
+import { CommandCursorBackward } from "./CommandCursorBackward";
+import { CommandCursorForward } from "./CommandCursorForward";
 import { CommandGoBackCell } from "./CommandGoBackCell";
 import { ContentBmwEncoding } from "./ContentBmwEncoding";
 import { CommandClearEncoding } from "./CommandClearEncoding";
@@ -51,6 +53,8 @@ export const cellTypeRegistry = {
   "ActionPostModifierCell": ActionPostModifierCell,
   "ActionRemoveIndicatorCell": ActionRemoveIndicatorCell,
   "ActionRemoveModifierCell": ActionRemoveModifierCell,
+  "CommandCursorBackward": CommandCursorBackward,
+  "CommandCursorForward": CommandCursorForward,
   "CommandGoBackCell": CommandGoBackCell,
   "ContentBmwEncoding": ContentBmwEncoding,
   "CommandClearEncoding": CommandClearEncoding,
@@ -100,6 +104,9 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
 /**
  * Signal for updating the contents of the ContentBmwEncoding area.  The value
  * of the signal is the current array of EncodingType objects to display in the
- * ContentBmwEncoding area, an empty array to begin with.
+ * ContentBmwEncoding area and the position of the caret
  */
-export const changeEncodingContents = signal([]);
+export const changeEncodingContents = signal({
+  payloads: [],
+  caretPosition: -1,
+});

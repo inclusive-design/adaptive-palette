@@ -39,17 +39,16 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
   );
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
-  const disabled = changeEncodingContents.value.length === 0;
+  const disabled = changeEncodingContents.value.caretPosition === -1;
 
   const cellClicked = () => {
-    // Get the last symbol in the editing area and its list of previously added
-    // modifiers.
-    const allButLastSymbol = [...changeEncodingContents.value];
-    const lastSymbol = allButLastSymbol.pop();
+    // Get the symbol at the caret position in the editing area.
+    const { caretPosition, payloads } = changeEncodingContents.value;
+    const symbolToEdit = payloads[caretPosition];
     let newBciAvId = (
-      typeof lastSymbol.bciAvId === "number" ?
-        [lastSymbol.bciAvId] :
-        lastSymbol.bciAvId
+      typeof symbolToEdit.bciAvId === "number" ?
+        [symbolToEdit.bciAvId] :
+        symbolToEdit.bciAvId
     );
     if (prepend) {
       newBciAvId = [ ...modifierBciAvId, "/", ...newBciAvId ];
@@ -58,20 +57,23 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
       newBciAvId = [ ...newBciAvId, "/", ...modifierBciAvId ];
     }
     // Push the current modifier information onto the `modifierInfo` of the
-    // `lastSymbol`, tracking the order in which the modifiers were added.
-    lastSymbol.modifierInfo.push({
+    // `symbolToEdit`, tracking the order in which the modifiers were added.
+    symbolToEdit.modifierInfo.push({
       modifierId: modifierBciAvId,
       modifierGloss: label,
       isPrepended: prepend
     });
-    const payload = {
-      "id": lastSymbol.id + props.id,
-      "label": `${label} ${lastSymbol.label}`,
+    payloads[caretPosition] = {
+      "id": symbolToEdit.id + props.id,
+      "label": `${label} ${symbolToEdit.label}`,
       "bciAvId": newBciAvId,
-      "modifierInfo": lastSymbol.modifierInfo
+      "modifierInfo": symbolToEdit.modifierInfo
     };
-    changeEncodingContents.value = [...allButLastSymbol, payload];
-    speak(payload.label);
+    changeEncodingContents.value = {
+      payloads: payloads,
+      caretPosition: caretPosition
+    };
+    speak(`${label} ${symbolToEdit.label}`);
   };
 
   return html`

@@ -8,7 +8,7 @@
  * You may obtain a copy of the License at
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
-import { JsonPaletteType } from "./index.d";
+import { JsonPaletteType, SymbolEncodingType, ContentSignalDataType } from "./index.d";
 
 /**
  * Global Utility Functions
@@ -68,8 +68,43 @@ async function loadPaletteFromJsonFile (jsonFilePath: string): Promise<JsonPalet
   }
 }
 
+/**
+ * Given a current set of Bliss-words, the caret position and a Bliss-word to
+ * add, insert the new word at the caret position in the set of symbols and
+ * update to the new caret position.
+ * @param {SymbolEncodingType} wordToAdd   - The new Bliss-word to add.
+ * @param {SymbolEncodingType[]} symbolSet - The set of Bliss-words to add to.
+ * @param {number} caretPos                - The insertion point within
+ *                                           `symbolSet`.
+ * @return {ContentSignalDataType} - the modified symbol set and new position of
+ *                                   the insertion caret.
+ */
+function insertWordAtCaret (wordToAdd: SymbolEncodingType, symbolSet: SymbolEncodingType[], caretPos: number ): ContentSignalDataType {
+  let newSymbolSet;
+  // If the `caretPos` is the last symbol in the `symbolSet`, append the new
+  // `wordToAdd`.  If the `caretPos` is somwhere within the `symbolSet`, put the
+  // new symbol right after the `caretPos`.  In both cases add one to the caret
+  // position.
+  const newCaretPos = caretPos + 1;
+  if (caretPos === symbolSet.length-1) {
+    newSymbolSet = {
+      payloads: [...symbolSet, wordToAdd],
+      caretPosition: newCaretPos
+    };
+  }
+  else {
+    symbolSet.splice(newCaretPos, 0, wordToAdd);
+    newSymbolSet = {
+      payloads: symbolSet,
+      caretPosition: newCaretPos
+    };
+  }
+  return newSymbolSet;
+}
+
 export {
   generateGridStyle,
   speak,
-  loadPaletteFromJsonFile
+  loadPaletteFromJsonFile,
+  insertWordAtCaret
 };

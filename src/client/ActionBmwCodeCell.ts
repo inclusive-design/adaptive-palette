@@ -14,7 +14,7 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle, speak, insertWordAtCaret } from "./GlobalUtils";
 import { decomposeBciAvId } from "./SvgUtils";
 import "./ActionBmwCodeCell.scss";
 
@@ -40,7 +40,8 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType): VNode {
       "bciAvId": payloadBciAvId,
       "modifierInfo": []
     };
-    changeEncodingContents.value = [...changeEncodingContents.value, payload];
+    const{ caretPosition, payloads } = changeEncodingContents.value;
+    changeEncodingContents.value = insertWordAtCaret(payload, payloads, caretPosition);
     speak(props.options.label);
   };
 
