@@ -17,14 +17,31 @@
   display: flex;
   overflow: auto; /* Add scrollbar when content overflows */
   white-space: nowrap;
-
-  &:hover {
-    background-color: limegreen;
-    color: white;
-  }
+  font-weight: bold;
 
   .blissSymbol {
     margin: 0 0.5rem;
     text-align: center;
+  }
+
+  .cursorCaret {
+    background-color: yellow;
+    padding-right: 2px;
+    border-right: 2px solid black;
+    animation: caretBlink 1s;
+    animation-iteration-count: infinite;
+  }
+
+  .insertionCaret {
+    padding-left: 2px;
+    border-left: 2px solid black;
+    animation: caretBlink 1s;
+    animation-iteration-count: infinite;
+  }
+}
+
+@keyframes caretBlink {
+  50% {
+    border-color: #ffffff;
   }
 }

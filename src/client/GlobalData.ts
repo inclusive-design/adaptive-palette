@@ -32,12 +32,17 @@ import bliss_symbols from "../../public/data/bliss_symbol_explanations.json";
 import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
 import { ActionBranchToPaletteCell } from "./ActionBranchToPaletteCell";
 import { ActionIndicatorCell } from "./ActionIndicatorCell";
+import { ActionPreModifierCell } from "./ActionPreModifierCell";
+import { ActionPostModifierCell } from "./ActionPostModifierCell";
 import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
+import { ActionRemoveModifierCell } from "./ActionRemoveModifierCell";
 import { ActionTextCell } from "./ActionTextCell";
+import { CommandClearEncoding } from "./CommandClearEncoding";
+import { CommandCursorBackward } from "./CommandCursorBackward";
+import { CommandCursorForward } from "./CommandCursorForward";
+import { CommandDelLastEncoding } from "./CommandDelLastEncoding";
 import { CommandGoBackCell } from "./CommandGoBackCell";
 import { ContentBmwEncoding } from "./ContentBmwEncoding";
-import { CommandClearEncoding } from "./CommandClearEncoding";
-import { CommandDelLastEncoding } from "./CommandDelLastEncoding";
 import { PaletteStore } from "./PaletteStore";
 import { NavigationStack } from "./NavigationStack";
 
@@ -45,12 +50,17 @@ export const cellTypeRegistry = {
   "ActionBmwCodeCell": ActionBmwCodeCell,
   "ActionBranchToPaletteCell": ActionBranchToPaletteCell,
   "ActionIndicatorCell": ActionIndicatorCell,
+  "ActionPreModifierCell": ActionPreModifierCell,
+  "ActionPostModifierCell": ActionPostModifierCell,
   "ActionRemoveIndicatorCell": ActionRemoveIndicatorCell,
+  "ActionRemoveModifierCell": ActionRemoveModifierCell,
   "ActionTextCell": ActionTextCell,
+  "CommandClearEncoding": CommandClearEncoding,
+  "CommandCursorBackward": CommandCursorBackward,
+  "CommandCursorForward": CommandCursorForward,
+  "CommandDelLastEncoding": CommandDelLastEncoding
   "CommandGoBackCell": CommandGoBackCell,
   "ContentBmwEncoding": ContentBmwEncoding,
-  "CommandClearEncoding": CommandClearEncoding,
-  "CommandDelLastEncoding": CommandDelLastEncoding
 };
 
 /**
@@ -106,9 +116,12 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
 /**
  * Signal for updating the contents of the ContentBmwEncoding area.  The value
  * of the signal is the current array of EncodingType objects to display in the
- * ContentBmwEncoding area, an empty array to begin with.
+ * ContentBmwEncoding area and the position of the caret
  */
-export const changeEncodingContents = signal([]);
+export const changeEncodingContents = signal({
+  payloads: [],
+  caretPosition: -1,
+});
 
 /**
  * Signal for updating the contents of the SentenceCompletion area.  The value

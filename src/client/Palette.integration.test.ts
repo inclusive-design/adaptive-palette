@@ -91,6 +91,30 @@ describe("Palette integration test", () => {
           "columnStart": 4,
           "columnSpan": 1
         }
+      },
+      "command-cursor-forwards": {
+        "type": "CommandCursorForward",
+        "options": {
+          "label": "Forward",
+          "bciAvId": [ 14390, ";", 24670 ],
+          "rowStart": 2,
+          "rowSpan": 1,
+          "columnStart": 12,
+          "columnSpan": 1,
+          "ariaControls": "content-encoding-area"
+        }
+      },
+      "command-cursor-backwards": {
+        "type": "CommandCursorBackward",
+        "options": {
+          "label": "Backward",
+          "bciAvId": [ 12613, ";", 24670 ],
+          "rowStart": 2,
+          "rowSpan": 1,
+          "columnStart": 11,
+          "columnSpan": 1,
+          "ariaControls": "bmw-encoding-area"
+        }
       }
     }
   };
@@ -183,6 +207,48 @@ describe("Palette integration test", () => {
           "rowStart": 1,
           "rowSpan": 1,
           "columnStart": 12,
+          "columnSpan": 1
+        }
+      }
+    }
+  };
+
+  // Modifier "tool bar" palette
+  const OPPOSITE_MODIFIER_ID = 15927;
+  const INTENSITY_MODIFIER_ID = 14947;
+  const testModifierPalette = {
+    "name": "modifier tool bar",
+    "cells": {
+      "opposite-15927-9eb5b1c4-afca-455b-bfb5-d896e8afb3e9": {
+        "type": "ActionPreModifierCell",
+        "options": {
+          "label": "opposite of",
+          "bciAvId": OPPOSITE_MODIFIER_ID,
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 1,
+          "columnSpan": 1
+        }
+      },
+      "intensity-14947-30e39aea-b045-4082-b07b-43c0b92be8dd": {
+        "type": "ActionPostModifierCell",
+        "options": {
+          "label": "intensity",
+          "bciAvId": INTENSITY_MODIFIER_ID,
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 2,
+          "columnSpan": 1
+        }
+      },
+      "remove_a_modifier-c4a69b52-e23f-4c4b-bd1b-2f5d9a4d4906": {
+        "type": "ActionRemoveModifierCell",
+        "options": {
+          "label": "remove a modifier",
+          "bciAvId": [ 17448 ],
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 15,
           "columnSpan": 1
         }
       }
@@ -304,14 +370,14 @@ describe("Palette integration test", () => {
     expect(firstCell).toBeInTheDocument();
     expect(addPluralButton).toBeInTheDocument();
     fireEvent.click(firstCell);
-    let firstSymbol = changeEncodingContents.value[0];
+    let firstSymbol = changeEncodingContents.value.payloads[0];
     expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(false);
     expect(firstSymbol.bciAvId.includes(ACTION_INDICATOR_ID)).toBe(false);
 
     // Click the `addPluralButton` and check that the plural indicator has been
     // added to the symbol in the content area.
     fireEvent.click(addPluralButton);
-    firstSymbol = changeEncodingContents.value[0];
+    firstSymbol = changeEncodingContents.value.payloads[0];
     expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(true);
     expect(firstSymbol.bciAvId.includes(ACTION_INDICATOR_ID)).toBe(false);
 
@@ -319,7 +385,7 @@ describe("Palette integration test", () => {
     // plural indicator has been replaced with the action indicator.
     const addActionButton = await screen.findByText("action");
     fireEvent.click(addActionButton);
-    firstSymbol = changeEncodingContents.value[0];
+    firstSymbol = changeEncodingContents.value.payloads[0];
     expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(false);
     expect(firstSymbol.bciAvId.includes(ACTION_INDICATOR_ID)).toBe(true);
 
@@ -328,7 +394,7 @@ describe("Palette integration test", () => {
     // either).
     const removeIndicatorButton = await screen.findByText("remove indicator");
     fireEvent.click(removeIndicatorButton);
-    firstSymbol = changeEncodingContents.value[0];
+    firstSymbol = changeEncodingContents.value.payloads[0];
     expect(firstSymbol.bciAvId.includes(ACTION_INDICATOR_ID)).toBe(false);
     expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(false);
   });
@@ -351,7 +417,7 @@ describe("Palette integration test", () => {
     const removeIndicatorButton = await screen.findByText("remove indicator");
     fireEvent.click(firstCell);
     fireEvent.click(addPluralButton);
-    const firstSymbol = changeEncodingContents.value[0];
+    const firstSymbol = changeEncodingContents.value.payloads[0];
     expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(true);
     expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
 
@@ -365,5 +431,187 @@ describe("Palette integration test", () => {
     const deleteButton = await screen.findByText("Delete");
     fireEvent.click(deleteButton);
     expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
+  });
+
+  test("Coordinating adding and remove modifiers", async() => {
+    // Setup: add the `testPalette` to the document as well as the modifier
+    // strip.  Find the "clear all" button and activate it to clear out any
+    // contents in the content area.
+    render(html`<${Palette} json=${testPalette}/>`);
+    render(html`<${Palette} json=${testModifierPalette}/>`);
+    const clearButton = await screen.findByText("Clear");
+    fireEvent.click(clearButton);
+    const contentArea = await screen.findByLabelText("Input Area");
+    expect(contentArea.childNodes.length).toBe(0);
+
+    // Get the "First Cell", and the "intensity" and "oppositve" modifier
+    // buttons, and the "remove a modifier" button.  The remove modifier should
+    // be disabled.
+    const firstCell = await screen.findByText("First Cell");
+    const addIntensityButton = await screen.findByText("intensity");
+    const addOppositeButton = await screen.findByText("opposite of");
+    const removeModifierButton = await screen.findByText("remove a modifier");
+    expect(firstCell).toBeInTheDocument();
+    expect(addIntensityButton).toBeInTheDocument();
+    expect(addOppositeButton).toBeInTheDocument();
+    expect(removeModifierButton).toBeInTheDocument();
+    expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
+
+    // Add "First Cell" to the `changeEncodingContents`.  There should be no
+    // modifiers on it at this point.
+    fireEvent.click(firstCell);
+    let firstSymbol = changeEncodingContents.value.payloads[0];
+    expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(false);
+    expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
+
+    // Add the intensity modifer.
+    fireEvent.click(addIntensityButton);
+    firstSymbol = changeEncodingContents.value.payloads[0];
+    expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(true);
+    expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect(removeModifierButton.getAttribute("disabled")).toBeNull();
+
+    // Remove the intensity modifer.
+    fireEvent.click(removeModifierButton);
+    firstSymbol = changeEncodingContents.value.payloads[0];
+    expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(false);
+    expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
+
+    // Add the intensity, and then the oppposite modifiers.
+    fireEvent.click(addIntensityButton);
+    firstSymbol = changeEncodingContents.value.payloads[0];
+    expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(true);
+    expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect(removeModifierButton.getAttribute("disabled")).toBeNull();
+    fireEvent.click(addOppositeButton);
+    firstSymbol = changeEncodingContents.value.payloads[0];
+    expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(true);
+    expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(true);
+    expect(removeModifierButton.getAttribute("disabled")).toBeNull();
+
+    // Remove a modifier -- should be the last one added, the "opposite of"
+    // modifier.
+    fireEvent.click(removeModifierButton);
+    firstSymbol = changeEncodingContents.value.payloads[0];
+    expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(true);
+    expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect(removeModifierButton.getAttribute("disabled")).toBeNull();
+
+    // Remove another modifier -- should be the "intensity" modifier.  Also,
+    // there should be no more modifiers on the symbol and the remove button
+    // should be disabled.
+    fireEvent.click(removeModifierButton);
+    firstSymbol = changeEncodingContents.value.payloads[0];
+    expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(false);
+    expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
+  });
+
+  test("Coordinating cursor movement and editing", async() => {
+    // Setup: add the `testPalette`, the indicator and modifier strips
+    // Find the "clear all" button and activate it to clear out any
+    // contents in the content area.
+    render(html`<${Palette} json=${testPalette}/>`);
+    render(html`<${Palette} json=${testIndicatorPalette}/>`);
+    render(html`<${Palette} json=${testModifierPalette}/>`);
+    const clearButton = await screen.findByText("Clear");
+    fireEvent.click(clearButton);
+    let contentArea = await screen.findByLabelText("Input Area");
+    expect(contentArea.childNodes.length).toBe(0);
+    expect(changeEncodingContents.value.caretPosition).toBe(-1);
+
+    // Add three symbols to the content area.  The cursor posiiton should be
+    // after the third symbol (= 2).
+    const firstCell = await screen.findByText("First Cell");
+    fireEvent.click(firstCell);
+    const secondCell = await screen.findByText("Second Cell");
+    fireEvent.click(secondCell);
+    fireEvent.click(firstCell);
+    const cursorForward = await screen.findByText("Forward");
+    const cursorBackward = await screen.findByText("Backward");
+    expect(contentArea.childNodes.length).toBe(3);
+    expect(changeEncodingContents.value.caretPosition).toBe(2);
+
+    // Cannot move cursor forward since at the end (right most). Caret position
+    // should not change.
+    fireEvent.click(cursorForward);
+    expect(changeEncodingContents.value.caretPosition).toBe(2);
+
+    // Move all the way to left -- click backward twice.  Caret position should
+    // be zero.
+    fireEvent.click(cursorBackward);
+    fireEvent.click(cursorBackward);
+    expect(changeEncodingContents.value.caretPosition).toBe(0);
+
+    // Move right one symbol.  Caret position should be 1, and the symbol itself
+    // should be secondCell's symbol.
+    fireEvent.click(cursorForward);
+    let symbolAtCaret = changeEncodingContents.value.payloads[1];
+    const paletteSecondCell = testPalette.cells["secondCell"];
+    expect(changeEncodingContents.value.caretPosition).toBe(1);
+    expect(symbolAtCaret.label).toBe(paletteSecondCell.options.label);
+    expect(symbolAtCaret.bciAvId).toStrictEqual([paletteSecondCell.options.bciAvId]);
+
+    // Add an indicator to the symbol at the cursor.  Caret position should not
+    // change, but symbol's bciAvId should now have a semi-colon.
+    const pluralButton = await screen.findByText("plural");
+    fireEvent.click(pluralButton);
+    symbolAtCaret = changeEncodingContents.value.payloads[1];
+    expect(changeEncodingContents.value.caretPosition).toBe(1);
+    expect(symbolAtCaret.label).toBe(paletteSecondCell.options.label);
+    expect(symbolAtCaret.bciAvId).toContain(";");
+
+    // Remove the indicator.  Caret position should not change, but the symbol's
+    // bciAvId should revert back to the original.
+    const removeIndicatorButton = await screen.findByText("remove indicator");
+    fireEvent.click(removeIndicatorButton);
+    symbolAtCaret = changeEncodingContents.value.payloads[1];
+    expect(changeEncodingContents.value.caretPosition).toBe(1);
+    expect(symbolAtCaret.label).toBe(paletteSecondCell.options.label);
+    expect(symbolAtCaret.bciAvId).toStrictEqual([paletteSecondCell.options.bciAvId]);
+
+    // Add a modifier to the symbol at the cursor.  Caret position should not
+    // change, but symbol's bciAvId should now have the modifier.
+    const oppositeButton = await screen.findByText("opposite of");
+    fireEvent.click(oppositeButton);
+    symbolAtCaret = changeEncodingContents.value.payloads[1];
+    expect(changeEncodingContents.value.caretPosition).toBe(1);
+    expect(symbolAtCaret.bciAvId).toContain(OPPOSITE_MODIFIER_ID);
+
+    // Remove the modifier.  Caret position should not change, but the symbol's
+    // bciAvId should revert back to the original.
+    const removeModifierButton = await screen.findByText("remove a modifier");
+    fireEvent.click(removeModifierButton);
+    symbolAtCaret = changeEncodingContents.value.payloads[1];
+    expect(changeEncodingContents.value.caretPosition).toBe(1);
+    expect(symbolAtCaret.label).toBe(paletteSecondCell.options.label);
+    expect(symbolAtCaret.bciAvId).toStrictEqual([paletteSecondCell.options.bciAvId]);
+
+    // Delete the symbol at the caret.  The caret position should move left by
+    // one, the number of symbols in the input area should now be 2, and the
+    // one at the caret should be firstCell's symbol.
+    expect(contentArea.childElementCount).not.toBe(0);
+    const deleteButton = await screen.findByText("Delete");
+    fireEvent.click(deleteButton);
+    symbolAtCaret = changeEncodingContents.value.payloads[1];
+    const paletteFirstCell = testPalette.cells["firstCell"];
+    expect(changeEncodingContents.value.caretPosition).toBe(0);
+    expect(changeEncodingContents.value.payloads.length).toBe(2);
+    expect(symbolAtCaret.label).toBe(paletteFirstCell.options.label);
+    expect(symbolAtCaret.bciAvId).toStrictEqual(paletteFirstCell.options.bciAvId);
+
+    // Move the caret to -1.  Since there are symbols in the display, this
+    // should change the display to show an insert before the first symbol.
+    changeEncodingContents.value = {
+      caretPosition: -1,
+      payloads: changeEncodingContents.value.payloads
+    };
+    contentArea = await screen.findByLabelText("Input Area");
+    expect(changeEncodingContents.value.payloads.length).not.toBe(0);
+    expect(changeEncodingContents.value.caretPosition).toBe(-1);
+    expect(contentArea.childElementCount).not.toBe(0);
+    expect(contentArea.children[0].className.includes("insertionCaret")).toBe(true);
   });
 });

@@ -5,7 +5,7 @@
       "type": "ActionBmwCodeCell",
       "options": {
         "label": "angry",
-        "bciAvId": 12377,
+        "bciAvId": [ 14647, "/", 14164, ";", 8998, "/", 15928 ],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,

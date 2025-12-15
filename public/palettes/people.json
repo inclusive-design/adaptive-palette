@@ -115,8 +115,8 @@
     "back-up-10a32c78-56fe-4622-9fba-0416b68d72fc": {
       "type": "CommandGoBackCell",
       "options": {
-        "label": "Go back",
-        "bciAvId":  12612,
+        "label": "Back",
+        "bciAvId":  [ 12613, ";", 24670 ],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -126,8 +126,8 @@
     "back-up-20a32c78-56fe-4622-9fba-0416b68d72fc": {
       "type": "CommandGoBackCell",
       "options": {
-        "label": "Go back",
-        "bciAvId":  12612,
+        "label": "Back",
+        "bciAvId":  [ 12613, ";", 24670 ],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 14,

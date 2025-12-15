@@ -60,7 +60,7 @@ export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType
 
   return html`
     <button
-      id="${props.id}" class="actionBranchToPaletteCell" style="${gridStyles}"
+      id="${props.id}" class="actionBranchToPaletteCell foldedCorner" style="${gridStyles}"
       data-branchto="${branchTo}" onClick=${navigateToPalette}>
       <${BlissSymbol} bciAvId=${bciAvId} label=${label} />
     </button>

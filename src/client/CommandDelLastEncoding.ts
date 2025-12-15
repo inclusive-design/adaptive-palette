@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2025 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -30,9 +30,20 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNo
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
-    const newEncodingContents = [...changeEncodingContents.value];
-    newEncodingContents.pop();
-    changeEncodingContents.value = newEncodingContents;
+    const { payloads, caretPosition } = changeEncodingContents.value;
+
+    // Nothing to do if:
+    // - there are no symbols (payloads), or
+    // - there are symbols, but the caret is for inserting before the first
+    //   symbol
+    if (payloads.length !== 0 && caretPosition !== -1) {
+      const newEncodingContents = [...changeEncodingContents.value.payloads];
+      newEncodingContents.splice(caretPosition, 1);
+      changeEncodingContents.value = {
+        payloads: newEncodingContents,
+        caretPosition: caretPosition - 1
+      };
+    }
     speak(label);
   };
 

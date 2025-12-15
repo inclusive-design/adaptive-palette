@@ -7,14 +7,38 @@
           "rowStart": 2,
           "rowSpan": 1,
           "columnStart": 1,
-          "columnSpan": 12
+          "columnSpan": 10
+      }
+    },
+    "command-move-caret-backwards": {
+      "type": "CommandCursorBackward",
+      "options": {
+          "label": "Backward",
+          "bciAvId": [ 12613, ";", 24670 ],
+          "rowStart": 2,
+          "rowSpan": 1,
+          "columnStart": 11,
+          "columnSpan": 1,
+          "ariaControls": "bmw-encoding-area"
+      }
+    },
+    "command-move-caret-forwards": {
+      "type": "CommandCursorForward",
+      "options": {
+          "label": "Forward",
+          "bciAvId": [ 14390, ";", 24670 ],
+          "rowStart": 2,
+          "rowSpan": 1,
+          "columnStart": 12,
+          "columnSpan": 1,
+          "ariaControls": "bmw-encoding-area"
       }
     },
     "command-del-last-encoding": {
       "type": "CommandDelLastEncoding",
       "options": {
           "label": "Delete",
-          "bciAvId": 12613,
+          "bciAvId": [ 24883, ";", 24670 ],
           "rowStart": 2,
           "rowSpan": 1,
           "columnStart": 13,
@@ -26,7 +50,7 @@
       "type": "CommandClearEncoding",
       "options": {
           "label": "Delete all",
-          "bciAvId": [ 13665, "//", 12360 ],
+          "bciAvId": [ 24883, ";", 24670, "//", 12360 ],
           "rowStart": 2,
           "rowSpan": 1,
           "columnStart": 14,
