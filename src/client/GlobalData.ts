@@ -58,7 +58,7 @@ export const cellTypeRegistry = {
   "CommandClearEncoding": CommandClearEncoding,
   "CommandCursorBackward": CommandCursorBackward,
   "CommandCursorForward": CommandCursorForward,
-  "CommandDelLastEncoding": CommandDelLastEncoding
+  "CommandDelLastEncoding": CommandDelLastEncoding,
   "CommandGoBackCell": CommandGoBackCell,
   "ContentBmwEncoding": ContentBmwEncoding,
 };
