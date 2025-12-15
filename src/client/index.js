@@ -52,10 +52,6 @@ render(
 );
 render(html`<${SentenceCompletionsPalette} />`, document.getElementById("llm_suggestions"));
 
-// Form for entering SVG strings
-import { ActionSvgEntryField } from "./ActionSvgEntryField";
-render(html`<${ActionSvgEntryField} />`, document.getElementById("svgBuilderStringEntry"));
-
 // Window keydown listener for a global "go back" keystroke
 window.addEventListener("keydown", (event) => {
   if (event.code === "Backquote") {
