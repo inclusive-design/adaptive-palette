@@ -9,8 +9,8 @@
      "branchTo": "Bliss standard chart",
      "rowStart": 3,
      "rowSpan": 1,
-     "columnStart": 9,
-     "columnSpan": 4
+     "columnStart": 5,
+     "columnSpan": 2
     }
   },
   "myfamily-30a32c78-56fe-4622-9fba-0416b68d72fc": {
@@ -22,7 +22,7 @@
      "rowStart": 3,
      "rowSpan": 1,
      "columnStart": 1,
-     "columnSpan": 4
+     "columnSpan": 2
     }
   },
   "people-30a32c78-56fe-4622-9fba-0416b68d72fc": {
@@ -33,20 +33,20 @@
       "bciAvId": 14646,
       "rowStart": 3,
       "rowSpan": 1,
-      "columnStart": 5,
-      "columnSpan": 4
+      "columnStart": 3,
+      "columnSpan": 2
     }
   },
-  "bmw-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+  "5707a518-3d14-4c1c-a9b5-8a8ed53aa6ee": {
     "type": "ActionBranchToPaletteCell",
     "options": {
-      "label": "BMW",
-      "branchTo": "BMW Palette",
-      "bciAvId": [ 8552, "/", 8563, "/", 8573 ],
+      "label": "ideas speech",
+      "branchTo": "tel_speeches",
       "rowStart": 3,
       "rowSpan": 1,
-      "columnStart": 13,
-      "columnSpan": 4
+      "columnStart": 7,
+      "columnSpan": 2,
+      "bciAvId": [ 14926, ";", 9011, "/", 12335, "/", 15666 ]
     }
   }
 }}

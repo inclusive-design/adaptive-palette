@@ -14,7 +14,7 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle, speak, insertWordAtCaret } from "./GlobalUtils";
 import { decomposeBciAvId } from "./SvgUtils";
 import "./ActionGlossSearchCell.scss";
 
@@ -29,9 +29,19 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
   } = props.options;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
-  let proposedLabel = label.split(":")[0];
-  if (proposedLabel.length === 0) {
-    proposedLabel = props.options.label;
+  // The label has the form "searchTerm: gloss".  Check if the searchTerm part
+  // is a number.  If so, replace it with the `bciAvId`, which is the id of the
+  // symbol found when searching for all of the symbols that contain the
+  // searched-for symbol.
+  let actualLabel = label;
+  const [ searchTerm, glossPart ] = label.split(":");
+  let proposedGloss = searchTerm;
+  if (proposedGloss.length === 0) {
+    proposedGloss = label;
+  }
+  else if (typeof parseInt(searchTerm) === "number") {
+    actualLabel = `${bciAvId}: ${glossPart}`;
+    proposedGloss = glossPart;
   }
   const composition = decomposeBciAvId(bciAvId);
   let compositionString;
@@ -51,12 +61,16 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
     const composition = decomposeBciAvId(bciAvId);
     const labelInput = document.getElementById(`input-${props.id}`) as HTMLInputElement;
     const theLabel = labelInput.value;
+    const payloadBciAvId = ( composition ? composition : props.options.bciAvId );
     const payload = {
       "id": props.id,
       "label": theLabel,
-      "bciAvId": ( composition ? composition : props.options.bciAvId )
+      "bciAvId": payloadBciAvId,
+      "modifierInfo": []
     };
-    changeEncodingContents.value = [...changeEncodingContents.value, payload];
+    changeEncodingContents.value = insertWordAtCaret(
+      payload, changeEncodingContents.value.payloads, changeEncodingContents.value.caretPosition
+    );
     speak(theLabel);
   };
 
@@ -65,11 +79,11 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
       <button id="${props.id}" onClick=${cellClicked}>
         <${BlissSymbol}
           bciAvId=${bciAvId}
-          label=${label}
+          label=${actualLabel}
           isPresentation=true
         />
       </button>
-      <input id=input-${props.id} value=${proposedLabel} />
+      <input id=input-${props.id} value=${proposedGloss} />
       <span>${compositionString}</span>
     </div>
   `;

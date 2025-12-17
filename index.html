@@ -7,38 +7,48 @@
     <title>Adaptive Palette</title>
   </head>
   <body>
-    <h2>Palettes</h1>
     <!--
-      Expandable forms for the prompts and the SVG builder strings.
+      Expandable forms for the LLM prompts and SVG builder strings.
     -->
-    <details style="margin-left: 0.5em; display:inline-grid;">
-      <summary style="color:white">Prompt Dialog</summary>
-      <div id="llm_prompt" style="display:inline-grid;"></div>
-    </details>
-    <details style="margin-left: 0.5em; display:inline-grid">
-      <summary style="color:white">SVG Entry</summary>
-      <div id="svgBuilderStringEntry" style="display:inline-grid;"></div>
-    </details>
+    <div class="oneRow">
+      <details style="margin-left: 0.5em; display:inline-grid;">
+        <summary style="color:white">Prompt Dialog</summary>
+        <div id="llm_prompt" style="display:inline-grid;"></div>
+      </details>
+      <details id="SvgEntryDalog" style="margin-left: 0.5em; display:none;">
+        <summary style="color:white">SVG Entry</summary>
+        <div id="svgBuilderStringEntry" style="display:inline-grid;"></div>
+      </details>
+    </div>
     <div id="askForLlmSuggestions" style="margin-left: 0.5em;"></div>
     <div id="llm_suggestions" style="color: white; background-color: black; margin-left:0.5em"></div>
     <div>&nbsp;</div>
-    <div id="searchGloss" style="display:inline-grid;"></div>
-    <div id="searchGlossResults"></div>
-    <div id="backupArea">
-      <div id="backup_palette"></div>
+
+    <!--
+      Form for searching the BCI AV glosses.
+    -->
+    <div id="SearchGlossDialog" style="display:none;">
+      <div id="searchGloss" style="display:inline-grid;"></div>
+      <div id="searchGlossResults"></div>
     </div>
     <div id="inputArea">
       <div id="input_palette"></div>
     </div>
+
     <div>
       <div id="indicators"></div>
     </div>
-    <div>&nbsp;</div>
-    <div id="mainPaletteDisplayArea">
-      <script type="module">
-        import "./src/client/index.js";
-      </script>
+    <div>
+      <div id="modifiers"></div>
     </div>
-    <div>&nbsp;</div>
+    <div class="oneRow">
+      <div id="backup_palette"></div>
+      <div id="mainPaletteDisplayArea">
+        <script type="module">
+          import "./src/client/index.js";
+        </script>
+      </div>
+      <div>&nbsp;</div>
+    </div>
   </body>
 </html>

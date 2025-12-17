@@ -43,7 +43,7 @@ export function CommandTelegraphicCompletions (props: CommandTelegraphicCompleti
 
     // Get the label texts from each symbol in `changeEncodingContents`
     const labelText = [];
-    changeEncodingContents.value.forEach( (value) => {
+    changeEncodingContents.value.payloads.forEach( (value) => {
       labelText.push(value.label);
     });
     const systemPrompt = (document.getElementById(TEXTAREA_ID) as HTMLTextAreaElement).value;

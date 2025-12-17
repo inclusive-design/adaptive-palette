@@ -17,6 +17,7 @@ import { GlossSearchPalette } from "./GlossSearchPalette";
 
 const GLOSS_ENTRY_FIELD_ID = "glossSearchField";
 const SUBMIT_LABEL = "Search";
+const CLEAR_LABEL = "Clear";
 
 export function ActionSearchGloss (): VNode {
 
@@ -47,11 +48,23 @@ export function ActionSearchGloss (): VNode {
     );
   };
 
+  const clearResults = (event) => {
+    event.preventDefault();
+    const matches = [];
+    const noSearchTerm = true;
+    const searchText = "";
+    render(
+      html`<${GlossSearchPalette} matches=${matches} noSearchTerm=${noSearchTerm} searchTerm=${searchText} />`,
+      document.getElementById("searchGlossResults")
+    );
+  };
+
   return html`
     <form onSubmit=${searchGloss} class="actionSearchGloss">
       <label for=${GLOSS_ENTRY_FIELD_ID} style="color: white;">Search gloss: </label>
-      <input id=${GLOSS_ENTRY_FIELD_ID} name=${GLOSS_ENTRY_FIELD_ID} type="text"/>
+      <input id=${GLOSS_ENTRY_FIELD_ID} name=${GLOSS_ENTRY_FIELD_ID} type="text" />
       <input type="submit" value=${SUBMIT_LABEL} />
+      <input type="button" value=${CLEAR_LABEL} onClick=${clearResults} />
     </form>
   `;
 }

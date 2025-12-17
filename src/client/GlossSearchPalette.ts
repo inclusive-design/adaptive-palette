@@ -42,9 +42,8 @@ export function makeMatchesPalette (glossMatches, searchTerm, startRow, startCol
     "name": GLOSS_MATCHES_PALETTE,
     "cells": {}
   };
-  // Make the palette square, and at least one cell wide.
-  const numCols = 5;
-  //  const numCols = 1 + glossMatches.length / 3;
+  // Make the palette at most 4 columns wide.
+  const numCols = ( glossMatches.length <= 4 ? glossMatches.length : 4 );
   let rowIndex = 0;
   let colIndex = 0;
 

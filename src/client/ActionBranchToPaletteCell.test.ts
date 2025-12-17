@@ -52,7 +52,7 @@ describe("ActionBranchToPaletteCell render tests", (): void => {
     expect(button).toBeVisible();
     expect(button).toBeValid();
     expect(button.id).toBe(TEST_CELL_ID);
-    expect(button.getAttribute("class")).toBe("actionBranchToPaletteCell");
+    expect(button.getAttribute("class")).toBe("actionBranchToPaletteCell foldedCorner");
     expect(button.textContent).toBe(goToPaletteCell.options.label);
 
     // Check the grid cell styles.

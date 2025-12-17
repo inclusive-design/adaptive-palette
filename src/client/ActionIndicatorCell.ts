@@ -14,7 +14,7 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle, speak, wordGrammar } from "./GlobalUtils";
 import { findIndicators, findClassifierFromLeft } from "./SvgUtils";
 import "./ActionIndicatorCell.scss";
 
@@ -30,14 +30,14 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
   const indicatorBciAvId = props.options.bciAvId;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
-  const disabled = changeEncodingContents.value.length === 0;
+  const disabled = changeEncodingContents.value.caretPosition === -1;
 
   const cellClicked = () => {
-    // Get the last symbol in the editing area and find the locations to replace
-    // any existing indicator.
-    const allButLastSymbol = [...changeEncodingContents.value];
-    const lastSymbol = allButLastSymbol.pop();
-    let newBciAvId = lastSymbol.bciAvId;
+    // Get the symbol at the caret position in the editing area and find the
+    // locations within it to replace any existing indicator.
+    const { caretPosition, payloads } = changeEncodingContents.value;
+    const symbolToEdit = payloads[caretPosition];
+    let newBciAvId = symbolToEdit.bciAvId;
     if (newBciAvId.constructor === Array) {
       const indicatorPositions = findIndicators(newBciAvId);
       const classifierIndex = findClassifierFromLeft(newBciAvId);
@@ -64,16 +64,25 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
     else {
       newBciAvId = [ newBciAvId, ";", indicatorBciAvId ];
     }
-    const payload = {
-      // TODO:  what should the following two fields be?  For now the ID is
-      // the combination of the previous symbol plus the indicator.  The label
-      // is the same as before, but is spoken aloud with the indicator label.
-      "id": lastSymbol.id + props.id,
-      "label": lastSymbol.label,
-      "bciAvId": newBciAvId
+    // Try to transform the gloss to fit with the indicator.  If nothing
+    // changes, add the label of the indicator, e.g., "plural".
+    let grammaticalLabel = wordGrammar(symbolToEdit.label, indicatorBciAvId as number);
+    if (grammaticalLabel === symbolToEdit.label) {
+      grammaticalLabel = `${symbolToEdit.label}, ${props.options.label}`;
+    }
+    payloads[caretPosition] = {
+      // TODO:  what should for the "id"?  For now it is the combination of the
+      // previous symbol plus the indicator.
+      "id": symbolToEdit.id + props.id,
+      "label": grammaticalLabel,
+      "bciAvId": newBciAvId,
+      "modifierInfo": symbolToEdit.modifierInfo
     };
-    changeEncodingContents.value = [...allButLastSymbol, payload];
-    speak(`${lastSymbol.label}, ${props.options.label}`);
+    changeEncodingContents.value = {
+      payloads: payloads,
+      caretPosition: caretPosition
+    };
+    speak(`${grammaticalLabel}`);
   };
 
   return html`

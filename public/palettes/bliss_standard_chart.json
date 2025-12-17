@@ -115,7 +115,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "angry",
-        "bciAvId": 12377,
+        "bciAvId": [ 14647, "/", 14164, ";", 8998, "/", 15928 ],
         "branchTo": "feelings",
         "rowStart": 2,
         "rowSpan": 1,
@@ -139,7 +139,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "thing",
-        "bciAvId": 9009,
+        "bciAvId": 17717,
         "branchTo": "things",
         "rowStart": 2,
         "rowSpan": 1,

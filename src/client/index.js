@@ -11,7 +11,7 @@
 import { render } from "preact";
 import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
-import { loadPaletteFromJsonFile, speak } from "./GlobalUtils";
+import { loadPaletteFromJsonFile } from "./GlobalUtils";
 import { goBackImpl } from "./CommandGoBackCell";
 import "./index.scss";
 
@@ -29,18 +29,21 @@ const firstLayer = await loadPaletteFromJsonFile("/palettes/palettes.json");
 const goBackCell = await loadPaletteFromJsonFile("/palettes/backup_palette.json");
 const inputArea = await loadPaletteFromJsonFile("/palettes/input_area.json");
 const topPalette = await loadPaletteFromJsonFile("/palettes/top_palette.json");
+const modifiersPalette = await loadPaletteFromJsonFile("/palettes/modifiers.json");
 
 PaletteStore.paletteFileMap = paletteFileMap;
 adaptivePaletteGlobals.paletteStore.addPalette(firstLayer);
 adaptivePaletteGlobals.paletteStore.addPalette(goBackCell);
 adaptivePaletteGlobals.paletteStore.addPalette(inputArea);
 adaptivePaletteGlobals.paletteStore.addPalette(topPalette);
+adaptivePaletteGlobals.paletteStore.addPalette(modifiersPalette);
 
 adaptivePaletteGlobals.navigationStack.currentPalette = firstLayer;
 render(html`<${Palette} json=${inputArea} />`, document.getElementById("input_palette"));
 render(html`<${Palette} json=${goBackCell} />`, document.getElementById("backup_palette"));
 render(html`<${Palette} json=${topPalette} />`, document.getElementById("indicators"));
 render(html`<${Palette} json=${firstLayer} />`, document.getElementById("mainPaletteDisplayArea"));
+render(html`<${Palette} json=${modifiersPalette} />`, document.getElementById("modifiers"));
 
 render(html`<${DialogPromptEntries} />`, document.getElementById("llm_prompt"));
 render(
@@ -63,7 +66,7 @@ window.addEventListener("keydown", (event) => {
     // If focus was not on a textual input element, go back up one layer in the
     // palette navigation
     if (!elementAllowsTextEntry(event.target)) {
-      speak("Go back");
+      adaptivePaletteGlobals.buttonClick.play();
       goBackImpl();
     }
   }
@@ -81,3 +84,25 @@ function elementAllowsTextEntry (element) {
     (element.getAttribute("role") === "textbox")
   );
 }
+
+// "Secret" keydown listener for showing/hiding the hidden SVG builder entry UI
+// and find-by-gloss dialog
+window.addEventListener("keydown", (event) => {
+  console.log(`Kebyoard event, key is '${event.key}', code is '${event.code}'`);
+  if (event.ctrlKey && event.metaKey && (event.code == "Space")) {
+    console.log("Detected full combo");
+    toggleDisplay("SvgEntryDalog");
+    toggleDisplay("SearchGlossDialog");
+  }
+});
+
+function toggleDisplay (elementId) {
+  const visibleStyle = document.getElementById(elementId).style;
+  if (visibleStyle.display === "block") {
+    visibleStyle.display = "none";
+  }
+  else {
+    visibleStyle.display = "block";
+  }
+}
+

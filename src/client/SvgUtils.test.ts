@@ -13,7 +13,7 @@ import {
   bciToBlissaryId, bciAvIdToString, makeBciAvIdType, isIndicatorId,
   findIndicators, isModifierId, findClassifierFromLeft, findBciAvSymbol,
   decomposeBciAvId, BLISSARY_PATTERN_KEY, BCIAV_PATTERN_KEY,
-  getSvgElement, getSvgMarkupString
+  getSvgElement, getSvgMarkupString, isSingleSymbol
 } from "./SvgUtils";
 
 describe("SvgUtils module", (): void => {
@@ -54,6 +54,7 @@ describe("SvgUtils module", (): void => {
   const nonModifierId = 28043;                        // "continuous" indicator
   const dontKnow = [ 15161, "/", 15733];
   const fullDontKnow = [15162,";",8993,"/",15474,"/",14947];
+  const noHasNoModifiers = [ 15474, "/", 14947, "/", 14947 ]; // -!!
 
   // Gloss for symbol is "remove indicator".  The `shortTwoWordBciAvId` uses
   // the single BCI AV ID for the "remove" symbol.
@@ -61,6 +62,12 @@ describe("SvgUtils module", (): void => {
   const twoWordBlissaryString = "B634;B81//B348/B81/B86";
   const twoWordBciAvId = [ 17449, ";", 8993, "//", 14430, "/", 8993, "/", 8998 ];
   const shortTwoWordBciAvId = [ 17448, "//", 14430, "/", 8993, "/", 8998 ];
+
+  // Bliss-words for checking if they are single symbols or not, by the presence
+  // of a "/" test.
+  const smartWithIntensityBciAvId = [ 15471, ";", 8998, "/", 14947 ];
+  const withoutAsCharacter = [ 15474 ];
+  const smartAsWord = [ 15471, ";", 8998 ];
 
   // Github test runs suggested that more that 5000 msec was needed for these
   // tests, so increased timeout to 7000.
@@ -153,6 +160,11 @@ describe("SvgUtils module", (): void => {
     // BCI-AV-ID has no modifiers (or it is one).
     expect(findClassifierFromLeft(expectedBciAvIdRevive)).toEqual(0);
     expect(findClassifierFromLeft(singleBciAvId)).toEqual(0);
+
+    // The symbol for "no", which looks like -!!, appears to be made of all
+    // modifier symbols, but the negative sign is the classifier.  So,
+    // `findClassifierFromLeft()` should return zero in this case.
+    expect(findClassifierFromLeft(noHasNoModifiers)).toEqual(0);
   });
 
   test("Check finding full symbol information", (): void => {
@@ -205,5 +217,13 @@ describe("SvgUtils module", (): void => {
     expect(makeBciAvIdType(twoWordBlissaryString, BLISSARY_PATTERN_KEY)).toEqual(twoWordBciAvId);
     expect(makeBciAvIdType(twoWordBlissaryString)).toEqual(twoWordBciAvId);
     expect(decomposeBciAvId(shortTwoWordBciAvId)).toEqual(twoWordBciAvId);
+  });
+
+  test("Check BciAvIdTypes for single symbols", (): void => {
+    expect(isSingleSymbol(indicatorId)).toBe(true);
+    expect(isSingleSymbol(bciAvIdArray)).toBe(false);
+    expect(isSingleSymbol(smartWithIntensityBciAvId)).toBe(false);
+    expect(isSingleSymbol(withoutAsCharacter)).toBe(true);
+    expect(isSingleSymbol(smartAsWord)).toBe(true);
   });
 });

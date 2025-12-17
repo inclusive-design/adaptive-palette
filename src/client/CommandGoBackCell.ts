@@ -16,7 +16,6 @@ import { adaptivePaletteGlobals } from "./GlobalData";
 import { loadPaletteFromJsonFile } from "./GlobalUtils";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
-import { speak } from "./GlobalUtils";
 import "./ActionBmwCodeCell.scss";
 
 type CommandGoBackCellPropsType = {
@@ -61,7 +60,7 @@ export async function goBackImpl (defaultContaineId?: string ): Promise<void> {
  */
 const goBackToPalette = async (event: Event): Promise<void> => {
   const button = event.currentTarget as HTMLElement;
-  speak(button.innerText);
+  adaptivePaletteGlobals.buttonClick.play();
   return goBackImpl(button.getAttribute("aria-controls"));
 };
 
