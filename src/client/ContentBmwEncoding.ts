@@ -14,7 +14,7 @@ import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { ContentBmwEncodingType, EncodingType } from "./index.d";
-import { generateGridStyle } from "./GlobalUtils";
+import { generateGridStyle, clamp } from "./GlobalUtils";
 import "./ContentBmwEncoding.scss";
 
 export const INPUT_AREA_ID = "bmw-encoding-area";   // better way?
@@ -66,6 +66,36 @@ function generateMarkupArray (payloadArray: Array<EncodingType>, caretPos: numbe
   });
 }
 
+export function moveCursor (positionChange = 1) {
+  positionChange = Math.round(positionChange);
+
+  // Note: the new caretPosition can equal -1 indicating that the caret is before the
+  // first symbol in the `payloads` array.  But, it cannot be less than -1.
+  const newPosition = clamp(changeEncodingContents.value.caretPosition + positionChange, -1, changeEncodingContents.value.payloads.length - 1);
+  changeEncodingContents.value = {
+    payloads: changeEncodingContents.value.payloads,
+    caretPosition: newPosition
+  };
+};
+
+export function incrementCursor () {
+  moveCursor(1);
+}
+
+export function decrementCursor () {
+  moveCursor(-1);
+}
+
+function handleKeyDown(event: KeyboardEvent) {
+  if (event.key === "ArrowLeft" || event.key === "ArrowDown") {
+    decrementCursor();
+  }
+
+  if (event.key === "ArrowRight" || event.key === "ArrowUp") {
+    incrementCursor();
+  }
+}
+
 export function ContentBmwEncoding (props: ContentBmwEncodingProps): VNode {
   const { id, options } = props;
   const { columnStart, columnSpan, rowStart, rowSpan } = options;
@@ -76,7 +106,15 @@ export function ContentBmwEncoding (props: ContentBmwEncodingProps): VNode {
   );
 
   return html`
-    <div id="${id}" class="bmwEncodingArea" role="textbox" aria-label="Input Area" aria-readonly="true" style="${gridStyles}">
+    <div
+      id="${id}"
+      class="bmwEncodingArea"
+      role="textbox"
+      aria-label="Input Area"
+      aria-readonly="true"
+      style="${gridStyles}"
+      tabindex="0"
+      onKeyDown=${handleKeyDown}>
       ${contentsMarkupArray}
     </div>
   `;
