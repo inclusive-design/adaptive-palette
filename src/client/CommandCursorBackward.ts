@@ -33,9 +33,6 @@ export function CommandCursorBackward (props: CommandCursorBackwardProps): VNode
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
-    // Move the caret position back one.  Note that the new caretPosition can
-    // equal -1 indicating that the caret is before the first symbol in the
-    // `payloads` array.  But, it cannot be less than -1.
     decrementCursor();
     speak(label);
   };
