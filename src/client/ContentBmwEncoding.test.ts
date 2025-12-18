@@ -12,7 +12,7 @@
 import { render, screen } from "@testing-library/preact";
 import "@testing-library/jest-dom";
 import { html } from "htm/preact";
-import { ContentBmwEncoding } from "./ContentBmwEncoding";
+import { ContentBmwEncoding,  } from "./ContentBmwEncoding";
 import { initAdaptivePaletteGlobals } from "./GlobalData";
 
 test("The BMW Encoding content area is rendered correctly", async (): Promise<void> => {

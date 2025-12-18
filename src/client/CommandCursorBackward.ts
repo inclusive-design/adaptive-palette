@@ -12,7 +12,7 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
-import { changeEncodingContents } from "./GlobalData";
+import { decrementCursor } from "./ContentBmwEncoding";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { generateGridStyle, speak } from "./GlobalUtils";
 
@@ -36,12 +36,7 @@ export function CommandCursorBackward (props: CommandCursorBackwardProps): VNode
     // Move the caret position back one.  Note that the new caretPosition can
     // equal -1 indicating that the caret is before the first symbol in the
     // `payloads` array.  But, it cannot be less than -1.
-    if (changeEncodingContents.value.caretPosition > -1) {
-      changeEncodingContents.value = {
-        payloads: changeEncodingContents.value.payloads,
-        caretPosition: changeEncodingContents.value.caretPosition - 1
-      };
-    }
+    decrementCursor();
     speak(label);
   };
 
