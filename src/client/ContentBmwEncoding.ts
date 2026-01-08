@@ -66,7 +66,7 @@ function generateMarkupArray (payloadArray: Array<EncodingType>, caretPos: numbe
   });
 }
 
-export function moveCursor (positionChange = 1) {
+export function moveCursor (positionChange: number = 1) {
   positionChange = Math.round(positionChange);
 
   // Note: the new caretPosition can equal -1 indicating that the caret is before the
