@@ -9,12 +9,24 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { generateGridStyle } from "./GlobalUtils";
+import { generateGridStyle, clamp } from "./GlobalUtils";
 
 describe("Test global utility functions", (): void => {
 
   test("Test generateGridStyle()", (): void => {
     expect(generateGridStyle(2, 1, 3, 2)).toBe("grid-column: 2 / span 1;grid-row: 3 / span 2;");
     expect(generateGridStyle(undefined, undefined, undefined, undefined)).toBe("grid-column: undefined / span undefined;grid-row: undefined / span undefined;");
+  });
+
+  test("Test clamp function where value is below min", (): void => {
+    expect(clamp(-1, 0, 1)).toBe(0);
+  });
+
+  test("Test clamp function where value is above max", (): void => {
+    expect(clamp(2, 0, 1)).toBe(1);
+  });
+
+  test("Test clamp function where value is in range", (): void => {
+    expect(clamp(1, 0, 2)).toBe(1);
   });
 });
