@@ -58,7 +58,7 @@ The website will be available at [http://localhost:3000](http://localhost:3000).
 
 RAG (Retrieval-Augmented Generation) is an AI technique designed to enhance the accuracy of generative models by
 incorporating factual knowledge from external sources. It requires loading factual knowledge into a vector store
-that will be quried to provide relevant information to the language model as a context.
+that will be queried to provide relevant information to the language model as a context.
 
 By default, the use of RAG is turned off in the system. The `enableRag` flag is set to `false` by default in the
 [config/config.ts](./config/config.ts).
