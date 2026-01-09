@@ -15,7 +15,7 @@
 import { signal } from "@preact/signals";
 
 // NOTE: this import causes a warning serving the application using the `vite`
-// server.  The warning suggests to *not* us the `public` folder but to use
+// server.  The warning suggests to *not* use the `public` folder but to use
 // the `src` folder instead.  However, this code is also served using node
 // express and it is in the proper location for that envionment.  A copy of the
 // warning follows:
@@ -78,6 +78,7 @@ export const adaptivePaletteGlobals = {
   systemPrompts: {
     "What express": "What does this express? Give the top five answers.  Do not add a preamble like, 'Here are the top five answers.'",
     "Single Sentence": "Convert the telegraphic speech to a single sentence. Give the top five best answers.  Answer with a single grammatically correct sentence.  Number the five answers clearly.  Do not add a preamble like, 'Here are the top five answers.'",
+    "Single Sentence Young": "Convert the telegraphic speech to a single sentence. Give the top five best answers.  Answer with a single grammatically correct sentence in the style of an elementary school aged child, using the first person singular.  Number the five answers clearly.  Do not add a preamble like, 'Here are the top five answers.'",
   },
 
   // `id` attribute of the HTML element area where the main palette is
@@ -106,8 +107,7 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
   adaptivePaletteGlobals.blissaryIdMap = await loadBlissaryIdMap();
   adaptivePaletteGlobals.mainPaletteContainerId = mainPaletteContainerId || "";
 
-  // Set up the system prompts.  (NOTE: [JS]:  would prefer that one could set
-  // an entire object as an item called "adaptivePaletteSystemPrompts").
+  // Set up the system prompts.
   Object.keys(adaptivePaletteGlobals.systemPrompts).forEach( (key) => {
     window.localStorage.setItem(key, adaptivePaletteGlobals.systemPrompts[key]);
   });
