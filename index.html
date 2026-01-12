@@ -8,25 +8,12 @@
   </head>
   <body>
     <!--
-      Expandable forms for the LLM prompts and SVG builder strings.
+      Forms for entering SVG builder strings, and for searching the BCI AV.
     -->
-    <div class="oneRow">
-      <details style="margin-left: 0.5em; display:inline-grid;">
-        <summary style="color:white">Prompt Dialog</summary>
-        <div id="llm_prompt" style="display:inline-grid;"></div>
-      </details>
-      <details id="SvgEntryDalog" style="margin-left: 0.5em; display:none;">
-        <summary style="color:white">SVG Entry</summary>
-        <div id="svgBuilderStringEntry" style="display:inline-grid;"></div>
-      </details>
-    </div>
-    <div id="askForLlmSuggestions" style="margin-left: 0.5em;"></div>
-    <div id="llm_suggestions" style="color: white; background-color: black; margin-left:0.5em"></div>
-    <div>&nbsp;</div>
-
-    <!--
-      Form for searching the BCI AV glosses.
-    -->
+    <details id="SvgEntryDalog" style="margin-left: 0.5em; display:none;">
+      <summary style="color:white">SVG Entry</summary>
+      <div id="svgBuilderStringEntry" style="display:inline-grid;"></div>
+    </details>
     <div id="SearchGlossDialog" style="display:none;">
       <div id="searchGloss" style="display:inline-grid;"></div>
       <div id="searchGlossResults"></div>
@@ -48,7 +35,6 @@
           import "./src/client/index.js";
         </script>
       </div>
-      <div>&nbsp;</div>
     </div>
   </body>
 </html>

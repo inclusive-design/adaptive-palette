@@ -20,9 +20,6 @@ await initAdaptivePaletteGlobals("mainPaletteDisplayArea");
 
 import { PaletteStore } from "./PaletteStore";
 import { Palette } from "./Palette";
-import { CommandTelegraphicCompletions } from "./CommandTelegraphicCompletions";
-import { SentenceCompletionsPalette } from "./SentenceCompletionsPalette";
-import { DialogPromptEntries } from "./DialogPromptEntries";
 
 const paletteFileMap = await loadPaletteFromJsonFile("/palettes/palette_file_map.json");
 const firstLayer = await loadPaletteFromJsonFile("/palettes/palettes.json");
@@ -45,20 +42,14 @@ render(html`<${Palette} json=${topPalette} />`, document.getElementById("indicat
 render(html`<${Palette} json=${firstLayer} />`, document.getElementById("mainPaletteDisplayArea"));
 render(html`<${Palette} json=${modifiersPalette} />`, document.getElementById("modifiers"));
 
-render(html`<${DialogPromptEntries} />`, document.getElementById("llm_prompt"));
-render(
-  html`<${CommandTelegraphicCompletions} model="llama3.1:latest" stream=false />`,
-  document.getElementById("askForLlmSuggestions")
-);
-render(html`<${SentenceCompletionsPalette} />`, document.getElementById("llm_suggestions"));
-
-// Form for entering SVG strings
-import { ActionSvgEntryField } from "./ActionSvgEntryField";
-render(html`<${ActionSvgEntryField} />`, document.getElementById("svgBuilderStringEntry"));
 
 // Form for searching the gloss
 import { ActionSearchGloss } from "./ActionSearchGloss";
 render(html`<${ActionSearchGloss} />`, document.getElementById("searchGloss"));
+
+// Form for entering SVG strings
+import { ActionSvgEntryField } from "./ActionSvgEntryField";
+render(html`<${ActionSvgEntryField} />`, document.getElementById("svgBuilderStringEntry"));
 
 // Window keydown listener for a global "go back" keystroke
 window.addEventListener("keydown", (event) => {

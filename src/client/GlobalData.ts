@@ -31,14 +31,12 @@ import bliss_symbols from "../../public/data/bliss_symbol_explanations.json";
  */
 import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
 import { ActionBranchToPaletteCell } from "./ActionBranchToPaletteCell";
-import { ActionCombineModifierCell } from "./ActionCombineModifierCell";
 import { ActionGlossSearchCell } from "./ActionGlossSearchCell";
 import { ActionIndicatorCell } from "./ActionIndicatorCell";
 import { ActionPreModifierCell } from "./ActionPreModifierCell";
 import { ActionPostModifierCell } from "./ActionPostModifierCell";
 import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
 import { ActionRemoveModifierCell } from "./ActionRemoveModifierCell";
-import { ActionTextCell } from "./ActionTextCell";
 import { CommandCursorBackward } from "./CommandCursorBackward";
 import { CommandCursorForward } from "./CommandCursorForward";
 import { CommandGoBackCell } from "./CommandGoBackCell";
@@ -51,14 +49,12 @@ import { NavigationStack } from "./NavigationStack";
 export const cellTypeRegistry = {
   "ActionBmwCodeCell": ActionBmwCodeCell,
   "ActionBranchToPaletteCell": ActionBranchToPaletteCell,
-  "ActionCombineModifierCell": ActionCombineModifierCell,
   "ActionGlossSearchCell": ActionGlossSearchCell,
   "ActionIndicatorCell": ActionIndicatorCell,
   "ActionPreModifierCell": ActionPreModifierCell,
   "ActionPostModifierCell": ActionPostModifierCell,
   "ActionRemoveIndicatorCell": ActionRemoveIndicatorCell,
   "ActionRemoveModifierCell": ActionRemoveModifierCell,
-  "ActionTextCell": ActionTextCell,
   "CommandCursorBackward": CommandCursorBackward,
   "CommandCursorForward": CommandCursorForward,
   "CommandGoBackCell": CommandGoBackCell,
