@@ -19,6 +19,8 @@ import "./ContentBmwEncoding.scss";
 
 export const INPUT_AREA_ID = "bmw-encoding-area";   // better way?
 
+const isApplePlatform = navigator.platform.startsWith("Mac") || navigator.platform.startsWith("iPhone") || navigator.platform.startsWith("iPad");
+
 type ContentBmwEncodingProps = {
   id: string,
   options: ContentBmwEncodingType
@@ -84,6 +86,14 @@ export function decrementCursor () {
   moveCursor(-1);
 }
 
+export function moveCursorToHome () {
+  moveCursor(Number.NEGATIVE_INFINITY);
+};
+
+export function moveCursorToEnd () {
+  moveCursor(Number.POSITIVE_INFINITY);
+};
+
 function handleKeyDown(event: KeyboardEvent) {
   if (event.key === "ArrowLeft" || event.key === "ArrowDown") {
     decrementCursor();
@@ -91,6 +101,24 @@ function handleKeyDown(event: KeyboardEvent) {
 
   if (event.key === "ArrowRight" || event.key === "ArrowUp") {
     incrementCursor();
+  }
+
+  if (
+    event.key === "Home" ||
+    (event.ctrlKey && event.key === "a") ||
+    (isApplePlatform && event.metaKey && event.key === "ArrowLeft")
+  ) {
+    event.preventDefault();
+    moveCursorToHome();
+  }
+
+  if (
+    event.key === "End" ||
+    (event.ctrlKey && event.key === "e") ||
+    (isApplePlatform && event.metaKey && event.key === "ArrowRight")
+  ) {
+    event.preventDefault();
+    moveCursorToEnd();
   }
 }
 
