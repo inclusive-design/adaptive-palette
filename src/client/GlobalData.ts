@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -13,18 +13,7 @@
  * Populate and export global data
  */
 import { signal } from "@preact/signals";
-
-// NOTE: this import causes a warning serving the application using the `vite`
-// server.  The warning suggests to *not* us the `public` folder but to use
-// the `src` folder instead.  However, this code is also served using node
-// express and it is in the proper location for that envionment.  A copy of the
-// warning follows:
-// "Assets in public directory cannot be imported from JavaScript.
-//  If you intend to import that asset, put the file in the src directory, and use /src/data/bliss_symbol_explanations.json instead of /public/data/bliss_symbol_explanations.json.
-//  If you intend to use the URL of that asset, use /data/bliss_symbol_explanations.json?url.
-//  Files in the public directory are served at the root path.
-//  Instead of /public/data/bliss_symbol_explanations.json, use /data/bliss_symbol_explanations.json."
-import bliss_symbols from "../../public/data/bliss_symbol_explanations.json";
+import { BlissaryIdMap, BciAvSymbolsDict } from "./index.d";
 
 /**
  * The map between cell types (string) and actual components that render corresponding cells
@@ -65,12 +54,22 @@ export const cellTypeRegistry = {
  * Load the map between the BCI-AV IDs and the code consumed by the Bliss SVG
  * and create the PaletterStore and NavigationStack objects.
  */
-export const adaptivePaletteGlobals = {
+interface AdaptivePaletteGlobals {
+  blissaryIdMap: BlissaryIdMap | null;
+  bciAvSymbols: BciAvSymbolsDict | null;
+  paletteStore: PaletteStore;
+  navigationStack: NavigationStack;
+  mainPaletteContainerId: string;
+};
+
+const blissaryIdMapUrl: string = "https://raw.githubusercontent.com/hlridge/Bliss-Blissary-BCI-ID-Map/main/blissary_to_bci_mapping.json";
+export const bciAvSymbolsDictUrl: string = "https://raw.githubusercontent.com/inclusive-design/adaptive-palette/main/public/data/bliss_symbol_explanations.json";
+
+export const adaptivePaletteGlobals: AdaptivePaletteGlobals = {
   // The map between the BCI-AV IDs and the code consumed by the Bliss SVG
   // builder.  The map itself is set asynchronously.
-  blissaryIdMapUrl: "https://raw.githubusercontent.com/hlridge/Bliss-Blissary-BCI-ID-Map/main/blissary_to_bci_mapping.json",
   blissaryIdMap: null,
-  bciAvSymbols: bliss_symbols,
+  bciAvSymbols: null,
   paletteStore: new PaletteStore(),
   navigationStack: new NavigationStack(),
 
@@ -81,8 +80,8 @@ export const adaptivePaletteGlobals = {
   mainPaletteContainerId: ""
 };
 
-export async function loadBlissaryIdMap (): Promise<object> {
-  const response = await fetch(adaptivePaletteGlobals.blissaryIdMapUrl);
+export async function loadDataFromUrl<T>(url: string): Promise<T> {
+  const response = await fetch(url);
   return await response.json();
 }
 
@@ -94,10 +93,11 @@ export async function loadBlissaryIdMap (): Promise<object> {
  *                                                use for rendering the the
  *                                                main paletted Defaults to the
  *                                                empty string which denotes
- *                                                the `<body>delement.
+ *                                                the `<body>` element.
  */
 export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string): Promise<void> {
-  adaptivePaletteGlobals.blissaryIdMap = await loadBlissaryIdMap();
+  adaptivePaletteGlobals.blissaryIdMap = await loadDataFromUrl<BlissaryIdMap>(blissaryIdMapUrl);
+  adaptivePaletteGlobals.bciAvSymbols = await loadDataFromUrl<BciAvSymbolsDict>(bciAvSymbolsDictUrl);
   adaptivePaletteGlobals.mainPaletteContainerId = mainPaletteContainerId || "";
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -75,3 +75,22 @@ export type ContentSignalDataType = {
   payloads: SymbolEncodingType[],
   caretPosition: number
 };
+
+export type BlissaryIdMapEntry = {
+  blissaryId: number;
+  bciAvId: number;
+  blissSvgBuilderCode: string;
+}
+
+export type BlissaryIdMap = BlissaryIdMapEntry[];
+
+export type BciAvSymbolEntry = {
+  id: string;
+  description: string;
+  pos: string;
+  explanation: string;
+  isCharacter: boolean;
+  composition?: (string | number)[]; // Optional
+}
+
+export type BciAvSymbolsDict = BciAvSymbolEntry[];
