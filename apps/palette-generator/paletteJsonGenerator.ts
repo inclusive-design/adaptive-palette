@@ -27,6 +27,39 @@ export async function loadBciAvSymbolsDict() {
   bciAvSymbolsDict = await loadDataFromUrl<BciAvSymbolsDict>(bciAvSymbolsDictUrl);
 }
 
+// Define types used in the functions below
+interface BlissGloss {
+  id: string | number;
+  description: string;
+  composition?: (string | number)[]; // Optional
+}
+
+interface BciAvMatch {
+  bciAvId: number;
+  label: string;
+  composition?: (string | number)[]; // Optional
+  fullComposition?: (string | number)[]; // Optional
+}
+
+type MatchByInfo = Record<string, BciAvMatch[]>;
+
+interface Cell {
+  type: string;
+  options: {
+    label: string;
+    bciAvId?: number | (string | number)[];
+    rowStart: number;
+    rowSpan: number;
+    columnStart: number;
+    columnSpan: number;
+  };
+}
+
+interface Palette {
+  name: string;
+  cells: Record<string, Cell>;
+}
+
 /**
  * Test for the presencs of a string that encodes SVG builder information.  Such
  * strings begin with "SVG:" and ends with ":SVG"
@@ -93,20 +126,6 @@ function convertSvgBuilderString (theString: string) {
  *                  { id: {number}, description: {string}, ... }
  * @throws {Error} If no BCI AV ID is found for the label.
  */
-
-// Define the shape of the objects inside the function
-interface BlissGloss {
-  id: string | number;
-  description: string;
-  composition?: (string | number)[]; // Optional
-}
-
-interface BciAvMatch {
-  bciAvId: number;
-  label: string;
-  composition?: (string | number)[]; // Optional
-  fullComposition?: (string | number)[]; // Optional
-}
 
 /**
  * Helper function: Normalizes polymorphic return from decomposeBciAvId 
@@ -227,27 +246,6 @@ function findByBciAvId (bciAvId: string, blissGlosses: BlissGloss[]) {
  *            was no match in the gloss
  * }
  */
-
-
-interface Cell {
-  type: string;
-  options: {
-    label: string;
-    bciAvId?: number | (string | number)[];
-    rowStart: number;
-    rowSpan: number;
-    columnStart: number;
-    columnSpan: number;
-  };
-}
-
-interface Palette {
-  name: string;
-  cells: Record<string, Cell>;
-}
-
-// Type `BciAvMatch` is defined in the function above
-type MatchByInfo = Record<string, BciAvMatch[]>;
 
 export async function processPaletteLabels (paletteLabels: string[][], paletteName: string, startRow: number, startColumn: number, cellType: string) {
   // Initialize palette to return, the matches, and the error list
