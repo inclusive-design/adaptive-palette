@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Inclusive Design Research Centre, OCAD University
+ * Copyright 2025-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -15,16 +15,16 @@ import { html } from "htm/preact";
 import { findBciAvId, findCompositionsUsingId } from "./BciAvUtils";
 import { GlossSearchPalette } from "./GlossSearchPalette";
 
-const GLOSS_ENTRY_FIELD_ID = "glossSearchField";
-const SUBMIT_LABEL = "Search";
-const CLEAR_LABEL = "Clear";
+export const GLOSS_ENTRY_FIELD_ID = "glossSearchField";
+export const SUBMIT_LABEL = "Search";
+export const CLEAR_LABEL = "Clear";
 
 export function ActionSearchGloss (): VNode {
 
   const searchGloss = (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const searchText = formData.get(GLOSS_ENTRY_FIELD_ID).trim();
+    const searchText = (formData.get(GLOSS_ENTRY_FIELD_ID) as string).trim();
     let noSearchTerm;
     let matches;
     if (searchText.length === 0) {

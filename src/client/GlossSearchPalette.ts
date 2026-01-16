@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Inclusive Design Research Centre, OCAD University
+ * Copyright 2025-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -14,15 +14,16 @@ import { html } from "htm/preact";
 import { v4 as uuidv4 } from "uuid";
 
 import { adaptivePaletteGlobals } from "./GlobalData";
+import { MatchType, JsonPaletteType } from "./index.d";
 import { Palette } from "./Palette";
 
 export const GLOSS_MATCHES_PALETTE = "Gloss search";
 
-// TODO: define this properly
-//type GlossSearchPalettePropsType = {
-//  matches: ???,
-//  actualLabel: ???
-//};
+type GlossSearchPalettePropsType = {
+  matches: MatchType[],
+  noSearchTerm: boolean,
+  searchTerm: string
+};
 
 /**
  * Create a JsonPaletteType from an array of matches based on a gloss search.
@@ -31,13 +32,12 @@ export const GLOSS_MATCHES_PALETTE = "Gloss search";
  *                               glass matches the search term.
  * @param {String} searchTerm - The search term used to find the matches. It is
  *                              used to prefix the label of each cell.
- * @param {String} paletteName - The name for the palette.
  * @param {number} startRow - The row index of the top left cell of the palette
  * @param {number} startColumn - The column index of the top left cell of the
  *                                palette
  * @return {JsonPaletteType} - a palette, in JSON form
  */
-export function makeMatchesPalette (glossMatches, searchTerm, startRow, startCol) {
+export function makeMatchesPalette (glossMatches: MatchType[], searchTerm: string, startRow: number, startCol: number): JsonPaletteType {
   const jsonPalette = {
     "name": GLOSS_MATCHES_PALETTE,
     "cells": {}
@@ -75,7 +75,7 @@ export function makeMatchesPalette (glossMatches, searchTerm, startRow, startCol
   return jsonPalette;
 }
 
-export function GlossSearchPalette (props): VNode {
+export function GlossSearchPalette (props: GlossSearchPalettePropsType): VNode {
 
   // Remove any existing gloss search palette from the store.
   adaptivePaletteGlobals.paletteStore.removePalette(GLOSS_MATCHES_PALETTE);

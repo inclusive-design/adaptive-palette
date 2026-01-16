@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Inclusive Design Research Centre, OCAD University
+ * Copyright 2025 - 2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -9,6 +9,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 import { adaptivePaletteGlobals } from "./GlobalData";
+import { MatchType } from "./index.d";
 import { decomposeBciAvId } from "./SvgUtils";
 
 /**
@@ -28,7 +29,7 @@ import { decomposeBciAvId } from "./SvgUtils";
  *                  { bciAvId, label, composition, fullComposition}, or an empty
  *                  array if no BCI AV ID is found for the label.
  */
-export function findBciAvId(label) {
+export function findBciAvId(label: string): MatchType[] {
   const matches = [];
   // Search only if there is text to base the search on.
   if (label.trim().length !== 0) {
@@ -80,7 +81,7 @@ export function findBciAvId(label) {
  *                  { bciAvId, label, composition, fullComposition}, or an empty
  *                  array if no mathches are found.
  */
-export function findCompositionsUsingId (bciId: number) {
+export function findCompositionsUsingId (bciId: number): MatchType[] {
   const matches = [];
   for (const symbol of adaptivePaletteGlobals.bciAvSymbols) {
     const symbolId = parseInt(symbol.id);
