@@ -13,7 +13,6 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
-import { getSymbolIndexAtCursor } from "./Cursor";
 import { ContentBmwEncodingType, EncodingType } from "./index.d";
 import { generateGridStyle } from "./GlobalUtils";
 import "./ContentBmwEncoding.scss";
@@ -76,15 +75,8 @@ export function ContentBmwEncoding (props: ContentBmwEncodingProps): VNode {
     changeEncodingContents.value.payloads, changeEncodingContents.value.caretPosition
   );
 
-  const inputAreaClicked = (): void => {
-    changeEncodingContents.value = {
-      payloads: changeEncodingContents.value.payloads,
-      caretPosition: getSymbolIndexAtCursor(document.getElementById(INPUT_AREA_ID))
-    };
-  };
-
   return html`
-    <div id="${id}" class="bmwEncodingArea" role="textbox" aria-label="Input Area" aria-readonly="true" style="${gridStyles}" onClick="${inputAreaClicked}">
+    <div id="${id}" class="bmwEncodingArea" role="textbox" aria-label="Input Area" aria-readonly="true" style="${gridStyles}">
       ${contentsMarkupArray}
     </div>
   `;

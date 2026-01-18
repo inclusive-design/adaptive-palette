@@ -13,7 +13,7 @@ import {
   bciToBlissaryId, bciAvIdToString, makeBciAvIdType, isIndicatorId,
   findIndicators, isModifierId, findClassifierFromLeft, findBciAvSymbol,
   decomposeBciAvId, BLISSARY_PATTERN_KEY, BCIAV_PATTERN_KEY,
-  getSvgElement, getSvgMarkupString, isSingleSymbol
+  getSvgElement, getSvgMarkupString,
 } from "./SvgUtils";
 
 describe("SvgUtils module", (): void => {
@@ -49,7 +49,7 @@ describe("SvgUtils module", (): void => {
   const expectedMultiWordBciAvid = [ 17448, "//", 14430, "/", 8993,  "/", 8998 ];
 
   const indicatorId = 8999;                           // "future action" indicator
-  const nonIndicatorId = 12334;                       // "action" indicator
+  const nonIndicatorId = 12334;                       // "action" word
   const modifierId = 8515;                            // "5" (5 items or 5th)
   const nonModifierId = 28043;                        // "continuous" indicator
   const dontKnow = [ 15161, "/", 15733];
@@ -62,12 +62,6 @@ describe("SvgUtils module", (): void => {
   const twoWordBlissaryString = "B634;B81//B348/B81/B86";
   const twoWordBciAvId = [ 17449, ";", 8993, "//", 14430, "/", 8993, "/", 8998 ];
   const shortTwoWordBciAvId = [ 17448, "//", 14430, "/", 8993, "/", 8998 ];
-
-  // Bliss-words for checking if they are single symbols or not, by the presence
-  // of a "/" test.
-  const smartWithIntensityBciAvId = [ 15471, ";", 8998, "/", 14947 ];
-  const withoutAsCharacter = [ 15474 ];
-  const smartAsWord = [ 15471, ";", 8998 ];
 
   // Github test runs suggested that more that 5000 msec was needed for these
   // tests, so increased timeout to 7000.
@@ -217,13 +211,5 @@ describe("SvgUtils module", (): void => {
     expect(makeBciAvIdType(twoWordBlissaryString, BLISSARY_PATTERN_KEY)).toEqual(twoWordBciAvId);
     expect(makeBciAvIdType(twoWordBlissaryString)).toEqual(twoWordBciAvId);
     expect(decomposeBciAvId(shortTwoWordBciAvId)).toEqual(twoWordBciAvId);
-  });
-
-  test("Check BciAvIdTypes for single symbols", (): void => {
-    expect(isSingleSymbol(indicatorId)).toBe(true);
-    expect(isSingleSymbol(bciAvIdArray)).toBe(false);
-    expect(isSingleSymbol(smartWithIntensityBciAvId)).toBe(false);
-    expect(isSingleSymbol(withoutAsCharacter)).toBe(true);
-    expect(isSingleSymbol(smartAsWord)).toBe(true);
   });
 });

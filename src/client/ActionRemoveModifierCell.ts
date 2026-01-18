@@ -15,7 +15,6 @@ import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
-import { isSingleSymbol } from "./SvgUtils";
 import "./ActionIndicatorCell.scss";
 
 type ActionRemoveModifierPropsType = {
@@ -38,7 +37,7 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   const { payloads, caretPosition } = changeEncodingContents.value;
   if (payloads.length !== 0 && caretPosition !== -1) {
     const caretSymbol = payloads[caretPosition];
-    disabled = (caretSymbol.modifierInfo.length === 0) || isSingleSymbol(caretSymbol.bciAvId) ;
+    disabled = caretSymbol.modifierInfo.length === 0;
   }
   // Handle the request to remove the last placed modifier.
   const cellClicked = () => {
