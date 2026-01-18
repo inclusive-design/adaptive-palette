@@ -7,21 +7,34 @@
     <title>Adaptive Palette</title>
   </head>
   <body>
+    <!--
+      Forms for entering SVG builder strings, and for searching the BCI AV.
+    -->
+    <details id="SvgEntryDalog" style="margin-left: 0.5em;">
+      <summary style="color:white">SVG Entry</summary>
+      <div id="svgBuilderStringEntry" style="display:inline-grid;"></div>
+    </details>
+    <div id="SearchGlossDialog">
+      <div id="searchGloss" style="display:inline-grid;"></div>
+      <div id="searchGlossResults"></div>
+    </div>
     <div id="inputArea">
       <div id="input_palette"></div>
     </div>
-    <div class="oneRow">
-      <div id="backup_palette"></div>
+
+    <div>
       <div id="indicators"></div>
     </div>
     <div>
       <div id="modifiers"></div>
     </div>
-    <div>&nbsp;</div>
-    <div id="mainPaletteDisplayArea">
-      <script type="module">
-        import "./src/client/index.js";
-      </script>
+    <div class="oneRow">
+      <div id="backup_palette"></div>
+      <div id="mainPaletteDisplayArea">
+        <script type="module">
+          import "./src/client/index.js";
+        </script>
+      </div>
     </div>
   </body>
 </html>

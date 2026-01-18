@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
+ * Copyright 2025 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -9,9 +9,13 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-.actionBmwCodeCell {
-  border: 3px solid blue;
+.actionTextCell {
+  border: 2px solid black;
+  color: black;
   background-color: white;
+  margin-left: 1rem;
   padding-inline: 0.5rem;
-  text-align: center;
+  text-align: left;
+  font-size: 1rem;
+  width: 50%;
 }

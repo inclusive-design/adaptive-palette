@@ -14,7 +14,7 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType, ContentSignalDataType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle, speak, wordGrammar } from "./GlobalUtils";
 import { findIndicators } from "./SvgUtils";
 import "./ActionIndicatorCell.scss";
 
@@ -22,6 +22,28 @@ type ActionIndicatorCodeCellPropsType = {
   id: string,
   options: BlissSymbolInfoType & LayoutInfoType
 };
+
+const INDICATOR_SUFFIXES = [
+  ", plural", ", action", ", past", ", present", ", future", ", description",
+  ", concrete thing", ", command"
+];
+
+/*
+ * Check if the label on the symbol contains a suffix that describes an
+ * indicator.  If it exists, return the index in the string where the suffix
+ * starts.  This assumes that the suffix is (1) at the end of the string and
+ * (2) begins with a comma.
+ */
+function indexOfIndicatorSuffix (gloss: string): number {
+  let index = -1;
+  for (let i = 0; i < INDICATOR_SUFFIXES.length; i++) {
+    index = gloss.indexOf (INDICATOR_SUFFIXES[i]);
+    if (index !== -1) {
+      break;
+    }
+  }
+  return index;
+}
 
 /*
  * Given an array of symbols examine the symbol at the caret position to find
@@ -64,9 +86,22 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
       ...newBciAvId.slice(0, indicatorIndex-1),
       ...newBciAvId.slice(indicatorIndex+1)
     ];
+    // Try to remove the sense of the indicator.  If it is declared by one of
+    // of the INDICATOR_SUFFIXES, just remove the suffix.  Otherwise, attempt
+    // to have the NLP change the gloss.
+    let grammaticalWord = "";
+    const suffixIndex = indexOfIndicatorSuffix(symbolToEdit.label);
+    if (suffixIndex !== -1) {
+      grammaticalWord = symbolToEdit.label.substring(0, suffixIndex);
+    }
+    else {
+      grammaticalWord = wordGrammar(
+        symbolToEdit.label, symbolToEdit.bciAvId[indicatorIndex] as number, false
+      );
+    }
     payloads[caretPosition] = {
       "id": symbolToEdit.id + props.id,
-      "label": symbolToEdit.label,
+      "label": grammaticalWord,
       "bciAvId": newBciAvId,
       "modifierInfo": symbolToEdit.modifierInfo
     };
@@ -74,7 +109,7 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
       payloads: payloads,
       caretPosition: caretPosition
     };
-    speak(`${symbolToEdit.label}`);
+    speak(`${grammaticalWord}`);
   };
 
   return html`
