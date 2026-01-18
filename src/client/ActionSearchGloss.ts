@@ -57,6 +57,8 @@ export function ActionSearchGloss (): VNode {
       html`<${GlossSearchPalette} matches=${matches} noSearchTerm=${noSearchTerm} searchTerm=${searchText} />`,
       document.getElementById("searchGlossResults")
     );
+    const searchTextEntry = document.getElementById(GLOSS_ENTRY_FIELD_ID) as HTMLInputElement;
+    searchTextEntry.value = "";
   };
 
   return html`
