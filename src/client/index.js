@@ -13,6 +13,7 @@ import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
 import { loadPaletteFromJsonFile, speak } from "./GlobalUtils";
 import { goBackImpl } from "./CommandGoBackCell";
+import { INPUT_AREA_ID } from "./ContentBmwEncoding";
 import "./index.scss";
 
 // Initialize any globals used elsewhere in the code.
@@ -56,13 +57,15 @@ window.addEventListener("keydown", (event) => {
 
 function elementAllowsTextEntry (element) {
   return (
-    (element.type === "text") || (element.type === "email") ||
-    (element.type === "month") || (element.type === "number") ||
-    (element.type === "password") || (element.type === "search") ||
-    (element.type === "tel") || (element.type === "url") ||
-    (element.type === "week") ||
-    (element instanceof HTMLTextAreaElement) ||
-    (element instanceof HTMLSelectElement) ||
-    (element.getAttribute("role") === "textbox")
+    (element.id !== INPUT_AREA_ID) && (
+      (element.type === "text") || (element.type === "email") ||
+      (element.type === "month") || (element.type === "number") ||
+      (element.type === "password") || (element.type === "search") ||
+      (element.type === "tel") || (element.type === "url") ||
+      (element.type === "week") ||
+      (element instanceof HTMLTextAreaElement) ||
+      (element instanceof HTMLSelectElement) ||
+      (element.getAttribute("role") === "textbox")
+    )
   );
 }
