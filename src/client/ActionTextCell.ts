@@ -28,7 +28,13 @@ export function ActionTextCell (props: ActionTextCellPropsType): VNode {
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const sentenceClicked = () => {
-    speak(label.replace(/^[0-9]+./,"").trim());  // remove any leading "1. "
+    // The sentences are listed with leading numbers like so:
+    // 1. My brother's birthday is next Wednesday.
+    // 2. My brother's special day is Wednesday.
+    // 3. ...
+    // The following `replace()` is to remove the leading number from the spoken
+    // form.
+    speak(label.replace(/^[0-9]+./,"").trim());
   };
 
   return html`
