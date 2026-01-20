@@ -24,15 +24,12 @@ export const CANCEL_BUTTON_LABEL = "Cancel";
 type CommandTelegraphicCompletionsProps = {
   id: string,
   model: string,
-  // This should be a boolean type, but for Preact/html the type of the value is
-  // string.  It should be "true" or "false".
-  stream: ("true" | "false")
+  stream: boolean;
 };
 
 export function CommandTelegraphicCompletions (props: CommandTelegraphicCompletionsProps): VNode {
 
   const { model, stream } = props;
-  const streamAsBoolean = ( stream === "true" ? true : false );
 
   // Handler for getting completions from ollama and into the
   // `sentenceCompletionsSignal` signal's value.
@@ -48,7 +45,7 @@ export function CommandTelegraphicCompletions (props: CommandTelegraphicCompleti
     });
     const systemPrompt = (document.getElementById(TEXTAREA_ID) as HTMLTextAreaElement).value;
     const response = await queryChat(
-      labelText.join(" "), model, streamAsBoolean, systemPrompt
+      labelText.join(" "), model, stream, systemPrompt
     );
     // Parse the query response messages into an array of strings.  Note that
     // with Llama3.1 each message is one of the suggested sentence completions.

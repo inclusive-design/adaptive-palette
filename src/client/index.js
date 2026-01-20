@@ -47,7 +47,7 @@ render(html`<${Palette} json=${modifiersPalette} />`, document.getElementById("m
 
 render(html`<${DialogPromptEntries} />`, document.getElementById("llm_prompt"));
 render(
-  html`<${CommandTelegraphicCompletions} model="llama3.1:latest" stream=false />`,
+  html`<${CommandTelegraphicCompletions} model="llama3.1:latest" stream=${false} />`,
   document.getElementById("askForLlmSuggestions")
 );
 render(html`<${SentenceCompletionsPalette} />`, document.getElementById("llm_suggestions"));
