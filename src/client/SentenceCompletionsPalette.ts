@@ -8,14 +8,16 @@
  * You may obtain a copy of the License at
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
+import { VNode } from "preact";
 import { html } from "htm/preact";
+import { v4 as uuidv4 } from "uuid";
 
 import { adaptivePaletteGlobals, sentenceCompletionsSignal } from "./GlobalData";
 import { JsonPaletteType } from "./index.d";
 import { Palette } from "./Palette";
 
-const SENTENCE_COMPLETIONS_NAME = "Sentence Completions";
-const NO_BCI_AV_ID = -1;
+export const SENTENCE_COMPLETIONS_NAME = "Sentence Completions";
+export const NO_BCI_AV_ID = -1;
 
 /**
  * Create a palette from the array of sentences.  Each sentence is displayed
@@ -25,7 +27,7 @@ const NO_BCI_AV_ID = -1;
  * @param {string[]} - The array of sentences
  * @return {JsonPaletteType} - a palette data structure
  */
-function makeSentencessJsonPalette(sentences: string[]): JsonPaletteType {
+function makeSentencesJsonPalette(sentences: string[]): JsonPaletteType {
   const jsonPalette = {
     "name": SENTENCE_COMPLETIONS_NAME,
     "cells": {}
@@ -45,7 +47,7 @@ function makeSentencessJsonPalette(sentences: string[]): JsonPaletteType {
       }
     };
     row++;
-    jsonPalette.cells[sentence] = cell;
+    jsonPalette.cells[`${sentence}-${uuidv4()}`] = cell;
   });
   return jsonPalette;
 }
@@ -63,14 +65,14 @@ export function SentenceCompletionsPalette (): VNode {
     return html`<span></span>`;
   }
   // ... if there is only one data element in the completions, assume that
-  // it is the in-progress message, e.g. "Working...", and display it it as
+  // it is the in-progress message, e.g. "Working...", and display it as
   // just a string, ...
   else if (sentenceCompletionsSignal.value.length === 1) {
     return html`<span>${sentenceCompletionsSignal.value[0]}</span>`;
   }
   // ... othewise, show a palette of sentence completions.
   else {
-    const sentencesPalette = makeSentencessJsonPalette(sentenceCompletionsSignal.value);
+    const sentencesPalette = makeSentencesJsonPalette(sentenceCompletionsSignal.value);
     return html`<${Palette} json=${sentencesPalette}/>`;
   }
 }
