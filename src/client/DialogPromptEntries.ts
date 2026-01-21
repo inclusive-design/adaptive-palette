@@ -86,7 +86,7 @@ export function DialogPromptEntries (props: DialogPromptEntriesProps): VNode {
       <fieldset>
         <legend>Enter a prompt or choose one from the list</legend>
         <p>
-          <label for="R{SELECT_ID}">Choose a prompt:</label>
+          <label for="${SELECT_ID}">Choose a prompt:</label>
             <select id="${SELECT_ID}" onchange=${onSelectChange}>
               ${options}
             </select>
