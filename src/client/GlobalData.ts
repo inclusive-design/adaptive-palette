@@ -68,7 +68,7 @@ interface AdaptivePaletteGlobals {
 };
 
 const blissaryIdMapUrl: string = "https://raw.githubusercontent.com/hlridge/Bliss-Blissary-BCI-ID-Map/main/blissary_to_bci_mapping.json";
-export const bciAvSymbolsDictUrl: string = "https://raw.githubusercontent.com/cindyli/baby-bliss-bot/refs/heads/feat/add_bliss_gloss_into_LM/src/data/bliss_dict/bliss_dict_multi_langs.json";
+export const bciAvSymbolsDictUrl: string = "https://raw.githubusercontent.com/cindyli/adaptive-palette/refs/heads/feat/use-multi-lang-bliss-dict/public/data/bliss_dict_multi_langs.json";
 // export const bciAvSymbolsDictUrl: string = "https://raw.githubusercontent.com/inclusive-design/adaptive-palette/main/public/data/bliss_dict_multi_langs.json";
 
 export const adaptivePaletteGlobals: AdaptivePaletteGlobals = {
