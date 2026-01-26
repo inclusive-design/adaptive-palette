@@ -102,7 +102,8 @@ export async function loadDataFromUrl<T>(url: string): Promise<T> {
  * @param {MultiLangSymbolsDict} multiLangSymbolsDict - The multi-language data structure keyed by BCI AV ID
  * @return {Array} - Array of objects in the old format
  */
-export function convertToSingleLangFormat (multiLangSymbolsDict: MultiLangSymbolsDict, langCode: string = DEFAULT_LANG_CODE): BciAvSymbolsDict {
+export async function loadBlissDictInSingleLang (langCode: string = DEFAULT_LANG_CODE): Promise<BciAvSymbolsDict> {
+  const multiLangSymbolsDict = await loadDataFromUrl<MultiLangSymbolsDict>(bciAvSymbolsDictUrl);
   return Object.entries(multiLangSymbolsDict).map(([bciAvId, symbolData]) => {
     // Extract description from "description" using DEFAULT_LANG_CODE
     let description: string[] = [];
@@ -140,8 +141,7 @@ export function convertToSingleLangFormat (multiLangSymbolsDict: MultiLangSymbol
  */
 export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string): Promise<void> {
   adaptivePaletteGlobals.blissaryIdMap = await loadDataFromUrl<BlissaryIdMap>(blissaryIdMapUrl);
-  const multiLangSymbolsDict = await loadDataFromUrl<MultiLangSymbolsDict>(bciAvSymbolsDictUrl);
-  adaptivePaletteGlobals.bciAvSymbols = convertToSingleLangFormat(multiLangSymbolsDict);
+  adaptivePaletteGlobals.bciAvSymbols = await loadBlissDictInSingleLang();
   adaptivePaletteGlobals.mainPaletteContainerId = mainPaletteContainerId || "";
 }
 

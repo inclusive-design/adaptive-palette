@@ -9,8 +9,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 import { v4 as uuidv4 } from "uuid";
-import { MultiLangSymbolsDict } from "../../src/client/index.d";
-import { bciAvSymbolsDictUrl, loadDataFromUrl, convertToSingleLangFormat } from "../../src/client/GlobalData";
+import { loadBlissDictInSingleLang } from "../../src/client/GlobalData";
 import {
   makeBciAvIdType, BCIAV_PATTERN_KEY, BLISSARY_PATTERN_KEY, decomposeBciAvId
 } from "../../src/client/SvgUtils";
@@ -25,8 +24,7 @@ let bciAvSymbolsDict: BciAvSymbolsDict = [];
 
 // Load the BCI AV symbols dictionary from the URL
 export async function loadBciAvSymbolsDict() {
-  const multiLangSymbolsDict = await loadDataFromUrl<MultiLangSymbolsDict>(bciAvSymbolsDictUrl);
-  bciAvSymbolsDict = convertToSingleLangFormat(multiLangSymbolsDict);
+  bciAvSymbolsDict = await loadBlissDictInSingleLang();
 }
 
 // Define types used in the functions below
