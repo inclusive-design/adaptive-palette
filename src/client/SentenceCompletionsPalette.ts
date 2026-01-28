@@ -12,7 +12,7 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { v4 as uuidv4 } from "uuid";
 
-import { adaptivePaletteGlobals, sentenceCompletionsSignal } from "./GlobalData";
+import { sentenceCompletionsSignal } from "./GlobalData";
 import { JsonPaletteType } from "./index.d";
 import { Palette } from "./Palette";
 
@@ -53,11 +53,6 @@ function makeSentencesJsonPalette(sentences: string[]): JsonPaletteType {
 }
 
 export function SentenceCompletionsPalette (): VNode {
-
-  // Remove any existing sentence completions palette from the store.  Once a
-  // completions palette has been used and is to be replaced, the store no
-  // longer needs to retain it.
-  adaptivePaletteGlobals.paletteStore.removePalette(SENTENCE_COMPLETIONS_NAME);
 
   // Modify the palette display area.  When the `sentenceCompletionsSignal`
   // contains no data, empty the display, ...
