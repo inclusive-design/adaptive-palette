@@ -64,7 +64,6 @@ export function CommandTelegraphicCompletions (props: CommandTelegraphicCompleti
       <button onClick=${getTelegraphicCompletions}>
         ${TELEGRPAHIC_BUTTON_LABEL}
       </button>
-      <span style="visibility: hidden">F</span>
       <button onClick=${removeSuggestions}>
         ${CANCEL_BUTTON_LABEL}
       </button>
