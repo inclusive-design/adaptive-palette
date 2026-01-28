@@ -63,6 +63,8 @@ export const cellTypeRegistry = {
   "ContentBmwEncoding": ContentBmwEncoding,
 };
 
+export const SYSTEM_PROMPTS_KEY = "Telegraphic System Prompts";
+
 /**
  * Load the map between the BCI-AV IDs and the code consumed by the Bliss SVG
  * and create the PaletterStore and NavigationStack objects.
@@ -108,9 +110,9 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
   adaptivePaletteGlobals.mainPaletteContainerId = mainPaletteContainerId || "";
 
   // Set up the system prompts.
-  Object.keys(adaptivePaletteGlobals.systemPrompts).forEach( (key) => {
-    window.localStorage.setItem(key, adaptivePaletteGlobals.systemPrompts[key]);
-  });
+  window.localStorage.setItem(
+    SYSTEM_PROMPTS_KEY, JSON.stringify(adaptivePaletteGlobals.systemPrompts)
+  );
 }
 
 /**

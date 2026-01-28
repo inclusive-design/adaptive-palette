@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -9,85 +9,83 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render, VNode } from "preact";
+import { VNode } from "preact";
 import { html } from "htm/preact";
+import { useState } from "preact/hooks";
+
+import { SYSTEM_PROMPTS_KEY } from "./GlobalData";
 import "./DialogPromptEntries.scss";
 
-export const SELECT_ID      = "promptSelect";
-export const TEXTAREA_ID    = "systemPrompt";
-export const SUBMIT_VALUE   = "Save above prompt as:";
-export const PROMPT_NAME_ID = "promptName";
+export const SELECT_ID          = "promptSelect";
+export const TEXTAREA_ID        = "systemPrompt";
+export const SUBMIT_VALUE       = "Save above prompt as:";
+export const PROMPT_NAME_ID     = "promptName";
 
-type DialogPromptEntriesProps = {
-  promptName?: string
+/**
+ * Utility function for getting the prompts from `window.localStorage` while
+ * hiding the parsing to an object.
+ * @returns {Object} - The prompts
+ */
+function getStoredPrompts () {
+  return JSON.parse(window.localStorage.getItem(SYSTEM_PROMPTS_KEY));
 }
 
-export function DialogPromptEntries (props: DialogPromptEntriesProps): VNode {
+/**
+ * Utility function for saving the prompts into `window.localStorage` while
+ * hiding the stringification of the object.
+ * @param {Object} - The prompts
+ */
+function updateStoredPrompts (prompts) {
+  window.localStorage.setItem(SYSTEM_PROMPTS_KEY, JSON.stringify(prompts));
+}
 
-  // Use `promptName` as a factor in determining the selected index of the
-  // <select>.  Note: -1 means "nothing selected".
-  const promptName = props.promptName;
-  let selectSelectedIndex = -1;
+export function DialogPromptEntries (): VNode {
 
-  // (Re) Create <options> for the prompt <select>, based on the prompts
-  // in `window.localStorage`.  If there is a `promptName`, use it to
-  // determine the <select>'s selected index.
+  const [systemPrompts, setSystemPrompts] = useState(getStoredPrompts());
+  const [selectIndex, setSelectIndex] = useState(0);
+  const promptNames = Object.keys(systemPrompts);
+
+  // Utility to add a new prompt to the set of `systemPrompts`
+  const addPrompt = (newKey, newPrompt) => {
+    const newPrompts = getStoredPrompts();
+    newPrompts[newKey] = newPrompt;
+    setSystemPrompts(newPrompts);
+    setSelectIndex(Object.keys(newPrompts).indexOf(newKey));
+    updateStoredPrompts(newPrompts);
+  };
+
+  // Handle changes to the <select> menu
+  const onSelectChange = (event: Event) => {
+    event.preventDefault();
+    const theSelect = event.target as HTMLSelectElement;
+    setSelectIndex(theSelect.selectedIndex);
+  };
+
+  // Handle saving a new prompt
+  const savePrompt = (event: Event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget as HTMLFormElement);
+    const newPromptName = formData.get(PROMPT_NAME_ID) as string;
+    const newPrompt = formData.get(TEXTAREA_ID) as string;
+    if (newPromptName.length > 0 && newPrompt.length > 0) {
+      addPrompt(newPromptName, newPrompt);
+    }
+  };
+
+  // Create the <options>s for the <select>
   const options = [];
-  const localStore = window.localStorage;
-  for (let i = 0; i < localStore.length; i++) {
-    const theKey = localStorage.key(i);
-    const optionValue = localStore.getItem(theKey);
-    options.push(html`<option value="${optionValue}">${theKey}</option>`);
-    if (theKey === promptName) {
-      selectSelectedIndex = i;
-    }
-  }
-  // If the prompt <select> exists (has been rendered at least once), determine
-  // the currently selected prompt either (1) from the `promptName` and
-  // `selectSelectedIndex` or (2) from the <select>'s current `selectedIndex`
-  // property.
-  let thePrompt = "";
-  const theSelect = document.getElementById("promptSelect") as HTMLSelectElement;
-  if (theSelect) {
-    if (promptName && selectSelectedIndex !== -1) {
-      thePrompt = window.localStorage.getItem(promptName);
-      theSelect.selectedIndex = selectSelectedIndex;
-    }
-    else {
-      thePrompt = theSelect.options[theSelect.selectedIndex].value;
-    }
-  }
-  // But, if this is the first time the prompt <select> is rendered, use the
-  // first item in the <select>'s options as the current prompt, which is the
-  // first item in the `window.localstorage`
-  else {
-    thePrompt = window.localStorage.getItem(window.localStorage.key(0));
-  }
+  promptNames.forEach( (aKey) => {
+    options.push(html`<option value="${systemPrompts[aKey]}">${aKey}</option>`);
+  });
 
-  const savePrompt = (event) => {
-    event.preventDefault();
-    const promptNameFromField = (document.getElementById(("promptName")) as HTMLInputElement).value;
-    const promptToSave = (document.getElementById("systemPrompt") as HTMLTextAreaElement).value;
-    if (promptNameFromField.length > 0 && promptToSave.length > 0) {
-      window.localStorage.setItem(promptNameFromField, promptToSave);
-
-      // Redraw the <form> so it includes and references the new prompt.
-      render(html`<${DialogPromptEntries} promptName=${promptNameFromField}/>`, document.getElementById("llm_prompt"));
-    }
-  };
-
-  const onSelectChange = (event) => {
-    event.preventDefault();
-    (document.getElementById(TEXTAREA_ID) as HTMLTextAreaElement).value = event.currentTarget.value;
-  };
-
+  const thePrompt = systemPrompts[promptNames[selectIndex]];
   return html`
     <form class="dialogPromptEntries" onSubmit=${savePrompt}>
       <fieldset>
         <legend>Enter a prompt or choose one from the list</legend>
         <p>
           <label for="${SELECT_ID}">Choose a prompt:</label>
-            <select id="${SELECT_ID}" onchange=${onSelectChange}>
+            <select id="${SELECT_ID}" value=${thePrompt} onchange=${onSelectChange}>
               ${options}
             </select>
         </p>
@@ -96,7 +94,7 @@ export function DialogPromptEntries (props: DialogPromptEntriesProps): VNode {
           <textarea id="${TEXTAREA_ID}" name="${TEXTAREA_ID}" rows="4" cols="90" value=${thePrompt} />
           <div>
             <input type="submit" value="${SUBMIT_VALUE}" />
-            <input id="${PROMPT_NAME_ID}" type="text" style="margin-left: 1em" />
+            <input id="${PROMPT_NAME_ID}" name="${PROMPT_NAME_ID}" type="text" value="" style="margin-left: 1em" />
           </div>
         </p>
       </fieldset>
