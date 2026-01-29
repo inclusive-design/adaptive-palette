@@ -55,17 +55,16 @@ window.addEventListener("keydown", (event) => {
   }
 });
 
+const textInputTypes = [
+  "date", "datetime-local", "email", "month", "number", "password", "search",
+  "tel", "text", "time", "url", "week"
+];
+
 function elementAllowsTextEntry (element) {
-  return (
-    (element.id !== INPUT_AREA_ID) && (
-      (element.type === "text") || (element.type === "email") ||
-      (element.type === "month") || (element.type === "number") ||
-      (element.type === "password") || (element.type === "search") ||
-      (element.type === "tel") || (element.type === "url") ||
-      (element.type === "week") ||
-      (element instanceof HTMLTextAreaElement) ||
-      (element instanceof HTMLSelectElement) ||
-      (element.getAttribute("role") === "textbox")
-    )
+  return element.id !== INPUT_AREA_ID && (
+    textInputTypes.includes(element.type) ||
+    element instanceof HTMLTextAreaElement ||
+    element instanceof HTMLSelectElement ||
+    element.getAttribute("role") === "textbox"
   );
 }
