@@ -14,7 +14,7 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
-import { generateGridStyle, speak, wordGrammar } from "./GlobalUtils";
+import { generateGridStyle, speak } from "./GlobalUtils";
 import { findIndicators, findClassifierFromLeft } from "./SvgUtils";
 import "./ActionIndicatorCell.scss";
 
@@ -64,17 +64,12 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
     else {
       newBciAvId = [ newBciAvId, ";", indicatorBciAvId ];
     }
-    // Try to transform the gloss to fit with the indicator.  If nothing
-    // changes, add the label of the indicator, e.g., "plural".
-    let grammaticalLabel = wordGrammar(symbolToEdit.label, indicatorBciAvId as number);
-    if (grammaticalLabel === symbolToEdit.label) {
-      grammaticalLabel = `${symbolToEdit.label}, ${props.options.label}`;
-    }
     payloads[caretPosition] = {
-      // TODO:  what should for the "id"?  For now it is the combination of the
-      // previous symbol plus the indicator.
+      // TODO:  what should the following two fields be?  For now the ID is
+      // the combination of the previous symbol plus the indicator.  The label
+      // is the same as before, but is spoken aloud with the indicator label.
       "id": symbolToEdit.id + props.id,
-      "label": grammaticalLabel,
+      "label": symbolToEdit.label,
       "bciAvId": newBciAvId,
       "modifierInfo": symbolToEdit.modifierInfo
     };
@@ -82,7 +77,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       payloads: payloads,
       caretPosition: caretPosition
     };
-    speak(`${grammaticalLabel}`);
+    speak(`${symbolToEdit.label}, ${props.options.label}`);
   };
 
   return html`

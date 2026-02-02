@@ -8,8 +8,6 @@
  * You may obtain a copy of the License at
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
-import nlp from "compromise";
-
 import { JsonPaletteType, SymbolEncodingType, ContentSignalDataType } from "./index.d";
 
 /**
@@ -70,74 +68,6 @@ async function loadPaletteFromJsonFile (jsonFilePath: string): Promise<JsonPalet
   }
 }
 
-// Collections of indicators used by `wordGrammar()` below.  Note that the
-// `PLURAL_INDICATORS` includes the basic plural, the concrete thing plural,
-// the definite plural, and the concrete thing definite plural.
-const PLURAL_INDICATORS = [ 9011, 9010, 28044, 28046 ];
-
-// Some of the verb indicators.  There a many more
-// action/infinitive, future, past, command, present
-const VERB_INDICATORS = [ 8993, 8999, 9004, 24670, 24807 ];
-
-/**
- * Given a word and an indicator that modifies it, change the word to its
- * related form based on the indicator.  For example, if the indicator is for
- * the plural form, change the word to its plrual; if for the past tense,
- * change it to the past tense form.
- */
-function wordGrammar (wordToModify: string, indicatorId: number, added: boolean = true): string {
-  let result = wordToModify;
-  const doc = nlp(wordToModify);
-
-  if (PLURAL_INDICATORS.includes(indicatorId)) {
-    if (added) {
-      result = doc.nouns().toPlural().text();
-    }
-    else {
-      result = doc.nouns().toSingular().text();
-    }
-  }
-  else if (VERB_INDICATORS.includes(indicatorId)) {
-    if (added) {
-      switch (indicatorId) {
-      case 8993:
-        result = doc.verbs().toInfinitive().text();
-        if (result.length !== 0 && !result.includes("to")) {
-          result = "to " + result;
-        }
-        break;
-      case 8999:
-        result = doc.verbs().toFutureTense().text();
-        break;
-      case 9004:
-        result = doc.verbs().toPastTense().text();
-        break;
-      case 24670:
-      case 24807: // command is frequently present tense in English...
-        result = doc.verbs().toPresentTense().text();
-        break;
-      default:
-        break;
-      }
-    }
-    else {
-      // If removing a verb indicator, try turning the word back into a "noun"
-      // (gerund), e.g. "walk" -> "walking".
-      result = doc.verbs().toGerund().text();
-    }
-  }
-  // Compromise returns the empty string if it can't figure out how to convert
-  // the `wordToModify`.  Default is to revert back to the original input.
-  //
-  if (result.length === 0) {
-    result = wordToModify;
-  }
-  // If the gloss has a comma in it to begin with, Compromise sometimes adds
-  // extra, e.g. "has, have" -> "has,, had".  Remove the extra comma(s).
-  result = result.replace(/,,+/, ",");
-  return result;
-}
-
 /**
  * Given a current set of Bliss-words, the caret position and a Bliss-word to
  * add, insert the new word at the caret position in the set of symbols and
@@ -176,6 +106,5 @@ export {
   generateGridStyle,
   speak,
   loadPaletteFromJsonFile,
-  wordGrammar,
   insertWordAtCaret
 };
