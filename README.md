@@ -13,7 +13,7 @@ To work on the project, you need to install [NodeJS and NPM](https://nodejs.org/
 for your operating system.
 
 _**Note:** If you'd like to make use of RAG (optional), you'll also need to ensure that [CMake](http://cmake.org)
-is installed. CMake is required for installing `faiss` which is pulled in by the optional depenency `faiss-node`._
+is installed. CMake is required for installing `faiss` which is pulled in by the dependency `faiss-node`._
 
 Then, clone the project from GitHub. [Create a fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo)
 with your GitHub account, then enter the following in your command line
@@ -29,10 +29,6 @@ to install dependencies:
 ```bash
 npm ci
 ```
-
-_**Note:** If CMake is not available on the device, the optional dependency `faiss-node` will fail to install but
-will not prevent the application from installing. However, if you wish to use RAG, you'll need to install CMake and
-re-run `npm ci`._
 
 ## Development
 
@@ -99,9 +95,9 @@ Follow these steps to complete a one-time setup to enable RAG in the system:
 
 #### Troubleshooting
 
-In order to use RAG, `fais-node` must be installed. `faise-node` is an optional dependency and requires that
-[CMake](https://cmake.org/) be installed on the machine first. If this has not been done, install CMake and re-run
-the application install steps.
+In order to use RAG, `fais-node` must be installed. `faise-node` requires that [CMake](https://cmake.org/)
+be installed on the machine first. If this has not been done, install CMake and re-run the application install
+steps.
 
 ### Lint
 
