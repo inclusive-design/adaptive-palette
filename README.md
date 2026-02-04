@@ -12,6 +12,9 @@ The front end of the project is built with [Preact](https://preactjs.com/).
 To work on the project, you need to install [NodeJS and NPM](https://nodejs.org/en/download/)
 for your operating system.
 
+_**Note:** If you'd like to make use of RAG (optional), you'll also need to ensure that [CMake](http://cmake.org)
+is installed. CMake is required for installing `faiss` which is pulled in by the dependency `faiss-node`._
+
 Then, clone the project from GitHub. [Create a fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo)
 with your GitHub account, then enter the following in your command line
 (make sure to replace `your-username` with your username):
@@ -51,7 +54,7 @@ The website will be available at [http://localhost:3000](http://localhost:3000).
 
 RAG (Retrieval-Augmented Generation) is an AI technique designed to enhance the accuracy of generative models by
 incorporating factual knowledge from external sources. It requires loading factual knowledge into a vector store
-that will be quried to provide relevant information to the language model as a context.
+that will be queried to provide relevant information to the language model as a context.
 
 By default, the use of RAG is turned off in the system. The `enableRag` flag is set to `false` by default in the
 [config/config.ts](./config/config.ts).
@@ -89,6 +92,12 @@ Follow these steps to complete a one-time setup to enable RAG in the system:
 3. **Restart the server**
 
    Follow the instruction in the [Start a Server](./README.md#start-a-server) section.
+
+#### Troubleshooting
+
+In order to use RAG, `fais-node` must be installed. `faise-node` requires that [CMake](https://cmake.org/)
+be installed on the machine first. If this has not been done, install CMake and re-run the application install
+steps.
 
 ### Lint
 

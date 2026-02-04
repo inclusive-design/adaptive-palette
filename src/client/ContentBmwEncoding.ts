@@ -14,10 +14,12 @@ import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { ContentBmwEncodingType, EncodingType } from "./index.d";
-import { generateGridStyle } from "./GlobalUtils";
+import { generateGridStyle, clamp, speak } from "./GlobalUtils";
 import "./ContentBmwEncoding.scss";
 
 export const INPUT_AREA_ID = "bmw-encoding-area";   // better way?
+
+const isApplePlatform = navigator.platform.startsWith("Mac") || navigator.platform.startsWith("iPhone") || navigator.platform.startsWith("iPad");
 
 type ContentBmwEncodingProps = {
   id: string,
@@ -66,6 +68,64 @@ function generateMarkupArray (payloadArray: Array<EncodingType>, caretPos: numbe
   });
 }
 
+function moveCursor (positionChange: number = 1) {
+  // Note: the new caretPosition can equal -1 indicating that the caret is before the
+  // first symbol in the `payloads` array.  But, it cannot be less than -1.
+  const newPosition = clamp(changeEncodingContents.value.caretPosition + positionChange, -1, changeEncodingContents.value.payloads.length - 1);
+  changeEncodingContents.value = {
+    payloads: changeEncodingContents.value.payloads,
+    caretPosition: newPosition
+  };
+};
+
+export function incrementCursor () {
+  moveCursor(1);
+}
+
+export function decrementCursor () {
+  moveCursor(-1);
+}
+
+export function moveCursorToHome () {
+  moveCursor(Number.NEGATIVE_INFINITY);
+};
+
+export function moveCursorToEnd () {
+  moveCursor(Number.POSITIVE_INFINITY);
+};
+
+function handleKeyDown(event: KeyboardEvent) {
+  if ((!(isApplePlatform && event.metaKey) && event.key === "ArrowLeft") || event.key === "ArrowDown") {
+    decrementCursor();
+    speak("backward");
+  }
+
+  if ((!(isApplePlatform && event.metaKey) && event.key === "ArrowRight") || event.key === "ArrowUp") {
+    incrementCursor();
+    speak("forward");
+  }
+
+  if (
+    event.key === "Home" ||
+    (event.ctrlKey && event.key === "a") ||
+    (isApplePlatform && event.metaKey && event.key === "ArrowLeft")
+  ) {
+    event.preventDefault();
+    moveCursorToHome();
+    speak("move cursor to start");
+  }
+
+  if (
+    event.key === "End" ||
+    (event.ctrlKey && event.key === "e") ||
+    (isApplePlatform && event.metaKey && event.key === "ArrowRight")
+  ) {
+    event.preventDefault();
+    moveCursorToEnd();
+    speak("move cursor to end");
+  }
+}
+
 export function ContentBmwEncoding (props: ContentBmwEncodingProps): VNode {
   const { id, options } = props;
   const { columnStart, columnSpan, rowStart, rowSpan } = options;
@@ -76,7 +136,15 @@ export function ContentBmwEncoding (props: ContentBmwEncodingProps): VNode {
   );
 
   return html`
-    <div id="${id}" class="bmwEncodingArea" role="textbox" aria-label="Input Area" aria-readonly="true" style="${gridStyles}">
+    <div
+      id="${id}"
+      class="bmwEncodingArea"
+      role="textbox"
+      aria-label="Input Area"
+      aria-readonly="true"
+      style="${gridStyles}"
+      tabindex="0"
+      onKeyDown=${handleKeyDown}>
       ${contentsMarkupArray}
     </div>
   `;
