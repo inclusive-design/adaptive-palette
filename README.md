@@ -95,9 +95,24 @@ Follow these steps to complete a one-time setup to enable RAG in the system:
 
 #### Troubleshooting
 
-In order to use RAG, `fais-node` must be installed. `faise-node` requires that [CMake](https://cmake.org/)
+In order to use RAG, `faiss-node` must be installed. `faiss-node` requires that [CMake](https://cmake.org/)
 be installed on the machine first. If this has not been done, install CMake and re-run the application install
 steps.
+
+Using homebrew, you can install CMake with the following:
+
+```bash
+brew install cmake
+```
+
+If you encounter an `'omp.h' file not found` error, it likely means that you need to also install
+[OpenMP](https://openmp.llvm.org/).
+
+Using homebrew, you can install CMake with the following:
+
+```bash
+brew install libomp
+```
 
 ### Lint
 
