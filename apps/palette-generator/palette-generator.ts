@@ -13,7 +13,7 @@ import { render } from "preact";
 import { html } from "htm/preact";
 import { Palette } from "../../src/client/Palette";
 import { BlissSymbol } from "../../src/client/BlissSymbol";
-import { processPaletteLabels, fetchBlissGlossJson } from "./paletteJsonGenerator";
+import { processPaletteLabels, loadBciAvSymbolsDict } from "./paletteJsonGenerator";
 import "../../src/client/index.scss";
 import {
   initAdaptivePaletteGlobals, adaptivePaletteGlobals, cellTypeRegistry
@@ -22,7 +22,7 @@ import {
 
 // Initialize any globals used elsewhere in the code.
 await initAdaptivePaletteGlobals("paletteDisplay");
-await fetchBlissGlossJson();
+await loadBciAvSymbolsDict();
 let currentPaletteName = "";
 
 const MAX_MATCHES_OUTPUT = 7;
@@ -32,7 +32,7 @@ const MAX_MATCHES_OUTPUT = 7;
  * set up a handler to adjust the palette for changes in the cell type.
  */
 function initCellTypesSelect () {
-  const cellTypesSelect = document.getElementById("cellTypes");
+  const cellTypesSelect = document.getElementById("cellTypes") as HTMLSelectElement;
   Object.keys(cellTypeRegistry).forEach ((cellType) => {
     // The "cell" type `ContentBmwEncoding` is for an array of symbols within
     // a content area, not for cells within a palette.  Avoid for now.
@@ -58,7 +58,7 @@ function renderExamples() {
       isPresentation=false
       labelledBy="slashExampleLabel"
     />
-    `, document.getElementById("slashExample"));
+    `, document.getElementById("slashExample") as HTMLElement);
 
   // Semi-colon example
   render(html`
@@ -68,7 +68,7 @@ function renderExamples() {
       isPresentation=false
       labelledBy="semicolonExampleLabel"
     />
-  `, document.getElementById("semicolonExample"));
+  `, document.getElementById("semicolonExample") as HTMLElement);
 
   // Kerning example (relative kerning)
   render(html`
@@ -78,7 +78,7 @@ function renderExamples() {
       isPresentation=false
       labelledBy="kerningExampleLabel"
     />
-  `, document.getElementById("kerningExample"));
+  `, document.getElementById("kerningExample") as HTMLElement);
 
   // X example
   render(html`
@@ -88,7 +88,7 @@ function renderExamples() {
       isPresentation=false
       labelledBy="XExampleLabel"
     />
-  `, document.getElementById("XExample"));
+  `, document.getElementById("XExample") as HTMLElement);
 }
 
 /**
@@ -123,7 +123,7 @@ function handleGenerateDisplayButton () {
   if (glossesArray.length === 0) {
     paletteDisplay.innerText = "<p>Missing glosses ?</p>";
   }
-  const lookupResults = processPaletteLabels(
+  const lookupResults = await processPaletteLabels(
     glossesArray,
     paletteName.value,
     parseInt(rowStart.value),

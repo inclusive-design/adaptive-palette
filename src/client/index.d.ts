@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -75,3 +75,35 @@ export type ContentSignalDataType = {
   payloads: SymbolEncodingType[],
   caretPosition: number
 };
+
+export type BlissaryIdMapEntry = {
+  blissaryId: number;
+  bciAvId: number;
+  blissSvgBuilderCode: string;
+}
+
+export type BlissaryIdMap = BlissaryIdMapEntry[];
+
+// Data structure for BCI AV symbol dictionary with multi-language descriptions
+export type MultiLangSymbolEntry = {
+  description: Record<string, string[]>;
+  pos: string;
+  explanation: string;
+  isCharacter: boolean;
+  composition?: (string | number)[]; // Optional
+}
+
+export type MultiLangSymbolsDict = Record<string, MultiLangSymbolEntry>;
+
+// Data structure for BCI AV symbol dictionary in single-language format.
+// This data structure is used in the client after conversion from the multi-language format.
+export type BciAvSymbolEntry = {
+  id: string;
+  description: string;
+  pos: string;
+  explanation: string;
+  isCharacter: boolean;
+  composition?: (string | number)[]; // Optional
+}
+
+export type BciAvSymbolsDict = BciAvSymbolEntry[];
