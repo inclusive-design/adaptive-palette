@@ -34,9 +34,9 @@ export function findBciAvId(label: string): MatchType[] {
   // Search only if there is text to base the search on.
   if (label.trim().length !== 0) {
     // Search for the label in the Bliss gloss
+    const wordMatch = new RegExp("\\b" + `${label}` + "\\b");
     for (const gloss of adaptivePaletteGlobals.bciAvSymbols) {
       // Try an exact match or a word match
-      const wordMatch = new RegExp("\\b" + `${label}` + "\\b");
       if ((label === gloss.description) || wordMatch.test(gloss.description)) {
         // Get the composition of all the parts of the symbol's compostion or
         // its ID.  But if the `fullComposition` is the same as the original
@@ -96,20 +96,13 @@ export function findCompositionsUsingId (bciId: number): MatchType[] {
     }
     else if (symbol.composition) {
       const fullComposition = decomposeBciAvId(symbol.composition);
-      if (fullComposition?.constructor === Array) {
-        for (const member of fullComposition) {
-          if (member === bciId) {
-            matches.push({
-              bciAvId: symbolId,
-              label: symbol.description,
-              composition: symbol.composition,
-              fullComposition: fullComposition
-            });
-            // It's enough to find one occurrence of `bciId` in the
-            // `fullComposition` to record this `symbol`.
-            break;
-          }
-        }
+      if (Array.isArray(fullComposition) && fullComposition.includes(bciId)) {
+        matches.push({
+          bciAvId: symbolId,
+          label: symbol.description,
+          composition: symbol.composition,
+          fullComposition: fullComposition
+        });
       }
     }
   }
