@@ -80,8 +80,6 @@ export const adaptivePaletteGlobals = {
     "Single Sentence": "Convert the telegraphic speech to a single sentence. Give the top five best answers.  Answer with a single grammatically correct sentence.  Number the five answers clearly.  Do not add a preamble like, 'Here are the top five answers.'",
     "Single Sentence Young": "Convert the telegraphic speech to a single sentence. Give the top five best answers.  Answer with a single grammatically correct sentence in the style of an elementary school aged child, using the first person singular.  Number the five answers clearly.  Do not add a preamble like, 'Here are the top five answers.'",
   },
-  buttonClick: new Audio("/data/navigate.mp3"),
-
   // `id` attribute of the HTML element area where the main palette is
   // displayed, set by initAdaptivePaletteGlobals().  It defaults to the empty
   // string and that identifies the `<body>` elements as a default.

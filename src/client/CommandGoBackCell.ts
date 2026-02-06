@@ -13,7 +13,7 @@ import { render, VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { adaptivePaletteGlobals } from "./GlobalData";
-import { loadPaletteFromJsonFile } from "./GlobalUtils";
+import { loadPaletteFromJsonFile, speak } from "./GlobalUtils";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
 import "./ActionBmwCodeCell.scss";
@@ -60,7 +60,7 @@ export async function goBackImpl (defaultContaineId?: string ): Promise<void> {
  */
 const goBackToPalette = async (event: Event): Promise<void> => {
   const button = event.currentTarget as HTMLElement;
-  adaptivePaletteGlobals.buttonClick.play();
+  speak(button.innerText);
   return goBackImpl(button.getAttribute("aria-controls"));
 };
 
