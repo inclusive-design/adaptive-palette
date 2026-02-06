@@ -1,0 +1,32 @@
+/*
+ * Copyright 2025 Inclusive Design Research Centre, OCAD University
+ * All rights reserved.
+ *
+ * Licensed under the New BSD license. You may not use this file except in
+ * compliance with this License.
+ *
+ * You may obtain a copy of the License at
+ * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
+ */
+
+.actionGlossSearchCell {
+  border: 2px solid blue;
+  background-color: beige;
+  text-align: center;
+
+  button {
+    width: 100%;
+    border: none;
+    color: inherit;
+    background: none;
+  }
+
+  input, span {
+    display: block;
+    margin: 0 auto;
+  }
+
+  span {
+    padding-top: 0.5rem;
+  }
+}

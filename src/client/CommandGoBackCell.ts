@@ -13,10 +13,9 @@ import { render, VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { adaptivePaletteGlobals } from "./GlobalData";
-import { loadPaletteFromJsonFile } from "./GlobalUtils";
+import { loadPaletteFromJsonFile, speak } from "./GlobalUtils";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
-import { speak } from "./GlobalUtils";
 import "./ActionBmwCodeCell.scss";
 
 type CommandGoBackCellPropsType = {

@@ -15,7 +15,7 @@
 import { signal } from "@preact/signals";
 
 // NOTE: this import causes a warning serving the application using the `vite`
-// server.  The warning suggests to *not* us the `public` folder but to use
+// server.  The warning suggests to *not* use the `public` folder but to use
 // the `src` folder instead.  However, this code is also served using node
 // express and it is in the proper location for that envionment.  A copy of the
 // warning follows:
@@ -31,6 +31,7 @@ import bliss_symbols from "../../public/data/bliss_symbol_explanations.json";
  */
 import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
 import { ActionBranchToPaletteCell } from "./ActionBranchToPaletteCell";
+import { ActionGlossSearchCell } from "./ActionGlossSearchCell";
 import { ActionIndicatorCell } from "./ActionIndicatorCell";
 import { ActionPreModifierCell } from "./ActionPreModifierCell";
 import { ActionPostModifierCell } from "./ActionPostModifierCell";
@@ -48,6 +49,7 @@ import { NavigationStack } from "./NavigationStack";
 export const cellTypeRegistry = {
   "ActionBmwCodeCell": ActionBmwCodeCell,
   "ActionBranchToPaletteCell": ActionBranchToPaletteCell,
+  "ActionGlossSearchCell": ActionGlossSearchCell,
   "ActionIndicatorCell": ActionIndicatorCell,
   "ActionPreModifierCell": ActionPreModifierCell,
   "ActionPostModifierCell": ActionPostModifierCell,
@@ -73,7 +75,11 @@ export const adaptivePaletteGlobals = {
   bciAvSymbols: bliss_symbols,
   paletteStore: new PaletteStore(),
   navigationStack: new NavigationStack(),
-
+  systemPrompts: {
+    "What express": "What does this express? Give the top five answers.  Do not add a preamble like, 'Here are the top five answers.'",
+    "Single Sentence": "Convert the telegraphic speech to a single sentence. Give the top five best answers.  Answer with a single grammatically correct sentence.  Number the five answers clearly.  Do not add a preamble like, 'Here are the top five answers.'",
+    "Single Sentence Young": "Convert the telegraphic speech to a single sentence. Give the top five best answers.  Answer with a single grammatically correct sentence in the style of an elementary school aged child, using the first person singular.  Number the five answers clearly.  Do not add a preamble like, 'Here are the top five answers.'",
+  },
   // `id` attribute of the HTML element area where the main palette is
   // displayed, set by initAdaptivePaletteGlobals().  It defaults to the empty
   // string and that identifies the `<body>` elements as a default.
@@ -99,6 +105,12 @@ export async function loadBlissaryIdMap (): Promise<object> {
 export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string): Promise<void> {
   adaptivePaletteGlobals.blissaryIdMap = await loadBlissaryIdMap();
   adaptivePaletteGlobals.mainPaletteContainerId = mainPaletteContainerId || "";
+
+  // Set up the system prompts.  (NOTE: [JS]:  would prefer that one could set
+  // an entire object as an item called "adaptivePaletteSystemPrompts").
+  Object.keys(adaptivePaletteGlobals.systemPrompts).forEach( (key) => {
+    window.localStorage.setItem(key, adaptivePaletteGlobals.systemPrompts[key]);
+  });
 }
 
 /**
@@ -110,3 +122,10 @@ export const changeEncodingContents = signal({
   payloads: [],
   caretPosition: -1,
 });
+
+/**
+ * Signal for updating the contents of the SentenceCompletion area.  The value
+ * of the signal is the current array of sentences that are offered as possible
+ * completions.
+ */
+export const sentenceCompletionsSignal = signal([]);
