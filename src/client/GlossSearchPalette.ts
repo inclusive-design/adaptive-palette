@@ -11,7 +11,6 @@
 
 import { VNode } from "preact";
 import { html } from "htm/preact";
-import { v4 as uuidv4 } from "uuid";
 
 import { adaptivePaletteGlobals } from "./GlobalData";
 import { MatchType, JsonPaletteType } from "./index.d";
@@ -29,7 +28,7 @@ type GlossSearchPalettePropsType = {
  * Create a JsonPaletteType from an array of matches based on a gloss search.
  *
  * @param {Array} glossMatches - Array of Bliss symbol information objects whose
- *                               glass matches the search term.
+ *                               gloss matches the search term.
  * @param {String} searchTerm - The search term used to find the matches. It is
  *                              used to prefix the label of each cell.
  * @param {number} startRow - The row index of the top left cell of the palette
@@ -42,8 +41,8 @@ export function makeMatchesPalette (glossMatches: MatchType[], searchTerm: strin
     "name": GLOSS_MATCHES_PALETTE,
     "cells": {}
   };
-  // Make the palette at most 4 columns wide.
-  const numCols = ( glossMatches.length <= 4 ? glossMatches.length : 4 );
+  // Make the palette at most 5 columns wide.
+  const numCols = ( glossMatches.length <= 5 ? glossMatches.length : 5 );
   let rowIndex = 0;
   let colIndex = 0;
 
@@ -63,11 +62,11 @@ export function makeMatchesPalette (glossMatches: MatchType[], searchTerm: strin
         columnSpan: 1
       }
     };
-    jsonPalette.cells[`${match.label}-${uuidv4()}`] = cell;
+    jsonPalette.cells[`${match.label}-${match.bciAvId}`] = cell;
 
     // Update rows, columns, etc.
     colIndex++;
-    if (colIndex > numCols) {
+    if (colIndex >= numCols-1) {
       rowIndex++;
       colIndex = 0;
     }
@@ -86,7 +85,7 @@ export function GlossSearchPalette (props: GlossSearchPalettePropsType): VNode {
     return html``;
   }
   else if (matches.length === 0) {
-    return html`<p style="color: white;">No matches found</p>`;
+    return html`<p>No matches found</p>`;
   }
   else {
     const glossPalette = makeMatchesPalette(matches, searchTerm, 1, 1);
