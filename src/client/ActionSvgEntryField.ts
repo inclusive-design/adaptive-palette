@@ -11,6 +11,7 @@
 
 import { VNode } from "preact";
 import { html } from "htm/preact";
+import { useState } from "preact/hooks";
 
 import { BciAvIdType } from "./index.d";
 import { changeEncodingContents } from "./GlobalData";
@@ -21,7 +22,7 @@ import "./ActionSvgEntryField.scss";
 export const SVG_ENTRY_FIELD_ID    = "svgEntryField";
 export const SYMBOL_LABEL_FIELD_ID = "symbolLabel";
 export const SUBMIT_VALUE          = "Add Symbol";
-const MALFORMED                    = "Invalid svg string";
+const MALFORMED                    = "Invalid builder string";
 
 /**
  * Converts a string that encodes the information required by the SvgUtils
@@ -40,6 +41,9 @@ function convertSvgBuilderString (theString): BciAvIdType {
 }
 
 export function ActionSvgEntryField (): VNode {
+
+  const [malformed, setMalformed] = useState(false);
+  let invalidMessage = html``;
 
   const svgToSymbol = (event) => {
     event.preventDefault();
@@ -60,12 +64,21 @@ export function ActionSvgEntryField (): VNode {
           payload, changeEncodingContents.value.payloads, changeEncodingContents.value.caretPosition
         );
         speak(payload.label);
+        setMalformed(false);
       }
       else {
-        speak(MALFORMED);
+        setMalformed(true);
       }
     }
+    else {
+      setMalformed(true);
+    }
   };
+
+  if (malformed) {
+    invalidMessage = html`<span>${MALFORMED}</span>`;
+    speak(MALFORMED);
+  }
 
   return html`
     <form onSubmit=${svgToSymbol} class="actionSvgEntryField">
@@ -74,6 +87,7 @@ export function ActionSvgEntryField (): VNode {
         <p>
         <label for=${SVG_ENTRY_FIELD_ID}>Builder string:</label><br />
         <input id=${SVG_ENTRY_FIELD_ID} name=${SVG_ENTRY_FIELD_ID} type="text" size="40" required="true"/><br />
+        ${invalidMessage}
         </p>
         <p>
         <label for=${SYMBOL_LABEL_FIELD_ID}>Label:</label><br />
