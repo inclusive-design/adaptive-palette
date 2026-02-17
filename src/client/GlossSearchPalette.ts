@@ -86,7 +86,7 @@ export function GlossSearchPalette (props: GlossSearchPalettePropsType): VNode {
     return html``;
   }
   else if (matches.length === 0) {
-    return html`<p>No matches found</p>`;
+    return html`<p role="status">No matches found</p>`;
   }
   else {
     const glossPalette = makeMatchesPalette(matches, searchTerm, 1, 1);

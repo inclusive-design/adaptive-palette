@@ -76,8 +76,7 @@ export function ActionSvgEntryField (): VNode {
   };
 
   if (malformed) {
-    invalidMessage = html`<span>${MALFORMED}</span>`;
-    speak(MALFORMED);
+    invalidMessage = html`<span role="status">${MALFORMED}</span>`;
   }
 
   return html`
