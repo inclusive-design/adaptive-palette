@@ -11,8 +11,7 @@
     "jsxImportSource": "preact",
 		"resolveJsonModule": true,
     "esModuleInterop": true,
-    "alwaysStrict": true,
-    "esModuleInterop": true
+    "alwaysStrict": true
   },
   "include": [
 		"node_modules/vite/client.d.ts",
