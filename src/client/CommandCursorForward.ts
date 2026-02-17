@@ -12,7 +12,7 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
-import { changeEncodingContents } from "./GlobalData";
+import { incrementCursor } from "./ContentBmwEncoding";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { generateGridStyle, speak } from "./GlobalUtils";
 
@@ -33,12 +33,7 @@ export function CommandCursorForward (props: CommandCursorForwardProps): VNode {
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
-    if (changeEncodingContents.value.caretPosition < changeEncodingContents.value.payloads.length - 1) {
-      changeEncodingContents.value = {
-        payloads: changeEncodingContents.value.payloads,
-        caretPosition: changeEncodingContents.value.caretPosition + 1
-      };
-    }
+    incrementCursor();
     speak(label);
   };
 
