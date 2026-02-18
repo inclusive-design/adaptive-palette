@@ -19,7 +19,11 @@
     background-color: white;
   }
 
-  input, span {
+  label, input {
+    text-align: left;
+  }
+
+  span {
     display: block;
     margin: 0 auto;
   }

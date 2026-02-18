@@ -83,8 +83,11 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
           isPresentation=true
         />
       </button>
-      <input id=input-${props.id} value=${proposedGloss} />
-      <span>${compositionString}</span>
+      <div>
+        <label for="input-${props.id}">Label: </label>
+        <input id=input-${props.id} value=${proposedGloss} />
+        <span>${bciAvId}: ${compositionString}</span>
+      </div>
     </div>
   `;
 }
