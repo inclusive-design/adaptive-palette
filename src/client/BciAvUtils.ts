@@ -85,9 +85,9 @@ export function findCompositionsUsingId (bciId: number): MatchType[] {
   const matches = [];
   for (const symbol of adaptivePaletteGlobals.bciAvSymbols) {
     const symbolId = parseInt(symbol.id);
-    // Add the symbol itself
+    // Add the symbol itself and add it as the first element
     if (symbolId === bciId) {
-      matches.push({
+      matches.unshift({
         bciAvId: symbolId,
         label: symbol.description,
         composition: symbol.composition,
