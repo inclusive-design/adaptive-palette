@@ -102,9 +102,26 @@ function insertWordAtCaret (wordToAdd: SymbolEncodingType, symbolSet: SymbolEnco
   return newSymbolSet;
 }
 
+/**
+ * Returns the inputted value constrained to the `min` and `max` values.
+ * The returned value will:
+ *  - `min` if `value` was less than `min`
+ *  - `max` if the `value` was greater than `max`
+ *  - `value` if it fell within the `min` `max` range.
+ *
+ * @param {number} value - The value to evaluate
+ * @param {number} min - The minimum value to be returned
+ * @param {number} max - The maximum value to be returned
+ * @returns {number} - The constrained value
+ */
+function clamp (value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
+}
+
 export {
   generateGridStyle,
   speak,
   loadPaletteFromJsonFile,
-  insertWordAtCaret
+  insertWordAtCaret,
+  clamp
 };
