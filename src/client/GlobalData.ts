@@ -13,6 +13,7 @@
  * Populate and export global data
  */
 import { signal } from "@preact/signals";
+import { getModelNames } from "./ollamaApi";
 
 // NOTE: this import causes a warning serving the application using the `vite`
 // server.  The warning suggests to *not* use the `public` folder but to use
@@ -77,6 +78,7 @@ export const adaptivePaletteGlobals = {
   bciAvSymbols: bliss_symbols,
   paletteStore: new PaletteStore(),
   navigationStack: new NavigationStack(),
+  LLMs: [],
   systemPrompts: {
     "What express": "What does this express? Give the top five answers.  Do not add a preamble like, 'Here are the top five answers.'",
     "Single Sentence": "Convert the telegraphic speech to a single sentence. Give the top five best answers.  Answer with a single grammatically correct sentence.  Number the five answers clearly.  Do not add a preamble like, 'Here are the top five answers.'",
@@ -107,6 +109,7 @@ export async function loadBlissaryIdMap (): Promise<object> {
  */
 export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string): Promise<void> {
   adaptivePaletteGlobals.blissaryIdMap = await loadBlissaryIdMap();
+  adaptivePaletteGlobals.LLMs = await getModelNames();
   adaptivePaletteGlobals.mainPaletteContainerId = mainPaletteContainerId || "";
 
   // Set up the system prompts.

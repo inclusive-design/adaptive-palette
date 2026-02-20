@@ -15,7 +15,8 @@ import { html } from "htm/preact";
 
 import { SYSTEM_PROMPTS_KEY } from "./GlobalData";
 import {
-  SELECT_ID, TEXTAREA_ID, SUBMIT_VALUE, PROMPT_NAME_ID, DialogPromptEntries
+  LLM_SELECT_ID, PROMPT_SELECT_ID, TEXTAREA_ID, SUBMIT_VALUE, PROMPT_NAME_ID,
+  DialogPromptEntries
 } from "./DialogPromptEntries";
 
 describe("DialogPromptEntries component", (): void => {
@@ -34,15 +35,20 @@ describe("DialogPromptEntries component", (): void => {
     render(html`
       <${DialogPromptEntries} />`
     );
-    // Check the <select> and its <option>s.
-    const select = document.getElementById(SELECT_ID) as HTMLSelectElement;
-    expect(select).toBeInTheDocument();
-    expect(select.selectedIndex).toBe(0);
-    expect(select.value).toBe(PROMPT1);
-    const options = select.options as HTMLOptionsCollection;
+    // Check the prompt <select> and its <option>s.
+    const promptSelect = document.getElementById(PROMPT_SELECT_ID) as HTMLSelectElement;
+    expect(promptSelect).toBeInTheDocument();
+    expect(promptSelect.selectedIndex).toBe(0);
+    expect(promptSelect.value).toBe(PROMPT1);
+    const options = promptSelect.options as HTMLOptionsCollection;
     expect(options.length).toBe(Object.keys(testPrompts).length);
     expect(options.item(0).value).toBe(PROMPT1);
     expect(options.item(1).value).toBe(PROMPT2);
+
+    // Check that there is an LLM <select>.  Technically, we cannot check its
+    // options since that requires that Ollama be present and functioning.
+    const LLMSelect = document.getElementById(LLM_SELECT_ID) as HTMLSelectElement;
+    expect(LLMSelect).toBeInTheDocument();
 
     // Check the <textarea> and its content.
     const textArea = document.getElementById(TEXTAREA_ID) as HTMLTextAreaElement;

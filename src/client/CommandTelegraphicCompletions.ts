@@ -13,7 +13,7 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 
 import { changeEncodingContents, sentenceCompletionsSignal } from "./GlobalData";
-import { TEXTAREA_ID } from "./DialogPromptEntries";
+import { LLM_SELECT_ID, TEXTAREA_ID } from "./DialogPromptEntries";
 import { queryChat } from "./ollamaApi";
 
 import "./CommandTelegraphicCompletions.scss";
@@ -43,9 +43,10 @@ export function CommandTelegraphicCompletions (props: CommandTelegraphicCompleti
     changeEncodingContents.value.payloads.forEach( (value) => {
       labelText.push(value.label);
     });
+    const llm = (document.getElementById(LLM_SELECT_ID) as HTMLTextAreaElement).value;
     const systemPrompt = (document.getElementById(TEXTAREA_ID) as HTMLTextAreaElement).value;
     const response = await queryChat(
-      labelText.join(" "), model, stream, systemPrompt
+      labelText.join(" "), llm, stream, systemPrompt
     );
     // Parse the query response messages into an array of strings.  Note that
     // with Llama3.1 each message is one of the suggested sentence completions.
