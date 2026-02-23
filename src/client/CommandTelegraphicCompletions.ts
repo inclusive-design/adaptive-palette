@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Inclusive Design Research Centre, OCAD University
+ * Copyright 2025-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -11,25 +11,57 @@
 
 import { VNode } from "preact";
 import { html } from "htm/preact";
+import { useState } from "preact/hooks";
 
-import { changeEncodingContents, sentenceCompletionsSignal } from "./GlobalData";
-import { LLM_SELECT_ID, TEXTAREA_ID } from "./DialogPromptEntries";
+import {
+  adaptivePaletteGlobals, changeEncodingContents, sentenceCompletionsSignal
+} from "./GlobalData";
+import { TEXTAREA_ID } from "./DialogPromptEntries";
 import { queryChat } from "./ollamaApi";
 
 import "./CommandTelegraphicCompletions.scss";
 
 export const TELEGRPAHIC_BUTTON_LABEL = "Telegraphic Completions";
-export const CANCEL_BUTTON_LABEL = "Cancel";
+export const CANCEL_BUTTON_LABEL      = "Cancel";
+export const LLM_SELECT_ID            = "LLMSelect";
+export const NO_MODELS_AVAILABLE      = "No models available";
 
 type CommandTelegraphicCompletionsProps = {
   id: string,
-  model: string,
   stream: boolean;
 };
 
 export function CommandTelegraphicCompletions (props: CommandTelegraphicCompletionsProps): VNode {
 
-  const { model, stream } = props;
+  const { stream } = props;
+
+  // Initialize the LLM to use, and the <option>s for the LLM <select>.
+  const llmDisabled = ( adaptivePaletteGlobals.LLMs.length > 0 ? false : true );
+  const [selectedLLM, setSelectedLLM] = useState(
+    ( llmDisabled ? NO_MODELS_AVAILABLE : adaptivePaletteGlobals.LLMs[0] )
+  );
+  const llmOptions = [];
+  if (llmDisabled) {
+    llmOptions.push(
+      html`<option value="${selectedLLM}">${selectedLLM}</option>`
+    );
+  }
+  else {
+    adaptivePaletteGlobals.LLMs.forEach( (llm) => {
+      llmOptions.push(html`<option value="${llm}">${llm}</option>`);
+    });
+  }
+  const telegraphicButtonDisabled =
+    llmDisabled || changeEncodingContents.value.payloads.length === 0;
+
+  console.debug(`llmDisabled = ${llmDisabled}, telegraphicButtonDisabled = ${telegraphicButtonDisabled}`);
+
+  // Allow the user to select an LLM
+  const onLLMSelectChange = (event: Event) => {
+    event.preventDefault();
+    const LLMSelect = event.target as HTMLSelectElement;
+    setSelectedLLM(LLMSelect.selectedOptions.item(0).label);
+  };
 
   // Handler for getting completions from ollama and into the
   // `sentenceCompletionsSignal` signal's value.
@@ -43,10 +75,9 @@ export function CommandTelegraphicCompletions (props: CommandTelegraphicCompleti
     changeEncodingContents.value.payloads.forEach( (value) => {
       labelText.push(value.label);
     });
-    const llm = (document.getElementById(LLM_SELECT_ID) as HTMLTextAreaElement).value;
     const systemPrompt = (document.getElementById(TEXTAREA_ID) as HTMLTextAreaElement).value;
     const response = await queryChat(
-      labelText.join(" "), llm, stream, systemPrompt
+      labelText.join(" "), selectedLLM, stream, systemPrompt
     );
     // Parse the query response messages into an array of strings.  Note that
     // with Llama3.1 each message is one of the suggested sentence completions.
@@ -56,18 +87,28 @@ export function CommandTelegraphicCompletions (props: CommandTelegraphicCompleti
   };
 
   // Handler to remove all of the suggested completions.
-  const removeSuggestions = (): void => {
+  const removeSuggestions = (event): void => {
+    event.preventDefault();
     sentenceCompletionsSignal.value = [];
   };
 
   return html`
     <p class="commandTelegraphicCompletions">
-      <button onClick=${getTelegraphicCompletions}>
-        ${TELEGRPAHIC_BUTTON_LABEL}
-      </button>
-      <button onClick=${removeSuggestions}>
-        ${CANCEL_BUTTON_LABEL}
-      </button>
+      <form>
+        <fieldset>
+          <legend>Ask an AI</legend>
+          <label for="${LLM_SELECT_ID}">LLM: </label>
+          <select id="${LLM_SELECT_ID}" disabled="${llmDisabled}" value=${selectedLLM} onchange=${onLLMSelectChange}>
+            ${llmOptions}
+          </select>
+          <button onClick=${getTelegraphicCompletions} disabled="${telegraphicButtonDisabled}">
+            ${TELEGRPAHIC_BUTTON_LABEL}
+          </button>
+          <button onClick=${removeSuggestions} disabled="${telegraphicButtonDisabled}">
+            ${CANCEL_BUTTON_LABEL}
+          </button>
+        </fieldset>
+      </form>
     </p>
   `;
 }

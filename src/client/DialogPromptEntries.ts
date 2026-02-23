@@ -13,11 +13,10 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { useState } from "preact/hooks";
 
-import { adaptivePaletteGlobals, SYSTEM_PROMPTS_KEY } from "./GlobalData";
+import { SYSTEM_PROMPTS_KEY } from "./GlobalData";
 import "./DialogPromptEntries.scss";
 
 export const PROMPT_SELECT_ID   = "promptSelect";
-export const LLM_SELECT_ID      = "LLMSelect";
 export const TEXTAREA_ID        = "systemPrompt";
 export const SUBMIT_VALUE       = "Save above prompt as:";
 export const PROMPT_NAME_ID     = "promptName";
@@ -43,7 +42,6 @@ function updateStoredPrompts (prompts) {
 export function DialogPromptEntries (): VNode {
 
   const [systemPrompts, setSystemPrompts] = useState(getStoredPrompts());
-  const [selectedLLM, setSelectedLLM] = useState(adaptivePaletteGlobals.LLMs[0]);
   const [promptSelectIndex, setPromptSelectIndex] = useState(0);
   const promptNames = Object.keys(systemPrompts);
 
@@ -54,13 +52,6 @@ export function DialogPromptEntries (): VNode {
     setSystemPrompts(newPrompts);
     setPromptSelectIndex(Object.keys(newPrompts).indexOf(newKey));
     updateStoredPrompts(newPrompts);
-  };
-
-  // Save the selected LLM when user chooses another
-  const onLLMSelectChange = (event: Event) => {
-    event.preventDefault();
-    const LLMSelect = event.target as HTMLSelectElement;
-    setSelectedLLM(LLMSelect.selectedOptions.item(0).value);
   };
 
   // Save the selected prompt when the user chooses another prompt.
@@ -81,12 +72,6 @@ export function DialogPromptEntries (): VNode {
     }
   };
 
-  // Create the <option>s for the LLM <select>
-  const llmOptions = [];
-  adaptivePaletteGlobals.LLMs.forEach( (llm) => {
-    llmOptions.push(html`<option value="${llm}">${llm}</option>`);
-  });
-
   // Create the <option>s for the prompt <select>
   const promptOptions = [];
   promptNames.forEach( (aKey) => {
@@ -98,12 +83,6 @@ export function DialogPromptEntries (): VNode {
     <form class="dialogPromptEntries" onSubmit=${savePrompt}>
       <fieldset>
         <legend>Enter a prompt or choose one from the list</legend>
-        <p>
-          <label for="${LLM_SELECT_ID}">Choose an LLM: </label>
-          <select id="${LLM_SELECT_ID}" value=${selectedLLM} onchange=${onLLMSelectChange}>
-            ${llmOptions}
-          </select>
-        </p>
         <p>
           <label for="${PROMPT_SELECT_ID}">Choose a prompt: </label>
           <select id="${PROMPT_SELECT_ID}" value=${thePrompt} onchange=${onPromptSelectChange}>

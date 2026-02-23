@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Inclusive Design Research Centre, OCAD University
+ * Copyright 2025-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -15,7 +15,7 @@ import { html } from "htm/preact";
 
 import { SYSTEM_PROMPTS_KEY } from "./GlobalData";
 import {
-  LLM_SELECT_ID, PROMPT_SELECT_ID, TEXTAREA_ID, SUBMIT_VALUE, PROMPT_NAME_ID,
+  PROMPT_SELECT_ID, TEXTAREA_ID, SUBMIT_VALUE, PROMPT_NAME_ID,
   DialogPromptEntries
 } from "./DialogPromptEntries";
 
@@ -44,11 +44,6 @@ describe("DialogPromptEntries component", (): void => {
     expect(options.length).toBe(Object.keys(testPrompts).length);
     expect(options.item(0).value).toBe(PROMPT1);
     expect(options.item(1).value).toBe(PROMPT2);
-
-    // Check that there is an LLM <select>.  Technically, we cannot check its
-    // options since that requires that Ollama be present and functioning.
-    const LLMSelect = document.getElementById(LLM_SELECT_ID) as HTMLSelectElement;
-    expect(LLMSelect).toBeInTheDocument();
 
     // Check the <textarea> and its content.
     const textArea = document.getElementById(TEXTAREA_ID) as HTMLTextAreaElement;
