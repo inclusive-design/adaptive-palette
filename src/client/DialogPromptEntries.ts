@@ -42,15 +42,15 @@ function updateStoredPrompts (prompts) {
 export function DialogPromptEntries (): VNode {
 
   const [systemPrompts, setSystemPrompts] = useState(getStoredPrompts());
-  const [promptSelectIndex, setPromptSelectIndex] = useState(0);
   const promptNames = Object.keys(systemPrompts);
+  const [thePrompt, setThePrompt] = useState(systemPrompts[promptNames[0]]);
 
   // Utility to add a new prompt to the set of `systemPrompts`
   const addPrompt = (newKey, newPrompt) => {
     const newPrompts = getStoredPrompts();
     newPrompts[newKey] = newPrompt;
     setSystemPrompts(newPrompts);
-    setPromptSelectIndex(Object.keys(newPrompts).indexOf(newKey));
+    setThePrompt(newPrompt);
     updateStoredPrompts(newPrompts);
   };
 
@@ -58,7 +58,7 @@ export function DialogPromptEntries (): VNode {
   const onPromptSelectChange = (event: Event) => {
     event.preventDefault();
     const promptSelect = event.target as HTMLSelectElement;
-    setPromptSelectIndex(promptSelect.selectedIndex);
+    setThePrompt(promptSelect.value);
   };
 
   // Handle saving a new prompt
@@ -78,7 +78,6 @@ export function DialogPromptEntries (): VNode {
     promptOptions.push(html`<option value="${systemPrompts[aKey]}">${aKey}</option>`);
   });
 
-  const thePrompt = systemPrompts[promptNames[promptSelectIndex]];
   return html`
     <form class="dialogPromptEntries" onSubmit=${savePrompt}>
       <fieldset>
