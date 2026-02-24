@@ -11,7 +11,7 @@
 import { render } from "preact";
 import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
-import { loadPaletteFromJsonFile } from "./GlobalUtils";
+import { loadPaletteFromJsonFile, speak } from "./GlobalUtils";
 import { goBackImpl } from "./CommandGoBackCell";
 import { INPUT_AREA_ID } from "./ContentBmwEncoding";
 import "./index.scss";
@@ -21,6 +21,11 @@ await initAdaptivePaletteGlobals("mainPaletteDisplayArea");
 
 import { PaletteStore } from "./PaletteStore";
 import { Palette } from "./Palette";
+import { CommandTelegraphicCompletions } from "./CommandTelegraphicCompletions";
+import { SentenceCompletionsPalette } from "./SentenceCompletionsPalette";
+import { DialogPromptEntries } from "./DialogPromptEntries";
+import { ActionSearchGloss } from "./ActionSearchGloss";
+import { ActionSvgEntryField } from "./ActionSvgEntryField";
 
 const paletteFileMap = await loadPaletteFromJsonFile("/palettes/palette_file_map.json");
 const firstLayer = await loadPaletteFromJsonFile("/palettes/palettes.json");
@@ -43,14 +48,17 @@ render(html`<${Palette} json=${topPalette} />`, document.getElementById("indicat
 render(html`<${Palette} json=${firstLayer} />`, document.getElementById("mainPaletteDisplayArea"));
 render(html`<${Palette} json=${modifiersPalette} />`, document.getElementById("modifiers"));
 
+// Forms for interacting with LLMs
+render(html`<${DialogPromptEntries} />`, document.getElementById("llm_prompt"));
+render(
+  html`<${CommandTelegraphicCompletions} model="llama3.1:latest" stream=${false} />`,
+  document.getElementById("askForLlmSuggestions")
+);
+render(html`<${SentenceCompletionsPalette} />`, document.getElementById("llm_suggestions"));
 
-// Form for searching the gloss
-import { ActionSearchGloss } from "./ActionSearchGloss";
-render(html`<${ActionSearchGloss} />`, document.getElementById("searchGloss"));
-
-// Form for entering SVG strings
-import { ActionSvgEntryField } from "./ActionSvgEntryField";
+// Forms for entering SVG strings and searching the AV
 render(html`<${ActionSvgEntryField} />`, document.getElementById("svgBuilderStringEntry"));
+render(html`<${ActionSearchGloss} />`, document.getElementById("searchGloss"));
 
 // Window keydown listener for a global "go back" keystroke
 window.addEventListener("keydown", (event) => {
@@ -58,7 +66,7 @@ window.addEventListener("keydown", (event) => {
     // If focus was not on a textual input element, go back up one layer in the
     // palette navigation
     if (!elementAllowsTextEntry(event.target)) {
-      adaptivePaletteGlobals.buttonClick.play();
+      speak("Back");
       goBackImpl();
     }
   }
@@ -77,5 +85,4 @@ function elementAllowsTextEntry (element) {
     element.getAttribute("role") === "textbox"
   );
 }
-
 

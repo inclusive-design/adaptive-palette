@@ -13,6 +13,7 @@
  * Populate and export global data
  */
 import { signal } from "@preact/signals";
+import { getModelNames } from "./ollamaApi";
 
 // NOTE: this import causes a warning serving the application using the `vite`
 // server.  The warning suggests to *not* use the `public` folder but to use
@@ -37,12 +38,13 @@ import { ActionPreModifierCell } from "./ActionPreModifierCell";
 import { ActionPostModifierCell } from "./ActionPostModifierCell";
 import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
 import { ActionRemoveModifierCell } from "./ActionRemoveModifierCell";
+import { ActionTextCell } from "./ActionTextCell";
+import { CommandClearEncoding } from "./CommandClearEncoding";
 import { CommandCursorBackward } from "./CommandCursorBackward";
 import { CommandCursorForward } from "./CommandCursorForward";
+import { CommandDelLastEncoding } from "./CommandDelLastEncoding";
 import { CommandGoBackCell } from "./CommandGoBackCell";
 import { ContentBmwEncoding } from "./ContentBmwEncoding";
-import { CommandClearEncoding } from "./CommandClearEncoding";
-import { CommandDelLastEncoding } from "./CommandDelLastEncoding";
 import { PaletteStore } from "./PaletteStore";
 import { NavigationStack } from "./NavigationStack";
 
@@ -55,13 +57,16 @@ export const cellTypeRegistry = {
   "ActionPostModifierCell": ActionPostModifierCell,
   "ActionRemoveIndicatorCell": ActionRemoveIndicatorCell,
   "ActionRemoveModifierCell": ActionRemoveModifierCell,
+  "ActionTextCell": ActionTextCell,
+  "CommandClearEncoding": CommandClearEncoding,
   "CommandCursorBackward": CommandCursorBackward,
   "CommandCursorForward": CommandCursorForward,
+  "CommandDelLastEncoding": CommandDelLastEncoding,
   "CommandGoBackCell": CommandGoBackCell,
   "ContentBmwEncoding": ContentBmwEncoding,
-  "CommandClearEncoding": CommandClearEncoding,
-  "CommandDelLastEncoding": CommandDelLastEncoding
 };
+
+export const SYSTEM_PROMPTS_KEY = "Telegraphic System Prompts";
 
 /**
  * Load the map between the BCI-AV IDs and the code consumed by the Bliss SVG
@@ -75,6 +80,7 @@ export const adaptivePaletteGlobals = {
   bciAvSymbols: bliss_symbols,
   paletteStore: new PaletteStore(),
   navigationStack: new NavigationStack(),
+  LLMs: [],
   systemPrompts: {
     "What express": "What does this express? Give the top five answers.  Do not add a preamble like, 'Here are the top five answers.'",
     "Single Sentence": "Convert the telegraphic speech to a single sentence. Give the top five best answers.  Answer with a single grammatically correct sentence.  Number the five answers clearly.  Do not add a preamble like, 'Here are the top five answers.'",
@@ -104,13 +110,13 @@ export async function loadBlissaryIdMap (): Promise<object> {
  */
 export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string): Promise<void> {
   adaptivePaletteGlobals.blissaryIdMap = await loadBlissaryIdMap();
+  adaptivePaletteGlobals.LLMs = await getModelNames();
   adaptivePaletteGlobals.mainPaletteContainerId = mainPaletteContainerId || "";
 
-  // Set up the system prompts.  (NOTE: [JS]:  would prefer that one could set
-  // an entire object as an item called "adaptivePaletteSystemPrompts").
-  Object.keys(adaptivePaletteGlobals.systemPrompts).forEach( (key) => {
-    window.localStorage.setItem(key, adaptivePaletteGlobals.systemPrompts[key]);
-  });
+  // Set up the system prompts.
+  window.localStorage.setItem(
+    SYSTEM_PROMPTS_KEY, JSON.stringify(adaptivePaletteGlobals.systemPrompts)
+  );
 }
 
 /**

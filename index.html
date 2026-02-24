@@ -8,15 +8,24 @@
   </head>
   <body>
     <!--
-      Two main ares of the app.  This top area is for the UI that supports
+      Expandable form for the LLM prompts and interactions.
+    -->
+    <details style="margin-left: 0.5em; display:inline-grid;">
+      <summary>Prompt Dialog</summary>
+      <div id="llm_prompt" style="display:inline-grid;"></div>
+    </details>
+    </div>
+    <div id="askForLlmSuggestions" style="margin-left: 0.5em;"></div>
+    <div id="llm_suggestions" style="color: white; background-color: black; margin-left:0.5em"></div>
+    <!--
+      Two areas for the rest of the app.  The first area supports:
       1. Entering symbols using SVG builder strings
       2. Searching the BCI AV for symbols, displaying the search results
         as a palette
     -->
 
     <!--
-      First main aria: Forms for entering SVG builder strings, and for searching
-      the BCI AV.
+      First aria:
     -->
     <div>
       <details id="SvgEntryDialog" style="margin-left: 0.5em;">
@@ -30,8 +39,8 @@
     </div>
 
     <!--
-      Second main ares:  This is for the Bliss symobl input and palette part
-      of the app
+      Second ares:  This is for the Bliss symobl input and palette navigation
+      part of the app
     -->
     <div id="inputArea">
       <div id="input_palette"></div>
