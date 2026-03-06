@@ -11,6 +11,8 @@
 
 import { VNode } from "preact";
 import { html } from "htm/preact";
+import { useState } from 'preact/hooks';
+
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { ContentBmwEncodingType, EncodingType } from "./index.d";
@@ -129,13 +131,20 @@ function handleKeyDown(event: KeyboardEvent) {
 export function ContentBmwEncoding (props: ContentBmwEncodingProps): VNode {
   const { id, options } = props;
   const { columnStart, columnSpan, rowStart, rowSpan } = options;
+  const { blendWords, setBlendWords } = useState(false);
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
   const contentsMarkupArray = generateMarkupArray(
     changeEncodingContents.value.payloads, changeEncodingContents.value.caretPosition
   );
 
+  const handleBlendWordsCheckbox = (event) => {
+    event.preventDefault;
+    ( event.target.checked ? setState(true) : setState(false) );
+  }
+
   return html`
+    <span><input id="blend-words" type="checkbox" /><label for="blend-words">Blend Words</label></span>
     <div
       id="${id}"
       class="bmwEncodingArea"
