@@ -14,8 +14,10 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { composeBlissWord, generateGridStyle, speak } from "./GlobalUtils";
 import "./ActionModifierCell.scss";
+
+const ISA_MODIFIER = true;
 
 export type ActionModifierCodeCellPropsType = {
   id: string,
@@ -42,38 +44,10 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
   const disabled = changeEncodingContents.value.caretPosition === -1;
 
   const cellClicked = () => {
-    // Get the symbol at the caret position in the editing area.
-    const { caretPosition, payloads } = changeEncodingContents.value;
-    const symbolToEdit = payloads[caretPosition];
-    let newBciAvId = (
-      typeof symbolToEdit.bciAvId === "number" ?
-        [symbolToEdit.bciAvId] :
-        symbolToEdit.bciAvId
-    );
-    if (prepend) {
-      newBciAvId = [ ...modifierBciAvId, "/", ...newBciAvId ];
-    }
-    else {
-      newBciAvId = [ ...newBciAvId, "/", ...modifierBciAvId ];
-    }
-    // Push the current modifier information onto the `modifierInfo` of the
-    // `symbolToEdit`, tracking the order in which the modifiers were added.
-    symbolToEdit.modifierInfo.push({
-      modifierId: modifierBciAvId,
-      modifierGloss: label,
-      isPrepended: prepend
-    });
-    payloads[caretPosition] = {
-      "id": symbolToEdit.id + props.id,
-      "label": `${label} ${symbolToEdit.label}`,
-      "bciAvId": newBciAvId,
-      "modifierInfo": symbolToEdit.modifierInfo
-    };
-    changeEncodingContents.value = {
-      payloads: payloads,
-      caretPosition: caretPosition
-    };
-    speak(`${label} ${symbolToEdit.label}`);
+    const newContents = composeBlissWord(modifierBciAvId, label, ISA_MODIFIER, changeEncodingContents.value, prepend);
+    const { payloads, caretPosition } = newContents;
+    changeEncodingContents.value = newContents;
+    speak(payloads[caretPosition].label);
   };
 
   return html`

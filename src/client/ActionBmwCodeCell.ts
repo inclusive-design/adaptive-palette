@@ -13,10 +13,12 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
-import { changeEncodingContents } from "./GlobalData";
-import { generateGridStyle, speak, insertWordAtCaret } from "./GlobalUtils";
+import { changeEncodingContents, isComposing } from "./GlobalData";
+import { generateGridStyle, speak, insertWordAtCaret, composeBlissWord } from "./GlobalUtils";
 import { decomposeBciAvId } from "./SvgUtils";
 import "./ActionBmwCodeCell.scss";
+
+const NOT_A_MODIFIER = false;
 
 type ActionBmwCodeCellPropsType = {
   id: string,
@@ -32,17 +34,27 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType): VNode {
 
   const cellClicked = () => {
     const composition = decomposeBciAvId(bciAvId);
-    // The payload includes an empty `modifierInfo` for this new symbol.
     const payloadBciAvId = ( composition ? composition : props.options.bciAvId );
-    const payload = {
-      "id": props.id,
-      "label": props.options.label,
-      "bciAvId": payloadBciAvId,
-      "modifierInfo": []
-    };
-    const{ caretPosition, payloads } = changeEncodingContents.value;
-    changeEncodingContents.value = insertWordAtCaret(payload, payloads, caretPosition);
-    speak(props.options.label);
+    // If composing, append the `payloadBciAvId` symbol to the symbol and the
+    // current caret position.
+    const { caretPosition, payloads } = changeEncodingContents.value;
+    let newLabel;
+    if (isComposing.value) {
+      const newContents = composeBlissWord(payloadBciAvId, label, NOT_A_MODIFIER, changeEncodingContents.value);
+      newLabel = newContents.payloads[newContents.caretPosition].label;
+      changeEncodingContents.value = newContents;
+    }
+    else {
+      const payload = {
+        "id": props.id,
+        "label": props.options.label,
+        "bciAvId": payloadBciAvId,
+        "modifierInfo": []
+      };
+      newLabel = payload.label;
+      changeEncodingContents.value = insertWordAtCaret(payload, payloads, caretPosition);
+    }
+    speak(newLabel);
   };
 
   return html`

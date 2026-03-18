@@ -112,3 +112,16 @@ export const changeEncodingContents = signal({
   payloads: [],
   caretPosition: -1,
 });
+
+/**
+ * Signals for tracking the contents of the word composition input area when
+ * the user is composing a Bliss-word.  The contents signal has the same
+ * structure as the `changeEncodingContents` above.  The isComposing is a state
+ * to indicate whether the mode of the palette is for composing Bliss-words
+ */
+export const composeWordContents = signal({
+  payloads: [],
+  caretPosition: -1,
+});
+export const isComposing = signal(false);
+
