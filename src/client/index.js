@@ -10,10 +10,13 @@
  */
 import { render } from "preact";
 import { html } from "htm/preact";
-import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
 import { loadPaletteFromJsonFile, speak } from "./GlobalUtils";
 import { goBackImpl } from "./CommandGoBackCell";
-import { INPUT_AREA_ID } from "./ContentBmwEncoding";
+import {
+  initAdaptivePaletteGlobals, adaptivePaletteGlobals,
+  INPUT_AREA_ID, COMPOSE_AREA_ID
+} from "./GlobalData";
+
 import "./index.scss";
 
 // Initialize any globals used elsewhere in the code.
@@ -25,7 +28,7 @@ import { Palette } from "./Palette";
 const paletteFileMap = await loadPaletteFromJsonFile("/palettes/palette_file_map.json");
 const firstLayer = await loadPaletteFromJsonFile("/palettes/palettes.json");
 const goBackCell = await loadPaletteFromJsonFile("/palettes/backup_palette.json");
-//const composeWordsArea = await loadPaletteFromJsonFile("/palettes/compose_words.json");
+const composeWordsArea = await loadPaletteFromJsonFile("/palettes/compose_words.json");
 const inputArea = await loadPaletteFromJsonFile("/palettes/input_area.json");
 const topPalette = await loadPaletteFromJsonFile("/palettes/top_palette.json");
 const modifiersPalette = await loadPaletteFromJsonFile("/palettes/modifiers.json");
@@ -33,13 +36,13 @@ const modifiersPalette = await loadPaletteFromJsonFile("/palettes/modifiers.json
 PaletteStore.paletteFileMap = paletteFileMap;
 adaptivePaletteGlobals.paletteStore.addPalette(firstLayer);
 adaptivePaletteGlobals.paletteStore.addPalette(goBackCell);
-//adaptivePaletteGlobals.paletteStore.addPalette(composeWordsArea);
+adaptivePaletteGlobals.paletteStore.addPalette(composeWordsArea);
 adaptivePaletteGlobals.paletteStore.addPalette(inputArea);
 adaptivePaletteGlobals.paletteStore.addPalette(topPalette);
 adaptivePaletteGlobals.paletteStore.addPalette(modifiersPalette);
 
 adaptivePaletteGlobals.navigationStack.currentPalette = firstLayer;
-//render(html`<${Palette} json=${composeWordsArea} />`, document.getElementById("compose_words_palette"));
+render(html`<${Palette} json=${composeWordsArea} />`, document.getElementById("compose_words_palette"));
 render(html`<${Palette} json=${inputArea} />`, document.getElementById("input_palette"));
 render(html`<${Palette} json=${goBackCell} />`, document.getElementById("backup_palette"));
 render(html`<${Palette} json=${topPalette} />`, document.getElementById("indicators"));
@@ -64,7 +67,7 @@ const textInputTypes = [
 ];
 
 function elementAllowsTextEntry (element) {
-  return element.id !== INPUT_AREA_ID && (
+  return element.id !== INPUT_AREA_ID || element.id === COMPOSE_AREA_ID && (
     textInputTypes.includes(element.type) ||
     element instanceof HTMLTextAreaElement ||
     element instanceof HTMLSelectElement ||

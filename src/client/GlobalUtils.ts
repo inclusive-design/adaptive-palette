@@ -199,22 +199,37 @@ function composeBlissWord (bciAvIdToAdd: BciAvIdType, label: string, isModifier:
  * @return {ContentSignalDataType} - the modified contents.
  */
 function removeLastSymbol (encodingContents: ContentSignalDataType): ContentSignalDataType {
-  // Get the symbol at the caret position
-  const { caretPosition, payloads } = encodingContents;
-  const symbolToEdit = payloads[caretPosition];
-
-  // Find the last "/" in the bciAvId, and truncate from there.
-  const lastSlashIndex = symbolToEdit.bciAvId.findLastIndex( (item) => item === "/");
-  const newBciAvId = symbolToEdit.bciAvId.slice(0, lastSlashIndex);
-  payloads[caretPosition] = {
-    "id": symbolToEdit.id,
-    "label": symbolToEdit.label,
-    "bciAvId": newBciAvId,
-    "modifierInfo": symbolToEdit.modifierInfo // Might be incorrect becauase of this function
-  };
+  //   // Get the symbol at the caret position
+  //   const { caretPosition, payloads } = encodingContents;
+  //   const symbolToEdit = payloads[caretPosition];
+  //   const symbolBciAvId = (
+  //     Array.isArray(symbolToEdit.bciAvId) ?
+  //     symbolToEdit.bciAvId :
+  //     [ symbolToEdit.bciAvId ]
+  //   );
+  //   const bciAvIdToEdit = symbolBciAvId as Array<string | number>;
+  //   console.debug(`TYPEOF bciAvIdToEdit is ${typeof bciAvIdToEdit}, Array.isArray() is ${Array.isArray(bciAvIdToEdit)}`);
+  //
+  //   // Find the last "/" in the bciAvId, and truncate from there.
+  //   const forFun = [ 55, "/", 77];
+  //   const lastSlashForFun = forFun.findLastIndex( (item) => item === "/");
+  //   console.debug(`lastSlashForFun is ${lastSlashForFun}`);
+  //
+  //   const lastSlashIndex = bciAvIdToEdit.findLastIndex( (item) => item === "/");
+  //   const newBciAvId = bciAvIdToEdit.slice(0, lastSlashIndex);
+  //   payloads[caretPosition] = {
+  //     "id": symbolToEdit.id,
+  //     "label": symbolToEdit.label,
+  //     "bciAvId": newBciAvId,
+  //     "modifierInfo": symbolToEdit.modifierInfo // Might be incorrect becauase of this function
+  //   };
+  //   return {
+  //     payloads: payloads,
+  //     caretPosition: caretPosition
+  //   };
   return {
-    payloads: payloads,
-    caretPosition: caretPosition
+    payloads: encodingContents.payloads,
+    caretPosition: encodingContents.caretPosition
   };
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -41,6 +41,7 @@ import { CommandCursorBackward } from "./CommandCursorBackward";
 import { CommandCursorForward } from "./CommandCursorForward";
 import { CommandGoBackCell } from "./CommandGoBackCell";
 import { ContentBmwEncoding } from "./ContentBmwEncoding";
+import { ContentComposeWordsEntry } from "./ContentComposeWordsEntry";
 import { CommandClearEncoding } from "./CommandClearEncoding";
 import { CommandDelLastEncoding } from "./CommandDelLastEncoding";
 import { PaletteStore } from "./PaletteStore";
@@ -59,6 +60,7 @@ export const cellTypeRegistry = {
   "CommandCursorForward": CommandCursorForward,
   "CommandGoBackCell": CommandGoBackCell,
   "ContentBmwEncoding": ContentBmwEncoding,
+  "ContentComposeWordsEntry": ContentComposeWordsEntry,
   "CommandClearEncoding": CommandClearEncoding,
   "CommandDelLastEncoding": CommandDelLastEncoding
 };
@@ -104,6 +106,10 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
 }
 
 /**
+ * Global signals and map
+ */
+
+/**
  * Signal for updating the contents of the ContentBmwEncoding area.  The value
  * of the signal is the current array of EncodingType objects to display in the
  * ContentBmwEncoding area and the position of the caret
@@ -123,5 +129,21 @@ export const composeWordContents = signal({
   payloads: [],
   caretPosition: -1,
 });
+
+/**
+ * Some of the CommandXxx components use an `aria-controls` to associate them
+ * with the element that they control.  For thes components, there is an
+ * `ariaControls` field in the associated palette definition .json file.  The
+ * follwoing map defines which content signal (see immediatly above) goes with
+ * which aria controlled element.
+ * TODO: add a type for the map in `index.d.ts`.
+ */
+export const INPUT_AREA_ID = "bmw-encoding-area";
+export const COMPOSE_AREA_ID = "compose-words-entry";
+
+export const contentSignalMap = {
+  "bmw-encoding-area": changeEncodingContents,
+  "compose-words-entry": composeWordContents
+};
 export const isComposing = signal(false);
 
