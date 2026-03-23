@@ -131,8 +131,8 @@
     "remove-indicator-ce71d580-2712-44b8-9daf-7e894295d827": {
       "type": "ActionRemoveIndicatorCell",
       "options": {
-        "label": "remove indicator",
-        "bciAvId": [ 17448, "//", 14430, "/", 8993,  "/", 9011 ],
+        "label": "Remove indicator",
+        "bciAvId": [ 17449, ";", 24670, "//", 14430, "/", 8993,  "/", 9011 ],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 12,
