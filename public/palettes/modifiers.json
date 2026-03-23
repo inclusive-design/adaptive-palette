@@ -155,8 +155,8 @@
     "remove_a_modifier-c4a69b52-e23f-4c4b-bd1b-2f5d9a4d4906": {
       "type": "ActionRemoveModifierCell",
       "options": {
-        "label": "remove added modifier",
-        "bciAvId": [ 17448, "//", 12339, ";", 8998 ],
+        "label": "Undo",
+        "bciAvId": [ 17449, ";", 24670, "/", 12335, "/", 12656 ],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 14,
