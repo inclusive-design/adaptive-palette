@@ -46,6 +46,7 @@ import { CommandClearEncoding } from "./CommandClearEncoding";
 import { CommandDelLastEncoding } from "./CommandDelLastEncoding";
 import { PaletteStore } from "./PaletteStore";
 import { NavigationStack } from "./NavigationStack";
+import { ToggleMakeCombination } from "./ToggleMakeCombination";
 
 export const cellTypeRegistry = {
   "ActionBmwCodeCell": ActionBmwCodeCell,
@@ -62,7 +63,8 @@ export const cellTypeRegistry = {
   "ContentBmwEncoding": ContentBmwEncoding,
   "ContentComposeWordsEntry": ContentComposeWordsEntry,
   "CommandClearEncoding": CommandClearEncoding,
-  "CommandDelLastEncoding": CommandDelLastEncoding
+  "CommandDelLastEncoding": CommandDelLastEncoding,
+  "ToggleMakeCombination": ToggleMakeCombination
 };
 
 /**
