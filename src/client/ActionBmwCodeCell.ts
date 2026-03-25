@@ -14,11 +14,9 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { INPUT_AREA_ID, COMPOSE_AREA_ID, contentSignalMap, isComposing } from "./GlobalData";
-import { generateGridStyle, speak, insertWordAtCaret, composeBlissWord } from "./GlobalUtils";
+import { generateGridStyle, speak, insertWordAtCaret } from "./GlobalUtils";
 import { decomposeBciAvId } from "./SvgUtils";
 import "./ActionBmwCodeCell.scss";
-
-const NOT_A_MODIFIER = false;
 
 type ActionBmwCodeCellPropsType = {
   id: string,
@@ -40,26 +38,14 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType): VNode {
     // current caret position.
     const contentsSignal = contentSignalMap[ariaControls];
     const { caretPosition, payloads } = contentsSignal.value;
-    let newLabel;
-    /*
-    if (isComposing.value) {
-      const newContents = composeBlissWord(payloadBciAvId, label, NOT_A_MODIFIER, changeEncodingContents.value);
-      newLabel = newContents.payloads[newContents.caretPosition].label;
-      changeEncodingContents.value = newContents;
-    }
-    else {
-    */
     const payload = {
       "id": props.id,
       "label": props.options.label,
       "bciAvId": payloadBciAvId,
       "modifierInfo": []
     };
-    newLabel = payload.label;
     contentsSignal.value = insertWordAtCaret(payload, payloads, caretPosition);
-    //  changeEncodingContents.value = insertWordAtCaret(payload, payloads, caretPosition);
-    //}
-    speak(newLabel);
+    speak(payload.label);
   };
 
   return html`

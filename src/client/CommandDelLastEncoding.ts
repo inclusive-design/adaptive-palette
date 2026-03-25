@@ -12,9 +12,9 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
-import { contentSignalMap, isComposing } from "./GlobalData";
+import { contentSignalMap } from "./GlobalData";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
-import { generateGridStyle, speak, removeLastSymbol } from "./GlobalUtils";
+import { generateGridStyle, speak } from "./GlobalUtils";
 
 type CommandDelLastEncodingProps = {
   id: string,
@@ -38,12 +38,6 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNo
     // - there are symbols, but the caret is for inserting before the first
     //   symbol
     if (payloads.length !== 0 && caretPosition !== -1) {
-      /*
-      if (isComposing.value) {
-        contentSignal.value = removeLastSymbol(contentSignal.value);
-      }
-      else {
-      */
       const newEncodingContents = [...contentSignal.value.payloads];
       newEncodingContents.splice(caretPosition, 1);
       contentSignal.value = {

@@ -30,6 +30,10 @@ button {
   background-color: lightsalmon;
 }
 
+.btn-command:disabled {
+  background-color: silver;
+}
+
 svg {
   max-height: 4rem;
   width: auto;
