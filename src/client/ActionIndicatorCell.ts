@@ -13,7 +13,7 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
-import { changeEncodingContents } from "./GlobalData";
+import { INPUT_AREA_ID, COMPOSE_AREA_ID, contentSignalMap, isComposing } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
 import { findIndicators, findClassifierFromLeft } from "./SvgUtils";
 import "./ActionIndicatorCell.scss";
@@ -30,12 +30,15 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
   const indicatorBciAvId = props.options.bciAvId;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
-  const disabled = changeEncodingContents.value.caretPosition === -1;
+  const ariaControls = ( isComposing.value ? COMPOSE_AREA_ID : INPUT_AREA_ID);
+  const contentsSignal = contentSignalMap[ariaControls];
+  const disabled = contentsSignal.value.caretPosition === -1;
 
   const cellClicked = () => {
     // Get the symbol at the caret position in the editing area and find the
     // locations within it to replace any existing indicator.
-    const { caretPosition, payloads } = changeEncodingContents.value;
+    const changeContents = contentSignalMap[ariaControls];
+    const { caretPosition, payloads } = contentsSignal.value;
     const symbolToEdit = payloads[caretPosition];
     let newBciAvId = symbolToEdit.bciAvId;
     if (newBciAvId.constructor === Array) {
@@ -73,7 +76,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       "bciAvId": newBciAvId,
       "modifierInfo": symbolToEdit.modifierInfo
     };
-    changeEncodingContents.value = {
+    contentsSignal.value = {
       payloads: payloads,
       caretPosition: caretPosition
     };
@@ -81,7 +84,13 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
   };
 
   return html`
-    <button id="${props.id}" class="actionIndicatorCell" style="${gridStyles}" onClick=${cellClicked} disabled="${disabled}">
+    <button
+      id="${props.id}"
+      class="actionIndicatorCell"
+      style="${gridStyles}"
+      onClick=${cellClicked}
+      disabled="${disabled}"
+      aria-controls="${ariaControls}">
       <${BlissSymbol}
         bciAvId=${indicatorBciAvId}
         label=${label}
