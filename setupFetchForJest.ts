@@ -1,5 +1,5 @@
 /**
- * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -19,8 +19,9 @@ import { fetch } from "whatwg-fetch";
 
 // jsdom does not expose structuredClone even though Node.js has it since v17.
 // bliss-svg-builder@1.0.0-rc.1 depends on it.  Same class of issue as fetch above.
+
+import v8 from "node:v8";
 if (typeof globalThis.structuredClone === "undefined") {
-  const v8 = require("node:v8");
   globalThis.structuredClone = (val: unknown) => v8.deserialize(v8.serialize(val));
 }
 
