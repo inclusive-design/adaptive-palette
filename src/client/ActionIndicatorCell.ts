@@ -37,7 +37,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
   const cellClicked = () => {
     // Get the symbol at the caret position in the editing area and find the
     // locations within it to replace any existing indicator.
-    const changeContents = contentSignalMap[ariaControls];
+    const contentsSignal = contentSignalMap[ariaControls];
     const { caretPosition, payloads } = contentsSignal.value;
     const symbolToEdit = payloads[caretPosition];
     let newBciAvId = symbolToEdit.bciAvId;

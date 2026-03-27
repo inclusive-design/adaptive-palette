@@ -15,9 +15,8 @@ import { useState } from "preact/hooks";
 
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
-import { INPUT_AREA_ID, COMPOSE_AREA_ID, contentSignalMap, isComposing } from "./GlobalData";
+import { composeWordContents, COMPOSE_AREA_ID } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
-import { findIndicators, findClassifierFromLeft } from "./SvgUtils";
 import "./ActionModifierCell.scss";
 
 const COMBINE_MARKER_PAYLOAD = {
@@ -37,50 +36,57 @@ export function ToggleMakeCombination (props: ToggleMakeCombinationPropsType): V
     columnStart, columnSpan, rowStart, rowSpan, label
   } = props.options;
   const combineMarkerBciAvId = props.options.bciAvId;
-
   const [isPressed, setIsPressed] = useState(false);
 
+  const { caretPosition, payloads } = composeWordContents.value;
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
-  const ariaControls = ( isComposing.value ? COMPOSE_AREA_ID : INPUT_AREA_ID);
-  const contentsSignal = contentSignalMap[ariaControls];
-  const disabled = contentsSignal.value.payloads.length === 0;
+  const disabled = payloads.length === 0;
+  if (payloads.length === 0) {
+    setIsPressed(false);
+  }
 
   const cellClicked = () => {
-    // Get the symbol at the caret position in the editing area and find the
-    // locations within it to replace any existing indicator.
-    const changeContents = contentSignalMap[ariaControls];
-    const { caretPosition, payloads } = contentsSignal.value;
 
-    // If the previous click untoggled the cell the `isPressed` state is `false`
-    // Then, add the combine marker to the beginning and end of the contents
-    // and set `isPressed` to `true`
-    let speech;
-    if (!isPressed) {
-      payloads.unshift(COMBINE_MARKER_PAYLOAD);
-      payloads.push(COMBINE_MARKER_PAYLOAD);
-      speech = "add combination";
+    // If there are no symobls to mark with the combine marker, make sure that
+    // the `isPressed` state is `fales` and do nothing else.
+    if (payloads.length === 0) {
+      setIsPressed(false);
     }
     else {
-      payloads.shift();
-      payloads.pop();
-      speech = "remove combination";
+      // If the previous click untoggled the cell the `isPressed` state is
+      // `false` -- add the combine marker to the beginning and end of the
+      // contents and set `isPressed` to `true`...
+      let speech;
+      if (!isPressed) {
+        payloads.unshift(COMBINE_MARKER_PAYLOAD);
+        payloads.push(COMBINE_MARKER_PAYLOAD);
+        speech = "add combination";
+      }
+      // ... otherwise remove the combine marker.
+      else {
+        payloads.shift();
+        payloads.pop();
+        speech = "remove combination";
+      }
+      setIsPressed(!isPressed);
+      console.debug(`isPressed is ${isPressed}`);
+      //isPressed = !isPressed;
+      composeWordContents.value = {
+        payloads: payloads,
+        caretPosition: caretPosition
+      };
+      speak(speech);
     }
-    setIsPressed(!isPressed);
-    contentsSignal.value = {
-      payloads: payloads,
-      caretPosition: caretPosition
-    };
-    speak(speech);
   };
 
   return html`
     <button
       id="${props.id}"
-      class="actionIndicatorCell"
+      class="actionModifierCell"
       style="${gridStyles}"
       onClick=${cellClicked}
       disabled="${disabled}"
-      aria-controls="${ariaControls}"
+      aria-controls="${COMPOSE_AREA_ID}"
       aria-pressed="${isPressed}">
       <${BlissSymbol}
         bciAvId=${combineMarkerBciAvId}
