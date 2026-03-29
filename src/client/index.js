@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -11,7 +11,7 @@
 import { render } from "preact";
 import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
-import { loadPaletteFromJsonFile, speak } from "./GlobalUtils";
+import { loadPaletteFromJsonFile } from "./GlobalUtils";
 import { goBackImpl } from "./CommandGoBackCell";
 import { INPUT_AREA_ID } from "./ContentBmwEncoding";
 import "./index.scss";
@@ -43,13 +43,22 @@ render(html`<${Palette} json=${topPalette} />`, document.getElementById("indicat
 render(html`<${Palette} json=${firstLayer} />`, document.getElementById("mainPaletteDisplayArea"));
 render(html`<${Palette} json=${modifiersPalette} />`, document.getElementById("modifiers"));
 
+
+// Form for searching the gloss
+import { ActionSearchGloss } from "./ActionSearchGloss";
+render(html`<${ActionSearchGloss} />`, document.getElementById("searchGloss"));
+
+// Form for entering SVG strings
+import { ActionSvgEntryField } from "./ActionSvgEntryField";
+render(html`<${ActionSvgEntryField} />`, document.getElementById("svgBuilderStringEntry"));
+
 // Window keydown listener for a global "go back" keystroke
 window.addEventListener("keydown", (event) => {
   if (event.code === "Backquote") {
     // If focus was not on a textual input element, go back up one layer in the
     // palette navigation
     if (!elementAllowsTextEntry(event.target)) {
-      speak("Go back");
+      adaptivePaletteGlobals.buttonClick.play();
       goBackImpl();
     }
   }
@@ -68,3 +77,5 @@ function elementAllowsTextEntry (element) {
     element.getAttribute("role") === "textbox"
   );
 }
+
+

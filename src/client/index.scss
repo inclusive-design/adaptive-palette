@@ -1,5 +1,9 @@
 /* Global Styles */
 
+:root {
+  color-scheme: only light;
+}
+
 html {
   font-size: 18px;
 }
@@ -54,4 +58,8 @@ svg.inter-word-padding {
   display: grid;
   grid-template-columns: 0.1fr 1fr;
   column-gap: 0.5rem;
+}
+
+#SvgEntryDialog, #SearchGlossDialog, #searchGlossResults {
+  margin: 0.5rem;
 }
