@@ -73,6 +73,5 @@ export type SymbolEncodingType = EncodingType & {
 }
 export type ContentSignalDataType = {
   payloads: SymbolEncodingType[],
-  caretPosition: number/*,
-  isComposingWord: boolean*/
+  caretPosition: number
 };

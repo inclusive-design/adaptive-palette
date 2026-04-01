@@ -185,8 +185,7 @@ function composeBlissWord (bciAvIdToAdd: BciAvIdType, label: string, isModifier:
   };
   return {
     payloads: payloads,
-    caretPosition: caretPosition/*,
-    isComposingWord: encodingContents.isComposingWord*/
+    caretPosition: caretPosition
   };
 }
 

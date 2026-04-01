@@ -12,8 +12,9 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 
-import { composeWordContents, isComposing } from "./GlobalData";
+import { composeWordContents } from "./GlobalData";
 import { ContentBmwEncodingType } from "./index.d";
+import { ToggleIsComposingWords } from "./ToggleIsComposingWords";
 import { ContentEncodingInputField } from "./ContentEncodingInputField";
 import "./ContentBmwEncoding.scss";
 
@@ -26,20 +27,8 @@ type ContentComposeWordsEntryProps = {
 
 export function ContentComposeWordsEntry (props: ContentComposeWordsEntryProps): VNode {
 
-  const toggleComposeBlissWords = (event) => {
-    const checkBox = event.target as HTMLInputElement;
-    isComposing.value = checkBox.checked;
-  };
-
   return html`
-    <span>
-      <input
-        id="composeBlissWordsInput"
-        type="checkbox"
-        onClick="${toggleComposeBlissWords}"
-      />
-     <label for="composeBlissWords">Compose</label>
-    </span>
+    <${ToggleIsComposingWords} />
     <${ContentEncodingInputField}
       id="${props.id}"
       options=${props.options}
