@@ -12,7 +12,7 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
-import { changeEncodingContents } from "./GlobalData";
+import { contentSignalMap } from "./GlobalData";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { generateGridStyle, speak } from "./GlobalUtils";
 
@@ -30,21 +30,23 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNo
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
-    const { payloads, caretPosition } = changeEncodingContents.value;
+    const contentSignal = contentSignalMap[ariaControls];
+    const { payloads, caretPosition } = contentSignal.value;
 
     // Nothing to do if:
     // - there are no symbols (payloads), or
     // - there are symbols, but the caret is for inserting before the first
     //   symbol
     if (payloads.length !== 0 && caretPosition !== -1) {
-      const newEncodingContents = [...changeEncodingContents.value.payloads];
+      const newEncodingContents = [...contentSignal.value.payloads];
       newEncodingContents.splice(caretPosition, 1);
-      changeEncodingContents.value = {
+      contentSignal.value = {
         payloads: newEncodingContents,
         caretPosition: caretPosition - 1
       };
+      speak(label);
+      //}
     }
-    speak(label);
   };
 
   return html`

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Inclusive Design Research Centre, OCAD University
+ * Copyright 2025-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -12,9 +12,10 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
-import { decrementCursor } from "./ContentBmwEncoding";
+import { decrementCursor } from "./ContentEncodingInputField";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { generateGridStyle, speak } from "./GlobalUtils";
+import { contentSignalMap } from "./GlobalData";
 
 type CommandCursorBackwardProps = {
   id: string,
@@ -33,7 +34,7 @@ export function CommandCursorBackward (props: CommandCursorBackwardProps): VNode
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
-    decrementCursor();
+    decrementCursor(contentSignalMap[ariaControls]);
     speak(label);
   };
 

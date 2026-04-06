@@ -30,6 +30,10 @@ button {
   background-color: lightsalmon;
 }
 
+.btn-command:disabled {
+  background-color: silver;
+}
+
 svg {
   max-height: 4rem;
   width: auto;
@@ -53,5 +57,17 @@ svg.inter-word-padding {
 .oneRow {
   display: grid;
   grid-template-columns: 0.1fr 1fr;
+  column-gap: 0.5rem;
+}
+
+/*
+ * A div that contains two divs:
+ * - arranged in one row,
+ * - the first div is in the first column and needs the majority of the space,
+ * - the second div is in the second column and adds blank fille space
+ */
+.composer {
+  display: grid;
+  grid-template-columns: 1fr 0.5fr;
   column-gap: 0.5rem;
 }

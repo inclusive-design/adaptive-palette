@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -36,14 +36,17 @@ import { ActionPreModifierCell } from "./ActionPreModifierCell";
 import { ActionPostModifierCell } from "./ActionPostModifierCell";
 import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
 import { ActionRemoveModifierCell } from "./ActionRemoveModifierCell";
+import { CommandAddComposition } from "./CommandAddComposition";
 import { CommandCursorBackward } from "./CommandCursorBackward";
 import { CommandCursorForward } from "./CommandCursorForward";
 import { CommandGoBackCell } from "./CommandGoBackCell";
 import { ContentBmwEncoding } from "./ContentBmwEncoding";
+import { ContentComposeWordsEntry } from "./ContentComposeWordsEntry";
 import { CommandClearEncoding } from "./CommandClearEncoding";
 import { CommandDelLastEncoding } from "./CommandDelLastEncoding";
 import { PaletteStore } from "./PaletteStore";
 import { NavigationStack } from "./NavigationStack";
+import { ToggleMakeCombination } from "./ToggleMakeCombination";
 
 export const cellTypeRegistry = {
   "ActionBmwCodeCell": ActionBmwCodeCell,
@@ -53,12 +56,15 @@ export const cellTypeRegistry = {
   "ActionPostModifierCell": ActionPostModifierCell,
   "ActionRemoveIndicatorCell": ActionRemoveIndicatorCell,
   "ActionRemoveModifierCell": ActionRemoveModifierCell,
+  "CommandAddComposition": CommandAddComposition,
   "CommandCursorBackward": CommandCursorBackward,
   "CommandCursorForward": CommandCursorForward,
   "CommandGoBackCell": CommandGoBackCell,
   "ContentBmwEncoding": ContentBmwEncoding,
+  "ContentComposeWordsEntry": ContentComposeWordsEntry,
   "CommandClearEncoding": CommandClearEncoding,
-  "CommandDelLastEncoding": CommandDelLastEncoding
+  "CommandDelLastEncoding": CommandDelLastEncoding,
+  "ToggleMakeCombination": ToggleMakeCombination
 };
 
 /**
@@ -102,6 +108,10 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
 }
 
 /**
+ * Global signals and map
+ */
+
+/**
  * Signal for updating the contents of the ContentBmwEncoding area.  The value
  * of the signal is the current array of EncodingType objects to display in the
  * ContentBmwEncoding area and the position of the caret
@@ -110,3 +120,32 @@ export const changeEncodingContents = signal({
   payloads: [],
   caretPosition: -1,
 });
+
+/**
+ * Signals for tracking the contents of the word composition input area when
+ * the user is composing a Bliss-word.  The contents signal has the same
+ * structure as the `changeEncodingContents` above.  The isComposing is a state
+ * to indicate whether the mode of the palette is for composing Bliss-words
+ */
+export const composeWordContents = signal({
+  payloads: [],
+  caretPosition: -1,
+});
+
+/**
+ * Some of the CommandXxx components use an `aria-controls` to associate them
+ * with the element that they control.  For thes components, there is an
+ * `ariaControls` field in the associated palette definition .json file.  The
+ * follwoing map defines which content signal (see immediatly above) goes with
+ * which aria controlled element.
+ * TODO: add a type for the map in `index.d.ts`.
+ */
+export const INPUT_AREA_ID = "bmw-encoding-area";
+export const COMPOSE_AREA_ID = "compose-words-entry";
+
+export const contentSignalMap = {
+  "bmw-encoding-area": changeEncodingContents,
+  "compose-words-entry": composeWordContents
+};
+export const isComposing = signal(false);
+

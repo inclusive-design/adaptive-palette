@@ -1,0 +1,86 @@
+{
+  "name": "Compose Words",
+  "cells": {
+    "compose-words-entry": {
+      "type": "ContentComposeWordsEntry",
+      "options": {
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 1,
+          "columnSpan": 3
+      }
+    },
+    "command-move-caret-backwards": {
+      "type": "CommandCursorBackward",
+      "options": {
+          "label": "Backward",
+          "bciAvId": [ 12613, ";", 24670 ],
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 4,
+          "columnSpan": 1,
+          "ariaControls": "compose-words-entry"
+      }
+    },
+    "command-move-caret-forwards": {
+      "type": "CommandCursorForward",
+      "options": {
+          "label": "Forward",
+          "bciAvId": [ 14390, ";", 24670 ],
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 5,
+          "columnSpan": 1,
+          "ariaControls": "compose-words-entry"
+      }
+    },
+    "command-del-last-encoding": {
+      "type": "CommandDelLastEncoding",
+      "options": {
+          "label": "Delete",
+          "bciAvId": [ 24883, ";", 24670 ],
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 6,
+          "columnSpan": 1,
+          "ariaControls": "compose-words-entry"
+      }
+    },
+    "command-clear-encoding": {
+      "type": "CommandClearEncoding",
+      "options": {
+          "label": "Delete all",
+          "bciAvId": [ 24883, ";", 24670, "//", 12360 ],
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 7,
+          "columnSpan": 1,
+          "ariaControls": "compose-words-entry"
+      }
+    },
+    "toggle-make-combination": {
+      "type": "ToggleMakeCombination",
+      "options": {
+          "label": "Combine",
+          "bciAvId": [ 13382 ],
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 8,
+          "columnSpan": 1,
+          "ariaControls": "compose-words-entry"
+      }
+    },
+    "command-add-composition": {
+      "type": "CommandAddComposition",
+      "options": {
+          "label": "Add",
+          "bciAvId": [ 12339, ";", 24670 ],
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 9,
+          "columnSpan": 1,
+          "ariaControls": "compose-words-entry"
+      }
+    }
+  }
+}
