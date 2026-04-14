@@ -10,52 +10,80 @@
  */
 
 import { render, screen } from "@testing-library/preact";
+import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 
 import { NO_BCI_AV_ID } from "./SentenceCompletionsPalette";
 import { ActionTextCell } from "./ActionTextCell";
+import { speak } from "./GlobalUtils";
 
-describe("ActionBmwCodeDell render tests", (): void => {
+// Mock the GlobalUtils module so we can spy on the `speak` function
+jest.mock("./GlobalUtils", () => ({
+  ...jest.requireActual("./GlobalUtils"),
+  speak: jest.fn(),
+}));
 
+describe("ActionTextCell tests", (): void => {
   const testCell = {
     options: {
-      "label": "Some text to display",
-      "rowStart": "3",
-      "rowSpan": "2",
-      "columnStart": "2",
-      "columnSpan": "1",
-      "bciAvId": NO_BCI_AV_ID
+      label: "1. Some text to display", // Added a number to test the regex
+      rowStart: "3",
+      rowSpan: "2",
+      columnStart: "2",
+      columnSpan: "1",
+      bciAvId: NO_BCI_AV_ID
     }
   };
-  const TEST_CELL_ID = `${testCell.options.label}-unique-uuid`;
+  const TEST_CELL_ID = "unique-test-uuid";
 
-  test("Single ActionTextCell rendering", async (): Promise<void> => {
+  beforeEach(() => {
+    jest.clearAllMocks(); // Reset mocks between tests
+  });
+
+  test("Renders correctly with expected attributes and styles", (): void => {
+    render(html`
+      <${ActionTextCell}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />
+    `);
+
+    // Use getByRole for synchronous renders
+    const button = screen.getByRole("button", { name: testCell.options.label });
+
+    // jest-dom specific assertions
+    expect(button).toBeVisible();
+    expect(button).toBeValid();
+    expect(button).not.toBeDisabled();
+    expect(button).toHaveAttribute("id", TEST_CELL_ID);
+    expect(button).toHaveClass("actionTextCell");
+
+    // toHaveStyle handles CSS parsing better than direct object access
+    expect(button).toHaveStyle({
+      gridColumn: "2 / span 1",
+      gridRow: "3 / span 2"
+    });
+  });
+
+  test("Calls speak() with sanitized text when clicked", async (): Promise<void> => {
+    // Setup userEvent
+    const user = userEvent.setup();
 
     render(html`
       <${ActionTextCell}
         id="${TEST_CELL_ID}"
         options=${testCell.options}
-      />`
-    );
+      />
+    `);
 
-    // Check the rendered cell
-    const button = await screen.findByRole("button", {name: testCell.options.label});
+    const button = screen.getByRole("button", { name: testCell.options.label });
+    
+    // Simulate a user clicking the button
+    await user.click(button);
 
-    // Check that the ActionTextCell/button is rendered and has the correct
-    // attributes and text.
-    expect(button).toBeVisible();
-    expect(button).toBeValid();
-    expect(button.id).toBe(TEST_CELL_ID);
-    expect(button.getAttribute("class")).toBe("actionTextCell");
-    expect(button.textContent).toBe(testCell.options.label);
-
-    // Check the grid cell styles.
-    expect(button.style["grid-column"]).toBe("2 / span 1");
-    expect(button.style["grid-row"]).toBe("3 / span 2");
-
-    // Check disabled state (should be enabled)
-    expect(button.getAttribute("disabled")).toBe(null);
+    // Verify speak was called, and that the leading "1. " was stripped out
+    expect(speak).toHaveBeenCalledTimes(1);
+    expect(speak).toHaveBeenCalledWith("Some text to display");
   });
-
 });

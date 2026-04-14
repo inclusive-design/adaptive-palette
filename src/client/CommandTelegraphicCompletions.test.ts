@@ -9,21 +9,23 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render, screen } from "@testing-library/preact";
+import { render, screen, cleanup } from "@testing-library/preact";
 import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
 
 import {
-  CommandTelegraphicCompletions, TELEGRPAHIC_BUTTON_LABEL, CANCEL_BUTTON_LABEL,
-  LLM_SELECT_ID, NO_MODELS_AVAILABLE
+  CommandTelegraphicCompletions, 
+  TELEGRAPHIC_BUTTON_LABEL, 
+  CANCEL_BUTTON_LABEL,
+  NO_MODELS_AVAILABLE
 } from "./CommandTelegraphicCompletions";
 
-describe("CommandTelegraphicCompletions component", (): void => {
+describe("CommandTelegraphicCompletions component", () => {
 
   // Some phony LLM names for the LLM <select>
-  const LLM_NAMES = [ "chatHQS", "alpaca2.0", "balladeer10.5:latest" ];
+  const LLM_NAMES = ["chatHQS", "alpaca2.0", "balladeer10.5:latest"];
 
   // Simulate a single symbol in the input area
   const INPUT_CONTENTS = {
@@ -36,51 +38,47 @@ describe("CommandTelegraphicCompletions component", (): void => {
     caretPosition: 1
   };
 
-  test("Render the dialog, no LLMs available", async(): Promise<void> => {
+  beforeEach(() => {
     adaptivePaletteGlobals.LLMs = [];
-    render(html`
-      <${CommandTelegraphicCompletions} stream=false />`
-    );
-    const triggerButton = await screen.findByText(TELEGRPAHIC_BUTTON_LABEL);
-    expect(triggerButton).toBeInTheDocument();
-    expect(triggerButton).toBeInstanceOf(HTMLButtonElement);
-    expect(triggerButton.getAttribute("disabled")).toBeDefined();
-
-    const cancelButton = await screen.findByText(CANCEL_BUTTON_LABEL);
-    expect(cancelButton).toBeInTheDocument();
-    expect(cancelButton).toBeInstanceOf(HTMLButtonElement);
-    expect(cancelButton.getAttribute("disabled")).toBeDefined();
-
-    const llmSelect = await document.getElementById(LLM_SELECT_ID) as HTMLSelectElement;
-    expect(llmSelect.value).toBe(NO_MODELS_AVAILABLE);
-    const llmOptions = llmSelect.options as HTMLOptionsCollection;
-    expect(llmOptions.length).toBe(1);
-    expect(llmOptions.item(0).value).toBe(NO_MODELS_AVAILABLE);
+    changeEncodingContents.value = { payloads: [], caretPosition: 0 };
   });
 
-  test("Render the dialog, LLMs available", async(): Promise<void> => {
-    // Some phony LLM names for the LLM <select>
+  afterEach(() => {
+    cleanup();
+  });
+
+  test("Render the dialog, no LLMs available", async () => {
+    render(html`<${CommandTelegraphicCompletions} stream=${false} />`);
+    
+    const triggerButton = await screen.findByRole("button", { name: TELEGRAPHIC_BUTTON_LABEL });
+    expect(triggerButton).toBeDisabled();
+
+    const cancelButton = await screen.findByRole("button", { name: CANCEL_BUTTON_LABEL });
+    expect(cancelButton).toBeDisabled();
+    const llmSelect = screen.getByRole("combobox", { name: /llm/i }) as HTMLSelectElement;
+    expect(llmSelect.value).toBe(NO_MODELS_AVAILABLE);
+    
+    const llmOptions = screen.getAllByRole("option") as HTMLOptionElement[];
+    expect(llmOptions).toHaveLength(1);
+    expect(llmOptions[0].value).toBe(NO_MODELS_AVAILABLE);
+  });
+
+  test("Render the dialog, LLMs available", async () => {
     adaptivePaletteGlobals.LLMs = LLM_NAMES;
-    render(html`
-      <${CommandTelegraphicCompletions} stream=false />`
-    );
-    const triggerButton = await screen.findByText(TELEGRPAHIC_BUTTON_LABEL);
-    expect(triggerButton).toBeInTheDocument();
-    expect(triggerButton).toBeInstanceOf(HTMLButtonElement);
-    expect(triggerButton.getAttribute("disabled")).toBeDefined();
+    render(html`<${CommandTelegraphicCompletions} stream=${false} />`);
+    const triggerButton = await screen.findByRole("button", { name: TELEGRAPHIC_BUTTON_LABEL });
+    expect(triggerButton).toBeDisabled(); // Disabled because payloads.length === 0
 
-    const cancelButton = await screen.findByText(CANCEL_BUTTON_LABEL);
-    expect(cancelButton).toBeInTheDocument();
-    expect(cancelButton).toBeInstanceOf(HTMLButtonElement);
-    expect(cancelButton.getAttribute("disabled")).toBeDefined();
+    const cancelButton = await screen.findByRole("button", { name: CANCEL_BUTTON_LABEL });
+    expect(cancelButton).toBeEnabled(); 
 
-    const llmSelect = await document.getElementById(LLM_SELECT_ID) as HTMLSelectElement;
-    expect(llmSelect.value).toBe(adaptivePaletteGlobals.LLMs[0]);
-    const llmOptions = llmSelect.options as HTMLOptionsCollection;
-    expect(llmOptions.length).toBe(3);
-    for (let i=0; i < llmOptions.length; i++) {
-      expect(llmOptions.item(i).value).toBe(adaptivePaletteGlobals.LLMs[i]);
-    }
+    const llmSelect = screen.getByRole("combobox", { name: /llm/i }) as HTMLSelectElement;
+    expect(llmSelect.value).toBe(LLM_NAMES[0]);    
+    const llmOptions = screen.getAllByRole("option") as HTMLOptionElement[];
+    expect(llmOptions).toHaveLength(3);
+    
+    const optionValues = llmOptions.map(opt => opt.value);
+    expect(optionValues).toEqual(LLM_NAMES);
   });
 
   test("Render the dialog, LLMs available, user entered content", async(): Promise<void> => {
@@ -88,25 +86,19 @@ describe("CommandTelegraphicCompletions component", (): void => {
     adaptivePaletteGlobals.LLMs = LLM_NAMES;
     changeEncodingContents.value = INPUT_CONTENTS;
 
-    render(html`
-      <${CommandTelegraphicCompletions} stream=false />`
-    );
-    const triggerButton = await screen.findByText(TELEGRPAHIC_BUTTON_LABEL);
-    expect(triggerButton).toBeInTheDocument();
-    expect(triggerButton).toBeInstanceOf(HTMLButtonElement);
-    expect(triggerButton.getAttribute("disabled")).toBeNull();
+    render(html`<${CommandTelegraphicCompletions} stream=${false} />`);
+    
+    const triggerButton = await screen.findByRole("button", { name: TELEGRAPHIC_BUTTON_LABEL });
+    // FIXED: Use toBeEnabled()
+    expect(triggerButton).toBeEnabled();
 
-    const cancelButton = await screen.findByText(CANCEL_BUTTON_LABEL);
-    expect(cancelButton).toBeInTheDocument();
-    expect(cancelButton).toBeInstanceOf(HTMLButtonElement);
-    expect(cancelButton.getAttribute("disabled")).toBeNull();
+    const cancelButton = await screen.findByRole("button", { name: CANCEL_BUTTON_LABEL });
+    expect(cancelButton).toBeEnabled();
 
-    const llmSelect = await document.getElementById(LLM_SELECT_ID) as HTMLSelectElement;
-    expect(llmSelect.value).toBe(adaptivePaletteGlobals.LLMs[0]);
-    const llmOptions = llmSelect.options as HTMLOptionsCollection;
-    expect(llmOptions.length).toBe(3);
-    for (let i=0; i < llmOptions.length; i++) {
-      expect(llmOptions.item(i).value).toBe(adaptivePaletteGlobals.LLMs[i]);
-    }
+    const llmSelect = screen.getByRole("combobox", { name: /llm/i }) as HTMLSelectElement;
+    expect(llmSelect.value).toBe(LLM_NAMES[0]);
+    
+    const llmOptions = screen.getAllByRole("option") as HTMLOptionElement[];
+    expect(llmOptions).toHaveLength(3);
   });
 });

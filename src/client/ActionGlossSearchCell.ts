@@ -10,6 +10,7 @@
  */
 
 import { VNode } from "preact";
+import { useRef } from "preact/hooks";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
@@ -28,7 +29,11 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
     columnStart, columnSpan, rowStart, rowSpan, bciAvId, label
   } = props.options;
 
+  // Create a ref for the input instead of relying on document.getElementById
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
+  
   // The label has the form "searchTerm: gloss".  Check if the searchTerm part
   // is a number.  If so, replace it with the `bciAvId`, which is the id of the
   // symbol found when searching for all of the symbols that contain the
@@ -38,30 +43,25 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
   let proposedGloss = searchTerm;
   if (proposedGloss.length === 0) {
     proposedGloss = label;
-  }
-  else if (typeof parseInt(searchTerm) === "number") {
-    actualLabel = `${bciAvId}: ${glossPart}`;
-    proposedGloss = glossPart;
+  } 
+  // Check if searchTerm is a valid number, and make sure glossPart exists
+  else if (/^\d+$/.test(searchTerm)) {
+    actualLabel = `${bciAvId}: ${glossPart || ""}`.trim();
+    proposedGloss = glossPart || "";
   }
   const composition = decomposeBciAvId(bciAvId);
   let compositionString;
-  if (composition.constructor === Array) {
+  
+  if (Array.isArray(composition)) {
     compositionString = composition.join("");
-  }
-  else {
+  } else {
     compositionString = bciAvId.toString();
   }
 
-  const cellClicked = (event) => {
-    console.debug(event.target);
-    if (event.target.id === `input-${props.id}`) {
-      event.stopPropogation();
-      return;
-    }
-    const composition = decomposeBciAvId(bciAvId);
-    const labelInput = document.getElementById(`input-${props.id}`) as HTMLInputElement;
-    const theLabel = labelInput.value;
-    const payloadBciAvId = ( composition ? composition : props.options.bciAvId );
+  const cellClicked = () => {    
+    // Get value from the ref, fallback to proposedGloss if unavailable
+    const theLabel = inputRef.current ? inputRef.current.value : proposedGloss;
+    const payloadBciAvId = composition ?? props.options.bciAvId;
     const payload = {
       "id": props.id,
       "label": theLabel,
@@ -69,7 +69,9 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
       "modifierInfo": []
     };
     changeEncodingContents.value = insertWordAtCaret(
-      payload, changeEncodingContents.value.payloads, changeEncodingContents.value.caretPosition
+      payload, 
+      changeEncodingContents.value.payloads, 
+      changeEncodingContents.value.caretPosition
     );
     speak(theLabel);
   };
@@ -85,7 +87,11 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
       </button>
       <div>
         <label for="input-${props.id}">Label: </label>
-        <input id=input-${props.id} value=${proposedGloss} />
+        <input 
+          ref=${inputRef} 
+          id="input-${props.id}" 
+          defaultValue=${proposedGloss} 
+        />
         <span>${bciAvId}: ${compositionString}</span>
       </div>
     </div>

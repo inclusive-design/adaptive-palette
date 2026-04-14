@@ -17,15 +17,9 @@
     </div>
     <div id="askForLlmSuggestions" style="margin-left: 0.5em;"></div>
     <div id="llm_suggestions" style="color: white; background-color: black; margin-left:0.5em"></div>
-    <!--
-      Two areas for the rest of the app.  The first area supports:
-      1. Entering symbols using SVG builder strings
-      2. Searching the BCI AV for symbols, displaying the search results
-        as a palette
-    -->
 
     <!--
-      First aria:
+      Entering symbols using SVG builder strings
     -->
     <div>
       <details id="SvgEntryDialog" style="margin-left: 0.5em;">
@@ -33,14 +27,18 @@
         <div id="svgBuilderStringEntry" style="display:inline-grid;"></div>
       </details>
     </div>
+
+    <!--
+      Searching the BCI AV for symbols, displaying the search results as a palette
+    -->
     <div id="SearchGlossDialog">
       <div id="searchGloss" style="display:inline-grid;"></div>
       <div id="searchGlossResults"></div>
     </div>
 
     <!--
-      Second ares:  This is for the Bliss symobl input and palette navigation
-      part of the app
+      User's main interaction area with the adaptive palette, including the input palette,
+      indicators, modifiers, backup palette, and main palette display area.
     -->
     <div id="inputArea">
       <div id="input_palette"></div>

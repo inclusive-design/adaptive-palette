@@ -18,12 +18,12 @@ import { ActionGlossSearchCell } from "./ActionGlossSearchCell";
 
 describe("ActionGlossSearchCell render tests", (): void => {
 
-  const TEXT_SEARCH_CELL_ID = "bark-uuid-of-some-kind";
-  const TEXT_SEARCH_LABEL = "bark: bark";
   const BCI_TREE_BARK = 22311;
-  const TEXT_SEARCH_ACTUAL_LABEL = `${BCI_TREE_BARK}: bark`;
-  const TEXT_SEARCH_INPUT_ID = `input-${TEXT_SEARCH_CELL_ID}`;
-  const TEXT_SEARCH_PROPOSED_GLOSS = " bark";
+
+  // 1. Made ID unique to text search
+  const TEXT_SEARCH_CELL_ID = "text-search-uuid"; 
+  const TEXT_SEARCH_LABEL = "bark: bark";
+  const TEXT_SEARCH_PROPOSED_GLOSS = "bark"; 
 
   const textSearchCellProps = {
     id: TEXT_SEARCH_CELL_ID,
@@ -37,9 +37,9 @@ describe("ActionGlossSearchCell render tests", (): void => {
     }
   };
 
-  const BCI_SEARCH_CELL_ID = "bark-uuid-of-some-kind";
+  // 2. Made ID unique to BCI search
+  const BCI_SEARCH_CELL_ID = "bci-search-uuid";
   const BCI_SEARCH_LABEL = "22311: bark";
-  const BCI_SEARCH_INPUT_ID = `input-${BCI_SEARCH_CELL_ID}`;
   const BCI_SEARCH_PROPOSED_GLOSS = " bark";
 
   const bciSearchCellProps = {
@@ -58,35 +58,7 @@ describe("ActionGlossSearchCell render tests", (): void => {
     await initAdaptivePaletteGlobals();
   });
 
-  test("ActionGlossSearchCell rendering with text search", async (): Promise<void> => {
-
-    render(html`
-      <${ActionGlossSearchCell}
-        id="${bciSearchCellProps.id}"
-        options=${bciSearchCellProps.options}
-      />`
-    );
-
-    // Check the rendered cell
-    const button = await screen.findByRole("button", {name: TEXT_SEARCH_ACTUAL_LABEL});
-
-    // Check that the ActionGlossSearchCell/button is rendered and has the correct
-    // attributes and text.
-    expect(button).toBeVisible();
-    expect(button).toBeValid();
-    expect(button.id).toBe(TEXT_SEARCH_CELL_ID);
-    expect(button.getAttribute("disabled")).toBe(null);
-
-    const divCell = button.parentElement as HTMLElement;
-    expect(divCell.getAttribute("class")).toBe("actionGlossSearchCell");
-
-    const inputElement = document.getElementById(TEXT_SEARCH_INPUT_ID) as HTMLInputElement;
-    expect(inputElement).toBeVisible();
-    expect(inputElement).toBeValid();
-    expect(inputElement.value).toEqual(TEXT_SEARCH_PROPOSED_GLOSS);
-  });
-
-  test("ActionGlossSearchCell rendering with BCI AV ID search", async (): Promise<void> => {
+  test("ActionGlossSearchCell rendering with text search", async(): Promise<void> => {
 
     render(html`
       <${ActionGlossSearchCell}
@@ -96,22 +68,48 @@ describe("ActionGlossSearchCell render tests", (): void => {
     );
 
     // Check the rendered cell
-    const button = await screen.findByRole("button", {name: BCI_SEARCH_LABEL});
+    const button = await screen.findByRole("button", { name: TEXT_SEARCH_LABEL });
 
-    // Check that the ActionGlossSearchCell/button is rendered and has the correct
-    // attributes and text.
+    expect(button).toBeVisible();
+    expect(button).toBeValid();
+    expect(button.id).toBe(TEXT_SEARCH_CELL_ID);
+    expect(button).not.toBeDisabled();
+
+    // Check parent class using jest-dom
+    const divCell = button.parentElement as HTMLElement;
+    expect(divCell).toHaveClass("actionGlossSearchCell");
+
+    const inputElement = screen.getByLabelText(/Label:/i) as HTMLInputElement;
+    
+    expect(inputElement).toBeVisible();
+    expect(inputElement).toBeValid();
+    expect(inputElement).toHaveValue(TEXT_SEARCH_PROPOSED_GLOSS);
+  });
+
+  test("ActionGlossSearchCell rendering with BCI AV ID search", (): void => {
+
+    // FIXED: Now passing bciSearchCellProps to the BCI search test
+    render(html`
+      <${ActionGlossSearchCell}
+        id="${bciSearchCellProps.id}"
+        options=${bciSearchCellProps.options}
+      />`
+    );
+
+    const button = screen.getByRole("button", { name: BCI_SEARCH_LABEL });
+
     expect(button).toBeVisible();
     expect(button).toBeValid();
     expect(button.id).toBe(BCI_SEARCH_CELL_ID);
-    expect(button.getAttribute("disabled")).toBe(null);
+    expect(button).not.toBeDisabled();
 
     const divCell = button.parentElement as HTMLElement;
-    expect(divCell.getAttribute("class")).toBe("actionGlossSearchCell");
+    expect(divCell).toHaveClass("actionGlossSearchCell");
 
-    const inputElement = document.getElementById(BCI_SEARCH_INPUT_ID) as HTMLInputElement;
+    const inputElement = screen.getByLabelText(/Label:/i) as HTMLInputElement;    
     expect(inputElement).toBeVisible();
     expect(inputElement).toBeValid();
-    expect(inputElement.value).toEqual(BCI_SEARCH_PROPOSED_GLOSS);
+    expect(inputElement).toHaveValue(BCI_SEARCH_PROPOSED_GLOSS);
   });
 
 });

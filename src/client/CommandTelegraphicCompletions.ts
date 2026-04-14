@@ -17,98 +17,103 @@ import {
   adaptivePaletteGlobals, changeEncodingContents, sentenceCompletionsSignal
 } from "./GlobalData";
 import { TEXTAREA_ID } from "./DialogPromptEntries";
-import { queryChat } from "./ollamaApi";
 
+import { queryChat } from "./ollamaApi";
 import "./CommandTelegraphicCompletions.scss";
 
-export const TELEGRPAHIC_BUTTON_LABEL = "Telegraphic Completions";
+export const TELEGRAPHIC_BUTTON_LABEL = "Telegraphic Completions";
 export const CANCEL_BUTTON_LABEL      = "Cancel";
 export const LLM_SELECT_ID            = "LLMSelect";
 export const NO_MODELS_AVAILABLE      = "No models available";
+export const WORKING_MESSAGE          = "Working ...";
+export const CANNOT_COMPLETE_MESSAGE  = "Error: Could not get completions.";
 
 type CommandTelegraphicCompletionsProps = {
-  id: string,
   stream: boolean;
 };
 
-export function CommandTelegraphicCompletions (props: CommandTelegraphicCompletionsProps): VNode {
-
+export function CommandTelegraphicCompletions(props: CommandTelegraphicCompletionsProps): VNode {
   const { stream } = props;
 
-  // Initialize the LLM to use, and the <option>s for the LLM <select>.
-  const llmDisabled = ( adaptivePaletteGlobals.LLMs.length > 0 ? false : true );
+  const llmDisabled = adaptivePaletteGlobals.LLMs.length === 0;
+  
   const [selectedLLM, setSelectedLLM] = useState(
-    ( llmDisabled ? NO_MODELS_AVAILABLE : adaptivePaletteGlobals.LLMs[0] )
+    llmDisabled ? NO_MODELS_AVAILABLE : adaptivePaletteGlobals.LLMs[0]
   );
-  const llmOptions = [];
-  if (llmDisabled) {
-    llmOptions.push(
-      html`<option value="${selectedLLM}">${selectedLLM}</option>`
+  const [isFetching, setIsFetching] = useState(false); // Added loading state
+
+  // Declarative array mapping
+  const llmOptions = llmDisabled
+    ? [html`<option value=${selectedLLM}>${selectedLLM}</option>`]
+    : adaptivePaletteGlobals.LLMs.map(
+      (llm) => html`<option value=${llm}>${llm}</option>`
     );
-  }
-  else {
-    adaptivePaletteGlobals.LLMs.forEach( (llm) => {
-      llmOptions.push(html`<option value="${llm}">${llm}</option>`);
-    });
-  }
+
   const telegraphicButtonDisabled =
-    llmDisabled || changeEncodingContents.value.payloads.length === 0;
+    llmDisabled || changeEncodingContents.value.payloads.length === 0 || isFetching;
 
-  console.debug(`llmDisabled = ${llmDisabled}, telegraphicButtonDisabled = ${telegraphicButtonDisabled}`);
-
-  // Allow the user to select an LLM
   const onLLMSelectChange = (event: Event) => {
     event.preventDefault();
-    const LLMSelect = event.target as HTMLSelectElement;
-    setSelectedLLM(LLMSelect.selectedOptions.item(0).label);
+    const target = event.target as HTMLSelectElement;
+    setSelectedLLM(target.value);
   };
 
-  // Handler for getting completions from ollama and into the
-  // `sentenceCompletionsSignal` signal's value.
-  const getTelegraphicCompletions = async (event): Promise<void> => {
+  const getTelegraphicCompletions = async (event: Event): Promise<void> => {
     event.preventDefault();
-    // Empty out the response area
-    sentenceCompletionsSignal.value = ["Working ..."];
+    
+    setIsFetching(true);
+    sentenceCompletionsSignal.value = [WORKING_MESSAGE];
 
-    // Get the label texts from each symbol in `changeEncodingContents`
-    const labelText = [];
-    changeEncodingContents.value.payloads.forEach( (value) => {
-      labelText.push(value.label);
-    });
-    const systemPrompt = (document.getElementById(TEXTAREA_ID) as HTMLTextAreaElement).value;
-    const response = await queryChat(
-      labelText.join(" "), selectedLLM, stream, systemPrompt
-    );
-    // Parse the query response messages into an array of strings.  Note that
-    // with Llama3.1 each message is one of the suggested sentence completions.
-    // That might just be luck.
-    sentenceCompletionsSignal.value = response.message.content.split("\n");
-    console.log(`getTelegraphicCompletions(), ${sentenceCompletionsSignal.value}`);
+    // Declarative extraction of labels
+    const labelText = changeEncodingContents.value.payloads
+      .map((value) => value.label)
+      .join(" ");
+
+    const systemPrompt = (document.getElementById(TEXTAREA_ID) as HTMLTextAreaElement)?.value || "";
+
+    try {
+      const response = await queryChat(labelText, selectedLLM, stream, systemPrompt);
+      
+      // Optional Chaining to prevent crashes if response is malformed
+      const content = response?.message?.content || "";
+      sentenceCompletionsSignal.value = content.split("\n");
+      
+    } catch (error) {
+      console.error("Failed to fetch completions:", error);
+      sentenceCompletionsSignal.value = [CANNOT_COMPLETE_MESSAGE];
+    } finally {
+      setIsFetching(false);
+    }
   };
 
-  // Handler to remove all of the suggested completions.
-  const removeSuggestions = (event): void => {
+  const removeSuggestions = (event: Event): void => {
     event.preventDefault();
     sentenceCompletionsSignal.value = [];
   };
 
   return html`
-    <p class="commandTelegraphicCompletions">
+    <!-- Changed <p> to <div> to fix HTML validation -->
+    <div class="commandTelegraphicCompletions">
       <form>
         <fieldset>
           <legend>Ask an AI</legend>
-          <label for="${LLM_SELECT_ID}">LLM: </label>
-          <select id="${LLM_SELECT_ID}" disabled="${llmDisabled}" value=${selectedLLM} onchange=${onLLMSelectChange}>
+          <label for=${LLM_SELECT_ID}>LLM: </label>
+          <select 
+            id=${LLM_SELECT_ID} 
+            disabled=${llmDisabled || isFetching} 
+            value=${selectedLLM} 
+            onchange=${onLLMSelectChange}
+          >
             ${llmOptions}
           </select>
-          <button onClick=${getTelegraphicCompletions} disabled="${telegraphicButtonDisabled}">
-            ${TELEGRPAHIC_BUTTON_LABEL}
+          <button onClick=${getTelegraphicCompletions} disabled=${telegraphicButtonDisabled}>
+            ${TELEGRAPHIC_BUTTON_LABEL}
           </button>
-          <button onClick=${removeSuggestions} disabled="${telegraphicButtonDisabled}">
+          <button onClick=${removeSuggestions} disabled=${llmDisabled}>
             ${CANCEL_BUTTON_LABEL}
           </button>
         </fieldset>
       </form>
-    </p>
+    </div>
   `;
 }
