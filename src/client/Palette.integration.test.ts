@@ -522,7 +522,7 @@ describe("Palette integration test", () => {
     expect(contentArea.childNodes.length).toBe(0);
     expect(changeEncodingContents.value.caretPosition).toBe(-1);
 
-    // Add three symbols to the content area.  The cursor posiiton should be
+    // Add three symbols to the content area.  The cursor position should be
     // after the third symbol (= 2).
     const firstCell = await screen.findByText("First Cell");
     fireEvent.click(firstCell);

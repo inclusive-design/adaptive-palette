@@ -22,9 +22,9 @@ export const SUBMIT_LABEL = "Search";
 export const CLEAR_LABEL = "Clear";
 
 export function ActionSearchGloss(): VNode {
-  // 1. Use state to track the input and the results
+  // Use state to track the input and the results
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [matches, setMatches] = useState<MatchType[]>([]); // Replace 'any' with your actual Match type
+  const [matches, setMatches] = useState<MatchType[]>([]);
   const [hasSearched, setHasSearched] = useState<boolean>(false);
 
   const searchGloss = (event: Event) => {

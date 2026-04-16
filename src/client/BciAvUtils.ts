@@ -72,7 +72,7 @@ export function findBciAvId(label: string): MatchType[] {
 }
 
 /**
- * Find symbols where the given single BCI AV ID is part of the composiiton
+ * Find symbols where the given single BCI AV ID is part of the composition
  * of other symbols.
  * @param {number} bciId - The BCI AV ID to search symbols' compositions
  *                                for matches.

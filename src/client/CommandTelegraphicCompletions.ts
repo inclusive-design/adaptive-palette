@@ -92,7 +92,6 @@ export function CommandTelegraphicCompletions(props: CommandTelegraphicCompletio
   };
 
   return html`
-    <!-- Changed <p> to <div> to fix HTML validation -->
     <div class="commandTelegraphicCompletions">
       <form>
         <fieldset>

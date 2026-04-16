@@ -23,7 +23,7 @@ describe("ActionSvgEntryField component", () => {
   test("Renders input fields and submit button successfully", () => {
     render(html`<${ActionSvgEntryField} />`);
 
-    // Query by label text - this proves your <label for=".."> is correctly linked!
+    // Query by label text - this proves your <label for=".."> is correctly linked
     const builderInput = screen.getByLabelText(/Builder string:/i);
     expect(builderInput).toBeInTheDocument();
     expect(builderInput).toHaveValue("");
@@ -38,7 +38,7 @@ describe("ActionSvgEntryField component", () => {
 
   // Behavioral test
   test("Displays error message when an invalid builder string is submitted", async () => {
-    // userEvent is to simulate user interactions
+    // set up user events for simulating user interactions
     const user = userEvent.setup(); 
     
     render(html`<${ActionSvgEntryField} />`);

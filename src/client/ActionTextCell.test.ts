@@ -59,7 +59,7 @@ describe("ActionTextCell tests", (): void => {
     expect(button).toHaveAttribute("id", TEST_CELL_ID);
     expect(button).toHaveClass("actionTextCell");
 
-    // toHaveStyle handles CSS parsing better than direct object access
+    // toHaveStyle handles CSS parsing
     expect(button).toHaveStyle({
       gridColumn: "2 / span 1",
       gridRow: "3 / span 2"

@@ -85,7 +85,7 @@ export function ActionSvgEntryField(): VNode {
     
     speak(payload.label);
     setMalformed(false);
-    form.reset(); // UX Improvement: Clear the form for the next entry
+    form.reset(); // Clear the form for the next entry
   };
 
   return html`

@@ -89,7 +89,6 @@ describe("CommandTelegraphicCompletions component", () => {
     render(html`<${CommandTelegraphicCompletions} stream=${false} />`);
     
     const triggerButton = await screen.findByRole("button", { name: TELEGRAPHIC_BUTTON_LABEL });
-    // FIXED: Use toBeEnabled()
     expect(triggerButton).toBeEnabled();
 
     const cancelButton = await screen.findByRole("button", { name: CANCEL_BUTTON_LABEL });

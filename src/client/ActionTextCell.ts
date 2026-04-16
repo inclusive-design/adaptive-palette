@@ -14,7 +14,7 @@ import { useCallback } from "preact/hooks";
 import { html } from "htm/preact";
 
 import { generateGridStyle, speak } from "./GlobalUtils";
-import { BlissSymbolInfoType, LayoutInfoType } from "./index"; // Removed .d
+import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import "./ActionTextCell.scss";
 
 type ActionTextCellPropsType = {
@@ -29,7 +29,7 @@ export function ActionTextCell(props: ActionTextCellPropsType): VNode {
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const sentenceClicked = useCallback(() => {
-    // The sentences are listed with leading numbers like so:
+    // The sentences are listed with leading numbers like:
     // 1. My brother's birthday is next Wednesday.
     // 2. My brother's special day is Wednesday.
     // 3. ...

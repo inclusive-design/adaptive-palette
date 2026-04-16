@@ -22,7 +22,7 @@ import {
 
 describe("ActionSearchGloss component", () => {
 
-  test("Renders search-gloss form correctly", () => { // Removed unnecessary async
+  test("Renders search-gloss form correctly", () => {
     render(html`<${ActionSearchGloss} />`);
 
     // 1. Find input by its accessible accessible label/role

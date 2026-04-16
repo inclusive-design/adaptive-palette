@@ -88,7 +88,6 @@ describe("ActionGlossSearchCell render tests", (): void => {
 
   test("ActionGlossSearchCell rendering with BCI AV ID search", (): void => {
 
-    // FIXED: Now passing bciSearchCellProps to the BCI search test
     render(html`
       <${ActionGlossSearchCell}
         id="${bciSearchCellProps.id}"
