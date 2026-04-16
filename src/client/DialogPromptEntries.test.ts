@@ -14,36 +14,39 @@ import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 
 import { SYSTEM_PROMPTS_KEY } from "./GlobalData";
-import {
-  PROMPT_SELECT_ID, TEXTAREA_ID, SUBMIT_VALUE, PROMPT_NAME_ID,
-  DialogPromptEntries
-} from "./DialogPromptEntries";
+import { SUBMIT_VALUE, TEXTAREA_ID, DialogPromptEntries } from "./DialogPromptEntries";
 
-describe("DialogPromptEntries component", (): void => {
-  // Set up some dummy prompts for the <select> and the <textarea>
+describe("DialogPromptEntries component", () => {
   const PROMPT1_KEY = "prompt1";
   const PROMPT2_KEY = "prompt2";
   const PROMPT1 = "This is prompt one";
   const PROMPT2 = "Prompt two this time";
-  const testPrompts = {};
-  testPrompts[PROMPT1_KEY] = PROMPT1;
-  testPrompts[PROMPT2_KEY] = PROMPT2;
 
-  window.localStorage.setItem(SYSTEM_PROMPTS_KEY, JSON.stringify(testPrompts));
+  // Scope LocalStorage setup and teardown
+  beforeEach(() => {
+    const testPrompts = {
+      [PROMPT1_KEY]: PROMPT1,
+      [PROMPT2_KEY]: PROMPT2
+    };
+    window.localStorage.setItem(SYSTEM_PROMPTS_KEY, JSON.stringify(testPrompts));
+  });
 
-  test("Render dialog", async(): Promise<void> => {
-    render(html`
-      <${DialogPromptEntries} />`
-    );
+  afterEach(() => {
+    window.localStorage.clear();
+  });
+
+  test("Render dialog", () => {
+    render(html`<${DialogPromptEntries} />`);
+
     // Check the prompt <select> and its <option>s.
-    const promptSelect = document.getElementById(PROMPT_SELECT_ID) as HTMLSelectElement;
+    const promptSelect = screen.getByLabelText(/choose a prompt/i) as HTMLSelectElement;
     expect(promptSelect).toBeInTheDocument();
-    expect(promptSelect.selectedIndex).toBe(0);
-    expect(promptSelect.value).toBe(PROMPT1);
-    const options = promptSelect.options as HTMLOptionsCollection;
-    expect(options.length).toBe(Object.keys(testPrompts).length);
-    expect(options.item(0).value).toBe(PROMPT1);
-    expect(options.item(1).value).toBe(PROMPT2);
+    expect(promptSelect.value).toBe(PROMPT1_KEY);
+
+    const options = screen.getAllByRole("option") as HTMLOptionElement[];
+    expect(options).toHaveLength(2);
+    expect(options[0].value).toBe(PROMPT1_KEY);
+    expect(options[1].value).toBe(PROMPT2_KEY);
 
     // Check the <textarea> and its content.
     const textArea = document.getElementById(TEXTAREA_ID) as HTMLTextAreaElement;
@@ -51,11 +54,11 @@ describe("DialogPromptEntries component", (): void => {
     expect(textArea.value).toBe(PROMPT1);
 
     // Check the other inputs.
-    let anInput = document.getElementById(PROMPT_NAME_ID) as HTMLInputElement;
-    expect(anInput).toBeInTheDocument();
-    expect(anInput.value).toBe("");
+    const nameInput = screen.getByPlaceholderText("New prompt name") as HTMLInputElement;
+    expect(nameInput).toBeInTheDocument();
+    expect(nameInput.value).toBe("");
 
-    anInput = screen.getByDisplayValue(SUBMIT_VALUE);
-    expect(anInput).toBeInTheDocument();
+    const submitBtn = screen.getByRole("button", { name: SUBMIT_VALUE });
+    expect(submitBtn).toBeInTheDocument();
   });
 });

@@ -18,16 +18,19 @@ import "./DialogPromptEntries.scss";
 
 export const PROMPT_SELECT_ID   = "promptSelect";
 export const TEXTAREA_ID        = "systemPrompt";
-export const SUBMIT_VALUE       = "Save above prompt as:";
 export const PROMPT_NAME_ID     = "promptName";
+export const SUBMIT_VALUE        = "Save Prompt";
+export const NEW_PROMPT_PLACEHOLDER_TEXT = "New prompt name";
+
+type PromptsMap = Record<string, string>;
 
 /**
- * Utility function for getting the prompts from `window.localStorage` while
- * hiding the parsing to an object.
- * @returns {Object} - The prompts
+ * Utility function for getting the prompts from `window.localStorage`.
  */
-function getStoredPrompts () {
-  return JSON.parse(window.localStorage.getItem(SYSTEM_PROMPTS_KEY));
+function getStoredPrompts(): PromptsMap {
+  const stored = window.localStorage.getItem(SYSTEM_PROMPTS_KEY);
+  // Prevent JSON.parse(null) crash
+  return stored ? JSON.parse(stored) : {}; 
 }
 
 /**
@@ -35,67 +38,93 @@ function getStoredPrompts () {
  * hiding the stringification of the object.
  * @param {Object} - The prompts
  */
-function updateStoredPrompts (prompts) {
+function updateStoredPrompts(prompts: PromptsMap) {
   window.localStorage.setItem(SYSTEM_PROMPTS_KEY, JSON.stringify(prompts));
 }
 
-export function DialogPromptEntries (): VNode {
-
-  const [systemPrompts, setSystemPrompts] = useState(getStoredPrompts());
+export function DialogPromptEntries(): VNode {
+  const [systemPrompts, setSystemPrompts] = useState<PromptsMap>(getStoredPrompts());
+  
   const promptNames = Object.keys(systemPrompts);
-  const [thePrompt, setThePrompt] = useState(systemPrompts[promptNames[0]]);
+  const firstPromptKey = promptNames[0];
+  
+  // Track the selected key separately from the text being edited
+  const [selectedKey, setSelectedKey] = useState<string>(firstPromptKey || "");
+  const [thePrompt, setThePrompt] = useState<string>(systemPrompts[firstPromptKey] || "");
 
-  // Utility to add a new prompt to the set of `systemPrompts`
-  const addPrompt = (newKey, newPrompt) => {
-    const newPrompts = getStoredPrompts();
-    newPrompts[newKey] = newPrompt;
+  const addPrompt = (newKey: string, newPrompt: string) => {
+    // Copy current state instead of reading from localStorage again
+    const newPrompts = { ...systemPrompts, [newKey]: newPrompt };
     setSystemPrompts(newPrompts);
+    setSelectedKey(newKey);
     setThePrompt(newPrompt);
     updateStoredPrompts(newPrompts);
   };
 
-  // Save the selected prompt when the user chooses another prompt.
   const onPromptSelectChange = (event: Event) => {
-    event.preventDefault();
     const promptSelect = event.target as HTMLSelectElement;
-    setThePrompt(promptSelect.value);
+    const newKey = promptSelect.value;
+    setSelectedKey(newKey);
+    setThePrompt(systemPrompts[newKey]); // Update textarea text
   };
 
   // Handle saving a new prompt
   const savePrompt = (event: Event) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget as HTMLFormElement);
+    const form = event.currentTarget as HTMLFormElement;
+    const formData = new FormData(form);
+    
     const newPromptName = formData.get(PROMPT_NAME_ID) as string;
-    const newPrompt = formData.get(TEXTAREA_ID) as string;
-    if (newPromptName.length > 0 && newPrompt.length > 0) {
-      addPrompt(newPromptName, newPrompt);
+    const newPromptText = formData.get(TEXTAREA_ID) as string;
+    
+    if (newPromptName.trim().length > 0 && newPromptText.trim().length > 0) {
+      addPrompt(newPromptName, newPromptText);
+      // Clear the input field
+      (form.elements.namedItem(PROMPT_NAME_ID) as HTMLInputElement).value = "";
     }
   };
 
-  // Create the <option>s for the prompt <select>
-  const promptOptions = [];
-  promptNames.forEach( (aKey) => {
-    promptOptions.push(html`<option value="${systemPrompts[aKey]}">${aKey}</option>`);
-  });
+  const promptOptions = promptNames.map(key => html`
+    <option key=${key} value=${key}>${key}</option>
+  `);
 
   return html`
     <form class="dialogPromptEntries" onSubmit=${savePrompt}>
       <fieldset>
         <legend>Enter a prompt or choose one from the list</legend>
-        <p>
+        <div class="field-row">
           <label for="${PROMPT_SELECT_ID}">Choose a prompt: </label>
-          <select id="${PROMPT_SELECT_ID}" value=${thePrompt} onchange=${onPromptSelectChange}>
-            ${promptOptions}
+          <select 
+            id="${PROMPT_SELECT_ID}" 
+            value=${selectedKey} 
+            onChange=${onPromptSelectChange}
+            disabled=${promptNames.length === 0}
+          >
+            ${promptOptions.length > 0 ? promptOptions : html`<option>No prompts found</option>`}
           </select>
-        </p>
-        <p>
+        </div>
+        
+        <div class="field-row">
           <label for="${TEXTAREA_ID}">Prompt:</label><br />
-          <textarea id="${TEXTAREA_ID}" name="${TEXTAREA_ID}" rows="4" cols="90" value=${thePrompt} />
+          <textarea 
+            id="${TEXTAREA_ID}" 
+            name="${TEXTAREA_ID}" 
+            rows="4" 
+            cols="90" 
+            value=${thePrompt}
+            onInput=${(e: Event) => setThePrompt((e.target as HTMLTextAreaElement).value)}
+          ></textarea>
+          
           <div>
             <input type="submit" value="${SUBMIT_VALUE}" />
-            <input id="${PROMPT_NAME_ID}" name="${PROMPT_NAME_ID}" type="text" value="" style="margin-left: 1em" />
+            <input 
+              id="${PROMPT_NAME_ID}" 
+              name="${PROMPT_NAME_ID}" 
+              type="text" 
+              placeholder="${NEW_PROMPT_PLACEHOLDER_TEXT}"
+            />
           </div>
-        </p>
+        </div>
       </fieldset>
     </form>
   `;

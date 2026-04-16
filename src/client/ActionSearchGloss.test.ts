@@ -66,12 +66,8 @@ describe("ActionSearchGloss component behavior", () => {
     const searchInput = screen.getByRole("textbox", { name: /search vocabulary/i });
     const submitButton = screen.getByRole("button", { name: SUBMIT_LABEL });
 
-    // Type a search term
     await user.type(searchInput, "123");
-    
-    // Click submit
     await user.click(submitButton);
-
-    expect(screen.getByText(/No matches found/i)).toBeInTheDocument();
+    expect(await screen.findByText(/No matches found/i)).toBeInTheDocument();
   });
 });

@@ -11,15 +11,16 @@
 
 import { VNode } from "preact";
 import { html } from "htm/preact";
+import { useEffect, useMemo } from "preact/hooks";
 
 import { adaptivePaletteGlobals } from "./GlobalData";
-import { MatchType, JsonPaletteType } from "./index.d";
+import { MatchType, JsonPaletteType } from "./index.d"; 
 import { Palette } from "./Palette";
 
 export const GLOSS_MATCHES_PALETTE = "Gloss search";
 const MAXIMUM_COLUMNS = 5;
 
-type GlossSearchPalettePropsType = {
+type GlossSearchPaletteProps = {
   matches: MatchType[],
   noSearchTerm: boolean,
   searchTerm: string
@@ -28,22 +29,26 @@ type GlossSearchPalettePropsType = {
 /**
  * Create a JsonPaletteType from an array of matches based on a gloss search.
  *
- * @param {Array} glossMatches - Array of Bliss symbol information objects whose
+ * @param {MatchType[]} glossMatches - Array of Bliss symbol information objects whose
  *                               gloss matches the search term.
  * @param {String} searchTerm - The search term used to find the matches. It is
  *                              used to prefix the label of each cell.
  * @param {number} startRow - The row index of the top left cell of the palette
- * @param {number} startColumn - The column index of the top left cell of the
- *                                palette
+ * @param {number} startCol - The column index of the top left cell of the palette
  * @return {JsonPaletteType} - a palette, in JSON form
  */
-export function makeMatchesPalette (glossMatches: MatchType[], searchTerm: string, startRow: number, startCol: number): JsonPaletteType {
-  const jsonPalette = {
-    "name": GLOSS_MATCHES_PALETTE,
-    "cells": {}
+export function makeMatchesPalette (
+  glossMatches: MatchType[], 
+  searchTerm: string, 
+  startRow: number, 
+  startCol: number
+): JsonPaletteType {
+  const jsonPalette: JsonPaletteType = {
+    name: GLOSS_MATCHES_PALETTE,
+    cells: {}
   };
   // Make the palette at most MAXIMUM_COLUMNS wide.
-  const numCols = ( glossMatches.length < MAXIMUM_COLUMNS ? glossMatches.length + 1 : MAXIMUM_COLUMNS );
+  const numCols = Math.min(glossMatches.length, MAXIMUM_COLUMNS);
   let rowIndex = 0;
   let colIndex = 0;
 
@@ -67,7 +72,7 @@ export function makeMatchesPalette (glossMatches: MatchType[], searchTerm: strin
 
     // Update rows, columns, etc.
     colIndex++;
-    if (colIndex >= numCols-1) {
+    if (colIndex >= numCols) {
       rowIndex++;
       colIndex = 0;
     }
@@ -75,22 +80,29 @@ export function makeMatchesPalette (glossMatches: MatchType[], searchTerm: strin
   return jsonPalette;
 }
 
-export function GlossSearchPalette (props: GlossSearchPalettePropsType): VNode {
-
-  // Remove any existing gloss search palette from the store.
-  adaptivePaletteGlobals.paletteStore.removePalette(GLOSS_MATCHES_PALETTE);
-
+export function GlossSearchPalette (props: GlossSearchPaletteProps): VNode | null {
   const { matches, noSearchTerm, searchTerm } = props;
 
+  // Cleans up the palette from the global store whenever the component unmounts.
+  useEffect(() => {
+    return () => {
+      adaptivePaletteGlobals.paletteStore.removePalette(GLOSS_MATCHES_PALETTE);
+    };
+  }, []);
+
+  // Memoize the palette generation so it doesn't rebuild on unrelated re-renders
+  const glossPalette = useMemo(() => {
+    if (noSearchTerm || matches.length === 0) return null;
+    return makeMatchesPalette(matches, searchTerm, 1, 1);
+  }, [matches, searchTerm, noSearchTerm]);
+
   if (noSearchTerm) {
-    return html``;
+    return null;
   }
-  else if (matches.length === 0) {
+  
+  if (matches.length === 0) {
     return html`<p role="status">No matches found</p>`;
   }
-  else {
-    const glossPalette = makeMatchesPalette(matches, searchTerm, 1, 1);
-    return html`<${Palette} json=${glossPalette}/>`;
-  }
+  
+  return html`<${Palette} json=${glossPalette} />`;
 }
-

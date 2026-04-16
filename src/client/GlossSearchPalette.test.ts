@@ -9,7 +9,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render } from "@testing-library/preact";
+import { render, screen } from "@testing-library/preact";
 import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 
@@ -34,16 +34,14 @@ describe("GlossSearchPalette tests", (): void => {
       fullComposition: undefined
     }
   ];
-  const SEARCH_GLOSS_ID = "searchGlossResults";
+
   const NO_MATCHES: MatchType[] = [];
-  const HAS_NO_SEARCH_TERM: boolean = true;
-  const EMPTY_SEARCH_TEXT = "";
   const BARK = "bark";
   const PALETTE_SELECTOR = `[data-palettename='${GLOSS_MATCHES_PALETTE}']`;
 
   const emptyMatchPalette = {
-    "name": GLOSS_MATCHES_PALETTE,
-    "cells": {}
+    name: GLOSS_MATCHES_PALETTE,
+    cells: {}
   };
 
   beforeAll(async (): Promise<void> => {
@@ -51,78 +49,90 @@ describe("GlossSearchPalette tests", (): void => {
   });
 
   // Case 1: no search term; expect nothing rendered.
-  test("Render GlossSearchPalette, no search term", async (): Promise<void> => {
-    render(html`
-      <div id="${SEARCH_GLOSS_ID}">
-        <${GlossSearchPalette}
-          matches=${testMatches}
-          noSearchTerm=${HAS_NO_SEARCH_TERM}
-          searchTerm=${EMPTY_SEARCH_TEXT} />
-      </div>
+  test("Render GlossSearchPalette, no search term", () => {
+    const { container } = render(html`
+      <${GlossSearchPalette}
+        matches=${testMatches}
+        noSearchTerm=${true}
+        searchTerm="" 
+      />
     `);
-    const resultsDiv = document.getElementById(SEARCH_GLOSS_ID) as HTMLElement;
-    expect(resultsDiv).toBeInTheDocument();
-    const resultsPalette = document.querySelector(PALETTE_SELECTOR) as HTMLElement;
-    expect(resultsPalette).not.toBeInTheDocument();
+    expect(container).toBeEmptyDOMElement();
   });
 
-  // Case 2: no matches; expect error message paragraph (how to test?)
-  test("Render GlossSearchPalette, no matches", async (): Promise<void> => {
+  // Case 2: no matches; expect error message rendered.
+  test("Render GlossSearchPalette, no matches", () => {
     render(html`
-      <div id="${SEARCH_GLOSS_ID}">
-        <${GlossSearchPalette}
-          matches=${NO_MATCHES}
-          noSearchTerm=${!HAS_NO_SEARCH_TERM}
-          searchTerm=${EMPTY_SEARCH_TEXT} />
-      </div>
+      <${GlossSearchPalette}
+        matches=${NO_MATCHES}
+        noSearchTerm=${false}
+        searchTerm="" 
+      />
     `);
-    const resultsDiv = document.getElementById(SEARCH_GLOSS_ID) as HTMLElement;
-    expect(resultsDiv).toBeInTheDocument();
 
-    const resultsPalette = document.querySelector(PALETTE_SELECTOR) as HTMLElement;
-    expect(resultsPalette).not.toBeInTheDocument();
-
-    expect(resultsDiv.children.length).toBe(1);
-    const errorMsgParagraph = resultsDiv.children.item(0) as HTMLElement;
-    expect(errorMsgParagraph).toBeInTheDocument();
-    expect(errorMsgParagraph.tagName).toBe("P");
+    const statusMessage = screen.getByRole("status");
+    expect(statusMessage).toBeInTheDocument();
+    expect(statusMessage).toHaveTextContent("No matches found");
   });
 
-  // Case 3: there are matches, expect palette rendered (how to test?)
-  test("Render GlossSearchPalette with matches", async (): Promise<void> => {
-
-    render(html`
-      <div id="${SEARCH_GLOSS_ID}">
-        <${GlossSearchPalette}
-          matches=${testMatches}
-          noSearchTerm=${!HAS_NO_SEARCH_TERM}
-          searchTerm=${BARK} />
-      </div>
+  // Case 3: there are matches, expect palette rendered
+  test("Render GlossSearchPalette with matches", () => {
+    const { container } = render(html`
+      <${GlossSearchPalette}
+        matches=${testMatches}
+        noSearchTerm=${false}
+        searchTerm=${BARK} 
+      />
     `);
-    const resultsDiv = document.getElementById(SEARCH_GLOSS_ID) as HTMLElement;
-    expect(resultsDiv).toBeInTheDocument();
-    const resultsPalette = document.querySelector(PALETTE_SELECTOR) as HTMLElement;
+
+    const resultsPalette = container.querySelector(PALETTE_SELECTOR);
     expect(resultsPalette).toBeInTheDocument();
+    
+    // Ensure the "No matches" text is NOT present
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
   });
 
   // Test makeMatchesPalette()
-  test ("makeMatchesPalette(), empty matches array", async(): Promise<void> => {
+  test("makeMatchesPalette(), empty matches array", () => {
     const matchesPalette = makeMatchesPalette([], BARK, 1, 1);
     expect(matchesPalette).toEqual(emptyMatchPalette);
   });
 
-  test ("makeMatchesPalette(), searching for 'bark'", async(): Promise<void> =>{
+  test("makeMatchesPalette(), searching for 'bark'", () => {
+    interface ExpectedCellShape {
+      type: string;
+      options: {
+        label: string;
+        bciAvId: number;
+        rowStart: number;
+        rowSpan: 1,
+        columnStart: number;
+        columnSpan: 1
+      }
+    };
+
     const matchesPalette = makeMatchesPalette(testMatches, BARK, 1, 1);
+    
     expect(matchesPalette).not.toBeNull();
     expect(matchesPalette.name).toEqual(GLOSS_MATCHES_PALETTE);
 
     const cellKeys = Object.keys(matchesPalette.cells);
-    expect(cellKeys).not.toBeNull();
     expect(cellKeys.length).toBe(testMatches.length);
-    cellKeys.forEach( (key) => {
-      expect(key.startsWith(BARK)).toBe(true);
-      const theCell = matchesPalette.cells[key];
-      expect(theCell.type).toEqual("ActionGlossSearchCell");
-    });
+    
+    // Validate first cell
+    const firstCell = matchesPalette.cells[cellKeys[0]] as ExpectedCellShape; 
+    
+    expect(cellKeys[0].startsWith(BARK)).toBe(true);
+    expect(firstCell.type).toEqual("ActionGlossSearchCell");
+    expect(firstCell.options.label).toEqual(`${BARK}: ${testMatches[0].label}`);
+    
+    // Validate positioning logic (startRow: 1, startCol: 1)
+    expect(firstCell.options.rowStart).toBe(1);
+    expect(firstCell.options.columnStart).toBe(1);
+
+    // Validate second cell increments column correctly
+    const secondCell = matchesPalette.cells[cellKeys[1]] as ExpectedCellShape;
+    expect(secondCell.options.rowStart).toBe(1);
+    expect(secondCell.options.columnStart).toBe(2);
   });
 });

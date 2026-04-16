@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 Inclusive Design Research Centre, OCAD University
+ * Copyright 2024-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -9,24 +9,20 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { default as ollama, ChatResponse } from "ollama/browser";
+import ollama, { ChatResponse } from "ollama/browser";
 
 /**
  * Retrieve a list of LLMs available from the service
- * @return {Array} - Array of the names of the available models.
+ * @return {Promise<string[]>} - Array of the names of the available models.
  */
-export async function getModelNames (): Promise<string[]> {
-  const modelNames = [];
+export async function getModelNames(): Promise<string[]> {
   try {
     const list = await ollama.list();
-    list.models.forEach( (model) => {
-      modelNames.push(model.name);
-    });
+    return list.models.map((model) => model.name);
+  } catch (error) {
+    console.error("Failed to fetch Ollama models:", error);
+    return [];
   }
-  catch (error) {
-    console.debug(error);
-  }
-  return modelNames;
 }
 
 /**
@@ -52,7 +48,7 @@ export async function getModelNames (): Promise<string[]> {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function queryChat (query: string, modelName: string, streamResp: boolean, systemPrompt?: string): Promise<ChatResponse | any> {
   const messageArray = [];
-  if (systemPrompt.length !== 0) {
+  if (systemPrompt && systemPrompt.length !== 0) {
     messageArray.push({
       role: "system",
       content: systemPrompt
@@ -94,8 +90,7 @@ export async function queryChat (query: string, modelName: string, streamResp: b
   };
   if (streamResp) {
     return await ollama.chat({ ...request, stream: true });
-  }
-  else {
+  } else {
     return await ollama.chat({ ...request, stream: false });
   }
 }

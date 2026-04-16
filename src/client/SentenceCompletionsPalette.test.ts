@@ -9,7 +9,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render, screen } from "@testing-library/preact";
+import { render, screen, cleanup } from "@testing-library/preact";
 import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 
@@ -27,45 +27,48 @@ describe("SentenceCompletionsPalette render tests", (): void => {
     "My brother thinks I'm funny when we splash in the water"
   ];
 
-  test("Sentence completions signal value is WORKING_MESSAGE", async (): Promise<void> => {
+  // Clean up DOM and reset global signals after each test
+  afterEach(() => {
+    cleanup();
+    sentenceCompletionsSignal.value = [];
+  });
 
+  test("Sentence completions signal value is WORKING_MESSAGE", (): void => {
     sentenceCompletionsSignal.value = [WORKING_MESSAGE];
     render(html`<${SentenceCompletionsPalette} />`);
 
     // The `WORKING_MESSAGE` should be in the document, but not a completions
     // palette.
-    expect(await screen.findByText(WORKING_MESSAGE)).toBeVisible();
+    expect(screen.getByText(WORKING_MESSAGE)).toBeVisible();
     expect(document.querySelector(`[data-palettename="${SENTENCE_COMPLETIONS_NAME}"]`)).toBeNull();
   });
 
-  test("Sentence completions signal value is empty", async (): Promise<void> => {
+  test("Sentence completions signal value is empty", (): void => {
     sentenceCompletionsSignal.value = [];
     render(html`<${SentenceCompletionsPalette} />`);
 
     // Neither the `WORKING_MESSAGE` nor a completions palette should be in the
     // document.
-    const nullElement = await screen.queryByText(WORKING_MESSAGE);
-    expect(nullElement).toBeNull();
+    expect(screen.queryByText(WORKING_MESSAGE)).toBeNull();
     expect(document.querySelector(`[data-palettename="${SENTENCE_COMPLETIONS_NAME}"]`)).toBeNull();
   });
 
   test("Signal value is a set of completions", async (): Promise<void> => {
-
     sentenceCompletionsSignal.value = SUGGESTED_COMPLETIONS;
     render(html`<${SentenceCompletionsPalette} />`);
 
     // There should be no `WORKING_MESSAGE` but there should be a completions
     // palette.
-    const nullElement = await screen.queryByText(WORKING_MESSAGE);
-    expect(nullElement).toBeNull();
+    expect(screen.queryByText(WORKING_MESSAGE)).toBeNull();
+    
     const paletteElement = document.querySelector(`[data-palettename="${SENTENCE_COMPLETIONS_NAME}"]`);
     expect(paletteElement).toBeVisible();
 
     // Check that there is a button for each sentence in the signal value.
-    SUGGESTED_COMPLETIONS.forEach( async (aSentence) => {
-      const buttonSentence = await screen.findByRole("button", { name: `/${aSentence}/` });
+    for (const aSentence of SUGGESTED_COMPLETIONS) {
+      const buttonSentence = screen.getByRole("button", { name: aSentence });
       expect(buttonSentence).toBeVisible();
-    });
+    }
   });
 
 });

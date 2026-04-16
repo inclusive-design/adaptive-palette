@@ -49,12 +49,12 @@ render(html`<${Palette} json=${firstLayer} />`, document.getElementById("mainPal
 render(html`<${Palette} json=${modifiersPalette} />`, document.getElementById("modifiers"));
 
 // Forms for interacting with LLMs
-render(html`<${DialogPromptEntries} />`, document.getElementById("llm_prompt"));
+render(html`<${DialogPromptEntries} />`, document.getElementById("llmPrompt"));
 render(
   html`<${CommandTelegraphicCompletions} model="llama3.1:latest" stream=${false} />`,
   document.getElementById("askForLlmSuggestions")
 );
-render(html`<${SentenceCompletionsPalette} />`, document.getElementById("llm_suggestions"));
+render(html`<${SentenceCompletionsPalette} />`, document.getElementById("llmSuggestions"));
 
 // Forms for entering SVG strings and searching the AV
 render(html`<${ActionSvgEntryField} />`, document.getElementById("svgBuilderStringEntry"));
@@ -85,4 +85,3 @@ function elementAllowsTextEntry (element) {
     element.getAttribute("role") === "textbox"
   );
 }
-

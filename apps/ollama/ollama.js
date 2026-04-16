@@ -308,4 +308,3 @@ promptTextArea.addEventListener("input", setAskButtonsEnabledState);
 
 // Set up the model <select> element
 initModelSelect();
-
