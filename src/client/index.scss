@@ -1,5 +1,9 @@
 /* Global Styles */
 
+:root {
+  color-scheme: only light;
+}
+
 html {
   font-size: 18px;
 }
@@ -16,14 +20,14 @@ body {
 }
 
 button {
-    border-radius: 1rem;
-    color: black;
-    font-weight: bold;
-    padding-bottom: 0.5rem;
+  border-radius: 1rem;
+  color: black;
+  font-weight: bold;
+  padding-bottom: 0.5rem;
 
-    &:hover, &:focus {
-      border-color: red;
-    }
+  &:hover, &:focus {
+    border-color: red;
+  }
 }
 
 .btn-command {
@@ -40,7 +44,7 @@ svg.inter-word-padding {
 }
 
 .paletteContainer {
-    height: 100%;
+  height: 100%;
 }
 
 /*
@@ -54,4 +58,31 @@ svg.inter-word-padding {
   display: grid;
   grid-template-columns: 0.1fr 1fr;
   column-gap: 0.5rem;
+}
+
+#llmInteraction {
+  margin-left: 0.5rem;
+  display:inline-grid;
+
+  #llmPrompt {
+    display:inline-grid;
+  }
+}
+
+#askForLlmSuggestions {
+  margin-left: 0.5rem;
+}
+
+#llmSuggestions {
+  color: white;
+  background-color: black;
+  margin-left: 0.5rem;
+}
+
+#SvgEntryDialog, #SearchGlossDialog, #searchGlossResults {
+  margin: 0.5rem;
+}
+
+#searchGloss {
+  display:inline-grid;
 }

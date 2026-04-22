@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -21,6 +21,11 @@ await initAdaptivePaletteGlobals("mainPaletteDisplayArea");
 
 import { PaletteStore } from "./PaletteStore";
 import { Palette } from "./Palette";
+import { CommandTelegraphicCompletions } from "./CommandTelegraphicCompletions";
+import { SentenceCompletionsPalette } from "./SentenceCompletionsPalette";
+import { DialogPromptEntries } from "./DialogPromptEntries";
+import { ActionSearchGloss } from "./ActionSearchGloss";
+import { ActionSvgEntryField } from "./ActionSvgEntryField";
 
 const paletteFileMap = await loadPaletteFromJsonFile("/palettes/palette_file_map.json");
 const firstLayer = await loadPaletteFromJsonFile("/palettes/palettes.json");
@@ -43,13 +48,25 @@ render(html`<${Palette} json=${topPalette} />`, document.getElementById("indicat
 render(html`<${Palette} json=${firstLayer} />`, document.getElementById("mainPaletteDisplayArea"));
 render(html`<${Palette} json=${modifiersPalette} />`, document.getElementById("modifiers"));
 
+// Forms for interacting with LLMs
+render(html`<${DialogPromptEntries} />`, document.getElementById("llmPrompt"));
+render(
+  html`<${CommandTelegraphicCompletions} model="llama3.1:latest" stream=${false} />`,
+  document.getElementById("askForLlmSuggestions")
+);
+render(html`<${SentenceCompletionsPalette} />`, document.getElementById("llmSuggestions"));
+
+// Forms for entering SVG strings and searching the AV
+render(html`<${ActionSvgEntryField} />`, document.getElementById("svgBuilderStringEntry"));
+render(html`<${ActionSearchGloss} />`, document.getElementById("searchGloss"));
+
 // Window keydown listener for a global "go back" keystroke
 window.addEventListener("keydown", (event) => {
   if (event.code === "Backquote") {
     // If focus was not on a textual input element, go back up one layer in the
     // palette navigation
     if (!elementAllowsTextEntry(event.target)) {
-      speak("Go back");
+      speak("Back");
       goBackImpl();
     }
   }

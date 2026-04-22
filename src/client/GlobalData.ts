@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -13,9 +13,10 @@
  * Populate and export global data
  */
 import { signal } from "@preact/signals";
+import { getModelNames } from "./ollamaApi";
 
 // NOTE: this import causes a warning serving the application using the `vite`
-// server.  The warning suggests to *not* us the `public` folder but to use
+// server.  The warning suggests to *not* use the `public` folder but to use
 // the `src` folder instead.  However, this code is also served using node
 // express and it is in the proper location for that envionment.  A copy of the
 // warning follows:
@@ -31,35 +32,41 @@ import bliss_symbols from "../../public/data/bliss_symbol_explanations.json";
  */
 import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
 import { ActionBranchToPaletteCell } from "./ActionBranchToPaletteCell";
+import { ActionGlossSearchCell } from "./ActionGlossSearchCell";
 import { ActionIndicatorCell } from "./ActionIndicatorCell";
 import { ActionPreModifierCell } from "./ActionPreModifierCell";
 import { ActionPostModifierCell } from "./ActionPostModifierCell";
 import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
 import { ActionRemoveModifierCell } from "./ActionRemoveModifierCell";
+import { ActionTextCell } from "./ActionTextCell";
+import { CommandClearEncoding } from "./CommandClearEncoding";
 import { CommandCursorBackward } from "./CommandCursorBackward";
 import { CommandCursorForward } from "./CommandCursorForward";
+import { CommandDelLastEncoding } from "./CommandDelLastEncoding";
 import { CommandGoBackCell } from "./CommandGoBackCell";
 import { ContentBmwEncoding } from "./ContentBmwEncoding";
-import { CommandClearEncoding } from "./CommandClearEncoding";
-import { CommandDelLastEncoding } from "./CommandDelLastEncoding";
 import { PaletteStore } from "./PaletteStore";
 import { NavigationStack } from "./NavigationStack";
 
 export const cellTypeRegistry = {
   "ActionBmwCodeCell": ActionBmwCodeCell,
   "ActionBranchToPaletteCell": ActionBranchToPaletteCell,
+  "ActionGlossSearchCell": ActionGlossSearchCell,
   "ActionIndicatorCell": ActionIndicatorCell,
   "ActionPreModifierCell": ActionPreModifierCell,
   "ActionPostModifierCell": ActionPostModifierCell,
   "ActionRemoveIndicatorCell": ActionRemoveIndicatorCell,
   "ActionRemoveModifierCell": ActionRemoveModifierCell,
+  "ActionTextCell": ActionTextCell,
+  "CommandClearEncoding": CommandClearEncoding,
   "CommandCursorBackward": CommandCursorBackward,
   "CommandCursorForward": CommandCursorForward,
+  "CommandDelLastEncoding": CommandDelLastEncoding,
   "CommandGoBackCell": CommandGoBackCell,
   "ContentBmwEncoding": ContentBmwEncoding,
-  "CommandClearEncoding": CommandClearEncoding,
-  "CommandDelLastEncoding": CommandDelLastEncoding
 };
+
+export const SYSTEM_PROMPTS_KEY = "Telegraphic System Prompts";
 
 /**
  * Load the map between the BCI-AV IDs and the code consumed by the Bliss SVG
@@ -73,7 +80,12 @@ export const adaptivePaletteGlobals = {
   bciAvSymbols: bliss_symbols,
   paletteStore: new PaletteStore(),
   navigationStack: new NavigationStack(),
-
+  LLMs: [],
+  systemPrompts: {
+    "What express": "What does this express? Give the top five answers.  Do not add a preamble like, 'Here are the top five answers.'",
+    "Single Sentence": "Convert the telegraphic speech to a single sentence. Give the top five best answers.  Answer with a single grammatically correct sentence.  Number the five answers clearly.  Do not add a preamble like, 'Here are the top five answers.'",
+    "Single Sentence Young": "Convert the telegraphic speech to a single sentence. Give the top five best answers.  Answer with a single grammatically correct sentence in the style of an elementary school aged child, using the first person singular.  Number the five answers clearly.  Do not add a preamble like, 'Here are the top five answers.'",
+  },
   // `id` attribute of the HTML element area where the main palette is
   // displayed, set by initAdaptivePaletteGlobals().  It defaults to the empty
   // string and that identifies the `<body>` elements as a default.
@@ -98,7 +110,13 @@ export async function loadBlissaryIdMap (): Promise<object> {
  */
 export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string): Promise<void> {
   adaptivePaletteGlobals.blissaryIdMap = await loadBlissaryIdMap();
+  adaptivePaletteGlobals.LLMs = await getModelNames();
   adaptivePaletteGlobals.mainPaletteContainerId = mainPaletteContainerId || "";
+
+  // Set up the system prompts.
+  window.localStorage.setItem(
+    SYSTEM_PROMPTS_KEY, JSON.stringify(adaptivePaletteGlobals.systemPrompts)
+  );
 }
 
 /**
@@ -110,3 +128,10 @@ export const changeEncodingContents = signal({
   payloads: [],
   caretPosition: -1,
 });
+
+/**
+ * Signal for updating the contents of the SentenceCompletion area.  The value
+ * of the signal is the current array of sentences that are offered as possible
+ * completions.
+ */
+export const sentenceCompletionsSignal = signal([]);
