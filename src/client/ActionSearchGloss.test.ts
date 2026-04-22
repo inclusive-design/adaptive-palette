@@ -28,7 +28,7 @@ describe("ActionSearchGloss component", () => {
     // 1. Find input by its accessible accessible label/role
     const searchInput = screen.getByRole("textbox", { name: /search vocabulary/i });
     expect(searchInput).toBeInTheDocument();
-    expect(searchInput).toHaveValue(""); // Use jest-dom's toHaveValue
+    expect(searchInput).toHaveValue("");
 
     // 2. Find submit button by Role
     const submitButton = screen.getByRole("button", { name: SUBMIT_LABEL });
@@ -66,8 +66,16 @@ describe("ActionSearchGloss component behavior", () => {
     const searchInput = screen.getByRole("textbox", { name: /search vocabulary/i });
     const submitButton = screen.getByRole("button", { name: SUBMIT_LABEL });
 
+    // When invalid value is submitted
     await user.type(searchInput, "123");
     await user.click(submitButton);
     expect(await screen.findByText(/No matches found/i)).toBeInTheDocument();
-  });
+
+    await user.clear(searchInput);
+
+    // When valid value is submitted
+    await user.type(searchInput, "fish");
+    await user.click(submitButton);
+    expect(await screen.findAllByText(/14188/i)).not.toHaveLength(0);
+  }, 10000);
 });
