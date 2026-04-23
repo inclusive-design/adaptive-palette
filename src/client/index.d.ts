@@ -81,7 +81,7 @@ export type ContentSignalDataType = {
  */
 export type MatchType = {
   bciAvId: number,
-  label: text,
+  label: string,
   composition: BciAvIdType,
   fullComposition: BciAvIdType
 }

@@ -15,7 +15,7 @@
 // suggests using whatwg's version of fetch() instead:
 // https://github.com/jsdom/jsdom/issues/1724#issuecomment-720727999
 
-import { fetch } from "whatwg-fetch";
+// import { fetch } from "whatwg-fetch";
 
 // jsdom does not expose structuredClone even though Node.js has it since v17.
 // bliss-svg-builder@1.0.0-rc.1 depends on it.  Same class of issue as fetch above.
@@ -25,8 +25,8 @@ if (typeof globalThis.structuredClone === "undefined") {
   globalThis.structuredClone = (val: unknown) => v8.deserialize(v8.serialize(val));
 }
 
-module.exports = {
-  globals: {
-    fetch: fetch
-  }
-};
+// module.exports = {
+//   globals: {
+//     fetch: fetch
+//   }
+// };

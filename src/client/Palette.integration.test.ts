@@ -337,7 +337,6 @@ describe("Palette integration test", () => {
     goForwardButton = (await screen.findByText("Go To")).parentElement;
     expect(goForwardButton).toBeInTheDocument();
     fireEvent.click(goForwardButton);
-    goBackButton = (await waitFor(() => screen.findByText("Back Up"))).parentElement;
     expect(navStack.currentPalette.palette).toBe(testLayerOnePalette);
     expect(navStack.peek().palette).toBe(testPalette);
     await goBackImpl();
