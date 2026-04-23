@@ -1,5 +1,5 @@
 module.exports = {
-  setupFiles: ["./setupFetchForJest.ts"],
+  setupFiles: ["./setupForJest.ts"],
   verbose: true,
   preset: "ts-jest",
   testEnvironment: "jsdom",

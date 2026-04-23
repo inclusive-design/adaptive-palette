@@ -335,11 +335,13 @@ describe("Palette integration test", () => {
     // function.  This is a way of testing that go-back functionality is
     // available to other kinds of events such as a key press.
     goForwardButton = (await screen.findByText("Go To")).parentElement;
-    expect(goForwardButton).toBeInTheDocument();
+    await waitFor(() => expect(goForwardButton).toBeInTheDocument());
     fireEvent.click(goForwardButton);
+    await waitFor(() => screen.findByText("Back Up"));
     expect(navStack.currentPalette.palette).toBe(testLayerOnePalette);
     expect(navStack.peek().palette).toBe(testPalette);
     await goBackImpl();
+    await waitFor(() => expect(firstCell).toBeInTheDocument());
     expect(navStack.currentPalette.palette).toBe(testPalette);
     expect(navStack.isEmpty()).toBe(true);
 
