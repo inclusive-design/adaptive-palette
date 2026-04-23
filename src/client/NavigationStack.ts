@@ -19,7 +19,7 @@ export class NavigationStack {
   navigateBackStack: Array<NavStackItemType>;
 
   // The current palette in the palette display area
-  currPalette: NavStackItemType;
+  currPalette: NavStackItemType | null;
 
   /**
    * Initialize the navigation stack to have zero entries.
@@ -61,7 +61,7 @@ export class NavigationStack {
     if (this.isEmpty()) {
       return null;
     } else {
-      return this.navigateBackStack.pop();
+      return this.navigateBackStack.pop() ?? null;
     }
   }
 
@@ -115,18 +115,18 @@ export class NavigationStack {
 
   /**
    * Empty the navigation stack and reset the current palette displayed.
-   * @param {NavStackItemType} - The palette that is currently displayed.
+   * @param {NavStackItemType | null} - The palette that is currently displayed.
    */
-  flushReset (currentPalette: NavStackItemType): void {
+  flushReset (currentPalette: NavStackItemType | null): void {
     this.currentPalette = currentPalette;
     this.navigateBackStack.length = 0;
   }
 
   /**
    * Accessor for setting the currently displayed palette.
-   * @param: {NavStackItemType} - the intended current palette.
+   * @param: {NavStackItemType | null} - the intended current palette.
    */
-  set currentPalette (palette: NavStackItemType) {
+  set currentPalette (palette: NavStackItemType | null) {
     this.currPalette = palette;
   }
 
@@ -134,7 +134,7 @@ export class NavigationStack {
    * Accessor for getting the currently displayed palette.
    * @return: {NavStackItemType} - The current palette.
    */
-  get currentPalette(): NavStackItemType {
+  get currentPalette(): NavStackItemType | null {
     return this.currPalette;
   }
 }

@@ -30,7 +30,7 @@ import { decomposeBciAvId } from "./SvgUtils";
  *                  array if no BCI AV ID is found for the label.
  */
 export function findBciAvId(label: string): MatchType[] {
-  const matches = [];
+  const matches: MatchType[] = [];
   // Search only if there is text to base the search on.
   if (label.trim().length !== 0) {
     // Search for the label in the Bliss gloss
@@ -46,11 +46,11 @@ export function findBciAvId(label: string): MatchType[] {
         let equalCompositions = false;
         if (gloss.composition) {
           fullComposition = decomposeBciAvId(gloss.composition);
-          equalCompositions = fullComposition.join("") === gloss.composition.join("");
+          equalCompositions = (fullComposition as (string|number)[]).join("") === (gloss.composition as (string|number)[]).join("");
         }
         else {
           fullComposition = decomposeBciAvId(glossId);
-          if (fullComposition && fullComposition.length === 1) {
+          if (Array.isArray(fullComposition) && fullComposition.length === 1) {
             equalCompositions = fullComposition[0] === glossId;
           }
         }
@@ -63,7 +63,7 @@ export function findBciAvId(label: string): MatchType[] {
         // DEBUGGING
         const lastMatch = matches[matches.length - 1];
         if (lastMatch.fullComposition) {
-          console.debug(`${lastMatch.label} has a defined fullComposition: '${fullComposition.join("")}'`);
+          console.debug(`${lastMatch.label} has a defined fullComposition: '${(fullComposition as (string|number)[]).join("")}'`);
         }
       }
     }
@@ -82,7 +82,7 @@ export function findBciAvId(label: string): MatchType[] {
  *                  array if no mathches are found.
  */
 export function findCompositionsUsingId (bciId: number): MatchType[] {
-  const matches = [];
+  const matches: MatchType[] = [];
   for (const symbol of adaptivePaletteGlobals.bciAvSymbols) {
     const symbolId = parseInt(symbol.id);
     // Add the symbol itself and add it as the first element

@@ -52,17 +52,17 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       if (indicatorPositions.length === 0) {
         newBciAvId = [
           ...newBciAvId.slice(0, classifierIndex+1),
-          ";", indicatorBciAvId,
+          ";", indicatorBciAvId as number,
           ...newBciAvId.slice(classifierIndex+1)
         ];
       }
       indicatorPositions.forEach((position) => {
-        newBciAvId[position] = indicatorBciAvId;
+        (newBciAvId as (string|number)[])[position] = indicatorBciAvId as number;
       });
     }
     // The BCI AV ID is a single identifier, not an svg builder array.
     else {
-      newBciAvId = [ newBciAvId, ";", indicatorBciAvId ];
+      newBciAvId = [ newBciAvId as number, ";", indicatorBciAvId as number ];
     }
     payloads[caretPosition] = {
       // TODO:  what should the following two fields be?  For now the ID is

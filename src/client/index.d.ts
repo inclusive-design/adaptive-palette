@@ -11,6 +11,12 @@
 
 export type BciAvIdType = number | (string|number)[];
 
+export type BlissaryMapEntryType = {
+  blissaryId: number,
+  bciAvId: number,
+  blissSvgBuilderCode: string
+};
+
 export type BlissSymbolInfoType = {
   label: string,
   bciAvId: BciAvIdType
@@ -82,6 +88,6 @@ export type ContentSignalDataType = {
 export type MatchType = {
   bciAvId: number,
   label: string,
-  composition: BciAvIdType,
-  fullComposition: BciAvIdType
+  composition?: BciAvIdType,
+  fullComposition?: BciAvIdType
 }

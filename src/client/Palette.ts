@@ -55,11 +55,11 @@ export function Palette (props: PalettePropsType): VNode {
   const cellIds = Object.keys(paletteDefinition.cells);
 
   // Loop to create an array of renderings for each cell
-  const theCells = [];
+  const theCells: VNode[] = [];
   cellIds.forEach((id) => {
     const aCell = paletteDefinition.cells[id];
     const cellOptions = aCell.options;
-    const cellComponent = cellTypeRegistry[aCell.type];
+    const cellComponent = cellTypeRegistry[aCell.type as keyof typeof cellTypeRegistry];
     if (!cellComponent) {
       console.error(`Error at rendering the cell type "${aCell.type}". Fix it by defining the render component for this cell type at GlobalData.ts -> cellTypeRegistry.`);
     } else {

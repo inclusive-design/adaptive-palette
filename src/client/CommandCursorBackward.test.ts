@@ -56,10 +56,10 @@ describe("CommandCursorBackward render tests", (): void => {
     expect(button.textContent).toBe(testCell.options.label);
 
     // Check the grid cell styles.
-    expect(button.style["grid-column"]).toBe(
+    expect(button.style.getPropertyValue("grid-column")).toBe(
       `${testCell.options.columnStart} / span ${testCell.options.columnSpan}`
     );
-    expect(button.style["grid-row"]).toBe(
+    expect(button.style.getPropertyValue("grid-row")).toBe(
       `${testCell.options.rowStart} / span ${testCell.options.rowSpan}`
     );
 

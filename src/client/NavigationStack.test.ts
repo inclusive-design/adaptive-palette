@@ -66,7 +66,7 @@ const testPalette2 = {
 describe("NavigationStack module - basics", (): void => {
 
   const navigation = new NavigationStack();
-  let renderingElement;
+  let renderingElement: HTMLElement;
 
   beforeAll(async (): Promise<void> => {
     render(html`<div data-testid="${RENDERING_TEST_ID}">Rendering div</div>`);
@@ -103,7 +103,9 @@ describe("NavigationStack module - basics", (): void => {
 describe("NavigationStack module - pushing and popping", (): void => {
 
   const navigation = new NavigationStack();
-  let renderingElement, testStackItem1, testStackItem2;
+  let renderingElement: HTMLElement;
+  let testStackItem1: { palette: typeof testPalette1, htmlElement: HTMLElement };
+  let testStackItem2: { palette: typeof testPalette2, htmlElement: HTMLElement };
 
   beforeAll(async (): Promise<void> => {
     render(html`<div data-testid="${RENDERING_TEST_ID}">Rendering div</div>`);

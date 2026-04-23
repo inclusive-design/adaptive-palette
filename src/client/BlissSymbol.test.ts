@@ -47,7 +47,7 @@ describe("BlissSymbol render tests", (): void => {
     expect(blissSymbolLabelDiv).toBeValid();
 
     // Expect an <svg ...> element as the only sibling
-    const parentChildren = blissSymbolLabelDiv.parentNode.childNodes;
+    const parentChildren = blissSymbolLabelDiv.parentNode!.childNodes;
     expect(parentChildren.length).toBe(2);
     expect(parentChildren[0].nodeName).toBe("svg");
   });
@@ -61,8 +61,8 @@ describe("BlissSymbol render tests", (): void => {
       />`
     );
     const blissSymbolLabelDiv = await screen.findByText(arrayBciAvId.label);
-    const svgElement = blissSymbolLabelDiv.parentNode.querySelector("svg");
-    const parentChildren = blissSymbolLabelDiv.parentNode.childNodes;
+    const svgElement = blissSymbolLabelDiv.parentNode!.querySelector("svg");
+    const parentChildren = blissSymbolLabelDiv.parentNode!.childNodes;
     expect(parentChildren.length).toBe(1);
     expect(svgElement).toBe(null);
   });
@@ -78,7 +78,7 @@ describe("BlissSymbol render tests", (): void => {
     const blissSymbolLabelDiv = await screen.findByText(arrayBciAvId.label);
     expect(blissSymbolLabelDiv).toBeVisible();
     expect(blissSymbolLabelDiv).toBeValid();
-    const parentChildren = blissSymbolLabelDiv.parentNode.childNodes;
+    const parentChildren = blissSymbolLabelDiv.parentNode!.childNodes;
     expect(parentChildren.length).toBe(2);
     expect(parentChildren[0].nodeName).toBe("svg");
   });
@@ -92,7 +92,7 @@ describe("BlissSymbol render tests", (): void => {
       />`
     );
     const blissSymbolLabelDiv = await screen.findByText(arrayBciAvId.label);
-    const svgElement = blissSymbolLabelDiv.parentNode.querySelector("svg");
+    const svgElement = blissSymbolLabelDiv.parentNode!.querySelector("svg")!;
     expect(svgElement.getAttribute("aria-hidden")).toBe("true");
     expect(svgElement.getAttribute("role")).toBe(null);
     expect(svgElement.getAttribute("aria-labelledby")).toBe(null);
@@ -108,7 +108,7 @@ describe("BlissSymbol render tests", (): void => {
       />`
     );
     const blissSymbolLabelDiv = await screen.findByText(arrayBciAvId.label);
-    const svgElement = blissSymbolLabelDiv.parentNode.querySelector("svg");
+    const svgElement = blissSymbolLabelDiv.parentNode!.querySelector("svg")!;
     expect(svgElement.getAttribute("role")).toBe(GRAPHIC_ROLE);
     expect(svgElement.getAttribute("aria-labelledby")).toBe(MOCK_LABEL_ID);
     expect(svgElement.getAttribute("aria-hidden")).toBe(null);

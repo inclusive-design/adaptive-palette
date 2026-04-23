@@ -38,7 +38,7 @@ describe("SvgUtils module", (): void => {
 
   const badBciSvgBuilderStr       = "asdffr;1214343";
   const badBlissarySvgBuilderStr  = "asdffr;B1214343";
-  const expectBciAvTypeBadResult  = [];
+  const expectBciAvTypeBadResult: (string|number)[]  = [];
 
   const abcBlissarySvgBuilderStr = "Xa/Xb/Xc";        // "a b c"
   const abcBciAvSvgBuilderStr    = "Xa/Xb/Xc";        // "a b c"
@@ -74,7 +74,7 @@ describe("SvgUtils module", (): void => {
 
     // Use the 100th entry in the map for testing.  There is nothing special
     // about the 100th entry.  Just as good as any.
-    const blissaryIdMapEntry = blissaryIdMap[100];
+    const blissaryIdMapEntry = blissaryIdMap![100];
 
     const result = bciToBlissaryId(blissaryIdMapEntry.bciAvId);
     expect(result.blissaryId).toBe(blissaryIdMapEntry.blissaryId);
@@ -163,7 +163,7 @@ describe("SvgUtils module", (): void => {
 
   test("Check finding full symbol information", (): void => {
     let actual = findBciAvSymbol(singleBciAvId);
-    expect(parseInt(actual.id)).toBe(singleBciAvId);
+    expect(parseInt(actual!.id)).toBe(singleBciAvId);
 
     // Passing an invalid BCI AV Identifier or the array form of BciAvIdType
     // should return `undefined`

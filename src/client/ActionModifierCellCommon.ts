@@ -58,6 +58,9 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
     }
     // Push the current modifier information onto the `modifierInfo` of the
     // `symbolToEdit`, tracking the order in which the modifiers were added.
+    if (!symbolToEdit.modifierInfo) {
+      symbolToEdit.modifierInfo = [];
+    }
     symbolToEdit.modifierInfo.push({
       modifierId: modifierBciAvId,
       modifierGloss: label,

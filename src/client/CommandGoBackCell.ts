@@ -44,7 +44,7 @@ export async function goBackImpl (defaultContaineId?: string ): Promise<void> {
   if (paletteToGoBackTo && paletteToGoBackTo.palette) {
     const paletteDefinition = await paletteStore.getNamedPalette(paletteToGoBackTo.palette.name, loadPaletteFromJsonFile);
     if (paletteDefinition) {
-      const paletteContainer = paletteToGoBackTo.htmlElement || document.getElementById(defaultContaineId) || document.body;
+      const paletteContainer = paletteToGoBackTo.htmlElement || document.getElementById(defaultContaineId ?? "") || document.body;
       navigationStack.popAndSetCurrent(paletteToGoBackTo);
       render (html`<${Palette} json=${paletteDefinition}/>`, paletteContainer);
     }
@@ -61,7 +61,7 @@ export async function goBackImpl (defaultContaineId?: string ): Promise<void> {
 const goBackToPalette = async (event: Event): Promise<void> => {
   const button = event.currentTarget as HTMLElement;
   speak(button.innerText);
-  return goBackImpl(button.getAttribute("aria-controls"));
+  return goBackImpl(button.getAttribute("aria-controls") ?? undefined);
 };
 
 export function CommandGoBackCell (props: CommandGoBackCellPropsType): VNode {
