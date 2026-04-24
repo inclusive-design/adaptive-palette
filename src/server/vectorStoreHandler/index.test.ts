@@ -47,19 +47,24 @@ describe("Test vectorStoreHandler", () => {
       });
     };
 
+    // Load vector store once to avoid re-initializing the native faiss-node addon,
+    // which causes "module is already linked" on some Node.js versions.
+    let vectorStore: Awaited<ReturnType<typeof vectorStoreHandler.load>>;
+    beforeAll(async () => {
+      vectorStore = await vectorStoreHandler.load(__dirname + "/testVectorStore");
+    }, 25000);
+
     it("should perform the search with a vector store by returning default 4 top matches", async () => {
-      const vectorStore = await vectorStoreHandler.load(__dirname + "/testVectorStore");
       const results = await vectorStoreHandler.similaritySearch(vectorStore, "roy");
       expect(results.length).toBe(4);
       verifyResults(results);
-    }, 25000);
+    });
 
     it("should perform the search with a vector store by returning requested number of top matches", async () => {
       const topK = 3;
-      const vectorStore = await vectorStoreHandler.load(__dirname + "/testVectorStore");
       const results = await vectorStoreHandler.similaritySearch(vectorStore, "roy", topK);
       expect(results.length).toBe(topK);
       verifyResults(results);
-    }, 13000);
+    });
   });
 });
