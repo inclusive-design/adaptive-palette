@@ -3,7 +3,7 @@
     "target": "ES2022",
     "module": "ESNext",
     "types": ["jest", "node"],
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "allowJs": true,
     "checkJs": true,
     "resolveJsonModule": true,
