@@ -52,7 +52,9 @@ describe("Test vectorStoreHandler", () => {
     let vectorStore: Awaited<ReturnType<typeof vectorStoreHandler.load>>;
     beforeAll(async () => {
       vectorStore = await vectorStoreHandler.load(__dirname + "/testVectorStore");
-    }, 25000);
+      // The dummy search warms up the HuggingFace model download on first run.
+      await vectorStoreHandler.similaritySearch(vectorStore, "warmup");
+    }, 120000);
 
     it("should perform the search with a vector store by returning default 4 top matches", async () => {
       const results = await vectorStoreHandler.similaritySearch(vectorStore, "roy");
