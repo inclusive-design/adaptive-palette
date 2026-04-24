@@ -12,12 +12,20 @@ import fs from "fs";
 import { FaissStore } from "@langchain/community/vectorstores/faiss";
 import { HuggingFaceTransformersEmbeddings } from "@langchain/community/embeddings/huggingface_transformers";
 
+// Implement the singleton in loading vector stores to prevent "module is already linked" errors.
+const instanceCache = new Map<string, FaissStore>();
+
 /**
- * Load the FAISS store into the memory
+ * Load the FAISS store into the memory. Returns a cached instance if the same
+ * directory was previously loaded, preventing duplicate native addon initialization.
  * @param {string} vectorStoreDir The path to the local FAISS store
  * @returns The loaded vector store instance
  */
 const load = async (vectorStoreDir: string): Promise<FaissStore> => {
+  if (instanceCache.has(vectorStoreDir)) {
+    return instanceCache.get(vectorStoreDir)!;
+  }
+
   // Make sure the given directory exists
   if (!fs.existsSync(vectorStoreDir)) {
     throw new Error("The vector store directory \"" + vectorStoreDir + "\" does not exist.");
@@ -31,6 +39,7 @@ const load = async (vectorStoreDir: string): Promise<FaissStore> => {
         model: "Xenova/all-MiniLM-L6-v2",
       })
     );
+    instanceCache.set(vectorStoreDir, vectorStore);
     return vectorStore;
   } catch (error) {
     console.log("An error occurred during loading vector store: ", error);

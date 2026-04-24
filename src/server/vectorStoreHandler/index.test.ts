@@ -47,14 +47,10 @@ describe("Test vectorStoreHandler", () => {
       });
     };
 
-    // Load vector store once to avoid re-initializing the native faiss-node addon,
-    // which causes "module is already linked" on some Node.js versions.
     let vectorStore: Awaited<ReturnType<typeof vectorStoreHandler.load>>;
     beforeAll(async () => {
       vectorStore = await vectorStoreHandler.load(__dirname + "/testVectorStore");
-      // The dummy search warms up the HuggingFace model download on first run.
-      await vectorStoreHandler.similaritySearch(vectorStore, "warmup");
-    }, 120000);
+    }, 25000);
 
     it("should perform the search with a vector store by returning default 4 top matches", async () => {
       const results = await vectorStoreHandler.similaritySearch(vectorStore, "roy");
