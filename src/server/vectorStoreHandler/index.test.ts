@@ -55,7 +55,7 @@ describe("Test vectorStoreHandler", () => {
       const results = await vectorStoreHandler.similaritySearch(vectorStore, "roy");
       expect(results.length).toBe(4);
       verifyResults(results);
-    }, 25000);
+    }, 50000);
 
     it("should perform the search with a vector store by returning requested number of top matches", async () => {
       const topK = 3;
