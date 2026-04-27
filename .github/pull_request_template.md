@@ -1,6 +1,8 @@
 # Pull Request Checklist
 
+* [ ] This pull request has been tested by running `npm run lint` without errors
 * [ ] This pull request has been tested by running `npm run test` without errors
+* [ ] This pull request has been tested by running `npm run dev` without errors
 * [ ] This pull request has been built by running `npm start` without errors
 * [ ] This isn't a duplicate of an existing pull request
 
