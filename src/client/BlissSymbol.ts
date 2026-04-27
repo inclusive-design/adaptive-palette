@@ -39,7 +39,9 @@ export function BlissSymbol (props: BlissSymbolPropsType): VNode {
       svgElement.setAttribute("aria-hidden", "true");
     } else {
       svgElement.setAttribute("role", `${GRAPHIC_ROLE}`);
-      svgElement.setAttribute("aria-labelledby", labelledBy);
+      if (labelledBy) {
+        svgElement.setAttribute("aria-labelledby", labelledBy);
+      }
     }
     svgMarkupString = svgElement.outerHTML;
   }

@@ -56,8 +56,8 @@ describe("CommandDelLastEncoding render tests", (): void => {
     expect(button.textContent).toBe(testCell.options.label);
 
     // Check the grid cell styles.
-    expect(button.style["grid-column"]).toBe("13 / span 1");
-    expect(button.style["grid-row"]).toBe("2 / span 1");
+    expect(button.style.getPropertyValue("grid-column")).toBe("13 / span 1");
+    expect(button.style.getPropertyValue("grid-row")).toBe("2 / span 1");
 
     // Check aria-controls
     expect(button.getAttribute("aria-controls")).toBe(testCell.options.ariaControls);

@@ -108,7 +108,7 @@ function findBciAvId(label, blissGlosses) {
       // its ID.  But if the `fullComposition` is the same as the original
       // ignore it.
       const glossId = parseInt(gloss.id);
-      let fullComposition = undefined;
+      let fullComposition;
       let equalCompositions = false;
       if (gloss.composition) {
         fullComposition = decomposeBciAvId(gloss.composition);

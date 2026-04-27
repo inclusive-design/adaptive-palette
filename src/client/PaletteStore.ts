@@ -16,7 +16,7 @@ export class PaletteStore {
   // Singleton storage for all palettes
   // The contents are named Palette instances; hence, each palette must have
   // a unique name.
-  static paletteMap = {};
+  static paletteMap: Record<string, JsonPaletteType> = {};
 
   // Singleton map of palette names and their files.
   static paletteFileMap: PaletteFileMapType = {};
@@ -38,7 +38,7 @@ export class PaletteStore {
    * @param: {String} name             - Optional, the preferred name of th
    *                                     palette.
    */
-  addPalette (palette: JsonPaletteType, paletteName?: string): void {
+  addPalette (palette: JsonPaletteType | undefined, paletteName?: string): void {
     if (!palette) {
       return;
     }
@@ -59,7 +59,7 @@ export class PaletteStore {
    * @param: {String} paletteName - The palette to remove.
    * @return {JsonPaletteType} reference to the removed palette.
    */
-  removePalette (paletteName: string): JsonPaletteType {
+  removePalette (paletteName: string): JsonPaletteType | null {
     if (this.isEmpty()) {
       return null;
     } else {
@@ -98,8 +98,8 @@ export class PaletteStore {
    * @return {JsonPaletteType} reference to the named palette, or undefined if
    *                           no such palette.
    */
-  async getNamedPalette(paletteName: string, loadFunction?: (filePath:string) => Promise<JsonPaletteType>): Promise<JsonPaletteType> {
-    let palette = PaletteStore.paletteMap[paletteName];
+  async getNamedPalette(paletteName: string, loadFunction?: (filePath:string) => Promise<JsonPaletteType | undefined>): Promise<JsonPaletteType | undefined> {
+    let palette: JsonPaletteType | undefined = PaletteStore.paletteMap[paletteName];
     if (!palette && loadFunction) {
       palette = await loadFunction(
         PaletteStore.paletteFileMap[paletteName]

@@ -14,6 +14,7 @@
  */
 import { signal } from "@preact/signals";
 import { getModelNames } from "./ollamaApi";
+import type { ContentSignalDataType, BlissaryMapEntryType } from "./index.d";
 
 // NOTE: this import causes a warning serving the application using the `vite`
 // server.  The warning suggests to *not* use the `public` folder but to use
@@ -76,11 +77,11 @@ export const adaptivePaletteGlobals = {
   // The map between the BCI-AV IDs and the code consumed by the Bliss SVG
   // builder.  The map itself is set asynchronously.
   blissaryIdMapUrl: "https://raw.githubusercontent.com/hlridge/Bliss-Blissary-BCI-ID-Map/main/blissary_to_bci_mapping.json",
-  blissaryIdMap: null,
+  blissaryIdMap: null as BlissaryMapEntryType[] | null,
   bciAvSymbols: bliss_symbols,
   paletteStore: new PaletteStore(),
   navigationStack: new NavigationStack(),
-  LLMs: [],
+  LLMs: [] as string[],
   systemPrompts: {
     "What express": "What does this express? Give the top five answers.  Do not add a preamble like, 'Here are the top five answers.'",
     "Single Sentence": "Convert the telegraphic speech to a single sentence. Give the top five best answers.  Answer with a single grammatically correct sentence.  Number the five answers clearly.  Do not add a preamble like, 'Here are the top five answers.'",
@@ -93,7 +94,7 @@ export const adaptivePaletteGlobals = {
   mainPaletteContainerId: ""
 };
 
-export async function loadBlissaryIdMap (): Promise<object> {
+export async function loadBlissaryIdMap (): Promise<BlissaryMapEntryType[]> {
   const response = await fetch(adaptivePaletteGlobals.blissaryIdMapUrl);
   return await response.json();
 }
@@ -124,7 +125,7 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
  * of the signal is the current array of EncodingType objects to display in the
  * ContentBmwEncoding area and the position of the caret
  */
-export const changeEncodingContents = signal({
+export const changeEncodingContents = signal<ContentSignalDataType>({
   payloads: [],
   caretPosition: -1,
 });
@@ -134,4 +135,4 @@ export const changeEncodingContents = signal({
  * of the signal is the current array of sentences that are offered as possible
  * completions.
  */
-export const sentenceCompletionsSignal = signal([]);
+export const sentenceCompletionsSignal = signal<string[]>([]);

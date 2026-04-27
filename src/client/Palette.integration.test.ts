@@ -319,41 +319,42 @@ describe("Palette integration test", () => {
     // for the "Back Up" button.
     let goForwardButton = (await screen.findByText("Go To")).parentElement;
 
-    fireEvent.click(goForwardButton);
+    fireEvent.click(goForwardButton!);
     let goBackButton = (await waitFor(() => screen.findByText("Back Up"))).parentElement;
     expect(goBackButton).toBeInTheDocument();
-    expect(navStack.currentPalette.palette).toBe(testLayerOnePalette);
-    expect(navStack.peek().palette).toBe(testPalette);
+    expect(navStack.currentPalette!.palette).toBe(testLayerOnePalette);
+    expect(navStack.peek()!.palette).toBe(testPalette);
 
     // Trigger go-back navigation by clicking the `goBackButon`
-    fireEvent.click(goBackButton);
+    fireEvent.click(goBackButton!);
     await waitFor(() => expect(firstCell).toBeInTheDocument());
-    expect(navStack.currentPalette.palette).toBe(testPalette);
+    expect(navStack.currentPalette!.palette).toBe(testPalette);
     expect(navStack.isEmpty()).toBe(true);
 
     // Go forward again, then trigger go-back navigation by calling the go-back
     // function.  This is a way of testing that go-back functionality is
     // available to other kinds of events such as a key press.
     goForwardButton = (await screen.findByText("Go To")).parentElement;
-    expect(goForwardButton).toBeInTheDocument();
-    fireEvent.click(goForwardButton);
-    goBackButton = (await waitFor(() => screen.findByText("Back Up"))).parentElement;
-    expect(navStack.currentPalette.palette).toBe(testLayerOnePalette);
-    expect(navStack.peek().palette).toBe(testPalette);
+    await waitFor(() => expect(goForwardButton).toBeInTheDocument());
+    fireEvent.click(goForwardButton!);
+    await waitFor(() => screen.findByText("Back Up"));
+    expect(navStack.currentPalette!.palette).toBe(testLayerOnePalette);
+    expect(navStack.peek()!.palette).toBe(testPalette);
     await goBackImpl();
-    expect(navStack.currentPalette.palette).toBe(testPalette);
+    await waitFor(() => expect(firstCell).toBeInTheDocument());
+    expect(navStack.currentPalette!.palette).toBe(testPalette);
     expect(navStack.isEmpty()).toBe(true);
 
     // Go forward once again, then trigger go-back navigation by calling the
     // go-back function, this time passing a container element id.
     goForwardButton = (await screen.findByText("Go To")).parentElement;
     expect(goForwardButton).toBeInTheDocument();
-    fireEvent.click(goForwardButton);
+    fireEvent.click(goForwardButton!);
     goBackButton = (await waitFor(() => screen.findByText("Back Up"))).parentElement;
-    expect(navStack.currentPalette.palette).toBe(testLayerOnePalette);
-    expect(navStack.peek().palette).toBe(testPalette);
-    await goBackImpl(goBackButton.getAttribute("aria-controls"));
-    expect(navStack.currentPalette.palette).toBe(testPalette);
+    expect(navStack.currentPalette!.palette).toBe(testLayerOnePalette);
+    expect(navStack.peek()!.palette).toBe(testPalette);
+    await goBackImpl(goBackButton!.getAttribute("aria-controls") ?? undefined);
+    expect(navStack.currentPalette!.palette).toBe(testPalette);
     expect(navStack.isEmpty()).toBe(true);
   });
 
@@ -371,23 +372,23 @@ describe("Palette integration test", () => {
     expect(addPluralButton).toBeInTheDocument();
     fireEvent.click(firstCell);
     let firstSymbol = changeEncodingContents.value.payloads[0];
-    expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(false);
-    expect(firstSymbol.bciAvId.includes(ACTION_INDICATOR_ID)).toBe(false);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(PLURAL_INDICATOR_ID)).toBe(false);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(ACTION_INDICATOR_ID)).toBe(false);
 
     // Click the `addPluralButton` and check that the plural indicator has been
     // added to the symbol in the content area.
     fireEvent.click(addPluralButton);
     firstSymbol = changeEncodingContents.value.payloads[0];
-    expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(true);
-    expect(firstSymbol.bciAvId.includes(ACTION_INDICATOR_ID)).toBe(false);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(PLURAL_INDICATOR_ID)).toBe(true);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(ACTION_INDICATOR_ID)).toBe(false);
 
     // Find and click the add-action-indicator button and check that the
     // plural indicator has been replaced with the action indicator.
     const addActionButton = await screen.findByText("action");
     fireEvent.click(addActionButton);
     firstSymbol = changeEncodingContents.value.payloads[0];
-    expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(false);
-    expect(firstSymbol.bciAvId.includes(ACTION_INDICATOR_ID)).toBe(true);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(PLURAL_INDICATOR_ID)).toBe(false);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(ACTION_INDICATOR_ID)).toBe(true);
 
     // Find and click the remove-indicator button and check that the
     // action indicator has been removed (and that there is no plural idnicator
@@ -395,8 +396,8 @@ describe("Palette integration test", () => {
     const removeIndicatorButton = await screen.findByText("remove indicator");
     fireEvent.click(removeIndicatorButton);
     firstSymbol = changeEncodingContents.value.payloads[0];
-    expect(firstSymbol.bciAvId.includes(ACTION_INDICATOR_ID)).toBe(false);
-    expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(false);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(ACTION_INDICATOR_ID)).toBe(false);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(PLURAL_INDICATOR_ID)).toBe(false);
   });
 
   test("ActionRemoveIndicator disabled state depending on the last symbol in the content area", async() => {
@@ -418,7 +419,7 @@ describe("Palette integration test", () => {
     fireEvent.click(firstCell);
     fireEvent.click(addPluralButton);
     const firstSymbol = changeEncodingContents.value.payloads[0];
-    expect(firstSymbol.bciAvId.includes(PLURAL_INDICATOR_ID)).toBe(true);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(PLURAL_INDICATOR_ID)).toBe(true);
     expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
 
     // Add a second symbol to the contents, one without an indicator.  The
@@ -461,42 +462,42 @@ describe("Palette integration test", () => {
     // modifiers on it at this point.
     fireEvent.click(firstCell);
     let firstSymbol = changeEncodingContents.value.payloads[0];
-    expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(false);
-    expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(false);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
     expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
 
     // Add the intensity modifer.
     fireEvent.click(addIntensityButton);
     firstSymbol = changeEncodingContents.value.payloads[0];
-    expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(true);
-    expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(true);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
     expect(removeModifierButton.getAttribute("disabled")).toBeNull();
 
     // Remove the intensity modifer.
     fireEvent.click(removeModifierButton);
     firstSymbol = changeEncodingContents.value.payloads[0];
-    expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(false);
-    expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(false);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
     expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
 
     // Add the intensity, and then the oppposite modifiers.
     fireEvent.click(addIntensityButton);
     firstSymbol = changeEncodingContents.value.payloads[0];
-    expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(true);
-    expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(true);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
     expect(removeModifierButton.getAttribute("disabled")).toBeNull();
     fireEvent.click(addOppositeButton);
     firstSymbol = changeEncodingContents.value.payloads[0];
-    expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(true);
-    expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(true);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(true);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(true);
     expect(removeModifierButton.getAttribute("disabled")).toBeNull();
 
     // Remove a modifier -- should be the last one added, the "opposite of"
     // modifier.
     fireEvent.click(removeModifierButton);
     firstSymbol = changeEncodingContents.value.payloads[0];
-    expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(true);
-    expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(true);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
     expect(removeModifierButton.getAttribute("disabled")).toBeNull();
 
     // Remove another modifier -- should be the "intensity" modifier.  Also,
@@ -504,8 +505,8 @@ describe("Palette integration test", () => {
     // should be disabled.
     fireEvent.click(removeModifierButton);
     firstSymbol = changeEncodingContents.value.payloads[0];
-    expect(firstSymbol.bciAvId.includes(INTENSITY_MODIFIER_ID)).toBe(false);
-    expect(firstSymbol.bciAvId.includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(false);
+    expect((firstSymbol.bciAvId as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
     expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
   });
 

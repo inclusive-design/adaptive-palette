@@ -37,14 +37,14 @@ type CommandGoBackCellPropsType = {
  *                                     to render the palette if none is
  *                                     specified in the navigation stack entry.
  */
-export async function goBackImpl (defaultContaineId?: string ): Promise<void> {
+export async function goBackImpl (defaultContaineId?: string | null ): Promise<void> {
   const { paletteStore, navigationStack } = adaptivePaletteGlobals;
 
   const paletteToGoBackTo = navigationStack.peek();
   if (paletteToGoBackTo && paletteToGoBackTo.palette) {
     const paletteDefinition = await paletteStore.getNamedPalette(paletteToGoBackTo.palette.name, loadPaletteFromJsonFile);
     if (paletteDefinition) {
-      const paletteContainer = paletteToGoBackTo.htmlElement || document.getElementById(defaultContaineId) || document.body;
+      const paletteContainer = paletteToGoBackTo.htmlElement || document.getElementById(defaultContaineId ?? "") || document.body;
       navigationStack.popAndSetCurrent(paletteToGoBackTo);
       render (html`<${Palette} json=${paletteDefinition}/>`, paletteContainer);
     }
