@@ -10,7 +10,6 @@
  */
 
 // jsdom does not expose structuredClone even though Node.js has it since v17.
-// bliss-svg-builder@1.0.0-rc.1 depends on it.
 
 import v8 from "node:v8";
 if (typeof globalThis.structuredClone === "undefined") {
