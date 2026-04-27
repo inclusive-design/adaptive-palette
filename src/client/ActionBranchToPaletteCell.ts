@@ -35,13 +35,11 @@ const navigateToPalette = async (event: Event): Promise<void> => {
 
   const buttonsPaletteName = button.parentElement!.getAttribute("data-palettename")!;
   const branchToPaletteName = button.getAttribute("data-branchto");
-  let paletteDefinition;
-  if (branchToPaletteName) {
-    const paletteDefinition = await paletteStore.getNamedPalette(branchToPaletteName, loadPaletteFromJsonFile);
-  } else {
+  if (!branchToPaletteName) {
     console.error(`navigateToPalette():  Branch-to palette name not specified for button ${button.id}`);
     return;
   }
+  const paletteDefinition = await paletteStore.getNamedPalette(branchToPaletteName, loadPaletteFromJsonFile);
   if (paletteDefinition) {
     const displayElement = button.parentElement!.parentElement!;
     const goBackPalette = await paletteStore.getNamedPalette(buttonsPaletteName);
