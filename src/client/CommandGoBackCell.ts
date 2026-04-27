@@ -37,7 +37,7 @@ type CommandGoBackCellPropsType = {
  *                                     to render the palette if none is
  *                                     specified in the navigation stack entry.
  */
-export async function goBackImpl (defaultContaineId?: string ): Promise<void> {
+export async function goBackImpl (defaultContaineId?: string | null ): Promise<void> {
   const { paletteStore, navigationStack } = adaptivePaletteGlobals;
 
   const paletteToGoBackTo = navigationStack.peek();
@@ -61,7 +61,7 @@ export async function goBackImpl (defaultContaineId?: string ): Promise<void> {
 const goBackToPalette = async (event: Event): Promise<void> => {
   const button = event.currentTarget as HTMLElement;
   speak(button.innerText);
-  return goBackImpl(button.getAttribute("aria-controls") ?? undefined);
+  return goBackImpl(button.getAttribute("aria-controls"));
 };
 
 export function CommandGoBackCell (props: CommandGoBackCellPropsType): VNode {
