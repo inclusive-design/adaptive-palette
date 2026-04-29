@@ -377,7 +377,10 @@ export function getSvgElement (bciAvId: BciAvIdType): SVGElement | undefined {
  */
 export function bciToBlissaryId (bciAvId: number): BlissaryMapEntryType {
   const { blissaryIdMap } = adaptivePaletteGlobals;
-  return blissaryIdMap!.find((entry) => entry.bciAvId === bciAvId)!;
+  if (!blissaryIdMap) {
+    throw new Error("blissaryIdMap is not defined in adaptivePaletteGlobals");
+  }
+  return blissaryIdMap.find((entry) => entry.bciAvId === bciAvId)!;
 }
 
 /**
@@ -389,5 +392,8 @@ export function bciToBlissaryId (bciAvId: number): BlissaryMapEntryType {
  */
 export function blissaryToBciAvId (blissaryId: number): BlissaryMapEntryType {
   const { blissaryIdMap } = adaptivePaletteGlobals;
-  return blissaryIdMap!.find((entry) => entry.blissaryId === blissaryId)!;
+  if (!blissaryIdMap) {
+    throw new Error("blissaryIdMap is not defined in adaptivePaletteGlobals");
+  }
+  return blissaryIdMap.find((entry) => entry.blissaryId === blissaryId)!;
 }

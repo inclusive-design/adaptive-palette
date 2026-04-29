@@ -33,23 +33,36 @@ const navigateToPalette = async (event: Event): Promise<void> => {
   const button = event.currentTarget as HTMLElement;
   speak(button.innerText);
 
-  const buttonsPaletteName = button.parentElement!.getAttribute("data-palettename")!;
-  const branchToPaletteName = button.getAttribute("data-branchto");
-  if (!branchToPaletteName) {
-    console.error(`navigateToPalette():  Branch-to palette name not specified for button ${button.id}`);
+  const buttonParent = button.parentElement;
+  const displayElement = buttonParent?.parentElement as HTMLElement | undefined;
+  if (!buttonParent || !displayElement) {
+    console.error(`navigateToPalette(): Missing parent or display element for button ${button.id}`);
     return;
   }
+
+  const buttonsPaletteName = buttonParent?.getAttribute("data-palettename");
+  const branchToPaletteName = button.getAttribute("data-branchto");
+  if (!buttonsPaletteName || !branchToPaletteName) {
+    console.error(`navigateToPalette(): Missing routing attributes (data-palettename/branchto) for ${button.id}`);
+    return;
+  }
+
   const paletteDefinition = await paletteStore.getNamedPalette(branchToPaletteName, loadPaletteFromJsonFile);
-  if (paletteDefinition) {
-    const displayElement = button.parentElement!.parentElement!;
-    const goBackPalette = await paletteStore.getNamedPalette(buttonsPaletteName);
-    navigationStack.push({ palette: goBackPalette!, htmlElement: displayElement });
-    render (html`<${Palette} json=${paletteDefinition}/>`, displayElement);
-    navigationStack.currentPalette = { palette: paletteDefinition, htmlElement: displayElement };
+  if (!paletteDefinition) {
+    console.error(`navigateToPalette(): Unable to locate palette definition for ${branchToPaletteName}`);
+    return;
   }
-  else {
-    console.error(`navigateToPalette():  Unable to locate the palette definition for ${branchToPaletteName}`);
+
+  const goBackPalette = await paletteStore.getNamedPalette(buttonsPaletteName);
+  if (!goBackPalette) {
+    console.error(`navigateToPalette(): Unable to locate go-back palette definition for ${buttonsPaletteName}`);
+    return;
   }
+
+  // Update UI and State
+  navigationStack.push({ palette: goBackPalette, htmlElement: displayElement });
+  render(html`<${Palette} json=${paletteDefinition}/>`, displayElement);
+  navigationStack.currentPalette = { palette: paletteDefinition, htmlElement: displayElement };
 };
 
 export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType): VNode {

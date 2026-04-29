@@ -47,7 +47,11 @@ describe("BlissSymbol render tests", (): void => {
     expect(blissSymbolLabelDiv).toBeValid();
 
     // Expect an <svg ...> element as the only sibling
-    const parentChildren = blissSymbolLabelDiv.parentNode!.childNodes;
+    const parentNode = blissSymbolLabelDiv.parentNode;
+    if (!parentNode) {
+      throw new Error("Parent node of blissSymbolLabelDiv is null");
+    }
+    const parentChildren = parentNode.childNodes;
     expect(parentChildren.length).toBe(2);
     expect(parentChildren[0].nodeName).toBe("svg");
   });
@@ -61,13 +65,17 @@ describe("BlissSymbol render tests", (): void => {
       />`
     );
     const blissSymbolLabelDiv = await screen.findByText(arrayBciAvId.label);
-    const svgElement = blissSymbolLabelDiv.parentNode!.querySelector("svg");
-    const parentChildren = blissSymbolLabelDiv.parentNode!.childNodes;
+    const parentNode = blissSymbolLabelDiv.parentNode;
+    if (!parentNode) {
+      throw new Error("Parent node of blissSymbolLabelDiv is null");
+    }
+    const svgElement = parentNode.querySelector("svg");
+    const parentChildren = parentNode.childNodes;
     expect(parentChildren.length).toBe(1);
     expect(svgElement).toBe(null);
   });
 
-  test(`BlissSymbol defined by an of BCI_AV_IDs (${arrayBciAvId.label})`, async (): Promise<void> => {
+  test(`BlissSymbol defined by an array of BCI_AV_IDs (${arrayBciAvId.label})`, async (): Promise<void> => {
     render(html`
       <${BlissSymbol}
         bciAvId="${arrayBciAvId.bciAvId}"
@@ -78,7 +86,11 @@ describe("BlissSymbol render tests", (): void => {
     const blissSymbolLabelDiv = await screen.findByText(arrayBciAvId.label);
     expect(blissSymbolLabelDiv).toBeVisible();
     expect(blissSymbolLabelDiv).toBeValid();
-    const parentChildren = blissSymbolLabelDiv.parentNode!.childNodes;
+    const parentNode = blissSymbolLabelDiv.parentNode;
+    if (!parentNode) {
+      throw new Error("Parent node of blissSymbolLabelDiv is null");
+    }
+    const parentChildren = parentNode.childNodes;
     expect(parentChildren.length).toBe(2);
     expect(parentChildren[0].nodeName).toBe("svg");
   });
@@ -92,7 +104,11 @@ describe("BlissSymbol render tests", (): void => {
       />`
     );
     const blissSymbolLabelDiv = await screen.findByText(arrayBciAvId.label);
-    const svgElement = blissSymbolLabelDiv.parentNode!.querySelector("svg")!;
+    const parentNode = blissSymbolLabelDiv.parentNode;
+    if (!parentNode) {
+      throw new Error("Parent node of blissSymbolLabelDiv is null");
+    }
+    const svgElement = parentNode.querySelector("svg")!;
     expect(svgElement.getAttribute("aria-hidden")).toBe("true");
     expect(svgElement.getAttribute("role")).toBe(null);
     expect(svgElement.getAttribute("aria-labelledby")).toBe(null);
@@ -108,7 +124,11 @@ describe("BlissSymbol render tests", (): void => {
       />`
     );
     const blissSymbolLabelDiv = await screen.findByText(arrayBciAvId.label);
-    const svgElement = blissSymbolLabelDiv.parentNode!.querySelector("svg")!;
+    const parentNode = blissSymbolLabelDiv.parentNode;
+    if (!parentNode) {
+      throw new Error("Parent node of blissSymbolLabelDiv is null");
+    }
+    const svgElement = parentNode.querySelector("svg")!;
     expect(svgElement.getAttribute("role")).toBe(GRAPHIC_ROLE);
     expect(svgElement.getAttribute("aria-labelledby")).toBe(MOCK_LABEL_ID);
     expect(svgElement.getAttribute("aria-hidden")).toBe(null);

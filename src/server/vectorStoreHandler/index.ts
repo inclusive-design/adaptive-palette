@@ -22,8 +22,10 @@ const instanceCache = new Map<string, FaissStore>();
  * @returns The loaded vector store instance
  */
 const load = async (vectorStoreDir: string): Promise<FaissStore> => {
-  if (instanceCache.has(vectorStoreDir)) {
-    return instanceCache.get(vectorStoreDir)!;
+  const cachedInstance = instanceCache.get(vectorStoreDir);
+  
+  if (cachedInstance !== undefined) {
+    return cachedInstance;
   }
 
   // Make sure the given directory exists

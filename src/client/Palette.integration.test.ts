@@ -318,43 +318,94 @@ describe("Palette integration test", () => {
     // <button> of interest.  The button is that <div>'s parent.  Similarly
     // for the "Back Up" button.
     let goForwardButton = (await screen.findByText("Go To")).parentElement;
+    if (!goForwardButton) {
+      throw new Error("Go Forward button not found");
+    }
 
-    fireEvent.click(goForwardButton!);
+    fireEvent.click(goForwardButton);
     let goBackButton = (await waitFor(() => screen.findByText("Back Up"))).parentElement;
+    if (!goBackButton) {
+      throw new Error("Go Back button not found after forward navigation");
+    }
     expect(goBackButton).toBeInTheDocument();
-    expect(navStack.currentPalette!.palette).toBe(testLayerOnePalette);
-    expect(navStack.peek()!.palette).toBe(testPalette);
+    const currentPalette = navStack.currentPalette;
+    if (!currentPalette) {
+      throw new Error("Current palette on navStack is null after forward navigation");
+    }
+    expect(currentPalette.palette).toBe(testLayerOnePalette);
+    const peekedPalette = navStack.peek();
+    if (!peekedPalette) {
+      throw new Error("Peeked palette on navStack is null after forward navigation");
+    }
+    expect(peekedPalette.palette).toBe(testPalette);
 
     // Trigger go-back navigation by clicking the `goBackButon`
-    fireEvent.click(goBackButton!);
+    fireEvent.click(goBackButton);
     await waitFor(() => expect(firstCell).toBeInTheDocument());
-    expect(navStack.currentPalette!.palette).toBe(testPalette);
+    const currentPaletteAfterGoBack = navStack.currentPalette;
+    if (!currentPaletteAfterGoBack) {
+      throw new Error("Current palette on navStack is null after go-back navigation");
+    }
+    expect(currentPaletteAfterGoBack.palette).toBe(testPalette);
     expect(navStack.isEmpty()).toBe(true);
 
     // Go forward again, then trigger go-back navigation by calling the go-back
     // function.  This is a way of testing that go-back functionality is
     // available to other kinds of events such as a key press.
     goForwardButton = (await screen.findByText("Go To")).parentElement;
+    if (!goForwardButton) {
+      throw new Error("Go Forward button not found on second forward navigation");
+    }
     await waitFor(() => expect(goForwardButton).toBeInTheDocument());
-    fireEvent.click(goForwardButton!);
+    fireEvent.click(goForwardButton);
     await waitFor(() => screen.findByText("Back Up"));
-    expect(navStack.currentPalette!.palette).toBe(testLayerOnePalette);
-    expect(navStack.peek()!.palette).toBe(testPalette);
+    const currentPaletteAfterSecondGoForward = navStack.currentPalette;
+    if (!currentPaletteAfterSecondGoForward) {
+      throw new Error("Current palette on navStack is null after second forward navigation");
+    }
+    expect(currentPaletteAfterSecondGoForward.palette).toBe(testLayerOnePalette);
+    const peekedPaletteAfterSecondGoForward = navStack.peek();
+    if (!peekedPaletteAfterSecondGoForward) {
+      throw new Error("Peeked palette on navStack is null after second forward navigation");
+    }
+    expect(peekedPaletteAfterSecondGoForward.palette).toBe(testPalette);
     await goBackImpl();
     await waitFor(() => expect(firstCell).toBeInTheDocument());
-    expect(navStack.currentPalette!.palette).toBe(testPalette);
+    const currentPaletteAfterSecondGoBack = navStack.currentPalette;
+    if (!currentPaletteAfterSecondGoBack) {
+      throw new Error("Current palette on navStack is null after go-back navigation");
+    }
+    expect(currentPaletteAfterSecondGoBack.palette).toBe(testPalette);
     expect(navStack.isEmpty()).toBe(true);
 
     // Go forward once again, then trigger go-back navigation by calling the
     // go-back function, this time passing a container element id.
     goForwardButton = (await screen.findByText("Go To")).parentElement;
+    if (!goForwardButton) {
+      throw new Error("Go Forward button not found on third forward navigation");
+    }
     expect(goForwardButton).toBeInTheDocument();
-    fireEvent.click(goForwardButton!);
+    fireEvent.click(goForwardButton);
     goBackButton = (await waitFor(() => screen.findByText("Back Up"))).parentElement;
-    expect(navStack.currentPalette!.palette).toBe(testLayerOnePalette);
-    expect(navStack.peek()!.palette).toBe(testPalette);
-    await goBackImpl(goBackButton!.getAttribute("aria-controls") ?? undefined);
-    expect(navStack.currentPalette!.palette).toBe(testPalette);
+    if (!goBackButton) {
+      throw new Error("Go Back button not found on third forward navigation");
+    }
+    const currentPaletteAfterThirdGoForward = navStack.currentPalette;
+    if (!currentPaletteAfterThirdGoForward) {
+      throw new Error("Current palette on navStack is null after third forward navigation");
+    }
+    expect(currentPaletteAfterThirdGoForward.palette).toBe(testLayerOnePalette);
+    const peekedPaletteAfterThirdGoForward = navStack.peek();
+    if (!peekedPaletteAfterThirdGoForward) {
+      throw new Error("Peeked palette on navStack is null after third forward navigation");
+    }
+    expect(peekedPaletteAfterThirdGoForward.palette).toBe(testPalette);
+    await goBackImpl(goBackButton.getAttribute("aria-controls") ?? undefined);
+    const currentPaletteAfterThirdGoBack = navStack.currentPalette;
+    if (!currentPaletteAfterThirdGoBack) {
+      throw new Error("Current palette on navStack is null after third go-back navigation");
+    }
+    expect(currentPaletteAfterThirdGoBack.palette).toBe(testPalette);
     expect(navStack.isEmpty()).toBe(true);
   });
 

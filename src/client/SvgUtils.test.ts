@@ -71,10 +71,18 @@ describe("SvgUtils module", (): void => {
 
   test("Retrieve blissary id from BCI-AV-ID", (): void => {
     const { blissaryIdMap } = adaptivePaletteGlobals;
+    expect(blissaryIdMap).toBeDefined();
+
+    if (!blissaryIdMap) {
+      throw new Error("blissaryIdMap is not defined in adaptivePaletteGlobals");
+    }
 
     // Use the 100th entry in the map for testing.  There is nothing special
     // about the 100th entry.  Just as good as any.
-    const blissaryIdMapEntry = blissaryIdMap![100];
+    const blissaryIdMapEntry = blissaryIdMap[100];
+    if (!blissaryIdMapEntry) {
+      throw new Error("blissaryIdMapEntry at index 100 is undefined");
+    }
 
     const result = bciToBlissaryId(blissaryIdMapEntry.bciAvId);
     expect(result.blissaryId).toBe(blissaryIdMapEntry.blissaryId);
@@ -163,7 +171,7 @@ describe("SvgUtils module", (): void => {
 
   test("Check finding full symbol information", (): void => {
     let actual = findBciAvSymbol(singleBciAvId);
-    expect(parseInt(actual!.id)).toBe(singleBciAvId);
+    expect(Number(actual?.id)).toBe(singleBciAvId);
 
     // Passing an invalid BCI AV Identifier or the array form of BciAvIdType
     // should return `undefined`

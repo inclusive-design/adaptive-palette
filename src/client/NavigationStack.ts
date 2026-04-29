@@ -54,15 +54,11 @@ export class NavigationStack {
   /**
    * Pop and return the most recently pushed palette from the top of the
    * navigation stack.
-   * @return {NavStackItemType} - reference to the popped palette; null if the
+   * @return {NavStackItemType} - reference to the popped palette; undefined if the
    *                              stack is empty.
    */
-  pop (): NavStackItemType | null {
-    if (this.isEmpty()) {
-      return null;
-    } else {
-      return this.navigateBackStack.pop() ?? null;
-    }
+  pop (): NavStackItemType | undefined {
+    return this.navigateBackStack.pop();
   }
 
   /**
@@ -94,11 +90,7 @@ export class NavigationStack {
    *                              stack, or `undefined` if the stack is empty.
    */
   peekLast (): NavStackItemType | undefined {
-    if (this.isEmpty()) {
-      return undefined;
-    } else {
-      return this.navigateBackStack[0];
-    }
+    return this.navigateBackStack[0];
   }
 
   /**
@@ -108,7 +100,7 @@ export class NavigationStack {
    *                             is about to be displayed.
    * @return {NavStackItemType} - The most recently visited palette.
    */
-  popAndSetCurrent (currentPalette: NavStackItemType): NavStackItemType | null {
+  popAndSetCurrent (currentPalette: NavStackItemType): NavStackItemType | undefined {
     this.currentPalette = currentPalette;
     return this.pop();
   }
