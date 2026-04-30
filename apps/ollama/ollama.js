@@ -261,7 +261,7 @@ async function queryEachModel (promptText) {
  */
 function createOutputSection(modelName) {
   let sectionEl = document.getElementById(`section_${modelName}`);
-  let paragraph = null;
+  let paragraph;
   if (!sectionEl) {
     sectionEl = document.createElement("section");
     document.body.appendChild(sectionEl);

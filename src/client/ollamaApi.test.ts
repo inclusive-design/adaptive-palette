@@ -53,12 +53,17 @@ describe("ollamaApi unit tests", (): void => {
     });
 
     test("should handle errors and return an empty array", async (): Promise<void> => {
+      // Intentionally mock an error response to test error handling. It will override the
+      // global mock defined in `setupForJestAfterFramework.ts`. Also spy on console.error
+      // to suppress expected error logs during testing.
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
       // Simulate a network error or Ollama being offline
       mockedOllama.list.mockRejectedValue(new Error("Connection refused"));
 
       const modelNames = await getModelNames();
       expect(mockedOllama.list).toHaveBeenCalledTimes(1);
       expect(modelNames).toEqual([]);
+      consoleErrorSpy.mockRestore();
     });
   });
 

@@ -14,8 +14,32 @@ import { generateGridStyle, clamp } from "./GlobalUtils";
 describe("Test global utility functions", (): void => {
 
   test("Test generateGridStyle()", (): void => {
+    // All values provided
     expect(generateGridStyle(2, 1, 3, 2)).toBe("grid-column: 2 / span 1;grid-row: 3 / span 2;");
-    expect(generateGridStyle(undefined, undefined, undefined, undefined)).toBe("grid-column: undefined / span undefined;grid-row: undefined / span undefined;");
+    
+    // All values explicitly undefined. Expect an empty string
+    expect(generateGridStyle(undefined, undefined, undefined, undefined)).toBe("");
+    
+    // No values provided because parameters are optional
+    expect(generateGridStyle()).toBe("");
+
+    // Only columnStart provided
+    expect(generateGridStyle(2, undefined, undefined, undefined)).toBe("grid-column: 2;");
+
+    // Only columnSpan provided
+    expect(generateGridStyle(undefined, 3, undefined, undefined)).toBe("grid-column: span 3;");
+
+    // Only rowStart provided
+    expect(generateGridStyle(undefined, undefined, 4, undefined)).toBe("grid-row: 4;");
+
+    // Only rowSpan provided
+    expect(generateGridStyle(undefined, undefined, undefined, 5)).toBe("grid-row: span 5;");
+
+    // Mixed variations (e.g., columnStart and rowSpan only)
+    expect(generateGridStyle(2, undefined, undefined, 5)).toBe("grid-column: 2;grid-row: span 5;");
+
+    // Mixed variations (e.g., columnSpan and rowStart only)
+    expect(generateGridStyle(undefined, 3, 4, undefined)).toBe("grid-column: span 3;grid-row: 4;");
   });
 
   test("Test clamp function where value is below min", (): void => {

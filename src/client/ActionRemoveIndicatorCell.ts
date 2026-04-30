@@ -31,7 +31,7 @@ type ActionIndicatorCodeCellPropsType = {
  *                    -1 if it has no indicator.
  */
 function caretSymbolIndicatorPosition (symbols: ContentSignalDataType): number {
-  let indicatorPositions = [];
+  let indicatorPositions: number[] = [];
   const { payloads, caretPosition } = symbols;
   if (payloads.length !== 0 && caretPosition !== -1) {
     const caretSymbolBciAvId = payloads[caretPosition].bciAvId;
@@ -60,9 +60,10 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
     const indicatorIndex = caretSymbolIndicatorPosition(changeEncodingContents.value);
     const symbolToEdit = payloads[caretPosition];
     let newBciAvId = symbolToEdit.bciAvId;
+    const newBciAvIdArr = newBciAvId as (string|number)[];
     newBciAvId = [
-      ...newBciAvId.slice(0, indicatorIndex-1),
-      ...newBciAvId.slice(indicatorIndex+1)
+      ...newBciAvIdArr.slice(0, indicatorIndex-1),
+      ...newBciAvIdArr.slice(indicatorIndex+1)
     ];
     payloads[caretPosition] = {
       "id": symbolToEdit.id + props.id,

@@ -30,7 +30,7 @@ export const NO_BCI_AV_ID = -1;
 function makeSentencesJsonPalette(sentences: string[]): JsonPaletteType {
   // Functional approach using reduce, relying on index for the unique key
   // and row calculation
-  const cells = sentences.reduce((acc, sentence, index) => {
+  const cells = sentences.reduce<JsonPaletteType["cells"]>((acc, sentence, index) => {
     // Determine row based on array index (1-based)
     const row = index + 1; 
     const key = `sentence-${index}-${sentence.substring(0, 10)}`; 

@@ -15,6 +15,17 @@ import { JsonPaletteType, SymbolEncodingType, ContentSignalDataType } from "./in
  */
 
 /**
+ * Helper function to construct a single grid property rule.
+ */
+function buildGridProperty(property: string, start?: number, span?: number): string {
+  const value = [start, span !== undefined ? `span ${span}` : undefined]
+    .filter(val => val !== undefined)
+    .join(" / ");
+    
+  return value ? `${property}: ${value};` : "";
+}
+
+/**
  * Generate the grid css.
  * @param {number} columnStart - The number of the column that the grid item will start from.
  * @param {number} columnSpan - The number of columns that the item will span across.
@@ -22,8 +33,11 @@ import { JsonPaletteType, SymbolEncodingType, ContentSignalDataType } from "./in
  * @param {number} rowSpan - The number of rows that the item will span across.
  * @return {String} - The grid css.
  */
-function generateGridStyle(columnStart: number, columnSpan: number, rowStart: number, rowSpan: number): string {
-  return `grid-column: ${columnStart} / span ${columnSpan};grid-row: ${rowStart} / span ${rowSpan};`;
+function generateGridStyle(columnStart?: number, columnSpan?: number, rowStart?: number, rowSpan?: number): string {
+  const colStyle = buildGridProperty("grid-column", columnStart, columnSpan);
+  const rowStyle = buildGridProperty("grid-row", rowStart, rowSpan);
+
+  return colStyle + rowStyle;
 }
 
 /**
@@ -31,7 +45,7 @@ function generateGridStyle(columnStart: number, columnSpan: number, rowStart: nu
  * on, cancel it.
  * @param {String} text - The text to be announced.
  */
-function speak(text): void {
+function speak(text: string): void {
   // If the text-to-speech feature is unavailable, do nothing. This happens when running node tests.
   if (!window.speechSynthesis) {
     return;
@@ -56,7 +70,7 @@ function speak(text): void {
  * @return {JsonPaletteType}    - The palette itself, or `null` if it could not be
  *                                loaded.
  */
-async function loadPaletteFromJsonFile (jsonFilePath: string): Promise<JsonPaletteType> {
+async function loadPaletteFromJsonFile (jsonFilePath: string): Promise<JsonPaletteType | undefined> {
   try {
     const response = await fetch(jsonFilePath);
     if (!response.ok) {

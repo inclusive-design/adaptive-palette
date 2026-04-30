@@ -10,15 +10,8 @@
  */
 
 import { BlissSVGBuilder } from "bliss-svg-builder";
-import { BciAvIdType } from "./index.d";
+import { BciAvIdType, BlissaryMapEntryType } from "./index.d";
 import { adaptivePaletteGlobals } from "./GlobalData";
-
-// The struture of an entry in the Blissary Id map.
-type BlissaryMapEntryType = {
-  blissaryId: number,
-  bciAvId: number,
-  blissSvgBuilderCode: string
-};
 
 // Ranges and list for all the indicator symbols.  The range values are the
 // minimum and maximum BCI AV ID.
@@ -72,8 +65,8 @@ export const BCIAV_PATTERN_KEY      = "bciAv";
  *                              BLISSARY_PATTERN_KEY
  * @return {BciAvIdType}
  */
-export function makeBciAvIdType (blissSvgBuilderCode: string, patternKey: string = BLISSARY_PATTERN_KEY): BciAvIdType {
-  const bciAvIdType = [];
+export function makeBciAvIdType (blissSvgBuilderCode: string, patternKey: keyof typeof SEMICOLON_PATTERNS = BLISSARY_PATTERN_KEY): BciAvIdType {
+  const bciAvIdType: (string|number)[] = [];
   const words = blissSvgBuilderCode.split(DOUBLE_SLASH_SEPARATOR);
   words.forEach( (word) => {
     // Keep any double-slashes intact
@@ -154,7 +147,7 @@ export function isIndicatorId (bciAvId: number): boolean {
  *                   returned if there are no indicators.
  */
 export function findIndicators (bciAvId: BciAvIdType): number[] {
-  const positions = [];
+  const positions: number[] = [];
   if (bciAvId.constructor === Array) {
     bciAvId.forEach((item, index) => {
       if (typeof item === "number") {
@@ -269,7 +262,7 @@ export function findBciAvSymbol (bciAvId: BciAvIdType) {
  * @return {BciAvIdType} - The fully dcomposed `BciAvIdType` or  `undefined` if
  *                         there is no match to any BCI-AV-ID
  */
-export function decomposeBciAvId (bciAvId: BciAvIdType): BciAvIdType {
+export function decomposeBciAvId (bciAvId: BciAvIdType): BciAvIdType | undefined {
   if (typeof bciAvId === "number") {
     // `bciAvId` is a single number.
     const bciAvSymbol = findBciAvSymbol(bciAvId);
@@ -305,12 +298,15 @@ export function decomposeBciAvId (bciAvId: BciAvIdType): BciAvIdType {
  * @return {BciAvIdType} - The full decomposition for the given `bciAvIdArray`
  */
 function loopDecompose (bciAvIdArray: BciAvIdType): BciAvIdType {
-  let resultArray = [];
+  let resultArray: (string|number)[] = [];
   if (bciAvIdArray.constructor === Array) {
     bciAvIdArray.forEach( (part) => {
       // This tests that `part` is not a separator, not e.g., "/", or ";"
       if (typeof part === "number") {
-        resultArray = resultArray.concat(decomposeBciAvId(part));
+        const decomposed = decomposeBciAvId(part);
+        if (decomposed !== undefined) {
+          resultArray = resultArray.concat(Array.isArray(decomposed) ? decomposed : [decomposed]);
+        }
       }
       // Keep `part` separators as they are.
       else {
@@ -330,7 +326,7 @@ function loopDecompose (bciAvIdArray: BciAvIdType): BciAvIdType {
  * @return {BlissSVGBuilder} - The corresponding SVG markup, or `null`.
  */
 
-function getSvgBuilder (bciAvId: BciAvIdType): BlissSVGBuilder {
+function getSvgBuilder (bciAvId: BciAvIdType): BlissSVGBuilder | null {
   let builder;
   try {
     const svgBuilderArgument = bciAvIdToString(bciAvId);
@@ -353,7 +349,7 @@ function getSvgBuilder (bciAvId: BciAvIdType): BlissSVGBuilder {
  *                                `[ 12335, "/", 8499 ]`
  * @return {String} - The corresponding SVG markup, or `undefined`.
  */
-export function getSvgMarkupString (bciAvId: BciAvIdType): string {
+export function getSvgMarkupString (bciAvId: BciAvIdType): string | undefined {
   const builder = getSvgBuilder(bciAvId);
   return ( builder ? builder.svgCode : undefined );
 }
@@ -367,7 +363,7 @@ export function getSvgMarkupString (bciAvId: BciAvIdType): string {
  *                                `[ 12335, "/", 8499 ]`
  * @return {Element} - The corresponding SVG markup, or `undefined`.
  */
-export function getSvgElement (bciAvId: BciAvIdType): SVGElement {
+export function getSvgElement (bciAvId: BciAvIdType): SVGElement | undefined {
   const builder = getSvgBuilder(bciAvId);
   return ( builder ? builder.svgElement : undefined );
 }
@@ -381,7 +377,10 @@ export function getSvgElement (bciAvId: BciAvIdType): SVGElement {
  */
 export function bciToBlissaryId (bciAvId: number): BlissaryMapEntryType {
   const { blissaryIdMap } = adaptivePaletteGlobals;
-  return blissaryIdMap.find((entry) => entry.bciAvId === bciAvId);
+  if (!blissaryIdMap) {
+    throw new Error("blissaryIdMap is not defined in adaptivePaletteGlobals");
+  }
+  return blissaryIdMap.find((entry) => entry.bciAvId === bciAvId)!;
 }
 
 /**
@@ -393,5 +392,8 @@ export function bciToBlissaryId (bciAvId: number): BlissaryMapEntryType {
  */
 export function blissaryToBciAvId (blissaryId: number): BlissaryMapEntryType {
   const { blissaryIdMap } = adaptivePaletteGlobals;
-  return blissaryIdMap.find((entry) => entry.blissaryId === blissaryId);
+  if (!blissaryIdMap) {
+    throw new Error("blissaryIdMap is not defined in adaptivePaletteGlobals");
+  }
+  return blissaryIdMap.find((entry) => entry.blissaryId === blissaryId)!;
 }

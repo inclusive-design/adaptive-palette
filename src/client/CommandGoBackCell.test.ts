@@ -71,8 +71,8 @@ describe("CommandGoBackCell render tests", (): void => {
     expect(button.getAttribute("aria-controls")).toBe("");
 
     // Check the grid cell styles.
-    expect(button.style["grid-column"]).toBe("2 / span 1");
-    expect(button.style["grid-row"]).toBe("3 / span 2");
+    expect(button.style.getPropertyValue("grid-column")).toBe("2 / span 1");
+    expect(button.style.getPropertyValue("grid-row")).toBe("3 / span 2");
 
     // Check disabled state (should be enabled)
     expect(button.getAttribute("disabled")).toBe(null);

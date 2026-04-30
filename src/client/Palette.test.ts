@@ -81,6 +81,9 @@ describe("Palette component", (): void => {
     expect(firstCell).toBeInTheDocument();
 
     const paletteElement = document.querySelector("div.paletteContainer");
+    if (!paletteElement) {
+      throw new Error("Palette element with class 'paletteContainer' not found in the DOM");
+    }
     expect(paletteElement).toBeVisible();
     expect(paletteElement).toBeValid();
 
