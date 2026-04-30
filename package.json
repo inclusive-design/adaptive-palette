@@ -20,7 +20,7 @@
     "test:server": "node --experimental-vm-modules node_modules/.bin/jest --config jest.config.node.cjs"
   },
   "dependencies": {
-    "@huggingface/transformers": "^3.8.1",
+    "@huggingface/transformers": "^4.0.0",
     "@langchain/community": "^1.1.27",
     "@langchain/core": "^1.1.42",
     "@preact/signals": "^2.9.0",
