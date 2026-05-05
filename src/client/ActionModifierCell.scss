@@ -22,3 +22,8 @@
   padding-inline: 0.5rem;
   text-align: center;
 }
+
+.actionModifierCell[aria-pressed="true"] {
+  background-color: #a0a0a0;
+  color: white;
+}

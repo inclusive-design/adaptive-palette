@@ -13,7 +13,7 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
-import { changeEncodingContents } from "./GlobalData";
+import { INPUT_AREA_ID, COMPOSE_AREA_ID, contentSignalMap, isComposing } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
 import "./ActionModifierCell.scss";
 
@@ -39,7 +39,9 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
   );
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
-  const disabled = changeEncodingContents.value.caretPosition === -1;
+  const ariaControls = ( isComposing.value ? COMPOSE_AREA_ID : INPUT_AREA_ID);
+  const contentsSignal = contentSignalMap[ariaControls];
+  const disabled = contentsSignal.value.caretPosition === -1;
 
   const cellClicked = () => {
     // Get the symbol at the caret position in the editing area.
@@ -80,7 +82,13 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
   };
 
   return html`
-    <button id="${props.id}" class="actionModifierCell" style="${gridStyles}" onClick=${cellClicked} disabled="${disabled}">
+    <button
+      id="${props.id}"
+      class="actionModifierCell"
+      style="${gridStyles}"
+      onClick=${cellClicked}
+      disabled="${disabled}"
+      aria-controls="${ariaControls}">
       <${BlissSymbol}
         bciAvId=${modifierBciAvId}
         label=${label}

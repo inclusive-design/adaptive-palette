@@ -8,7 +8,9 @@
  * You may obtain a copy of the License at
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
-import { JsonPaletteType, SymbolEncodingType, ContentSignalDataType } from "./index.d";
+import {
+  JsonPaletteType, SymbolEncodingType, ContentSignalDataType, BciAvIdType
+} from "./index.d";
 
 /**
  * Global Utility Functions
@@ -132,10 +134,124 @@ function clamp (value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
 
+/**
+ * Add the given symbol to the current contents at the given caret position.
+ *
+ * @param {BciAvIdType} bciAvIdToAdd - Symbol to add to current symbol
+ * @param {string} label - The label associated with `bciAvIdToAdd`
+ * @param {boolean} isModifier - Indicates if `bciAvIdToAdd` is a modifier symbol
+ * @param {ContentSignalDataType} encodingContents - Contents to add the symbol to.
+ * @param {boolean} prepend - Optional flag to allow prepending, default is to
+ *                            append (`false`)
+ * @return {ContentSignalDataType} - the modified contents.
+ */
+function composeBlissWord (bciAvIdToAdd: BciAvIdType, label: string, isModifier: boolean, encodingContents: ContentSignalDataType, prepend?: boolean): ContentSignalDataType {
+  // Guarantee that `bciAvIdToAdd` is the array form
+  bciAvIdToAdd = ( typeof bciAvIdToAdd === "number" ? [bciAvIdToAdd] : bciAvIdToAdd );
+
+  // Get the symbol at the caret position.
+  const { caretPosition, payloads } = encodingContents;
+  let symbolToEdit;
+  let newBciAvId;
+  if (caretPosition < 0) {
+    newBciAvId = bciAvIdToAdd;
+    symbolToEdit = {
+      id: "foobar",
+      label: label,
+      bciAvId: newBciAvId,
+      modifiefInfo: []
+    };
+  }
+  else {
+    symbolToEdit = payloads[caretPosition];
+    newBciAvId = (
+      typeof symbolToEdit.bciAvId === "number" ?
+        [symbolToEdit.bciAvId] :
+        symbolToEdit.bciAvId
+    );
+    if (prepend) {
+      newBciAvId = [ ...bciAvIdToAdd, "/", ...newBciAvId ];
+    }
+    else {
+      newBciAvId = [ ...newBciAvId, "/", ...bciAvIdToAdd ];
+    }
+  }
+  // If the `bciAvIdToAdd` is a modifier, push the new modifier information
+  // into the `modifierInfo` of the `symbolToEdit`, tracking the order in which
+  // the modifiers were added.
+  let newLabel;
+  if (isModifier) {
+    symbolToEdit.modifierInfo.push({
+      modifierId: bciAvIdToAdd,
+      modifierGloss: label,
+      isPrepended: prepend
+    });
+    newLabel = `${label} ${symbolToEdit.label}`;
+  }
+  else {
+    newLabel = ( prepend ? `${label} ${symbolToEdit.label}` : `${symbolToEdit.label} ${label}` );
+  }
+  payloads[caretPosition] = {
+    "id": symbolToEdit.id + newBciAvId.join(""),
+    "label": newLabel,
+    "bciAvId": newBciAvId,
+    "modifierInfo": symbolToEdit.modifierInfo
+  };
+  return {
+    payloads: payloads,
+    caretPosition: caretPosition
+  };
+}
+
+/**
+ * Remove the last symbol at the caret the given contents.
+ * Note: what is really wanted is something that removes the last
+ * Bliss-character.
+ *
+ * @param {ContentSignalDataType} encodingContents - Contents to add the symbol to.
+ * @return {ContentSignalDataType} - the modified contents.
+ */
+function removeLastSymbol (encodingContents: ContentSignalDataType): ContentSignalDataType {
+  //   // Get the symbol at the caret position
+  //   const { caretPosition, payloads } = encodingContents;
+  //   const symbolToEdit = payloads[caretPosition];
+  //   const symbolBciAvId = (
+  //     Array.isArray(symbolToEdit.bciAvId) ?
+  //     symbolToEdit.bciAvId :
+  //     [ symbolToEdit.bciAvId ]
+  //   );
+  //   const bciAvIdToEdit = symbolBciAvId as Array<string | number>;
+  //   console.debug(`TYPEOF bciAvIdToEdit is ${typeof bciAvIdToEdit}, Array.isArray() is ${Array.isArray(bciAvIdToEdit)}`);
+  //
+  //   // Find the last "/" in the bciAvId, and truncate from there.
+  //   const forFun = [ 55, "/", 77];
+  //   const lastSlashForFun = forFun.findLastIndex( (item) => item === "/");
+  //   console.debug(`lastSlashForFun is ${lastSlashForFun}`);
+  //
+  //   const lastSlashIndex = bciAvIdToEdit.findLastIndex( (item) => item === "/");
+  //   const newBciAvId = bciAvIdToEdit.slice(0, lastSlashIndex);
+  //   payloads[caretPosition] = {
+  //     "id": symbolToEdit.id,
+  //     "label": symbolToEdit.label,
+  //     "bciAvId": newBciAvId,
+  //     "modifierInfo": symbolToEdit.modifierInfo // Might be incorrect becauase of this function
+  //   };
+  //   return {
+  //     payloads: payloads,
+  //     caretPosition: caretPosition
+  //   };
+  return {
+    payloads: encodingContents.payloads,
+    caretPosition: encodingContents.caretPosition
+  };
+}
+
 export {
   generateGridStyle,
   speak,
   loadPaletteFromJsonFile,
   insertWordAtCaret,
-  clamp
+  clamp,
+  composeBlissWord,
+  removeLastSymbol
 };

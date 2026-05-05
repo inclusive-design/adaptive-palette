@@ -13,7 +13,7 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
-import { changeEncodingContents } from "./GlobalData";
+import { INPUT_AREA_ID, COMPOSE_AREA_ID, contentSignalMap, isComposing } from "./GlobalData";
 import { generateGridStyle, speak, insertWordAtCaret } from "./GlobalUtils";
 import { decomposeBciAvId } from "./SvgUtils";
 import "./ActionBmwCodeCell.scss";
@@ -29,24 +29,27 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType): VNode {
   } = props.options;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
+  const ariaControls = ( isComposing.value ? COMPOSE_AREA_ID : INPUT_AREA_ID);
 
   const cellClicked = () => {
     const composition = decomposeBciAvId(bciAvId);
-    // The payload includes an empty `modifierInfo` for this new symbol.
     const payloadBciAvId = ( composition ? composition : props.options.bciAvId );
+    // If composing, append the `payloadBciAvId` symbol to the symbol and the
+    // current caret position.
+    const contentsSignal = contentSignalMap[ariaControls];
+    const { caretPosition, payloads } = contentsSignal.value;
     const payload = {
       "id": props.id,
       "label": props.options.label,
       "bciAvId": payloadBciAvId,
       "modifierInfo": []
     };
-    const{ caretPosition, payloads } = changeEncodingContents.value;
-    changeEncodingContents.value = insertWordAtCaret(payload, payloads, caretPosition);
-    speak(props.options.label);
+    contentsSignal.value = insertWordAtCaret(payload, payloads, caretPosition);
+    speak(payload.label);
   };
 
   return html`
-    <button id="${props.id}" class="actionBmwCodeCell" style="${gridStyles}" onClick=${cellClicked}>
+    <button id="${props.id}" class="actionBmwCodeCell" style="${gridStyles}" onClick=${cellClicked} aria-controls="${ariaControls}">
       <${BlissSymbol}
         bciAvId=${bciAvId}
         label=${label}

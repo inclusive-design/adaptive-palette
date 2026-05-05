@@ -12,9 +12,10 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
-import { incrementCursor } from "./ContentBmwEncoding";
+import { incrementCursor } from "./ContentEncodingInputField";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { generateGridStyle, speak } from "./GlobalUtils";
+import { contentSignalMap } from "./GlobalData";
 
 type CommandCursorForwardProps = {
   id: string,
@@ -33,7 +34,7 @@ export function CommandCursorForward (props: CommandCursorForwardProps): VNode {
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
-    incrementCursor();
+    incrementCursor(contentSignalMap[ariaControls]);
     speak(label);
   };
 

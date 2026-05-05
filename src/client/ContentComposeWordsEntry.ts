@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2026 Inclusive Design Research Centre, OCAD University
+ * Copyright 2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -12,26 +12,29 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 
-import { changeEncodingContents } from "./GlobalData";
+import { composeWordContents } from "./GlobalData";
 import { ContentBmwEncodingType } from "./index.d";
+import { ToggleIsComposingWords } from "./ToggleIsComposingWords";
 import { ContentEncodingInputField } from "./ContentEncodingInputField";
 import "./ContentBmwEncoding.scss";
 
-const ARIA_LABEL = "Input Area";
+const ARIA_LABEL = "Compose Words";
 
-type ContentBmwEncodingProps = {
+type ContentComposeWordsEntryProps = {
   id: string,
   options: ContentBmwEncodingType
 }
 
-export function ContentBmwEncoding (props: ContentBmwEncodingProps): VNode {
+export function ContentComposeWordsEntry (props: ContentComposeWordsEntryProps): VNode {
 
   return html`
+    <${ToggleIsComposingWords} />
     <${ContentEncodingInputField}
       id="${props.id}"
       options=${props.options}
-      contentsSignal=${changeEncodingContents}
+      contentsSignal=${composeWordContents}
       ariaLabel="${ARIA_LABEL}"
     />
   `;
 }
+

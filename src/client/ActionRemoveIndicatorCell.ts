@@ -13,7 +13,7 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType, ContentSignalDataType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
-import { changeEncodingContents } from "./GlobalData";
+import { INPUT_AREA_ID, COMPOSE_AREA_ID, contentSignalMap, isComposing } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
 import { findIndicators } from "./SvgUtils";
 import "./ActionIndicatorCell.scss";
@@ -50,14 +50,16 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
 
   // Enable the remove-indicator button only if there is an indicator on the
   // last symbol in the encoding contents array.
-  const indicatorPosition = caretSymbolIndicatorPosition(changeEncodingContents.value);
+  const ariaControls =  ( isComposing.value ? COMPOSE_AREA_ID : INPUT_AREA_ID );
+  const contentsSignal = contentSignalMap[ariaControls];
+  const indicatorPosition = caretSymbolIndicatorPosition(contentsSignal.value);
   const disabled = indicatorPosition === -1;
 
   const cellClicked = () => {
     // Get the symbol at the caret position in the editing area and find the
     // locations within it to replace any existing indicator.
-    const { caretPosition, payloads } = changeEncodingContents.value;
-    const indicatorIndex = caretSymbolIndicatorPosition(changeEncodingContents.value);
+    const { caretPosition, payloads } = contentsSignal.value;
+    const indicatorIndex = caretSymbolIndicatorPosition(contentsSignal.value);
     const symbolToEdit = payloads[caretPosition];
     let newBciAvId = symbolToEdit.bciAvId;
     const newBciAvIdArr = newBciAvId as (string|number)[];
@@ -71,7 +73,7 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
       "bciAvId": newBciAvId,
       "modifierInfo": symbolToEdit.modifierInfo
     };
-    changeEncodingContents.value = {
+    contentsSignal.value = {
       payloads: payloads,
       caretPosition: caretPosition
     };
@@ -79,7 +81,13 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
   };
 
   return html`
-    <button id="${props.id}" class="actionIndicatorCell" style="${gridStyles}" onClick=${cellClicked} disabled="${disabled}">
+    <button
+      id="${props.id}"
+      class="actionIndicatorCell"
+      style="${gridStyles}"
+      onClick=${cellClicked}
+      disabled="${disabled}"
+      aria-controls="${ariaControls}">
       <${BlissSymbol}
         bciAvId=${removeIndicatorBciAvId}
         label=${label}

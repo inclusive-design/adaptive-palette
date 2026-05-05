@@ -40,7 +40,8 @@ describe("Palette integration test", () => {
           "rowStart": 2,
           "rowSpan": 1,
           "columnStart": 13,
-          "columnSpan": 1
+          "columnSpan": 1,
+          "ariaControls": "bmw-encoding-area"
         }
       },
       "command-clear-encoding": {
@@ -51,7 +52,8 @@ describe("Palette integration test", () => {
           "rowStart": 2,
           "rowSpan": 1,
           "columnStart": 14,
-          "columnSpan": 1
+          "columnSpan": 1,
+          "ariaControls": "bmw-encoding-area"
         }
       },
       "firstCell": {
@@ -101,7 +103,7 @@ describe("Palette integration test", () => {
           "rowSpan": 1,
           "columnStart": 12,
           "columnSpan": 1,
-          "ariaControls": "content-encoding-area"
+          "ariaControls": "bmw-encoding-area"
         }
       },
       "command-cursor-backwards": {
