@@ -10,21 +10,54 @@
     <div id="composeWords" class="composer">
       <div id="compose_words_palette"></div>
     </div>
+    <!--
+      Expandable form for the LLM prompts and interactions.
+    -->
+    <details id="llmInteraction">
+      <summary>Prompt Dialog</summary>
+      <div id="llmPrompt"></div>
+    </details>
+    <div id="askForLlmSuggestions"></div>
+    <div id="llmSuggestions"></div>
+
+    <!--
+      Entering symbols using SVG builder strings
+    -->
+    <div>
+      <details id="SvgEntryDialog">
+        <summary>SVG Builder String</summary>
+        <div id="svgBuilderStringEntry" style="display:inline-grid;"></div>
+      </details>
+    </div>
+
+    <!--
+      Searching the BCI AV for symbols, displaying the search results as a palette
+    -->
+    <div id="SearchGlossDialog">
+      <div id="searchGloss"></div>
+      <div id="searchGlossResults"></div>
+    </div>
+
+    <!--
+      User's main interaction area with the adaptive palette, including the input palette,
+      indicators, modifiers, backup palette, and main palette display area.
+    -->
     <div id="inputArea">
       <div id="input_palette"></div>
     </div>
-    <div class="oneRow">
-      <div id="backup_palette"></div>
+    <div>
       <div id="indicators"></div>
     </div>
     <div>
       <div id="modifiers"></div>
     </div>
-    <div>&nbsp;</div>
-    <div id="mainPaletteDisplayArea">
-      <script type="module">
-        import "./src/client/index.js";
-      </script>
+    <div class="oneRow">
+      <div id="backup_palette"></div>
+      <div id="mainPaletteDisplayArea">
+        <script type="module">
+          import "./src/client/index.js";
+        </script>
+      </div>
     </div>
   </body>
 </html>

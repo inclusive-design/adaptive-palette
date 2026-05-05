@@ -46,10 +46,41 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
   const disabled = contentsSignal.value.caretPosition === -1;
 
   const cellClicked = () => {
-    const newContents = composeBlissWord(modifierBciAvId, label, ISA_MODIFIER, contentsSignal.value, prepend);
-    const { payloads, caretPosition } = newContents;
-    contentsSignal.value = newContents;
-    speak(payloads[caretPosition].label);
+    // Get the symbol at the caret position in the editing area.
+    const { caretPosition, payloads } = changeEncodingContents.value;
+    const symbolToEdit = payloads[caretPosition];
+    let newBciAvId = (
+      typeof symbolToEdit.bciAvId === "number" ?
+        [symbolToEdit.bciAvId] :
+        symbolToEdit.bciAvId
+    );
+    if (prepend) {
+      newBciAvId = [ ...modifierBciAvId, "/", ...newBciAvId ];
+    }
+    else {
+      newBciAvId = [ ...newBciAvId, "/", ...modifierBciAvId ];
+    }
+    // Push the current modifier information onto the `modifierInfo` of the
+    // `symbolToEdit`, tracking the order in which the modifiers were added.
+    if (!symbolToEdit.modifierInfo) {
+      symbolToEdit.modifierInfo = [];
+    }
+    symbolToEdit.modifierInfo.push({
+      modifierId: modifierBciAvId,
+      modifierGloss: label,
+      isPrepended: prepend
+    });
+    payloads[caretPosition] = {
+      "id": symbolToEdit.id + props.id,
+      "label": `${label} ${symbolToEdit.label}`,
+      "bciAvId": newBciAvId,
+      "modifierInfo": symbolToEdit.modifierInfo
+    };
+    changeEncodingContents.value = {
+      payloads: payloads,
+      caretPosition: caretPosition
+    };
+    speak(`${label} ${symbolToEdit.label}`);
   };
 
   return html`

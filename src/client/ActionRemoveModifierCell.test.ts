@@ -92,8 +92,8 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     expect(removeModifierButton.textContent).toBe(testCell.options.label);
 
     // Check the grid cell styles.
-    expect(removeModifierButton.style["grid-column"]).toBe("2 / span 1");
-    expect(removeModifierButton.style["grid-row"]).toBe("3 / span 2");
+    expect(removeModifierButton.style.getPropertyValue("grid-column")).toBe("2 / span 1");
+    expect(removeModifierButton.style.getPropertyValue("grid-row")).toBe("3 / span 2");
 
     // Check disabled state.  `changeEncodingContents` is initialized
     // with an empty array, hence there should be a `disabled` attribute.

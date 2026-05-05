@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -13,10 +13,9 @@ import { render, VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { adaptivePaletteGlobals } from "./GlobalData";
-import { loadPaletteFromJsonFile } from "./GlobalUtils";
+import { loadPaletteFromJsonFile, speak } from "./GlobalUtils";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
-import { speak } from "./GlobalUtils";
 import "./ActionBmwCodeCell.scss";
 
 type CommandGoBackCellPropsType = {
@@ -38,14 +37,14 @@ type CommandGoBackCellPropsType = {
  *                                     to render the palette if none is
  *                                     specified in the navigation stack entry.
  */
-export async function goBackImpl (defaultContaineId?: string ): Promise<void> {
+export async function goBackImpl (defaultContaineId?: string | null ): Promise<void> {
   const { paletteStore, navigationStack } = adaptivePaletteGlobals;
 
   const paletteToGoBackTo = navigationStack.peek();
   if (paletteToGoBackTo && paletteToGoBackTo.palette) {
     const paletteDefinition = await paletteStore.getNamedPalette(paletteToGoBackTo.palette.name, loadPaletteFromJsonFile);
     if (paletteDefinition) {
-      const paletteContainer = paletteToGoBackTo.htmlElement || document.getElementById(defaultContaineId) || document.body;
+      const paletteContainer = paletteToGoBackTo.htmlElement || document.getElementById(defaultContaineId ?? "") || document.body;
       navigationStack.popAndSetCurrent(paletteToGoBackTo);
       render (html`<${Palette} json=${paletteDefinition}/>`, paletteContainer);
     }

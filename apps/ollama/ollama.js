@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Inclusive Design Research Centre, OCAD University
+ * Copyright 2024-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -261,7 +261,7 @@ async function queryEachModel (promptText) {
  */
 function createOutputSection(modelName) {
   let sectionEl = document.getElementById(`section_${modelName}`);
-  let paragraph = null;
+  let paragraph;
   if (!sectionEl) {
     sectionEl = document.createElement("section");
     document.body.appendChild(sectionEl);
@@ -308,4 +308,3 @@ promptTextArea.addEventListener("input", setAskButtonsEnabledState);
 
 // Set up the model <select> element
 initModelSelect();
-

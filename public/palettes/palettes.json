@@ -37,16 +37,16 @@
       "columnSpan": 4
     }
   },
-  "bmw-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+  "5707a518-3d14-4c1c-a9b5-8a8ed53aa6ee": {
     "type": "ActionBranchToPaletteCell",
     "options": {
       "label": "BMW",
       "branchTo": "BMW Palette",
-      "bciAvId": [ 8552, "/", 8563, "/", 8573 ],
       "rowStart": 3,
       "rowSpan": 1,
       "columnStart": 13,
-      "columnSpan": 4
+      "columnSpan": 4,
+      "bciAvId": [ 8552, "/", 8563, "/", 8573 ]
     }
   }
 }}

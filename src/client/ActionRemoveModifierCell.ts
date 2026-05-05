@@ -37,7 +37,7 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   const { payloads, caretPosition } = changeEncodingContents.value;
   if (payloads.length !== 0 && caretPosition !== -1) {
     const caretSymbol = payloads[caretPosition];
-    disabled = caretSymbol.modifierInfo.length === 0;
+    disabled = !caretSymbol.modifierInfo || caretSymbol.modifierInfo.length === 0;
   }
   // Handle the request to remove the last placed modifier.
   const cellClicked = () => {
@@ -54,14 +54,14 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
 
     // Check for any modifier to remove -- if the symbol has no modifiers,
     // leave the `newBciAvId` as is.
-    const removeInfo = symbolToEdit.modifierInfo.pop();
+    const removeInfo = symbolToEdit.modifierInfo?.pop();
     if (removeInfo) {
       // Either the last modifer added was prepended to the beginning or
       // appended to the end. If it was prepended ...
       if (removeInfo.isPrepended) {
         // ... the modifier is the first symbol in the `newBciAvId`.  Remove it
         // plus the following "/"
-        newBciAvId = newBciAvId.slice(removeInfo.modifierId.length + 1);
+        newBciAvId = newBciAvId.slice((removeInfo.modifierId as (string|number)[]).length + 1);
       }
       // If the last modifier added was appended to the end ...
       else {
@@ -69,7 +69,7 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
         // from the end of the array.  Note: the "-1" is to account for the
         // "/" preceding the modfier's bciAvId.
         newBciAvId = newBciAvId.slice(
-          0, newBciAvId.length - removeInfo.modifierId.length - 1
+          0, newBciAvId.length - (removeInfo.modifierId as (string|number)[]).length - 1
         );
       }
       newLabel = newLabel.replace(removeInfo.modifierGloss, "").trim();

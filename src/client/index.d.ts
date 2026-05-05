@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 Inclusive Design Research Centre, OCAD University
+ * Copyright 2023-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -10,6 +10,12 @@
  */
 
 export type BciAvIdType = number | (string|number)[];
+
+export type BlissaryMapEntryType = {
+  blissaryId: number,
+  bciAvId: number,
+  blissSvgBuilderCode: string
+};
 
 export type BlissSymbolInfoType = {
   label: string,
@@ -75,3 +81,13 @@ export type ContentSignalDataType = {
   payloads: SymbolEncodingType[],
   caretPosition: number
 };
+
+/*
+ * Match structure when searching the BCI AV for symbols
+ */
+export type MatchType = {
+  bciAvId: number,
+  label: string,
+  composition?: BciAvIdType,
+  fullComposition?: BciAvIdType
+}

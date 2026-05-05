@@ -56,8 +56,8 @@ describe("ActionBranchToPaletteCell render tests", (): void => {
     expect(button.textContent).toBe(goToPaletteCell.options.label);
 
     // Check the grid cell styles.
-    expect(button.style["grid-column"]).toBe(`${goToPaletteCell.options.columnStart} / span ${goToPaletteCell.options.columnSpan}`);
-    expect(button.style["grid-row"]).toBe(`${goToPaletteCell.options.rowStart} / span ${goToPaletteCell.options.rowSpan}`);
+    expect(button.style.getPropertyValue("grid-column")).toBe(`${goToPaletteCell.options.columnStart} / span ${goToPaletteCell.options.columnSpan}`);
+    expect(button.style.getPropertyValue("grid-row")).toBe(`${goToPaletteCell.options.rowStart} / span ${goToPaletteCell.options.rowSpan}`);
 
     // Check disabled state (should be enabled)
     expect(button.getAttribute("disabled")).toBe(null);
