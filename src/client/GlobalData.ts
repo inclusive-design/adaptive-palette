@@ -39,7 +39,6 @@ import { ActionPreModifierCell } from "./ActionPreModifierCell";
 import { ActionPostModifierCell } from "./ActionPostModifierCell";
 import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
 import { ActionRemoveModifierCell } from "./ActionRemoveModifierCell";
-import { ActionTextCell } from "./ActionTextCell";
 import { CommandAddComposition } from "./CommandAddComposition";
 import { CommandClearEncoding } from "./CommandClearEncoding";
 import { CommandCursorBackward } from "./CommandCursorBackward";

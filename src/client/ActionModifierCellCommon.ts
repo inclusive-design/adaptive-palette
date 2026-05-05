@@ -14,10 +14,8 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { INPUT_AREA_ID, COMPOSE_AREA_ID, contentSignalMap, isComposing } from "./GlobalData";
-import { composeBlissWord, generateGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle, speak } from "./GlobalUtils";
 import "./ActionModifierCell.scss";
-
-const ISA_MODIFIER = true;
 
 export type ActionModifierCodeCellPropsType = {
   id: string,
