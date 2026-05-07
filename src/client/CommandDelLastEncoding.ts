@@ -30,7 +30,7 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNo
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
-    const contentSignal = contentSignalMap[ariaControls];
+    const contentSignal = contentSignalMap[ariaControls as keyof typeof contentSignalMap];
     const { payloads, caretPosition } = contentSignal.value;
 
     // Nothing to do if:

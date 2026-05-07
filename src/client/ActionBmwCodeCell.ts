@@ -36,7 +36,7 @@ export function ActionBmwCodeCell (props: ActionBmwCodeCellPropsType): VNode {
     const payloadBciAvId = ( composition ? composition : props.options.bciAvId );
     // If composing, append the `payloadBciAvId` symbol to the symbol and the
     // current caret position.
-    const contentsSignal = contentSignalMap[ariaControls];
+    const contentsSignal = contentSignalMap[ariaControls as keyof typeof contentSignalMap];
     const { caretPosition, payloads } = contentsSignal.value;
     const payload = {
       "id": props.id,

@@ -31,13 +31,13 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
   const ariaControls = ( isComposing.value ? COMPOSE_AREA_ID : INPUT_AREA_ID);
-  const contentsSignal = contentSignalMap[ariaControls];
+  const contentsSignal = contentSignalMap[ariaControls as keyof typeof contentSignalMap];
   const disabled = contentsSignal.value.caretPosition === -1;
 
   const cellClicked = () => {
     // Get the symbol at the caret position in the editing area and find the
     // locations within it to replace any existing indicator.
-    const contentsSignal = contentSignalMap[ariaControls];
+    const contentsSignal = contentSignalMap[ariaControls as keyof typeof contentSignalMap];
     const { caretPosition, payloads } = contentsSignal.value;
     const symbolToEdit = payloads[caretPosition];
     let newBciAvId = symbolToEdit.bciAvId;

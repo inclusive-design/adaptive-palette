@@ -34,10 +34,13 @@ export function CommandAddComposition (props: CommandAddCompositionProps): VNode
 
   const cellClicked = (): void => {
     const composePayloads = composeWordContents.value.payloads;
-    let composedBciAvId = [];
+    let composedBciAvId: (number | string)[] = [];
     let composedLabel = "";
     composePayloads.forEach( (payload) => {
-      composedBciAvId = composedBciAvId.concat(payload.bciAvId);
+      const normalizedBciAvId: (number | string)[] = 
+        typeof payload.bciAvId === "number" ? [payload.bciAvId] : payload.bciAvId;
+      
+      composedBciAvId = composedBciAvId.concat(normalizedBciAvId);
       composedBciAvId.push("/");
       composedLabel = `${composedLabel} ${payload.label}`;
     });

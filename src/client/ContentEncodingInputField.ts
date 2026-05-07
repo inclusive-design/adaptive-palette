@@ -98,7 +98,7 @@ export function moveCursorToEnd (contentSignal: Signal<ContentSignalDataType>) {
 
 function handleKeyDown(event: KeyboardEvent) {
   const element = event.target as HTMLElement;
-  const contentSignal = contentSignalMap[element.id];
+  const contentSignal = contentSignalMap[element.id as keyof typeof contentSignalMap];
   if ((!(isApplePlatform && event.metaKey) && event.key === "ArrowLeft") || event.key === "ArrowDown") {
     decrementCursor(contentSignal);
     speak("backward");

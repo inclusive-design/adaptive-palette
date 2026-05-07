@@ -39,6 +39,7 @@ import { ActionPreModifierCell } from "./ActionPreModifierCell";
 import { ActionPostModifierCell } from "./ActionPostModifierCell";
 import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
 import { ActionRemoveModifierCell } from "./ActionRemoveModifierCell";
+import { ActionTextCell } from "./ActionTextCell";
 import { CommandAddComposition } from "./CommandAddComposition";
 import { CommandClearEncoding } from "./CommandClearEncoding";
 import { CommandCursorBackward } from "./CommandCursorBackward";
@@ -60,12 +61,13 @@ export const cellTypeRegistry = {
   "ActionPostModifierCell": ActionPostModifierCell,
   "ActionRemoveIndicatorCell": ActionRemoveIndicatorCell,
   "ActionRemoveModifierCell": ActionRemoveModifierCell,
+  "ActionTextCell": ActionTextCell,
   "CommandAddComposition": CommandAddComposition,
   "CommandClearEncoding": CommandClearEncoding,
   "CommandCursorBackward": CommandCursorBackward,
   "CommandCursorForward": CommandCursorForward,
-  "CommandGoBackCell": CommandGoBackCell,
   "CommandDelLastEncoding": CommandDelLastEncoding,
+  "CommandGoBackCell": CommandGoBackCell,
   "ContentBmwEncoding": ContentBmwEncoding,
   "ContentComposeWordsEntry": ContentComposeWordsEntry,
   "ToggleMakeCombination": ToggleMakeCombination
@@ -144,7 +146,7 @@ export const changeEncodingContents = signal<ContentSignalDataType>({
  * structure as the `changeEncodingContents` above.  The isComposing is a state
  * to indicate whether the mode of the palette is for composing Bliss-words
  */
-export const composeWordContents = signal({
+export const composeWordContents = signal<ContentSignalDataType>({
   payloads: [],
   caretPosition: -1,
 });

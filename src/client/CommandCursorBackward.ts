@@ -34,7 +34,7 @@ export function CommandCursorBackward (props: CommandCursorBackwardProps): VNode
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
-    decrementCursor(contentSignalMap[ariaControls]);
+    decrementCursor(contentSignalMap[ariaControls as keyof typeof contentSignalMap]);
     speak(label);
   };
 

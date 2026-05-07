@@ -147,33 +147,33 @@ function clamp (value: number, min: number, max: number) {
  */
 function composeBlissWord (bciAvIdToAdd: BciAvIdType, label: string, isModifier: boolean, encodingContents: ContentSignalDataType, prepend?: boolean): ContentSignalDataType {
   // Guarantee that `bciAvIdToAdd` is the array form
-  bciAvIdToAdd = ( typeof bciAvIdToAdd === "number" ? [bciAvIdToAdd] : bciAvIdToAdd );
+  const normalizedBciAvIdToAdd: (number | string)[] =
+    typeof bciAvIdToAdd === "number" ? [bciAvIdToAdd] : bciAvIdToAdd;
 
   // Get the symbol at the caret position.
   const { caretPosition, payloads } = encodingContents;
-  let symbolToEdit;
-  let newBciAvId;
+
+
+  let symbolToEdit = payloads[caretPosition];
+  let newBciAvId = normalizedBciAvIdToAdd;
+  
   if (caretPosition < 0) {
-    newBciAvId = bciAvIdToAdd;
-    symbolToEdit = {
-      id: "foobar",
-      label: label,
-      bciAvId: newBciAvId,
-      modifiefInfo: []
-    };
+    symbolToEdit.id = "foobar";
+    symbolToEdit.label = label;
+    symbolToEdit.bciAvId = normalizedBciAvIdToAdd;
+    symbolToEdit.modifierInfo = [];
   }
   else {
-    symbolToEdit = payloads[caretPosition];
     newBciAvId = (
       typeof symbolToEdit.bciAvId === "number" ?
         [symbolToEdit.bciAvId] :
         symbolToEdit.bciAvId
     );
     if (prepend) {
-      newBciAvId = [ ...bciAvIdToAdd, "/", ...newBciAvId ];
+      newBciAvId = [ ...normalizedBciAvIdToAdd, "/", ...newBciAvId ];
     }
     else {
-      newBciAvId = [ ...newBciAvId, "/", ...bciAvIdToAdd ];
+      newBciAvId = [ ...newBciAvId, "/", ...normalizedBciAvIdToAdd ];
     }
   }
   // If the `bciAvIdToAdd` is a modifier, push the new modifier information
@@ -181,10 +181,13 @@ function composeBlissWord (bciAvIdToAdd: BciAvIdType, label: string, isModifier:
   // the modifiers were added.
   let newLabel;
   if (isModifier) {
+    if (!symbolToEdit.modifierInfo) {
+      symbolToEdit.modifierInfo = [];
+    }
     symbolToEdit.modifierInfo.push({
-      modifierId: bciAvIdToAdd,
+      modifierId: normalizedBciAvIdToAdd,
       modifierGloss: label,
-      isPrepended: prepend
+      isPrepended: prepend ?? false
     });
     newLabel = `${label} ${symbolToEdit.label}`;
   }
