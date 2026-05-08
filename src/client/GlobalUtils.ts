@@ -154,7 +154,7 @@ function composeBlissWord (bciAvIdToAdd: BciAvIdType, label: string, isModifier:
   const { caretPosition, payloads } = encodingContents;
 
 
-  let symbolToEdit = payloads[caretPosition];
+  const symbolToEdit = payloads[caretPosition];
   let newBciAvId = normalizedBciAvIdToAdd;
   
   if (caretPosition < 0) {
