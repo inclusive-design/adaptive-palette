@@ -24,7 +24,7 @@ describe("BciUtils module", (): void => {
       fullComposition: undefined
     }, {
       bciAvId: 24020,
-      label: `${BARK}-(to)`,
+      label: "to bark, to woof",
       composition: [15666, ";", 8993, "/", 12380 ],
       fullComposition: undefined
     }
@@ -33,7 +33,7 @@ describe("BciUtils module", (): void => {
   const expectedSpaceIdResults = [
     {
       bciAvId: 17221,
-      label: "space,dimension",
+      label: "space, dimension",
       composition: undefined,
       fullComposition: undefined
     }, {
@@ -44,7 +44,7 @@ describe("BciUtils module", (): void => {
     }
   ];
   // Search for the single symbol for male cousin.
-  const MALE_COUSIN = "cousin_(male)";
+  const MALE_COUSIN = "cousin (male)";
   const expectedCousionResults = [
     {
       bciAvId: 25279,

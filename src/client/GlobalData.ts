@@ -14,7 +14,7 @@
  */
 import { signal } from "@preact/signals";
 import { getModelNames } from "./ollamaApi";
-import type { ContentSignalDataType, BlissaryMapEntryType } from "./index.d";
+import type { ContentSignalDataType, BlissaryMapEntryType, BlissSymbolEntry } from "./index.d";
 
 // NOTE: this import causes a warning serving the application using the `vite`
 // server.  The warning suggests to *not* use the `public` folder but to use
@@ -78,7 +78,7 @@ export const adaptivePaletteGlobals = {
   // builder.  The map itself is set asynchronously.
   blissaryIdMapUrl: "https://raw.githubusercontent.com/hlridge/Bliss-Blissary-BCI-ID-Map/main/blissary_to_bci_mapping.json",
   blissaryIdMap: null as BlissaryMapEntryType[] | null,
-  bciAvSymbols: bliss_symbols,
+  bciAvSymbols: bliss_symbols as BlissSymbolEntry[],
   paletteStore: new PaletteStore(),
   navigationStack: new NavigationStack(),
   LLMs: [] as string[],

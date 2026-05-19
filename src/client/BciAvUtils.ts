@@ -35,18 +35,18 @@ export function findBciAvId(label: string): MatchType[] {
   if (label.trim().length !== 0) {
     // Search for the label in the Bliss gloss
     const wordMatch = new RegExp("\\b" + `${label}` + "\\b");
-    for (const gloss of adaptivePaletteGlobals.bciAvSymbols) {
+    for (const oneSymbolEntry of adaptivePaletteGlobals.bciAvSymbols) {
       // Try an exact match or a word match
-      if ((label === gloss.description) || wordMatch.test(gloss.description)) {
+      if ((label === oneSymbolEntry.gloss) || wordMatch.test(oneSymbolEntry.gloss)) {
         // Get the composition of all the parts of the symbol's compostion or
         // its ID.  But if the `fullComposition` is the same as the original
         // ignore it.
-        const glossId = parseInt(gloss.id);
+        const glossId = parseInt(oneSymbolEntry.id);
         let fullComposition;
         let equalCompositions = false;
-        if (gloss.composition) {
-          fullComposition = decomposeBciAvId(gloss.composition);
-          equalCompositions = (fullComposition as (string|number)[]).join("") === gloss.composition.join("");
+        if (oneSymbolEntry.composition) {
+          fullComposition = decomposeBciAvId(oneSymbolEntry.composition);
+          equalCompositions = (fullComposition as (string|number)[]).join("") === (oneSymbolEntry.composition as (string|number)[]).join("");
         }
         else {
           fullComposition = decomposeBciAvId(glossId);
@@ -56,8 +56,8 @@ export function findBciAvId(label: string): MatchType[] {
         }
         matches.push({
           bciAvId: glossId,
-          label: gloss.description,
-          composition: gloss.composition,
+          label: oneSymbolEntry.gloss,
+          composition: oneSymbolEntry.composition,
           fullComposition: ( equalCompositions ? undefined : fullComposition )
         });
         // DEBUGGING
@@ -89,7 +89,7 @@ export function findCompositionsUsingId (bciId: number): MatchType[] {
     if (symbolId === bciId) {
       matches.unshift({
         bciAvId: symbolId,
-        label: symbol.description,
+        label: symbol.gloss,
         composition: symbol.composition,
         fullComposition: ( symbol.composition ? decomposeBciAvId(symbol.composition) : undefined )
       });
@@ -99,7 +99,7 @@ export function findCompositionsUsingId (bciId: number): MatchType[] {
       if (Array.isArray(fullComposition) && fullComposition.includes(bciId)) {
         matches.push({
           bciAvId: symbolId,
-          label: symbol.description,
+          label: symbol.gloss,
           composition: symbol.composition,
           fullComposition: fullComposition
         });

@@ -3,15 +3,16 @@
  * node generate_bliss_symbol_explanations.js <inputFile.json> <outputFile.json>
  *
  * Example:
- * node generate_bliss_symbol_explanations.js ../public/data/bliss_dictionary.json bliss_symbol_explanations.json
+ * node generate_bliss_symbol_explanations.js bliss_dictionary.json bliss_symbol_explanations.json
  *
  * This script processes a JSON file containing linguistic derivation data and 
  * maps it into a new hierarchical structure used by this project. The original
- * data file is used by bliss-svg-builder: https://github.com/hlridge/bliss-svg-builder.
+ * data file is used by bliss-svg-builder: https://github.com/hlridge/bliss-svg-builder
+ * and located at scripts/data/bliss_dictionary-20260513.json.
  * 
  * Operations:
  * 1. Field Mapping: Maps specified fields (e.g., `bciAvId` -> `id`, `isChar` -> 
- *    `isCharacter`, `gloss` -> `description`, `explanation` -> `explanation`).
+ *    `isCharacter`, `gloss` -> `gloss`, `explanation` -> `explanation`).
  *    1.1 Fallbacks for missing `bciAvId`:
  *      - Top-level: Uses `"B" + item.id`.
  *      - `code`: Decomposes the code into its constituent parts.
@@ -412,10 +413,10 @@ const outputData = data.map(item => {
     reports.missingTopBciAvId.add(item.id);
   }
 
-  /** @type {{ id: string, description: string, pos?: string, explanation?: string, isCharacter: boolean, composition?: (string | number)[] }} */
+  /** @type {{ id: string, gloss: string, pos?: string, explanation?: string, isCharacter: boolean, composition?: (string | number)[] }} */
   const outItem = {
     id: outId,
-    description: item.gloss,
+    gloss: item.gloss,
     pos: item.pos,
     explanation: item.explanation,
     isCharacter: item.isChar
