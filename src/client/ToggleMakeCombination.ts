@@ -13,10 +13,10 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { useState } from "preact/hooks";
 
-import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
+import { BlissSymbolInfoType, LayoutInfoType, SymbolEncodingType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { composeWordContents, COMPOSE_AREA_ID } from "./GlobalData";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { clamp, generateGridStyle, speak, isSkipSymbol, bciAvIdToSkip } from "./GlobalUtils";
 import "./ActionModifierCell.scss";
 
 const COMBINE_MARKER_PAYLOAD = {
@@ -32,51 +32,80 @@ type ToggleMakeCombinationPropsType = {
 };
 
 export function ToggleMakeCombination (props: ToggleMakeCombinationPropsType): VNode {
+  if (composeWordContents.value.payloads === undefined) {
+    console.trace("payloads is undefined", composeWordContents.value);
+  }
   const {
     columnStart, columnSpan, rowStart, rowSpan, label
   } = props.options;
   const combineMarkerBciAvId = props.options.bciAvId;
-  const [isPressed, setIsPressed] = useState(false);
 
   const { caretPosition, payloads } = composeWordContents.value;
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
   const disabled = payloads.length === 0;
-  if (payloads.length === 0) {
-    setIsPressed(false);
-  }
+
+  // The toggle is "pressed" when the array is currently wrapped between combine symbols.
+  const isPressed = payloads.length >= 2 &&
+    isSkipSymbol(payloads[0], bciAvIdToSkip) &&
+    isSkipSymbol(payloads[payloads.length - 1], bciAvIdToSkip);
 
   const cellClicked = () => {
-
-    // If there are no symobls to mark with the combine marker, make sure that
-    // the `isPressed` state is `fales` and do nothing else.
     if (payloads.length === 0) {
-      setIsPressed(false);
+      return;
     }
-    else {
-      // If the previous click untoggled the cell the `isPressed` state is
-      // `false` -- add the combine marker to the beginning and end of the
-      // contents and set `isPressed` to `true`...
-      let speech;
-      if (!isPressed) {
-        payloads.unshift(COMBINE_MARKER_PAYLOAD);
-        payloads.push(COMBINE_MARKER_PAYLOAD);
-        speech = "add combination";
+
+    let newPayloads: SymbolEncodingType[];
+    let newCaretPosition: number;
+    let speech: string;
+
+    if (!isPressed) {
+      // Wrap combine symbol at start and end. Every existing symbol shifts right by 1,
+      // so the caret (when on a symbol) must follow.
+      newPayloads = [COMBINE_MARKER_PAYLOAD, ...payloads, COMBINE_MARKER_PAYLOAD];
+      // If the caret was at -1, it was outside everything, so pull it inside the combine symbol
+      // onto the first symbol of the composed symbol. Otherwise just shit it right by 1.
+      newCaretPosition = caretPosition === -1 ? 1 : caretPosition + 1;
+      speech = "add combination";
+    } else {
+      const firstCombineIndex = payloads.findIndex(p => isSkipSymbol(p, bciAvIdToSkip));
+      let lastCombineIndex = -1;
+      for (let i = payloads.length -1; i >=0; i--) {
+        if (isSkipSymbol(payloads[i], bciAvIdToSkip)) {
+          lastCombineIndex = i;
+          break;
+        }
       }
-      // ... otherwise remove the combine marker.
-      else {
-        payloads.shift();
-        payloads.pop();
-        speech = "remove combination";
+      if (firstCombineIndex === -1 || firstCombineIndex === lastCombineIndex) {
+        return;
       }
-      setIsPressed(!isPressed);
-      console.debug(`isPressed is ${isPressed}`);
-      //isPressed = !isPressed;
-      composeWordContents.value = {
-        payloads: payloads,
-        caretPosition: caretPosition
-      };
-      speak(speech);
+
+      newPayloads = payloads.filter(
+        (_, i) => i !== firstCombineIndex && i !== lastCombineIndex
+      );
+
+      if (caretPosition === -1) {
+        newCaretPosition = -1;
+      } else if (caretPosition === firstCombineIndex || caretPosition === lastCombineIndex) {
+        newCaretPosition = -1;
+      } else {
+        let updatedPosition = caretPosition;
+        if (caretPosition > firstCombineIndex) {
+          updatedPosition -= 1;
+        }
+        if (caretPosition > lastCombineIndex) {
+          updatedPosition -= 1;
+        }
+        newCaretPosition = clamp(updatedPosition, -1, newPayloads.length -1);
+      }
+    
+      speech = "remove combination";
     }
+
+    composeWordContents.value = {
+      payloads: newPayloads,
+      caretPosition: newCaretPosition
+    };
+    speak(speech);
   };
 
   return html`
