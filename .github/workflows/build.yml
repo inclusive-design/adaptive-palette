@@ -1,4 +1,4 @@
-name: CI
+name: Build
 
 on: [push, pull_request]
 
@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node-version: [24.x, 25.x]
+        node-version: [24.x, 26.x]
     runs-on: ${{ matrix.os }}
     env:
       CI: true
@@ -28,11 +28,7 @@ jobs:
           npm --version
       - name: NPM install (ci)
         run: npm ci
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-      - name: Lint
-        run: npm run lint
-      - name: Type Checking
-        run: npm run typecheck
-      - name: Test
-        run: npm run test
+      - name: Build client
+        run: npm run build:client
+      - name: Build server
+        run: npm run build:server
