@@ -80798,12 +80798,14 @@
   {
     "id": "B6437",
     "gloss": "melting (metal)",
+    "pos": "noun",
     "explanation": "metal bar + fluid -- Note: This symbol does not exist in the official BCI version yet.",
     "isCharacter": true
   },
   {
     "id": "B6438",
     "gloss": "comparative less",
+    "pos": "expression",
     "explanation": "opposite meaning [modification, half-sized on midline] + comparative more -- Note: This symbol does not exist in the official BCI version yet.",
     "isCharacter": true
   },

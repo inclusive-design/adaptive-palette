@@ -3,7 +3,7 @@
  * node generate_bliss_symbol_explanations.js <inputFile.json> <outputFile.json>
  *
  * Example:
- * node generate_bliss_symbol_explanations.js bliss_dictionary.json bliss_symbol_explanations.json
+ * node generate_bliss_symbol_explanations.js data/bliss_dictionary_20260513.json ../public/data/bliss_symbol_explanations.json
  *
  * This script processes a JSON file containing linguistic derivation data and 
  * maps it into a new hierarchical structure used by this project. The original
@@ -21,6 +21,10 @@
  *    (`isChar === false`) down to their base characters (`isChar === true`).
  * 3. Delimiters: Inserts ";" before IDs that fall into the provided indicator 
  *    ranges/lists, and "/" otherwise, dynamically flattening the array.
+ * 
+ * Manual operations after script execution:
+ * 1. Add "pos" value "noun" to item with ID "B6437"
+ * 2. Add "pos" value "expression" to item with ID "B6438"
  * 
  * Execution report:
  * Report: Successfully processed 6420 records into bliss_symbol_explanations.json
