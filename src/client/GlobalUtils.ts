@@ -249,37 +249,6 @@ function removeLastSymbol (encodingContents: ContentSignalDataType): ContentSign
   };
 }
 
-/**
- * Check if BciAvId is equal, as BciAvId can be an array or string.
- * 
- * @param {BciAvIdType} a - A BciAvId to be compared
- * @param {BciAvIdType} b - A BciAvId to be compared
- * @return {boolean} - result of the comparison
- */
-function bciAvIdEqual (a: BciAvIdType, b: BciAvIdType): boolean {
-  if (Array.isArray(a) && Array.isArray(b)) {
-    return a.length === b.length && a.every((v, i) => v === b[i]);
-  }
-  if (Array.isArray(a) || Array.isArray(b)) {
-    return false;
-  }
-  return a == b;
-}
-
-/**
- * Check if payload contains BciAvIds to be skipped
- * 
- * @param {SymbolEncodingType} payload - object of input symbol details
- * @param {Array<BciAvIdType>} skipBciAvIds - An array of BciAvIds to be skipped
- * 
- */
-function isSkipSymbol (payload: SymbolEncodingType, skipBciAvIds: Array<BciAvIdType>): boolean {
-  return skipBciAvIds.some((id) => bciAvIdEqual(payload.bciAvId, id));
-}
-
-// Append BciAvId of symbols to skip navigating using moveCursor function to this list
-const bciAvIdToSkip = [13382];
-
 export {
   generateGridStyle,
   speak,
@@ -287,8 +256,5 @@ export {
   insertWordAtCaret,
   clamp,
   composeBlissWord,
-  removeLastSymbol,
-  bciAvIdEqual,
-  isSkipSymbol,
-  bciAvIdToSkip
+  removeLastSymbol
 };

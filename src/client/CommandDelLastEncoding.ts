@@ -14,7 +14,8 @@ import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { contentSignalMap } from "./GlobalData";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
-import { generateGridStyle, speak, isSkipSymbol, bciAvIdToSkip } from "./GlobalUtils";
+import { generateGridStyle, speak } from "./GlobalUtils";
+import { deleteAtCaret } from "./CursorActions";
 
 type CommandDelLastEncodingProps = {
   id: string,
@@ -31,49 +32,11 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNo
 
   const cellClicked = (): void => {
     const contentSignal = contentSignalMap[ariaControls as keyof typeof contentSignalMap];
-    const { payloads, caretPosition } = contentSignal.value;
-
-    // Nothing to do if:
-    // - there are no symbols (payloads), or
-    // - there are symbols, but the caret is for inserting before the first
-    //   symbol
-    if (payloads.length === 0 || caretPosition === -1) {
-      return;
+    const updatedContentSignal = deleteAtCaret(contentSignal.value);
+    if (updatedContentSignal !== contentSignal.value) {
+      contentSignal.value = updatedContentSignal;
+      speak(label);
     }
-    
-    const newEncodingContents = [...payloads];
-    newEncodingContents.splice(caretPosition, 1);
-
-    // Walk the caret left, skipping over any skip symbols
-    let newCaretPosition = caretPosition - 1;
-    while (newCaretPosition >= 0 && isSkipSymbol(newEncodingContents[newCaretPosition], bciAvIdToSkip)) {
-      newCaretPosition -= 1;
-    }
-
-    // If the position fell off the left side but the array still leads with a skip
-    // the caret is now outside the wrap. Try to find a symbol inside the wrap by going right
-
-    if (newCaretPosition === -1 && newEncodingContents.length > 0 && isSkipSymbol(newEncodingContents[0], bciAvIdToSkip)) {
-      let updatedPosition = 1;
-      while (updatedPosition < newEncodingContents.length && isSkipSymbol(newEncodingContents[updatedPosition], bciAvIdToSkip)) {
-        updatedPosition += 1;
-      }
-
-      if (updatedPosition >= newEncodingContents.length) {
-        // Only skip symbols in the payloads, remove the symbols and reset
-        contentSignal.value = { payloads: [], caretPosition: -1 };
-        speak(label);
-        return;
-      }
-
-      newCaretPosition = updatedPosition;
-    }
-
-    contentSignal.value = {
-      payloads: newEncodingContents,
-      caretPosition: newCaretPosition
-    };
-    speak(label);
   };
 
   return html`

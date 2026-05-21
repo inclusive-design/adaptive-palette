@@ -16,7 +16,8 @@ import { useState } from "preact/hooks";
 import { BlissSymbolInfoType, LayoutInfoType, SymbolEncodingType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { composeWordContents, COMPOSE_AREA_ID } from "./GlobalData";
-import { clamp, generateGridStyle, speak, isSkipSymbol, bciAvIdToSkip } from "./GlobalUtils";
+import { clamp, generateGridStyle, speak } from "./GlobalUtils";
+import { isCombined, combineContent, uncombineContent, bciAvIdToSkip } from "./CursorActions";
 import "./ActionModifierCell.scss";
 
 const COMBINE_MARKER_PAYLOAD = {
@@ -32,9 +33,6 @@ type ToggleMakeCombinationPropsType = {
 };
 
 export function ToggleMakeCombination (props: ToggleMakeCombinationPropsType): VNode {
-  if (composeWordContents.value.payloads === undefined) {
-    console.trace("payloads is undefined", composeWordContents.value);
-  }
   const {
     columnStart, columnSpan, rowStart, rowSpan, label
   } = props.options;
@@ -44,68 +42,25 @@ export function ToggleMakeCombination (props: ToggleMakeCombinationPropsType): V
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
   const disabled = payloads.length === 0;
 
-  // The toggle is "pressed" when the array is currently wrapped between combine symbols.
-  const isPressed = payloads.length >= 2 &&
-    isSkipSymbol(payloads[0], bciAvIdToSkip) &&
-    isSkipSymbol(payloads[payloads.length - 1], bciAvIdToSkip);
+  const isCombinedNow = isCombined(payloads, bciAvIdToSkip);
 
   const cellClicked = () => {
     if (payloads.length === 0) {
       return;
     }
 
-    let newPayloads: SymbolEncodingType[];
-    let newCaretPosition: number;
-    let speech: string;
-
-    if (!isPressed) {
-      // Wrap combine symbol at start and end. Every existing symbol shifts right by 1,
-      // so the caret (when on a symbol) must follow.
-      newPayloads = [COMBINE_MARKER_PAYLOAD, ...payloads, COMBINE_MARKER_PAYLOAD];
-      // If the caret was at -1, it was outside everything, so pull it inside the combine symbol
-      // onto the first symbol of the composed symbol. Otherwise just shit it right by 1.
-      newCaretPosition = caretPosition === -1 ? 1 : caretPosition + 1;
-      speech = "add combination";
+    if (isCombinedNow) {
+      const updatedPayloads = uncombineContent(composeWordContents.value, bciAvIdToSkip);
+      if (updatedPayloads !== composeWordContents.value) {
+        composeWordContents.value = updatedPayloads;
+        speak("remove combination");
+      }
     } else {
-      const firstCombineIndex = payloads.findIndex(p => isSkipSymbol(p, bciAvIdToSkip));
-      let lastCombineIndex = -1;
-      for (let i = payloads.length -1; i >=0; i--) {
-        if (isSkipSymbol(payloads[i], bciAvIdToSkip)) {
-          lastCombineIndex = i;
-          break;
-        }
-      }
-      if (firstCombineIndex === -1 || firstCombineIndex === lastCombineIndex) {
-        return;
-      }
-
-      newPayloads = payloads.filter(
-        (_, i) => i !== firstCombineIndex && i !== lastCombineIndex
+      composeWordContents.value = combineContent(
+        composeWordContents.value, COMBINE_MARKER_PAYLOAD
       );
-
-      if (caretPosition === -1) {
-        newCaretPosition = -1;
-      } else if (caretPosition === firstCombineIndex || caretPosition === lastCombineIndex) {
-        newCaretPosition = -1;
-      } else {
-        let updatedPosition = caretPosition;
-        if (caretPosition > firstCombineIndex) {
-          updatedPosition -= 1;
-        }
-        if (caretPosition > lastCombineIndex) {
-          updatedPosition -= 1;
-        }
-        newCaretPosition = clamp(updatedPosition, -1, newPayloads.length -1);
-      }
-    
-      speech = "remove combination";
+      speak("add combination");
     }
-
-    composeWordContents.value = {
-      payloads: newPayloads,
-      caretPosition: newCaretPosition
-    };
-    speak(speech);
   };
 
   return html`
@@ -116,7 +71,7 @@ export function ToggleMakeCombination (props: ToggleMakeCombinationPropsType): V
       onClick=${cellClicked}
       disabled="${disabled}"
       aria-controls="${COMPOSE_AREA_ID}"
-      aria-pressed="${isPressed}">
+      aria-pressed="${isCombinedNow}">
       <${BlissSymbol}
         bciAvId=${combineMarkerBciAvId}
         label=${label}

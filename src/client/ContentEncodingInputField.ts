@@ -16,7 +16,8 @@ import { Signal } from "@preact/signals";
 import { BlissSymbol } from "./BlissSymbol";
 import { contentSignalMap } from "./GlobalData";
 import { ContentBmwEncodingType, EncodingType, ContentSignalDataType, BciAvIdType } from "./index.d";
-import { generateGridStyle, clamp, speak, bciAvIdEqual, isSkipSymbol, bciAvIdToSkip } from "./GlobalUtils";
+import { generateGridStyle, clamp, speak } from "./GlobalUtils";
+import { moveCursor } from "./CursorActions";
 import "./ContentBmwEncoding.scss";
 
 const isApplePlatform = navigator.platform.startsWith("Mac") || navigator.platform.startsWith("iPhone") || navigator.platform.startsWith("iPad");
@@ -70,50 +71,20 @@ function generateMarkupArray (payloadArray: Array<EncodingType>, caretPos: numbe
   });
 }
 
-function moveCursor (positionChange: number = 1, contentSignal: Signal<ContentSignalDataType>, skipBciAvIds: Array<BciAvIdType> = bciAvIdToSkip) {
-  const { payloads, caretPosition } = contentSignal.value;
-  const max = payloads.length - 1;
-
-  // If the payloads are composed symbol, the caret must stay inside the combine symbols
-  // disallow -1 as a landing position. Otherwise -1 remains valid.
-
-  const isComposed = payloads.length > 0 && isSkipSymbol(payloads[0], skipBciAvIds);
-  const min = isComposed ? 0 : -1;
-
-  let newPosition = clamp(caretPosition + positionChange, min, max);
-
-  const direction = Math.sign(positionChange);
-  if (direction !== 0 && skipBciAvIds.length > 0) {
-    while (newPosition >= 0 && newPosition <= max && isSkipSymbol(payloads[newPosition], skipBciAvIds)) {
-      const updatedPosition = newPosition + direction;
-      if (updatedPosition < min || updatedPosition > max) {
-        newPosition = caretPosition;
-        break;
-      }
-      newPosition = updatedPosition;
-    }
-  }
-
-  contentSignal.value = {
-    payloads,
-    caretPosition: newPosition
-  };
-};
-
 export function incrementCursor (contentSignal: Signal<ContentSignalDataType>) {
-  moveCursor(1, contentSignal);
+  contentSignal.value = moveCursor(1, contentSignal.value);
 }
 
 export function decrementCursor (contentSignal: Signal<ContentSignalDataType>) {
-  moveCursor(-1, contentSignal);
+  contentSignal.value = moveCursor(-1, contentSignal.value);
 }
 
 export function moveCursorToHome (contentSignal: Signal<ContentSignalDataType>) {
-  moveCursor(Number.NEGATIVE_INFINITY, contentSignal);
+  contentSignal.value = moveCursor(Number.NEGATIVE_INFINITY, contentSignal.value);
 };
 
 export function moveCursorToEnd (contentSignal: Signal<ContentSignalDataType>) {
-  moveCursor(Number.POSITIVE_INFINITY, contentSignal);
+  contentSignal.value = moveCursor(Number.POSITIVE_INFINITY, contentSignal.value);
 };
 
 function handleKeyDown(event: KeyboardEvent) {
