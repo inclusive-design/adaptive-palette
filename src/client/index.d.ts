@@ -14,8 +14,8 @@ export type BciAvIdType = number | (string|number)[];
 export type BlissSymbolEntry = {
   id: string,
   gloss: string,
-  pos: string,
-  explanation: string,
+  pos?: string,
+  explanation?: string,
   isCharacter: boolean,
   composition?: BciAvIdType
 };

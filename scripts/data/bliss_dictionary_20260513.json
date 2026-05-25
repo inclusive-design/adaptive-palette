@@ -174080,6 +174080,7 @@
       "pos": "action",
       "code": "B457;B81/B401/B122",
       "bciAvId": 29415,
+      "explanation": "",
       "derivationParts": [
         {
           "id": "B457",
@@ -177606,6 +177607,7 @@
     {
       "id": 6437,
       "gloss": "melting (metal)",
+      "pos": "noun",
       "filename": "melting_(metal)",
       "isChar": true,
       "code": "B814;B695:6,0",
@@ -177630,6 +177632,7 @@
     {
       "id": 6438,
       "gloss": "comparative less",
+      "pos": "expression",
       "filename": "comparative_less",
       "isChar": true,
       "code": "DL1N:0,8;VL4:1,8;DL1N:1,11;B937:3,0",

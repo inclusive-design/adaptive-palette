@@ -119,7 +119,7 @@ function findBciAvId(label: string, blissSymbolEntries: BlissSymbolEntry[]): Mat
   console.log(`For label ${label}:`);
   for (const oneBlissSymbolEntry of blissSymbolEntries) {
     // Try an exact match or a word match
-    const wordMatch = new RegExp("\\b" + `${label}` + "\\b");
+    const wordMatch = new RegExp(`\\b${label}\\b`);
     if ((label === oneBlissSymbolEntry.gloss) || wordMatch.test(oneBlissSymbolEntry.gloss)) {
       // Get the composition of all the parts of the symbol's compostion or
       // its ID.  But if the `fullComposition` is the same as the original

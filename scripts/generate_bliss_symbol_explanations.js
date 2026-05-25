@@ -312,6 +312,8 @@ const reports = {
   missingTopBciAvId: new Set(),
   missingIsChar: new Set(),
   missingBPrefix: new Set(),
+  missingPos: new Set(),
+  missingExplanation: new Set(),
   circularDependency: new Set()
 };
 
@@ -417,6 +419,14 @@ const outputData = data.map(item => {
     reports.missingTopBciAvId.add(item.id);
   }
 
+  if (!item.pos) {
+    reports.missingPos.add(item.id);
+  }
+
+  if (!item.explanation) {
+    reports.missingExplanation.add(item.id);
+  }
+
   /** @type {{ id: string, gloss: string, pos?: string, explanation?: string, isCharacter: boolean, composition?: (string | number)[] }} */
   const outItem = {
     id: outId,
@@ -446,7 +456,7 @@ console.log("\n=== Processing Report ===");
 console.log(`Report: Successfully processed ${data.length} records into ${outputFileName}\n`);
 
 if (reports.missingTopBciAvId.size > 0) {
-  console.log(`Warning: Top-level items missing "bciAvId" (fallback applied "B" + id): ${reports.missingTopBciAvId.size} items.`);
+  console.log(`Warning: Top-level items missing "bciAvId" (fallback applied "B" + id): ${reports.missingTopBciAvId.size} items: ${[...reports.missingTopBciAvId].join(", ")}`);
 } else {
   console.log("Report: No Top-level items missing \"bciAvId\".");
 }
@@ -458,6 +468,14 @@ if (reports.missingIsChar.size > 0) {
 if (reports.missingBPrefix.size > 0) {
   console.log(`\n=== Special Code Segment Report (Total: ${reports.missingBPrefix.size}) ===`);
   reports.missingBPrefix.forEach(msg => console.log(msg));
+}
+
+if (reports.missingPos.size > 0) {
+  console.log(`\nWarning: Items missing "pos" value: ${reports.missingPos.size} items: ${[...reports.missingPos].join(", ")}`);
+}
+
+if (reports.missingExplanation.size > 0) {
+  console.log(`\nWarning: Items missing "explanation" value: ${reports.missingExplanation.size} items: ${[...reports.missingExplanation].join(", ")}`);
 }
 
 if (reports.circularDependency.size > 0) {
