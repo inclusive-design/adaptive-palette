@@ -16,7 +16,11 @@ const compat = new FlatCompat({
 
 export default [{
   ignores: ["**/dist/", "**/node_modules/"],
-}, ...compat.extends("eslint:recommended", "plugin:@typescript-eslint/recommended"), {
+}, ...compat.extends(
+  "eslint:recommended",
+  "plugin:@typescript-eslint/recommended",
+  "plugin:@typescript-eslint/recommended-type-checked"
+), {
   plugins: {
     "@typescript-eslint": typescriptEslint,
   },
@@ -30,6 +34,10 @@ export default [{
     parser: tsParser,
     ecmaVersion: "latest",
     sourceType: "module",
+    parserOptions: {
+      project: "./tsconfig.eslint.json",
+      tsconfigRootDir: __dirname,
+    },
   },
 
   rules: {
@@ -37,5 +45,14 @@ export default [{
     "linebreak-style": ["error", "unix"],
     quotes: ["error", "double"],
     semi: ["error", "always"],
+  },
+},
+// In Jest, we frequently test whether a specific method on an object was called
+// that requires to pass the method directly into the expect() function,
+// so unbound-method is a false positive with Jest's expect(mock.fn) pattern.
+{
+  files: ["**/*.test.ts", "**/*.test.js"],
+  rules: {
+    "@typescript-eslint/unbound-method": "off",
   },
 }];

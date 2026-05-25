@@ -10,7 +10,6 @@
  */
 
 import { render, screen } from "@testing-library/preact";
-import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 import { ContentBmwEncoding} from "./ContentBmwEncoding";
 import { initAdaptivePaletteGlobals } from "./GlobalData";

@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "./dist/server"
+  },
+  "include": [
+    "config/**/*",
+    "src/server/**/*"
+  ]
+}

@@ -11,18 +11,21 @@
 
 import { render, screen } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
-import "@testing-library/jest-dom";
 import { html } from "htm/preact";
+import { vi } from "vitest";
 
 import { NO_BCI_AV_ID } from "./SentenceCompletionsPalette";
 import { ActionTextCell } from "./ActionTextCell";
 import { speak } from "./GlobalUtils";
 
 // Mock the GlobalUtils module so we can spy on the `speak` function
-jest.mock("./GlobalUtils", () => ({
-  ...jest.requireActual("./GlobalUtils"),
-  speak: jest.fn(),
-}));
+vi.mock("./GlobalUtils", async () => {
+  const GlobalUtils = await vi.importActual("./GlobalUtils");
+  return {
+    ...GlobalUtils,
+    speak: vi.fn(),
+  };
+});
 
 describe("ActionTextCell tests", (): void => {
   const testCell = {
@@ -38,7 +41,7 @@ describe("ActionTextCell tests", (): void => {
   const TEST_CELL_ID = "unique-test-uuid";
 
   beforeEach(() => {
-    jest.clearAllMocks(); // Reset mocks between tests
+    vi.clearAllMocks(); // Reset mocks between tests
   });
 
   test("Renders correctly with expected attributes and styles", (): void => {
@@ -52,7 +55,7 @@ describe("ActionTextCell tests", (): void => {
     // Use getByRole for synchronous renders
     const button = screen.getByRole("button", { name: testCell.options.label });
 
-    // jest-dom specific assertions
+    //dom specific assertions
     expect(button).toBeVisible();
     expect(button).toBeValid();
     expect(button).not.toBeDisabled();
@@ -78,7 +81,7 @@ describe("ActionTextCell tests", (): void => {
     `);
 
     const button = screen.getByRole("button", { name: testCell.options.label });
-    
+
     // Simulate a user clicking the button
     await user.click(button);
 

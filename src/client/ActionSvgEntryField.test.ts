@@ -11,7 +11,6 @@
 
 import { render, screen } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
-import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 
 import {
@@ -39,8 +38,8 @@ describe("ActionSvgEntryField component", () => {
   // Behavioral test
   test("Displays error message when an invalid builder string is submitted", async () => {
     // set up user events for simulating user interactions
-    const user = userEvent.setup(); 
-    
+    const user = userEvent.setup();
+
     render(html`<${ActionSvgEntryField} />`);
 
     const builderInput = screen.getByLabelText(/Builder string:/i);
@@ -53,7 +52,7 @@ describe("ActionSvgEntryField component", () => {
     // Assert that the malformed state triggers the error message
     const errorMessage = await screen.findByText("Invalid builder string");
     expect(errorMessage).toBeInTheDocument();
-    
+
     expect(builderInput).toHaveAttribute("aria-invalid", "true");
   });
 

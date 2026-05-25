@@ -12,20 +12,47 @@ import { v4 as uuidv4 } from "uuid";
 import {
   makeBciAvIdType, BCIAV_PATTERN_KEY, BLISSARY_PATTERN_KEY, decomposeBciAvId
 } from "../../src/client/SvgUtils";
+import { BciAvIdType, JsonPaletteType } from "../../src/client/index.d";
 
 const BLANK_CELL = "BLANK";
 const SVG_PREFIX = "SVG:";
 const SVG_SUFFIX = ":SVG";
 const LABEL_MARKER = "LABEL:";
 
-let bliss_gloss;
-export async function fetchBlissGlossJson () {
+type BlissGlossEntry = {
+  id: string,
+  description: string,
+  pos?: string,
+  explanation?: string,
+  isCharacter?: boolean,
+  composition?: BciAvIdType,
+  composingIds?: unknown
+};
+
+type MatchInfo = {
+  bciAvId: number,
+  label: string,
+  composition?: BciAvIdType,
+  fullComposition?: BciAvIdType
+};
+
+type MatchByInfo = { [label: string]: MatchInfo[] };
+
+type ProcessPaletteResult = {
+  paletteJson: JsonPaletteType,
+  matches: MatchByInfo[],
+  errors: string[]
+};
+
+let bliss_gloss: BlissGlossEntry[];
+export async function fetchBlissGlossJson (): Promise<BlissGlossEntry[]> {
   // Read and parse the Bliss gloss JSON file
   try {
     const fetchResponse = await fetch("/data/bliss_symbol_explanations.json");
-    bliss_gloss = await fetchResponse.json();
+    bliss_gloss = await fetchResponse.json() as BlissGlossEntry[];
   } catch (error) {
-    console.error(`Error fetching 'bliss_symbol_explanations.json': ${error.message}`);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`Error fetching 'bliss_symbol_explanations.json': ${message}`);
   }
   return bliss_gloss;
 }
@@ -36,7 +63,7 @@ export async function fetchBlissGlossJson () {
  * @param {string} - the string to test.
  * @returns {boolean}
  */
-function isSvgBuilderString (theString) {
+function isSvgBuilderString (theString: string): boolean {
   return theString.startsWith(SVG_PREFIX) && theString.endsWith(SVG_SUFFIX);
 }
 
@@ -51,8 +78,8 @@ function isSvgBuilderString (theString) {
  * @return {Array} - An array of the specifiers required by the SvgUtils.
  * @throws {Error} - If the encoding is not well formed.
  */
-function convertSvgBuilderString (theString) {
-  let result;
+function convertSvgBuilderString (theString: string): BciAvIdType {
+  let result: BciAvIdType;
   // Three forms, one with commas and one without:
   // - commas:
   //   Replace the SVG prefix and suffix with "[" and "]", then parse the array.
@@ -68,7 +95,7 @@ function convertSvgBuilderString (theString) {
   if (theString.indexOf(",") !== -1) {
     // Replace the SVG prefix and suffix strings with square brackers (array)
     theString = theString.replace(SVG_PREFIX, "[").replace(SVG_SUFFIX,"]");
-    result = JSON.parse(theString);
+    result = JSON.parse(theString) as BciAvIdType;
   }
   else if (theString.indexOf("B") !== -1) {
     // Remove the SVG prefix and suffix
@@ -96,8 +123,8 @@ function convertSvgBuilderString (theString) {
  *                  { id: {number}, description: {string}, ... }
  * @throws {Error} If no BCI AV ID is found for the label.
  */
-function findBciAvId(label, blissGlosses) {
-  const matches = [];
+function findBciAvId(label: string, blissGlosses: BlissGlossEntry[]): MatchInfo[] {
+  const matches: MatchInfo[] = [];
   // Search for the label in the Bliss gloss
   console.log(`For label ${label}:`);
   for (const gloss of blissGlosses) {
@@ -108,15 +135,17 @@ function findBciAvId(label, blissGlosses) {
       // its ID.  But if the `fullComposition` is the same as the original
       // ignore it.
       const glossId = parseInt(gloss.id);
-      let fullComposition;
+      let fullComposition: BciAvIdType | undefined;
       let equalCompositions = false;
       if (gloss.composition) {
         fullComposition = decomposeBciAvId(gloss.composition);
-        equalCompositions = fullComposition.join("") === gloss.composition.join("");
+        const compArr = Array.isArray(gloss.composition) ? gloss.composition : [gloss.composition];
+        const fullArr = Array.isArray(fullComposition) ? fullComposition : [fullComposition];
+        equalCompositions = fullArr.join("") === compArr.join("");
       }
       else {
         fullComposition = decomposeBciAvId(glossId);
-        if (fullComposition && fullComposition.length === 1) {
+        if (Array.isArray(fullComposition) && fullComposition.length === 1) {
           equalCompositions = fullComposition[0] === glossId;
         }
       }
@@ -145,7 +174,7 @@ function findBciAvId(label, blissGlosses) {
  * @returns {Object} The object that matches the given BCI AV ID
  * @throws {Error} If the given BCI AV ID is invalid (not in the gloss)
  */
-function findByBciAvId (bciAvId: string, blissGlosses: array) {
+function findByBciAvId (bciAvId: string, blissGlosses: BlissGlossEntry[]): BlissGlossEntry {
   const theEntry = blissGlosses.find((entry) => (entry.id === bciAvId));
   if (theEntry === undefined) {
     throw new Error(`BciAvId not found for BCI AV ID: ${bciAvId}`);
@@ -197,14 +226,20 @@ function findByBciAvId (bciAvId: string, blissGlosses: array) {
  *            was no match in the gloss
  * }
  */
-export function processPaletteLabels (paletteLabels, paletteName, startRow, startColumn, cellType) {
+export function processPaletteLabels (
+  paletteLabels: string[][],
+  paletteName: string,
+  startRow: number,
+  startColumn: number,
+  cellType: string
+): ProcessPaletteResult {
   // Initialize palette to return, the matches, and the error list
-  const finalJson = {
-    "name": paletteName,
-    "cells": {}
+  const finalJson: JsonPaletteType = {
+    name: paletteName,
+    cells: {}
   };
-  const matchByInfoArray = [];
-  const errors = [];
+  const matchByInfoArray: MatchByInfo[] = [];
+  const errors: string[] = [];
 
   paletteLabels.forEach((row, rowIndex) => {
     row.forEach((infoString, colIndex) => {
@@ -217,7 +252,7 @@ export function processPaletteLabels (paletteLabels, paletteName, startRow, star
       }
       // Create a cell object for the current `infoString`, leaving the
       // `bciAvId` field undefined for now.
-      const cell = {
+      const cell: { type: string, options: { label: string, bciAvId: BciAvIdType | undefined, rowStart: number, rowSpan: number, columnStart: number, columnSpan: number } } = {
         type: cellType,
         options: {
           label: infoString,
@@ -244,10 +279,11 @@ export function processPaletteLabels (paletteLabels, paletteName, startRow, star
         else {
           // If the `infoString` is a BCI AV ID (a number), just use it for the
           // `bciAvId`.  Even so, find its description from the `bliss_gloss`
-          cell.options.bciAvId = parseInt(infoString);
-          if (!isNaN(cell.options.bciAvId)) {
+          const parsedId = parseInt(infoString);
+          cell.options.bciAvId = parsedId;
+          if (!isNaN(parsedId)) {
             const glossEntry = findByBciAvId(infoString, bliss_gloss);
-            cell.options.label = actualLabel || glossEntry["description"];
+            cell.options.label = actualLabel || glossEntry.description;
           }
           else {
             // Find the BCI AV IDs for the current infoString.  Use the first
@@ -255,7 +291,7 @@ export function processPaletteLabels (paletteLabels, paletteName, startRow, star
             const matches = findBciAvId(infoString, bliss_gloss);
             cell.options.bciAvId = matches[0].bciAvId;
             cell.options.label = actualLabel || infoString;
-            const inputMatches = {};
+            const inputMatches: MatchByInfo = {};
             inputMatches[infoString] = matches;
             matchByInfoArray.push(inputMatches);
           }
@@ -263,7 +299,8 @@ export function processPaletteLabels (paletteLabels, paletteName, startRow, star
       }
       catch (error) {
         // If an error occurs, add it to the errors array
-        errors.push(error.message);
+        const message = error instanceof Error ? error.message : String(error);
+        errors.push(message);
 
         // Change the cell label to indicate that this cell is not right yet.
         // The `bciAvId` encoding means "not found".

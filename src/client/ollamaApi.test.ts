@@ -9,28 +9,29 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+import { vi } from "vitest";
 import { getModelNames, queryChat } from "./ollamaApi";
 import ollama from "ollama/browser";
 
 // Mock the entire ollama/browser module
-jest.mock("ollama/browser", () => ({
+vi.mock("ollama/browser", () => ({
   __esModule: true,
   default: {
-    list: jest.fn(),
-    chat: jest.fn(),
+    list: vi.fn(),
+    chat: vi.fn(),
   },
 }));
 
-const mockedOllama = jest.mocked(ollama);
+const mockedOllama = vi.mocked(ollama);
 // Dynamically infer what mockedOllama returned types are supposed to be
 type OllamaListResponse = Awaited<ReturnType<typeof mockedOllama.list>>;
 type OllamaChatResponse = Awaited<ReturnType<typeof mockedOllama.chat>>;
 
 describe("ollamaApi unit tests", (): void => {
-  
+
   // Clear mocks before each test so they don't interfere with one another
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("getModelNames", () => {
@@ -41,7 +42,7 @@ describe("ollamaApi unit tests", (): void => {
           { name: "mistral" },
         ],
       };
-      
+
       // Casting through `unknown` tells TypeScript:
       // 1. "Treat this object as unknown" (which strips its current strict type constraints).
       // 2. "Now treat it as ListResponse" (which forces it to match the expected type).
@@ -53,10 +54,9 @@ describe("ollamaApi unit tests", (): void => {
     });
 
     test("should handle errors and return an empty array", async (): Promise<void> => {
-      // Intentionally mock an error response to test error handling. It will override the
-      // global mock defined in `setupForJestAfterFramework.ts`. Also spy on console.error
-      // to suppress expected error logs during testing.
-      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+      // Intentionally mock an error response to test error handling. Also spy on
+      // console.error to suppress expected error logs during testing.
+      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
       // Simulate a network error or Ollama being offline
       mockedOllama.list.mockRejectedValue(new Error("Connection refused"));
 
@@ -121,6 +121,9 @@ describe("ollamaApi unit tests", (): void => {
     test("should call ollama.chat with stream: true when streamResp is true", async () => {
       // For a stream, Ollama returns an AsyncIterable. Mock it using an async generator.
       async function* mockStream() {
+        // Add a mock `await` to satisfies the linter. Otherwise, the linter complains an async
+        // function is not waiting for anything inside it.
+        await Promise.resolve();
         yield { message: { content: "Pa" } };
         yield { message: { content: "ris" } };
       }
@@ -132,9 +135,9 @@ describe("ollamaApi unit tests", (): void => {
           stream: true,
         })
       );
-      
+
       // Verify we actually get the async iterable back
-      expect(typeof response[Symbol.asyncIterator]).toBe("function");
+      expect(typeof (response as AsyncIterable<unknown>)[Symbol.asyncIterator]).toBe("function");
     });
   });
 });

@@ -45,7 +45,7 @@ const load = async (vectorStoreDir: string): Promise<FaissStore> => {
     return vectorStore;
   } catch (error) {
     console.log("An error occurred during loading vector store: ", error);
-    throw new Error(`Failed to load vector store: ${error}`, { cause: error });
+    throw new Error(`Failed to load vector store: ${String(error)}`, { cause: error });
   }
 };
 
@@ -66,7 +66,7 @@ const similaritySearch = async (
     return results;
   } catch (error) {
     console.log("An error occurred during similarity search: ", error);
-    throw new Error(`Failed to execute similarity search: ${error}`, { cause: error });
+    throw new Error(`Failed to execute similarity search: ${String(error)}`, { cause: error });
   }
 };
 

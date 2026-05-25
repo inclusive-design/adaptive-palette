@@ -11,12 +11,11 @@
 
 import { render, screen } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
-import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 
 import {
-  ActionSearchGloss, 
-  SUBMIT_LABEL, 
+  ActionSearchGloss,
+  SUBMIT_LABEL,
   CLEAR_LABEL
 } from "./ActionSearchGloss";
 
@@ -41,7 +40,7 @@ describe("ActionSearchGloss component", () => {
 });
 
 describe("ActionSearchGloss component behavior", () => {
-  
+
   test("allows user to type and clear the input", async () => {
     // Setup user-event
     const user = userEvent.setup();

@@ -18,9 +18,7 @@
       const list = await response.json();
       // Structure is { "models": [ ... ] }.
       // See https://github.com/ollama/ollama/blob/main/docs/api.md#list-local-models
-      list.models.forEach( (model) => {
-        modelNames.push(model.name);
-      });
+      modelNames = list.models.map(model => model.name);
     }
     catch (error) {
       console.debug(error);

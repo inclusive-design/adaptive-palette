@@ -38,7 +38,14 @@ const inputArea = await loadPaletteFromJsonFile("/palettes/input_area.json");
 const topPalette = await loadPaletteFromJsonFile("/palettes/top_palette.json");
 const modifiersPalette = await loadPaletteFromJsonFile("/palettes/modifiers.json");
 
-PaletteStore.paletteFileMap = paletteFileMap;
+if (!paletteFileMap) { throw new Error("Failed to load /palettes/palette_file_map.json"); }
+if (!firstLayer) { throw new Error("Failed to load /palettes/palettes.json"); }
+if (!goBackCell) { throw new Error("Failed to load /palettes/backup_palette.json"); }
+if (!inputArea) { throw new Error("Failed to load /palettes/input_area.json"); }
+if (!topPalette) { throw new Error("Failed to load /palettes/top_palette.json"); }
+if (!modifiersPalette) { throw new Error("Failed to load /palettes/modifiers.json"); }
+
+PaletteStore.paletteFileMap = /** @type {import("./index").PaletteFileMapType} */ (/** @type {unknown} */ (paletteFileMap));
 adaptivePaletteGlobals.paletteStore.addPalette(firstLayer);
 adaptivePaletteGlobals.paletteStore.addPalette(goBackCell);
 adaptivePaletteGlobals.paletteStore.addPalette(composeWordsArea);
@@ -46,25 +53,25 @@ adaptivePaletteGlobals.paletteStore.addPalette(inputArea);
 adaptivePaletteGlobals.paletteStore.addPalette(topPalette);
 adaptivePaletteGlobals.paletteStore.addPalette(modifiersPalette);
 
-adaptivePaletteGlobals.navigationStack.currentPalette = firstLayer;
+adaptivePaletteGlobals.navigationStack.currentPalette = { palette: firstLayer, htmlElement: getRequiredElement("mainPaletteDisplayArea") };
 render(html`<${Palette} json=${composeWordsArea} />`, document.getElementById("compose_words_palette"));
-render(html`<${Palette} json=${inputArea} />`, document.getElementById("input_palette"));
-render(html`<${Palette} json=${goBackCell} />`, document.getElementById("backup_palette"));
-render(html`<${Palette} json=${topPalette} />`, document.getElementById("indicators"));
-render(html`<${Palette} json=${firstLayer} />`, document.getElementById("mainPaletteDisplayArea"));
-render(html`<${Palette} json=${modifiersPalette} />`, document.getElementById("modifiers"));
+render(html`<${Palette} json=${inputArea} />`, getRequiredElement("input_palette"));
+render(html`<${Palette} json=${goBackCell} />`, getRequiredElement("backup_palette"));
+render(html`<${Palette} json=${topPalette} />`, getRequiredElement("indicators"));
+render(html`<${Palette} json=${firstLayer} />`, getRequiredElement("mainPaletteDisplayArea"));
+render(html`<${Palette} json=${modifiersPalette} />`, getRequiredElement("modifiers"));
 
 // Forms for interacting with LLMs
-render(html`<${DialogPromptEntries} />`, document.getElementById("llmPrompt"));
+render(html`<${DialogPromptEntries} />`, getRequiredElement("llmPrompt"));
 render(
   html`<${CommandTelegraphicCompletions} model="llama3.1:latest" stream=${false} />`,
-  document.getElementById("askForLlmSuggestions")
+  getRequiredElement("askForLlmSuggestions")
 );
-render(html`<${SentenceCompletionsPalette} />`, document.getElementById("llmSuggestions"));
+render(html`<${SentenceCompletionsPalette} />`, getRequiredElement("llmSuggestions"));
 
 // Forms for entering SVG strings and searching the AV
-render(html`<${ActionSvgEntryField} />`, document.getElementById("svgBuilderStringEntry"));
-render(html`<${ActionSearchGloss} />`, document.getElementById("searchGloss"));
+render(html`<${ActionSvgEntryField} />`, getRequiredElement("svgBuilderStringEntry"));
+render(html`<${ActionSearchGloss} />`, getRequiredElement("searchGloss"));
 
 // Window keydown listener for a global "go back" keystroke
 window.addEventListener("keydown", (event) => {
@@ -73,7 +80,7 @@ window.addEventListener("keydown", (event) => {
     // palette navigation
     if (!elementAllowsTextEntry(event.target)) {
       speak("Back");
-      goBackImpl();
+      void goBackImpl();
     }
   }
 });
@@ -83,9 +90,24 @@ const textInputTypes = [
   "tel", "text", "time", "url", "week"
 ];
 
-function elementAllowsTextEntry (element) {
+/**
+ * @param {string} id
+ * @returns {HTMLElement}
+ */
+function getRequiredElement(id) {
+  const el = document.getElementById(id);
+  if (!el) { throw new Error(`Required DOM element #${id} not found`); }
+  return el;
+}
+
+/**
+ * @param {unknown} element
+ * @returns {boolean}
+ */
+function elementAllowsTextEntry(element) {
+  if (!(element instanceof HTMLElement)) { return false; }
   return element.id !== INPUT_AREA_ID || element.id === COMPOSE_AREA_ID && (
-    textInputTypes.includes(element.type) ||
+    (element instanceof HTMLInputElement && textInputTypes.includes(element.type)) ||
     element instanceof HTMLTextAreaElement ||
     element instanceof HTMLSelectElement ||
     element.getAttribute("role") === "textbox"

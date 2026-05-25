@@ -30,7 +30,7 @@ type PromptsMap = Record<string, string>;
 function getStoredPrompts(): PromptsMap {
   const stored = window.localStorage.getItem(SYSTEM_PROMPTS_KEY);
   // Prevent JSON.parse(null) crash
-  return stored ? JSON.parse(stored) : {}; 
+  return stored ? JSON.parse(stored) as PromptsMap : {};
 }
 
 /**

@@ -46,7 +46,7 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
   } 
   // Check if searchTerm is a valid number, and make sure glossPart exists
   else if (/^\d+$/.test(searchTerm)) {
-    actualLabel = `${bciAvId}: ${glossPart || ""}`.trim();
+    actualLabel = `${String(bciAvId)}: ${glossPart || ""}`.trim();
     proposedGloss = glossPart || "";
   }
   const composition = decomposeBciAvId(bciAvId);

@@ -18,20 +18,16 @@ const NO_AVAILABLE_MODELS = "No Available Models";
 
 /**
  * Retrieve a list of LLMs available from the service
- * @return {Array}    - Array of the names of the available models.
+ * @return {Promise<string[]>} - Array of the names of the available models.
  */
-async function getModelNames () {
-  let modelNames = [];
+async function getModelNames() {
   try {
     const list = await ollama.list();
-    list.models.forEach( (model) => {
-      modelNames.push(model.name);
-    });
-  }
-  catch (error) {
+    return list.models.map(model => model.name);
+  } catch (error) {
     console.debug(error);
+    return [];
   }
-  return modelNames;
 }
 
 /**
@@ -44,7 +40,7 @@ async function getModelNames () {
  *   - `NO_AVAILABLE_MODELS`
  */
 async function initModelSelect () {
-  const selectElement = document.getElementById("modelSelect");
+  const selectElement = /** @type {HTMLSelectElement} */ (document.getElementById("modelSelect"));
   const modelNames = await getModelNames();
 
   if (modelNames.length === 0) {
@@ -76,8 +72,8 @@ async function initModelSelect () {
  *                     `false` otherwise.
  */
 function enableDisableModelSelect () {
-  const selectElement = document.getElementById("modelSelect");
-  const allModelsCheckbox = document.getElementById("allModels");
+  const selectElement = /** @type {HTMLSelectElement} */ (document.getElementById("modelSelect"));
+  const allModelsCheckbox = /** @type {HTMLInputElement} */ (document.getElementById("allModels"));
   if (allModelsCheckbox.checked) {
     selectElement.setAttribute("disabled", "disabled");
   }
@@ -93,7 +89,7 @@ function enableDisableModelSelect () {
  * `nameOfModelToUse` based on the selection.
  */
 function setSelectedModel () {
-  const selectElement = document.getElementById("modelSelect");
+  const selectElement = /** @type {HTMLSelectElement} */ (document.getElementById("modelSelect"));
   nameOfModelToUse = selectElement.selectedOptions[0].label;
 }
 
@@ -107,7 +103,8 @@ function useAllModelsClicked () {
     nameOfModelToUse = USE_ALL_MODELS;
   }
   else {
-    nameOfModelToUse = document.getElementById("modelSelect").selectedOptions[0].label;
+    const selectElement = /** @type {HTMLSelectElement} */ (document.getElementById("modelSelect"));
+    nameOfModelToUse = selectElement.selectedOptions[0].label;
   }
 }
 
@@ -122,10 +119,10 @@ function askClicked(event) {
   // Empty out the response area
   document.getElementById("ollamaOutput").innerText = "Working...";
   if (event.target.id === "singleSentence") {
-    executeAsk(singleSentence);
+    void executeAsk(singleSentence);
   }
   else {
-    executeAsk();
+    void executeAsk();
   }
 }
 
@@ -133,11 +130,13 @@ function askClicked(event) {
  * Function for passing the chat prompt to the ollama service.
  * @param {String} query      - The prompt string to query the service with.
  * @param {String} modelName  - The name of the LLM to query.
- * @return {Object}           - The response from the service.
+ * @return {Promise<Object>}  - The response from the service.
  */
 async function queryChat (query, modelName) {
-  let messageArray = [];
-  const textFromSystemPrompt = document.getElementById("systemPrompt").value.trim();
+  /** @type {Array<{role: string, content: string}>} */
+  const messageArray = [];
+  const systemPromptEl = /** @type {HTMLTextAreaElement} */ (document.getElementById("systemPrompt"));
+  const textFromSystemPrompt = systemPromptEl.value.trim();
   if (textFromSystemPrompt !== "") {
     messageArray.push({
       role: "system",
@@ -165,27 +164,31 @@ async function queryChat (query, modelName) {
  *                                      grammatically correct sentence".
  */
 async function executeAsk (addSingleToPrompt) {
-  const modelInSelect = document.getElementById("modelSelect").selectedOptions[0].label;
-  let promptText = document.getElementById("prompt").value;
+  const selectElement = /** @type {HTMLSelectElement} */ (document.getElementById("modelSelect"));
+  const promptEl = /** @type {HTMLTextAreaElement} */ (document.getElementById("prompt"));
+  const allModelsEl = /** @type {HTMLInputElement} */ (document.getElementById("allModels"));
+  const modelInSelect = selectElement.selectedOptions[0].label;
+  let promptText = promptEl.value;
   if (addSingleToPrompt) {
     promptText += addSingleToPrompt;
   }
   console.debug(`executeAsk(): prompt is "${promptText}"`);
-  if (document.getElementById("allModels").checked) {
-    queryEachModel(promptText);
+  if (allModelsEl.checked) {
+    void queryEachModel(promptText);
   }
   else if (modelInSelect !== NO_AVAILABLE_MODELS) {
     const response = await queryChat(promptText, modelInSelect);
-    outputResult(response, document.getElementById("ollamaOutput"), "No Result");
+    void outputResult(response, document.getElementById("ollamaOutput"), "No Result");
   }
   else {
-    outputResult([], document.getElementById("ollamaOutput"), "No Result");
+    void outputResult([], document.getElementById("ollamaOutput"), "No Result");
   }
 }
 
 /**
  * Process the response from the ollama service and add it to the web page.
- * @param {Array} response    -  Array of objects, an ordered set of parts.
+ * @param {AsyncIterable<{message: {content: string}}>} response -  Array of
+ *                               objects, an ordered set of parts.
  * @param {Element} outputEl  -  The DOM element to put the entire resonse
  *                               message into.
  * @param {String} defaultMsg -  Optional default msssage when the `response`
@@ -194,8 +197,9 @@ async function executeAsk (addSingleToPrompt) {
 async function outputResult(response, outputEl, defaultMsg) {
   outputEl.innerText = "";
   for await (const aPart of response) {
-    console.debug(aPart.message.content);
-    outputEl.innerText += aPart.message.content;
+    const part = /** @type {{message: {content: string}}} */ (aPart);
+    console.debug(part.message.content);
+    outputEl.innerText += part.message.content;
     document.body.scrollIntoView({behavior: "smooth", block: "end"});
   }
   if (outputEl.innerText === "") {
@@ -237,7 +241,7 @@ async function queryEachModel (promptText) {
   const names = await getModelNames();
   let count = 0;
   names.forEach ((modelName) => {
-    queryChat(promptText, modelName)
+    await queryChat(promptText, modelName)
       .then(async (response) => {
         const outputEl = createOutputSection(modelName);
         await outputResult(response, outputEl, "No Result");
@@ -246,9 +250,11 @@ async function queryEachModel (promptText) {
         // Clear the general "Working..." message after all models have been
         // queried, and scroll to the bottom
         if (count === names.length) {
-          outputResult([], document.getElementById("ollamaOutput"), "");
+          await outputResult([], document.getElementById("ollamaOutput"), "");
           document.body.scrollTop = document.body.scrollHeight;
         }
+      }).catch((error) => {
+        console.error(`Error querying model ${modelName}:`, error);
       });
   });
 }
@@ -295,16 +301,16 @@ async function flushModelOutputSections () {
   document.getElementById("ollamaOutput").innerText = "";
 }
 
-const justAskButton = document.getElementById("justAsk");
-const singleSentenceButton = document.getElementById("singleSentence");
-const promptTextArea = document.getElementById("prompt");
+const justAskButton = /** @type {HTMLButtonElement} */ (document.getElementById("justAsk"));
+const singleSentenceButton = /** @type {HTMLButtonElement} */ (document.getElementById("singleSentence"));
+const promptTextArea = /** @type {HTMLTextAreaElement} */ (document.getElementById("prompt"));
 
 justAskButton.addEventListener("click", askClicked);
 singleSentenceButton.addEventListener("click", askClicked);
 document.getElementById("modelSelect").addEventListener("change", setSelectedModel);
 document.getElementById("allModels").addEventListener("click", useAllModelsClicked);
-document.getElementById("flushModelSections").addEventListener("click", flushModelOutputSections);
+document.getElementById("flushModelSections").addEventListener("click", () => { void flushModelOutputSections(); });
 promptTextArea.addEventListener("input", setAskButtonsEnabledState);
 
 // Set up the model <select> element
-initModelSelect();
+void initModelSelect();

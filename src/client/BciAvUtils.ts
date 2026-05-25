@@ -46,7 +46,7 @@ export function findBciAvId(label: string): MatchType[] {
         let equalCompositions = false;
         if (gloss.composition) {
           fullComposition = decomposeBciAvId(gloss.composition);
-          equalCompositions = (fullComposition as (string|number)[]).join("") === (gloss.composition as (string|number)[]).join("");
+          equalCompositions = (fullComposition as (string|number)[]).join("") === gloss.composition.join("");
         }
         else {
           fullComposition = decomposeBciAvId(glossId);

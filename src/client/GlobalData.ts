@@ -102,7 +102,7 @@ export const adaptivePaletteGlobals = {
 
 export async function loadBlissaryIdMap (): Promise<BlissaryMapEntryType[]> {
   const response = await fetch(adaptivePaletteGlobals.blissaryIdMapUrl);
-  return await response.json();
+  return await response.json() as BlissaryMapEntryType[];
 }
 
 /**

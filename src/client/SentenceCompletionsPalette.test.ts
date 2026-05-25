@@ -10,7 +10,6 @@
  */
 
 import { render, screen, cleanup } from "@testing-library/preact";
-import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 
 import { sentenceCompletionsSignal } from "./GlobalData";
@@ -53,14 +52,14 @@ describe("SentenceCompletionsPalette render tests", (): void => {
     expect(document.querySelector(`[data-palettename="${SENTENCE_COMPLETIONS_NAME}"]`)).toBeNull();
   });
 
-  test("Signal value is a set of completions", async (): Promise<void> => {
+  test("Signal value is a set of completions", (): void => {
     sentenceCompletionsSignal.value = SUGGESTED_COMPLETIONS;
     render(html`<${SentenceCompletionsPalette} />`);
 
     // There should be no `WORKING_MESSAGE` but there should be a completions
     // palette.
     expect(screen.queryByText(WORKING_MESSAGE)).toBeNull();
-    
+
     const paletteElement = document.querySelector(`[data-palettename="${SENTENCE_COMPLETIONS_NAME}"]`);
     expect(paletteElement).toBeVisible();
 

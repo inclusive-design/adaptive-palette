@@ -334,7 +334,7 @@ function getSvgBuilder (bciAvId: BciAvIdType): BlissSVGBuilder | null {
   }
   catch (err) {
     console.error(err);
-    console.error(`Unknown bci-av-id = ${bciAvId}`);
+    console.error(`Unknown bci-av-id = ${String(bciAvId)}`);
     builder = null;
   }
   return builder;

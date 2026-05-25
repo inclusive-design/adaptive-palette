@@ -9,7 +9,6 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 import { render, screen, fireEvent } from "@testing-library/preact";
-import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
@@ -50,22 +49,22 @@ describe("ActionRemoveModifierCell render tests", (): void => {
   const bciAvIdAfterPreModifierRemoval = [ 14183 ];
   const blissWordPrePostModifiers = {
     id: "still-yet-another-fake-id",
-    label: "stupid",
-    bciAvId: [ 15927, "/", 15471, ";", 8998, "/", 14947 ],
+    label: "angry",
+    bciAvId: [ 14647, "/", 14164, ";", 8998, "/", 15928 ],
     modifierInfo: [
       {
-        modifierId: [ 15927 ],
-        modifierGloss: "opposite of",
+        modifierId: [14647 ],
+        modifierGloss: "group of",
         isPrepended: true
       }, {
-        modifierId: [ 14947 ],
-        modifierGloss: "intensity",
+        modifierId: [ 15928 ],
+        modifierGloss: "opposition",
         isPrepended: false
       }
     ]
   };
-  const bciAvIdAfterOneModifierRemoved = [ 15927, "/", 15471, ";", 8998 ];
-  const bciAvIdAfterBothModifiersRemoved = [ 15471, ";", 8998 ];
+  const bciAvIdAfterOneModifierRemoved = [14647, "/", 14164, ";", 8998 ];
+  const bciAvIdAfterBothModifiersRemoved = [14164, ";", 8998 ];
 
   beforeAll(async (): Promise<void> => {
     await initAdaptivePaletteGlobals();

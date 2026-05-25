@@ -10,7 +10,6 @@
  */
 
 import { render, screen } from "@testing-library/preact";
-import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 
 import { SYSTEM_PROMPTS_KEY } from "./GlobalData";
@@ -39,11 +38,11 @@ describe("DialogPromptEntries component", () => {
     render(html`<${DialogPromptEntries} />`);
 
     // Check the prompt <select> and its <option>s.
-    const promptSelect = screen.getByLabelText(/choose a prompt/i) as HTMLSelectElement;
+    const promptSelect = screen.getByLabelText<HTMLSelectElement>(/choose a prompt/i);
     expect(promptSelect).toBeInTheDocument();
     expect(promptSelect.value).toBe(PROMPT1_KEY);
 
-    const options = screen.getAllByRole("option") as HTMLOptionElement[];
+    const options = screen.getAllByRole<HTMLOptionElement>("option");
     expect(options).toHaveLength(2);
     expect(options[0].value).toBe(PROMPT1_KEY);
     expect(options[1].value).toBe(PROMPT2_KEY);
@@ -54,7 +53,7 @@ describe("DialogPromptEntries component", () => {
     expect(textArea.value).toBe(PROMPT1);
 
     // Check the other inputs.
-    const nameInput = screen.getByPlaceholderText("New prompt name") as HTMLInputElement;
+    const nameInput = screen.getByPlaceholderText<HTMLInputElement>("New prompt name");
     expect(nameInput).toBeInTheDocument();
     expect(nameInput.value).toBe("");
 

@@ -46,7 +46,7 @@ if (config.rag.enableRag) {
 
   // Route to search the vector store
   app.post("/query-vector", async (req, res) => {
-    const { query } = req.body;
+    const { query } = req.body as { query: string };
 
     try {
       // Convert query to vector and search the index
@@ -55,7 +55,7 @@ if (config.rag.enableRag) {
     } catch (error) {
       res.status(500).json({
         isError: true,
-        error: error
+        error: error instanceof Error ? error.message : String(error)
       });
     }
   });

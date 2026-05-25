@@ -27,7 +27,11 @@ From the root of the cloned project, enter the following in your command line
 to install dependencies:
 
 ```bash
+# Install project dependencies
 npm ci
+
+# Install Playwright browsers for testing. This should only need to be done once.
+npx playwright install
 ```
 
 ## Development
@@ -142,13 +146,42 @@ To lint the source code, run:
 npm run lint
 ```
 
+### Type Checking
+
+To type check the source code, run:
+
+```bash
+npm run typecheck
+```
+
 ### Run Tests
 
 To run tests, run:
 
 ```bash
+# Run all tests
 npm test
+
+# Run only client tests
+npm run test:client
+
+# Run only server tests
+npm run test:server
 ```
+
+You can pass in arguments to the tests runner by placing them after a `--`. For example,
+if you want to only run a single test you could call `npm test -- {test file name}`.
+
+For a complete list CLI flags that can be passed to the tests see Vitest's
+[Command Line Interface](https://vitest.dev/guide/cli.html) docs.
+
+_**NOTE:** The browser tests make use of Playwright to test real browsers. If you haven't already, you
+may need to run `npx playwright install` to install browsers. (see: [Browsers](https://playwright.dev/docs/browsers))_
+
+_**NOTE:** Browser tests are run in headless mode; however audio may still be played._
+
+_**NOTE:** Tests are run with watch mode disabled. If you prefer to enable watch mode you can use `-- --watch` flag.
+(e.g. `npm test -- --watch`)_
 
 ## Demonstrations
 
@@ -184,4 +217,3 @@ command" and "Build output directory" settings:
 ## Utility Scripts
 
 - [Load a document into a vector databbase (`scripts/loadDocIntoVectorDb.js`)](./scripts/loadDocIntoVectorDb.js)
-- [One time script to generate the composition of Bliss-word based on the Blissary (`scripts/createAndRecordCompositions.ts`)](scripts/createAndRecordCompositions.ts)

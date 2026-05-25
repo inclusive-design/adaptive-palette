@@ -74,8 +74,7 @@ export function CommandTelegraphicCompletions(props: CommandTelegraphicCompletio
     try {
       const response = await queryChat(labelText, selectedLLM, stream, systemPrompt);
       
-      // Optional Chaining to prevent crashes if response is malformed
-      const content = response?.message?.content || "";
+      const content = "message" in response ? (response.message?.content || "") : "";
       sentenceCompletionsSignal.value = content.split("\n");
       
     } catch (error) {

@@ -10,7 +10,6 @@
  */
 
 import { render, screen } from "@testing-library/preact";
-import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals } from "./GlobalData";
@@ -54,7 +53,7 @@ describe("GlossSearchPalette tests", (): void => {
       <${GlossSearchPalette}
         matches=${testMatches}
         noSearchTerm=${true}
-        searchTerm="" 
+        searchTerm=""
       />
     `);
     expect(container).toBeEmptyDOMElement();
@@ -66,7 +65,7 @@ describe("GlossSearchPalette tests", (): void => {
       <${GlossSearchPalette}
         matches=${NO_MATCHES}
         noSearchTerm=${false}
-        searchTerm="" 
+        searchTerm=""
       />
     `);
 
@@ -81,13 +80,13 @@ describe("GlossSearchPalette tests", (): void => {
       <${GlossSearchPalette}
         matches=${testMatches}
         noSearchTerm=${false}
-        searchTerm=${BARK} 
+        searchTerm=${BARK}
       />
     `);
 
     const resultsPalette = container.querySelector(PALETTE_SELECTOR);
     expect(resultsPalette).toBeInTheDocument();
-    
+
     // Ensure the "No matches" text is NOT present
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
   });
@@ -112,20 +111,20 @@ describe("GlossSearchPalette tests", (): void => {
     };
 
     const matchesPalette = makeMatchesPalette(testMatches, BARK, 1, 1);
-    
+
     expect(matchesPalette).not.toBeNull();
     expect(matchesPalette.name).toEqual(GLOSS_MATCHES_PALETTE);
 
     const cellKeys = Object.keys(matchesPalette.cells);
     expect(cellKeys.length).toBe(testMatches.length);
-    
+
     // Validate first cell
-    const firstCell = matchesPalette.cells[cellKeys[0]] as ExpectedCellShape; 
-    
+    const firstCell = matchesPalette.cells[cellKeys[0]] as ExpectedCellShape;
+
     expect(cellKeys[0].startsWith(BARK)).toBe(true);
     expect(firstCell.type).toEqual("ActionGlossSearchCell");
     expect(firstCell.options.label).toEqual(`${BARK}: ${testMatches[0].label}`);
-    
+
     // Validate positioning logic (startRow: 1, startCol: 1)
     expect(firstCell.options.rowStart).toBe(1);
     expect(firstCell.options.columnStart).toBe(1);

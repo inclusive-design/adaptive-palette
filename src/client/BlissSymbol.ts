@@ -46,17 +46,14 @@ export function BlissSymbol (props: BlissSymbolPropsType): VNode {
     svgMarkupString = svgElement.outerHTML;
   }
 
-  // The coercion to `any` and assignment to `raw` is _only_ for the unit
-  // tests to avoid the error:
+  // The construction below is _only_ for the unit tests to avoid the error:
   // "Argument of type 'any[]' is not assignable to parameter of type
   // 'TemplateStringsArray.  Property raw is mssing ..."
   // see: https://stackoverflow.com/questions/50706337/importing-html-to-typescript-to-use-as-templatestringliteral#answer-51012181
-  // Also TypeScript-ESLint does not allow explicit `any` types; override that
-  // rule for this case.
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const templateStringArray = [`${svgMarkupString}`] as any;
-  templateStringArray.raw = [`${svgMarkupString}`];
+  const templateStringArray = Object.assign(
+    [`${svgMarkupString}`],
+    { raw: [`${svgMarkupString}`] }
+  ) as unknown as TemplateStringsArray;
 
   return html`
     ${html(templateStringArray)}

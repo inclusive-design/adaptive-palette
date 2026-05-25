@@ -2,18 +2,16 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "ESNext",
-    "types": ["jest", "node"],
     "moduleResolution": "bundler",
+    "types": ["node", "vitest/globals", "vitest/config"],
+    "noEmit": true,
     "allowJs": true,
     "checkJs": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "alwaysStrict": true,
-    "skipLibCheck": true,
-    "outDir": "./dist/server"
-  },
-  "include": [
-    "config/**/*",
-    "src/server/**/*"
-  ]
+    "skipLibCheck": true
+  }
 }

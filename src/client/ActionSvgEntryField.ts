@@ -52,9 +52,11 @@ export function ActionSvgEntryField(): VNode {
     const form = event.currentTarget as HTMLFormElement; 
     const formData = new FormData(form);
     
-    // Extract and typecast form data
-    const svgInputString = formData.get(SVG_ENTRY_FIELD_ID)?.toString() || "";
-    const labelString = formData.get(SYMBOL_LABEL_FIELD_ID)?.toString() || "";
+    // Extract form string values (File entries are excluded)
+    const rawSvgInput = formData.get(SVG_ENTRY_FIELD_ID);
+    const svgInputString = typeof rawSvgInput === "string" ? rawSvgInput : "";
+    const rawLabelInput = formData.get(SYMBOL_LABEL_FIELD_ID);
+    const labelString = typeof rawLabelInput === "string" ? rawLabelInput : "";
 
     const bciAvId = convertSvgBuilderString(svgInputString);
 

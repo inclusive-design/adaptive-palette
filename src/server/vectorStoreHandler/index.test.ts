@@ -17,7 +17,7 @@ describe("Test vectorStoreHandler", () => {
   }, 25000);
 
   describe("Test load()", () => {
-    it("the vector store should be loaded", async () => {
+    it("the vector store should be loaded", () => {
       expect(vectorStore).toBeTruthy();
     });
 
@@ -27,21 +27,6 @@ describe("Test vectorStoreHandler", () => {
   });
 
   describe("Test similaritySearch()", () => {
-    // Calling `vectorStoreHandler.similaritySearch()` in a Jest test reports this error:
-    // `TypeError: A float32 tensor's data must be type of function Float32Array() { [native code] }`.
-    // The error doesn't occur when the function is called outside of Jest. Mocking `Array.isArray`
-    // works around the issue.
-    // See https://github.com/microsoft/onnxruntime/issues/16622#issuecomment-1626413333
-    const originalImplementation = Array.isArray;
-
-    Array.isArray = jest.fn((type: unknown): boolean => {
-      if (type && type.constructor && (type.constructor.name === "Float32Array" || type.constructor.name === "BigInt64Array")) {
-        return true;
-      }
-
-      return originalImplementation(type);
-    }) as unknown as (arg: unknown) => arg is unknown[];
-
     // Verify every result element
     const verifyResults = (results: unknown[]) => {
       results.forEach((item) => {

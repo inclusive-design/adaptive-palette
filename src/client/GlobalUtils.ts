@@ -78,9 +78,9 @@ async function loadPaletteFromJsonFile (jsonFilePath: string): Promise<JsonPalet
     if (!response.ok) {
       console.error(`Error loading ${jsonFilePath}: ${response.status}`);
     }
-    return await response.json();
+    return await response.json() as JsonPaletteType;
   } catch (error) {
-    console.error(`Error loading ${jsonFilePath}:, ${error}`);
+    console.error(`Error loading ${jsonFilePath}:, ${String(error)}`);
   }
 }
 

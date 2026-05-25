@@ -18,6 +18,15 @@ import "../../src/client/index.scss";
 import {
   initAdaptivePaletteGlobals, adaptivePaletteGlobals, cellTypeRegistry
 } from "../../src/client/GlobalData";
+import { JsonPaletteType } from "../../src/client/index.d";
+
+type MatchInfo = {
+  bciAvId: number,
+  label: string,
+  composition?: (string | number)[],
+  fullComposition?: (string | number)[]
+};
+type MatchByInfo = { [label: string]: MatchInfo[] };
 
 
 // Initialize any globals used elsewhere in the code.
@@ -32,7 +41,7 @@ const MAX_MATCHES_OUTPUT = 7;
  * set up a handler to adjust the palette for changes in the cell type.
  */
 function initCellTypesSelect () {
-  const cellTypesSelect = document.getElementById("cellTypes");
+  const cellTypesSelect = document.getElementById("cellTypes") as HTMLSelectElement;
   Object.keys(cellTypeRegistry).forEach ((cellType) => {
     // The "cell" type `ContentBmwEncoding` is for an array of symbols within
     // a content area, not for cells within a palette.  Avoid for now.
@@ -40,9 +49,11 @@ function initCellTypesSelect () {
       cellTypesSelect.add(new Option(cellType));
     }
   });
-  cellTypesSelect.addEventListener("change", async () => {
-    const palette = await adaptivePaletteGlobals.paletteStore.getNamedPalette(currentPaletteName);
-    updatePaletteCells(palette, cellTypesSelect.selectedOptions[0].value);
+  cellTypesSelect.addEventListener("change", () => {
+    void (async () => {
+      const palette = await adaptivePaletteGlobals.paletteStore.getNamedPalette(currentPaletteName) as JsonPaletteType;
+      updatePaletteCells(palette, cellTypesSelect.selectedOptions[0].value);
+    })();
   });
 }
 
@@ -98,7 +109,7 @@ function renderExamples() {
  * @param {String} cellType - the cell type to set all of the `palette`'s cells
  *                            to.
  */
-function updatePaletteCells (palette, cellType) {
+function updatePaletteCells (palette: JsonPaletteType, cellType: string) {
   if (palette && cellType) {
     Object.keys(palette.cells).forEach((id) => {
       palette.cells[id].type = cellType;
@@ -123,12 +134,13 @@ function handleGenerateDisplayButton () {
   if (glossesArray.length === 0) {
     paletteDisplay.innerText = "<p>Missing glosses ?</p>";
   }
+  const cellTypesSelect = document.getElementById("cellTypes") as HTMLSelectElement;
   const lookupResults = processPaletteLabels(
     glossesArray,
     paletteName.value,
     parseInt(rowStart.value),
     parseInt(colStart.value),
-    document.getElementById("cellTypes").selectedOptions[0].value
+    cellTypesSelect.selectedOptions[0].value
   );
   currentPaletteName = lookupResults.paletteJson.name;
 
@@ -148,7 +160,7 @@ function handleGenerateDisplayButton () {
  */
 
 async function handleNameChange () {
-  const palette = await adaptivePaletteGlobals.paletteStore.getNamedPalette(currentPaletteName);
+  const palette = await adaptivePaletteGlobals.paletteStore.getNamedPalette(currentPaletteName) as JsonPaletteType;
   updatePaletteName(palette, paletteName.value);
 }
 
@@ -159,14 +171,15 @@ async function handleNameChange () {
  * @return {Array} - Array of arrays of glosses, where each inner array is one
  *                   row of the palette.
  */
-function makeGlossesArrays () {
-  const glossRowsText = document.getElementById("glossInput").value;
+function makeGlossesArrays (): string[][] {
+  const glossInputEl = document.getElementById("glossInput") as HTMLTextAreaElement;
+  const glossRowsText = glossInputEl.value;
   if (glossRowsText.trim() === "") {
     console.error("No glosses provided");
     return [];
   }
   const glossRows = glossRowsText.split("\n");
-  const arrayofRows = [];
+  const arrayofRows: string[][] = [];
   glossRows.forEach((row) => {
     // Make an array of strings from each row, removing any blank items. Then
     // remove any begining or trailing white space.
@@ -200,7 +213,7 @@ function clearPaletteDisplay () {
  * Based on: https://stackoverflow.com/questions/67804382/force-showing-the-save-as-dialog-box-when-downloading-a-file#answer-67806663
  */
 async function savePalette () {
-  const palette = await adaptivePaletteGlobals.paletteStore.getNamedPalette(currentPaletteName);
+  const palette = await adaptivePaletteGlobals.paletteStore.getNamedPalette(currentPaletteName) as JsonPaletteType;
   if (palette) {
     // Double check that the name did not change.
     updatePaletteName(palette, paletteName.value);
@@ -225,7 +238,7 @@ async function savePalette () {
  * @param {Palette} palette - the palette in question.
  * @param {String} nameFromUI - the name in the text field input.
  */
-function updatePaletteName (palette, nameFromUI) {
+function updatePaletteName (palette: JsonPaletteType, nameFromUI: string) {
   if (palette?.name !== nameFromUI) {
     adaptivePaletteGlobals.paletteStore.removePalette(palette.name);
     palette.name = nameFromUI;
@@ -242,7 +255,7 @@ function updatePaletteName (palette, nameFromUI) {
  *                             used to find the match:
  *                             {label: {bciAvId: {string}, label: {string}}
  */
-function reportMatches(allMatches) {
+function reportMatches(allMatches: MatchByInfo[]) {
   // Empty out any previous report
   const mainMatchesEl = document.getElementById("mainMatchesDisplay");
   mainMatchesEl.innerText = "";
@@ -254,9 +267,9 @@ function reportMatches(allMatches) {
     const matchString = Object.keys(aMatch)[0];
     dt.innerText = matchString;
 
-    const matchesForString = aMatch[matchString];
+    const matchesForString: MatchInfo[] = aMatch[matchString];
     for (let i = 0; i < MAX_MATCHES_OUTPUT && i < matchesForString.length; i++) {
-      const match = matchesForString[i];
+      const match: MatchInfo = matchesForString[i];
       const dd = document.createElement("dd");
       dl.append(dd);
       let compositionString = "";
@@ -280,7 +293,7 @@ function reportMatches(allMatches) {
  * Report any errors that occurred as a bulletted list
  * @param {Array} errors - array of error meesaages ({String})
  */
-function reportErrors(errors) {
+function reportErrors(errors: string[]) {
   const noErrorEl = document.getElementById("noErrors");
   const errorListEl = document.getElementById("errorList");  // a <ul> element
   if (!errors || errors.length === 0) {
@@ -299,17 +312,17 @@ function reportErrors(errors) {
 }
 
 // HTML UI Elements
-const paletteName = document.getElementById("paletteName");
-const rowStart = document.getElementById("rowStart");
-const colStart = document.getElementById("colStart");
+const paletteName = document.getElementById("paletteName") as HTMLInputElement;
+const rowStart = document.getElementById("rowStart") as HTMLInputElement;
+const colStart = document.getElementById("colStart") as HTMLInputElement;
 const generatePalette = document.getElementById("generatePalette");
 const paletteDisplay = document.getElementById("paletteDisplay");
 
 // Listeners
 generatePalette.addEventListener("click", handleGenerateDisplayButton);
-paletteName.addEventListener("change", handleNameChange);
+paletteName.addEventListener("change", () => { void handleNameChange(); });
 document.getElementById("clearPaletteDisplay").addEventListener("click", clearPaletteDisplay);
-document.getElementById("savePalette").addEventListener("click", savePalette);
+document.getElementById("savePalette").addEventListener("click", () => { void savePalette(); });
 
 initCellTypesSelect();
 renderExamples();

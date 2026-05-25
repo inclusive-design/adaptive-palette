@@ -90,8 +90,8 @@ describe("PaletteStore module", (): void => {
     "./path/to/mock_palette.json": mockPalette
   };
 
-  const loadPalette = async (filePath:string): Promise<JsonPaletteType> => {
-    return (FILE_PALETTE_MAP as Record<string, JsonPaletteType>)[`${filePath}.json`];
+  const loadPalette = (filePath: string): Promise<JsonPaletteType | undefined> => {
+    return Promise.resolve((FILE_PALETTE_MAP as Record<string, JsonPaletteType>)[`${filePath}.json`]);
   };
 
   const paletteStore = new PaletteStore();

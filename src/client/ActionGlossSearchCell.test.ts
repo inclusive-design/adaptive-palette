@@ -10,7 +10,6 @@
  */
 
 import { render, screen } from "@testing-library/preact";
-import "@testing-library/jest-dom";
 import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals } from "./GlobalData";
@@ -21,9 +20,9 @@ describe("ActionGlossSearchCell render tests", (): void => {
   const BCI_TREE_BARK = 22311;
 
   // 1. Made ID unique to text search
-  const TEXT_SEARCH_CELL_ID = "text-search-uuid"; 
+  const TEXT_SEARCH_CELL_ID = "text-search-uuid";
   const TEXT_SEARCH_LABEL = "bark: bark";
-  const TEXT_SEARCH_PROPOSED_GLOSS = "bark"; 
+  const TEXT_SEARCH_PROPOSED_GLOSS = "bark";
 
   const textSearchCellProps = {
     id: TEXT_SEARCH_CELL_ID,
@@ -75,12 +74,12 @@ describe("ActionGlossSearchCell render tests", (): void => {
     expect(button.id).toBe(TEXT_SEARCH_CELL_ID);
     expect(button).not.toBeDisabled();
 
-    // Check parent class using jest-dom
+    // Check parent class
     const divCell = button.parentElement as HTMLElement;
     expect(divCell).toHaveClass("actionGlossSearchCell");
 
-    const inputElement = screen.getByLabelText(/Label:/i) as HTMLInputElement;
-    
+    const inputElement = screen.getByLabelText(/Label:/i);
+
     expect(inputElement).toBeVisible();
     expect(inputElement).toBeValid();
     expect(inputElement).toHaveValue(TEXT_SEARCH_PROPOSED_GLOSS);
@@ -105,7 +104,7 @@ describe("ActionGlossSearchCell render tests", (): void => {
     const divCell = button.parentElement as HTMLElement;
     expect(divCell).toHaveClass("actionGlossSearchCell");
 
-    const inputElement = screen.getByLabelText(/Label:/i) as HTMLInputElement;    
+    const inputElement = screen.getByLabelText(/Label:/i);
     expect(inputElement).toBeVisible();
     expect(inputElement).toBeValid();
     expect(inputElement).toHaveValue(BCI_SEARCH_PROPOSED_GLOSS);
