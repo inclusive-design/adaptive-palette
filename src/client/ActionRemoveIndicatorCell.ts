@@ -51,7 +51,7 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
   // Enable the remove-indicator button only if there is an indicator on the
   // last symbol in the encoding contents array.
   const ariaControls =  ( isComposing.value ? COMPOSE_AREA_ID : INPUT_AREA_ID );
-  const contentsSignal = contentSignalMap[ariaControls as keyof typeof contentSignalMap];
+  const contentsSignal = contentSignalMap[ariaControls];
   const indicatorPosition = caretSymbolIndicatorPosition(contentsSignal.value);
   const disabled = indicatorPosition === -1;
 

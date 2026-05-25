@@ -11,12 +11,11 @@
 
 import { VNode } from "preact";
 import { html } from "htm/preact";
-import { useState } from "preact/hooks";
 
-import { BlissSymbolInfoType, LayoutInfoType, SymbolEncodingType } from "./index.d";
+import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { composeWordContents, COMPOSE_AREA_ID } from "./GlobalData";
-import { clamp, generateGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle, speak } from "./GlobalUtils";
 import { isCombined, combineContent, uncombineContent, bciAvIdToSkip } from "./CursorActions";
 import "./ActionModifierCell.scss";
 
@@ -38,7 +37,7 @@ export function ToggleMakeCombination (props: ToggleMakeCombinationPropsType): V
   } = props.options;
   const combineMarkerBciAvId = props.options.bciAvId;
 
-  const { caretPosition, payloads } = composeWordContents.value;
+  const { payloads } = composeWordContents.value;
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
   const disabled = payloads.length === 0;
 

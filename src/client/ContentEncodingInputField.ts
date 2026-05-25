@@ -15,8 +15,8 @@ import { Signal } from "@preact/signals";
 
 import { BlissSymbol } from "./BlissSymbol";
 import { contentSignalMap } from "./GlobalData";
-import { ContentBmwEncodingType, EncodingType, ContentSignalDataType, BciAvIdType } from "./index.d";
-import { generateGridStyle, clamp, speak } from "./GlobalUtils";
+import { ContentBmwEncodingType, EncodingType, ContentSignalDataType } from "./index.d";
+import { generateGridStyle, speak } from "./GlobalUtils";
 import { moveCursor } from "./CursorActions";
 import "./ContentBmwEncoding.scss";
 

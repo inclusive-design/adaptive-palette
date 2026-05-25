@@ -42,7 +42,7 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
   const ariaControls = ( isComposing.value ? COMPOSE_AREA_ID : INPUT_AREA_ID);
-  const contentsSignal = contentSignalMap[ariaControls as keyof typeof contentSignalMap];
+  const contentsSignal = contentSignalMap[ariaControls];
   const disabled = contentsSignal.value.caretPosition === -1;
 
   const cellClicked = () => {
