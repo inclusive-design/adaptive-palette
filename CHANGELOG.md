@@ -2,353 +2,113 @@
 
 ## 0.1.0 (2026-05-25)
 
-
 ### Features
 
-* actually commit the `SentenceCompletionsPalette` component ([63058c7](https://github.com/inclusive-design/adaptive-palette/commit/63058c700f2daff4bc1faaab920069ea0de8b98a))
-* add `role="status"` to two dialog messages ([11968bd](https://github.com/inclusive-design/adaptive-palette/commit/11968bd20cd7ce4cd44e213cd7165de5dfd786d3))
-* add a "remove indictor" action cell ([5f5ec72](https://github.com/inclusive-design/adaptive-palette/commit/5f5ec72b4937be7717d2261e82b494cf3695d3c8))
-* add a button for removing modifiers ([3d2f762](https://github.com/inclusive-design/adaptive-palette/commit/3d2f762a96afcaba1e2c94adc8d6439d83a3fe2f))
-* add a specific label to the svg builder strings ([929befa](https://github.com/inclusive-design/adaptive-palette/commit/929befaec0da075cd56b80656962676fbe80cc9c))
-* add a way to follow the typing restrictions of ollama.ts when testing ([1e6ac7f](https://github.com/inclusive-design/adaptive-palette/commit/1e6ac7f80ffbc703cb6c9270e44fcbaf6f4df4a8))
-* add ability to add modifier symbols to the last symbol in the input field ([807afc8](https://github.com/inclusive-design/adaptive-palette/commit/807afc8b37624baf4b5523547f3a13f0b9857e68))
-* add ability to delete current model(s)' output from the document ([ec3f2d3](https://github.com/inclusive-design/adaptive-palette/commit/ec3f2d316cfdf013910cb8e751a8d2e66ca53a41))
-* add ability to enter BCI AV identfiers as well as partial glosses. ([ed0d596](https://github.com/inclusive-design/adaptive-palette/commit/ed0d596d68d387db7031bf80722874406d6cae9b))
-* add ability to insert a symbol at the beginning of the content input area ([8b7d99e](https://github.com/inclusive-design/adaptive-palette/commit/8b7d99e8937667790fdf94b0a766daf0d33a97b0))
-* add an initial Express server ([5a16833](https://github.com/inclusive-design/adaptive-palette/commit/5a1683387701ac0b0527a50dc7290518ab1b4423))
-* add an utility script for generating palette JSON files ([9da461c](https://github.com/inclusive-design/adaptive-palette/commit/9da461cf86db84765dd5a10dcd8ac1d06de82123))
-* add checkbox for selecting all models ([b5e05d5](https://github.com/inclusive-design/adaptive-palette/commit/b5e05d5ddb52d7d4771886fbcc558931487fb8a7))
-* add composing ids and `isCharacter` fields to the bliss information ([3189ff1](https://github.com/inclusive-design/adaptive-palette/commit/3189ff1e74e7f056b6ee8309bc8e91e8d97b1ca0))
-* add cursor in the bliss symbol input field ([75a67fa](https://github.com/inclusive-design/adaptive-palette/commit/75a67fa887e868612256742169e32a2134aaf0e7))
-* add cursor in the bliss symbol input field ([f9119f4](https://github.com/inclusive-design/adaptive-palette/commit/f9119f4aa8f6a60e79cbaccb21e27ac1a8960a5f))
-* add dialog for changing the system prompt for querying ollama ([aa726b8](https://github.com/inclusive-design/adaptive-palette/commit/aa726b8bdf799369b426977ea94c82e0c9a5e03c))
-* add dialog to search gloss for symbols and present as a palette ([3c66ff4](https://github.com/inclusive-design/adaptive-palette/commit/3c66ff4d1dbc0916b191f82ac2506701bf4073ba))
-* add documentation for demo sub-folder ([cd30b0a](https://github.com/inclusive-design/adaptive-palette/commit/cd30b0a0642396b6749d90babc0ded34bc6ffe0e))
-* add dynamic sentence completions palette ([c1e2ddc](https://github.com/inclusive-design/adaptive-palette/commit/c1e2ddca276ef63f37bcd03fdf1f1989fc16d769))
-* add folded corner appearance to `ActionBranchToPaletteCell` ([75b7222](https://github.com/inclusive-design/adaptive-palette/commit/75b7222764618a581bc30a607e511102561177a9))
-* add function for locating the gloss entry with the given BCI AV ID ([35b9aac](https://github.com/inclusive-design/adaptive-palette/commit/35b9aac2a5a0406b0cdeed78224ec11e1cb6bc0e))
-* add function to insert symbols into the symbol editing field ([763dfac](https://github.com/inclusive-design/adaptive-palette/commit/763dfac10324c32d48e20e67f7a312f5642c9570))
-* add function to test if a bci av id is a single character ([cd90856](https://github.com/inclusive-design/adaptive-palette/commit/cd90856f5ddedfc17297f509796ccd07de5fed1a))
-* add indicators palette and define `ActionIndicatorCell` form and function ([5d2053b](https://github.com/inclusive-design/adaptive-palette/commit/5d2053b1b24a9927a784df14fe5e1118e1639727))
-* add inline examples of bliss builder strings to `details` section ([2ab2333](https://github.com/inclusive-design/adaptive-palette/commit/2ab2333969171b2d5ecf820905e36e019fb6716b))
-* add instructions on the main `index.html` page ([5ac37a4](https://github.com/inclusive-design/adaptive-palette/commit/5ac37a4592a9e2ff1d4f590b6ed2449f5f278f86))
-* add integration tests for adding and removing modifiers ([ab5fe26](https://github.com/inclusive-design/adaptive-palette/commit/ab5fe26fbd4f82310c29ebdbd2ccda233d7cdd1f))
-* add integration tests for the cursor forward and backward buttons ([1a7ab5e](https://github.com/inclusive-design/adaptive-palette/commit/1a7ab5e06c3dfe001e97b43c93ee4ba772399674))
-* add keyboard controls for going to the start/home and end of the input area ([d3c5a09](https://github.com/inclusive-design/adaptive-palette/commit/d3c5a09d630eed04a2bd762525ab38f02523c7ca))
-* add main sections of the standard bliss board ([e78445d](https://github.com/inclusive-design/adaptive-palette/commit/e78445dd7498ef1a83efdbe1a28be7d052d129b9))
-* add more unit tests re: gloss search components ([4219675](https://github.com/inclusive-design/adaptive-palette/commit/4219675bdb0918320eeec2f9d57263fc44436b43))
-* add new compositions, webapp that generates them, and documentation of exceptions ([b069056](https://github.com/inclusive-design/adaptive-palette/commit/b069056d2d86e27ac08eca1b9c3472c10a201d4a))
-* add README and fix lint errors ([747554b](https://github.com/inclusive-design/adaptive-palette/commit/747554ba993dcdfc53b48910e446eb3c4bf810a9))
-* add README for palette generator web app ([4d98bd0](https://github.com/inclusive-design/adaptive-palette/commit/4d98bd0d94ec409dd9d49246bd5110b99c3f7310))
-* add scripts for demo apps and advice regarding cloudflare previews ([13ed04a](https://github.com/inclusive-design/adaptive-palette/commit/13ed04a0ad34493c1b9d712a4014eac62006859d))
-* add scripts for RAG support ([210dd32](https://github.com/inclusive-design/adaptive-palette/commit/210dd32557747c7fa202760fb06b5a94598620a7))
-* add search by single BCI AV ID ([b37f1d7](https://github.com/inclusive-design/adaptive-palette/commit/b37f1d7a82ec28674938ca2326d69797bf62eeb3))
-* add some details regarding preview of the palette using cloudflare ([4fe3891](https://github.com/inclusive-design/adaptive-palette/commit/4fe3891ad881cff7e697bd84548eeeef787b6da2))
-* add some unit tests for the new prompt dialog ([b670284](https://github.com/inclusive-design/adaptive-palette/commit/b670284caf7fa659f6230fe1e3bff948e4452ecc))
-* add tests for `ActionIndicatorCell` ([d3886e5](https://github.com/inclusive-design/adaptive-palette/commit/d3886e537683e3cbe59cc2afb7082f1adfddac74))
-* add tests for `ActionRemoveIndicatorCell` ([b477a3e](https://github.com/inclusive-design/adaptive-palette/commit/b477a3eeef4287c410c12b251a8d46178b38ec78))
-* add tests for `ActionSvgEntryField` component ([ef019df](https://github.com/inclusive-design/adaptive-palette/commit/ef019df21777b79be779f139a49aa559ff03df6d))
-* add tests for `findCompositionsUsingId()` ([a3e1c5b](https://github.com/inclusive-design/adaptive-palette/commit/a3e1c5bceda3697718874768b8d5108dcc918902))
-* add tests for adding and removing modifiers ([9e7ffad](https://github.com/inclusive-design/adaptive-palette/commit/9e7ffad095540db89f47a15f65949aa2fd740a60))
-* add tests for ollama api ([64be8a7](https://github.com/inclusive-design/adaptive-palette/commit/64be8a7ada0503b837dd4003d973643750fc06b1))
-* add tests for the cursor forward and backward buttons ([e86de99](https://github.com/inclusive-design/adaptive-palette/commit/e86de99d18dcb681403dc5060f0b811f1449f96c))
-* add types for the typescript version of the ollama api ([2fc8ec1](https://github.com/inclusive-design/adaptive-palette/commit/2fc8ec142a02edcdf4d1b3bf71c17a0861c2de24))
-* add window keydown listener to handle "go back" keystroke ([002dce3](https://github.com/inclusive-design/adaptive-palette/commit/002dce3614bc88f70cd47945002c07c42f89efd1))
-* address review comments ([123b1e5](https://github.com/inclusive-design/adaptive-palette/commit/123b1e5d17b9f4a354a920e78c14417a31728211))
-* address review comments ([b51eae5](https://github.com/inclusive-design/adaptive-palette/commit/b51eae502eba5334b3a2e85ce4744b14236aacff))
-* address review comments ([e798893](https://github.com/inclusive-design/adaptive-palette/commit/e7988933895118a976314aa297b1ebea6f4c3dd1))
-* adjust "K:" builder code for latest bliss-svg-builder (alpha7) ([2bca9f8](https://github.com/inclusive-design/adaptive-palette/commit/2bca9f8d8098458e682e92d0c6ecae9debe87f7a))
-* adjust labels and bliss symbols for some command cells ([042ab3a](https://github.com/inclusive-design/adaptive-palette/commit/042ab3acf636c417c93c520a32f573ab12c50076))
-* allow entry of system prompt ([1640371](https://github.com/inclusive-design/adaptive-palette/commit/1640371558dd7a2e0446c4a0cd8218ea8f48e9b8))
-* allow svg builder strings to use BCI-AV IDs ([b94a11a](https://github.com/inclusive-design/adaptive-palette/commit/b94a11a3edafb48846e1d6b30fa528c4e5b85481))
-* allow user to choose the cell type ([175793a](https://github.com/inclusive-design/adaptive-palette/commit/175793a85a90a9ead3303d8142baa349b7651a8a))
-* animate the insertion caret; it blinks ([0e1fa03](https://github.com/inclusive-design/adaptive-palette/commit/0e1fa030c4c044ee0999c41e234622aff95e4e56))
-* appy typescript to the server code ([e5725ec](https://github.com/inclusive-design/adaptive-palette/commit/e5725ec21ef3f9dad8f9402aa4288d83a768cb5e))
-* change colour scheme for navigation and symbol cells ([30cd4fd](https://github.com/inclusive-design/adaptive-palette/commit/30cd4fd3deac7bf90ae4be82a82180d0caa29e9c))
-* change speech output of "Back" button to just a click sound ([985edd8](https://github.com/inclusive-design/adaptive-palette/commit/985edd8947e44243ff04eb3be9e3409ccc68f86f))
-* change symbols and gloss for "remove modifier" button to "remove added modifier" ([1e9a61e](https://github.com/inclusive-design/adaptive-palette/commit/1e9a61eb7fc331557091095b30441d976ba4db3a))
-* change symbols and gloss for "remove modifier" button to "remove added modifier" ([affb445](https://github.com/inclusive-design/adaptive-palette/commit/affb4451c1292953747482fd22c542d46e197cd6))
-* clear search text entry field when "clear" button is clicked ([ac89212](https://github.com/inclusive-design/adaptive-palette/commit/ac892123361c3409e6e972ed9e9104fecd2c3987))
-* combine `changeEncodingContents` and `cursorPositionSignal` into one signal ([9c3d73c](https://github.com/inclusive-design/adaptive-palette/commit/9c3d73c5a34dd4c8f0dc75e11b44a8bccc0ab1b3))
-* combine `changeEncodingContents` and `cursorPositionSignal` into one signal ([32765a0](https://github.com/inclusive-design/adaptive-palette/commit/32765a02b07d6d764b03fce0d6d825c5ee647498))
-* composite palettes as separate objects in the display ([fae6940](https://github.com/inclusive-design/adaptive-palette/commit/fae69404537a8c442f703e9634529b13b8b81f2b))
-* compute the compositionality of a given bliss word ([4ccccaf](https://github.com/inclusive-design/adaptive-palette/commit/4ccccafd3bb1d49a6024908575f43700a5b4d11b))
-* convert svg builder strings to the proper format of a cell ([76fbf59](https://github.com/inclusive-design/adaptive-palette/commit/76fbf59f40916c2dcba85b6205cbf4ddc1e636d2))
-* correct markup and styles for `ActionGlossSearchCell` and display decomposition svg builder string ([3243ad6](https://github.com/inclusive-design/adaptive-palette/commit/3243ad64e7ba571b2ed80bd06f4d37b1e695985f))
-* create "demos" folder and move code into it. ([52e73cf](https://github.com/inclusive-design/adaptive-palette/commit/52e73cfd4ea623399d2e62d3e76972bbd2cea233))
-* do not export moveCursor as it isn't used directly ([2d8e66c](https://github.com/inclusive-design/adaptive-palette/commit/2d8e66cb4ed5d4d46f9d4a1e5572bac2dba8f17c))
-* edit symbol at the caret ([bf36789](https://github.com/inclusive-design/adaptive-palette/commit/bf36789042723bb3ef65b51762195f1a6e138754))
-* edit symbol at the caret ([49da588](https://github.com/inclusive-design/adaptive-palette/commit/49da588cd3285ef2971e66ac138e31d72b000521))
-* edit symbol at the caret, part II: add/remove/replace modifiers. ([d6cdea7](https://github.com/inclusive-design/adaptive-palette/commit/d6cdea7e69f5ee495c5dd94a1ec4e099fd2d4258))
-* edit symbol at the caret, part II: add/remove/replace modifiers. ([0a3db26](https://github.com/inclusive-design/adaptive-palette/commit/0a3db26b7d4218aa5d81e9b03b3fe42be52e41c8))
-* first attempt at component for activating sentence completion ([a118ce6](https://github.com/inclusive-design/adaptive-palette/commit/a118ce6d0710e96f1c896e7ad1b65c9240e0c207))
-* fix column calculation for the display of the gloss search results palette ([07cbdb1](https://github.com/inclusive-design/adaptive-palette/commit/07cbdb15b06d183597997aefdb3b97d4f89b1833))
-* handle "//" in svg builder strings to add space between bliss-words ([3c29348](https://github.com/inclusive-design/adaptive-palette/commit/3c293482a9b28ac4a0bc5c19b877ce2c09fea269))
-* handle change events when the name input text field changes ([92c6250](https://github.com/inclusive-design/adaptive-palette/commit/92c6250d4f30e7d371ca0f10ac7c07bc44da85d1))
-* handle label specification for single BCI AV IDs and single words ([a8d91ef](https://github.com/inclusive-design/adaptive-palette/commit/a8d91efff13c1f97e100c351bc6d8067a54abe37))
-* handle new kerning specifier code from bliss-svg-builder ([470c39c](https://github.com/inclusive-design/adaptive-palette/commit/470c39c538af8faaedee394392f68c25497de1b8))
-* handle new word separator specifier code from bliss-svg-builder ([f023b28](https://github.com/inclusive-design/adaptive-palette/commit/f023b288be00644b7a0758f06610593c9a02edb9))
-* handle situtations where indicator cell is disabled ([9ead7e1](https://github.com/inclusive-design/adaptive-palette/commit/9ead7e166978e3113ed5fd52abc5ff436e967d44))
-* Implement RAG ([24182ce](https://github.com/inclusive-design/adaptive-palette/commit/24182ce195ab76ab53e48deb435c9d4484cbbf8a))
-* improve dialog for system prompt and add dialog for svg string entry ([2faf0f0](https://github.com/inclusive-design/adaptive-palette/commit/2faf0f0a181844e540a1d0fefd4a5399eedeea83))
-* improve labels and static text for dialogs and search results ([8735016](https://github.com/inclusive-design/adaptive-palette/commit/87350161deb27f973a3a11f687bb7ba26b6d5cdb))
-* improve logic of applying an indicator to the last symbol displayed ([b3dfb0d](https://github.com/inclusive-design/adaptive-palette/commit/b3dfb0d2683c869a53a6cd9aed9f641b31aade24))
-* improve name and placeholder text for search vocabulary entry field ([e494c4a](https://github.com/inclusive-design/adaptive-palette/commit/e494c4a8bf4a490b0895ec190132b71a8edaced5))
-* improve presentation of bci av ids and glosses in the matches report ([0af0905](https://github.com/inclusive-design/adaptive-palette/commit/0af0905027e394d7e13611de689b5c626c3ef5ce))
-* improve the way the modifiers are found in a single Bliss-word ([93a2cd5](https://github.com/inclusive-design/adaptive-palette/commit/93a2cd59a51b08c1f5d9746047e86b93a5a4ff1c))
-* improve use of compromise for modifying gloss when adding inidcators ([6daac03](https://github.com/inclusive-design/adaptive-palette/commit/6daac03e5414ab1b41673e7f007912be12a2b7c0))
-* include ability to add empty cells in the palette ([08448f4](https://github.com/inclusive-design/adaptive-palette/commit/08448f4ca846569bd407713aa0a0082ccc1d2f09))
-* initial set-up with an Express server ([dcc487f](https://github.com/inclusive-design/adaptive-palette/commit/dcc487f710ffa67fd4cee2534378d3589cb1ff90))
-* integrate ollama, first checkin ([fd51863](https://github.com/inclusive-design/adaptive-palette/commit/fd51863f0ad8776b102cab37990357c1e59c2987))
-* keyboard support for input area ([cb75cb1](https://github.com/inclusive-design/adaptive-palette/commit/cb75cb1e1becf2e3e30ac3dcc3fca4f1c0144166))
-* keyboard support for input area ([960d0a0](https://github.com/inclusive-design/adaptive-palette/commit/960d0a08c682fc85e3da9bcb11e57e5b665e7c60))
-* make `LABEL:` processing consistent for all inputs ([50131c6](https://github.com/inclusive-design/adaptive-palette/commit/50131c6a940f7f56e8507ace5b98bca95d3524c9))
-* modify hover and focus styles to only change the border to red ([6eb2f42](https://github.com/inclusive-design/adaptive-palette/commit/6eb2f42e4571a645d72826807dd137c213738df0))
-* modify navigation stack to track rendering element ([e47b06b](https://github.com/inclusive-design/adaptive-palette/commit/e47b06b1730697f3ca056d0fc53bf29a23a2682e))
-* modify README to explain how to select language models ([215ddc9](https://github.com/inclusive-design/adaptive-palette/commit/215ddc910a5e6ac0d5d174494619729888c1ee6b))
-* modify styles to partially support dark-based colour schemes. ([48a70f1](https://github.com/inclusive-design/adaptive-palette/commit/48a70f13b6a170e25973b32b87f90fa30c7e4c3d))
-* more changes to add the Express server ([1a2c982](https://github.com/inclusive-design/adaptive-palette/commit/1a2c982af790554105bfbb06451b99f0594d0f7b))
-* move `bliss_symbol_explanations.json` to `./public/data` folder ([9540ae0](https://github.com/inclusive-design/adaptive-palette/commit/9540ae02efd21b4c6d227b8415bc6e2a9ad07c30))
-* move `ollamaApi.ts` to `src/client` for use by adpative-palette ([8bf9fb4](https://github.com/inclusive-design/adaptive-palette/commit/8bf9fb457366011ba17da7173a70c7a66f5a3065))
-* move all code into the apps/palette-generator directory ([d07a959](https://github.com/inclusive-design/adaptive-palette/commit/d07a959f43ab4210c065217c43e0520f0ce51380))
-* move logic for handling indicators and modifiers in `SvgUtils` ([76b2e1e](https://github.com/inclusive-design/adaptive-palette/commit/76b2e1e5d2ad672ae83b31af20334b50e4eb80f0))
-* move styles of dialogs to their own .scss files ([fb33aa3](https://github.com/inclusive-design/adaptive-palette/commit/fb33aa3641433dbd164f7964195c5e64a329464c))
-* move the logic of the web app script to a command line script ([561442f](https://github.com/inclusive-design/adaptive-palette/commit/561442f89fe17e41e805f4bbb1e33819fd66b656))
-* output composition string in "Matches" section for each match ([5f44b7f](https://github.com/inclusive-design/adaptive-palette/commit/5f44b7f271423143d062dbb6212ed0a575cbc78c))
-* overwrite merged character and composition info into main JSON file ([97060a0](https://github.com/inclusive-design/adaptive-palette/commit/97060a05c99ae596dc0e762af601284715f32526))
-* prepare demo for ISAAC conference ([8c1cdda](https://github.com/inclusive-design/adaptive-palette/commit/8c1cdda7b5d9ce28ff74ea49bad8ffafebb9e50d))
-* properly update the prompt dialog when a new prompt is added ([a30918c](https://github.com/inclusive-design/adaptive-palette/commit/a30918cfb82f1cb222f2c09d8267f8a1df3cff1e))
-* provide basic modifier information for `ActionBmwCodeCell` cells ([66aa2ab](https://github.com/inclusive-design/adaptive-palette/commit/66aa2ab26d366bf3b135b39faebb38a5865aaaf5))
-* provide basic modifier information for other `ActionBmwXxx` cells ([81ac43b](https://github.com/inclusive-design/adaptive-palette/commit/81ac43b266016fcb027ac4dc9ce3f0fea478b0ec))
-* put back button next to indicators strip and improve colour and layout styles ([ee941d4](https://github.com/inclusive-design/adaptive-palette/commit/ee941d47dd256741f1e4c64b86fa6cf78729d2e2))
-* put symbol itself as the first result when searching by ID ([56baad4](https://github.com/inclusive-design/adaptive-palette/commit/56baad48445b1cd8eadefa87f5f2307d7d3638df))
-* query all models and show each output in separate sections on the page ([33ed473](https://github.com/inclusive-design/adaptive-palette/commit/33ed4732543b04561d92d5d1fdac0e549dc9f2e3))
-* refactor ollama app to separate out ollama api calls into a separate file ([b836ae5](https://github.com/inclusive-design/adaptive-palette/commit/b836ae58d61af26b458db83653cc6ea27db967de))
-* remove auto-detection of modifiers -- can't be done ([11f677f](https://github.com/inclusive-design/adaptive-palette/commit/11f677f81a589561580aa9a3eafde7b3ab83acd6))
-* remove auto-detection of modifiers part II: remove `isSingleSymbol()` ([d180a89](https://github.com/inclusive-design/adaptive-palette/commit/d180a89f54d89cc7125122578dcd0b1d5a86ce12))
-* remove code and data erroneously copied from the ISAAC demo branch ([fa28dee](https://github.com/inclusive-design/adaptive-palette/commit/fa28dee698d79d94818cbb7bf77a4d9d7b856190))
-* remove compromise package from package.json ([69ecee5](https://github.com/inclusive-design/adaptive-palette/commit/69ecee56482b2991eb538ff42b68c5826082cd37))
-* remove hiding of svg entry and search dialogs ([44d2ad5](https://github.com/inclusive-design/adaptive-palette/commit/44d2ad5037b862cc63daf0190bafa4cabd977bb5))
-* remove hover style on symbol input field ([df9940e](https://github.com/inclusive-design/adaptive-palette/commit/df9940ee7639b69efab3a71820862f64e0d3f028))
-* remove no longer needed `./scripts/data/bliss_gloss.json` ([54de53d](https://github.com/inclusive-design/adaptive-palette/commit/54de53daed8982316a3e37dbd5c75c333cad8b8b))
-* remove special handling for word separator in svg builder string ([6c90532](https://github.com/inclusive-design/adaptive-palette/commit/6c905329792acd3ede165cdca2976dc2092420bb))
-* remove use of compromise and nlp processing of glosses ([c0816a4](https://github.com/inclusive-design/adaptive-palette/commit/c0816a49bbd1ea97751cd9e2bffd365c2bdaef09))
-* remove web-app specific code for the compostion creation tool ([b937a4f](https://github.com/inclusive-design/adaptive-palette/commit/b937a4f6b6b07a4f008fb9b6a5c5166dda01bc75))
-* replace Jest with Vitest (resolves [#77](https://github.com/inclusive-design/adaptive-palette/issues/77)) ([#90](https://github.com/inclusive-design/adaptive-palette/issues/90)) ([2becfb2](https://github.com/inclusive-design/adaptive-palette/commit/2becfb24397894a115131fc0d6495276c54a9337))
-* report all matches on the web page ([f3bf9d0](https://github.com/inclusive-design/adaptive-palette/commit/f3bf9d02a9aef6a280638f53df5bf8da1e156310))
-* retrieve available models from the service and allow users to select one ([a68c222](https://github.com/inclusive-design/adaptive-palette/commit/a68c222716f1e9d223bd4ecc8df7897ca8db1861))
-* revert making fais-node optional as it's needed for tests ([89113e5](https://github.com/inclusive-design/adaptive-palette/commit/89113e5b32343ecccdb44bd799f2038d787978d8))
-* separate output area from symbol palettes ([15f5c1d](https://github.com/inclusive-design/adaptive-palette/commit/15f5c1d1c83d7136ca9a41cfcc5eab2d5fc9548b))
-* separate vite serve commands for serving local apps and demos ([38ed4cc](https://github.com/inclusive-design/adaptive-palette/commit/38ed4cc2b4d63179407c2bef41d6acbb4fb19d95))
-* show "main" bci-av id when searching for all symbols that contain the searched-for bci-av id ([e5a3682](https://github.com/inclusive-design/adaptive-palette/commit/e5a3682d0464dfa29f418830cc801dff6e704b73))
-* show/hide of "svg entry" and "search gloss" dialogs ([c2719dc](https://github.com/inclusive-design/adaptive-palette/commit/c2719dc409cb07890d3e739617173c1920776943))
-* support adding and removing modifiers ([6f7f4f0](https://github.com/inclusive-design/adaptive-palette/commit/6f7f4f07d913952431c633e3bf24d4d71fdb1aa2))
-* support cursor navigation and editing in the symbol input field ([385a81f](https://github.com/inclusive-design/adaptive-palette/commit/385a81f1ffe2157cccd5926bbc3ea0853a18d8e6))
-* support standard bliss board ([b436388](https://github.com/inclusive-design/adaptive-palette/commit/b4363883132040401d258bc3f4ea4db79cf8c418))
-* switch to using the bmw gloss and logging all possbile matches ([d3a8a45](https://github.com/inclusive-design/adaptive-palette/commit/d3a8a45021bae34c3b353317dbd085518dad0636))
-* track positions of modifiers in an array to remove in reverse order ([f72da91](https://github.com/inclusive-design/adaptive-palette/commit/f72da9174ee86f3644f1fcdabf7fd2cb62e8c7f0))
-* track the element to render the "go-back" palette into when navigating up a layer ([3558dd0](https://github.com/inclusive-design/adaptive-palette/commit/3558dd094ccf55fb699ae730c9940a93b077b637))
-* update based on changes to `changeEncodingContents` signal structure ([4f2bb93](https://github.com/inclusive-design/adaptive-palette/commit/4f2bb9316440e48a497112f9ad259f20d286f4bc))
-* update based on changes to `changeEncodingContents` signal structure ([d5141d0](https://github.com/inclusive-design/adaptive-palette/commit/d5141d0f6e403c806f9ea1b530fd9bc03506838d))
-* update bliss-svg-builder to `^0.1.0-alpha.6` ([85247a2](https://github.com/inclusive-design/adaptive-palette/commit/85247a29f79c638d5a4d567a6386e0ef4579bc49))
-* update READMEs for serving local apps and demos ([e6632bd](https://github.com/inclusive-design/adaptive-palette/commit/e6632bdd0a3fd50b67d7b8e341510508c7928dff))
-* update version of svg-builder to latest alpha ([73f722b](https://github.com/inclusive-design/adaptive-palette/commit/73f722bb2ce72c6b40996120ffff4a039f06574d))
-* update version of svg-builder to latest alpha ([15f2077](https://github.com/inclusive-design/adaptive-palette/commit/15f2077b4d2c46db3fcc1cd68e6974bbb4edbf80))
-* update version of svg-builder to latest alpha (alpha10) ([619f76f](https://github.com/inclusive-design/adaptive-palette/commit/619f76f91a025691d234ae6e46359e2b3d1c8c97))
-* update version of svg-builder to latest alpha (alpha10) ([cd29e4f](https://github.com/inclusive-design/adaptive-palette/commit/cd29e4f45866a0bac138afbadcb198998f50429a))
-* update version of svg-builder to latest alpha (alpha7) ([2f4c708](https://github.com/inclusive-design/adaptive-palette/commit/2f4c7081022cc238c120e24ae5ecd3764abec5bf))
-* update version of svg-builder to latest alpha (alpha8) ([6bbb535](https://github.com/inclusive-design/adaptive-palette/commit/6bbb53586af69b8c45c7efd77909167ad304ea6e))
-* update webpage output as the LLM result streams in ([17fc3ee](https://github.com/inclusive-design/adaptive-palette/commit/17fc3eed56219207336ef8ed440999b6ee402d6c))
-* use `malformed` state in `ActionSvgEntryField`to report invalid builder strings ([402e4f6](https://github.com/inclusive-design/adaptive-palette/commit/402e4f68fca5d9d1348c64b7e9a90b17acfa1f6b))
-* use a signal to update the contents of the encoding area ([765ee68](https://github.com/inclusive-design/adaptive-palette/commit/765ee6894d48a9040cbc81a30e168f5340e0ac87))
-* use composition information in json to render the symbol and determine where the indicator goes ([78366e1](https://github.com/inclusive-design/adaptive-palette/commit/78366e1af77b226f055e9be2928d1de97b872d58))
-* use compromise module for maodifying gloss when adding inidcators ([63b4d85](https://github.com/inclusive-design/adaptive-palette/commit/63b4d851fea3ffad3de47b847b2405e5087cbcc2))
-* use exact or word matches when searching the gloss ([7329597](https://github.com/inclusive-design/adaptive-palette/commit/7329597f5c22d77d6ae4dcb15fa189b48e254c43))
-* use fetch to retrieve the bliss gloss from github ([c06187b](https://github.com/inclusive-design/adaptive-palette/commit/c06187b6692b474999357add98610aa04ace5426))
-* use full decomposition of symbols to position indicators properly ([a2885b7](https://github.com/inclusive-design/adaptive-palette/commit/a2885b7f3114899e05cd478f35d2a3dcc234116b))
-* use ollama javascript client API to communicat with the ollama service ([b480118](https://github.com/inclusive-design/adaptive-palette/commit/b480118a3da49ecafdb27a55f78160a5c23b6bc7))
-* use simpler way to prepend modifier symbols ([fcf99ea](https://github.com/inclusive-design/adaptive-palette/commit/fcf99ea438125d9e08c173dc9e9efd8b82e92802))
-* use type array to determine if an `input` accepts text ([e87d63b](https://github.com/inclusive-design/adaptive-palette/commit/e87d63bc1fb400b22c38ae528b975ec74daf8686))
-* voice keyboard cursor navigation ([5410d74](https://github.com/inclusive-design/adaptive-palette/commit/5410d74d5c0a88fcb71eded9eac3cf22897f9e71))
+#### Palette System
 
+* Palettes are defined in JSON files with a CSS grid layout, where each cell specifies its position using
+  `columnStart`, `columnSpan`, `rowStart`, and `rowSpan` properties.
+* A cell type registry maps string keys to Preact components, allowing palette JSON files to reference components by
+  name.
+* Users can navigate between multiple palettes using a breadcrumb stack that supports a back button and layered
+  navigation history.
+* Palette JSON files are loaded lazily on demand as users navigate, reducing initial load time.
+* A top-level "palette of palettes" allows users to choose from multiple available palettes.
+* Branch-to-palette cells display a folded-corner visual style to indicate they link to another palette.
+
+#### Bliss Symbol Rendering
+
+* A shared `BlissSymbol` component combines an SVG graphic with a text label for consistent symbol display across the
+  palette.
+* Bliss symbols are rendered as SVGs using the `bliss-svg-builder` npm package.
+* The Blissary BCI-AV ID map is loaded dynamically from a remote source rather than bundled as a submodule.
+* SVG elements include proper ARIA markup, and the label of a selected Bliss symbol is announced to assistive
+  technologies.
+
+#### Symbol Encoding Area
+
+* Users can compose Bliss symbol messages in a dedicated encoding area that displays selected symbols.
+* An animated blinking insertion caret shows the current edit position within the encoding area.
+* Users can move the caret and edit the symbol at its position, including adding, removing, or replacing modifiers and
+  indicators.
+* A symbol can be inserted at the beginning of the encoding area, and the entire area can be cleared with a dedicated
+  button.
+
+#### Modifiers & Indicators
+
+* A modifiers palette allows users to add pre* and post-modifiers to the last symbol in the encoding area, with a
+  button to remove the most recently added modifier.
+* An indicators palette supports adding, removing, and replacing grammatical indicators on symbols.
+* The Bliss symbols shown on the "remove indicator" and "remove modifier" buttons correctly use the imperative
+  indicator form.
+
+#### Keyboard & Navigation
+
+* The symbol encoding area supports full keyboard navigation, including moving the caret forward and backward, and
+  jumping to the start or end of the input.
+* A voice keyboard cursor navigation mode allows users to move the cursor via speech input.
+* A global "go back" keystroke listener allows users to navigate back from any palette.
+* Palette navigation keystrokes continue to work correctly even when the symbol input area has focus.
+
+#### Symbol Search
+
+* Users can search for Bliss symbols by gloss (text description); results are displayed as a navigable palette.
+* Users can search by BCI-AV ID, with the matching symbol shown as the first result.
+* A separate dialog allows users to enter SVG builder strings directly to find or compose a symbol.
+* The search text field is cleared when the user clicks the clear button, and dialogs can be shown or hidden as
+  needed.
+
+#### Ollama LLM Integration (optional)
+
+* The palette can connect to a locally running Ollama LLM instance to provide AI-assisted communication support.
+* A dynamic sentence completions palette presents AI-generated continuations based on the current encoding area
+  content.
+* Users can configure the system prompt used for Ollama queries through an in-app dialog.
+* Ollama responses support both streaming output and multiple completion candidates.
+
+#### RAG Support (optional)
+
+* An optional Retrieval-Augmented Generation (RAG) pipeline uses LangChain, a FAISS vector store, HuggingFace
+  embeddings, and Ollama to answer questions from loaded documents.
+* A script (`scripts/loadDocIntoVectorDb.js`) is provided to load documents into the vector database.
+* RAG is disabled by default and can be enabled via `config/config.ts`.
+
+#### Palette Generator App
+
+* A standalone webapp (`apps/palette-generator`) is included for generating palette JSON definition files.
+
+#### Accessibility
+
+* `role="status"` is applied to search result and dialog status messages so assistive technologies announce updates
+  automatically.
+* The encoding display area carries `role="textbox"` to be correctly identified as an editable region by screen
+  readers.
+* Colour contrast has been improved for symbol cells and sentence completion buttons.
+* Partial support for dark and high-contrast colour schemes has been added; light mode is enforced for now while full
+  dark mode support is in progress.
+* Labels, placeholder text, and static text across dialogs and search result views have been improved for clarity.
 
 ### Bug Fixes
 
-* a typo ([ecd4c3e](https://github.com/inclusive-design/adaptive-palette/commit/ecd4c3e894ac17f0971de6f55c2bafffabcfb2e3))
-* actually add `ActionRemoveModifierCell.ts` ([5abb43f](https://github.com/inclusive-design/adaptive-palette/commit/5abb43fa3699e998b7df3e84f3a25d6fb83ce4e2))
-* actually add the `ActionRemoveIndicatorCell.ts` component to the code ([a166c70](https://github.com/inclusive-design/adaptive-palette/commit/a166c708ad24b5d9c1ab38e506a54c7ccb42a49c))
-* actually add the add indicator test for the previous commit ([e5c5e0d](https://github.com/inclusive-design/adaptive-palette/commit/e5c5e0d72187dde88ebf00d6179b2da15b2f817e))
-* actually add the unit test files ([538e198](https://github.com/inclusive-design/adaptive-palette/commit/538e1983648b752a557c75eeb11f61735e2b12e8))
-* add `ActionGlossSearchCell` styles file ([13a766a](https://github.com/inclusive-design/adaptive-palette/commit/13a766aff6050ab52d951480a3cde55b96fde1fe))
-* add a test case and clean up html ([f3e09d9](https://github.com/inclusive-design/adaptive-palette/commit/f3e09d91b6c772ebc7702d1d72470f551f107467))
-* add html page ([29bc751](https://github.com/inclusive-design/adaptive-palette/commit/29bc751f98994e2eff0845885897cc416d5be38d))
-* add integration test of the enabled state of the remove-indicator button depending on the last symbol in the content area ([3475ac4](https://github.com/inclusive-design/adaptive-palette/commit/3475ac401ba1b43a8223eeece2d1d59ee37a76c3))
-* add integration tests for adding, replacing, and removing indicators ([486c065](https://github.com/inclusive-design/adaptive-palette/commit/486c0659e12be2e1aeaed45ee37709e58cac4f4e))
-* add label of modifier to input area for `ActionPostModifierCell` component ([e2d6fa0](https://github.com/inclusive-design/adaptive-palette/commit/e2d6fa045fc893265c413ca81937aa54a5baddbc))
-* add output area `.json` description file ([fcc595e](https://github.com/inclusive-design/adaptive-palette/commit/fcc595ef5904e9b29aaf0a47333406215abe8587))
-* add propery type for symbol array function parameter ([d5ff9b2](https://github.com/inclusive-design/adaptive-palette/commit/d5ff9b2253a6d9718f700ddbd91fc9999efd8aab))
-* add simpler way to start up apps and demos ([7f1d83a](https://github.com/inclusive-design/adaptive-palette/commit/7f1d83a242d911f1d6e5503b16d642e910994650))
-* add test of enabled/disabled state of `ActionRemoveIndicatorCell` when clicked ([77bab86](https://github.com/inclusive-design/adaptive-palette/commit/77bab86dbf32066b609fbcbe1ad77d2e8e30a1de))
-* add the .json file extension into files in palette_file_map.json ([a8e0ffa](https://github.com/inclusive-design/adaptive-palette/commit/a8e0ffab56d259f7c5ed55ba4f1393b49b89be3c))
-* add timeout for some server tests ([0b1e5db](https://github.com/inclusive-design/adaptive-palette/commit/0b1e5dbbc53224634ebf1582f0ab174e9fe26a90))
-* address more review comments ([5a1ddbb](https://github.com/inclusive-design/adaptive-palette/commit/5a1ddbbe2baae14b1de3a996f7c295e7cf6295a2))
-* address more review comments ([f1b302c](https://github.com/inclusive-design/adaptive-palette/commit/f1b302cbeeade6b3ca14d5b39beb6c014850b7a4))
-* address review — use import instead of require, update copyright ([ff76b60](https://github.com/inclusive-design/adaptive-palette/commit/ff76b600938de493a94a9ed1654603743dfe0eb5))
-* address review comment to make the go-back key hanlder more robust ([3a804aa](https://github.com/inclusive-design/adaptive-palette/commit/3a804aafddf24de97663df8039ef89ff405025d9))
-* address review comments ([a7cbeb1](https://github.com/inclusive-design/adaptive-palette/commit/a7cbeb109c5a40300a3d1af09af48e8da15848a2))
-* address review comments ([0c4f2e8](https://github.com/inclusive-design/adaptive-palette/commit/0c4f2e8c70edd7fd97c029c7dcfa931313bd5170))
-* address review comments ([0101442](https://github.com/inclusive-design/adaptive-palette/commit/01014420ac14ee0f15c8f8f4ee04d52fe9590487))
-* address review comments and improve docs ([b1334f9](https://github.com/inclusive-design/adaptive-palette/commit/b1334f9c46d6ebaba53867b210b8c0e267585e20))
-* address review suggestions ([f60a845](https://github.com/inclusive-design/adaptive-palette/commit/f60a845bd4dea4557e78fe5a16a00051b1014343))
-* address review suggestions ([9841511](https://github.com/inclusive-design/adaptive-palette/commit/98415119b2a79c061ea6c27c030fc9d8ac3ee268))
-* addressed code review comments ([376147f](https://github.com/inclusive-design/adaptive-palette/commit/376147fa466761b252f7f16a36fbc7043e77fc3f))
-* adjust more casses of `ActionXxx` cells regarding  modifier information ([a5053d8](https://github.com/inclusive-design/adaptive-palette/commit/a5053d8d5d2acac18bd83e35cfdd96d684722e75))
-* adjust one test temporarily so it works with compromise module ([f61f308](https://github.com/inclusive-design/adaptive-palette/commit/f61f3087ae80346a8a13b91b2c5f23001314d1b6))
-* adjust since auto-detection of modifiers no longer supported ([657db8b](https://github.com/inclusive-design/adaptive-palette/commit/657db8ba379425790be6c071af2883281e2969a8))
-* adjust test configurations ([f506d74](https://github.com/inclusive-design/adaptive-palette/commit/f506d74463d5e642b1761af3cbabcd5ed8ec5d38))
-* adjust test configurations ([62aa3f6](https://github.com/inclusive-design/adaptive-palette/commit/62aa3f63919e6ea995309e1b155d2687530215a9))
-* allow palette navigation keystroke to work when symbol input area has focus ([a430ea3](https://github.com/inclusive-design/adaptive-palette/commit/a430ea3eb8f93494155aab03c17e99a706ed3010))
-* allow palette navigation keystroke to work when symbol input has focus ([1cf8287](https://github.com/inclusive-design/adaptive-palette/commit/1cf828799f0d1d28004d4c7b6d58de6b5fc49acc))
-* better name for script file; was `tsvFileCompositions.js` ([7b1d71a](https://github.com/inclusive-design/adaptive-palette/commit/7b1d71a6ef32762ff727f2565f8a668ce02bc005))
-* better scrolling as LLMs responses are written to the page ([4814b14](https://github.com/inclusive-design/adaptive-palette/commit/4814b14c045c63d9133da3c49ab8ad6d0645b779))
-* bug in detecting the LABEL marker in svg builder strings ([c8252fd](https://github.com/inclusive-design/adaptive-palette/commit/c8252fd34175fb7a029dd6f64b1ab1935674aa64))
-* bug where clearing a palette no longer allows displaying new ones ([8eb23c0](https://github.com/inclusive-design/adaptive-palette/commit/8eb23c05684c8d4dedbab4f2d402df5203158cea))
-* bug: replace *all* underscores when parsing `LABEL:input_string` ([2a70484](https://github.com/inclusive-design/adaptive-palette/commit/2a7048480adf894a1eba614ca1bb6c2f0394f402))
-* change indicator on "remove" to the imperative inidcator ([20379f5](https://github.com/inclusive-design/adaptive-palette/commit/20379f57adeec6f5cd809b9567c784e5997332e7))
-* check for array type in `findCompositionsUsingId()` ([79f310e](https://github.com/inclusive-design/adaptive-palette/commit/79f310eb68b6ce39b17e8b78d96ccda1391dc27d))
-* clean up ([ba5b20d](https://github.com/inclusive-design/adaptive-palette/commit/ba5b20d749f223b30e4c1087e63dc3c5f2cd4ec1))
-* code review - improved some components ([8e8c24a](https://github.com/inclusive-design/adaptive-palette/commit/8e8c24a1af023db89beed24b5654da190e039d85))
-* comment ([1e6fbe7](https://github.com/inclusive-design/adaptive-palette/commit/1e6fbe7850ec60a84930ad3b2054cfd1e0916718))
-* config, CI and template adjustments ([267a817](https://github.com/inclusive-design/adaptive-palette/commit/267a817e892fb1bceae674957088ce67ae5c43ed))
-* convert compostion to a string cleanly ([dbadfbd](https://github.com/inclusive-design/adaptive-palette/commit/dbadfbdc972767b031cf95ad0bb8991f6ad8a27c))
-* correct bci av ids for "more" and "most" modifiers ([8669ee3](https://github.com/inclusive-design/adaptive-palette/commit/8669ee3b41dec06a4f47cf0f68e9959b2833f0dd))
-* correct bliss symbols on the remove button cells ([346e418](https://github.com/inclusive-design/adaptive-palette/commit/346e4188ff082e79a734e0881b3a89cbeb9853c7))
-* correct the bliss symbols used for the two buttons that remove an indicator and remove a modifier ([19ade02](https://github.com/inclusive-design/adaptive-palette/commit/19ade02a13b2f15e1e550d4b8c1666f2cad67a8d))
-* disable dark mode ([6068ac7](https://github.com/inclusive-design/adaptive-palette/commit/6068ac77dd1e1e8d931e3f2b4f79d4cd00fc4523))
-* disable dark mode ([48a1d78](https://github.com/inclusive-design/adaptive-palette/commit/48a1d78352b60eb30809cd85e01fe7936af111cb))
-* disable/enable save button as appropriate and styles on all non-palette buttons ([df56976](https://github.com/inclusive-design/adaptive-palette/commit/df569764e836d0e0e640eef6532154d8cbd4918a))
-* do a warmup search in the server test for the initial model downlaod ([d4841ed](https://github.com/inclusive-design/adaptive-palette/commit/d4841ed670cc1e58eec36ff0b8ea710332181926))
-* erase existing model output sections when making a new query ([be2a931](https://github.com/inclusive-design/adaptive-palette/commit/be2a93185815ed159f29809469cbeae12df680e6))
-* fix "moduleResolution" value due to TypeScript upgrade ([a2cfb79](https://github.com/inclusive-design/adaptive-palette/commit/a2cfb796c7f3a7401ad1801de7b0ccce59790c9b))
-* fix a few test failures ([16dc4c2](https://github.com/inclusive-design/adaptive-palette/commit/16dc4c27c6bed2089df88ad8802e7c7db474f0cb))
-* fix a server test error ([4812911](https://github.com/inclusive-design/adaptive-palette/commit/481291151dfdae893efe29fa80225132b6f4e92b))
-* fix a typo ([25d9ac5](https://github.com/inclusive-design/adaptive-palette/commit/25d9ac575f4c0c8ef0ddb1d5108f9fd869719225))
-* fix CI failure ([3627f71](https://github.com/inclusive-design/adaptive-palette/commit/3627f71072ada438adc208dfa1195ac196952085))
-* fix ci.yml ([b006dbd](https://github.com/inclusive-design/adaptive-palette/commit/b006dbde2be483236349de7fdface18db7432a68))
-* fix comments and tweak the layout of the main page for the ISAAC demo ([a7be56a](https://github.com/inclusive-design/adaptive-palette/commit/a7be56ac83b5fc1a14387f5882fc5ca462d710fd))
-* fix github job failure ([8e40bfe](https://github.com/inclusive-design/adaptive-palette/commit/8e40bfeb500714e20c8a40409aa8ac5aea12ac75))
-* fix linting error ([20caa23](https://github.com/inclusive-design/adaptive-palette/commit/20caa2329c3b02c84865a00908f06c7f6c82d0d4))
-* fix linting errors of @typescript-eslint/no-unsafe-assignment ([d5f481a](https://github.com/inclusive-design/adaptive-palette/commit/d5f481a7d18989dabe864635ab32f9334264e358))
-* fix the failure of loading JSON files (resolves [#7](https://github.com/inclusive-design/adaptive-palette/issues/7)) ([5d165df](https://github.com/inclusive-design/adaptive-palette/commit/5d165dff282668e0b4e6396d9d57bf28f96e178c))
-* fix the type warnings when updating vite version ([05fb519](https://github.com/inclusive-design/adaptive-palette/commit/05fb5192330fd5c8a8820095706412413b97c1cb))
-* fix typos ([dabf16b](https://github.com/inclusive-design/adaptive-palette/commit/dabf16b8fecd1b086e194ca7abfbac3956bc8c4a))
-* handle undefined svg element in list of elements ([4831a33](https://github.com/inclusive-design/adaptive-palette/commit/4831a33d96d242796d5b0b4febe76d00e2a24d40))
-* ignore `ContentBmwEncoding` since it is not a cell type of palettes ([de321a4](https://github.com/inclusive-design/adaptive-palette/commit/de321a420c7bfd45b2905d882dd02de0b769486c))
-* implement singleton in loading vector store ([c30f9e8](https://github.com/inclusive-design/adaptive-palette/commit/c30f9e8f03c13d5ebb6511ac8d9063ee7f32e3fe))
-* improve &lt;title&gt; and &lt;h1&gt; for the two web apps ([b4abed7](https://github.com/inclusive-design/adaptive-palette/commit/b4abed7d12658392e7c4bd6595f4fe24b5b83085))
-* improve a code comment ([82ad762](https://github.com/inclusive-design/adaptive-palette/commit/82ad76229a638f14fbbdacbb94a138ebe6fe9db3))
-* improve comments ([fd93001](https://github.com/inclusive-design/adaptive-palette/commit/fd93001ec6eb5a991ff3bfa78c0bef1ee0e23c8e))
-* improve contrast of text on sentence completion buttons ([ac981d7](https://github.com/inclusive-design/adaptive-palette/commit/ac981d709f698442d20e52b97cc08a986c7c02b5))
-* improve doc, linting config, and CI job ([2946807](https://github.com/inclusive-design/adaptive-palette/commit/29468073f032fca093490fdc9bb719255f49190f))
-* improve gloss for "group of" and "very" (intensity) modifiers ([81f14d7](https://github.com/inclusive-design/adaptive-palette/commit/81f14d795006cfc23b7a1e6990331bd6da82a146))
-* improve name of optional default container id parameter for `goBackImpl()` ([e886254](https://github.com/inclusive-design/adaptive-palette/commit/e886254796c076527675b1f24170071f73528ed0))
-* improve pull request template ([4567ea2](https://github.com/inclusive-design/adaptive-palette/commit/4567ea2f84e85448745870af00851e727c0c4840))
-* improve readme.md and handle edge cases ([d1f600b](https://github.com/inclusive-design/adaptive-palette/commit/d1f600bb2b98e9b8c5d1daae524fba4f2e2aa1ff))
-* improve text label for the prompt text entry area ([48aa994](https://github.com/inclusive-design/adaptive-palette/commit/48aa9942ab6da554bd7ad9e026967baa102384d4))
-* improve text label for the prompte text entry area ([6e3715e](https://github.com/inclusive-design/adaptive-palette/commit/6e3715ed8c5fcc97b54913e992dbf063ac9e1cf0))
-* improve the dynamic load of palette JSON files ([e625df5](https://github.com/inclusive-design/adaptive-palette/commit/e625df59e6200dc7457a2beb6ccdbcd9a8467239))
-* improve the watch process for the dev environment ([e44b586](https://github.com/inclusive-design/adaptive-palette/commit/e44b586fa7f392df715ed13179cc96cc8f2174bd))
-* improved the pull request template ([3c6769f](https://github.com/inclusive-design/adaptive-palette/commit/3c6769f9c9daf209186747305a9a1afc90c04726))
-* increase the server test timeout duration ([aa3f74d](https://github.com/inclusive-design/adaptive-palette/commit/aa3f74d55b9f899767aaeb38a36ae19cef3dae4f))
-* increase the timeout duration for a server test ([7881592](https://github.com/inclusive-design/adaptive-palette/commit/7881592279ba0fd362ed55f5a87224a2f497b6d3))
-* indent typo ([fc50c27](https://github.com/inclusive-design/adaptive-palette/commit/fc50c2718539ed49ed4552facc61273e491e109b))
-* insure that `stream` constant is actually a boolean ([94fb28f](https://github.com/inclusive-design/adaptive-palette/commit/94fb28f916fbc3e2cf2b11c8174c1b17a186ba24))
-* lint error ([f5f8794](https://github.com/inclusive-design/adaptive-palette/commit/f5f879462ab84218c50ab4126b525cc69b6852e4))
-* lint error ([e599112](https://github.com/inclusive-design/adaptive-palette/commit/e59911277b8786c161dbadbbd2c9502325b4bccf))
-* lint error ([0151b3a](https://github.com/inclusive-design/adaptive-palette/commit/0151b3a3fbec4b8dfc3817105402f2aef8b32410))
-* lint errors ([5895bc1](https://github.com/inclusive-design/adaptive-palette/commit/5895bc13553ed99218aa632aedf1bdc7245125ce))
-* lint errors ([f39fdd2](https://github.com/inclusive-design/adaptive-palette/commit/f39fdd21d87749526a41d90f474a3128910e748c))
-* lint errors ([d00c84b](https://github.com/inclusive-design/adaptive-palette/commit/d00c84b9482445f5e2a1192ef378e262deeb3083))
-* lint errors ([9a3222d](https://github.com/inclusive-design/adaptive-palette/commit/9a3222da341ee4d56101ca230f97091e2ead7b63))
-* linted ([8261441](https://github.com/inclusive-design/adaptive-palette/commit/8261441d792a42beaa287e42a36c42bc65b3aec0))
-* linted ([d9a885d](https://github.com/inclusive-design/adaptive-palette/commit/d9a885d0b3c4e9a7b70e91faf72a09961d48f5d1))
-* linted ([05d269d](https://github.com/inclusive-design/adaptive-palette/commit/05d269d980ad2975287f3f640063de5b8a23b4a8))
-* linting errors for generated change log ([#110](https://github.com/inclusive-design/adaptive-palette/issues/110)) ([b45d215](https://github.com/inclusive-design/adaptive-palette/commit/b45d215e9b18849bd24d812f9531aec8250e4b54))
-* make `errors` array a local rather than a global ([0692291](https://github.com/inclusive-design/adaptive-palette/commit/0692291b992e4d0844496f5752ca0ade69a94de8))
-* make caret blink from white to black ([d5ed7cc](https://github.com/inclusive-design/adaptive-palette/commit/d5ed7cc1760489f45eadfd19b9ff320156bd4398))
-* make palette of gloss search results four columns wide ([c82bd1d](https://github.com/inclusive-design/adaptive-palette/commit/c82bd1df75f7070ddbe747ac45beba1dd62e4001))
-* make sure all `ActionXxx` cells maintain the modifier information ([f94cab5](https://github.com/inclusive-design/adaptive-palette/commit/f94cab55ca36bea0aa35b5f4800acb2d9ad335e1))
-* minor change to pull request template ([97e5900](https://github.com/inclusive-design/adaptive-palette/commit/97e5900e9daade6b05e4474489841f5b057aa6b8))
-* minor new line fix ([3ebfb97](https://github.com/inclusive-design/adaptive-palette/commit/3ebfb976669cef40dcf7e70e599e97c19b16178b))
-* minor refactoring and bugs ([85046d3](https://github.com/inclusive-design/adaptive-palette/commit/85046d30421860509b05374e58596f391b8b0c7e))
-* miscalcuation of the number of columns in the search results palette ([19d6a05](https://github.com/inclusive-design/adaptive-palette/commit/19d6a056532c19de973d9852027a65b574bbd3e1))
-* modify and rename `lastSymbolIndicatorPosition()` to find the position of the indicator, if any, in the last symbol. ([44f0ecf](https://github.com/inclusive-design/adaptive-palette/commit/44f0ecfdc53c94f8a4f1f651fe0aa22841905020))
-* modify in a number of ways: ([0d04bda](https://github.com/inclusive-design/adaptive-palette/commit/0d04bda7a43eff27ca2ea3436443fdcfa9775a5e))
-* more code changes from code review ([0ab6fe6](https://github.com/inclusive-design/adaptive-palette/commit/0ab6fe68a4ae635de89e67434c0e570d34c15e18))
-* more code clean up ([62529f2](https://github.com/inclusive-design/adaptive-palette/commit/62529f269cdbed368c0ede3951c0d5d368987a5d))
-* more fix for the server test ([d89dfe5](https://github.com/inclusive-design/adaptive-palette/commit/d89dfe5c7ccfb267249e6b6bbc1ca3c01f5da929))
-* not allow deletion of symbol when caret is the start (for insertion) ([bfef591](https://github.com/inclusive-design/adaptive-palette/commit/bfef59171a099404b3dc412f5630552953495025))
-* provide full decomposition of bliss-words in palette json files ([fa36c5b](https://github.com/inclusive-design/adaptive-palette/commit/fa36c5bc1213d40619446b4cf3ebdcf60d3c12cb))
-* provide full decomposition of bliss-words in palette json files ([fd95d81](https://github.com/inclusive-design/adaptive-palette/commit/fd95d810b3fff7051899893ffbeb7d3a8850f39f))
-* refactor` ActionPre/PostModiferCell` to capture common operations ([5cc6a85](https://github.com/inclusive-design/adaptive-palette/commit/5cc6a85dd6078a7307d4c4a6b52f778ba53aeeab))
-* remove `cacheDirectory` from jest config files and use default ([01c5913](https://github.com/inclusive-design/adaptive-palette/commit/01c5913267900f763fac072dd79a607255d9e854))
-* remove `cacheDirectory` from jest config files and use default ([a7afff0](https://github.com/inclusive-design/adaptive-palette/commit/a7afff064374e5bc4cea9dbd1ec300250c2d5e3c))
-* remove `console.debug()` debugging statements ([2ddb18a](https://github.com/inclusive-design/adaptive-palette/commit/2ddb18a8bf4218935b5faa9bedd69667c452a7bc))
-* remove `console.log()` debug statement ([e1acfb3](https://github.com/inclusive-design/adaptive-palette/commit/e1acfb3445f2b859897e7e6272315ddd6ea32a69))
-* remove accidently committed doc ([42c9419](https://github.com/inclusive-design/adaptive-palette/commit/42c9419d32febdc6b4aaefbaea4538f32b7044ca))
-* remove comment lines from JSON ([f5526d0](https://github.com/inclusive-design/adaptive-palette/commit/f5526d0c4e9591f806b8dadf89f4454db32fd132))
-* remove components that belong on another branch ([23818b3](https://github.com/inclusive-design/adaptive-palette/commit/23818b30c39a4c7b73972fc15a119ba477354ee6))
-* remove console.debug() and fix early exit of every() bug ([eab0e72](https://github.com/inclusive-design/adaptive-palette/commit/eab0e72a31ce97a304c8739bbbccbffd312ad804))
-* remove console.debug() statements ([b822a17](https://github.com/inclusive-design/adaptive-palette/commit/b822a17b4ff48c34c85cd1b4fdd98485f868919c))
-* remove extra comments ([db6f3e1](https://github.com/inclusive-design/adaptive-palette/commit/db6f3e1dc9ba9542dce9cf8e1b12b1ef8781f89e))
-* remove extra spaces ([b0419ca](https://github.com/inclusive-design/adaptive-palette/commit/b0419ca2f700a54ac3af111171c80e4a9c64e785))
-* remove leading "." from paths ([867ee79](https://github.com/inclusive-design/adaptive-palette/commit/867ee796d29736506668fd9c71683611c5e3c20c))
-* remove modifier action cells until their behaviour is understood ([80bea15](https://github.com/inclusive-design/adaptive-palette/commit/80bea1517b0df73d593ba2c48d7f45d1e0b11d3e))
-* remove the disable of @typescript-eslint/no-unsafe-argument from linting rules ([2cc14f9](https://github.com/inclusive-design/adaptive-palette/commit/2cc14f978f92a4d9891c469e1b859aad8e8018dc))
-* remove the disable of @typescript-eslint/no-unsafe-call from linting rules ([1ff09c1](https://github.com/inclusive-design/adaptive-palette/commit/1ff09c1c7db95d1d76af9a810ae039e5cc5c59bc))
-* remove the disable of @typescript-eslint/no-unsafe-member-access from linting rules ([48fa4bb](https://github.com/inclusive-design/adaptive-palette/commit/48fa4bb189f7795aac6d7981e9371317a5bdf0dd))
-* remove the disable of @typescript-eslint/no-unsafe-return from linting rules ([f3ff51d](https://github.com/inclusive-design/adaptive-palette/commit/f3ff51da3c8632369169d4092e0c7cd36c8baa1b))
-* remove unimplemented combine modifier preact component ([314da9e](https://github.com/inclusive-design/adaptive-palette/commit/314da9e361f1aabed7c63e417153aa51888e6725))
-* remove unused `Cursor.ts` component and related functions ([b46fd6b](https://github.com/inclusive-design/adaptive-palette/commit/b46fd6b598cc861e3e147f630208d744cbbaf269))
-* replace absolute url to bliss glosses file with a relative one ([90d5dd0](https://github.com/inclusive-design/adaptive-palette/commit/90d5dd08db84a88db94e6c4b6ce7ea338e625efa))
-* restore history of palette_file_map.json (I) ([1904268](https://github.com/inclusive-design/adaptive-palette/commit/190426804f1df29626f57c1efd126384c95e14d6))
-* restore version of `apps/ollama/ollama.js` ([44faee5](https://github.com/inclusive-design/adaptive-palette/commit/44faee5446467e14d843f4f4d9989f96f2ccc5b2))
-* return zero for classifier position if symbol is "modifier" symbols only ([ea00b99](https://github.com/inclusive-design/adaptive-palette/commit/ea00b997b1aa1522459f862e2fb4e7ce8d124f93))
-* save palette to json file with indents ([1e4fb52](https://github.com/inclusive-design/adaptive-palette/commit/1e4fb52176402e36f98fa814d115d7ab503eb1f6))
-* spelling ([70e1a21](https://github.com/inclusive-design/adaptive-palette/commit/70e1a2134ceac443bcbb30bd04336b2ef7f030ec))
-* spelling error ([285203d](https://github.com/inclusive-design/adaptive-palette/commit/285203dd37e1f7df5ba85e7dcc7488d3c42663b9))
-* spelling mistake ([20bb0d2](https://github.com/inclusive-design/adaptive-palette/commit/20bb0d295bc6bd396ad63c9f8ff5df09dd3a6832))
-* started to add typecheck job and fix reported errors ([dabd316](https://github.com/inclusive-design/adaptive-palette/commit/dabd31662cc1d97f41ab9a39fe81095a46be7b8c))
-* stop caret moving backwards beyond the left most symbol ([f79d8c9](https://github.com/inclusive-design/adaptive-palette/commit/f79d8c9e9c752dc76747cbcfd7e7d58cf715e466))
-* stop searching after finding the first occurrence of the given bci-av-id ([abdbbe0](https://github.com/inclusive-design/adaptive-palette/commit/abdbbe0abd788f5ca3f4f9d8f707e88f1be49953))
-* switch `isCharacter` to true for four indicators ([b4c54de](https://github.com/inclusive-design/adaptive-palette/commit/b4c54de61b59c780fd5fffe428ca4ade1cc769c5))
-* switch `isCharacter` to true or false for numerous BCI-AV-IDs ([7f474dd](https://github.com/inclusive-design/adaptive-palette/commit/7f474dddb67c839c5c1baa223c43d4eecb93166b))
-* symbol for "room" and to add "concrete thing" indicator ([3331a6e](https://github.com/inclusive-design/adaptive-palette/commit/3331a6ead7a47fe5f7b4c2f60473d3d28414a97b))
-* syntax error: semi-colon that should have been a colon ([e5be98a](https://github.com/inclusive-design/adaptive-palette/commit/e5be98a194b005a2d76adf5881999673e9b067be))
-* type specification of `ContentSignalDataType.payloads` ([79958b7](https://github.com/inclusive-design/adaptive-palette/commit/79958b7a2d92308afcbd19e39163b20c10d77688))
-* typos and grammatical errors ([d74fb81](https://github.com/inclusive-design/adaptive-palette/commit/d74fb81e59b29cf727e6c97cf296a5ca22610ddb))
-* update .nvmrc and ci.yml ([62c51a1](https://github.com/inclusive-design/adaptive-palette/commit/62c51a10f7cecd9d3b7d250a23594303373696b3))
-* update ci.yml ([76316c4](https://github.com/inclusive-design/adaptive-palette/commit/76316c466ce41a1eaec4ead38e0c4d0795b101fa))
-* update copyright date ([04bab7e](https://github.com/inclusive-design/adaptive-palette/commit/04bab7e7833a108630cd6e2c858c8497b54fda01))
-* update copyright dates of changed files to 2026 ([507ff7d](https://github.com/inclusive-design/adaptive-palette/commit/507ff7dc63e3c65e487f293b1ed44906cb8f25af))
-* update main README's demonstrations section ([a2cfaea](https://github.com/inclusive-design/adaptive-palette/commit/a2cfaeaa634b66086924a7c7ce80300583b980c8))
-* update npm packages to latest versions ([fab9985](https://github.com/inclusive-design/adaptive-palette/commit/fab9985574594e7004479654d0b5169525596400))
-* update npm packages to latest versions ([2c70306](https://github.com/inclusive-design/adaptive-palette/commit/2c70306d6fdaf3c941eccb66a71ec7897559d31c))
-* update README ([89c9088](https://github.com/inclusive-design/adaptive-palette/commit/89c90882eb33ac6371eff086e2dcf7278e497a15))
-* update README.md to reflect the features of the app. ([7ea76a7](https://github.com/inclusive-design/adaptive-palette/commit/7ea76a76e6606c2483ce0a548c605b2b93b7356b))
-* update some npm packages ([ff8cca3](https://github.com/inclusive-design/adaptive-palette/commit/ff8cca3589db325ff999c1516a0e76091c93de24))
-* update tests for add indicators or modifiers when caret is at beginning ([499e00f](https://github.com/inclusive-design/adaptive-palette/commit/499e00fbe6bca9c5d01f8aaefe964a9ede63bc06))
-* update typescript to the latest version ([b3c3720](https://github.com/inclusive-design/adaptive-palette/commit/b3c372076735ff07f5d8fdc056937cc93fc982b4))
-* updated new location of `bliss_symbol_explanations.json` ([7851e00](https://github.com/inclusive-design/adaptive-palette/commit/7851e00ce42ced41c02c4c7f415d06435996f40d))
-* upgrade bliss-svg-builder from alpha.10 to rc.1 ([6b31015](https://github.com/inclusive-design/adaptive-palette/commit/6b310153289994a650b75d41d76c6ded926d53f6))
-* upgrade bliss-svg-builder to rc.1 ([aec49d9](https://github.com/inclusive-design/adaptive-palette/commit/aec49d913b7ad63b03ad3f20ffd1a8bbda3147f4))
-* upgrade vite to latest version ([50fbeba](https://github.com/inclusive-design/adaptive-palette/commit/50fbeba9b77cc1dcbfe88baa324d0d91b322697a))
-* use `rem` units instead of `em` or `px` ([e1df4a9](https://github.com/inclusive-design/adaptive-palette/commit/e1df4a972aeab800436027bbe50e142051e39b7d))
-* use fetch() to load json ([6569488](https://github.com/inclusive-design/adaptive-palette/commit/6569488f36ed260cecf56e78dcbdb3d389b65b3a))
-* use imperative indicator (24670) for command cells ([cf9f9e6](https://github.com/inclusive-design/adaptive-palette/commit/cf9f9e66d8be73f8608d2388b1f0cf925f6e4b6b))
-* use one string for a json file location in the palette_file_map.json ([4fb81ba](https://github.com/inclusive-design/adaptive-palette/commit/4fb81bab8ffcf80d477cfbd2d1c787c353c039c9))
-* wait for the build to complete before starting the dev server ([61e6af5](https://github.com/inclusive-design/adaptive-palette/commit/61e6af561cf5f128bbfe11c9e716b771bb742c53))
+* The column count calculation for the gloss search results palette was incorrect and has been corrected.
+* Palette navigation keystrokes were being blocked when the symbol input area had focus; this has been resolved.
+* The Bliss symbols assigned to the "remove indicator" and "remove modifier" buttons were incorrect and have been
+  fixed.
+* Command cells were using the wrong indicator symbol; they now correctly use the imperative form (BCI-AV ID 24670).
+* The caret could previously move past the leftmost symbol; it is now constrained to valid positions.
+* Deleting a symbol was incorrectly allowed when the caret was at the insertion start position; this is now blocked.
+* The vector store on the server is now loaded as a singleton to avoid redundant model downloads.
+* Dark mode is explicitly disabled while the full colour scheme implementation is in progress.
 
+### Infrastructure
+
+* The test runner has been migrated from Jest to Vitest, resolving long-standing compatibility issues.
+* Renovate bot has been added to automate dependency update pull requests.
+* A TypeScript strict type checking job has been added to CI, and all reported type errors have been resolved.
+* Release-please has been configured for automated release management.
+* `bliss-svg-builder` has been upgraded from alpha to rc.1.
+* TypeScript, Vite, and ESLint have been upgraded to their latest versions.
+* `npm-run-all` has been replaced with the actively maintained `npm-run-all2` package.
 
 ### Miscellaneous Chores
 
