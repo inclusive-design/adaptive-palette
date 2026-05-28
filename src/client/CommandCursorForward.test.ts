@@ -21,7 +21,7 @@ describe("CommandCursorForward render tests", (): void => {
   const testCell = {
     options: {
       "label": "Forward",
-      "bciAvId": [ 14390, ";", 24670 ],
+      "composition": [ 335, ";", 907 ],   // IDsfor bciAvIds 14390, 24670
       "rowStart": 2,
       "rowSpan": 1,
       "columnStart": 12,
@@ -70,4 +70,3 @@ describe("CommandCursorForward render tests", (): void => {
   });
 
 });
-

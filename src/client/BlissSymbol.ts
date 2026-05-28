@@ -12,12 +12,12 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { getSvgElement } from "./SvgUtils";
-import { BciAvIdType } from "./index.d";
+import { SymbolCompositionType } from "./index.d";
 
 export const GRAPHIC_ROLE = "graphic-symbol img";
 
 type BlissSymbolPropsType = {
-  bciAvId: BciAvIdType,
+  composition: SymbolCompositionType,
   label: string,
   // Aria markup information for svg part of the BlissSymbol.  The first is
   // really a boolean, but the html template function converts it to string
@@ -28,8 +28,8 @@ type BlissSymbolPropsType = {
 }
 
 export function BlissSymbol (props: BlissSymbolPropsType): VNode {
-  const { bciAvId, label, isPresentation, labelledBy } = props;
-  const svgElement = getSvgElement(bciAvId);
+  const { composition, label, isPresentation, labelledBy } = props;
+  const svgElement = getSvgElement(composition);
 
   let svgMarkupString = "";
   if (svgElement) {

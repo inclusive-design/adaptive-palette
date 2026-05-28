@@ -24,7 +24,7 @@ describe("ActionRemoveModifierCell render tests", (): void => {
       "rowSpan": "2",
       "columnStart": "2",
       "columnSpan": "1",
-      "bciAvId": 17448
+      "composition": 2505
     }
   };
 
@@ -33,38 +33,38 @@ describe("ActionRemoveModifierCell render tests", (): void => {
   const blissWordNoModifier = {
     id: "another-fake-id",
     label: "lonely",
-    bciAvId: [ 14164, ";", 8998, "/", 15474, "/", 16161 ],
+    composition: [ 313, ";", 86, "/", 449, "/", 513 ],
     modifierInfo: []
   };
   const blissWordWithPreModifier = {
     id: "yet-another-fake-id",
     label: "flame",
-    bciAvId: [ 15972, "/", 14183 ],
+    composition: [ 15972, "/", 319 ],
     modifierInfo: [{
       modifierId: [ 15972 ],
       modifierGloss: "part of",
       isPrepended: true
     }]
   };
-  const bciAvIdAfterPreModifierRemoval = [ 14183 ];
+  const compositionAfterPreModifierRemoval = [ 319 ];
   const blissWordPrePostModifiers = {
     id: "still-yet-another-fake-id",
     label: "angry",
-    bciAvId: [ 14647, "/", 14164, ";", 8998, "/", 15928 ],
+    composition: [ 368, "/", 313, ";", 86, "/", 487 ],
     modifierInfo: [
       {
-        modifierId: [14647 ],
+        modifierId: [368 ],
         modifierGloss: "group of",
         isPrepended: true
       }, {
-        modifierId: [ 15928 ],
+        modifierId: [ 487 ],
         modifierGloss: "opposition",
         isPrepended: false
       }
     ]
   };
-  const bciAvIdAfterOneModifierRemoved = [14647, "/", 14164, ";", 8998 ];
-  const bciAvIdAfterBothModifiersRemoved = [14164, ";", 8998 ];
+  const compositionAfterOneModifierRemoved = [368, "/", 313, ";", 86 ];
+  const compositionAfterBothModifiersRemoved = [313, ";", 86 ];
 
   beforeAll(async (): Promise<void> => {
     await initAdaptivePaletteGlobals();
@@ -173,7 +173,7 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     fireEvent.click(removeModifierButton);
     expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
     const lastSymbol = changeEncodingContents.value.payloads[changeEncodingContents.value.payloads.length-1];
-    expect(lastSymbol.bciAvId).toStrictEqual(bciAvIdAfterPreModifierRemoval);
+    expect(lastSymbol.composition).toStrictEqual(compositionAfterPreModifierRemoval);
   });
 
   test("ActionRemoveModifierCell rendering, enabled then disabled after removing prepended and appended modifiers", async (): Promise<void> => {
@@ -204,14 +204,13 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     fireEvent.click(removeModifierButton);
     expect(removeModifierButton.getAttribute("disabled")).toBeNull();
     let lastSymbol = changeEncodingContents.value.payloads[changeEncodingContents.value.payloads.length-1];
-    expect(lastSymbol.bciAvId).toStrictEqual(bciAvIdAfterOneModifierRemoved);
+    expect(lastSymbol.composition).toStrictEqual(compositionAfterOneModifierRemoved);
 
     // Remove the last modifier.  Now the `ActionRemoveModifierCell` should be
     // disabled.  Check that the symbol itself no longer has any modifiers.
     fireEvent.click(removeModifierButton);
     expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
     lastSymbol = changeEncodingContents.value.payloads[changeEncodingContents.value.payloads.length-1];
-    expect(lastSymbol.bciAvId).toStrictEqual(bciAvIdAfterBothModifiersRemoved);
+    expect(lastSymbol.composition).toStrictEqual(compositionAfterBothModifiersRemoved);
   });
 });
-

@@ -26,11 +26,11 @@ describe("Palette component", (): void => {
         "type": "ActionBmwCodeCell",
         "options": {
           "label": "First Cell",
-          "bciAvId": [
-            17720,
+          "composition": [
+            652,
             "/",
-            17697
-          ],
+            646
+          ],   // IDsfor bciAvIds 17720, 17697
           "rowStart": 3,
           "rowSpan": 1,
           "columnStart": 3,
@@ -41,7 +41,7 @@ describe("Palette component", (): void => {
         "type": "ActionBmwCodeCell",
         "options": {
           "label": "Second Cell",
-          "bciAvId": 23409,
+          "composition": 823,
           "rowStart": 3,
           "rowSpan": 1,
           "columnStart": 4,
@@ -52,11 +52,11 @@ describe("Palette component", (): void => {
         "type": "ActionBmwCodeCell",
         "options": {
           "label": "Third Cell",
-          "bciAvId": [
-            25554,
+          "composition": [
+            1028,
             "/",
-            12335
-          ],
+            106
+          ],   // IDsfor bciAvIds 25554, 12335
           "rowStart": 3,
           "rowSpan": 1,
           "columnStart": 5,

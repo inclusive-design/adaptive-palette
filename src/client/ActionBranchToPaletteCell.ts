@@ -67,7 +67,7 @@ const navigateToPalette = async (event: Event): Promise<void> => {
 
 export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType): VNode {
   const {
-    columnStart, columnSpan, rowStart, rowSpan, branchTo, bciAvId, label
+    columnStart, columnSpan, rowStart, rowSpan, branchTo, composition, label
   } = props.options;
 
   const gridStyles = `
@@ -79,7 +79,7 @@ export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType
     <button
       id="${props.id}" class="actionBranchToPaletteCell foldedCorner" style="${gridStyles}"
       data-branchto="${branchTo}" onClick=${navigateToPalette}>
-      <${BlissSymbol} bciAvId=${bciAvId} label=${label} />
+      <${BlissSymbol} composition=${composition} label=${label} />
     </button>
   `;
 }

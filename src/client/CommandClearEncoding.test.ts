@@ -21,7 +21,7 @@ describe("CommandClearEncoding render tests", (): void => {
   const testCell = {
     options: {
       "label": "Clear",
-      "bciAvId": 13665,
+      "composition": 1532,
       "rowStart": 2,
       "rowSpan": 1,
       "columnStart": 14,

@@ -23,7 +23,7 @@ const testPalette1 = {
       "type": "cellOneType",
       "options": {
         "label": "Singer",
-        "bciAvId": 16991,
+        "composition": 2411,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -34,7 +34,7 @@ const testPalette1 = {
       "type": "cellTwoType",
       "options": {
         "label": "Dancer",
-        "bciAvId": 19961,
+        "composition": 513,
         "rowStart": 2,
         "rowSpan": 3,
         "columnStart": 4,
@@ -51,7 +51,7 @@ const testPalette2 = {
       "type": "dummyCellType",
       "options": {
         "label": "Choreographer",
-        "bciAvId": 666,
+        "composition": 823,
         "rowStart": 2,
         "rowSpan": 2,
         "columnStart": 2,

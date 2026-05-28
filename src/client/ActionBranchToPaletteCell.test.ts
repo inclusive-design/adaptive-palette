@@ -26,7 +26,7 @@ describe("ActionBranchToPaletteCell render tests", (): void => {
       "rowSpan": "12",
       "columnStart": "33",
       "columnSpan": "11",
-      "bciAvId": [ 16161, "/", 9011 ]
+      "composition": [ 513, "/", 99 ]   // IDsfor bciAvIds 16161, 9011
     }
   };
 

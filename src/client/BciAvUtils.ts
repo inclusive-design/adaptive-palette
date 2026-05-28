@@ -10,11 +10,10 @@
  */
 import { adaptivePaletteGlobals } from "./GlobalData";
 import { MatchType } from "./index.d";
-import { decomposeBciAvId } from "./SvgUtils";
 
 /**
- * Finds the BCI AV ID(s) for a given label.  The date structure searched is the
- * global BCI AV ID structure in `adaptivePaletteGlobals.bliss_symbols`.
+ * Finds symbols for a given label/gloss. The data structure searched is the
+ * global symbol structure in `adaptivePaletteGlobals.symbols`.
  *
  * The label is compared to each of the glosses where a match is defined as
  * either an exact match, or a "word" match using the regular expression
@@ -26,45 +25,23 @@ import { decomposeBciAvId } from "./SvgUtils";
  *
  * @param {string} label - The label to use to search for matches in the gloss.
  * @returns {Array} An array of objects whose gloss matches the given label:
- *                  { bciAvId, label, composition, fullComposition}, or an empty
- *                  array if no BCI AV ID is found for the label.
+ *                  { id, label, composition }, or an empty
+ *                  array if no symbol is found for the label.
  */
-export function findBciAvId(label: string): MatchType[] {
+export function findSymbolByGloss(label: string): MatchType[] {
   const matches: MatchType[] = [];
   // Search only if there is text to base the search on.
   if (label.trim().length !== 0) {
     // Search for the label in the Bliss gloss
     const wordMatch = new RegExp("\\b" + `${label}` + "\\b");
-    for (const oneSymbolEntry of adaptivePaletteGlobals.bciAvSymbols) {
+    for (const oneSymbolEntry of adaptivePaletteGlobals.symbols) {
       // Try an exact match or a word match
       if ((label === oneSymbolEntry.gloss) || wordMatch.test(oneSymbolEntry.gloss)) {
-        // Get the composition of all the parts of the symbol's compostion or
-        // its ID.  But if the `fullComposition` is the same as the original
-        // ignore it.
-        const glossId = parseInt(oneSymbolEntry.id);
-        let fullComposition;
-        let equalCompositions = false;
-        if (oneSymbolEntry.composition) {
-          fullComposition = decomposeBciAvId(oneSymbolEntry.composition);
-          equalCompositions = (fullComposition as (string|number)[]).join("") === (oneSymbolEntry.composition as (string|number)[]).join("");
-        }
-        else {
-          fullComposition = decomposeBciAvId(glossId);
-          if (Array.isArray(fullComposition) && fullComposition.length === 1) {
-            equalCompositions = fullComposition[0] === glossId;
-          }
-        }
         matches.push({
-          bciAvId: glossId,
+          id: oneSymbolEntry.id,
           label: oneSymbolEntry.gloss,
-          composition: oneSymbolEntry.composition,
-          fullComposition: ( equalCompositions ? undefined : fullComposition )
+          composition: oneSymbolEntry.composition
         });
-        // DEBUGGING
-        const lastMatch = matches[matches.length - 1];
-        if (lastMatch.fullComposition) {
-          console.debug(`${lastMatch.label} has a defined fullComposition: '${(fullComposition as (string|number)[]).join("")}'`);
-        }
       }
     }
   }
@@ -74,36 +51,31 @@ export function findBciAvId(label: string): MatchType[] {
 /**
  * Find symbols where the given single BCI AV ID is part of the composition
  * of other symbols.
- * @param {number} bciId - The BCI AV ID to search symbols' compositions
- *                                for matches.
+ * @param {number} bciId - The BCI AV ID to search symbols' compositions for matches.
  * @returns {Array} An array of objects whose `composition` contains the given
- *                  `bciId`:
- *                  { bciAvId, label, composition, fullComposition}, or an empty
- *                  array if no mathches are found.
+ *                  `bciId`: { id, label, composition }, or an empty
+ *                  array if no matches are found.
  */
-export function findCompositionsUsingId (bciId: number): MatchType[] {
+export function findSymbolByBciAvId (bciId: number): MatchType[] {
   const matches: MatchType[] = [];
-  for (const symbol of adaptivePaletteGlobals.bciAvSymbols) {
-    const symbolId = parseInt(symbol.id);
-    // Add the symbol itself and add it as the first element
-    if (symbolId === bciId) {
+  // Convert bciAvId to ID for searching composition arrays
+  const targetId = adaptivePaletteGlobals.symbols.find(s => s.bciAvId === bciId)?.id;
+  for (const symbol of adaptivePaletteGlobals.symbols) {
+    // Add the symbol itself as the first element
+    if (symbol.bciAvId === bciId) {
       matches.unshift({
-        bciAvId: symbolId,
+        id: symbol.id,
         label: symbol.gloss,
-        composition: symbol.composition,
-        fullComposition: ( symbol.composition ? decomposeBciAvId(symbol.composition) : undefined )
+        composition: symbol.composition
       });
     }
-    else if (symbol.composition) {
-      const fullComposition = decomposeBciAvId(symbol.composition);
-      if (Array.isArray(fullComposition) && fullComposition.includes(bciId)) {
-        matches.push({
-          bciAvId: symbolId,
-          label: symbol.gloss,
-          composition: symbol.composition,
-          fullComposition: fullComposition
-        });
-      }
+    else if (targetId !== undefined && Array.isArray(symbol.composition)
+             && symbol.composition.includes(targetId)) {
+      matches.push({
+        id: symbol.id,
+        label: symbol.gloss,
+        composition: symbol.composition
+      });
     }
   }
   return matches;

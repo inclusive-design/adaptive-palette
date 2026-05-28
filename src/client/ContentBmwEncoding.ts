@@ -47,21 +47,21 @@ function generateMarkupArray (payloadArray: Array<EncodingType>, caretPos: numbe
     if (index === 0 && caretPos === -1) {
       return html`
         <div class="blissSymbol insertionCaret">
-          <${BlissSymbol} bciAvId=${payload.bciAvId} label=${payload.label} isPresentation="true" />
+          <${BlissSymbol} composition=${payload.composition} label=${payload.label} isPresentation="true" />
         </div>
       `;
     }
     else if (index === caretPos) {
       return html`
         <div class="blissSymbol cursorCaret">
-          <${BlissSymbol} bciAvId=${payload.bciAvId} label=${payload.label} isPresentation="true" />
+          <${BlissSymbol} composition=${payload.composition} label=${payload.label} isPresentation="true" />
         </div>
       `;
     }
     else {
       return html`
         <div class="blissSymbol">
-          <${BlissSymbol} bciAvId=${payload.bciAvId} label=${payload.label} isPresentation="true" />
+          <${BlissSymbol} composition=${payload.composition} label=${payload.label} isPresentation="true" />
         </div>
       `;
     }

@@ -13,9 +13,9 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { useState } from "preact/hooks";
 
-import { BciAvIdType } from "./index.d";
+import { SymbolCompositionType } from "./index.d";
 import { changeEncodingContents } from "./GlobalData";
-import { makeBciAvIdType, decomposeBciAvId, BLISSARY_PATTERN_KEY, BCIAV_PATTERN_KEY } from "./SvgUtils";
+import { getCompositionFromBuilderCode } from "./SvgUtils";
 import { speak, insertWordAtCaret } from "./GlobalUtils";
 import "./ActionSvgEntryField.scss";
 
@@ -25,21 +25,15 @@ export const SUBMIT_VALUE          = "Add Symbol";
 const MALFORMED                    = "Invalid builder string";
 
 /**
- * Converts a string that encodes the information required by the SvgUtils
- * (svg builder) to the proper format -- an array of bliss-svg specifications.
- * Note: adapted from the `paletteGeneratorJSON.ts`
- * Two forms are accepted:
- * - BCI-AV-ID codes and separators, e.g. "13166;9011"
- * - Blissary codes and separators, e.g., "B220;B99"
+ * Converts a blissary SVG builder string to the proper SymbolCompositionType format.
+ * Accepts blissary codes and separators, e.g., "B220;B99". Outputs an array of ids
+ * and separators, e.g., [220, ";", 99]. If the input is malformed, returns an empty array.
  * @param {string} svgBuilderString - The string to convert.
- * @return {BciAvIdType} - An array of the specifiers required by the SvgUtils.
- *                         If the input is malformed, the result will be an
- *                         empty `BciAvIdType` -- an empty array.
+ * @return {SymbolCompositionType} - An array of ids and separators, or an
+ *                         empty array if the input is malformed.
  */
-function convertSvgBuilderString(svgBuilderString: string): BciAvIdType {
-  const sanitizedString = svgBuilderString.trim();
-  const patternKey = sanitizedString.startsWith("B") ? BLISSARY_PATTERN_KEY : BCIAV_PATTERN_KEY;
-  return makeBciAvIdType(sanitizedString, patternKey);
+function convertSvgBuilderString(svgBuilderString: string): SymbolCompositionType {
+  return getCompositionFromBuilderCode(svgBuilderString.trim());
 }
 
 export function ActionSvgEntryField(): VNode {
@@ -58,24 +52,17 @@ export function ActionSvgEntryField(): VNode {
     const rawLabelInput = formData.get(SYMBOL_LABEL_FIELD_ID);
     const labelString = typeof rawLabelInput === "string" ? rawLabelInput : "";
 
-    const bciAvId = convertSvgBuilderString(svgInputString);
+    const composition = convertSvgBuilderString(svgInputString);
 
     // Check invalid Builder String
-    if (!Array.isArray(bciAvId) || bciAvId.length === 0) {
-      return setMalformed(true);
-    }
-
-    const composition = decomposeBciAvId(bciAvId);
-
-    // Check invalid Composition
-    if (!Array.isArray(composition) || composition.length === 0 || !composition[0]) {
+    if (!Array.isArray(composition) || composition.length === 0) {
       return setMalformed(true);
     }
 
     const payload = {
-      id: bciAvId.join(""),
+      id: composition.join(""),
       label: labelString,
-      bciAvId: composition,
+      composition: composition,
       modifierInfo: []
     };
 

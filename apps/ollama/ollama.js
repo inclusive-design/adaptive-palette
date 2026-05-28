@@ -240,7 +240,7 @@ function setAskButtonsEnabledState() {
 async function queryEachModel (promptText) {
   const names = await getModelNames();
   let count = 0;
-  names.forEach ((modelName) => {
+  names.forEach (async (modelName) => {
     await queryChat(promptText, modelName)
       .then(async (response) => {
         const outputEl = createOutputSection(modelName);

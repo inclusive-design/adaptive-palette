@@ -24,7 +24,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
       "rowSpan": "2",
       "columnStart": "2",
       "columnSpan": "1",
-      "bciAvId": [ 17448, "//", 14430, "/", 8993,  "/", 8998 ]
+      "composition": [ 2505, "//", 348, "/", 81,  "/", 86 ]
     }
   };
 
@@ -33,14 +33,14 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
   const blissWordNoIndicator = {
     id: "another-fake-id",
     label: "opposite",
-    bciAvId: 15927
+    composition: 486     // ID for bciAvId 15927 (opposite)
   };
   const blissWordWithIndicator = {
     id: "yet-another-fake-id",
     label: "don't know",
-    bciAvId: [ 15162, ";", 8993, "/", 15733 ]
+    composition: [ 412, ";", 81, "/", 2088 ]   // IDs for bciAvId 15162, 8993, 15733
   };
-  const bciAvIdAfterIndicatorRemoval = [ 15162, "/", 15733 ];
+  const compositionAfterIndicatorRemoval = [ 412, "/", 2088 ];  // IDs for bciAvId 15162, 15733
 
   beforeAll(async (): Promise<void> => {
     await initAdaptivePaletteGlobals();
@@ -150,7 +150,6 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     fireEvent.click(removeIndicatorButton);
     expect(removeIndicatorButton.getAttribute("disabled")).toBeDefined();
     const lastSymbol = changeEncodingContents.value.payloads[changeEncodingContents.value.payloads.length-1];
-    expect(lastSymbol.bciAvId).toStrictEqual(bciAvIdAfterIndicatorRemoval);
+    expect(lastSymbol.composition).toStrictEqual(compositionAfterIndicatorRemoval);
   });
 });
-

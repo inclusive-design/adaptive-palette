@@ -75,6 +75,6 @@ describe("ActionSearchGloss component behavior", () => {
     // When valid value is submitted
     await user.type(searchInput, "fish");
     await user.click(submitButton);
-    expect(await screen.findAllByText(/14188/i)).not.toHaveLength(0);
+    expect(await screen.findAllByText(/^fish: /i)).not.toHaveLength(0);
   }, 20000);
 });

@@ -25,7 +25,7 @@ describe("ActionPreModifierCell render tests", (): void => {
       "rowSpan": "2",
       "columnStart": "2",
       "columnSpan": "1",
-      "bciAvId": 15927
+      "composition": 486
     }
   };
 
@@ -72,7 +72,7 @@ describe("ActionPreModifierCell render tests", (): void => {
       payloads: [{
         id: "fake-id",
         label: "building",
-        bciAvId: 14905
+        composition: 392
       }],
       caretPosition: 0
     };

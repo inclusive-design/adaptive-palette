@@ -21,7 +21,7 @@ describe("CommandDelLastEncoding render tests", (): void => {
   const testCell = {
     options: {
       "label": "Delete",
-      "bciAvId": 12613,
+      "composition": 145,
       "rowStart": 2,
       "rowSpan": 1,
       "columnStart": 13,

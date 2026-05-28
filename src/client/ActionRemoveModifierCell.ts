@@ -26,7 +26,7 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   const {
     columnStart, columnSpan, rowStart, rowSpan, label
   } = props.options;
-  const removeModifierBciAvId = props.options.bciAvId;
+  const removeModifierComposition = props.options.composition;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
@@ -45,31 +45,31 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
     // `newBciAvId` and `newLabel`.
     const { caretPosition, payloads } = changeEncodingContents.value;
     const symbolToEdit = payloads[caretPosition];
-    let newBciAvId = (
-      typeof symbolToEdit.bciAvId === "number" ?
-        [symbolToEdit.bciAvId] :
-        symbolToEdit.bciAvId
+    let newComposition = (
+      typeof symbolToEdit.composition === "number" ?
+        [symbolToEdit.composition] :
+        symbolToEdit.composition
     );
     let newLabel = symbolToEdit.label;
 
     // Check for any modifier to remove -- if the symbol has no modifiers,
-    // leave the `newBciAvId` as is.
+    // leave the `newComposition` as is.
     const removeInfo = symbolToEdit.modifierInfo?.pop();
     if (removeInfo) {
       // Either the last modifer added was prepended to the beginning or
       // appended to the end. If it was prepended ...
       if (removeInfo.isPrepended) {
-        // ... the modifier is the first symbol in the `newBciAvId`.  Remove it
+        // ... the modifier is the first symbol in the `newComposition`.  Remove it
         // plus the following "/"
-        newBciAvId = newBciAvId.slice((removeInfo.modifierId as (string|number)[]).length + 1);
+        newComposition = newComposition.slice((removeInfo.modifierId as (string|number)[]).length + 1);
       }
       // If the last modifier added was appended to the end ...
       else {
-        // ... the modifier is the last symbol in the `newBciAvId`.  Remove it
+        // ... the modifier is the last symbol in the `newComposition`.  Remove it
         // from the end of the array.  Note: the "-1" is to account for the
-        // "/" preceding the modfier's bciAvId.
-        newBciAvId = newBciAvId.slice(
-          0, newBciAvId.length - (removeInfo.modifierId as (string|number)[]).length - 1
+        // "/" preceding the modifier's composition.
+        newComposition = newComposition.slice(
+          0, newComposition.length - (removeInfo.modifierId as (string|number)[]).length - 1
         );
       }
       newLabel = newLabel.replace(removeInfo.modifierGloss, "").trim();
@@ -77,7 +77,7 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
     payloads[caretPosition] = {
       "id": symbolToEdit.id,
       "label": newLabel,
-      "bciAvId": newBciAvId,
+      "composition": newComposition,
       "modifierInfo": symbolToEdit.modifierInfo
     };
     changeEncodingContents.value = {
@@ -90,7 +90,7 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   return html`
     <button id="${props.id}" class="actionIndicatorCell" style="${gridStyles}" onClick=${cellClicked} disabled="${disabled}">
       <${BlissSymbol}
-        bciAvId=${removeModifierBciAvId}
+        composition=${removeModifierComposition}
         label=${label}
         isPresentation=true
       />

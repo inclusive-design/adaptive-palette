@@ -10,16 +10,16 @@
  */
 
 import { BlissSVGBuilder } from "bliss-svg-builder";
-import { BciAvIdType, BlissaryMapEntryType } from "./index.d";
+import { SymbolCompositionType } from "./index.d";
 import { adaptivePaletteGlobals } from "./GlobalData";
 
 // Ranges and list for all the indicator symbols.  The range values are the
-// minimum and maximum BCI AV ID.
+// minimum and maximum ID.
 const indicatorIds = {
-  range1: [8993, 9011],
-  range2: [24667, 24679],
-  range3: [28043, 28046],
-  list: [24665, 24807, 25458]
+  range1: [81, 99],       // bciAvId 8993-9011
+  range2: [904, 916],     // bciAvId 24667-24679
+  range3: [5996, 5998],   // bciAvId 28044-28046
+  list: [902, 903, 928, 992]  // bciAvId 24665, 28043, 24807, 25458
 };
 
 // Lists of modifier symbols
@@ -27,19 +27,16 @@ const indicatorIds = {
 // Semantic and Grammatical strategies.
 const modifierIds = {
   // much, intensity, without, opposite, generalization, part of, ago, now, future
-  semantic: [14647, 14947, 15474, 15927, 14430, 15972, 12352, 15736, 17705],
+  semantic: [368, 401, 449, 486, 348, 502, 112, 474, 648],
   // more, most, belongs to
-  grammatical: [24879, 24944, 12663],
+  grammatical: [937, 968, 160],
   // range of the index numerals from 0 through 9. NOTE THIS IS A RANGE.
-  numericRange: [8510, 8519],
+  numericRange: [19, 28],
   // metaphor, Blissname, slang, coarse slang
-  signalling: [15460, 21624, 24961, 24962]
+  signalling: [444, 753, 970, 971]
 };
 
-// Regular expressions for patterns within Blissary SVG builder strings and
-// their BCI-AV-ID equivalents.  Note that only the semicolon and identifier
-// patterns are different. Blissary identifiers always begin with a "B" followed
-// by numerals, whereas BCI-AV-ID are numerals only.
+// Regular expressions for patterns within Blissary SVG builder strings.
 export const KERN_PATTERN           = /[AR]K:-?\d+/;
 export const BLISS_LETTER_PATTERN   = /X[a-zA-Z]/;  // may not work e.g., Greek
 export const SLASH_PATTERN          = new RegExp("/");
@@ -47,113 +44,81 @@ export const SLASH_SEPARATOR        = /(\/)/;
 export const DOUBLE_SLASH_PATTERN   = new RegExp("//");
 export const DOUBLE_SLASH_SEPARATOR = /(\/\/)/;
 export const SEMICOLON_SEPARATOR    = /(;)/;
-export const SEMICOLON_PATTERNS     = {
-  blissary: /B\d+;/,
-  bciAv: /\d+;/
-};
-export const BLISSARY_PATTERN_KEY   = "blissary";
-export const BCIAV_PATTERN_KEY      = "bciAv";
+export const SEMICOLON_PATTERN      = /B\d+;/;
 
 /**
- * Given an svg-builder code string, create a `BciAvIdType`.  The builder string
- * can either contain Blissary IDs or BCI AV IDs, but not both. The optional
- * second parameter allows the caller to specify which kind of identifiers are
- * in the builder string.
+ * Given a Blissary SVG builder code string, create a `SymbolCompositionType` array.
+ * Each "B<id>" token is parsed to its ID integer. Other tokens
+ * (KERN codes, letter codes, separators) are kept as strings.
  * @param {String} blissSvgBuilderCode - SVG builder string to convert.
- * @param {String} patternKey - Optional, either BLISSARY_PATTERN_KEY or
- *                              BCIAV_PATTERN_KEY.  The default is
- *                              BLISSARY_PATTERN_KEY
- * @return {BciAvIdType}
+ * @return {SymbolCompositionType}
  */
-export function makeBciAvIdType (blissSvgBuilderCode: string, patternKey: keyof typeof SEMICOLON_PATTERNS = BLISSARY_PATTERN_KEY): BciAvIdType {
-  const bciAvIdType: (string|number)[] = [];
+export function getCompositionFromBuilderCode (blissSvgBuilderCode: string): SymbolCompositionType {
+  const idArray: (string|number)[] = [];
   const words = blissSvgBuilderCode.split(DOUBLE_SLASH_SEPARATOR);
   words.forEach( (word) => {
     // Keep any double-slashes intact
     if (word.match(DOUBLE_SLASH_SEPARATOR)) {
-      bciAvIdType.push(word);
+      idArray.push(word);
     }
     else {
       const splits = word.split(SLASH_SEPARATOR);
       splits.forEach((aSplit) => {
-        // These patterns remain intact -- no conversion
+        // These patterns remain intact
         if (KERN_PATTERN.test(aSplit) || BLISS_LETTER_PATTERN.test(aSplit) || SLASH_SEPARATOR.test(aSplit)) {
-          bciAvIdType.push(aSplit);
+          idArray.push(aSplit);
         }
-        else if (SEMICOLON_PATTERNS[patternKey].test(aSplit)) {
+        else if (SEMICOLON_PATTERN.test(aSplit)) {
           // The structure of a semicolon svg string when split gives a three-member
           // array: [ID, ";", ID]
           const semiColonSplits = aSplit.split(SEMICOLON_SEPARATOR);
-          if (patternKey === BLISSARY_PATTERN_KEY) {
-            let entry = blissaryToBciAvId(parseInt(semiColonSplits[0].slice(1)));
-            bciAvIdType.push(entry.bciAvId);
-            bciAvIdType.push(";");
-            entry = blissaryToBciAvId(parseInt(semiColonSplits[2].slice(1)));
-            bciAvIdType.push(entry.bciAvId);
-          }
-          else {
-            bciAvIdType.push(parseInt(semiColonSplits[0]));
-            bciAvIdType.push(";");
-            bciAvIdType.push(parseInt(semiColonSplits[2]));
-          }
+          idArray.push(parseInt(semiColonSplits[0].slice(1)));
+          idArray.push(";");
+          idArray.push(parseInt(semiColonSplits[2].slice(1)));
         }
-        // Everything else is either a Blissary ID in the form of a string
-        // "B<digits>" or a BCI-AV-ID in the form of "<digits>". Slice off the
-        // "B" prefix, convert the rest to an integer and then convert that to a
-        // BCI-AV-ID as needed
+        // "B<digits>" token — strip "B" to get ID
         else {
-          if (patternKey === "blissary") {
-            const numericalId = parseInt(aSplit.slice(1));
-            if (!isNaN(numericalId)) {
-              const blissaryMapEntry = blissaryToBciAvId(numericalId);
-              bciAvIdType.push(blissaryMapEntry.bciAvId);
-            }
-          }
-          else {
-            const numericalId = parseInt(aSplit);
-            if (!isNaN(numericalId)) {
-              bciAvIdType.push(numericalId);
-            }
+          const numericalId = parseInt(aSplit.slice(1));
+          if (!isNaN(numericalId)) {
+            idArray.push(numericalId);
           }
         }
       });
     }
   });
-  return bciAvIdType;
+  return idArray;
 }
 
 /*
- * Evaluate if the given integer matches the BCI-AV-ID of one of the indicator
- * symbols.
- * @param {number} bciAvId - The number form of a BciAvIdType
+ * Evaluate if the given integer matches the ID of one of the
+ * indicator symbols.
+ * @param {number} id - The ID of a symbol
  * @return {boolean}
  */
-export function isIndicatorId (bciAvId: number): boolean {
+export function isIndicator (id: number): boolean {
   return (
-    (bciAvId >= indicatorIds.range1[0] && bciAvId <= indicatorIds.range1[1]) ||
-    (bciAvId >= indicatorIds.range2[0] && bciAvId <= indicatorIds.range2[1]) ||
-    (bciAvId >= indicatorIds.range3[0] && bciAvId <= indicatorIds.range3[1]) ||
-    indicatorIds.list.includes(bciAvId)
+    (id >= indicatorIds.range1[0] && id <= indicatorIds.range1[1]) ||
+    (id >= indicatorIds.range2[0] && id <= indicatorIds.range2[1]) ||
+    (id >= indicatorIds.range3[0] && id <= indicatorIds.range3[1]) ||
+    indicatorIds.list.includes(id)
   );
 }
 
 /*
  * Function to check for one or more indicators in the array form of a
- * BciAvIdType.  If a single BCI-AV-ID is passed in, the result is an empty
+ * SymbolCompositionType.  If a single ID is passed in, the result is an empty
  * array.
- * @param {BciAvIdType} bciAvId - The array form of a BciAvIdType is a mixture
- *                                of integers and strings.
+ * @param {SymbolCompositionType} id - The array form of a SymbolCompositionType is a mixture
+ *                           of integers and strings.
  * @return {Array} - the positions of the indicator(s).  An empty array is
  *                   returned if there are no indicators.
  */
-export function findIndicators (bciAvId: BciAvIdType): number[] {
+export function findIndicators (id: SymbolCompositionType): number[] {
   const positions: number[] = [];
-  if (bciAvId.constructor === Array) {
-    bciAvId.forEach((item, index) => {
-      if (typeof item === "number") {
-        if (isIndicatorId(item)) {
-          positions.push(index);
-        }
+  if (id.constructor === Array) {
+    id.forEach((item, index) => {
+      if (typeof item === "number" && isIndicator(item)) {
+        positions.push(index);
       }
     });
   }
@@ -161,39 +126,39 @@ export function findIndicators (bciAvId: BciAvIdType): number[] {
 }
 
 /*
- * Evaluate if the given integer matches the BCI AV ID of one of the modifier
- * symbols.
- * @param {number} bciAvId - The number form of a BciAvIdType
+ * Evaluate if the given integer matches the ID of one of the
+ * modifier symbols.
+ * @param {number} id - The ID of a symbol
  * @return {boolean}
  */
-export function isModifierId (bciAvId: number): boolean {
+export function isModifier (id: number): boolean {
   return (
-    modifierIds.semantic.includes(bciAvId) ||
-    modifierIds.grammatical.includes(bciAvId) ||
-    (bciAvId >= modifierIds.numericRange[0] && bciAvId <= modifierIds.numericRange[1]) ||
-    modifierIds.signalling.includes(bciAvId)
+    modifierIds.semantic.includes(id) ||
+    modifierIds.grammatical.includes(id) ||
+    (id >= modifierIds.numericRange[0] && id <= modifierIds.numericRange[1]) ||
+    modifierIds.signalling.includes(id)
   );
 }
 
 /*
  * Find the position of the first non-modifier symbol starting from left.  This
- * should be a classifier symbol.  If the single number form of a BciAvIdType is
+ * should be a classifier symbol.  If the single number form of a SymbolCompositionType is
  * provided, then 0 (zero) is returned.  If the entire sequence of symbols has
  * been processed, and none are left, then 0 (zero) is returned.
- * @param {BciAvIdType} bciAvId - The array form of a BciAvIdType is a mixture
- *                                of integers and strings.
+ * @param {SymbolCompositionType} id - The array form of a SymbolCompositionType is a mixture
+ *                           of integers and strings.
  * @return {number} - the index of the symbol just after the last modifier.
  */
-export function findClassifierFromLeft (bciAvId: BciAvIdType): number {
+export function findClassifierFromLeft (id: SymbolCompositionType): number {
   let rightMost = 0;
-  if (bciAvId.constructor === Array) {
+  if (id.constructor === Array) {
     // Prefix modifiers are a sequence of an ID followed by the "/" separator.
     // Examine symbols until a non-modifer symbol is found, advancing the index
     // by 2.
-    for (let index = 0; index < bciAvId.length; index += 2) {
-      const item = bciAvId[index];
+    for (let index = 0; index < id.length; index += 2) {
+      const item = id[index];
       if (typeof item === "number") {
-        if (isModifierId(item)) {
+        if (isModifier(item)) {
           rightMost = index + 2;
         }
         else {
@@ -201,7 +166,7 @@ export function findClassifierFromLeft (bciAvId: BciAvIdType): number {
         }
       }
     }
-    if (rightMost >= bciAvId.length) {
+    if (rightMost >= id.length) {
       rightMost = 0;
     }
   }
@@ -209,191 +174,88 @@ export function findClassifierFromLeft (bciAvId: BciAvIdType): number {
 }
 
 /**
- * Convert the given `BciAvIdType` to a SVG builder code string.  If the
- * `BciAvIdType`argument is an array of BCI-AV-IDs and punctuation, concatenate
- * the array into a string of builder code strings and punctuation marks.  If
- * the argument is a single numeric BCI-AV-ID, retrieve its composition if any
- * and use that.  If not composition, use the single id value.
- * @param {BciAvIdType} bciAvId - The BciAvIdType to convert.
- * @return {String} - The concatenation of the builder codes and punctuation,
+ * Convert the given `SymbolCompositionType` to a SVG builder code string.  Each
+ * ID integer is converted to `"B<id>"`. String separators are
+ * kept as-is.
+ * @param {SymbolCompositionType} id - The SymbolCompositionType to convert (IDs).
+ * @return {String} - The concatenation of the builder codes and separators,
  *                    e.g., "B106/B12".
  */
-export function bciAvIdToString (bciAvId: BciAvIdType): string {
-  let finalCode = "";
-  if (typeof bciAvId === "number") {
-    const { blissSvgBuilderCode } = bciToBlissaryId(bciAvId);
-    finalCode = blissSvgBuilderCode;
+export function idToString (id: SymbolCompositionType): string {
+  if (typeof id === "number") {
+    return "B" + id;
   }
-  // `bicAvId` is an array
-  else {
-    bciAvId.forEach((item) => {
-      if (typeof item === "number") {
-        const { blissSvgBuilderCode } = bciToBlissaryId(item);
-        finalCode = `${finalCode}${blissSvgBuilderCode}`;
-      } else {
-        finalCode = `${finalCode}${item}`;
-      }
-    });
-  }
-  return finalCode;
+  return id.map(
+    item => typeof item === "number" ? "B" + item : item
+  ).join("");
 }
 
 /**
- * Utility function to find the given single BCI-AV-ID within the
- * `adaptivePaletteGlobals.bciAvSymbols` data structure (part of global data).
+ * Utility function to find symbol information by BCI-AV-ID (user-facing lookup).
  *
- * @param {BciAvIdType} bciAvId - The number form of a BciAvIdType
+ * @param {SymbolCompositionType} bciAvId - The BCI-AV-ID to search for
  * @return {Object} - The full information about the given BCI-AV-ID, or
  *                    `undefined` if there is no such ID or the input is not
- *                    a single ID.
+ *                    a single number.
  */
-export function findBciAvSymbol (bciAvId: BciAvIdType) {
-  return adaptivePaletteGlobals.bciAvSymbols.find( (symbol) => {
-    return parseInt(symbol.id) === bciAvId;
-  });
+export function findSymbolByBciAvId (bciAvId: SymbolCompositionType) {
+  return adaptivePaletteGlobals.symbols.find(
+    symbol => symbol.bciAvId === bciAvId
+  );
 }
 
 /**
- * Given a `BciAvIdType`, find the composition of each single ID in the passed
- * in parameter.  Note that this is recursive.  The decomposition stops when a
- * single ID is either a Bliss-character or has no composition.
- *
- * @param (BciAvIdType) bciAvId - The `BciAvIdType` to process.
- * @return {BciAvIdType} - The fully dcomposed `BciAvIdType` or  `undefined` if
- *                         there is no match to any BCI-AV-ID
- */
-export function decomposeBciAvId (bciAvId: BciAvIdType): BciAvIdType | undefined {
-  if (typeof bciAvId === "number") {
-    // `bciAvId` is a single number.
-    const bciAvSymbol = findBciAvSymbol(bciAvId);
-    if (bciAvSymbol) {
-      if (bciAvSymbol.isCharacter) {
-        return [bciAvId];
-      }
-      else if (!bciAvSymbol.composition) {
-        return [bciAvId];
-      }
-      else {
-        return loopDecompose(bciAvSymbol.composition);
-      }
-    }
-    else {
-      // No corressponding symbol found in `adaptivePaletteGlobals.bciAvSymbols`
-      return undefined;
-    }
-  }
-  else {
-    // `bciAvId` is an array
-    return loopDecompose(bciAvId);
-  }
-}
-
-/**
- * Local helper for `decomposeBciAvId()` to loop through a BciAvIdType array
- * and calls `decomposeBciAvId()` for each single number BciAvIdType.  Note that
- * this is recursive in the sense that it calls `decomposeBciAvId()` which, in
- * turn, can call this function.
- *
- * @param {BciAvIdType} bciAvIdArray - The array form of an BCI-AV-ID
- * @return {BciAvIdType} - The full decomposition for the given `bciAvIdArray`
- */
-function loopDecompose (bciAvIdArray: BciAvIdType): BciAvIdType {
-  let resultArray: (string|number)[] = [];
-  if (bciAvIdArray.constructor === Array) {
-    bciAvIdArray.forEach( (part) => {
-      // This tests that `part` is not a separator, not e.g., "/", or ";"
-      if (typeof part === "number") {
-        const decomposed = decomposeBciAvId(part);
-        if (decomposed !== undefined) {
-          resultArray = resultArray.concat(Array.isArray(decomposed) ? decomposed : [decomposed]);
-        }
-      }
-      // Keep `part` separators as they are.
-      else {
-        resultArray.push(part);
-      }
-    });
-  }
-  return resultArray;
-}
-
-/**
- * Create and return the builder from a string based on the given BciAvIdType.
- * If the BciAvIdType is invalid, `null` is returned.
- * @param {BciAvIdType} bciAvId - A single BCI-AV-ID (a number) or an array of
- *                                such ids and characters, e.g.
- *                                `[ 12335, "/", 8499 ]`
+ * Create and return the builder from a string based on the given SymbolCompositionType.
+ * If the SymbolCompositionType is invalid, `null` is returned.
+ * @param {SymbolCompositionType} id - A ID (a number) or an array of
+ *                           IDs and separators, e.g.
+ *                           `[ 106, "/", 12 ]`
  * @return {BlissSVGBuilder} - The corresponding SVG markup, or `null`.
  */
-
-function getSvgBuilder (bciAvId: BciAvIdType): BlissSVGBuilder | null {
+function getSvgBuilder (id: SymbolCompositionType): BlissSVGBuilder | null {
+  if (typeof id === "number") {
+    const symbol = adaptivePaletteGlobals.symbols.find(s => s.id === id);
+    if (!symbol) return null;
+    // If the symbol has a composition, use it: composite IDs (isCharacter: false)
+    // are not in the builder's internal database and produce empty SVGs.
+    if (symbol.composition) {
+      id = symbol.composition as SymbolCompositionType;
+    }
+  }
   let builder;
   try {
-    const svgBuilderArgument = bciAvIdToString(bciAvId);
-    builder = new BlissSVGBuilder(svgBuilderArgument);
+    builder = new BlissSVGBuilder(idToString(id));
   }
   catch (err) {
     console.error(err);
-    console.error(`Unknown bci-av-id = ${String(bciAvId)}`);
+    console.error(`Unknown id = ${String(id)}`);
     builder = null;
   }
   return builder;
 }
 
 /**
- * Get the SVG markup as a string based on the given single BCI-AV-ID.
- * or an array of BCI-AV-IDs and other characters
+ * Get the SVG markup as a string based on the given ID or array.
  *
- * @param {BciAvIdType} bciAvId - A single BCI-AV-ID (a number) or an array of
- *                                such ids and characters, e.g.
- *                                `[ 12335, "/", 8499 ]`
+ * @param {SymbolCompositionType} id - A ID (a number) or an array of
+ *                           IDs and separators, e.g.
+ *                           `[ 106, "/", 12 ]`
  * @return {String} - The corresponding SVG markup, or `undefined`.
  */
-export function getSvgMarkupString (bciAvId: BciAvIdType): string | undefined {
-  const builder = getSvgBuilder(bciAvId);
+export function getSvgMarkupString (id: SymbolCompositionType): string | undefined {
+  const builder = getSvgBuilder(id);
   return ( builder ? builder.svgCode : undefined );
 }
 
 /**
- * Get the SVG markup as a DOM element based on the given single BCI-AV-ID.
- * or an array of BCI-AV-IDs and other characters
+ * Get the SVG markup as a DOM element based on the given ID or array.
  *
- * @param {BciAvIdType} bciAvId - A single BCI-AV-ID (a number) or an array of
- *                                such ids and characters, e.g.
- *                                `[ 12335, "/", 8499 ]`
+ * @param {SymbolCompositionType} id - A ID (a number) or an array of
+ *                           IDs and separators, e.g.
+ *                           `[ 106, "/", 12 ]`
  * @return {Element} - The corresponding SVG markup, or `undefined`.
  */
-export function getSvgElement (bciAvId: BciAvIdType): SVGElement | undefined {
-  const builder = getSvgBuilder(bciAvId);
+export function getSvgElement (id: SymbolCompositionType): SVGElement | undefined {
+  const builder = getSvgBuilder(id);
   return ( builder ? builder.svgElement : undefined );
-}
-
-/**
- * Retrieve the entry in the `blissaryIdMap` that matches the given BCI-AV-ID
- * An entry has this structure: { blissaryId, bciavId, blissSvgBuilderCode }
- *
- * @param {Number} bciAvId - A single BCI-AV-ID (a single number)
- * @return {BlissaryMapEntryType} - The matching map entry or `undefined`.
- */
-export function bciToBlissaryId (bciAvId: number): BlissaryMapEntryType {
-  const { blissaryIdMap } = adaptivePaletteGlobals;
-  if (!blissaryIdMap) {
-    throw new Error("blissaryIdMap is not defined in adaptivePaletteGlobals");
-  }
-  return blissaryIdMap.find((entry) => entry.bciAvId === bciAvId)!;
-}
-
-/**
- * Retrieve the entry in the `blissaryIdMap` that matches the given Blissary ID
- * An entry has this structure: { blissaryId, bciavId, blissSvgBuilderCode }
- *
- * @param {Number} blissaryId - The Blissary ID to search for.
- * @return {BlissaryMapEntryType} - The matching map entry or `undefined`.
- */
-export function blissaryToBciAvId (blissaryId: number): BlissaryMapEntryType {
-  const { blissaryIdMap } = adaptivePaletteGlobals;
-  if (!blissaryIdMap) {
-    throw new Error("blissaryIdMap is not defined in adaptivePaletteGlobals");
-  }
-  return blissaryIdMap.find((entry) => entry.blissaryId === blissaryId)!;
 }

@@ -31,11 +31,11 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
     columnStart, columnSpan, rowStart, rowSpan, label
   } = props.options;
 
-  // Get the modifier BCI AV ID and make sure it's an array.
-  const modifierBciAvId = (
-    typeof props.options.bciAvId === "number" ?
-      [props.options.bciAvId] :
-      props.options.bciAvId
+  // Get the modifier composition and make sure it's an array.
+  const modifierComposition = (
+    typeof props.options.composition === "number" ?
+      [props.options.composition] :
+      props.options.composition
   );
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
@@ -45,16 +45,16 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
     // Get the symbol at the caret position in the editing area.
     const { caretPosition, payloads } = changeEncodingContents.value;
     const symbolToEdit = payloads[caretPosition];
-    let newBciAvId = (
-      typeof symbolToEdit.bciAvId === "number" ?
-        [symbolToEdit.bciAvId] :
-        symbolToEdit.bciAvId
+    let newComposition = (
+      typeof symbolToEdit.composition === "number" ?
+        [symbolToEdit.composition] :
+        symbolToEdit.composition
     );
     if (prepend) {
-      newBciAvId = [ ...modifierBciAvId, "/", ...newBciAvId ];
+      newComposition = [ ...modifierComposition, "/", ...newComposition ];
     }
     else {
-      newBciAvId = [ ...newBciAvId, "/", ...modifierBciAvId ];
+      newComposition = [ ...newComposition, "/", ...modifierComposition ];
     }
     // Push the current modifier information onto the `modifierInfo` of the
     // `symbolToEdit`, tracking the order in which the modifiers were added.
@@ -62,14 +62,14 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
       symbolToEdit.modifierInfo = [];
     }
     symbolToEdit.modifierInfo.push({
-      modifierId: modifierBciAvId,
+      modifierId: modifierComposition,
       modifierGloss: label,
       isPrepended: prepend
     });
     payloads[caretPosition] = {
       "id": symbolToEdit.id + props.id,
       "label": `${label} ${symbolToEdit.label}`,
-      "bciAvId": newBciAvId,
+      "composition": newComposition,
       "modifierInfo": symbolToEdit.modifierInfo
     };
     changeEncodingContents.value = {
@@ -82,7 +82,7 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
   return html`
     <button id="${props.id}" class="actionModifierCell" style="${gridStyles}" onClick=${cellClicked} disabled="${disabled}">
       <${BlissSymbol}
-        bciAvId=${modifierBciAvId}
+        composition=${modifierComposition}
         label=${label}
         isPresentation=true
       />

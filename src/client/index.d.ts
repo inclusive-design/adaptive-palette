@@ -9,26 +9,24 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-export type BciAvIdType = number | (string|number)[];
+// Symbol composition can be either a symbol ID defined in bliss_symbol_explanations.json,
+// for example 1433, or an array of symbol IDs and/or strings that represent the composition
+// of a symbol, for example [1433, "/", 1234].
+export type SymbolCompositionType = number | (string|number)[];
 
 export type BlissSymbolEntry = {
-  id: string,
+  id: number,
+  bciAvId: number,
   gloss: string,
   pos?: string,
   explanation?: string,
   isCharacter: boolean,
-  composition?: BciAvIdType
-};
-
-export type BlissaryMapEntryType = {
-  blissaryId: number,
-  bciAvId: number,
-  blissSvgBuilderCode: string
+  composition?: SymbolCompositionType
 };
 
 export type BlissSymbolInfoType = {
   label: string,
-  bciAvId: BciAvIdType
+  composition: SymbolCompositionType
 }
 export type LayoutInfoType = {
   columnStart: number,
@@ -74,7 +72,7 @@ export type NavStackItemType = {
 // Extra information in a content payload structure when the symbol has
 // modifiers
 export type ModifierInfoType = {
-  modifierId: BciAvIdType,
+  modifierId: SymbolCompositionType,
   modifierGloss: string,
   isPrepended: boolean
 };
@@ -95,8 +93,7 @@ export type ContentSignalDataType = {
  * Match structure when searching the BCI AV for symbols
  */
 export type MatchType = {
-  bciAvId: number,
+  id: number,
   label: string,
-  composition?: BciAvIdType,
-  fullComposition?: BciAvIdType
+  composition?: SymbolCompositionType
 }

@@ -14,7 +14,7 @@ import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 import { vi } from "vitest";
 
-import { NO_BCI_AV_ID } from "./SentenceCompletionsPalette";
+import { NO_SYMBOL_ID } from "./SentenceCompletionsPalette";
 import { ActionTextCell } from "./ActionTextCell";
 import { speak } from "./GlobalUtils";
 
@@ -35,7 +35,7 @@ describe("ActionTextCell tests", (): void => {
       rowSpan: "2",
       columnStart: "2",
       columnSpan: "1",
-      bciAvId: NO_BCI_AV_ID
+      composition: NO_SYMBOL_ID
     }
   };
   const TEST_CELL_ID = "unique-test-uuid";

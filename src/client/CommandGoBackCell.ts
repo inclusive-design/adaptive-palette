@@ -67,7 +67,7 @@ const goBackToPalette = async (event: Event): Promise<void> => {
 export function CommandGoBackCell (props: CommandGoBackCellPropsType): VNode {
 
   const {
-    columnStart, columnSpan, rowStart, rowSpan, bciAvId, label
+    columnStart, columnSpan, rowStart, rowSpan, composition, label
   } = props.options;
   const ariaControlsId = adaptivePaletteGlobals.mainPaletteContainerId;
 
@@ -80,7 +80,7 @@ export function CommandGoBackCell (props: CommandGoBackCellPropsType): VNode {
     <button
       id="${props.id}" class="btn-command" style="${gridStyles}"
       aria-controls="${ariaControlsId}" onClick=${goBackToPalette}>
-      <${BlissSymbol} bciAvId=${bciAvId} label=${label} />
+      <${BlissSymbol} composition=${composition} label=${label} />
     </button>
   `;
 }

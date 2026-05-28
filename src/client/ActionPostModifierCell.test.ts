@@ -25,7 +25,7 @@ describe("ActionPostModifierCell render tests", (): void => {
       "rowSpan": "2",
       "columnStart": "2",
       "columnSpan": "1",
-      "bciAvId": 14947
+      "composition": 401
     }
   };
 
@@ -72,7 +72,7 @@ describe("ActionPostModifierCell render tests", (): void => {
       payloads: [{
         id: "fake-id",
         label: "speak",
-        bciAvId: [ 15666, ";", 8993 ],
+        composition: [ 457, ";", 81 ],
       }],
       caretPosition: 0
     };

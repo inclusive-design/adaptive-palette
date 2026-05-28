@@ -25,7 +25,7 @@ describe("ActionIndicatorCell render tests", (): void => {
       "rowSpan": "2",
       "columnStart": "2",
       "columnSpan": "1",
-      "bciAvId": 9011
+      "composition": 99
     }
   };
 
@@ -72,7 +72,7 @@ describe("ActionIndicatorCell render tests", (): void => {
       payloads: [{
         id: "fake-id",
         label: "opposite",
-        bciAvId: 15927
+        composition: 486
       }],
       caretPosition: 0  // put the caret on the "fake-id" symbol
     };

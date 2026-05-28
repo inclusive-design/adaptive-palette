@@ -31,7 +31,7 @@ describe("CommandTelegraphicCompletions component", () => {
     payloads: [{
       id: "fake-uuid",
       label: "dog",
-      bciAvId: [12380],
+      composition: [124],
       modifierInfo: []
     }],
     caretPosition: 1

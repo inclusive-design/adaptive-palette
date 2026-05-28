@@ -16,32 +16,32 @@ import { initAdaptivePaletteGlobals } from "./GlobalData";
 import { BlissSymbol, GRAPHIC_ROLE } from "./BlissSymbol";
 
 describe("BlissSymbol render tests", (): void => {
-  const singleBciAvId = {
-    bciAvId: 12335,
+  const singleSymbol = {
+    composition: 106,     // ID for bciAvId 12335 (VERB)
     label: "VERB"
   };
 
-  const arrayBciAvId = {
-    bciAvId: [12335, "/", 8499],
+  const arraySymbol = {
+    composition: [106, "/", 12],  // IDs for bciAvId 12335, 8499 (VERB+S)
     label: "VERB+S"
   };
 
   const MOCK_LABEL_ID = "mockLabelId";
-  const UNKNOWN_BCI_AV_ID = -1;
+  const UNKNOWN_COMPOSITION = -1;
 
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
   });
 
-  test(`BlissSymbol defined by a single BCI_AV_ID (${singleBciAvId.label})`, async (): Promise<void> => {
+  test(`BlissSymbol defined by a single composition id (${singleSymbol.label})`, async (): Promise<void> => {
     render(html`
       <${BlissSymbol}
-        bciAvId="${singleBciAvId.bciAvId}"
-        label="${singleBciAvId.label}"
+        composition=${singleSymbol.composition}
+        label="${singleSymbol.label}"
         isPresentation=true
       />`
     );
-    const blissSymbolLabelDiv = await screen.findByText(singleBciAvId.label);
+    const blissSymbolLabelDiv = await screen.findByText(singleSymbol.label);
     expect(blissSymbolLabelDiv).toBeVisible();
     expect(blissSymbolLabelDiv).toBeValid();
 
@@ -58,12 +58,12 @@ describe("BlissSymbol render tests", (): void => {
   test("BlissSymbol when the SVG is unknown", async (): Promise<void> => {
     render(html`
       <${BlissSymbol}
-        bciAvId="${UNKNOWN_BCI_AV_ID}"
-        label="${arrayBciAvId.label}"
+        composition=${UNKNOWN_COMPOSITION}
+        label="${arraySymbol.label}"
         isPresentation=true
       />`
     );
-    const blissSymbolLabelDiv = await screen.findByText(arrayBciAvId.label);
+    const blissSymbolLabelDiv = await screen.findByText(arraySymbol.label);
     const parentNode = blissSymbolLabelDiv.parentNode;
     if (!parentNode) {
       throw new Error("Parent node of blissSymbolLabelDiv is null");
@@ -74,15 +74,15 @@ describe("BlissSymbol render tests", (): void => {
     expect(svgElement).toBe(null);
   });
 
-  test(`BlissSymbol defined by an array of BCI_AV_IDs (${arrayBciAvId.label})`, async (): Promise<void> => {
+  test(`BlissSymbol defined by an array of composition ids (${arraySymbol.label})`, async (): Promise<void> => {
     render(html`
       <${BlissSymbol}
-        bciAvId="${arrayBciAvId.bciAvId}"
-        label="${arrayBciAvId.label}"
+        composition=${arraySymbol.composition}
+        label="${arraySymbol.label}"
         isPresentation=true
       />`
     );
-    const blissSymbolLabelDiv = await screen.findByText(arrayBciAvId.label);
+    const blissSymbolLabelDiv = await screen.findByText(arraySymbol.label);
     expect(blissSymbolLabelDiv).toBeVisible();
     expect(blissSymbolLabelDiv).toBeValid();
     const parentNode = blissSymbolLabelDiv.parentNode;
@@ -97,12 +97,12 @@ describe("BlissSymbol render tests", (): void => {
   test("BlissSymbol aria: when svg has no role)", async (): Promise<void> => {
     render(html`
       <${BlissSymbol}
-        bciAvId="${arrayBciAvId.bciAvId}"
-        label="${arrayBciAvId.label}"
+        composition=${arraySymbol.composition}
+        label="${arraySymbol.label}"
         isPresentation=true
       />`
     );
-    const blissSymbolLabelDiv = await screen.findByText(arrayBciAvId.label);
+    const blissSymbolLabelDiv = await screen.findByText(arraySymbol.label);
     const parentNode = blissSymbolLabelDiv.parentNode;
     if (!parentNode) {
       throw new Error("Parent node of blissSymbolLabelDiv is null");
@@ -116,13 +116,13 @@ describe("BlissSymbol render tests", (): void => {
   test("BlissSymbol aria: when svg has a graphic role)", async (): Promise<void> => {
     render(html`
       <${BlissSymbol}
-        bciAvId="${arrayBciAvId.bciAvId}"
-        label="${arrayBciAvId.label}"
+        composition=${arraySymbol.composition}
+        label="${arraySymbol.label}"
         isPresentation=false
         labelledBy=${MOCK_LABEL_ID}
       />`
     );
-    const blissSymbolLabelDiv = await screen.findByText(arrayBciAvId.label);
+    const blissSymbolLabelDiv = await screen.findByText(arraySymbol.label);
     const parentNode = blissSymbolLabelDiv.parentNode;
     if (!parentNode) {
       throw new Error("Parent node of blissSymbolLabelDiv is null");

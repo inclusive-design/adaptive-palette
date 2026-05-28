@@ -17,7 +17,7 @@ import { JsonPaletteType } from "./index.d";
 import { Palette } from "./Palette";
 
 export const SENTENCE_COMPLETIONS_NAME = "Sentence Completions";
-export const NO_BCI_AV_ID = -1;
+export const NO_SYMBOL_ID = -1;
 
 /**
  * Create a palette from the array of sentences. Each sentence is displayed
@@ -39,7 +39,7 @@ function makeSentencesJsonPalette(sentences: string[]): JsonPaletteType {
       type: "ActionTextCell",
       options: {
         label: sentence,
-        bciAvId: NO_BCI_AV_ID,
+        composition: NO_SYMBOL_ID,
         rowStart: row,
         rowSpan: 1,
         columnStart: 1,

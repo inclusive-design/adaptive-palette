@@ -28,7 +28,7 @@ type CommandCursorBackwardProps = {
 
 export function CommandCursorBackward (props: CommandCursorBackwardProps): VNode {
   const { id, options } = props;
-  const { label, bciAvId, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
+  const { label, composition, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
@@ -44,7 +44,7 @@ export function CommandCursorBackward (props: CommandCursorBackwardProps): VNode
       style="${gridStyles}"
       aria-controls=${ariaControls}
       onClick=${cellClicked}>
-      <${BlissSymbol} bciAvId=${bciAvId} label=${label}/>
+      <${BlissSymbol} composition=${composition} label=${label}/>
     </button>
   `;
 }

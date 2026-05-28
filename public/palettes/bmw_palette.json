@@ -5,10 +5,10 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "DEM.",
-                "bciAvId": [
-                    17720,
+                "composition": [
+                    652,
                     "/",
-                    17697
+                    646
                 ],
                 "rowStart": 3,
                 "rowSpan": 1,
@@ -20,7 +20,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "CONJ.",
-                "bciAvId": 23409,
+                "composition": 823,
                 "rowStart": 3,
                 "rowSpan": 1,
                 "columnStart": 4,
@@ -31,10 +31,10 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "ADVERB",
-                "bciAvId": [
-                    25554,
+                "composition": [
+                    1028,
                     "/",
-                    12335
+                    106
                 ],
                 "rowStart": 3,
                 "rowSpan": 1,
@@ -46,10 +46,10 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "PREP.",
-                "bciAvId": [
-                    12324,
+                "composition": [
+                    102,
                     "/",
-                    17717
+                    651
                 ],
                 "rowStart": 3,
                 "rowSpan": 1,
@@ -61,7 +61,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "ADJ.",
-                "bciAvId": 25554,
+                "composition": 1028,
                 "rowStart": 3,
                 "rowSpan": 1,
                 "columnStart": 7,
@@ -72,7 +72,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "ADJ.+ER",
-                "bciAvId": 24879,
+                "composition": 937,
                 "rowStart": 3,
                 "rowSpan": 1,
                 "columnStart": 8,
@@ -83,7 +83,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "ADJ.+EST",
-                "bciAvId": 24944,
+                "composition": 968,
                 "rowStart": 3,
                 "rowSpan": 1,
                 "columnStart": 9,
@@ -94,7 +94,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "NOUN",
-                "bciAvId": 17717,
+                "composition": 651,
                 "rowStart": 3,
                 "rowSpan": 1,
                 "columnStart": 10,
@@ -105,10 +105,10 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "NOUN PL.",
-                "bciAvId": [
-                    17717,
+                "composition": [
+                    651,
                     ";",
-                    9011
+                    99
                 ],
                 "rowStart": 3,
                 "rowSpan": 1,
@@ -120,7 +120,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "N PERSON",
-                "bciAvId": 16161,
+                "composition": 513,
                 "rowStart": 3,
                 "rowSpan": 1,
                 "columnStart": 12,
@@ -131,10 +131,10 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "N.PER PL",
-                "bciAvId": [
-                    16161,
+                "composition": [
+                    513,
                     ";",
-                    9011
+                    99
                 ],
                 "rowStart": 3,
                 "rowSpan": 1,
@@ -146,10 +146,10 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "ABS TIME",
-                "bciAvId": [
+                "composition": [
                     "HC8N:0,8;S4:2,10",
                     "/",
-                    17732
+                    655
                 ],
                 "rowStart": 3,
                 "rowSpan": 1,
@@ -161,10 +161,10 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "OBJECT",
-                "bciAvId": [
-                    24727,
+                "composition": [
+                    920,
                     "/",
-                    12335
+                    106
                 ],
                 "rowStart": 4,
                 "rowSpan": 1,
@@ -176,7 +176,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "POSS.",
-                "bciAvId": 24925,
+                "composition": 959,
                 "rowStart": 4,
                 "rowSpan": 1,
                 "columnStart": 2,
@@ -187,7 +187,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "VERB",
-                "bciAvId": 12335,
+                "composition": 106,
                 "rowStart": 4,
                 "rowSpan": 1,
                 "columnStart": 3,
@@ -198,10 +198,10 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "VERB+S",
-                "bciAvId": [
-                    12335,
+                "composition": [
+                    106,
                     "/",
-                    8499
+                    12
                 ],
                 "rowStart": 4,
                 "rowSpan": 1,
@@ -213,10 +213,10 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "VERB+ING",
-                "bciAvId": [
-                    12335,
+                "composition": [
+                    106,
                     "/",
-                    14390
+                    335
                 ],
                 "rowStart": 4,
                 "rowSpan": 1,
@@ -228,10 +228,10 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "VERB+ED",
-                "bciAvId": [
-                    12335,
+                "composition": [
+                    106,
                     "/",
-                    15975
+                    503
                 ],
                 "rowStart": 4,
                 "rowSpan": 1,
@@ -243,10 +243,10 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "VERB+EN",
-                "bciAvId": [
-                    12335,
+                "composition": [
+                    106,
                     "/",
-                    13949
+                    297
                 ],
                 "rowStart": 4,
                 "rowSpan": 1,
@@ -258,7 +258,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "TO+VERB",
-                "bciAvId": 13860,
+                "composition": 1558,
                 "rowStart": 4,
                 "rowSpan": 1,
                 "columnStart": 8,
@@ -269,7 +269,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "WHAT",
-                "bciAvId": 18229,
+                "composition": 699,
                 "rowStart": 4,
                 "rowSpan": 1,
                 "columnStart": 9,
@@ -280,10 +280,10 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "INTERJ.",
-                "bciAvId": [
-                    24961,
+                "composition": [
+                    970,
                     "/",
-                    14947
+                    401
                 ],
                 "rowStart": 4,
                 "rowSpan": 1,
@@ -295,12 +295,12 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "MINSPEAK",
-                "bciAvId": [
-                    14647,
+                "composition": [
+                    368,
                     "/",
-                    15972,
+                    502,
                     "/",
-                    15172
+                    414
                 ],
                 "rowStart": 4,
                 "rowSpan": 1,
@@ -312,7 +312,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "FORCE",
-                "bciAvId": 22914,
+                "composition": 804,
                 "rowStart": 4,
                 "rowSpan": 1,
                 "columnStart": 12,
@@ -323,7 +323,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "NUMBER",
-                "bciAvId": 15742,
+                "composition": 478,
                 "rowStart": 4,
                 "rowSpan": 1,
                 "columnStart": 13,
@@ -334,7 +334,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "POEM",
-                "bciAvId": 16210,
+                "composition": 2177,
                 "rowStart": 4,
                 "rowSpan": 1,
                 "columnStart": 14,
@@ -345,7 +345,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "I+",
-                "bciAvId": 14916,
+                "composition": 1840,
                 "rowStart": 5,
                 "rowSpan": 1,
                 "columnStart": 1,
@@ -356,7 +356,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "WE+",
-                "bciAvId": 18212,
+                "composition": 2717,
                 "rowStart": 5,
                 "rowSpan": 1,
                 "columnStart": 2,
@@ -367,7 +367,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "HELP",
-                "bciAvId": 14704,
+                "composition": 382,
                 "rowStart": 5,
                 "rowSpan": 1,
                 "columnStart": 3,
@@ -378,7 +378,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "GIVE",
-                "bciAvId": 14440,
+                "composition": 1729,
                 "rowStart": 5,
                 "rowSpan": 1,
                 "columnStart": 4,
@@ -389,7 +389,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "COMMUN.",
-                "bciAvId": 13390,
+                "composition": 1444,
                 "rowStart": 5,
                 "rowSpan": 1,
                 "columnStart": 5,
@@ -400,7 +400,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "TOOL",
-                "bciAvId": 17755,
+                "composition": 660,
                 "rowStart": 5,
                 "rowSpan": 1,
                 "columnStart": 6,
@@ -411,7 +411,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "COUNTRY",
-                "bciAvId": 13424,
+                "composition": 244,
                 "rowStart": 5,
                 "rowSpan": 1,
                 "columnStart": 7,
@@ -422,7 +422,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "LIMITIME",
-                "bciAvId": 15212,
+                "composition": 426,
                 "rowStart": 5,
                 "rowSpan": 1,
                 "columnStart": 8,
@@ -433,7 +433,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "YEAR",
-                "bciAvId": 18289,
+                "composition": 716,
                 "rowStart": 5,
                 "rowSpan": 1,
                 "columnStart": 9,
@@ -444,7 +444,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "MONTH",
-                "bciAvId": 15649,
+                "composition": 452,
                 "rowStart": 5,
                 "rowSpan": 1,
                 "columnStart": 10,
@@ -455,7 +455,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "DAY",
-                "bciAvId": 13639,
+                "composition": 258,
                 "rowStart": 5,
                 "rowSpan": 1,
                 "columnStart": 11,
@@ -466,7 +466,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "MANY",
-                "bciAvId": 15671,
+                "composition": 2042,
                 "rowStart": 5,
                 "rowSpan": 1,
                 "columnStart": 12,
@@ -477,7 +477,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "PART",
-                "bciAvId": 15972,
+                "composition": 502,
                 "rowStart": 5,
                 "rowSpan": 1,
                 "columnStart": 13,
@@ -488,7 +488,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "RELATION",
-                "bciAvId": 16479,
+                "composition": 558,
                 "rowStart": 5,
                 "rowSpan": 1,
                 "columnStart": 14,
@@ -499,7 +499,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "YOU+",
-                "bciAvId": 18465,
+                "composition": 2785,
                 "rowStart": 6,
                 "rowSpan": 1,
                 "columnStart": 1,
@@ -510,7 +510,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "THEY+",
-                "bciAvId": 17713,
+                "composition": 2589,
                 "rowStart": 6,
                 "rowSpan": 1,
                 "columnStart": 2,
@@ -521,7 +521,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "RECEIVE",
-                "bciAvId": 14435,
+                "composition": 1726,
                 "rowStart": 6,
                 "rowSpan": 1,
                 "columnStart": 3,
@@ -532,7 +532,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "WRITE",
-                "bciAvId": 18285,
+                "composition": 2770,
                 "rowStart": 6,
                 "rowSpan": 1,
                 "columnStart": 4,
@@ -543,7 +543,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "EYE",
-                "bciAvId": 14133,
+                "composition": 303,
                 "rowStart": 6,
                 "rowSpan": 1,
                 "columnStart": 5,
@@ -554,7 +554,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "REPEAT",
-                "bciAvId": 16487,
+                "composition": 2265,
                 "rowStart": 6,
                 "rowSpan": 1,
                 "columnStart": 6,
@@ -565,7 +565,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "WATER",
-                "bciAvId": 18209,
+                "composition": 695,
                 "rowStart": 6,
                 "rowSpan": 1,
                 "columnStart": 7,
@@ -576,7 +576,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "WEIGHT",
-                "bciAvId": 18221,
+                "composition": 697,
                 "rowStart": 6,
                 "rowSpan": 1,
                 "columnStart": 8,
@@ -587,7 +587,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "PUT",
-                "bciAvId": 16440,
+                "composition": 2229,
                 "rowStart": 6,
                 "rowSpan": 1,
                 "columnStart": 9,
@@ -598,7 +598,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "FOOD",
-                "bciAvId": 14377,
+                "composition": 329,
                 "rowStart": 6,
                 "rowSpan": 1,
                 "columnStart": 10,
@@ -609,7 +609,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "WITHOUT",
-                "bciAvId": 15474,
+                "composition": 449,
                 "rowStart": 6,
                 "rowSpan": 1,
                 "columnStart": 11,
@@ -620,7 +620,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "ALSO",
-                "bciAvId": 12374,
+                "composition": 120,
                 "rowStart": 6,
                 "rowSpan": 1,
                 "columnStart": 12,
@@ -631,7 +631,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "EQUAL",
-                "bciAvId": 16713,
+                "composition": 578,
                 "rowStart": 6,
                 "rowSpan": 1,
                 "columnStart": 13,
@@ -642,7 +642,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "OPPOSITE",
-                "bciAvId": 15927,
+                "composition": 486,
                 "rowStart": 6,
                 "rowSpan": 1,
                 "columnStart": 14,
@@ -653,7 +653,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "HE+",
-                "bciAvId": 14687,
+                "composition": 1791,
                 "rowStart": 7,
                 "rowSpan": 1,
                 "columnStart": 1,
@@ -664,10 +664,10 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "PREVERB",
-                "bciAvId": [
-                    13867,
+                "composition": [
+                    270,
                     "/",
-                    12335
+                    106
                 ],
                 "rowStart": 7,
                 "rowSpan": 1,
@@ -679,7 +679,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "QUIET",
-                "bciAvId": 16447,
+                "composition": 2233,
                 "rowStart": 7,
                 "rowSpan": 1,
                 "columnStart": 3,
@@ -690,7 +690,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "WANT",
-                "bciAvId": 18035,
+                "composition": 2705,
                 "rowStart": 7,
                 "rowSpan": 1,
                 "columnStart": 4,
@@ -701,7 +701,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "ELECTRIC",
-                "bciAvId": 13918,
+                "composition": 288,
                 "rowStart": 7,
                 "rowSpan": 1,
                 "columnStart": 5,
@@ -712,7 +712,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "RELIGION",
-                "bciAvId": 16483,
+                "composition": 2261,
                 "rowStart": 7,
                 "rowSpan": 1,
                 "columnStart": 6,
@@ -723,7 +723,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "THINK",
-                "bciAvId": 17718,
+                "composition": 2593,
                 "rowStart": 7,
                 "rowSpan": 1,
                 "columnStart": 7,
@@ -734,7 +734,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "YOUNG",
-                "bciAvId": 18467,
+                "composition": 2787,
                 "rowStart": 7,
                 "rowSpan": 1,
                 "columnStart": 8,
@@ -745,7 +745,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "UMBRELLA",
-                "bciAvId": 17966,
+                "composition": 674,
                 "rowStart": 7,
                 "rowSpan": 1,
                 "columnStart": 9,
@@ -756,7 +756,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "IF",
-                "bciAvId": 14927,
+                "composition": 1847,
                 "rowStart": 7,
                 "rowSpan": 1,
                 "columnStart": 10,
@@ -767,7 +767,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "OUTWORLD",
-                "bciAvId": 15411,
+                "composition": 1969,
                 "rowStart": 7,
                 "rowSpan": 1,
                 "columnStart": 11,
@@ -778,7 +778,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "PAST",
-                "bciAvId": 15975,
+                "composition": 503,
                 "rowStart": 7,
                 "rowSpan": 1,
                 "columnStart": 12,
@@ -789,7 +789,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "PRESENT",
-                "bciAvId": 16246,
+                "composition": 546,
                 "rowStart": 7,
                 "rowSpan": 1,
                 "columnStart": 13,
@@ -800,7 +800,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "FUTURE",
-                "bciAvId": 14417,
+                "composition": 341,
                 "rowStart": 7,
                 "rowSpan": 1,
                 "columnStart": 14,
@@ -811,7 +811,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "SHE+",
-                "bciAvId": 16949,
+                "composition": 2377,
                 "rowStart": 8,
                 "rowSpan": 1,
                 "columnStart": 1,
@@ -822,10 +822,10 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "PREVRB+S",
-                "bciAvId": [
-                    13867,
+                "composition": [
+                    270,
                     "/",
-                    12335
+                    106
                 ],
                 "rowStart": 8,
                 "rowSpan": 1,
@@ -837,7 +837,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "AM/BE",
-                "bciAvId": 12639,
+                "composition": 1267,
                 "rowStart": 8,
                 "rowSpan": 1,
                 "columnStart": 3,
@@ -848,7 +848,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "STOP",
-                "bciAvId": 17268,
+                "composition": 2491,
                 "rowStart": 8,
                 "rowSpan": 1,
                 "columnStart": 4,
@@ -859,7 +859,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "DIRECTN",
-                "bciAvId": 13682,
+                "composition": 1547,
                 "rowStart": 8,
                 "rowSpan": 1,
                 "columnStart": 5,
@@ -870,7 +870,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "FORGIVE",
-                "bciAvId": 14388,
+                "composition": 1695,
                 "rowStart": 8,
                 "rowSpan": 1,
                 "columnStart": 6,
@@ -881,7 +881,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "GO",
-                "bciAvId": 14449,
+                "composition": 1736,
                 "rowStart": 8,
                 "rowSpan": 1,
                 "columnStart": 7,
@@ -892,7 +892,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "HAVE",
-                "bciAvId": 14685,
+                "composition": 1789,
                 "rowStart": 8,
                 "rowSpan": 1,
                 "columnStart": 8,
@@ -903,7 +903,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "JOURNEY",
-                "bciAvId": 17779,
+                "composition": 667,
                 "rowStart": 8,
                 "rowSpan": 1,
                 "columnStart": 9,
@@ -914,24 +914,24 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "KING",
-                "bciAvId": [
-                    15416,
+                "composition": [
+                    433,
                     "/",
-                    16420,
+                    548,
                     ";",
-                    16420,
+                    548,
                     ":",
                     "8,0",
                     ";",
-                    14960,
+                    405,
                     ";",
-                    14960,
+                    405,
                     ":",
                     "16,0",
                     ";",
-                    13901,
+                    281,
                     ";",
-                    13901,
+                    281,
                     ":",
                     "8,0"
                 ],
@@ -945,7 +945,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "LOVE",
-                "bciAvId": 15399,
+                "composition": 431,
                 "rowStart": 8,
                 "rowSpan": 1,
                 "columnStart": 11,
@@ -956,7 +956,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "HOUSE",
-                "bciAvId": 14905,
+                "composition": 392,
                 "rowStart": 8,
                 "rowSpan": 1,
                 "columnStart": 12,
@@ -967,7 +967,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "RETURN",
-                "bciAvId": 16500,
+                "composition": 2276,
                 "rowStart": 8,
                 "rowSpan": 1,
                 "columnStart": 13,
@@ -978,7 +978,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "LEGSFEET",
-                "bciAvId": 15189,
+                "composition": 418,
                 "rowStart": 8,
                 "rowSpan": 1,
                 "columnStart": 14,
@@ -989,7 +989,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "IT+",
-                "bciAvId": 14960,
+                "composition": 405,
                 "rowStart": 9,
                 "rowSpan": 1,
                 "columnStart": 1,
@@ -1000,7 +1000,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "NO",
-                "bciAvId": 15722,
+                "composition": 2080,
                 "rowStart": 9,
                 "rowSpan": 1,
                 "columnStart": 2,
@@ -1011,7 +1011,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "DRESS",
-                "bciAvId": 13876,
+                "composition": 1566,
                 "rowStart": 9,
                 "rowSpan": 1,
                 "columnStart": 3,
@@ -1022,7 +1022,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "ZEBRA",
-                "bciAvId": 18474,
+                "composition": 2794,
                 "rowStart": 9,
                 "rowSpan": 1,
                 "columnStart": 4,
@@ -1033,7 +1033,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "EXCLAIM",
-                "bciAvId": 14947,
+                "composition": 401,
                 "rowStart": 9,
                 "rowSpan": 1,
                 "columnStart": 5,
@@ -1044,7 +1044,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "CAN",
-                "bciAvId": 13114,
+                "composition": 1370,
                 "rowStart": 9,
                 "rowSpan": 1,
                 "columnStart": 6,
@@ -1055,7 +1055,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "VALUE",
-                "bciAvId": 13949,
+                "composition": 297,
                 "rowStart": 9,
                 "rowSpan": 1,
                 "columnStart": 7,
@@ -1066,7 +1066,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "BUT",
-                "bciAvId": 13094,
+                "composition": 192,
                 "rowStart": 9,
                 "rowSpan": 1,
                 "columnStart": 8,
@@ -1077,7 +1077,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "NEAR",
-                "bciAvId": 15697,
+                "composition": 2061,
                 "rowStart": 9,
                 "rowSpan": 1,
                 "columnStart": 9,
@@ -1088,7 +1088,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "MAYBE",
-                "bciAvId": 15436,
+                "composition": 1986,
                 "rowStart": 9,
                 "rowSpan": 1,
                 "columnStart": 10,
@@ -1099,7 +1099,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "MONEY",
-                "bciAvId": 15484,
+                "composition": 451,
                 "rowStart": 9,
                 "rowSpan": 1,
                 "columnStart": 11,
@@ -1110,7 +1110,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "FURNITUR",
-                "bciAvId": 14416,
+                "composition": 1716,
                 "rowStart": 9,
                 "rowSpan": 1,
                 "columnStart": 12,
@@ -1121,7 +1121,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "YES",
-                "bciAvId": 18294,
+                "composition": 2776,
                 "rowStart": 9,
                 "rowSpan": 1,
                 "columnStart": 13,
@@ -1132,7 +1132,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "SAY",
-                "bciAvId": 16728,
+                "composition": 2325,
                 "rowStart": 9,
                 "rowSpan": 1,
                 "columnStart": 14,
@@ -1143,7 +1143,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "AIR",
-                "bciAvId": 12356,
+                "composition": 114,
                 "rowStart": 10,
                 "rowSpan": 1,
                 "columnStart": 1,
@@ -1154,7 +1154,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "OPEN",
-                "bciAvId": 15921,
+                "composition": 2104,
                 "rowStart": 10,
                 "rowSpan": 1,
                 "columnStart": 2,
@@ -1165,7 +1165,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "NOT",
-                "bciAvId": 15733,
+                "composition": 2088,
                 "rowStart": 10,
                 "rowSpan": 1,
                 "columnStart": 3,
@@ -1176,7 +1176,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "FINISH",
-                "bciAvId": 14181,
+                "composition": 1665,
                 "rowStart": 10,
                 "rowSpan": 1,
                 "columnStart": 4,
@@ -1187,7 +1187,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "CAUSE",
-                "bciAvId": 13134,
+                "composition": 206,
                 "rowStart": 10,
                 "rowSpan": 1,
                 "columnStart": 5,
@@ -1198,7 +1198,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "BIRTH",
-                "bciAvId": 12843,
+                "composition": 166,
                 "rowStart": 10,
                 "rowSpan": 1,
                 "columnStart": 6,
@@ -1209,7 +1209,7 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "SEXUAL",
-                "bciAvId": 16933,
+                "composition": 2362,
                 "rowStart": 10,
                 "rowSpan": 1,
                 "columnStart": 7,
@@ -1220,10 +1220,10 @@
             "type": "ActionBmwCodeCell",
             "options": {
                 "label": "LANG.",
-                "bciAvId": [
-                    15172,
+                "composition": [
+                    414,
                     "/",
-                    14883
+                    386
                 ],
                 "rowStart": 10,
                 "rowSpan": 1,

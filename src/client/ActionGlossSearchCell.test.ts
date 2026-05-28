@@ -17,7 +17,7 @@ import { ActionGlossSearchCell } from "./ActionGlossSearchCell";
 
 describe("ActionGlossSearchCell render tests", (): void => {
 
-  const BCI_TREE_BARK = 22311;
+  const BCI_TREE_BARK = 3274;
 
   // 1. Made ID unique to text search
   const TEXT_SEARCH_CELL_ID = "text-search-uuid";
@@ -32,13 +32,13 @@ describe("ActionGlossSearchCell render tests", (): void => {
       "rowSpan": "2",
       "columnStart": "2",
       "columnSpan": "1",
-      "bciAvId": BCI_TREE_BARK
+      "composition": BCI_TREE_BARK
     }
   };
 
   // 2. Made ID unique to BCI search
   const BCI_SEARCH_CELL_ID = "bci-search-uuid";
-  const BCI_SEARCH_LABEL = "22311: bark";
+  const BCI_SEARCH_LABEL = "3274: bark";
   const BCI_SEARCH_PROPOSED_GLOSS = " bark";
 
   const bciSearchCellProps = {
@@ -49,7 +49,7 @@ describe("ActionGlossSearchCell render tests", (): void => {
       "rowSpan": "2",
       "columnStart": "2",
       "columnSpan": "1",
-      "bciAvId": BCI_TREE_BARK
+      "composition": BCI_TREE_BARK
     }
   };
 

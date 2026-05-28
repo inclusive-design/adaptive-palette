@@ -21,7 +21,7 @@ describe("PaletteStore module", (): void => {
         "type": "cellOneType",
         "options": {
           "label": "Singer",
-          "bciAvId": 16991,
+          "composition": 2411,
           "rowStart": 1,
           "rowSpan": 1,
           "columnStart": 1,
@@ -32,7 +32,7 @@ describe("PaletteStore module", (): void => {
         "type": "cellTwoType",
         "options": {
           "label": "Dancer",
-          "bciAvId": 19961,
+          "composition": 513,
           "rowStart": 2,
           "rowSpan": 3,
           "columnStart": 4,
@@ -50,7 +50,7 @@ describe("PaletteStore module", (): void => {
         "type": "dummyCellType",
         "options": {
           "label": "Choreographer",
-          "bciAvId": 666,
+          "composition": 823,
           "rowStart": 2,
           "rowSpan": 2,
           "columnStart": 2,
@@ -67,7 +67,7 @@ describe("PaletteStore module", (): void => {
         "type": "mockCellType",
         "options": {
           "label": "clown",
-          "bciAvId": 23443,
+          "composition": 3738,
           "rowStart": 1,
           "rowSpan": 1024,
           "columnStart": 9,

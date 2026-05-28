@@ -61,14 +61,14 @@ export function makeMatchesPalette (
       type: "ActionGlossSearchCell",
       options: {
         label: `${searchTerm}: ${match.label}`,
-        bciAvId: match.bciAvId,
+        composition: match.composition ?? match.id,
         rowStart: currentRow,
         rowSpan: 1,
         columnStart: currentCol,
         columnSpan: 1
       }
     };
-    jsonPalette.cells[`${match.label}-${match.bciAvId}`] = cell;
+    jsonPalette.cells[`${match.label}-${match.id}`] = cell;
 
     // Update rows, columns, etc.
     colIndex++;

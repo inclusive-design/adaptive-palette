@@ -45,7 +45,7 @@ There are four types of input items allowed:
 - a single number that is the BCI AV ID of a specific Bliss symbol,
 - the text "BLANK" will result in an empty blank cell,
 - an svg-builder string as required by the [bliss-svg-builder](https://github.com/hlridge/bliss-svg-builder)
-  that specifies component BCI AV IDs or Blissary IDs that the builder uses to
+  that specifies component BCI AV IDs or IDsthat the builder uses to
   create the SVG graphic.  More about the structure of this string is given below.
 
 An svg-builder string is marked by "SVG:" at the beginning of the string and

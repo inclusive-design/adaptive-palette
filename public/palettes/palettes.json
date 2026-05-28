@@ -1,53 +1,65 @@
 {
-  "name": "Palettes",
-  "cells": {
-  "bliss-std-chart-653dfa6e-69c5-453b-bdf5-4d37216aaec1": {
-   "type": "ActionBranchToPaletteCell",
-   "options": {
-     "label": "Bliss standard chart",
-     "bciAvId": [ 13934, "//", 15172, "/", 12857 ],
-     "branchTo": "Bliss standard chart",
-     "rowStart": 3,
-     "rowSpan": 1,
-     "columnStart": 9,
-     "columnSpan": 4
+    "name": "Palettes",
+    "cells": {
+        "bliss-std-chart-653dfa6e-69c5-453b-bdf5-4d37216aaec1": {
+            "type": "ActionBranchToPaletteCell",
+            "options": {
+                "label": "Bliss standard chart",
+                "composition": [
+                    291,
+                    "//",
+                    414,
+                    "/",
+                    167
+                ],
+                "branchTo": "Bliss standard chart",
+                "rowStart": 3,
+                "rowSpan": 1,
+                "columnStart": 9,
+                "columnSpan": 4
+            }
+        },
+        "myfamily-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+            "type": "ActionBranchToPaletteCell",
+            "options": {
+                "label": "Family",
+                "composition": 730,
+                "branchTo": "My Family Palette",
+                "rowStart": 3,
+                "rowSpan": 1,
+                "columnStart": 1,
+                "columnSpan": 4
+            }
+        },
+        "people-30a32c78-56fe-4622-9fba-0416b68d72fc": {
+            "type": "ActionBranchToPaletteCell",
+            "options": {
+                "label": "People",
+                "branchTo": "People",
+                "composition": 1758,
+                "rowStart": 3,
+                "rowSpan": 1,
+                "columnStart": 5,
+                "columnSpan": 4
+            }
+        },
+        "5707a518-3d14-4c1c-a9b5-8a8ed53aa6ee": {
+            "type": "ActionBranchToPaletteCell",
+            "options": {
+                "label": "BMW",
+                "branchTo": "BMW Palette",
+                "rowStart": 3,
+                "rowSpan": 1,
+                "columnStart": 13,
+                "columnSpan": 4,
+                "composition": [
+                    56,
+                    "/",
+                    67,
+                    "/",
+                    77
+                ]
+            }
+        }
     }
-  },
-  "myfamily-30a32c78-56fe-4622-9fba-0416b68d72fc": {
-   "type": "ActionBranchToPaletteCell",
-   "options": {
-     "label": "Family",
-     "bciAvId": 20572,
-     "branchTo": "My Family Palette",
-     "rowStart": 3,
-     "rowSpan": 1,
-     "columnStart": 1,
-     "columnSpan": 4
-    }
-  },
-  "people-30a32c78-56fe-4622-9fba-0416b68d72fc": {
-    "type": "ActionBranchToPaletteCell",
-    "options": {
-      "label": "People",
-      "branchTo": "People",
-      "bciAvId": 14646,
-      "rowStart": 3,
-      "rowSpan": 1,
-      "columnStart": 5,
-      "columnSpan": 4
-    }
-  },
-  "5707a518-3d14-4c1c-a9b5-8a8ed53aa6ee": {
-    "type": "ActionBranchToPaletteCell",
-    "options": {
-      "label": "BMW",
-      "branchTo": "BMW Palette",
-      "rowStart": 3,
-      "rowSpan": 1,
-      "columnStart": 13,
-      "columnSpan": 4,
-      "bciAvId": [ 8552, "/", 8563, "/", 8573 ]
-    }
-  }
-}}
-
+}

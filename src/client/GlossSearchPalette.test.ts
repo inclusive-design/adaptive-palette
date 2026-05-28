@@ -13,7 +13,7 @@ import { render, screen } from "@testing-library/preact";
 import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals } from "./GlobalData";
-import { MatchType } from "./index.d";
+import { MatchType, SymbolCompositionType } from "./index.d";
 import {
   GlossSearchPalette, GLOSS_MATCHES_PALETTE, makeMatchesPalette
 } from "./GlossSearchPalette";
@@ -22,15 +22,13 @@ describe("GlossSearchPalette tests", (): void => {
 
   const testMatches: MatchType[] = [
     {
-      bciAvId: 22311,
+      id: 3274,
       label: "bark",
-      composition: [16420, "/", 17783 ],
-      fullComposition: undefined
+      composition: [548, "/", 669]
     }, {
-      bciAvId: 24020,
+      id: 4168,
       label: "bark-(to)",
-      composition: [15666, ";", 8993, "/", 12380 ],
-      fullComposition: undefined
+      composition: [457, ";", 81, "/", 124]
     }
   ];
 
@@ -102,7 +100,7 @@ describe("GlossSearchPalette tests", (): void => {
       type: string;
       options: {
         label: string;
-        bciAvId: number;
+        composition: SymbolCompositionType;
         rowStart: number;
         rowSpan: 1,
         columnStart: number;

@@ -25,7 +25,7 @@ describe("ActionBmwCodeDell render tests", (): void => {
       "rowSpan": "2",
       "columnStart": "2",
       "columnSpan": "1",
-      "bciAvId": [ 12335, "/", 8499 ]   // VERB+EN
+      "composition": [ 106, "/", 12 ]   // VERB+EN (IDs for bciAvIds 12335, 8499)
     }
   };
 
@@ -59,6 +59,10 @@ describe("ActionBmwCodeDell render tests", (): void => {
 
     // Check disabled state (should be enabled)
     expect(button.getAttribute("disabled")).toBe(null);
+
+    // Check that SVG is rendered (composition field must be set; bciAvId would leave it undefined)
+    const svgElement = button.querySelector("svg");
+    expect(svgElement).not.toBe(null);
   });
 
 });

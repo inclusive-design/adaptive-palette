@@ -27,7 +27,7 @@ describe("CommandGoBackCell render tests", (): void => {
       "rowSpan": "2",
       "columnStart": "2",
       "columnSpan": "1",
-      "bciAvId": 12612
+      "composition": 1248
     }
   };
   const goBackCellAriaControls = {
@@ -37,7 +37,7 @@ describe("CommandGoBackCell render tests", (): void => {
       "rowSpan": "2",
       "columnStart": "2",
       "columnSpan": "1",
-      "bciAvId": 12612
+      "composition": 1248
     }
   };
 
