@@ -16,17 +16,17 @@ import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { generateGridStyle, speak, insertWordAtCaret } from "./GlobalUtils";
-import { adaptivePaletteGlobals } from "./GlobalData";
+import { idToString } from "./SvgUtils";
 import "./ActionGlossSearchCell.scss";
 
 type ActionGlossSearchCellPropsType = {
   id: string,
-  options: BlissSymbolInfoType & LayoutInfoType
+  options: BlissSymbolInfoType & LayoutInfoType & { id: number, bciAvId: number }
 };
 
 export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): VNode {
   const {
-    columnStart, columnSpan, rowStart, rowSpan, composition, label
+    columnStart, columnSpan, rowStart, rowSpan, composition, label, id, bciAvId
   } = props.options;
 
   // Create a ref for the input instead of relying on document.getElementById
@@ -38,7 +38,6 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
   // is a number.  If so, replace it with the `composition`, which is the id of the
   // symbol found when searching for all of the symbols that contain the
   // searched-for symbol.
-  let actualLabel = label;
   const [ searchTerm, glossPart ] = label.split(":");
   let proposedGloss = searchTerm;
   if (proposedGloss.length === 0) {
@@ -46,25 +45,18 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
   }
   // Check if searchTerm is a valid number, and make sure glossPart exists
   else if (/^\d+$/.test(searchTerm)) {
-    actualLabel = `${String(composition)}: ${glossPart || ""}`.trim();
     proposedGloss = glossPart || "";
   }
-  const symbol = typeof composition === "number"
-    ? adaptivePaletteGlobals.symbols.find(s => s.id === composition)
-    : null;
-  const resolvedComposition = Array.isArray(composition) ? composition : symbol?.composition;
-  const compositionString = Array.isArray(resolvedComposition)
-    ? resolvedComposition.join("")
-    : composition.toString();
+
+  const compositionString = idToString(composition);
 
   const cellClicked = () => {
     // Get value from the ref, fallback to proposedGloss if unavailable
     const theLabel = inputRef.current ? inputRef.current.value : proposedGloss;
-    const payloadComposition = resolvedComposition ?? composition;
     const payload = {
       "id": props.id,
       "label": theLabel,
-      "composition": payloadComposition,
+      "composition": composition,
       "modifierInfo": []
     };
     changeEncodingContents.value = insertWordAtCaret(
@@ -80,7 +72,7 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
       <button id="${props.id}" onClick=${cellClicked}>
         <${BlissSymbol}
           composition=${composition}
-          label=${actualLabel}
+          label=${label}
           isPresentation=true
         />
       </button>
@@ -91,7 +83,7 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
           id="input-${props.id}"
           defaultValue=${proposedGloss}
         />
-        <span>${composition}: ${compositionString}</span>
+        <span>${bciAvId} . ${idToString(id)} . ${compositionString}</span>
       </div>
     </div>
   `;

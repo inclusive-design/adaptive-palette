@@ -60,6 +60,8 @@ export function makeMatchesPalette (
     const cell = {
       type: "ActionGlossSearchCell",
       options: {
+        id: match.id,
+        bciAvId: match.bciAvId,
         label: `${searchTerm}: ${match.label}`,
         composition: match.composition ?? match.id,
         rowStart: currentRow,

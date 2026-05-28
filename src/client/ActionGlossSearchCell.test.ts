@@ -27,6 +27,8 @@ describe("ActionGlossSearchCell render tests", (): void => {
   const textSearchCellProps = {
     id: TEXT_SEARCH_CELL_ID,
     options: {
+      id: BCI_TREE_BARK,
+      bciAvId: 22311,
       "label": TEXT_SEARCH_LABEL,
       "rowStart": "3",
       "rowSpan": "2",
@@ -44,6 +46,8 @@ describe("ActionGlossSearchCell render tests", (): void => {
   const bciSearchCellProps = {
     id: BCI_SEARCH_CELL_ID,
     options: {
+      id: BCI_TREE_BARK,
+      bciAvId: 22311,
       "label": BCI_SEARCH_LABEL,
       "rowStart": "3",
       "rowSpan": "2",
@@ -83,6 +87,11 @@ describe("ActionGlossSearchCell render tests", (): void => {
     expect(inputElement).toBeVisible();
     expect(inputElement).toBeValid();
     expect(inputElement).toHaveValue(TEXT_SEARCH_PROPOSED_GLOSS);
+
+    const spanEl = document.querySelector(".actionGlossSearchCell span");
+    expect(spanEl).not.toBeNull();
+    // composition=3274 (number) → idToString(3274) = "B3274"
+    expect(spanEl!.textContent).toBe("22311 . B3274 . B3274");
   });
 
   test("ActionGlossSearchCell rendering with BCI AV ID search", (): void => {

@@ -19,10 +19,12 @@ describe("BciUtils module", (): void => {
   const expectedBarkResults = [
     {
       id: 3274,
+      bciAvId: 22311,
       label: BARK,
       composition: [548, "/", 669 ],
     }, {
       id: 4168,
+      bciAvId: 24020,
       label: "to bark, to woof",
       composition: [457, ";", 81, "/", 124 ],
     }
@@ -31,10 +33,12 @@ describe("BciUtils module", (): void => {
   const expectedSpaceIdResults = [
     {
       id: 611,
+      bciAvId: 17221,
       label: "space, dimension",
       composition: undefined,
     }, {
       id: 5402,
+      bciAvId: 25790,
       label: "sculpture",
       composition: [ 840, ";", 97, "/", "RK:-2", "/", 313, "/", 12, "/", 611 ],
     }
@@ -44,6 +48,7 @@ describe("BciUtils module", (): void => {
   const expectedCousionResults = [
     {
       id: 5066,
+      bciAvId: 25279,
       label: MALE_COUSIN,
       composition: [607, "/", 479, "/", 11, "/", 500],
     }

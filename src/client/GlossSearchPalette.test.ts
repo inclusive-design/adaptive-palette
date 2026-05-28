@@ -23,10 +23,12 @@ describe("GlossSearchPalette tests", (): void => {
   const testMatches: MatchType[] = [
     {
       id: 3274,
+      bciAvId: 22311,
       label: "bark",
       composition: [548, "/", 669]
     }, {
       id: 4168,
+      bciAvId: 24020,
       label: "bark-(to)",
       composition: [457, ";", 81, "/", 124]
     }
@@ -99,12 +101,14 @@ describe("GlossSearchPalette tests", (): void => {
     interface ExpectedCellShape {
       type: string;
       options: {
+        id: number;
+        bciAvId: number;
         label: string;
         composition: SymbolCompositionType;
         rowStart: number;
-        rowSpan: 1,
+        rowSpan: 1;
         columnStart: number;
-        columnSpan: 1
+        columnSpan: 1;
       }
     };
 
@@ -122,6 +126,8 @@ describe("GlossSearchPalette tests", (): void => {
     expect(cellKeys[0].startsWith(BARK)).toBe(true);
     expect(firstCell.type).toEqual("ActionGlossSearchCell");
     expect(firstCell.options.label).toEqual(`${BARK}: ${testMatches[0].label}`);
+    expect(firstCell.options.id).toBe(testMatches[0].id);
+    expect(firstCell.options.bciAvId).toBe(testMatches[0].bciAvId);
 
     // Validate positioning logic (startRow: 1, startCol: 1)
     expect(firstCell.options.rowStart).toBe(1);

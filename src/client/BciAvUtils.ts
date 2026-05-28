@@ -39,6 +39,7 @@ export function findSymbolByGloss(label: string): MatchType[] {
       if ((label === oneSymbolEntry.gloss) || wordMatch.test(oneSymbolEntry.gloss)) {
         matches.push({
           id: oneSymbolEntry.id,
+          bciAvId: oneSymbolEntry.bciAvId,
           label: oneSymbolEntry.gloss,
           composition: oneSymbolEntry.composition
         });
@@ -65,6 +66,7 @@ export function findSymbolByBciAvId (bciId: number): MatchType[] {
     if (symbol.bciAvId === bciId) {
       matches.unshift({
         id: symbol.id,
+        bciAvId: symbol.bciAvId,
         label: symbol.gloss,
         composition: symbol.composition
       });
@@ -73,6 +75,7 @@ export function findSymbolByBciAvId (bciId: number): MatchType[] {
              && symbol.composition.includes(targetId)) {
       matches.push({
         id: symbol.id,
+        bciAvId: symbol.bciAvId,
         label: symbol.gloss,
         composition: symbol.composition
       });

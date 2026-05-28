@@ -94,6 +94,7 @@ export type ContentSignalDataType = {
  */
 export type MatchType = {
   id: number,
+  bciAvId: number,
   label: string,
   composition?: SymbolCompositionType
 }
