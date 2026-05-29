@@ -239,24 +239,20 @@ function setAskButtonsEnabledState() {
  */
 async function queryEachModel (promptText) {
   const names = await getModelNames();
-  let count = 0;
-  names.forEach (async (modelName) => {
+  await Promise.all(names.map(async (modelName) => {
     await queryChat(promptText, modelName)
       .then(async (response) => {
         const outputEl = createOutputSection(modelName);
         await outputResult(response, outputEl, "No Result");
-        count++;
-
-        // Clear the general "Working..." message after all models have been
-        // queried, and scroll to the bottom
-        if (count === names.length) {
-          await outputResult([], document.getElementById("ollamaOutput"), "");
-          document.body.scrollTop = document.body.scrollHeight;
-        }
       }).catch((error) => {
         console.error(`Error querying model ${modelName}:`, error);
       });
-  });
+  }));
+
+  // Clear the general "Working..." message after all models have been
+  // queried, and scroll to the bottom
+  await outputResult(/** @type {any} */ ([]), /** @type {HTMLElement} */ (document.getElementById("ollamaOutput")), "");
+  document.body.scrollTop = document.body.scrollHeight;
 }
 
 /**
