@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 Inclusive Design Research Centre, OCAD University
+ * Copyright 2024-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in

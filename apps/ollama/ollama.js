@@ -251,7 +251,7 @@ async function queryEachModel (promptText) {
 
   // Clear the general "Working..." message after all models have been
   // queried, and scroll to the bottom
-  await outputResult(/** @type {any} */ ([]), /** @type {HTMLElement} */ (document.getElementById("ollamaOutput")), "");
+  /** @type {HTMLElement} */ (document.getElementById("ollamaOutput")).innerText = "";
   document.body.scrollTop = document.body.scrollHeight;
 }
 
