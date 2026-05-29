@@ -2,9 +2,9 @@
 
 ## How to Launch
 
-The palette generator is one of the web applications within this
-project that run on localhost.  It
-is made available using the following command executed in the home directory:
+The palette generator is one of the web applications within this project that
+run on localhost.  It is made available using the following command executed in
+the home directory:
 
 ```text
 npm run serveAppsDemos
@@ -28,128 +28,61 @@ they refer to the position of the first cell in the first row of the palette.
 
 The "Type of cell" select allows you to specify or modify the kind of cells that
 make up the palette.  Note that _all_ of the cells are set to this type; there
-is no way to have a mixture of cell types.  A future version of the application
-will address this limitation.
+is no way to have a mixture of cell types.
 
-### Search for matches
+### Search for Matches
 
-The next section, "Search for matches" is a text area where each line of text
-describes one row of palette cells.  Spaces are used for separate cells so the
-text used to specify a cell cannot contain any spaces.
+The "Search for matches" text area is where you specify the palette contents.
+Each line corresponds to one row of palette cells.  Items within a row are
+separated by spaces.  Four item types are accepted:
 
-There are four types of input items allowed:
+- **`BLANK`** — an empty cell.
+- **BCI AV ID** — a number matching a specific Bliss symbol; the gloss becomes
+  the cell label.
+- **`GLOSS:gloss text:GLOSS`** — searches for an exact or partial gloss match;
+  spaces are allowed within the gloss text.
+- **SVG builder string** — a `SVG:...:SVG` string specifying how to compose a
+  symbol from component IDs.  Components can be BCI AV IDs (plain numbers) or
+  blissary IDs (numbers prefixed with `B`).
 
-- a string that is a single word such as "heart" or "dog", or a string that
-  matches part or all of a gloss entry, e.g., "indicator_".  As shown in this
-  last example, the string can include an underscore character (\_),
-- a single number that is the BCI AV ID of a specific Bliss symbol,
-- the text "BLANK" will result in an empty blank cell,
-- an svg-builder string as required by the [bliss-svg-builder](https://github.com/hlridge/bliss-svg-builder)
-  that specifies component BCI AV IDs or IDsthat the builder uses to
-  create the SVG graphic.  More about the structure of this string is given below.
-
-An svg-builder string is marked by "SVG:" at the beginning of the string and
-":SVG" at the end. What lies between is a set of comma separated BCI AVI IDs or
-Blissary IDs, and quoted strings that are parsed by the svg builder.  No spaces
-are allowed within an SVG string.  Note that mixing BCI AV IDs and Blissary IDs
-in the same SVG string is not supported.
-
-Some examples of svg-builder strings:
+An optional label can be appended to any non-`BLANK` item using the enclosing
+marker `LABEL:label text:LABEL`.  Spaces are allowed within the label text.
+Some examples:
 
 ```text
-SVG:14905,"/",24883:SVG // "building" (14905) followed by "deletion" (24833) = "ruin"
-SVG:13166,";",9011:SVG  // "child" (13166) with plural indicator above (9011) = "children"
-SVG:13166;9011:SVG      // "child" (13166) with plural indicator above (9011) = "children"
-SVG:B220;B99:SVG        // "child" (B220) with plural indicator above (B99) = "children"
+25605LABEL:ruin:LABEL
+GLOSS:indicator (action):GLOSSLABEL:verb:LABEL
+SVG:13166;9011:SVGLABEL:children:LABEL
+SVG:B220;B99:SVGLABEL:children:LABEL
 ```
 
-A user defined label for a cell can be specified for a word, ID, or an
-svg-builder string. User defined labels cannot be added to `BLANK` cells. The
-label to display is given by immediately appending "LABEL:_label\_text_" to the
-word, number, or svg-builder string. The _label\_text_ will be used as the label
-for the cell instead of the usual gloss for the symbol. Note that this is the
-only way to specify a cell's label for svg-builder strings.  The _label\_text_
-cannot have any whitespace within it, since whitespace is used to indicate a new
-cell in the palette.  If white space is needed, use an underscore.  Any
-underscore characters in the _label\_text_ are replaced with a single space.
-Some examples follow:
-
-```text
-clothLABEL:cross_hatches             // cell label is "cross hatches"
-23641LABEL:ruin                      // cell label is "ruin"; official gloss is "ruin,wreck,wreckage\_(building)\_(1)
-SVG:13166,";",9011:SVGLABEL:children // cell label is "children"
-```
+For full details on all accepted formats and SVG builder string syntax, expand
+the **"How to specify matches"** section within the app.
 
 ### Generate Palette
 
-Clicking the "Generate palette" button will trigger the app to use the
-individual words and numbers to search the Bliss gloss for matches.  In the case
-of words, a match is defined as matching a single word within the gloss or
-matching the entire gloss.  Since the same word can appear in multiple glosses,
-multiple matches are a possible result.  Only the first match is used to
-construct the cell, but all of the matches are reported in the lower part of the
-page.
-
-In the case of numbers, the gloss is searched for that unique BCI AV ID and that
-single gloss entry is used to construct the cell.  If the number is invalid, an
-error is reported.
-
-If the cell description string is an svg-builder string, the gloss is not
-consulted. This has the consequence that the cell will not have a label since
-the svg-builder does not know what the label is.  Usually, however, if the user
-knows the svg-builder string, they likely know the name of the symbol it
-constructs, and can provide a label using the "LABEL:_label\_text_" technique.
-
-For each match found, a cell is constructed and added to the appropriate row and
-the entire palette is shown on screen.  It can be inspected for errors.
-Corrections can be made in the glosses area and a new palette generated by
-clicking the "Generate palette" button again.
+Clicking "Generate palette" searches the Bliss gloss for matches and renders a
+palette preview.  Multiple matches for a single gloss input are all listed in the
+"Matches" section below the preview; only the first match is used in the palette.
+Corrections can be made in the text area and the palette regenerated by clicking
+the button again.
 
 ### Save Palette
 
-Clicking the "Save palette" button will export a palette definition JSON file
-and save it to disk where the browser saves file downloads, typically the
-"Downloads" folder.  The name of the file will be the palette's name with a
-".json" extension.  For example, if the palette name is "People", then the file
-created is "People.json".
+Clicking "Save palette" exports the palette as a JSON file to the browser's
+download folder.  The filename is the palette name with a `.json` extension.
 
 ### Clear Palette
 
-Clicking the "Clear palette" button removes the preview of the palette, and the
-matches and error listings.
+Clicking "Clear palette" removes the preview and resets the matches and error
+listings.
 
 ### Matches and Errors
 
-#### Matches
+The **Matches** section lists all gloss matches found for each input item, showing
+the BCI AV ID, the full gloss, and the composition for compound symbols.  Use
+this to verify the correct symbol was chosen or to substitute a BCI AV ID when
+a gloss input returns multiple matches.
 
-The "Matches" section is a list of all of the matches that were found for each
-item in the "Search for matches" input text area.  Each item is listed
-separately where the head of the listing is a copy of the input word.  The
-matches for each word are a list of the BCI AVI IDs, their glosses, and their
-full decomposition if the match is a Bliss-word composed from a sequence of
-Bliss-characters.  For example, if the input word was "cloth", two gloss entries
-are reported.  One is a symbol for cloth in the sense of fabric (BCI AV ID
-13365), and the other is a symbol for "drying rack" (BCI AV ID 26161).  Its
-composition is shown as '17445/23859/13365', the BCI AV IDs for the
-Bliss-characters "structure,construction", "dryness,drought", and
-"cloth,fabric,material,textile,net":
-
-```text
-cloth
-    13365: cloth,fabric,material,textile,net
-    26161: drying_rack_(cloth), '17445/23859/13365'
-```
-
-If the Bliss symbol drawn in the preview palette is incorrect, the matches can
-be consulted to see if there is a better symbol.  If so, its BCI AV ID can be
-input instead of the word initially used.
-
-No matches are listed for BCI AV ID inputs, "BLANK" inputs, nor svg builder
-strings.  Valid BCI AV ID will match a Bliss gloss entry exactly and only errors
-are reported if the ID is invalid.  The gloss is not consulted for BLANK inputs
-nor for svg builder strings.
-
-#### Errors
-
-The "Errors" section describe errors that arise from searching the gloss entries
-or for invalid svg builder strings.
+The **Errors** section reports items that could not be matched or that contained
+invalid SVG builder strings.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 Inclusive Design Research Centre, OCAD University
+ * Copyright 2024-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -64,7 +64,7 @@ function renderExamples() {
   // Slash example
   render(html`
     <${BlissSymbol}
-      bciAvId=${[ 12378, "/", 25582 ]}
+      composition=${[ 122, "/", 1056 ]}
       label="slash - half space between symbols (raccoon)"
       isPresentation=false
       labelledBy="slashExampleLabel"
@@ -74,7 +74,7 @@ function renderExamples() {
   // Semi-colon example
   render(html`
     <${BlissSymbol}
-      bciAvId=${[ 12378, ";", 9011, "/", 25582 ]}
+      composition=${[ 122, ";", 99, "/", 1056 ]}
       label="semi-colon - superimpose plural indicator symbol (raccoons)"
       isPresentation=false
       labelledBy="semicolonExampleLabel"
@@ -84,7 +84,7 @@ function renderExamples() {
   // Kerning example (relative kerning)
   render(html`
     <${BlissSymbol}
-      bciAvId=${[ 14164, "/", "RK:-2", "/", 16164 ]}
+      composition=${[ 313, "/", "RK:-2", "/", 516 ]}
       label="kerning - quarter space between symbols (pain)"
       isPresentation=false
       labelledBy="kerningExampleLabel"
@@ -94,7 +94,7 @@ function renderExamples() {
   // X example
   render(html`
     <${BlissSymbol}
-      bciAvId=${[ "XH", "/", "Xo", "/", "Xl", "/", "Xl", "/", "Xi", "/", "Xs" ]}
+      composition=${[ "XH", "/", "Xo", "/", "Xl", "/", "Xl", "/", "Xi", "/", "Xs" ]}
       label="'X' for letters - (Hollis)"
       isPresentation=false
       labelledBy="XExampleLabel"
@@ -181,10 +181,9 @@ function makeGlossesArrays (): string[][] {
   const glossRows = glossRowsText.split("\n");
   const arrayofRows: string[][] = [];
   glossRows.forEach((row) => {
-    // Make an array of strings from each row, removing any blank items. Then
-    // remove any begining or trailing white space.
-    const rowArray = row.split(" ").filter((item) => item.length !== 0);
-    rowArray.forEach((item, i, arr) => arr[i] = item.trim());
+    // GLOSS:...:GLOSS items may contain spaces inside — match them as a single
+    // token before falling back to any non-space sequence.
+    const rowArray = row.match(/GLOSS:.+?:GLOSS(?:LABEL:.+?:LABEL)?|\S+LABEL:.+?:LABEL|\S+/g) || [];
     arrayofRows.push(rowArray);
   });
   return arrayofRows;

@@ -9,13 +9,13 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 import { v4 as uuidv4 } from "uuid";
-import { bstrToComposition } from "../../src/client/SvgUtils";
+import { bstrToComposition, findSymbolByBciAvId } from "../../src/client/SvgUtils";
 import { SymbolCompositionType, BlissSymbolEntry, JsonPaletteType } from "../../src/client/index.d";
 
 const BLANK_CELL = "BLANK";
 const SVG_PREFIX = "SVG:";
 const SVG_SUFFIX = ":SVG";
-const LABEL_MARKER = "LABEL:";
+const LABEL_PATTERN = /LABEL:(.+?):LABEL/;
 
 type MatchInfo = {
   id: number,
@@ -66,34 +66,32 @@ function isSvgBuilderString (theString: string): boolean {
  * @return {Array} - An array of the specifiers required by the SvgUtils.
  * @throws {Error} - If the encoding is not well formed.
  */
+function bciAvIdToBlissaryId(bciAvId: number): number {
+  const symbol = findSymbolByBciAvId(bciAvId);
+  if (!symbol) throw new Error(`BCI AV ID not found: ${bciAvId}`);
+  return symbol.id;
+}
+
 function convertSvgBuilderString (theString: string): SymbolCompositionType {
   let result: SymbolCompositionType;
-  // Three forms, one with commas and one without:
-  // - commas:
-  //   Replace the SVG prefix and suffix with "[" and "]", then parse the array.
-  //   e.g., 'SVG:13166,";",9011:SVG' -> '[13166,";",9011]'
-  // - no commas, using BCI AV IDs:
-  //   Treat as an SVG composition string and use bstrToComposition() to convert
-  //   it to the array form.
-  //   e.g., 'SVG:13166;9011:SVG' -> '[13166,";",9011]'
-  // - no commas, using Blissary IDs:
-  //   Treat as an SVG composition string and use bstrToComposition() to convert
-  //   it to the array form.
-  //   e.g., 'SVG:B220;B99:SVG' -> '[13166,";",9011]'
-  if (theString.indexOf(",") !== -1) {
-    // Replace the SVG prefix and suffix strings with square brackers (array)
-    theString = theString.replace(SVG_PREFIX, "[").replace(SVG_SUFFIX,"]");
-    result = JSON.parse(theString) as SymbolCompositionType;
-  }
-  else if (theString.indexOf("B") !== -1) {
+  // Two forms:
+  // - no commas, using Blissary IDs with "B" prefix (e.g. "B220;B99"):
+  //   Remove the SVG prefix/suffix and use bstrToComposition().
+  // - no commas, using BCI AV IDs as plain numbers (e.g. "13166;9011"):
+  //   Parse tokens, look up each number as a BCI AV ID, return blissary IDs.
+  if (theString.indexOf("B") !== -1) {
     // Remove the SVG prefix and suffix; parse Blissary builder format (e.g. "B220;B99")
     theString = theString.replace(SVG_PREFIX, "").replace(SVG_SUFFIX,"");
     result = bstrToComposition(theString);
   }
   else {
-    // Numeric BCI-AV-ID notation (e.g. "13166;9011") is no longer supported.
-    // Use Blissary format (e.g. "B823;B99") or comma-separated IDs instead.
-    throw new Error(`Unsupported SVG builder format (numeric BCI-AV-ID): ${theString}. Use Blissary "B<id>" format.`);
+    // Numeric BCI-AV-ID notation (e.g. "13166;9011"): look up blissary IDs
+    const inner = theString.replace(SVG_PREFIX, "").replace(SVG_SUFFIX, "");
+    const tokens = inner.match(/\/\/|\/|;;|;|[AR]K:-?\d+|\d+/g) || [];
+    result = tokens.map(token => {
+      const num = parseInt(token);
+      return isNaN(num) ? token : bciAvIdToBlissaryId(num);
+    });
   }
   return result;
 }
@@ -234,17 +232,28 @@ export function processPaletteLabels (
         }
       };
       try {
-        // Split on `LABEL_MARKER`.  Result is an array, but if there is no
-        // `LABEL_MARKER` it is an array of one element.
-        const labelSplits = infoString.split(LABEL_MARKER);
-        infoString = labelSplits[0];
-        const actualLabel = labelSplits[1]?.replace(/_/g, " ");
+        // Extract LABEL:...:LABEL enclosing marker if present.
+        const labelMatch = infoString.match(LABEL_PATTERN);
+        const actualLabel = labelMatch?.[1].replace(/_/g, " ");
+        if (labelMatch) {
+          infoString = infoString.replace(LABEL_PATTERN, "");
+        }
 
         // If the `infoString` is an Svg Builder string, convert it to the
         // proper array version of the `composition`, but it won't have a label
         if (isSvgBuilderString(infoString)) {
           cell.options.composition = convertSvgBuilderString(infoString);
           cell.options.label = actualLabel || "";
+        }
+        else if (infoString.startsWith("GLOSS:") && infoString.endsWith(":GLOSS")) {
+          // Multi-word gloss search using GLOSS:...:GLOSS enclosing marker
+          const glossText = infoString.slice("GLOSS:".length, -":GLOSS".length);
+          const matches = findBciAvId(glossText, bliss_gloss);
+          cell.options.composition = matches[0].composition ?? matches[0].id;
+          cell.options.label = actualLabel || glossText;
+          const inputMatches: MatchByInfo = {};
+          inputMatches[glossText] = matches;
+          matchByInfoArray.push(inputMatches);
         }
         else {
           // If the `infoString` is a BCI AV ID (a number), look it up to get
