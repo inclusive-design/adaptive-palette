@@ -13,7 +13,6 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { useState } from "preact/hooks";
 
-import { SymbolCompositionType } from "./index.d";
 import { changeEncodingContents } from "./GlobalData";
 import { bstrToComposition } from "./SvgUtils";
 import { speak, insertWordAtCaret } from "./GlobalUtils";
@@ -23,18 +22,6 @@ export const SVG_ENTRY_FIELD_ID    = "svgEntryField";
 export const SYMBOL_LABEL_FIELD_ID = "symbolLabel";
 export const SUBMIT_VALUE          = "Add Symbol";
 const MALFORMED                    = "Invalid builder string";
-
-/**
- * Converts a blissary SVG builder string to the proper SymbolCompositionType format.
- * Accepts blissary codes and separators, e.g., "B220;B99". Outputs an array of ids
- * and separators, e.g., [220, ";", 99]. If the input is malformed, returns an empty array.
- * @param {string} svgBuilderString - The string to convert.
- * @return {SymbolCompositionType} - An array of ids and separators, or an
- *                         empty array if the input is malformed.
- */
-function convertSvgBuilderString(svgBuilderString: string): SymbolCompositionType {
-  return bstrToComposition(svgBuilderString.trim());
-}
 
 export function ActionSvgEntryField(): VNode {
   const [malformed, setMalformed] = useState(false);
@@ -52,7 +39,7 @@ export function ActionSvgEntryField(): VNode {
     const rawLabelInput = formData.get(SYMBOL_LABEL_FIELD_ID);
     const labelString = typeof rawLabelInput === "string" ? rawLabelInput : "";
 
-    const composition = convertSvgBuilderString(svgInputString);
+    const composition = bstrToComposition(svgInputString.trim());
 
     // Check invalid Builder String
     if (!Array.isArray(composition) || composition.length === 0) {

@@ -24,16 +24,21 @@ describe("SvgUtils module", (): void => {
 
   const invalidId = 0;
 
-  const reviveBlissarySvgBuilderStr = "B206;B81/RK:-2/B473/B457";
-  const expectedIdRevive = [
+  const mixedSeparatorsBstr = "B206;B81/RK:-2/B473/B457";
+  const expectedMixedSeparatorsComposition = [
     206, ";", 81, "/", "RK:-2", "/", 473, "/", 457
   ];
 
-  const abcBlissarySvgBuilderStr = "Xa/Xb/Xc";       // "a b c"
-  const expectedIdAbc = [ "Xa", "/", "Xb", "/", "Xc" ];
+  const abcBstr = "Xa/Xb/Xc";       // "a b c"
+  const expectedAbcComposition = [ "Xa", "/", "Xb", "/", "Xc" ];
 
-  const multiWordBlissaryBuilderStr = "B2505//B348/B81/B86";
-  const expectedMultiWordId = [ 2505, "//", 348, "/", 81, "/", 86 ];
+  const multiWordBstr = "B2505//B348/B81/B86";
+  const expectedMultiWordComposition = [ 2505, "//", 348, "/", 81, "/", 86 ];
+
+  const doubleSemicolonBStr = "B206;B81/RK:-2/B473/B457;;B5996;;B99";
+  const expectedDoubleSemicolonComposition = [
+    206, ";", 81, "/", "RK:-2", "/", 473, "/", 457, ";;", 5996, ";;", 99
+  ];
 
   const indicatorId = 87;                            // "future action" indicator (bciAvId 8999)
   const nonIndicatorId = 105;                        // "action" word (bciAvId 12334)
@@ -65,9 +70,10 @@ describe("SvgUtils module", (): void => {
   });
 
   test("Create a SymbolCompositionType from a Blissary SVG builder string", (): void => {
-    expect(bstrToComposition(reviveBlissarySvgBuilderStr)).toEqual(expectedIdRevive);
-    expect(bstrToComposition(abcBlissarySvgBuilderStr)).toEqual(expectedIdAbc);
-    expect(bstrToComposition(multiWordBlissaryBuilderStr)).toEqual(expectedMultiWordId);
+    expect(bstrToComposition(mixedSeparatorsBstr)).toEqual(expectedMixedSeparatorsComposition);
+    expect(bstrToComposition(abcBstr)).toEqual(expectedAbcComposition);
+    expect(bstrToComposition(multiWordBstr)).toEqual(expectedMultiWordComposition);
+    expect(bstrToComposition(doubleSemicolonBStr)).toEqual(expectedDoubleSemicolonComposition);
   });
 
   test("Check bstrToComposition() when passing an invalid input", (): void => {
@@ -83,29 +89,29 @@ describe("SvgUtils module", (): void => {
   });
 
   test("Find indicator positions", (): void => {
-    // `expectedIdRevive` contains an action indicator (id=81) over the first symbol.
-    let indicatorPositions = findIndicators(expectedIdRevive);
+    // `expectedMixedSeparatorsComposition` contains an action indicator (id=81) over the first symbol.
+    let indicatorPositions = findIndicators(expectedMixedSeparatorsComposition);
     expect(indicatorPositions.length).toEqual(1);
     expect(indicatorPositions).toEqual([2]);
 
-    // `expectedIdAbc` has no indicators.  `singleId` is a single number and has no indicators.
-    indicatorPositions = findIndicators(expectedIdAbc);
+    // `expectedAbcComposition` has no indicators.  `singleId` is a single number and has no indicators.
+    indicatorPositions = findIndicators(expectedAbcComposition);
     expect(indicatorPositions.length).toEqual(0);
     indicatorPositions = findIndicators(singleId);
     expect(indicatorPositions.length).toEqual(0);
   });
 
   test("Find first symbol after a modifier", (): void => {
-    // Prefix the `expectedIdRevive` with the `modifierId` modifier.
-    let modifiedRevive = [modifierId, "/", ...expectedIdRevive];
+    // Prefix the `expectedMixedSeparatorsComposition` with the `modifierId` modifier.
+    let modifiedRevive = [modifierId, "/", ...expectedMixedSeparatorsComposition];
     expect(findClassifierFromLeft(modifiedRevive)).toEqual(2);
 
     // Prefix again with two modifiers and a modifier suffix.
-    modifiedRevive = [modifierId, "/", modifierId, "/", ...expectedIdRevive, "/", modifierId];
+    modifiedRevive = [modifierId, "/", modifierId, "/", ...expectedMixedSeparatorsComposition, "/", modifierId];
     expect(findClassifierFromLeft(modifiedRevive)).toEqual(4);
 
-    // The original `expectedIdRevive` has no modifiers; also a single id has no modifiers.
-    expect(findClassifierFromLeft(expectedIdRevive)).toEqual(0);
+    // The original `expectedMixedSeparatorsComposition` has no modifiers; also a single id has no modifiers.
+    expect(findClassifierFromLeft(expectedMixedSeparatorsComposition)).toEqual(0);
     expect(findClassifierFromLeft(singleId)).toEqual(0);
 
     // The symbol for "no" is made of all modifier symbols, but the negative sign
@@ -135,18 +141,18 @@ describe("SvgUtils module", (): void => {
   });
 
   test("Get SVG Element and markup for id array using slash, semi-colon, and kern codes", (): void => {
-    expect(getSvgElement(expectedIdRevive)).toBeDefined();
-    expect(getSvgMarkupString(expectedIdRevive)).toBeDefined();
+    expect(getSvgElement(expectedMixedSeparatorsComposition)).toBeDefined();
+    expect(getSvgMarkupString(expectedMixedSeparatorsComposition)).toBeDefined();
   });
 
   test("Get SVG Element and markup for id array using double-slash code", (): void => {
-    expect(getSvgElement(expectedMultiWordId)).toBeDefined();
-    expect(getSvgMarkupString(expectedMultiWordId)).toBeDefined();
+    expect(getSvgElement(expectedMultiWordComposition)).toBeDefined();
+    expect(getSvgMarkupString(expectedMultiWordComposition)).toBeDefined();
   });
 
   test("Get SVG Element and markup for id array using X code", (): void => {
-    expect(getSvgElement(expectedMultiWordId)).toBeDefined();
-    expect(getSvgMarkupString(expectedMultiWordId)).toBeDefined();
+    expect(getSvgElement(expectedMultiWordComposition)).toBeDefined();
+    expect(getSvgMarkupString(expectedMultiWordComposition)).toBeDefined();
   });
 
   test("Multiword using '//'", (): void => {

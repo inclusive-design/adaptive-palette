@@ -36,57 +36,51 @@ const modifierIds = {
   signalling: [444, 753, 970, 971]
 };
 
-// Regular expressions for patterns within Blissary SVG builder strings.
-export const KERN_PATTERN           = /[AR]K:-?\d+/;
-export const BLISS_LETTER_PATTERN   = /X[a-zA-Z]/;  // may not work e.g., Greek
-export const SLASH_PATTERN          = new RegExp("/");
-export const SLASH_SEPARATOR        = /(\/)/;
-export const DOUBLE_SLASH_PATTERN   = new RegExp("//");
-export const DOUBLE_SLASH_SEPARATOR = /(\/\/)/;
-export const SEMICOLON_SEPARATOR    = /(;)/;
-export const SEMICOLON_PATTERN      = /B\d+;/;
-
 /**
- * Given a Blissary SVG builder code string, create a `SymbolCompositionType` array.
- * Each "B<id>" token is parsed to its ID integer. Other tokens
- * (KERN codes, letter codes, separators) are kept as strings.
- * @param {String} blissSvgBuilderCode - SVG builder string to convert.
- * @return {SymbolCompositionType}
+ * Parses a Blissary SVG builder string into a composition array.
+ * 
+ * Handled Tokens:
+ * - Symbol IDs: "B" followed by digits (e.g., "B123"). These are parsed into numbers.
+ * - Kerning Codes: "AK:" or "RK:" followed by digits/negatives (e.g., "AK:-10"). Kept as strings.
+ * - Letter Codes: "X" followed by any Unicode letter (e.g., "XA", "Xα"). Kept as strings.
+ * - Separators: "/", "//", ";", and ";;". Kept as strings.
+ * 
+ * Validation:
+ * The string must be entirely composed of valid tokens. If the string is empty, 
+ * or if it contains any unrecognized garbage characters (e.g., "asdffr;B12"), 
+ * the function returns an empty array.
+ * 
+ * @param {string} bstr - The raw SVG builder sequence (e.g., "B12//B34;;AK:-10/Xα").
+ * @returns {SymbolCompositionType} An array of parsed tokens (numbers for IDs, strings for the rest).
+ *                                  Returns [] if the input is empty or invalid.
  */
-export function bstrToComposition (blissSvgBuilderCode: string): SymbolCompositionType {
-  const idArray: (string|number)[] = [];
-  const words = blissSvgBuilderCode.split(DOUBLE_SLASH_SEPARATOR);
-  words.forEach( (word) => {
-    // Keep any double-slashes intact
-    if (word.match(DOUBLE_SLASH_SEPARATOR)) {
-      idArray.push(word);
+export function bstrToComposition(bstr: string): SymbolCompositionType {
+  // Return empty array for empty strings or falsy inputs
+  if (!bstr) {
+    return [];
+  }
+
+  // VALIDATOR: Asserts the ENTIRE string (^ to $) is composed of 1 or more valid tokens.
+  const VALIDATOR = /^(?:\/\/|\/|;;|;|[AR]K:-?\d+|X\p{L}|B\d+)+$/u;
+  
+  // If there are any unrecognized characters (like "asdffr"), it fails validation.
+  if (!VALIDATOR.test(bstr)) {
+    return [];
+  }
+
+  // TOKENIZER: Extracts the valid tokens sequentially.
+  const TOKENIZER = /\/\/|\/|;;|;|[AR]K:-?\d+|X\p{L}|B\d+/gu;
+  const tokens = bstr.match(TOKENIZER) || [];
+
+  return tokens.map((token) => {
+    // If the token matches the strict "B<digits>" pattern, strip "B" and parse as integer
+    if (/^B\d+$/.test(token)) {
+      return parseInt(token.slice(1), 10);
     }
-    else {
-      const splits = word.split(SLASH_SEPARATOR);
-      splits.forEach((aSplit) => {
-        // These patterns remain intact
-        if (KERN_PATTERN.test(aSplit) || BLISS_LETTER_PATTERN.test(aSplit) || SLASH_SEPARATOR.test(aSplit)) {
-          idArray.push(aSplit);
-        }
-        else if (SEMICOLON_PATTERN.test(aSplit)) {
-          // The structure of a semicolon svg string when split gives a three-member
-          // array: [ID, ";", ID]
-          const semiColonSplits = aSplit.split(SEMICOLON_SEPARATOR);
-          idArray.push(parseInt(semiColonSplits[0].slice(1)));
-          idArray.push(";");
-          idArray.push(parseInt(semiColonSplits[2].slice(1)));
-        }
-        // "B<digits>" token — strip "B" to get ID
-        else {
-          const numericalId = parseInt(aSplit.slice(1));
-          if (!isNaN(numericalId)) {
-            idArray.push(numericalId);
-          }
-        }
-      });
-    }
+    
+    // Otherwise, keep the token as a string (Kern codes, Letter codes, and Separators)
+    return token;
   });
-  return idArray;
 }
 
 /**
