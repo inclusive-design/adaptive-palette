@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Inclusive Design Research Centre, OCAD University
+ * Copyright 2025-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -22,4 +22,3 @@ const APPENDED = false;
 export function ActionPostModifierCell (props: ActionModifierCodeCellPropsType): VNode {
   return ActionModifierCellCommon (props, APPENDED);
 }
-
