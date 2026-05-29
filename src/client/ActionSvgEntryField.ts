@@ -15,7 +15,7 @@ import { useState } from "preact/hooks";
 
 import { SymbolCompositionType } from "./index.d";
 import { changeEncodingContents } from "./GlobalData";
-import { getCompositionFromBuilderCode } from "./SvgUtils";
+import { bstrToComposition } from "./SvgUtils";
 import { speak, insertWordAtCaret } from "./GlobalUtils";
 import "./ActionSvgEntryField.scss";
 
@@ -33,7 +33,7 @@ const MALFORMED                    = "Invalid builder string";
  *                         empty array if the input is malformed.
  */
 function convertSvgBuilderString(svgBuilderString: string): SymbolCompositionType {
-  return getCompositionFromBuilderCode(svgBuilderString.trim());
+  return bstrToComposition(svgBuilderString.trim());
 }
 
 export function ActionSvgEntryField(): VNode {

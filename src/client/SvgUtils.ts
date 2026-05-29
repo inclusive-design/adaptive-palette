@@ -53,7 +53,7 @@ export const SEMICOLON_PATTERN      = /B\d+;/;
  * @param {String} blissSvgBuilderCode - SVG builder string to convert.
  * @return {SymbolCompositionType}
  */
-export function getCompositionFromBuilderCode (blissSvgBuilderCode: string): SymbolCompositionType {
+export function bstrToComposition (blissSvgBuilderCode: string): SymbolCompositionType {
   const idArray: (string|number)[] = [];
   const words = blissSvgBuilderCode.split(DOUBLE_SLASH_SEPARATOR);
   words.forEach( (word) => {
@@ -87,6 +87,23 @@ export function getCompositionFromBuilderCode (blissSvgBuilderCode: string): Sym
     }
   });
   return idArray;
+}
+
+/**
+ * Convert the given `SymbolCompositionType` to a SVG builder code string.  Each
+ * ID integer is converted to `"B<id>"`. String separators are
+ * kept as-is.
+ * @param {SymbolCompositionType} id - The SymbolCompositionType to convert (IDs).
+ * @return {String} - The concatenation of the builder codes and separators,
+ *                    e.g., "B106/B12".
+ */
+export function compositionToBstr (id: SymbolCompositionType): string {
+  if (typeof id === "number") {
+    return "B" + id;
+  }
+  return id.map(
+    item => typeof item === "number" ? "B" + item : item
+  ).join("");
 }
 
 /*
@@ -174,23 +191,6 @@ export function findClassifierFromLeft (id: SymbolCompositionType): number {
 }
 
 /**
- * Convert the given `SymbolCompositionType` to a SVG builder code string.  Each
- * ID integer is converted to `"B<id>"`. String separators are
- * kept as-is.
- * @param {SymbolCompositionType} id - The SymbolCompositionType to convert (IDs).
- * @return {String} - The concatenation of the builder codes and separators,
- *                    e.g., "B106/B12".
- */
-export function idToString (id: SymbolCompositionType): string {
-  if (typeof id === "number") {
-    return "B" + id;
-  }
-  return id.map(
-    item => typeof item === "number" ? "B" + item : item
-  ).join("");
-}
-
-/**
  * Utility function to find symbol information by BCI-AV-ID (user-facing lookup).
  *
  * @param {SymbolCompositionType} bciAvId - The BCI-AV-ID to search for
@@ -219,12 +219,12 @@ function getSvgBuilder (id: SymbolCompositionType): BlissSVGBuilder | null {
     // If the symbol has a composition, use it: composite IDs (isCharacter: false)
     // are not in the builder's internal database and produce empty SVGs.
     if (symbol.composition) {
-      id = symbol.composition as SymbolCompositionType;
+      id = symbol.composition;
     }
   }
   let builder;
   try {
-    builder = new BlissSVGBuilder(idToString(id));
+    builder = new BlissSVGBuilder(compositionToBstr(id));
   }
   catch (err) {
     console.error(err);

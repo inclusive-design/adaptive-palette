@@ -8,9 +8,9 @@
  * You may obtain a copy of the License at
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
-import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
+import { initAdaptivePaletteGlobals } from "./GlobalData";
 import {
-  idToString, getCompositionFromBuilderCode, isIndicator,
+  compositionToBstr, bstrToComposition, isIndicator,
   findIndicators, isModifier, findClassifierFromLeft, findSymbolByBciAvId,
   getSvgElement, getSvgMarkupString,
 } from "./SvgUtils";
@@ -51,28 +51,28 @@ describe("SvgUtils module", (): void => {
   }, 7000);
 
   test("Create svg builder argument", (): void => {
-    let result = idToString(singleId);
+    let result = compositionToBstr(singleId);
     expect(result).toBe(expectedString);
 
-    result = idToString(idArray);
+    result = compositionToBstr(idArray);
     expect(result).toBe(expectedConcatenation);
   });
 
   test("Unknown id produces empty-ish SVG", (): void => {
-    expect(() => { idToString(invalidId); }).not.toThrow();
+    expect(() => { compositionToBstr(invalidId); }).not.toThrow();
     // invalidId=0 produces "B0" which BlissSVGBuilder may reject — test via getSvgMarkupString
     expect(getSvgMarkupString(invalidId)).not.toBeDefined();
   });
 
   test("Create a SymbolCompositionType from a Blissary SVG builder string", (): void => {
-    expect(getCompositionFromBuilderCode(reviveBlissarySvgBuilderStr)).toEqual(expectedIdRevive);
-    expect(getCompositionFromBuilderCode(abcBlissarySvgBuilderStr)).toEqual(expectedIdAbc);
-    expect(getCompositionFromBuilderCode(multiWordBlissaryBuilderStr)).toEqual(expectedMultiWordId);
+    expect(bstrToComposition(reviveBlissarySvgBuilderStr)).toEqual(expectedIdRevive);
+    expect(bstrToComposition(abcBlissarySvgBuilderStr)).toEqual(expectedIdAbc);
+    expect(bstrToComposition(multiWordBlissaryBuilderStr)).toEqual(expectedMultiWordId);
   });
 
-  test("Check getCompositionFromBuilderCode() when passing an invalid input", (): void => {
-    expect(getCompositionFromBuilderCode("asdffr;B1214343")).toEqual([]);
-    expect(getCompositionFromBuilderCode("")).toEqual([]);
+  test("Check bstrToComposition() when passing an invalid input", (): void => {
+    expect(bstrToComposition("asdffr;B1214343")).toEqual([]);
+    expect(bstrToComposition("")).toEqual([]);
   });
 
   test("Check for indicator or modifier ID", (): void => {
@@ -150,8 +150,8 @@ describe("SvgUtils module", (): void => {
   });
 
   test("Multiword using '//'", (): void => {
-    expect(idToString(twoWordId)).toBe(twoWordIdString);
-    expect(getCompositionFromBuilderCode(twoWordIdString)).toEqual(twoWordId);
+    expect(compositionToBstr(twoWordId)).toBe(twoWordIdString);
+    expect(bstrToComposition(twoWordIdString)).toEqual(twoWordId);
   });
 
   test("Get SVG Element and markup for composite symbol (isCharacter: false)", (): void => {

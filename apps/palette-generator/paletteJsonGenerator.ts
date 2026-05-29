@@ -9,7 +9,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 import { v4 as uuidv4 } from "uuid";
-import { getCompositionFromBuilderCode } from "../../src/client/SvgUtils";
+import { bstrToComposition } from "../../src/client/SvgUtils";
 import { SymbolCompositionType, BlissSymbolEntry, JsonPaletteType } from "../../src/client/index.d";
 
 const BLANK_CELL = "BLANK";
@@ -73,11 +73,11 @@ function convertSvgBuilderString (theString: string): SymbolCompositionType {
   //   Replace the SVG prefix and suffix with "[" and "]", then parse the array.
   //   e.g., 'SVG:13166,";",9011:SVG' -> '[13166,";",9011]'
   // - no commas, using BCI AV IDs:
-  //   Treat as an SVG composition string and use getCompositionFromBuilderCode() to convert
+  //   Treat as an SVG composition string and use bstrToComposition() to convert
   //   it to the array form.
   //   e.g., 'SVG:13166;9011:SVG' -> '[13166,";",9011]'
   // - no commas, using Blissary IDs:
-  //   Treat as an SVG composition string and use getCompositionFromBuilderCode() to convert
+  //   Treat as an SVG composition string and use bstrToComposition() to convert
   //   it to the array form.
   //   e.g., 'SVG:B220;B99:SVG' -> '[13166,";",9011]'
   if (theString.indexOf(",") !== -1) {
@@ -88,7 +88,7 @@ function convertSvgBuilderString (theString: string): SymbolCompositionType {
   else if (theString.indexOf("B") !== -1) {
     // Remove the SVG prefix and suffix; parse Blissary builder format (e.g. "B220;B99")
     theString = theString.replace(SVG_PREFIX, "").replace(SVG_SUFFIX,"");
-    result = getCompositionFromBuilderCode(theString);
+    result = bstrToComposition(theString);
   }
   else {
     // Numeric BCI-AV-ID notation (e.g. "13166;9011") is no longer supported.

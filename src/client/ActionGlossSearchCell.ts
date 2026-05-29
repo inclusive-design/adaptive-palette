@@ -16,7 +16,7 @@ import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { generateGridStyle, speak, insertWordAtCaret } from "./GlobalUtils";
-import { idToString } from "./SvgUtils";
+import { compositionToBstr } from "./SvgUtils";
 import "./ActionGlossSearchCell.scss";
 
 type ActionGlossSearchCellPropsType = {
@@ -48,7 +48,7 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
     proposedGloss = glossPart || "";
   }
 
-  const compositionString = idToString(composition);
+  const compositionString = compositionToBstr(composition);
 
   const cellClicked = () => {
     // Get value from the ref, fallback to proposedGloss if unavailable
@@ -83,7 +83,7 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
           id="input-${props.id}"
           defaultValue=${proposedGloss}
         />
-        <span>${bciAvId} . ${idToString(id)} . ${compositionString}</span>
+        <span>${bciAvId} . ${compositionToBstr(id)} . ${compositionString}</span>
       </div>
     </div>
   `;
