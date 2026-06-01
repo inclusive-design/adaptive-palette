@@ -138,8 +138,11 @@ describe("SvgUtils module", (): void => {
     expect(getResolvedComposition(99)).toEqual(99);
     expect(getResolvedComposition(4749)).toEqual([106, ";", 81, "/", "RK:-2", "/", 374, "/", 718]);
     expect(getResolvedComposition([1903, "/", 449, "/", 401 ])).toEqual([412, ";", 81, "/", 449, "/", 401 ]);
-    expect(getResolvedComposition(99999)).toEqual(null);
     expect(getResolvedComposition([])).toEqual([]);
+    expect(getResolvedComposition(99999)).toEqual(null);
+    expect(getResolvedComposition([99999])).toEqual(null);
+    expect(getResolvedComposition([449, "/", 99999])).toEqual(null);
+    expect(getResolvedComposition([449, "/", 99999, "/", 449])).toEqual(null);
   });
 
   test("Get SVG Element and markup for single ID", (): void => {

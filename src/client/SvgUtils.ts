@@ -213,7 +213,17 @@ export function getResolvedComposition (id: SymbolCompositionType): SymbolCompos
     id = resolve(id);
   }
   else {
-    id = id.flatMap(item => (typeof item === "number" ? resolve(item) : item));
+    const resolved: (number | string)[] = [];
+    for (const item of id) {
+      if (typeof item === "number") {
+        if (!adaptivePaletteGlobals.symbols.find(s => s.id === item)) return null;
+        const r = resolve(item);
+        resolved.push(...(Array.isArray(r) ? r : [r]));
+      } else {
+        resolved.push(item);
+      }
+    }
+    id = resolved;
   }
 
   return id;

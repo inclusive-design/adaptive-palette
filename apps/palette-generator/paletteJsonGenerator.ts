@@ -19,7 +19,7 @@ const LABEL_PATTERN = /LABEL:(.+?):LABEL/;
 
 type MatchInfo = {
   id: number,
-  bciAvId: number,
+  bciAvId?: number,
   label: string,
   composition?: SymbolCompositionType
 };
@@ -119,7 +119,7 @@ function findBciAvId(label: string, blissSymbolEntries: BlissSymbolEntry[]): Mat
     if ((label === oneBlissSymbolEntry.gloss) || wordMatch.test(oneBlissSymbolEntry.gloss)) {
       matches.push({
         id: oneBlissSymbolEntry.id,
-        bciAvId: oneBlissSymbolEntry.bciAvId,
+        bciAvId: oneBlissSymbolEntry.bciAvId ?? undefined,
         label: oneBlissSymbolEntry.gloss,
         composition: oneBlissSymbolEntry.composition
       });
