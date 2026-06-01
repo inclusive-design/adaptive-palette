@@ -16,7 +16,7 @@ export type SymbolCompositionType = number | (string|number)[];
 
 export type BlissSymbolEntry = {
   id: number,
-  bciAvId: number,
+  bciAvId?: number,
   gloss: string,
   pos?: string,
   explanation?: string,

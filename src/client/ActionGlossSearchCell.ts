@@ -21,7 +21,7 @@ import "./ActionGlossSearchCell.scss";
 
 type ActionGlossSearchCellPropsType = {
   id: string,
-  options: BlissSymbolInfoType & LayoutInfoType & { id: number, bciAvId: number }
+  options: BlissSymbolInfoType & LayoutInfoType & { id: number, bciAvId?: number }
 };
 
 export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): VNode {
@@ -83,7 +83,7 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
           id="input-${props.id}"
           defaultValue=${proposedGloss}
         />
-        <span>${bciAvId} . ${compositionToBstr(id)} . ${compositionString}</span>
+        <span>${bciAvId ?? ""} . ${compositionToBstr(id)} . ${compositionString}</span>
       </div>
     </div>
   `;

@@ -77,7 +77,9 @@
             "options": {
                 "label": "when",
                 "composition": [
-                    2734
+                    699,
+                    "/",
+                    655
                 ],
                 "rowStart": 2,
                 "rowSpan": 1,
@@ -103,7 +105,9 @@
             "options": {
                 "label": "how",
                 "composition": [
-                    1832
+                    699,
+                    "/",
+                    106
                 ],
                 "rowStart": 2,
                 "rowSpan": 1,

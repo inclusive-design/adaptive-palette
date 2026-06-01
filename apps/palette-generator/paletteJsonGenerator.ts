@@ -36,7 +36,7 @@ let bliss_gloss: BlissSymbolEntry[];
 export async function fetchBlissGlossJson (): Promise<BlissSymbolEntry[]> {
   // Read and parse the Bliss gloss JSON file
   try {
-    const fetchResponse = await fetch("../../public/data/bliss_symbol_explanations.json");
+    const fetchResponse = await fetch("/data/bliss_symbol_explanations.json");
     bliss_gloss = await fetchResponse.json() as BlissSymbolEntry[];
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

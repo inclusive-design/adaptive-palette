@@ -1,5 +1,5 @@
 /*
- * Copyright 2025-2026 - 2026 Inclusive Design Research Centre, OCAD University
+ * Copyright 2025-2026 Inclusive Design Research Centre, OCAD University
  * All rights reserved.
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -52,18 +52,18 @@ export function findSymbolByGloss(label: string): MatchType[] {
 /**
  * Find symbols where the given single BCI AV ID is part of the composition
  * of other symbols.
- * @param {number} bciId - The BCI AV ID to search symbols' compositions for matches.
+ * @param {number} bciAvId - The BCI AV ID to search symbols' compositions for matches.
  * @returns {Array} An array of objects whose `composition` contains the given
- *                  `bciId`: { id, label, composition }, or an empty
+ *                  `bciAvId`: { id, label, composition }, or an empty
  *                  array if no matches are found.
  */
-export function findSymbolByBciAvId (bciId: number): MatchType[] {
+export function findSymbolsContainingBciAvId (bciAvId: number): MatchType[] {
   const matches: MatchType[] = [];
   // Convert bciAvId to ID for searching composition arrays
-  const targetId = adaptivePaletteGlobals.symbols.find(s => s.bciAvId === bciId)?.id;
+  const targetId = adaptivePaletteGlobals.symbols.find(s => s.bciAvId === bciAvId)?.id;
   for (const symbol of adaptivePaletteGlobals.symbols) {
     // Add the symbol itself as the first element
-    if (symbol.bciAvId === bciId) {
+    if (symbol.bciAvId === bciAvId) {
       matches.unshift({
         id: symbol.id,
         bciAvId: symbol.bciAvId,

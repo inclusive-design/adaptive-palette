@@ -7,9 +7,10 @@
  *
  * This script processes a JSON file containing linguistic derivation data and 
  * maps it into a new hierarchical structure used by this project. The original
- * data file is used by bliss-svg-builder: https://github.com/hlridge/bliss-svg-builder
- * and located at scripts/data/bliss_dictionary-20260513.json.
- * 
+ * data file is provided by [bliss-svg-builder project](https://github.com/hlridge/bliss-svg-builder).
+ * See [`../docs/GenerateBlissSymbolExplanations.md`](../docs/GenerateBlissSymbolExplanations.md)
+ * for detailed documentation.
+ *
  * Operations:
  * 1. Field Mapping: Maps specified fields (e.g., `id` -> `id`, `bciAvId` -> `bciAvId`,
  *     `isChar` -> `isCharacter`, `gloss` -> `gloss`, `explanation` -> `explanation`,
@@ -120,7 +121,7 @@ function decompose(item, visited) {
       const refId = parseInt(match[1], 10);
       const refItem = topLevelIdMap.get(refId);
 
-      // Verify item exists and has a valid bciAvId
+      // Verify item exists and has a valid ID reference
       if (refItem) {
         // Prevent infinite loops
         if (visited.has(refId)) {
@@ -200,7 +201,7 @@ if (reports.missingBPrefix.size > 0) {
   reports.missingBPrefix.forEach(msg => console.log(msg));
 }
 
-if (reports.missingBPrefix.size === 0 && reports.circularDependency.size === 0) {
+if (reports.missingBPrefix.size === 0 && reports.circularDependency.size === 0 && reports.missingIDReference.size === 0) {
   console.log("\nReport: No data structural errors detected.");
 }
 

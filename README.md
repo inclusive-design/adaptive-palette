@@ -187,13 +187,13 @@ _**NOTE:** Tests are run with watch mode disabled. If you prefer to enable watch
 
 The sub-folder [`demos`](./demos) contains code for a number of demonstrations.
 These are short examples.  The [`apps`](./apps) folder contains more fully
-built-out application examples.  See the respective READMEs for instructions on
-how to run the software.
+built-out application examples.  See the respective READMEs and documentation
+for instructions on how to run the software.
 
 - [Ollama Chat Web-App](./apps/ollama/README.md): a chat application running on
   `localhost` that provides access to multiple LLMs using the Ollama localhost
   web service.
-- [Palette Generator Web-App](./apps/palette-generator/README.md): an
+- [Palette Generator Web-App](./docs/PaletteJsonGenerator.md): an
   application for generating and saving a palette using the Bliss gloss.  By
   providing a set of gloss words, BCI AV IDs, or svg builder strings, the Bliss
   gloss is searched and a palette is generated based on matches found.
@@ -217,3 +217,15 @@ command" and "Build output directory" settings:
 ## Utility Scripts
 
 - [Load a document into a vector databbase (`scripts/loadDocIntoVectorDb.js`)](./scripts/loadDocIntoVectorDb.js)
+- [Generate `public/data/bliss_symbol_explanations.json`](`scripts/generate_bliss_symbol_explanation.js`)
+
+## Documentation
+
+- [Generate Bliss Symbol Explanations](./docs/GenerateBlissSymbolExplanations.md): how to generate
+  `public/data/bliss_symbol_explanations.json`, which contains Bliss symbol vocabulary including glosses,
+  part-of-speech labels, semantic explanations, and symbol compositions.
+- [Palette JSON Generator](./docs/PaletteJsonGenerator.md): how to use the web-based Palette Generator app to
+  create custom Bliss symbol palettes from gloss words, BCI AV IDs, or SVG builder strings.
+- [Client Developer Documentation](./docs/ClientDeveloperDoc.md): technical guide for developers building the
+  adaptive palette client side with Preact.
+- [Server APIs](./docs/ServerAPIs.md): reference for the supported server API endpoints.

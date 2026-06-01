@@ -186,7 +186,9 @@
             "options": {
                 "label": "do, does",
                 "composition": [
-                    1558
+                    106,
+                    ";",
+                    81
                 ],
                 "branchTo": "do_does",
                 "rowStart": 3,

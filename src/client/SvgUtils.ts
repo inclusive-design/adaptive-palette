@@ -189,13 +189,34 @@ export function findClassifierFromLeft (id: SymbolCompositionType): number {
  *
  * @param {SymbolCompositionType} bciAvId - The BCI-AV-ID to search for
  * @return {Object} - The full information about the given BCI-AV-ID, or
- *                    `undefined` if there is no such ID or the input is not
- *                    a single number.
+ *                    `undefined` if there is no such ID.
  */
-export function findSymbolByBciAvId (bciAvId: SymbolCompositionType) {
+export function findSymbolByBciAvId (bciAvId: number) {
   return adaptivePaletteGlobals.symbols.find(
     symbol => symbol.bciAvId === bciAvId
   );
+}
+
+/**
+ * Resolve a symbol ID or array of IDs to their corresponding compositions.
+ * @param {SymbolCompositionType} id - A ID (a number) or an array of
+ *                           IDs and separators, e.g.
+ *                           `[ 106, "/", 12 ]`
+ * @return {SymbolCompositionType | null} - The resolved composition, or `null` if the ID is invalid.
+ */
+export function getResolvedComposition (id: SymbolCompositionType): SymbolCompositionType | null {
+  const resolve = (single: number): SymbolCompositionType =>
+    adaptivePaletteGlobals.symbols.find(s => s.id === single)?.composition ?? single;
+
+  if (typeof id === "number") {
+    if (!adaptivePaletteGlobals.symbols.find(s => s.id === id)) return null;
+    id = resolve(id);
+  }
+  else {
+    id = id.flatMap(item => (typeof item === "number" ? resolve(item) : item));
+  }
+
+  return id;
 }
 
 /**
@@ -207,18 +228,19 @@ export function findSymbolByBciAvId (bciAvId: SymbolCompositionType) {
  * @return {BlissSVGBuilder} - The corresponding SVG markup, or `null`.
  */
 function getSvgBuilder (id: SymbolCompositionType): BlissSVGBuilder | null {
-  if (typeof id === "number") {
-    const symbol = adaptivePaletteGlobals.symbols.find(s => s.id === id);
-    if (!symbol) return null;
-    // If the symbol has a composition, use it: composite IDs (isCharacter: false)
-    // are not in the builder's internal database and produce empty SVGs.
-    if (symbol.composition) {
-      id = symbol.composition;
-    }
+  // Composite IDs (isCharacter: false) aren't in the builder's internal
+  // database and render as empty SVGs, so replace any composite ID — whether
+  // passed on its own or nested in an array — with its base-character
+  // composition.
+  const resolvedId = getResolvedComposition(id);
+  if (resolvedId === null) {
+    console.error(`Unknown id = ${String(id)}`);
+    return null;
   }
+
   let builder;
   try {
-    builder = new BlissSVGBuilder(compositionToBstr(id));
+    builder = new BlissSVGBuilder(compositionToBstr(resolvedId));
   }
   catch (err) {
     console.error(err);

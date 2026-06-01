@@ -14,7 +14,7 @@ import { useState } from "preact/hooks";
 import { html } from "htm/preact";
 
 import { MatchType } from "./index.d";
-import { findSymbolByGloss, findSymbolByBciAvId } from "./BciAvUtils";
+import { findSymbolByGloss, findSymbolsContainingBciAvId } from "./BciAvUtils";
 import { GlossSearchPalette } from "./GlossSearchPalette";
 
 export const GLOSS_ENTRY_FIELD_ID = "glossSearchField";
@@ -38,7 +38,7 @@ export function ActionSearchGloss(): VNode {
       if (isNaN(numberId)) {
         currentMatches = findSymbolByGloss(text);
       } else {
-        currentMatches = findSymbolByBciAvId(numberId);
+        currentMatches = findSymbolsContainingBciAvId(numberId);
       }
     }
 

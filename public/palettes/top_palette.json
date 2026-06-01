@@ -40,7 +40,9 @@
             "options": {
                 "label": "don't know",
                 "composition": [
-                    1903,
+                    412,
+                    ";",
+                    81,
                     "/",
                     449,
                     "/",

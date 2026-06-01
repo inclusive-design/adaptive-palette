@@ -12,7 +12,7 @@ import { initAdaptivePaletteGlobals } from "./GlobalData";
 import {
   compositionToBstr, bstrToComposition, isIndicator,
   findIndicators, isModifier, findClassifierFromLeft, findSymbolByBciAvId,
-  getSvgElement, getSvgMarkupString,
+  getResolvedComposition, getSvgElement, getSvgMarkupString,
 } from "./SvgUtils";
 
 describe("SvgUtils module", (): void => {
@@ -38,6 +38,11 @@ describe("SvgUtils module", (): void => {
   const doubleSemicolonBStr = "B206;B81/RK:-2/B473/B457;;B5996;;B99";
   const expectedDoubleSemicolonComposition = [
     206, ";", 81, "/", "RK:-2", "/", 473, "/", 457, ";;", 5996, ";;", 99
+  ];
+
+  const hasAkKerningBStr = "B206;B81/AK:-2/B473/RK:-2/B457;;B5996";
+  const hasAkKerningComposition = [
+    206, ";", 81, "/", "AK:-2", "/", 473, "/", "RK:-2", "/", 457, ";;", 5996
   ];
 
   const indicatorId = 87;                            // "future action" indicator (bciAvId 8999)
@@ -74,6 +79,7 @@ describe("SvgUtils module", (): void => {
     expect(bstrToComposition(abcBstr)).toEqual(expectedAbcComposition);
     expect(bstrToComposition(multiWordBstr)).toEqual(expectedMultiWordComposition);
     expect(bstrToComposition(doubleSemicolonBStr)).toEqual(expectedDoubleSemicolonComposition);
+    expect(bstrToComposition(hasAkKerningBStr)).toEqual(hasAkKerningComposition);
   });
 
   test("Check bstrToComposition() when passing an invalid input", (): void => {
@@ -123,11 +129,17 @@ describe("SvgUtils module", (): void => {
     let actual = findSymbolByBciAvId(23409);   // CONJ. bciAvId
     expect(actual?.bciAvId).toBe(23409);
 
-    // Passing an invalid BCI AV ID or the array form should return `undefined`
+    // Passing an invalid BCI AV ID should return `undefined`
     actual = findSymbolByBciAvId(1);
     expect(actual).toEqual(undefined);
-    actual = findSymbolByBciAvId(idArray);
-    expect(actual).toEqual(undefined);
+  });
+
+  test("Get resolved composition", (): void => {
+    expect(getResolvedComposition(99)).toEqual(99);
+    expect(getResolvedComposition(4749)).toEqual([106, ";", 81, "/", "RK:-2", "/", 374, "/", 718]);
+    expect(getResolvedComposition([1903, "/", 449, "/", 401 ])).toEqual([412, ";", 81, "/", 449, "/", 401 ]);
+    expect(getResolvedComposition(99999)).toEqual(null);
+    expect(getResolvedComposition([])).toEqual([]);
   });
 
   test("Get SVG Element and markup for single ID", (): void => {

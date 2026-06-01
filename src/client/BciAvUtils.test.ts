@@ -10,7 +10,7 @@
  */
 
 import { initAdaptivePaletteGlobals } from "./GlobalData";
-import { findSymbolByGloss, findSymbolByBciAvId } from "./BciAvUtils";
+import { findSymbolByGloss, findSymbolsContainingBciAvId } from "./BciAvUtils";
 
 describe("BciUtils module", (): void => {
 
@@ -75,11 +75,11 @@ describe("BciUtils module", (): void => {
   });
 
   test("Search based on a BCI AV ID", (): void => {
-    expect(findSymbolByBciAvId(SPACE_ID)).toStrictEqual(expectedSpaceIdResults);
+    expect(findSymbolsContainingBciAvId(SPACE_ID)).toStrictEqual(expectedSpaceIdResults);
   });
 
   test("Search with invalid BCI AV ID", (): void => {
-    expect(findSymbolByBciAvId(NO_SUCH_ID)).toStrictEqual([]);
+    expect(findSymbolsContainingBciAvId(NO_SUCH_ID)).toStrictEqual([]);
   });
 
 });
