@@ -217,7 +217,7 @@ command" and "Build output directory" settings:
 ## Utility Scripts
 
 - [Load a document into a vector databbase (`scripts/loadDocIntoVectorDb.js`)](./scripts/loadDocIntoVectorDb.js)
-- [Generate `public/data/bliss_symbol_explanations.json`](scripts/generate_bliss_symbol_explanation.js)
+- [Generate `public/data/bliss_symbol_explanations.json`](scripts/generate_bliss_symbol_explanations.js)
 
 ## Documentation
 
