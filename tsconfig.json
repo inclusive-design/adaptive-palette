@@ -13,5 +13,9 @@
     "esModuleInterop": true,
     "alwaysStrict": true,
     "skipLibCheck": true
-  }
+  },
+  "include": [
+    "node_modules/vite/client.d.ts",
+    "src/client/**/*"
+  ]
 }

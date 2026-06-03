@@ -8,6 +8,5 @@ dist
 .DS_Store
 
 # Application files and folders
-vectorStore
 src/client/__screenshots__/
 .vitest-attachments/

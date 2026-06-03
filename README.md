@@ -12,9 +12,6 @@ The front end of the project is built with [Preact](https://preactjs.com/).
 To work on the project, you need to install [NodeJS and NPM](https://nodejs.org/en/download/)
 for your operating system.
 
-_**Note:** If you'd like to make use of RAG (optional), you'll also need to ensure that [CMake](http://cmake.org)
-is installed. CMake is required for installing `faiss` which is pulled in by the dependency `faiss-node`._
-
 Then, clone the project from GitHub. [Create a fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo)
 with your GitHub account, then enter the following in your command line
 (make sure to replace `your-username` with your username):
@@ -36,106 +33,22 @@ npx playwright install
 
 ## Development
 
-### Start a Server
+### Start Development Server
 
-To start a local web server, run:
+To start a local development server with hot module reload that injects updated code
+modules directly into a running application without requiring a full page refresh, run:
 
 ```bash
 npm start
 ```
 
-To start a local web server for **development** that every change to the source code
-will be watched and redeployed,
-run:
-
-```bash
-npm run dev
-```
-
 The website will be available at [http://localhost:3000](http://localhost:3000).
 
-### Enable RAG
-
-RAG (Retrieval-Augmented Generation) is an AI technique designed to enhance the accuracy of generative models by
-incorporating factual knowledge from external sources. It requires loading factual knowledge into a vector store
-that will be queried to provide relevant information to the language model as a context.
-
-By default, the use of RAG is turned off in the system. The `enableRag` flag is set to `false` by default in the
-[config/config.ts](./config/config.ts).
-
-Follow these steps to complete a one-time setup to enable RAG in the system:
-
-1. **Load a document into the vector store**
-
-   Use the [`scripts/loadDocIntoVectorDb.js`](./scripts/loadDocIntoVectorDb.js) script to populate the vector store.
-   Run the following command from the project root directory:
-
-   ```bash
-   node scripts/loadDocIntoVectorDb.js [location-of-document] [target-dir-of-vector-db]
-   ```
-
-2. **Configure the application**
-
-   Update the [config/config.ts](./config/config.ts) file to specify the path to the vector store directory and set
-   the flag `enableRag` to `true`:
-
-   ```typescript
-   export const config = {
-     // ... other configurations
-     rag: {
-      enableRag: true,
-       vectorStoreDir: "[path-to-vector-db-directory]"
-     }
-     ...
-   };
-   ```
-
-   **Note**: The `vectorStoreDir` defaults to `./vectorStore`. Modify the value to match where your vector store
-   is located. When a relative path is used, the path is relative to the project root directory.
-
-3. **Restart the server**
-
-   Follow the instruction in the [Start a Server](./README.md#start-a-server) section.
-
-#### Troubleshooting
-
-##### CMake not installed
-
-In order to use RAG, `faiss-node` must be installed. `faiss-node` requires that [CMake](https://cmake.org/)
-be installed on the machine first. If this has not been done, install CMake and re-run the application install
-steps.
-
-Using homebrew, you can install CMake with the following:
+To build the project for production (outputs to `dist/client`), run:
 
 ```bash
-brew install cmake
-```
-
-For other installation options please consult [CMake's download page](https://cmake.org/download/).
-
-##### 'omp.h' file not found
-
-If you encounter an `'omp.h' file not found` error, it likely means that you need to install
-[OpenMP](https://openmp.llvm.org/).
-
-Using homebrew, you can install OpenMP with the following:
-
-```bash
-brew install libomp
-```
-
-##### npm error ENOTEMPTY: directory not empty
-
-If you encounter an `npm error ENOTEMPTY: directory not empty` error, you can try removing the `node_modules`
-directory and rerunning the npm install.
-
-```bash
-
-# remove the node_modules directory
-rm -rf node_modules
-
-# re-run the npm install
-npm ci
+npm run build
+npx serve -s dist/client
 ```
 
 ### Lint
@@ -161,12 +74,6 @@ To run tests, run:
 ```bash
 # Run all tests
 npm test
-
-# Run only client tests
-npm run test:client
-
-# Run only server tests
-npm run test:server
 ```
 
 You can pass in arguments to the tests runner by placing them after a `--`. For example,
@@ -216,7 +123,6 @@ command" and "Build output directory" settings:
 
 ## Utility Scripts
 
-- [Load a document into a vector databbase (`scripts/loadDocIntoVectorDb.js`)](./scripts/loadDocIntoVectorDb.js)
 - [Generate `public/data/bliss_symbol_explanations.json`](scripts/generate_bliss_symbol_explanations.js)
 
 ## Documentation
@@ -228,4 +134,3 @@ command" and "Build output directory" settings:
   create custom Bliss symbol palettes from gloss words, BCI AV IDs, or SVG builder strings.
 - [Client Developer Documentation](./docs/ClientDeveloperDoc.md): technical guide for developers building the
   adaptive palette client side with Preact.
-- [Server APIs](./docs/ServerAPIs.md): reference for the supported server API endpoints.
