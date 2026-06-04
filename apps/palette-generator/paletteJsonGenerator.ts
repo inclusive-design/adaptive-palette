@@ -1,6 +1,7 @@
 /*
- * Copyright 2024-2026 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -75,9 +76,9 @@ function bciAvIdToBlissaryId(bciAvId: number): number {
 function convertSvgBuilderString (theString: string): SymbolCompositionType {
   let result: SymbolCompositionType;
   // Two forms:
-  // - no commas, using Blissary IDs with "B" prefix (e.g. "B220;B99"):
+  // - when using Blissary IDs with "B" prefix (e.g. "B220;B99"):
   //   Remove the SVG prefix/suffix and use bstrToComposition().
-  // - no commas, using BCI AV IDs as plain numbers (e.g. "13166;9011"):
+  // - when using BCI AV IDs as plain numbers (e.g. "13166;9011"):
   //   Parse tokens, look up each number as a BCI AV ID, return blissary IDs.
   if (theString.indexOf("B") !== -1) {
     // Remove the SVG prefix and suffix; parse Blissary builder format (e.g. "B220;B99")
