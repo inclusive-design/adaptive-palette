@@ -24,10 +24,6 @@
  * - Errors (always shown): missing code, missing ID references, non-character references
  * - Warnings (always shown): missing bciAvId, missing pos
  * - Verbose-only (--verbose): special code segments, missing isChar, missing explanation
- *
- * Notes but not show-stopper: after processing, a few items with missing fields:
- * Warning: Items missing "explanation" value: 1 items: 6330
- * Warning: missing "bciAvId": 9 items: 5844, 5995, 6435, 6436, 6437, 6438, 6439, 6440, 6441
  */
 
 import fs from "fs";
@@ -60,6 +56,7 @@ const verboseWarnings = {
 };
 
 /**
+ * Parse input arguments and return structured parameters.
  * @param {string[]} argv
  * @returns {{ inputFile: string, outputFile: string, verbose: boolean }}
  */
@@ -76,6 +73,7 @@ function parseArgs(argv) {
 }
 
 /**
+ * Read and parse the input JSON file, returning an array of BlissItem objects.
  * @param {string} fileName
  * @returns {BlissItem[]}
  */
@@ -87,11 +85,19 @@ function readInput(fileName) {
     console.error(`Error: Failed to read "${fileName}". Make sure the file exists.`);
     process.exit(1);
   }
-  const parsed = /** @type {{ data: BlissItem[] }} */ (JSON.parse(rawData));
-  return parsed.data;
+  try {
+    const parsed = /** @type {{ data: BlissItem[] }} */ (JSON.parse(rawData));
+    return parsed.data;
+  }
+  catch {
+    console.error(`Error: Failed to parse "${fileName}". Make sure the file is valid JSON.`);
+    process.exit(1);
+  }
 }
 
 /**
+ * Build a lookup map from ID to BlissItem for easy reference during composition parsing.
+ * This also checks for missing "isChar" keys and defaults them to false, while logging a warning.
  * @param {BlissItem[]} data
  * @returns {Map<number, BlissItem>}
  */
@@ -99,7 +105,7 @@ function buildLookupMap(data) {
   /** @type {Map<number, BlissItem>} */
   const map = new Map();
   data.forEach(item => {
-    if (!Object.prototype.hasOwnProperty.call(item, "isChar") || item.isChar === null) {
+    if (!item.hasOwnProperty("isChar") || item.isChar === null) {
       item.isChar = false;
       verboseWarnings.missingIsChar.add(item.id);
     }
@@ -109,6 +115,10 @@ function buildLookupMap(data) {
 }
 
 /**
+ * Parse the `code` field of a non-character item to build its composition array.
+ * - `B`-prefixed segments are resolved to character IDs using the lookup map.
+ * - Separators (`/` and `;`) are preserved as strings in the composition array.
+ * - Logs errors for missing code, missing ID references, and non-character references.
  * @param {BlissItem} item
  * @param {Map<number, BlissItem>} lookupMap
  * @returns {(string | number)[]}
@@ -155,6 +165,7 @@ function buildComposition(item, lookupMap) {
 }
 
 /**
+ * Transform the input data array into the desired output structure, while performing error and warning checks.
  * @param {BlissItem[]} data
  * @param {Map<number, BlissItem>} lookupMap
  * @returns {{ id: number, bciAvId?: number, gloss: string, pos?: string, explanation?: string, isCharacter: boolean, composition?: (string | number)[] }[]}
@@ -184,6 +195,7 @@ function transformItems(data, lookupMap) {
 }
 
 /**
+ * Write the output data array to a JSON file, with error handling for write failures.
  * @param {string} fileName
  * @param {object[]} data
  */
@@ -197,13 +209,14 @@ function writeOutput(fileName, data) {
 }
 
 /**
+ * Print a report of the processing results, including any errors or warnings.
  * @param {string} outputFile
  * @param {number} count
  * @param {boolean} verbose
  */
 function printReport(outputFile, count, verbose) {
   console.log("\n=== Processing Report ===");
-  console.log(`Report: Successfully processed ${count} records into ${outputFile}\n`);
+  console.log(`Report: Successfully processed ${count} records into ${outputFile}`);
 
   if (errors.missingCode.size > 0) {
     console.log(`\n=== Missing Code Report (Total: ${errors.missingCode.size}) ===`);
@@ -249,6 +262,7 @@ function printReport(outputFile, count, verbose) {
   }
 }
 
+// Main execution
 const { inputFile, outputFile, verbose } = parseArgs(process.argv.slice(2));
 const data = readInput(inputFile);
 const lookupMap = buildLookupMap(data);

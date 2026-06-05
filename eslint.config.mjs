@@ -47,7 +47,19 @@ export default [{
     semi: ["error", "always"],
   },
 },
-// In Jest, we frequently test whether a specific method on an object was called
+{
+  files: ["scripts/**/*.js", "apps/**/*.js"],
+  languageOptions: {
+    parserOptions: {
+      // Disables type-aware linting specifically for these js files
+      project: null, 
+    }
+  },
+  rules: {
+    ...typescriptEslint.configs["disable-type-checked"].rules
+  }
+},
+  // In Jest, we frequently test whether a specific method on an object was called
 // that requires to pass the method directly into the expect() function,
 // so unbound-method is a false positive with Jest's expect(mock.fn) pattern.
 {
