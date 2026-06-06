@@ -44,11 +44,11 @@ npm start
 
 The website will be available at [http://localhost:3000](http://localhost:3000).
 
-To build the project for production (outputs to `dist/client`), run:
+To build the project for production (outputs to `dist`), run:
 
 ```bash
 npm run build
-npx serve -s dist/client
+npx serve -s dist
 ```
 
 ### Lint
@@ -118,8 +118,8 @@ to do this.
 In the "Deployment details" for the preview, use the following for the "Build
 command" and "Build output directory" settings:
 
-- Build command: `npm run build:client`
-- Build output directory:: `/dist/client`
+- Build command: `npm run build`
+- Build output directory:: `/dist`
 
 ## Utility Scripts
 
