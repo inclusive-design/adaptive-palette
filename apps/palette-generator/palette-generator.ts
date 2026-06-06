@@ -1,6 +1,7 @@
 /*
- * Copyright 2024-2026 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -71,6 +72,16 @@ function renderExamples() {
     />
     `, document.getElementById("slashExample"));
 
+  // Double slash example
+  render(html`
+    <${BlissSymbol}
+      composition=${[ 122, "//", 1056 ]}
+      label="double slash - full space between symbols (raccoon)"
+      isPresentation=false
+      labelledBy="doubleSlashExampleLabel"
+    />
+    `, document.getElementById("doubleSlashExample"));
+
   // Semi-colon example
   render(html`
     <${BlissSymbol}
@@ -80,6 +91,16 @@ function renderExamples() {
       labelledBy="semicolonExampleLabel"
     />
   `, document.getElementById("semicolonExample"));
+
+  // Double semi-colon example
+  render(html`
+    <${BlissSymbol}
+      composition=${[ 122, "/", 1056, ";;", 99 ]}
+      label="double semi-colon - superimpose plural indicator symbol (raccoons)"
+      isPresentation=false
+      labelledBy="doubleSemicolonExampleLabel"
+    />
+  `, document.getElementById("doubleSemicolonExample"));
 
   // Kerning example (relative kerning)
   render(html`

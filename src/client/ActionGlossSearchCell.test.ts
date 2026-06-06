@@ -1,6 +1,7 @@
 /*
- * Copyright 2026 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -90,7 +91,6 @@ describe("ActionGlossSearchCell render tests", (): void => {
 
     const spanEl = document.querySelector(".actionGlossSearchCell span");
     expect(spanEl).not.toBeNull();
-    // composition=3274 (number) → compositionToBstr(3274) = "B3274"
     expect(spanEl!.textContent).toBe("22311 . B3274 . B3274");
   });
 
