@@ -36,133 +36,13 @@ GLOSS:indicator (action):GLOSS      GLOSS:indicator (action):GLOSSLABEL:verb:LAB
 SVG:13166;9011:SVG      SVG:13166;9011:SVGLABEL:children:LABEL
 SVG:14905//24883:SVGLABEL:removed building:LABEL        SVG:B220;B99:SVGLABEL:children:LABEL
 SVG:B457;B81/B487/B124:SVG SVG:B457;B81/B487/B124;;B99:SVGLABEL:a number of growling dogs:LABEL
+SVG:B457;B81/B124/24883:SVG
     </textarea>
   </p>
-  <details>
-    <summary>How to specify matches</summary>
-    <p>
-      List the items to search for in the "Search for matches:" text box above.
-      Each line corresponds to a row in the generated palette.  Items are
-      separated by spaces and each item specifies a single cell.  Each item is
-      one of:
-    </p>
-    <ul>
-      <li>
-        BLANK (all capitals), for a empty blank cell,
-      </li>
-      <li>
-        BCI AV ID, one of the official identifiers of a Bliss character or
-        Bliss word (Bliss symbol),
-         <ul>
-           <li>The cell's label is the gloss associated with the Bliss symbol.
-           </li>
-         </ul>
-      </li>
-      <li>
-        A gloss.  Use
-        <code>GLOSS:<em>gloss</em>:GLOSS</code>.
-        The glossary is searched for glosses that match, or for a
-        partial or exact match with the gloss of an individual Bliss symbol.
-        Mutitple matches are possible, but only the first match is displayed
-        in the preview.
-         <ul>
-           <li>The label is the given label to be displayed and exported.
-           </li>
-         </ul>
-      </li>
-      <li>
-        An svg-builder string, as defined by the <a href="https://github.com/hlridge/bliss-svg-builder">bliss-svg-builder</a>,
-        that defines the SVG image to use for the symbol,
-         <ul>
-           <li>The cell will have no label.</li>
-         </ul>
-      </li>
-    </ul>
-    <p>
-      Except for BLANK cells, you can optionally specify a label for each type of
-      item.  Append
-      <code>LABEL:<em>label_text</em>:LABEL</code> to
-      the end of the item.  The <em>label_text</em>
-      have spaces. Some examples:
-    </p>
-    <ul>
-      <li><code>25605LABEL:ruin:LABEL</code> will find the symbol whose BCI AV ID is
-          "25605".  The cell's label is "ruin".
-          <ul>
-            <li class="margin-bottom">
-              If the <code>LABEL:ruin:LABEL</code> is not appended, the label is the
-              gloss for 25605, namely, "dilapidated, ruined (building) (1)".
-            </li>
-          </ul>
-      </li>
-      <li><code>GLOSS:indicator (action):GLOSSLABEL:verb:LABEL</code> will find the
-          symbol whose gloss is "indicator (action)".  The cell's label is "verb".
-            <ul>
-              <li class="margin-bottom">
-                If the <code>LABEL:verb:LABEL</code> is not appended, the label
-                is the matched gloss text, i.e. "indicator (action)".
-              </li>
-            </ul>
-      </li>
-      <li class="margin-bottom"><code>SVG:13166;9011:SVGLABEL:children:LABEL</code> will generate
-          the SVG image that combines the symbols that mean "child" and
-          "plural".  The cell's label is "children".  13166 and 9011 are the
-          BCI AV IDs for "child" and "indicator (plural)", respectively.
-      </li>
-      <li class="margin-bottom"><code>SVG:B220;B99:SVGLABEL:children:LABEL</code> will also generate
-          the SVG image that combines the symbols that mean "child" and
-          "plural".  However, the identifiers in this SVG builder string are
-          blissary IDs (the "B" prefix followed by the blissary ID number).
-      </li>
-    </ul>
-    <p>
-      When the page loads the first time, the above examples are shown in the
-      "Search for matches" text box.  Press "Generate palette" button to
-      preview the palette and see the list of matehes below the preview.
-    </p>
-    <h2>SVG Builder String Syntax</h2>
-    <p>
-      The two main parts of an SVG builder string are the BCI-AV-ID numbers
-      and several kinds of separators.  The separator characters and how they
-      affect the rendering of the symbols are noted below.  The terminology is
-      taken from <a target="_blank" href="https://www.blissymbolics.org/images/bliss-fundamental-rules-2020-06-16.pdf#page=4">The Fundamental Rules of Blissymbolics</a>,
-      Sections 3.3, 3.6, and 3.7.
-    </p>
-    <dl>
-      <dt>/ - forward slash</dt>
-      <dd>Normal space between Bliss symbols in a Bliss-word (BLISSYMBOL HALF SPACE).</dd>
-      <dd>Example: 12378/25582 (animal + mask)</dd>
-      <dd class="margin-bottom"><span id="slashExample"></span></dd>
-
-      <dt>// - double forward slash</dt>
-      <dd>Normal space between Bliss words in a Bliss sentence (BLISSYMBOL FULL SPACE).</dd>
-      <dd>Example: 12378//25582 (animal mask)</dd>
-      <dd class="margin-bottom"><span id="doubleSlashExample"></span></dd>
-
-      <dt>; - semi-colon</dt>
-      <dd>Superimpose the symbol following the semi-colon onto the previous symbol.
-        Used frequently for indicators.</dd>
-      <dd>Example: 12378;9011/25582 (animal<strong>s</strong> + mask)</dd>
-      <dd class="margin-bottom"><span id="semicolonExample"></span></dd>
-
-      <dt>;; - double semi-colon</dt>
-      <dd>Superimpose the symbol following the double semi-colon onto the classifier symbol in
-        the Bliss word composed by preceeding symbols. Used frequently for indicators.</dd>
-      <dd>Example: 12378/25582;;9011 (animal<strong>s</strong> + mask)</dd>
-      <dd class="margin-bottom"><span id="doubleSemicolonExample"></span></dd>
-
-      <dt>RK:-2 - relative kerning</dt>
-      <dd>Quarter space between symbols (BLISSYMBOL QUARTER SPACE)</dd>
-      <dd>Example: 14164/RK:-2/16164 (feeling + illness)</dd>
-      <dd class="margin-bottom"><span id="kerningExample"></span></dd>
-
-      <dt>X&lt;single letter&gt; - letter</dt>
-      <dd>X must be followed by a single letter, e.g. "a".  The result is the Blissymbol for that letter.</dd>
-      <dd>Example: XH/Xo/Xl/Xl/Xi/Xs</dd>
-      <dd class="margin-bottom"><span id="XExample"></span></dd>
-    </dl>
-    <hr>
-  </details>
+  <p>
+    See <a href="../../docs/PaletteJsonGenerator.md#search-for-matches">how to specify matches</a>
+    in the documentation.
+  </p>
   <p>
     <button id="generatePalette" class="usual">Generate palette</button>
     <button id="savePalette" class="usual" disabled>Save palette</button><br>

@@ -10,7 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 import { v4 as uuidv4 } from "uuid";
-import { bstrToComposition, findSymbolByBciAvId } from "../../src/client/SvgUtils";
+import { findSymbolByBciAvId } from "../../src/client/SvgUtils";
 import { SymbolCompositionType, BlissSymbolEntry, JsonPaletteType } from "../../src/client/index.d";
 
 const BLANK_CELL = "BLANK";
@@ -58,13 +58,12 @@ function isSvgBuilderString (theString: string): boolean {
 
 /**
  * Converts a string that encodes the information required by the SvgUtils
- * (svg builder) to the proper format -- an array of bliss-svg specifications.
+ * (svg builder) to the proper format -- an array of IDs and separators.
  * Three forms are accepted:
- * - Comma separated, e.g., 'SVG:13166,";",9011:SVG',
  * - BCI-AV-ID codes and separators: 'SVG:13166;9011:SVG'
- * - Blissary codes and separators: 'SVG:B220;B99:SVG
+ * - Blissary codes and separators: 'SVG:B220;B99:SVG'
  * @param {string} svgBuilderString - The string to convert.
- * @return {Array} - An array of the specifiers required by the SvgUtils.
+ * @return {Array} - An array of IDs and separators required by the SvgUtils.
  * @throws {Error} - If the encoding is not well formed.
  */
 function bciAvIdToBlissaryId(bciAvId: number): number {
@@ -73,28 +72,27 @@ function bciAvIdToBlissaryId(bciAvId: number): number {
   return symbol.id;
 }
 
+/**
+ * Converts a string that encodes the information required by the SvgUtils
+ * (svg builder) to the proper format -- an array of IDs and separators.
+ * @param {string} theString - The string to convert, which should be in the
+ * form 'SVG:...:SVG', where the "..." is a series of separated BCI AV IDs,
+ * Blissary IDs, and separators ("/", ";", "//", ";;").
+ * @return {Array} - An array of the IDs and separators required by the SvgUtils.
+ * @throws {Error} - If the encoding is not well formed.
+ */
 function convertSvgBuilderString (theString: string): SymbolCompositionType {
-  let result: SymbolCompositionType;
-  // Two forms:
-  // - when using Blissary IDs with "B" prefix (e.g. "B220;B99"):
-  //   Remove the SVG prefix/suffix and use bstrToComposition().
-  // - when using BCI AV IDs as plain numbers (e.g. "13166;9011"):
-  //   Parse tokens, look up each number as a BCI AV ID, return blissary IDs.
-  if (theString.indexOf("B") !== -1) {
-    // Remove the SVG prefix and suffix; parse Blissary builder format (e.g. "B220;B99")
-    theString = theString.replace(SVG_PREFIX, "").replace(SVG_SUFFIX,"");
-    result = bstrToComposition(theString);
-  }
-  else {
-    // Numeric BCI-AV-ID notation (e.g. "13166;9011"): look up blissary IDs
-    const inner = theString.replace(SVG_PREFIX, "").replace(SVG_SUFFIX, "");
-    const tokens = inner.match(/\/\/|\/|;;|;|[AR]K:-?\d+|\d+/g) || [];
-    result = tokens.map(token => {
-      const num = parseInt(token);
-      return isNaN(num) ? token : bciAvIdToBlissaryId(num);
-    });
-  }
-  return result;
+  // Handles Blissary IDs (B<n>), BCI AV IDs (plain numbers), separators, and
+  // any mix of the above — e.g. "SVG:B457;13166/B487/B124:SVG".
+  const inner = theString.replace(SVG_PREFIX, "").replace(SVG_SUFFIX, "");
+  const tokens = inner.match(/\/\/|\/|;;|;|[AR]K:-?\d+|X\p{L}|B\d+|\d+/gu) || [];
+  return tokens.map(token => {
+    if (/^B\d+$/.test(token)) {
+      return parseInt(token.slice(1), 10);
+    }
+    const num = parseInt(token);
+    return isNaN(num) ? token : bciAvIdToBlissaryId(num);
+  });
 }
 
 /**

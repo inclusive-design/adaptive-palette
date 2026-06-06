@@ -105,7 +105,7 @@ function buildLookupMap(data) {
   /** @type {Map<number, BlissItem>} */
   const map = new Map();
   data.forEach(item => {
-    if (!item.hasOwnProperty("isChar") || item.isChar === null) {
+    if (!Object.prototype.hasOwnProperty.call(item, "isChar") || item.isChar === null) {
       item.isChar = false;
       verboseWarnings.missingIsChar.add(item.id);
     }

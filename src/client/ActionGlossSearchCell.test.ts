@@ -91,7 +91,6 @@ describe("ActionGlossSearchCell render tests", (): void => {
 
     const spanEl = document.querySelector(".actionGlossSearchCell span");
     expect(spanEl).not.toBeNull();
-    // composition=3274 (number) → compositionToBstr(3274) = "B3274"
     expect(spanEl!.textContent).toBe("22311 . B3274 . B3274");
   });
 
