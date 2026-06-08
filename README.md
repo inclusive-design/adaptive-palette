@@ -48,7 +48,7 @@ To build the project for production (outputs to `dist`), run:
 
 ```bash
 npm run build
-npx serve -s dist
+npx vite preview
 ```
 
 ### Lint
@@ -132,5 +132,5 @@ command" and "Build output directory" settings:
   part-of-speech labels, semantic explanations, and symbol compositions.
 - [Palette JSON Generator](./docs/PaletteJsonGenerator.md): how to use the web-based Palette Generator app to
   create custom Bliss symbol palettes from gloss words, BCI AV IDs, or SVG builder strings.
-- [Client Developer Documentation](./docs/ClientDeveloperDoc.md): technical guide for developers building the
+- [Client Developer Documentation](./docs/DeveloperDoc.md): technical guide for developers building the
   adaptive palette client side with Preact.

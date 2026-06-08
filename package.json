@@ -10,8 +10,7 @@
     "lint": "run-p lint:*",
     "lint:js": "eslint .",
     "lint:markdown": "markdownlint-cli2",
-    "test": "vitest run",
-    "test:client": "vitest run --project client"
+    "test": "vitest run"
   },
   "dependencies": {
     "@preact/signals": "^2.9.0",
