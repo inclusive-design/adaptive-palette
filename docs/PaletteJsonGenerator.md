@@ -11,10 +11,10 @@ JSON file ready to place in `public/palettes/`.
 Run the following command from the project root:
 
 ```sh
-npm run serveAppsDemos
+npm start
 ```
 
-Then open [`http://localhost:5173/apps/palette-generator/`](http://localhost:5173/apps/palette-generator/) in a browser.
+Then open [`http://localhost:3000/apps/palette-generator/`](http://localhost:3000/apps/palette-generator/) in a browser.
 
 ## Settings
 

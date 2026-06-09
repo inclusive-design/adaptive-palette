@@ -43,12 +43,12 @@ hides a lot of these details when interacting with Ollama.
 The demo web-app is launched using the following command:
 
 ```text
-npm run serveAppsDemos
+npm start
 ```
 
 Once the development server is running, open this `localhost` url from within a
 browser:
-[`http://localhost:5173/demos/Ollama%20Chat%20Service/whatExpress.html`](http://localhost:5174/demos/Ollama%20Chat%20Service/whatExpress.html)
+[`http://localhost:3000/demos/Ollama%20Chat%20Service/whatExpress.html`](http://localhost:3000/demos/Ollama%20Chat%20Service/whatExpress.html)
 
 ### Chat using Ollama Client Library
 

@@ -5,7 +5,7 @@ Full documentation: [docs/PaletteJsonGenerator.md](../../docs/PaletteJsonGenerat
 ## Quick Start
 
 ```sh
-npm run serveAppsDemos
+npm start
 ```
 
-Open [`http://localhost:5173/apps/palette-generator/`](http://localhost:5173/apps/palette-generator/) in a browser.
+Open [`http://localhost:3000/apps/palette-generator/`](http://localhost:3000/apps/palette-generator/) in a browser.

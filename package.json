@@ -5,7 +5,6 @@
   "scripts": {
     "start": "vite --port 3000",
     "build": "vite build",
-    "serveAppsDemos": "vite --port 5173",
     "typecheck": "tsc --noEmit",
     "lint": "run-p lint:*",
     "lint:js": "eslint .",
