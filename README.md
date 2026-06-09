@@ -51,6 +51,9 @@ npm run build
 npx vite preview
 ```
 
+_**NOTE:** `npx vite preview` launches a local static web server to preview the build
+in the `/dist` directory.
+
 ### Lint
 
 To lint the source code, run:
