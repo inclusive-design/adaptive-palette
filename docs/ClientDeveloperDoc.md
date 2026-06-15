@@ -7,8 +7,8 @@ build the adaptive palette client side.
 
 `Palette.ts` constructs a palette based on a JSON file that contains a list
 of the cells in the palette. An example is found in
-[`public/palettes/bliss_standard_chart.json`](../public/palettes/bliss_standard_chart.json).
-The `cells` object is the list of all of the cells. Each cell has a `type` key and
+[`public/palettes/bliss_standard_chart.json`](../public/palettes/bliss_standard_chart.json). The
+`cells` object is the list of all of the cells. Each cell has a `type` key and
 an `options` key. The `type` value indicates which Preact component should be
 used to render this cell. The `options` contains information to be passed to the
 component.
@@ -80,7 +80,7 @@ three categories by prefix.
 
 | Type | Purpose | Key options beyond layout |
 | ---- | ------- | ------------------------- |
-| `ActionBmwCodeCell` | Appends a Bliss symbol to the encoding area when clicked | `label`, `composition` |
+| `ActionCodeCell` | Appends a Bliss symbol to the encoding area when clicked | `label`, `composition` |
 | `ActionBranchToPaletteCell` | Navigates to another palette | `label`, `composition`, `branchTo` (palette file name without `.json`), `ariaControls` |
 | `ActionGlossSearchCell` | Searches for a Bliss symbol by gloss; `label` format is `"searchTerm: gloss"` | `label`, `composition`, `id`, `bciAvId` |
 | `ActionIndicatorCell` | Applies a Bliss indicator to the last symbol in the encoding area | `label`, `composition` |
@@ -104,7 +104,7 @@ three categories by prefix.
 
 | Type | Purpose | Key options beyond layout |
 | ---- | ------- | ------------------------- |
-| `ContentBmwEncoding` | Displays the current encoding (the input area showing selected symbols) | layout fields only |
+| `ContentEncoding` | Displays the current encoding (the input area showing selected symbols) | layout fields only |
 
 ## How to add a new cell type
 

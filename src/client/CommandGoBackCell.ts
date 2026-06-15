@@ -17,7 +17,7 @@ import { adaptivePaletteGlobals } from "./GlobalData";
 import { loadPaletteFromJsonFile, speak } from "./GlobalUtils";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
-import "./ActionBmwCodeCell.scss";
+import "./ActionCodeCell.scss";
 
 type CommandGoBackCellPropsType = {
   id: string,

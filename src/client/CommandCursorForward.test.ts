@@ -27,7 +27,7 @@ describe("CommandCursorForward render tests", (): void => {
       "rowSpan": 1,
       "columnStart": 12,
       "columnSpan": 1,
-      "ariaControls": "content-encoding-area"
+      "ariaControls": "test-encoding-area"
     }
   };
 

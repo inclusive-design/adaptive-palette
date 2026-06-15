@@ -9,5 +9,7 @@ dist
 
 # Application files and folders
 vectorStore
-src/client/__screenshots__/
-.vitest-attachments/
+
+# Testing related artifacts
+/**/__screenshots__/
+.vitest-attachements

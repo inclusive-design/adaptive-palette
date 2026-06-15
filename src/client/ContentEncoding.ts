@@ -14,17 +14,17 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
-import { ContentBmwEncodingType, EncodingType } from "./index.d";
+import { ContentEncodingType, EncodingType } from "./index.d";
 import { generateGridStyle, clamp, speak } from "./GlobalUtils";
-import "./ContentBmwEncoding.scss";
+import "./ContentEncoding.scss";
 
-export const INPUT_AREA_ID = "bmw-encoding-area";   // better way?
+export const INPUT_AREA_ID = "content-encoding-area";   // better way?
 
 const isApplePlatform = navigator.platform.startsWith("Mac") || navigator.platform.startsWith("iPhone") || navigator.platform.startsWith("iPad");
 
-type ContentBmwEncodingProps = {
+type ContentEncodingProps = {
   id: string,
-  options: ContentBmwEncodingType
+  options: ContentEncodingType
 }
 
 /*
@@ -127,7 +127,7 @@ function handleKeyDown(event: KeyboardEvent) {
   }
 }
 
-export function ContentBmwEncoding (props: ContentBmwEncodingProps): VNode {
+export function ContentEncoding (props: ContentEncodingProps): VNode {
   const { id, options } = props;
   const { columnStart, columnSpan, rowStart, rowSpan } = options;
 
@@ -139,7 +139,7 @@ export function ContentBmwEncoding (props: ContentBmwEncodingProps): VNode {
   return html`
     <div
       id="${id}"
-      class="bmwEncodingArea"
+      class="contentEncodingArea"
       role="textbox"
       aria-label="Input Area"
       aria-readonly="true"
