@@ -14,9 +14,9 @@ import { render, screen } from "@testing-library/preact";
 import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals } from "./GlobalData";
-import { ActionBmwCodeCell } from "./ActionBmwCodeCell";
+import { ActionCodeCell } from "./ActionCodeCell";
 
-describe("ActionBmwCodeDell render tests", (): void => {
+describe("ActionCodeCell render tests", (): void => {
 
   const TEST_CELL_ID = "uuid-of-some-kind";
   const testCell = {
@@ -34,10 +34,10 @@ describe("ActionBmwCodeDell render tests", (): void => {
     await initAdaptivePaletteGlobals();
   });
 
-  test("Single ActionBmwCodeCell rendering", async (): Promise<void> => {
+  test("Single ActionCodeCell rendering", async (): Promise<void> => {
 
     render(html`
-      <${ActionBmwCodeCell}
+      <${ActionCodeCell}
         id="${TEST_CELL_ID}"
         options=${testCell.options}
       />`
@@ -46,12 +46,12 @@ describe("ActionBmwCodeDell render tests", (): void => {
     // Check the rendered cell
     const button = await screen.findByRole("button", {name: testCell.options.label});
 
-    // Check that the ActionBmwCodeCell/button is rendered and has the correct
+    // Check that the ActionCodeCell/button is rendered and has the correct
     // attributes and text.
     expect(button).toBeVisible();
     expect(button).toBeValid();
     expect(button.id).toBe(TEST_CELL_ID);
-    expect(button.getAttribute("class")).toBe("actionBmwCodeCell");
+    expect(button.getAttribute("class")).toBe("ActionCodeCell");
     expect(button.textContent).toBe(testCell.options.label);
 
     // Check the grid cell styles.

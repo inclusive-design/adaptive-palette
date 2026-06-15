@@ -14,7 +14,7 @@ import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
 import { loadPaletteFromJsonFile, speak } from "./GlobalUtils";
 import { goBackImpl } from "./CommandGoBackCell";
-import { INPUT_AREA_ID } from "./ContentBmwEncoding";
+import { INPUT_AREA_ID } from "./ContentEncoding";
 import "./index.scss";
 
 // Initialize any globals used elsewhere in the code.

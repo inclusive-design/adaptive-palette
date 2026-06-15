@@ -48,12 +48,12 @@ export type JsonPaletteType = {
   cells: {
     [key: string]: {
       type: string,
-      options: BlissSymbolCellType | ContentBmwEncodingType
+      options: BlissSymbolCellType | ContentEncodingType
     }
   }
 };
 
-export type ContentBmwEncodingType = LayoutInfoType;
+export type ContentEncodingType = LayoutInfoType;
 
 export type EncodingType = BlissSymbolInfoType & {
   id: string,

@@ -12,13 +12,13 @@
 
 import { render, screen } from "@testing-library/preact";
 import { html } from "htm/preact";
-import { ContentBmwEncoding} from "./ContentBmwEncoding";
+import { ContentEncoding} from "./ContentEncoding";
 import { initAdaptivePaletteGlobals } from "./GlobalData";
 
-test("The BMW Encoding content area is rendered correctly", async (): Promise<void> => {
+test("The content encoding area is rendered correctly", async (): Promise<void> => {
   await initAdaptivePaletteGlobals();
 
-  const cellId = "uuid-of-bmw-encoding-area";
+  const cellId = "uuid-of-content-encoding-area";
   const cellOptions = {
     columnStart: 1,
     columnSpan: 5,
@@ -27,7 +27,7 @@ test("The BMW Encoding content area is rendered correctly", async (): Promise<vo
   };
 
   render(html`
-    <${ContentBmwEncoding}
+    <${ContentEncoding}
       id="${cellId}"
       options=${cellOptions}
     />`

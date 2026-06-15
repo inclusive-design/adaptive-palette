@@ -1,167 +1,137 @@
 {
-    "name": "top_palette",
-    "cells": {
-        "SVG:12374/14947/14947:SVG-83498953-875a-4f8a-9abc-bb2a992ad023": {
-            "type": "ActionBmwCodeCell",
-            "options": {
-                "label": "yes",
-                "composition": [
-                    120,
-                    "/",
-                    401,
-                    "/",
-                    401
-                ],
-                "rowStart": 1,
-                "rowSpan": 1,
-                "columnStart": 1,
-                "columnSpan": 1
-            }
-        },
-        "SVG:15474/14947/14947:SVG-29984eee-0f35-4b91-a2d6-d6c2051b175c": {
-            "type": "ActionBmwCodeCell",
-            "options": {
-                "label": "no",
-                "composition": [
-                    449,
-                    "/",
-                    401,
-                    "/",
-                    401
-                ],
-                "rowStart": 1,
-                "rowSpan": 1,
-                "columnStart": 2,
-                "columnSpan": 1
-            }
-        },
-        "SVG:15161/15474/14947:SVG-11de49f0-2bc8-4863-9f7a-7a7b1f115780": {
-            "type": "ActionBmwCodeCell",
-            "options": {
-                "label": "don't know",
-                "composition": [
-                    412,
-                    ";",
-                    81,
-                    "/",
-                    449,
-                    "/",
-                    401
-                ],
-                "rowStart": 1,
-                "rowSpan": 1,
-                "columnStart": 3,
-                "columnSpan": 1
-            }
-        },
-        "action-49abcd96-b0af-4c66-8400-b9a0cb3a20c8": {
-            "type": "ActionIndicatorCell",
-            "options": {
-                "label": "action",
-                "composition": 81,
-                "rowStart": 1,
-                "rowSpan": 1,
-                "columnStart": 4,
-                "columnSpan": 1
-            }
-        },
-        "SVG:9004:SVG-a13239d3-1532-4ffc-a9c0-e1ebd6132830": {
-            "type": "ActionIndicatorCell",
-            "options": {
-                "label": "past",
-                "composition": 92,
-                "rowStart": 1,
-                "rowSpan": 1,
-                "columnStart": 5,
-                "columnSpan": 1
-            }
-        },
-        "SVG:24807:SVG-7018c55e-d669-4ba2-b69a-35c414822e47": {
-            "type": "ActionIndicatorCell",
-            "options": {
-                "label": "present",
-                "composition": 928,
-                "rowStart": 1,
-                "rowSpan": 1,
-                "columnStart": 6,
-                "columnSpan": 1
-            }
-        },
-        "SVG:8999:SVG-e5c9733b-792d-49a4-953c-29fc7968e1e8": {
-            "type": "ActionIndicatorCell",
-            "options": {
-                "label": "future",
-                "composition": 87,
-                "rowStart": 1,
-                "rowSpan": 1,
-                "columnStart": 7,
-                "columnSpan": 1
-            }
-        },
-        "SVG:9011:SVG-fb89740b-0a1a-4fcb-8275-bdaabe32a5dc": {
-            "type": "ActionIndicatorCell",
-            "options": {
-                "label": "plural",
-                "composition": 99,
-                "rowStart": 1,
-                "rowSpan": 1,
-                "columnStart": 8,
-                "columnSpan": 1
-            }
-        },
-        "SVG:8998:SVG-332c5c6e-f224-4a3f-a365-83c679bf8ed6": {
-            "type": "ActionIndicatorCell",
-            "options": {
-                "label": "description",
-                "composition": 86,
-                "rowStart": 1,
-                "rowSpan": 1,
-                "columnStart": 9,
-                "columnSpan": 1
-            }
-        },
-        "concretething-indicator-5a6ebbeb-202a-41ff-bca0-fba69ddd95ee": {
-            "type": "ActionIndicatorCell",
-            "options": {
-                "label": "concrete thing",
-                "composition": 97,
-                "rowStart": 1,
-                "rowSpan": 1,
-                "columnStart": 10,
-                "columnSpan": 1
-            }
-        },
-        "command-indicator-f3aec80d-6f5f-4a31-a488-34754eb32052": {
-            "type": "ActionIndicatorCell",
-            "options": {
-                "label": "command",
-                "composition": 907,
-                "rowStart": 1,
-                "rowSpan": 1,
-                "columnStart": 11,
-                "columnSpan": 1
-            }
-        },
-        "remove-indicator-ce71d580-2712-44b8-9daf-7e894295d827": {
-            "type": "ActionRemoveIndicatorCell",
-            "options": {
-                "label": "Remove indicator",
-                "composition": [
-                    634,
-                    ";",
-                    907,
-                    "//",
-                    348,
-                    "/",
-                    81,
-                    "/",
-                    99
-                ],
-                "rowStart": 1,
-                "rowSpan": 1,
-                "columnStart": 12,
-                "columnSpan": 1
-            }
-        }
+  "name": "top_palette",
+  "cells": {
+    "SVG:12374/14947/14947:SVG-83498953-875a-4f8a-9abc-bb2a992ad023": {
+      "type": "ActionCodeCell",
+      "options": {
+        "label": "yes",
+        "composition": [120, "/", 401, "/", 401],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "SVG:15474/14947/14947:SVG-29984eee-0f35-4b91-a2d6-d6c2051b175c": {
+      "type": "ActionCodeCell",
+      "options": {
+        "label": "no",
+        "composition": [449, "/", 401, "/", 401],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "SVG:15161/15474/14947:SVG-11de49f0-2bc8-4863-9f7a-7a7b1f115780": {
+      "type": "ActionCodeCell",
+      "options": {
+        "label": "don't know",
+        "composition": [412, ";", 81, "/", 449, "/", 401],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1
+      }
+    },
+    "action-49abcd96-b0af-4c66-8400-b9a0cb3a20c8": {
+      "type": "ActionIndicatorCell",
+      "options": {
+        "label": "action",
+        "composition": 81,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1
+      }
+    },
+    "SVG:9004:SVG-a13239d3-1532-4ffc-a9c0-e1ebd6132830": {
+      "type": "ActionIndicatorCell",
+      "options": {
+        "label": "past",
+        "composition": 92,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "SVG:24807:SVG-7018c55e-d669-4ba2-b69a-35c414822e47": {
+      "type": "ActionIndicatorCell",
+      "options": {
+        "label": "present",
+        "composition": 928,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 6,
+        "columnSpan": 1
+      }
+    },
+    "SVG:8999:SVG-e5c9733b-792d-49a4-953c-29fc7968e1e8": {
+      "type": "ActionIndicatorCell",
+      "options": {
+        "label": "future",
+        "composition": 87,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 7,
+        "columnSpan": 1
+      }
+    },
+    "SVG:9011:SVG-fb89740b-0a1a-4fcb-8275-bdaabe32a5dc": {
+      "type": "ActionIndicatorCell",
+      "options": {
+        "label": "plural",
+        "composition": 99,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 8,
+        "columnSpan": 1
+      }
+    },
+    "SVG:8998:SVG-332c5c6e-f224-4a3f-a365-83c679bf8ed6": {
+      "type": "ActionIndicatorCell",
+      "options": {
+        "label": "description",
+        "composition": 86,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 9,
+        "columnSpan": 1
+      }
+    },
+    "concretething-indicator-5a6ebbeb-202a-41ff-bca0-fba69ddd95ee": {
+      "type": "ActionIndicatorCell",
+      "options": {
+        "label": "concrete thing",
+        "composition": 97,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 10,
+        "columnSpan": 1
+      }
+    },
+    "command-indicator-f3aec80d-6f5f-4a31-a488-34754eb32052": {
+      "type": "ActionIndicatorCell",
+      "options": {
+        "label": "command",
+        "composition": 907,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 11,
+        "columnSpan": 1
+      }
+    },
+    "remove-indicator-ce71d580-2712-44b8-9daf-7e894295d827": {
+      "type": "ActionRemoveIndicatorCell",
+      "options": {
+        "label": "Remove indicator",
+        "composition": [634, ";", 907, "//", 348, "/", 81, "/", 99],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 12,
+        "columnSpan": 1
+      }
     }
+  }
 }

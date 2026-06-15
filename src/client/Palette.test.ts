@@ -24,7 +24,7 @@ describe("Palette component", (): void => {
     "name": "Test Palette",
     "cells": {
       "firstCell": {
-        "type": "ActionBmwCodeCell",
+        "type": "ActionCodeCell",
         "options": {
           "label": "First Cell",
           "composition": [
@@ -39,7 +39,7 @@ describe("Palette component", (): void => {
         }
       },
       "secondCell": {
-        "type": "ActionBmwCodeCell",
+        "type": "ActionCodeCell",
         "options": {
           "label": "Second Cell",
           "composition": 823,
@@ -50,7 +50,7 @@ describe("Palette component", (): void => {
         }
       },
       "thirdCell": {
-        "type": "ActionBmwCodeCell",
+        "type": "ActionCodeCell",
         "options": {
           "label": "Third Cell",
           "composition": [

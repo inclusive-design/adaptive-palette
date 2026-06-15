@@ -44,9 +44,9 @@ const MAX_MATCHES_OUTPUT = 7;
 function initCellTypesSelect () {
   const cellTypesSelect = document.getElementById("cellTypes") as HTMLSelectElement;
   Object.keys(cellTypeRegistry).forEach ((cellType) => {
-    // The "cell" type `ContentBmwEncoding` is for an array of symbols within
+    // The "cell" type `ContentEncoding` is for an array of symbols within
     // a content area, not for cells within a palette.  Avoid for now.
-    if (cellType !== "ContentBmwEncoding") {
+    if (cellType !== "ContentEncoding") {
       cellTypesSelect.add(new Option(cellType));
     }
   });

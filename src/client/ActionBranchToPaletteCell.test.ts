@@ -47,7 +47,7 @@ describe("ActionBranchToPaletteCell render tests", (): void => {
     // Check the rendered cell
     const button = await screen.findByRole("button", {name: goToPaletteCell.options.label});
 
-    // Check that the ActionBmwCodeCell/button is rendered and has the correct
+    // Check that the ActionCodeCell/button is rendered and has the correct
     // attributes and text.
     expect(button).toBeVisible();
     expect(button).toBeValid();
