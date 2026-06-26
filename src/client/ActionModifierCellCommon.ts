@@ -36,9 +36,9 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
 
   // Get the modifier composition and make sure it's an array.
   const modifierComposition = (
-    typeof props.options.composition === "number" ?
-      [props.options.composition] :
-      props.options.composition
+    typeof composition === "number" ?
+      [composition] :
+      composition
   );
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
