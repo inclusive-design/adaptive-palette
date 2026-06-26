@@ -11,10 +11,10 @@ import {
 
 import type { ContentSignalDataType, SymbolEncodingType } from "./index.d";
 
-const testSymbolA = { id: "a", label: "A", bciAvId: 1 };
-const testSymbolB = { id: "b", label: "B", bciAvId: 2 };
-const testSymbolC = { id: "c", label: "C", bciAvId: 3 };
-const combineSymbol = { id: "combine", label: "combine", bciAvId: 13382 };
+const testSymbolA = { id: "a", label: "A", composition: 1 };
+const testSymbolB = { id: "b", label: "B", composition: 2 };
+const testSymbolC = { id: "c", label: "C", composition: 3 };
+const combineSymbol = { id: "combine", label: "combine", composition: 233 };
 
 const testInput = (
   payloads: SymbolEncodingType[],
