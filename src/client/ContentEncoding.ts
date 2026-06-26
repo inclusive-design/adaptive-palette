@@ -1,6 +1,7 @@
 /*
- * Copyright 2023-2026 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -13,18 +14,18 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 
 import { changeEncodingContents } from "./GlobalData";
-import { ContentBmwEncodingType } from "./index.d";
+import { ContentEncodingType } from "./index.d";
 import { ContentEncodingInputField } from "./ContentEncodingInputField";
-import "./ContentBmwEncoding.scss";
+import "./ContentEncoding.scss";
 
 const ARIA_LABEL = "Input Area";
 
-type ContentBmwEncodingProps = {
+type ContentEncodingProps = {
   id: string,
-  options: ContentBmwEncodingType
+  options: ContentEncodingType
 }
 
-export function ContentBmwEncoding (props: ContentBmwEncodingProps): VNode {
+export function ContentEncoding (props: ContentEncodingProps): VNode {
 
   return html`
     <${ContentEncodingInputField}

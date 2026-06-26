@@ -44,12 +44,12 @@ npm install ollama
 Launch the web-app chat client using the command:
 
 ```text
-npm run serveAppsDemos
+npm start
 ```
 
 Once the development server is running, open this `localhost` url from within a
 browser:
-[`http://localhost:5173/apps/ollama/ollama.html`](http://localhost:5173/apps/ollama/ollama.html)
+[`http://localhost:3000/apps/ollama/ollama.html`](http://localhost:3000/apps/ollama/ollama.html)
 
 ## How to Chat
 

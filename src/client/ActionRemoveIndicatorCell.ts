@@ -1,6 +1,7 @@
 /*
- * Copyright 2025 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -34,8 +35,8 @@ function caretSymbolIndicatorPosition (symbols: ContentSignalDataType): number {
   let indicatorPositions: number[] = [];
   const { payloads, caretPosition } = symbols;
   if (payloads.length !== 0 && caretPosition !== -1) {
-    const caretSymbolBciAvId = payloads[caretPosition].bciAvId;
-    indicatorPositions = findIndicators(caretSymbolBciAvId);
+    const caretSymbolComposition = payloads[caretPosition].composition;
+    indicatorPositions = findIndicators(caretSymbolComposition);
   }
   return ( indicatorPositions.length === 0 ? -1 : indicatorPositions[0]);
 }
@@ -44,7 +45,7 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
   const {
     columnStart, columnSpan, rowStart, rowSpan, label
   } = props.options;
-  const removeIndicatorBciAvId = props.options.bciAvId;
+  const removeIndicatorComposition = props.options.composition;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
@@ -61,16 +62,16 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
     const { caretPosition, payloads } = contentsSignal.value;
     const indicatorIndex = caretSymbolIndicatorPosition(contentsSignal.value);
     const symbolToEdit = payloads[caretPosition];
-    let newBciAvId = symbolToEdit.bciAvId;
-    const newBciAvIdArr = newBciAvId as (string|number)[];
-    newBciAvId = [
-      ...newBciAvIdArr.slice(0, indicatorIndex-1),
-      ...newBciAvIdArr.slice(indicatorIndex+1)
+    let newComposition = symbolToEdit.composition;
+    const newCompositionArr = newComposition as (string|number)[];
+    newComposition = [
+      ...newCompositionArr.slice(0, indicatorIndex-1),
+      ...newCompositionArr.slice(indicatorIndex+1)
     ];
     payloads[caretPosition] = {
       "id": symbolToEdit.id + props.id,
       "label": symbolToEdit.label,
-      "bciAvId": newBciAvId,
+      "composition": newComposition,
       "modifierInfo": symbolToEdit.modifierInfo
     };
     contentsSignal.value = {
@@ -89,7 +90,7 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
       disabled="${disabled}"
       aria-controls="${ariaControls}">
       <${BlissSymbol}
-        bciAvId=${removeIndicatorBciAvId}
+        composition=${removeIndicatorComposition}
         label=${label}
         isPresentation=true
       />

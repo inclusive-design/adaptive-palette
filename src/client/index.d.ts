@@ -1,6 +1,7 @@
 /*
- * Copyright 2023-2026 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -9,17 +10,24 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-export type BciAvIdType = number | (string|number)[];
+// Symbol composition can be either a symbol ID defined in bliss_symbol_explanations.json,
+// for example 1433, or an array of symbol IDs and/or strings that represent the composition
+// of a symbol, for example [1433, "/", 1234].
+export type SymbolCompositionType = number | (string|number)[];
 
-export type BlissaryMapEntryType = {
-  blissaryId: number,
-  bciAvId: number,
-  blissSvgBuilderCode: string
+export type BlissSymbolEntry = {
+  id: number,
+  bciAvId?: number,
+  gloss: string,
+  pos?: string,
+  explanation?: string,
+  isCharacter: boolean,
+  composition?: SymbolCompositionType
 };
 
 export type BlissSymbolInfoType = {
   label: string,
-  bciAvId: BciAvIdType
+  composition: SymbolCompositionType
 }
 export type LayoutInfoType = {
   columnStart: number,
@@ -40,12 +48,12 @@ export type JsonPaletteType = {
   cells: {
     [key: string]: {
       type: string,
-      options: BlissSymbolCellType | ContentBmwEncodingType
+      options: BlissSymbolCellType | ContentEncodingType
     }
   }
 };
 
-export type ContentBmwEncodingType = LayoutInfoType;
+export type ContentEncodingType = LayoutInfoType;
 
 export type EncodingType = BlissSymbolInfoType & {
   id: string,
@@ -65,7 +73,7 @@ export type NavStackItemType = {
 // Extra information in a content payload structure when the symbol has
 // modifiers
 export type ModifierInfoType = {
-  modifierId: BciAvIdType,
+  modifierId: SymbolCompositionType,
   modifierGloss: string,
   isPrepended: boolean
 };
@@ -86,8 +94,8 @@ export type ContentSignalDataType = {
  * Match structure when searching the BCI AV for symbols
  */
 export type MatchType = {
-  bciAvId: number,
+  id: number,
+  bciAvId?: number,
   label: string,
-  composition?: BciAvIdType,
-  fullComposition?: BciAvIdType
+  composition?: SymbolCompositionType
 }

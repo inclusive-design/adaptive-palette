@@ -2,10 +2,10 @@
   "name": "vehicle",
   "cells": {
     "18010-bb5e731b-78fd-4dc0-b876-7c7d0af0c45f": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "vehicle",
-        "bciAvId": 18010,
+        "composition": 688,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -13,10 +13,10 @@
       }
     },
     "wheelchair-f8ecb839-53ee-4964-87a7-64c946ea8449": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "wheelchair",
-        "bciAvId": 18233,
+        "composition": 701,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -24,14 +24,10 @@
       }
     },
     "SVG:18233/13918:SVG-2ebd136e-8aec-41e8-a7d8-6a667c5f54df": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "electric wheelchair",
-        "bciAvId": [
-          18233,
-          "/",
-          13918
-        ],
+        "composition": [701, "/", 288],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -39,14 +35,10 @@
       }
     },
     "SVG:8498/18232:SVG-4241097e-c6c3-4bf8-9ac8-cdb981308820": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "bicycle",
-        "bciAvId": [
-          8498,
-          "/",
-          18232
-        ],
+        "composition": [11, "/", 700],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -54,10 +46,10 @@
       }
     },
     "car-0bc6cfd7-124b-4493-b9c1-21d877bd5e7a": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "car",
-        "bciAvId": 13121,
+        "composition": 202,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -65,14 +57,10 @@
       }
     },
     "SVG:13121/15212:SVG-272a68b0-eb9f-4821-b2fe-8a2d72bb7243": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "taxi",
-        "bciAvId": [
-          13121,
-          "/",
-          15212
-        ],
+        "composition": [202, "/", 426],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -80,10 +68,10 @@
       }
     },
     "bus-e57bdada-6604-45ad-b0b3-a056c9c92108": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "bus",
-        "bciAvId": 13089,
+        "composition": 188,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -91,14 +79,10 @@
       }
     },
     "SVG:14647/18010:SVG-76c0113d-f4a4-4448-90e0-1b2e6c9db886": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "train",
-        "bciAvId": [
-          14647,
-          "/",
-          18010
-        ],
+        "composition": [368, "/", 688],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -106,10 +90,10 @@
       }
     },
     "aeroplane-8f30ebb1-b634-497e-a361-2303eaae3996": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "aeroplane",
-        "bciAvId": 12357,
+        "composition": 115,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -117,10 +101,10 @@
       }
     },
     "boat,ship-38d1287f-ddb4-45ca-ab04-2faf24617852": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "boat,ship",
-        "bciAvId": 12869,
+        "composition": 170,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -128,16 +112,10 @@
       }
     },
     "SVG:14905/16161/17779:SVG-d9072472-478a-410b-a0c3-5e744fb902ae": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "hotel, motel",
-        "bciAvId": [
-          14905,
-          "/",
-          16161,
-          "/",
-          17779
-        ],
+        "composition": [392, "/", 513, "/", 667],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -145,10 +123,10 @@
       }
     },
     "trip-65633882-35d2-49ba-b90b-fe908d418292": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "trip",
-        "bciAvId": 17779,
+        "composition": 667,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -156,14 +134,10 @@
       }
     },
     "SVG:15189/15943:SVG-4979a9b4-2c2b-4cf7-bcf4-0c6e96b37641": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "outing",
-        "bciAvId": [
-          15189,
-          "/",
-          15943
-        ],
+        "composition": [418, "/", 491],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -171,14 +145,10 @@
       }
     },
     "SVG:15962/14952:SVG-ca2d1334-5946-42d0-9333-b242e176a83e": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "ticket",
-        "bciAvId": [
-          15962,
-          "/",
-          14952
-        ],
+        "composition": [497, "/", 402],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -186,10 +156,10 @@
       }
     },
     "suitcase-dbf5b5de-cbe1-4912-b3c6-9ee50407b82a": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "suitcase",
-        "bciAvId": 12618,
+        "composition": 147,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -197,18 +167,10 @@
       }
     },
     "SVG:14647/14647/14647/14905:SVG-780e4925-98a4-4ffc-9df1-2deb40418be5": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "city",
-        "bciAvId": [
-          14647,
-          "/",
-          14647,
-          "/",
-          14647,
-          "/",
-          14905
-        ],
+        "composition": [368, "/", 368, "/", 368, "/", 392],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -216,10 +178,10 @@
       }
     },
     "country-1f4ed887-e18d-4308-978a-2742c86aaeaa": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "country",
-        "bciAvId": 13423,
+        "composition": 243,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -227,10 +189,10 @@
       }
     },
     "stuff-a1433bc8-bbd2-47c5-a1c4-8ded8dcd3282": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "stuff",
-        "bciAvId": 15431,
+        "composition": 438,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -238,18 +200,10 @@
       }
     },
     "SVG:13158/14647/14133/17717:SVG-14ca8553-8607-49c6-b2ce-00f79307b963": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "plastic",
-        "bciAvId": [
-          13158,
-          "/",
-          14647,
-          "/",
-          14133,
-          "/",
-          17717
-        ],
+        "composition": [216, "/", 368, "/", 303, "/", 651],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -257,14 +211,10 @@
       }
     },
     "SVG:15431/23150:SVG-572e89d7-3f5a-404a-ae2c-665b3919f689": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "metal",
-        "bciAvId": [
-          15431,
-          "/",
-          23150
-        ],
+        "composition": [438, "/", 814],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

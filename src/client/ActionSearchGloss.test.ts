@@ -1,6 +1,7 @@
 /*
- * Copyright 2026 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -75,6 +76,7 @@ describe("ActionSearchGloss component behavior", () => {
     // When valid value is submitted
     await user.type(searchInput, "fish");
     await user.click(submitButton);
+    expect(await screen.findAllByText(/^fish: /i)).not.toHaveLength(0);
     expect(await screen.findAllByText(/14188/i)).not.toHaveLength(0);
   }, 20000);
 });

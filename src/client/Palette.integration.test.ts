@@ -1,6 +1,7 @@
 /*
- * Copyright 2024 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -22,8 +23,8 @@ describe("Palette integration test", () => {
   const testPalette = {
     "name": "Test Palette",
     "cells": {
-      "bmw-encoding-area": {
-        "type": "ContentBmwEncoding",
+      "content-encoding-area": {
+        "type": "ContentEncoding",
         "options": {
           "rowStart": 2,
           "rowSpan": 1,
@@ -35,7 +36,7 @@ describe("Palette integration test", () => {
         "type": "CommandDelLastEncoding",
         "options": {
           "label": "Delete",
-          "bciAvId": 12613,
+          "composition": 145,
           "rowStart": 2,
           "rowSpan": 1,
           "columnStart": 13,
@@ -47,7 +48,7 @@ describe("Palette integration test", () => {
         "type": "CommandClearEncoding",
         "options": {
           "label": "Clear",
-          "bciAvId": 13665,
+          "composition": 1532,
           "rowStart": 2,
           "rowSpan": 1,
           "columnStart": 14,
@@ -56,13 +57,13 @@ describe("Palette integration test", () => {
         }
       },
       "firstCell": {
-        "type": "ActionBmwCodeCell",
+        "type": "ActionCodeCell",
         "options": {
           "label": "First Cell",
-          "bciAvId": [
-            17720,
+          "composition": [
+            652,
             "/",
-            17697
+            646
           ],
           "rowStart": 3,
           "rowSpan": 1,
@@ -71,10 +72,10 @@ describe("Palette integration test", () => {
         }
       },
       "secondCell": {
-        "type": "ActionBmwCodeCell",
+        "type": "ActionCodeCell",
         "options": {
           "label": "Second Cell",
-          "bciAvId": 23409,
+          "composition": 823,
           "rowStart": 3,
           "rowSpan": 1,
           "columnStart": 4,
@@ -86,7 +87,7 @@ describe("Palette integration test", () => {
         "options": {
           "label": "Go To",
           "branchTo": "People",
-          "bciAvId": 12343,
+          "composition": 1177,
           "rowStart": 3,
           "rowSpan": 1,
           "columnStart": 4,
@@ -97,24 +98,24 @@ describe("Palette integration test", () => {
         "type": "CommandCursorForward",
         "options": {
           "label": "Forward",
-          "bciAvId": [ 14390, ";", 24670 ],
+          "composition": [ 335, ";", 907 ],
           "rowStart": 2,
           "rowSpan": 1,
           "columnStart": 12,
           "columnSpan": 1,
-          "ariaControls": "bmw-encoding-area"
+          "ariaControls": "test-encoding-area"
         }
       },
       "command-cursor-backwards": {
         "type": "CommandCursorBackward",
         "options": {
           "label": "Backward",
-          "bciAvId": [ 12613, ";", 24670 ],
+          "composition": [ 145, ";", 907 ],
           "rowStart": 2,
           "rowSpan": 1,
           "columnStart": 11,
           "columnSpan": 1,
-          "ariaControls": "bmw-encoding-area"
+          "ariaControls": "content-encoding-area"
         }
       }
     }
@@ -126,10 +127,10 @@ describe("Palette integration test", () => {
     "name": "People",
     "cells": {
       "woman": {
-        "type": "ActionBmwCodeCell",
+        "type": "ActionCodeCell",
         "options": {
           "label": "Woman",
-          "bciAvId": 18269,
+          "composition": 710,
           "rowStart": 3,
           "rowSpan": 1,
           "columnStart": 6,
@@ -137,10 +138,10 @@ describe("Palette integration test", () => {
         }
       },
       "person": {
-        "type": "ActionBmwCodeCell",
+        "type": "ActionCodeCell",
         "options": {
           "label": "Person",
-          "bciAvId":  16161,
+          "composition":  513,
           "rowStart": 4,
           "rowSpan": 1,
           "columnStart": 6,
@@ -148,10 +149,10 @@ describe("Palette integration test", () => {
         }
       },
       "man": {
-        "type": "ActionBmwCodeCell",
+        "type": "ActionCodeCell",
         "options": {
           "label": "Man",
-          "bciAvId":  15416,
+          "composition":  433,
           "rowStart": 5,
           "rowSpan": 1,
           "columnStart": 6,
@@ -162,7 +163,7 @@ describe("Palette integration test", () => {
         "type": "CommandGoBackCell",
         "options": {
           "label": "Back Up",
-          "bciAvId":  12612,
+          "composition":  1248,
           "rowStart": 3,
           "rowSpan": 1,
           "columnStart": 1,
@@ -173,8 +174,8 @@ describe("Palette integration test", () => {
   };
 
   // Indicator "tool bar" palette
-  const PLURAL_INDICATOR_ID = 9011;
-  const ACTION_INDICATOR_ID = 8993;
+  const PLURAL_INDICATOR_ID = 99;    // ID for bciAvId 9011 (plural indicator)
+  const ACTION_INDICATOR_ID = 81;    // ID for bciAvId 8993 (action indicator)
   const testIndicatorPalette = {
     "name": "indicator tool bar",
     "cells": {
@@ -182,7 +183,7 @@ describe("Palette integration test", () => {
         "type": "ActionIndicatorCell",
         "options": {
           "label": "plural",
-          "bciAvId": PLURAL_INDICATOR_ID,
+          "composition": PLURAL_INDICATOR_ID,
           "rowStart": 1,
           "rowSpan": 1,
           "columnStart": 8,
@@ -193,7 +194,7 @@ describe("Palette integration test", () => {
         "type": "ActionIndicatorCell",
         "options": {
           "label": "action",
-          "bciAvId": ACTION_INDICATOR_ID,
+          "composition": ACTION_INDICATOR_ID,
           "rowStart": 1,
           "rowSpan": 1,
           "columnStart": 4,
@@ -204,7 +205,7 @@ describe("Palette integration test", () => {
         "type": "ActionRemoveIndicatorCell",
         "options": {
           "label": "remove indicator",
-          "bciAvId": [ 17448, "//", 14430, "/", 8993,  "/", 8998 ],
+          "composition": [ 2505, "//", 348, "/", 81,  "/", 86 ],
           "rowStart": 1,
           "rowSpan": 1,
           "columnStart": 12,
@@ -215,8 +216,8 @@ describe("Palette integration test", () => {
   };
 
   // Modifier "tool bar" palette
-  const OPPOSITE_MODIFIER_ID = 15927;
-  const INTENSITY_MODIFIER_ID = 14947;
+  const OPPOSITE_MODIFIER_ID = 486;   // ID for bciAvId 15927 (opposite)
+  const INTENSITY_MODIFIER_ID = 401;  // ID for bciAvId 14947 (intensity)
   const testModifierPalette = {
     "name": "modifier tool bar",
     "cells": {
@@ -224,7 +225,7 @@ describe("Palette integration test", () => {
         "type": "ActionPreModifierCell",
         "options": {
           "label": "opposite of",
-          "bciAvId": OPPOSITE_MODIFIER_ID,
+          "composition": OPPOSITE_MODIFIER_ID,
           "rowStart": 1,
           "rowSpan": 1,
           "columnStart": 1,
@@ -235,7 +236,7 @@ describe("Palette integration test", () => {
         "type": "ActionPostModifierCell",
         "options": {
           "label": "intensity",
-          "bciAvId": INTENSITY_MODIFIER_ID,
+          "composition": INTENSITY_MODIFIER_ID,
           "rowStart": 1,
           "rowSpan": 1,
           "columnStart": 2,
@@ -246,7 +247,7 @@ describe("Palette integration test", () => {
         "type": "ActionRemoveModifierCell",
         "options": {
           "label": "remove a modifier",
-          "bciAvId": [ 17448 ],
+          "composition": [ 2505 ],
           "rowStart": 1,
           "rowSpan": 1,
           "columnStart": 15,
@@ -263,7 +264,7 @@ describe("Palette integration test", () => {
     adaptivePaletteGlobals.paletteStore.addPalette(testLayerOnePalette);
   });
 
-  test("Cell coordinations among bmw action cells, input area, delete and clear buttons", async() => {
+  test("Cell coordinations among action cells, input area, delete and clear buttons", async() => {
     // render() the palette and then wait until its first cell is available to
     // insure that the entire palette is in the DOM.
     render(html`<${Palette} json=${testPalette}/>`);
@@ -424,23 +425,23 @@ describe("Palette integration test", () => {
     expect(addPluralButton).toBeInTheDocument();
     fireEvent.click(firstCell);
     let firstSymbol = changeEncodingContents.value.payloads[0];
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(PLURAL_INDICATOR_ID)).toBe(false);
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(ACTION_INDICATOR_ID)).toBe(false);
+    expect((firstSymbol.composition as (string|number)[]).includes(PLURAL_INDICATOR_ID)).toBe(false);
+    expect((firstSymbol.composition as (string|number)[]).includes(ACTION_INDICATOR_ID)).toBe(false);
 
     // Click the `addPluralButton` and check that the plural indicator has been
     // added to the symbol in the content area.
     fireEvent.click(addPluralButton);
     firstSymbol = changeEncodingContents.value.payloads[0];
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(PLURAL_INDICATOR_ID)).toBe(true);
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(ACTION_INDICATOR_ID)).toBe(false);
+    expect((firstSymbol.composition as (string|number)[]).includes(PLURAL_INDICATOR_ID)).toBe(true);
+    expect((firstSymbol.composition as (string|number)[]).includes(ACTION_INDICATOR_ID)).toBe(false);
 
     // Find and click the add-action-indicator button and check that the
     // plural indicator has been replaced with the action indicator.
     const addActionButton = await screen.findByText("action");
     fireEvent.click(addActionButton);
     firstSymbol = changeEncodingContents.value.payloads[0];
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(PLURAL_INDICATOR_ID)).toBe(false);
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(ACTION_INDICATOR_ID)).toBe(true);
+    expect((firstSymbol.composition as (string|number)[]).includes(PLURAL_INDICATOR_ID)).toBe(false);
+    expect((firstSymbol.composition as (string|number)[]).includes(ACTION_INDICATOR_ID)).toBe(true);
 
     // Find and click the remove-indicator button and check that the
     // action indicator has been removed (and that there is no plural idnicator
@@ -448,8 +449,8 @@ describe("Palette integration test", () => {
     const removeIndicatorButton = await screen.findByText("remove indicator");
     fireEvent.click(removeIndicatorButton);
     firstSymbol = changeEncodingContents.value.payloads[0];
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(ACTION_INDICATOR_ID)).toBe(false);
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(PLURAL_INDICATOR_ID)).toBe(false);
+    expect((firstSymbol.composition as (string|number)[]).includes(ACTION_INDICATOR_ID)).toBe(false);
+    expect((firstSymbol.composition as (string|number)[]).includes(PLURAL_INDICATOR_ID)).toBe(false);
   });
 
   test("ActionRemoveIndicator disabled state depending on the last symbol in the content area", async() => {
@@ -471,7 +472,7 @@ describe("Palette integration test", () => {
     fireEvent.click(firstCell);
     fireEvent.click(addPluralButton);
     const firstSymbol = changeEncodingContents.value.payloads[0];
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(PLURAL_INDICATOR_ID)).toBe(true);
+    expect((firstSymbol.composition as (string|number)[]).includes(PLURAL_INDICATOR_ID)).toBe(true);
     expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
 
     // Add a second symbol to the contents, one without an indicator.  The
@@ -514,42 +515,42 @@ describe("Palette integration test", () => {
     // modifiers on it at this point.
     fireEvent.click(firstCell);
     let firstSymbol = changeEncodingContents.value.payloads[0];
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(false);
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect((firstSymbol.composition as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(false);
+    expect((firstSymbol.composition as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
     expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
 
     // Add the intensity modifer.
     fireEvent.click(addIntensityButton);
     firstSymbol = changeEncodingContents.value.payloads[0];
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(true);
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect((firstSymbol.composition as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(true);
+    expect((firstSymbol.composition as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
     expect(removeModifierButton.getAttribute("disabled")).toBeNull();
 
     // Remove the intensity modifer.
     fireEvent.click(removeModifierButton);
     firstSymbol = changeEncodingContents.value.payloads[0];
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(false);
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect((firstSymbol.composition as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(false);
+    expect((firstSymbol.composition as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
     expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
 
     // Add the intensity, and then the oppposite modifiers.
     fireEvent.click(addIntensityButton);
     firstSymbol = changeEncodingContents.value.payloads[0];
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(true);
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect((firstSymbol.composition as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(true);
+    expect((firstSymbol.composition as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
     expect(removeModifierButton.getAttribute("disabled")).toBeNull();
     fireEvent.click(addOppositeButton);
     firstSymbol = changeEncodingContents.value.payloads[0];
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(true);
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(true);
+    expect((firstSymbol.composition as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(true);
+    expect((firstSymbol.composition as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(true);
     expect(removeModifierButton.getAttribute("disabled")).toBeNull();
 
     // Remove a modifier -- should be the last one added, the "opposite of"
     // modifier.
     fireEvent.click(removeModifierButton);
     firstSymbol = changeEncodingContents.value.payloads[0];
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(true);
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect((firstSymbol.composition as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(true);
+    expect((firstSymbol.composition as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
     expect(removeModifierButton.getAttribute("disabled")).toBeNull();
 
     // Remove another modifier -- should be the "intensity" modifier.  Also,
@@ -557,8 +558,8 @@ describe("Palette integration test", () => {
     // should be disabled.
     fireEvent.click(removeModifierButton);
     firstSymbol = changeEncodingContents.value.payloads[0];
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(false);
-    expect((firstSymbol.bciAvId as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
+    expect((firstSymbol.composition as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(false);
+    expect((firstSymbol.composition as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
     expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
   });
 
@@ -605,7 +606,7 @@ describe("Palette integration test", () => {
     const paletteSecondCell = testPalette.cells["secondCell"];
     expect(changeEncodingContents.value.caretPosition).toBe(1);
     expect(symbolAtCaret.label).toBe(paletteSecondCell.options.label);
-    expect(symbolAtCaret.bciAvId).toStrictEqual([paletteSecondCell.options.bciAvId]);
+    expect(symbolAtCaret.composition).toStrictEqual(paletteSecondCell.options.composition);
 
     // Add an indicator to the symbol at the cursor.  Caret position should not
     // change, but symbol's bciAvId should now have a semi-colon.
@@ -614,7 +615,7 @@ describe("Palette integration test", () => {
     symbolAtCaret = changeEncodingContents.value.payloads[1];
     expect(changeEncodingContents.value.caretPosition).toBe(1);
     expect(symbolAtCaret.label).toBe(paletteSecondCell.options.label);
-    expect(symbolAtCaret.bciAvId).toContain(";");
+    expect(symbolAtCaret.composition).toContain(";");
 
     // Remove the indicator.  Caret position should not change, but the symbol's
     // bciAvId should revert back to the original.
@@ -623,7 +624,7 @@ describe("Palette integration test", () => {
     symbolAtCaret = changeEncodingContents.value.payloads[1];
     expect(changeEncodingContents.value.caretPosition).toBe(1);
     expect(symbolAtCaret.label).toBe(paletteSecondCell.options.label);
-    expect(symbolAtCaret.bciAvId).toStrictEqual([paletteSecondCell.options.bciAvId]);
+    expect(symbolAtCaret.composition).toStrictEqual([paletteSecondCell.options.composition]);
 
     // Add a modifier to the symbol at the cursor.  Caret position should not
     // change, but symbol's bciAvId should now have the modifier.
@@ -631,7 +632,7 @@ describe("Palette integration test", () => {
     fireEvent.click(oppositeButton);
     symbolAtCaret = changeEncodingContents.value.payloads[1];
     expect(changeEncodingContents.value.caretPosition).toBe(1);
-    expect(symbolAtCaret.bciAvId).toContain(OPPOSITE_MODIFIER_ID);
+    expect(symbolAtCaret.composition).toContain(OPPOSITE_MODIFIER_ID);
 
     // Remove the modifier.  Caret position should not change, but the symbol's
     // bciAvId should revert back to the original.
@@ -640,7 +641,7 @@ describe("Palette integration test", () => {
     symbolAtCaret = changeEncodingContents.value.payloads[1];
     expect(changeEncodingContents.value.caretPosition).toBe(1);
     expect(symbolAtCaret.label).toBe(paletteSecondCell.options.label);
-    expect(symbolAtCaret.bciAvId).toStrictEqual([paletteSecondCell.options.bciAvId]);
+    expect(symbolAtCaret.composition).toStrictEqual([paletteSecondCell.options.composition]);
 
     // Delete the symbol at the caret.  The caret position should move left by
     // one, the number of symbols in the input area should now be 2, and the
@@ -653,7 +654,7 @@ describe("Palette integration test", () => {
     expect(changeEncodingContents.value.caretPosition).toBe(0);
     expect(changeEncodingContents.value.payloads.length).toBe(2);
     expect(symbolAtCaret.label).toBe(paletteFirstCell.options.label);
-    expect(symbolAtCaret.bciAvId).toStrictEqual(paletteFirstCell.options.bciAvId);
+    expect(symbolAtCaret.composition).toStrictEqual(paletteFirstCell.options.composition);
 
     // Move the caret to -1.  Since there are symbols in the display, this
     // should change the display to show an insert before the first symbol.

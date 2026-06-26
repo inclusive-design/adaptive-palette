@@ -2,10 +2,10 @@
   "name": "time",
   "cells": {
     "17732-bbba3b5b-2db2-446a-8fa1-22a18fc5ff55": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "time",
-        "bciAvId": 17732,
+        "composition": 655,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -13,10 +13,10 @@
       }
     },
     "minute-2f5190e5-eb08-4926-997e-c48f62ab1c97": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "minute",
-        "bciAvId": 15475,
+        "composition": 2015,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -24,10 +24,10 @@
       }
     },
     "hour-10ff8178-c479-4fca-98c8-2a4b7e895e4a": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "hour",
-        "bciAvId": 14904,
+        "composition": 1830,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -35,10 +35,10 @@
       }
     },
     "week-75f6e173-eccd-45df-b7c8-18ffddb1f179": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "week",
-        "bciAvId": 18217,
+        "composition": 2721,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -46,10 +46,10 @@
       }
     },
     "month-027ecc60-0ffa-44e8-b65d-7bef4b9f0d47": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "month",
-        "bciAvId": 15649,
+        "composition": 452,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -57,10 +57,10 @@
       }
     },
     "year-73879b3e-931f-42da-9d3b-ca7d18ce787e": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "year",
-        "bciAvId": 18289,
+        "composition": 716,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -68,10 +68,10 @@
       }
     },
     "spring-efedb03e-da17-48ff-abed-2dc8e8a0d279": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "spring",
-        "bciAvId": 17241,
+        "composition": 2476,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -79,10 +79,10 @@
       }
     },
     "summer-e16394c0-cc3e-452c-85c9-74671ad3fcea": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "summer",
-        "bciAvId": 17460,
+        "composition": 2515,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -90,18 +90,10 @@
       }
     },
     "SVG:17462/8499/15183/13869:SVG-63d7c97a-b98d-4691-a226-47adb5e8107e": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "autumn",
-        "bciAvId": [
-          17462,
-          "/",
-          8499,
-          "/",
-          15183,
-          "/",
-          13869
-        ],
+        "composition": [636, "/", 12, "/", 416, "/", 271],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -109,10 +101,10 @@
       }
     },
     "18262-85da374f-4200-4611-b244-f135e7745af4": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "winter",
-        "bciAvId": 18262,
+        "composition": 2753,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -120,10 +112,10 @@
       }
     },
     "Christmas-3574bf74-32e9-4eb5-b6bc-eb59dc39bec0": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "Christmas",
-        "bciAvId": 13181,
+        "composition": 1412,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -131,10 +123,10 @@
       }
     },
     "13903-2856f672-0d4e-4df5-89b7-6a7ab075c050": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "Easter",
-        "bciAvId": 13903,
+        "composition": 1585,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -142,10 +134,10 @@
       }
     },
     "holiday-7894763a-67a7-4721-b51c-813d669412e3": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "holiday",
-        "bciAvId": 14884,
+        "composition": 1815,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -153,10 +145,10 @@
       }
     },
     "birthday-38a32354-1b7d-4dce-a6e0-f9f25c634ecf": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "birthday",
-        "bciAvId": 12846,
+        "composition": 1298,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -164,10 +156,10 @@
       }
     },
     "vacation-6600ca58-0445-4a75-889d-5d347648858d": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "vacation",
-        "bciAvId": 17995,
+        "composition": 2678,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -175,10 +167,10 @@
       }
     },
     "weather-030de1bb-5a09-43f3-ac1e-e73373a71d96": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "weather",
-        "bciAvId": 18214,
+        "composition": 696,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -186,10 +178,10 @@
       }
     },
     "rain-830d30ba-d294-4e7a-8cbb-02934e4fe23c": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "rain",
-        "bciAvId": 16455,
+        "composition": 556,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -197,10 +189,10 @@
       }
     },
     "snow-c0340184-6647-4569-b93b-a5ca3f00abe8": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "snow",
-        "bciAvId": 17192,
+        "composition": 604,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -208,10 +200,10 @@
       }
     },
     "air-f35b445a-1ab5-454e-9303-7f4e5aa0979f": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "air",
-        "bciAvId": 12356,
+        "composition": 114,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -219,10 +211,10 @@
       }
     },
     "18255-b2b911fa-e0f8-4dff-ae01-14fd7363cac3": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "wind",
-        "bciAvId": 18255,
+        "composition": 705,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

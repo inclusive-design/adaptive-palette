@@ -1,6 +1,7 @@
 /*
- * Copyright 2024 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -27,7 +28,7 @@ describe("CommandGoBackCell render tests", (): void => {
       "rowSpan": "2",
       "columnStart": "2",
       "columnSpan": "1",
-      "bciAvId": 12612
+      "composition": 1248
     }
   };
   const goBackCellAriaControls = {
@@ -37,7 +38,7 @@ describe("CommandGoBackCell render tests", (): void => {
       "rowSpan": "2",
       "columnStart": "2",
       "columnSpan": "1",
-      "bciAvId": 12612
+      "composition": 1248
     }
   };
 
@@ -60,7 +61,7 @@ describe("CommandGoBackCell render tests", (): void => {
     // Check the rendered cell with TEST_CELL_ID1
     const button = await screen.findByRole("button", {name: goBackCellNoAriaControls.options.label});
 
-    // Check that the ActionBmwCodeCell/button is rendered and has the correct
+    // Check that the ActionCodeCell/button is rendered and has the correct
     // attributes and text.
     expect(button).toBeVisible();
     expect(button).toBeValid();

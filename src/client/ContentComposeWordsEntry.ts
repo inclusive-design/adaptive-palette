@@ -13,16 +13,16 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 
 import { composeWordContents } from "./GlobalData";
-import { ContentBmwEncodingType } from "./index.d";
+import { ContentEncodingType } from "./index.d";
 import { ToggleIsComposingWords } from "./ToggleIsComposingWords";
 import { ContentEncodingInputField } from "./ContentEncodingInputField";
-import "./ContentBmwEncoding.scss";
+import "./ContentEncoding.scss";
 
 const ARIA_LABEL = "Compose Words";
 
 type ContentComposeWordsEntryProps = {
   id: string,
-  options: ContentBmwEncodingType
+  options: ContentEncodingType
 }
 
 export function ContentComposeWordsEntry (props: ContentComposeWordsEntryProps): VNode {

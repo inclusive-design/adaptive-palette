@@ -27,28 +27,28 @@ type CommandAddCompositionProps = {
 
 export function CommandAddComposition (props: CommandAddCompositionProps): VNode {
   const { id, options } = props;
-  const { label, bciAvId, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
+  const { label, composition, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
   const disabled = composeWordContents.value.payloads.length === 0;
 
   const cellClicked = (): void => {
     const composePayloads = composeWordContents.value.payloads;
-    let composedBciAvId: (number | string)[] = [];
+    let composedCompositionId: (number | string)[] = [];
     let composedLabel = "";
     composePayloads.forEach( (payload) => {
-      const normalizedBciAvId: (number | string)[] = 
-        typeof payload.bciAvId === "number" ? [payload.bciAvId] : payload.bciAvId;
+      const normalizedCompositionId: (number | string)[] = 
+        typeof payload.composition === "number" ? [payload.composition] : payload.composition;
       
-      composedBciAvId = composedBciAvId.concat(normalizedBciAvId);
-      composedBciAvId.push("/");
+      composedCompositionId = composedCompositionId.concat(normalizedCompositionId);
+      composedCompositionId.push("/");
       composedLabel = `${composedLabel} ${payload.label}`;
     });
-    composedBciAvId.pop();  // remove the last "/"
+    composedCompositionId.pop();  // remove the last "/"
     const composedPayload = {
       "id": uuidv4(),
       "label": composedLabel.trim(),
-      "bciAvId": composedBciAvId,
+      "composition": composedCompositionId,
       "modifierInfo": []
     };
     const { payloads, caretPosition } = changeEncodingContents.value;
@@ -68,7 +68,7 @@ export function CommandAddComposition (props: CommandAddCompositionProps): VNode
       aria-controls=${ariaControls}
       onClick=${cellClicked}
       disabled="${disabled}">
-      <${BlissSymbol} bciAvId=${bciAvId} label=${label}/>
+      <${BlissSymbol} composition=${composition} label=${label}/>
     </button>
   `;
 }

@@ -1,6 +1,7 @@
 /*
- * Copyright 2025 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -30,14 +31,14 @@ export type ActionModifierCodeCellPropsType = {
  */
 export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType, prepend: boolean): VNode {
   const {
-    columnStart, columnSpan, rowStart, rowSpan, label
+    columnStart, columnSpan, rowStart, rowSpan, label, composition
   } = props.options;
 
-  // Get the modifier BCI AV ID and make sure it's an array.
-  const modifierBciAvId = (
-    typeof props.options.bciAvId === "number" ?
-      [props.options.bciAvId] :
-      props.options.bciAvId
+  // Get the modifier composition and make sure it's an array.
+  const modifierComposition = (
+    typeof props.options.composition === "number" ?
+      [props.options.composition] :
+      props.options.composition
   );
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
@@ -46,7 +47,7 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
   const disabled = contentsSignal.value.caretPosition === -1;
 
   const cellClicked = () => {
-    const newContents = composeBlissWord(modifierBciAvId, label, ISA_MODIFIER, contentsSignal.value, prepend);
+    const newContents = composeBlissWord(modifierComposition, label, ISA_MODIFIER, contentsSignal.value, prepend);
     const { payloads, caretPosition } = newContents;
     contentsSignal.value = newContents;
     speak(payloads[caretPosition].label);
@@ -61,7 +62,7 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
       disabled="${disabled}"
       aria-controls="${ariaControls}">
       <${BlissSymbol}
-        bciAvId=${modifierBciAvId}
+        composition=${modifierComposition}
         label=${label}
         isPresentation=true
       />

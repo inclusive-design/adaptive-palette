@@ -12,22 +12,22 @@
 import type {
   ContentSignalDataType,
   SymbolEncodingType,
-  BciAvIdType
+  SymbolCompositionType
 } from "./index.d";
 
 import { clamp } from "./GlobalUtils";
 
-// Append BciAvId of symbols to skip navigating using moveCursor function to this list
-const bciAvIdToSkip = [13382];
+// Append SymbolCompositionToSkip of symbols to skip navigating using moveCursor function to this list
+const SymbolCompositionToSkip = [233];
 
 /**
- * Check if BciAvId is equal, as BciAvId can be an array or string.
+ * Check if SymbolComposition is equal, as SymbolComposition can be an array or string.
  * 
- * @param {BciAvIdType} a - A BciAvId to be compared
- * @param {BciAvIdType} b - A BciAvId to be compared
+ * @param {SymbolCompositionType} a - A SymbolComposition to be compared
+ * @param {SymbolCompositionType} b - A SymbolComposition to be compared
  * @return {boolean} - result of the comparison
  */
-function bciAvIdEqual (a: BciAvIdType, b: BciAvIdType): boolean {
+function compositionIdEqual (a: SymbolCompositionType, b: SymbolCompositionType): boolean {
   if (Array.isArray(a) && Array.isArray(b)) {
     return a.length === b.length && a.every((v, i) => v === b[i]);
   }
@@ -38,43 +38,43 @@ function bciAvIdEqual (a: BciAvIdType, b: BciAvIdType): boolean {
 }
 
 /**
- * Check if payload contains BciAvIds to be skipped
+ * Check if payload contains composition id to be skipped
  * 
  * @param {SymbolEncodingType} payload - An array of input symbols
- * @param {Array<BciAvIdType>} skipBciAvIds - An array of BciAvIds to be skipped
+ * @param {Array<SymbolCompositionType>} skipCompositionIds - An array of composition ids to be skipped
  * 
  */
-function isSkipSymbol (payload: SymbolEncodingType, skipBciAvIds: Array<BciAvIdType>): boolean {
-  return skipBciAvIds.some((id) => bciAvIdEqual(payload.bciAvId, id));
+function isSkipSymbol (payload: SymbolEncodingType, skipCompositionIds: Array<SymbolCompositionType>): boolean {
+  return skipCompositionIds.some((id) => compositionIdEqual(payload.composition, id));
 }
 
 /**
  * Check if payloads is a combine symbol
  * 
  * @param {Array<SymbolEncodingType>} payloads - An array of input symbols
- * @param {Array<BciAvIdType>} skipBciAvIds - An array of BciAvIds to be skipped
+ * @param {Array<SymbolCompositionType>} skipCompositionIds - An array of composition ids to be skipped
  * 
  */
-function isCombined(payloads: Array<SymbolEncodingType>, skipBciAvIds: Array<BciAvIdType>): boolean {
+function isCombined(payloads: Array<SymbolEncodingType>, skipCompositionIds: Array<SymbolCompositionType>): boolean {
   return (
     payloads.length >=2 &&
-		isSkipSymbol(payloads[0], skipBciAvIds) &&
-		isSkipSymbol(payloads[payloads.length - 1], skipBciAvIds)
+		isSkipSymbol(payloads[0], skipCompositionIds) &&
+		isSkipSymbol(payloads[payloads.length - 1], skipCompositionIds)
   );
 }
 
-function moveCursor (positionChange: number, contentSignal: ContentSignalDataType, skipBciAvIds: Array<BciAvIdType> = bciAvIdToSkip) {
+function moveCursor (positionChange: number, contentSignal: ContentSignalDataType, skipCompositionIds: Array<SymbolCompositionType> = SymbolCompositionToSkip) {
   const { payloads, caretPosition } = contentSignal;
   const max = payloads.length - 1;
   // If the payloads are composed symbol, the caret must stay inside the combine symbols
   // disallow -1 as a landing position. Otherwise -1 remains valid.
-  const min = isCombined(payloads, skipBciAvIds) ? 0 : -1;
+  const min = isCombined(payloads, skipCompositionIds) ? 0 : -1;
 
   let newPosition = clamp(caretPosition + positionChange, min, max);
 
   const direction = Math.sign(positionChange);
-  if (direction !== 0 && skipBciAvIds.length > 0) {
-    while (newPosition >= 0 && newPosition <= max && isSkipSymbol(payloads[newPosition], skipBciAvIds)) {
+  if (direction !== 0 && skipCompositionIds.length > 0) {
+    while (newPosition >= 0 && newPosition <= max && isSkipSymbol(payloads[newPosition], skipCompositionIds)) {
       const updatedPosition = newPosition + direction;
       if (updatedPosition < min || updatedPosition > max) {
         newPosition = caretPosition;
@@ -94,7 +94,7 @@ function moveCursor (positionChange: number, contentSignal: ContentSignalDataTyp
   };
 };
 
-function deleteAtCaret (contentSignal: ContentSignalDataType, skipBciAvIds: Array<BciAvIdType> = bciAvIdToSkip): ContentSignalDataType {
+function deleteAtCaret (contentSignal: ContentSignalDataType, skipCompositionIds: Array<SymbolCompositionType> = SymbolCompositionToSkip): ContentSignalDataType {
   const { payloads, caretPosition } = contentSignal;
 
   // Nothing to do if:
@@ -110,16 +110,16 @@ function deleteAtCaret (contentSignal: ContentSignalDataType, skipBciAvIds: Arra
 
   // Walk the caret left, skipping over any skip symbols
   let newCaretPosition = caretPosition - 1;
-  while (newCaretPosition >= 0 && isSkipSymbol(newEncodingContents[newCaretPosition], skipBciAvIds)) {
+  while (newCaretPosition >= 0 && isSkipSymbol(newEncodingContents[newCaretPosition], skipCompositionIds)) {
     newCaretPosition -= 1;
   }
 
   // If the position fell off the left side but the array still leads with a skip
   // the caret is now outside the wrap. Try to find a symbol inside the wrap by going right
 
-  if (newCaretPosition === -1 && newEncodingContents.length > 0 && isSkipSymbol(newEncodingContents[0], skipBciAvIds)) {
+  if (newCaretPosition === -1 && newEncodingContents.length > 0 && isSkipSymbol(newEncodingContents[0], skipCompositionIds)) {
     let updatedPosition = 1;
-    while (updatedPosition < newEncodingContents.length && isSkipSymbol(newEncodingContents[updatedPosition], skipBciAvIds)) {
+    while (updatedPosition < newEncodingContents.length && isSkipSymbol(newEncodingContents[updatedPosition], skipCompositionIds)) {
       updatedPosition += 1;
     }
 
@@ -145,13 +145,13 @@ function combineContent (contentSignal: ContentSignalDataType, combineSymbol: Sy
   };
 }
 
-function uncombineContent (contentSignal: ContentSignalDataType, skipBciAvIds: Array<BciAvIdType>): ContentSignalDataType {
+function uncombineContent (contentSignal: ContentSignalDataType, skipCompositionIds: Array<SymbolCompositionType>): ContentSignalDataType {
   const { payloads, caretPosition } = contentSignal;
 
-  const firstCombineIndex = payloads.findIndex(p => isSkipSymbol(p, skipBciAvIds));
+  const firstCombineIndex = payloads.findIndex(p => isSkipSymbol(p, skipCompositionIds));
   let lastCombineIndex = -1;
   for (let i = payloads.length -1; i >=0; i--) {
-    if (isSkipSymbol(payloads[i], skipBciAvIds)) {
+    if (isSkipSymbol(payloads[i], skipCompositionIds)) {
       lastCombineIndex = i;
       break;
     }
@@ -184,8 +184,8 @@ function uncombineContent (contentSignal: ContentSignalDataType, skipBciAvIds: A
 }
 
 export {
-  bciAvIdEqual,
-  bciAvIdToSkip,
+  compositionIdEqual,
+  SymbolCompositionToSkip,
   isSkipSymbol,
   isCombined,
   moveCursor,

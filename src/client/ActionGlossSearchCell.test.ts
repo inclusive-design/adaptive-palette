@@ -1,6 +1,7 @@
 /*
- * Copyright 2026 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -17,7 +18,7 @@ import { ActionGlossSearchCell } from "./ActionGlossSearchCell";
 
 describe("ActionGlossSearchCell render tests", (): void => {
 
-  const BCI_TREE_BARK = 22311;
+  const BCI_TREE_BARK = 3274;
 
   // 1. Made ID unique to text search
   const TEXT_SEARCH_CELL_ID = "text-search-uuid";
@@ -27,29 +28,33 @@ describe("ActionGlossSearchCell render tests", (): void => {
   const textSearchCellProps = {
     id: TEXT_SEARCH_CELL_ID,
     options: {
+      id: BCI_TREE_BARK,
+      bciAvId: 22311,
       "label": TEXT_SEARCH_LABEL,
       "rowStart": "3",
       "rowSpan": "2",
       "columnStart": "2",
       "columnSpan": "1",
-      "bciAvId": BCI_TREE_BARK
+      "composition": BCI_TREE_BARK
     }
   };
 
   // 2. Made ID unique to BCI search
   const BCI_SEARCH_CELL_ID = "bci-search-uuid";
-  const BCI_SEARCH_LABEL = "22311: bark";
+  const BCI_SEARCH_LABEL = "3274: bark";
   const BCI_SEARCH_PROPOSED_GLOSS = " bark";
 
   const bciSearchCellProps = {
     id: BCI_SEARCH_CELL_ID,
     options: {
+      id: BCI_TREE_BARK,
+      bciAvId: 22311,
       "label": BCI_SEARCH_LABEL,
       "rowStart": "3",
       "rowSpan": "2",
       "columnStart": "2",
       "columnSpan": "1",
-      "bciAvId": BCI_TREE_BARK
+      "composition": BCI_TREE_BARK
     }
   };
 
@@ -83,6 +88,10 @@ describe("ActionGlossSearchCell render tests", (): void => {
     expect(inputElement).toBeVisible();
     expect(inputElement).toBeValid();
     expect(inputElement).toHaveValue(TEXT_SEARCH_PROPOSED_GLOSS);
+
+    const spanEl = document.querySelector(".actionGlossSearchCell span");
+    expect(spanEl).not.toBeNull();
+    expect(spanEl!.textContent).toBe("22311 . B3274 . B3274");
   });
 
   test("ActionGlossSearchCell rendering with BCI AV ID search", (): void => {

@@ -2,14 +2,10 @@
   "name": "much_many",
   "cells": {
     "SVG:14647;8998:SVG-e89b3882-8ee9-4333-93c3-96797acc9f0e": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "much, many",
-        "bciAvId": [
-          14647,
-          ";",
-          8998
-        ],
+        "composition": [368, ";", 86],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -17,10 +13,10 @@
       }
     },
     "more-3b297ebf-af86-4c9c-9ebd-52bca604956b": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "more",
-        "bciAvId": 15654,
+        "composition": 2029,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -28,10 +24,10 @@
       }
     },
     "most-df2c24d7-b462-4e15-9414-a40715c9e3a8": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "most",
-        "bciAvId": 15661,
+        "composition": 2035,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -39,10 +35,10 @@
       }
     },
     "near-34a4a7ec-fa08-40a9-89ef-44cf6283c3e2": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "near",
-        "bciAvId": 15697,
+        "composition": 2061,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -50,10 +46,10 @@
       }
     },
     "different-bf91bb2a-d425-42b2-adb6-28fa4c56c245": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "different",
-        "bciAvId": 13675,
+        "composition": 262,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -61,10 +57,10 @@
       }
     },
     "happy-ffed8179-301d-40cd-9dc0-ab5c9668d24d": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "happy",
-        "bciAvId": 14676,
+        "composition": 1780,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -72,10 +68,10 @@
       }
     },
     "sad-15f53049-5932-4abe-a874-98f718929a3f": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "sad",
-        "bciAvId": 16702,
+        "composition": 2304,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -83,10 +79,10 @@
       }
     },
     "upset-2103a241-fc1c-48cb-b934-0ca9c275324d": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "upset",
-        "bciAvId": 17985,
+        "composition": 2671,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -94,10 +90,10 @@
       }
     },
     "afraid-ae6bf750-3376-4678-b396-3d90df7a1725": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "afraid",
-        "bciAvId": 12347,
+        "composition": 1181,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -105,10 +101,10 @@
       }
     },
     "anxious-137f32a3-4f51-4131-b2c6-ea906963e61a": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "anxious",
-        "bciAvId": 12398,
+        "composition": 1211,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -116,10 +112,10 @@
       }
     },
     "good-7983d11b-cc44-49a1-a2dd-b5ec79cf3a0d": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "good",
-        "bciAvId": 12645,
+        "composition": 1270,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -127,10 +123,10 @@
       }
     },
     "bad-afe3deff-5ad1-474a-bd48-db20e24b33f4": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "bad",
-        "bciAvId": 12615,
+        "composition": 1250,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -138,10 +134,10 @@
       }
     },
     "beautiful-64f4afdd-b99b-4edf-87ae-4a558c74fa4d": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "beautiful",
-        "bciAvId": 12645,
+        "composition": 1270,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -149,10 +145,10 @@
       }
     },
     "funny-2c770a3c-37f3-4f0f-b7ab-064e7bba9ce7": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "funny",
-        "bciAvId": 14414,
+        "composition": 1715,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -160,10 +156,10 @@
       }
     },
     "boring-87a9305b-8f5d-4f70-ab53-942a3c6f75ed": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "boring",
-        "bciAvId": 24827,
+        "composition": 4759,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -171,10 +167,10 @@
       }
     },
     "nice-c41d989c-9d13-46c3-87bb-70f3693d7083": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "nice",
-        "bciAvId": 15717,
+        "composition": 2076,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -182,10 +178,10 @@
       }
     },
     "troublesome-ca8bd297-a475-4a1b-a933-cbbbe480af14": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "troublesome",
-        "bciAvId": 24821,
+        "composition": 4754,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -193,10 +189,10 @@
       }
     },
     "communication-24e7a935-acee-45c9-b15f-f882da7e4154": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "communication",
-        "bciAvId": 13390,
+        "composition": 1444,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -204,10 +200,10 @@
       }
     },
     "uncomfortable-ee70cb85-5274-4936-b9c2-0440041152f4": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "uncomfortable",
-        "bciAvId": 17968,
+        "composition": 2657,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -215,14 +211,10 @@
       }
     },
     "SVG:15399;8998:SVG-4cff7099-775c-4e78-b744-7da9956a2601": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "in love",
-        "bciAvId": [
-          15399,
-          ";",
-          8998
-        ],
+        "composition": [431, ";", 86],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

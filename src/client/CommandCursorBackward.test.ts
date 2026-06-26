@@ -1,6 +1,7 @@
 /*
- * Copyright 2025 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -21,12 +22,12 @@ describe("CommandCursorBackward render tests", (): void => {
   const testCell = {
     options: {
       "label": "Backward",
-      "bciAvId": [ 12613, ";", 24670 ],
+      "composition": [ 145, ";", 907 ],   // IDsfor bciAvIds 12613, 24670
       "rowStart": 2,
       "rowSpan": 1,
       "columnStart": 11,
       "columnSpan": 1,
-      "ariaControls": "bmw-encoding-area"
+      "ariaControls": "content-encoding-area"
     }
   };
 
@@ -70,4 +71,3 @@ describe("CommandCursorBackward render tests", (): void => {
   });
 
 });
-

@@ -2,14 +2,10 @@
   "name": "think",
   "cells": {
     "SVG:15471;8993:SVG-0edf8cd0-b3fd-4c6e-9eb8-61d2d597d613": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "think",
-        "bciAvId": [
-          15471,
-          ";",
-          8993
-        ],
+        "composition": [447, ";", 81],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -17,14 +13,10 @@
       }
     },
     "SVG:15162;8993:SVG-8c7eb65b-40d1-4bde-a483-3253a9b00c90": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "know",
-        "bciAvId": [
-          15162,
-          ";",
-          8993
-        ],
+        "composition": [412, ";", 81],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -32,14 +24,10 @@
       }
     },
     "SVG:25629;8993:SVG-1bf5f1fe-91f4-4c8d-b573-bc75ab3cd9d0": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "understand",
-        "bciAvId": [
-          25629,
-          ";",
-          8993
-        ],
+        "composition": [1103, ";", 81],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -47,14 +35,10 @@
       }
     },
     "SVG:24899;8993:SVG-c37448d1-5963-4f17-8e8f-6c981e03fe6c": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "forget",
-        "bciAvId": [
-          24899,
-          ";",
-          8993
-        ],
+        "composition": [948, ";", 81],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -62,14 +46,10 @@
       }
     },
     "SVG:24883;8993:SVG-d1d6c98e-3888-4929-83c2-1ec577de57d5": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "take away, destroy",
-        "bciAvId": [
-          24883,
-          ";",
-          8993
-        ],
+        "composition": [939, ";", 81],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -77,14 +57,10 @@
       }
     },
     "SVG:24833;8993:SVG-2ad9e8fe-22c7-4d1b-aa74-e113f968227f": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "desire",
-        "bciAvId": [
-          24833,
-          ";",
-          8993
-        ],
+        "composition": [930, ";", 81],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -92,16 +68,10 @@
       }
     },
     "SVG:22911;8993/25595:SVG-d81cae6e-33ea-4d4c-883e-28e3d286fdcc": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "guess",
-        "bciAvId": [
-          22911,
-          ";",
-          8993,
-          "/",
-          25595
-        ],
+        "composition": [802, ";", 81, "/", 1069],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -109,14 +79,10 @@
       }
     },
     "SVG:13649;8993:SVG-f6612454-af84-455f-b133-d60ee18e762e": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "decide",
-        "bciAvId": [
-          13649,
-          ";",
-          8993
-        ],
+        "composition": [260, ";", 81],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -124,14 +90,10 @@
       }
     },
     "SVG:15701;8993:SVG-ef640035-edcb-4aae-9f9a-2496a3840c59": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "need",
-        "bciAvId": [
-          15701,
-          ";",
-          8993
-        ],
+        "composition": [467, ";", 81],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -139,14 +101,10 @@
       }
     },
     "SVG:14704;8993:SVG-31eddf76-31d1-4009-abed-3868ce1197ce": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "help",
-        "bciAvId": [
-          14704,
-          ";",
-          8993
-        ],
+        "composition": [382, ";", 81],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -154,16 +112,10 @@
       }
     },
     "SVG:13403;8993/14417:SVG-c7c3097d-0a4e-4e85-ad3f-1aeef6b0e403": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "keep",
-        "bciAvId": [
-          13403,
-          ";",
-          8993,
-          "/",
-          14417
-        ],
+        "composition": [239, ";", 81, "/", 341],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -171,14 +123,10 @@
       }
     },
     "SVG:13934;8993:SVG-ff18d695-7704-4be6-9ad4-5af1884a238e": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "close",
-        "bciAvId": [
-          13934,
-          ";",
-          8993
-        ],
+        "composition": [291, ";", 81],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -186,16 +134,10 @@
       }
     },
     "SVG:14133;8993/25570:SVG-55dd5c28-4dbe-46b3-aa88-65d82e50805d": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "find",
-        "bciAvId": [
-          14133,
-          ";",
-          8993,
-          "/",
-          25570
-        ],
+        "composition": [303, ";", 81, "/", 1044],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -203,14 +145,10 @@
       }
     },
     "SVG:16193;8993:SVG-359bd7bd-25c1-4be4-8056-3de6b78e1756": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "put",
-        "bciAvId": [
-          16193,
-          ";",
-          8993
-        ],
+        "composition": [531, ";", 81],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -218,16 +156,10 @@
       }
     },
     "SVG:13935;8993/15212:SVG-39c54309-4d32-4813-83ad-1cd38fafbab0": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "wait",
-        "bciAvId": [
-          13935,
-          ";",
-          8993,
-          "/",
-          15212
-        ],
+        "composition": [292, ";", 81, "/", 426],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -235,18 +167,10 @@
       }
     },
     "SVG:15666;8993/12335/14417:SVG-9576105a-7b80-425e-867c-ff607b64af76": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "promise",
-        "bciAvId": [
-          15666,
-          ";",
-          8993,
-          "/",
-          12335,
-          "/",
-          14417
-        ],
+        "composition": [457, ";", 81, "/", 106, "/", 341],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -254,14 +178,10 @@
       }
     },
     "SVG:24895;8998:SVG-4035e817-d898-489b-a371-d65e32c11113": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "pretend",
-        "bciAvId": [
-          24895,
-          ";",
-          8998
-        ],
+        "composition": [945, ";", 86],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -269,16 +189,10 @@
       }
     },
     "SVG:15172;8993/13918:SVG-762e2bdf-860a-4673-beb3-0beb421c2946": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "call",
-        "bciAvId": [
-          15172,
-          ";",
-          8993,
-          "/",
-          13918
-        ],
+        "composition": [414, ";", 81, "/", 288],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -286,14 +200,10 @@
       }
     },
     "SVG:15425;8993:SVG-043e18b0-91de-423b-88cf-1dbc80f80891": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "marry",
-        "bciAvId": [
-          15425,
-          ";",
-          8993
-        ],
+        "composition": [437, ";", 81],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -301,14 +211,10 @@
       }
     },
     "SVG:24855;8993:SVG-5ef210d3-2c0a-4ffb-9702-8b3a3e324ea1": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "fight",
-        "bciAvId": [
-          24855,
-          ";",
-          8993
-        ],
+        "composition": [934, ";", 81],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

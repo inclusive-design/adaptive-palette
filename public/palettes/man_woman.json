@@ -2,10 +2,10 @@
   "name": "man_woman",
   "cells": {
     "man-2d68d262-b971-489a-a07e-18126abae7bf": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "man",
-        "bciAvId": 15416,
+        "composition": 433,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -13,10 +13,10 @@
       }
     },
     "woman-939e630b-a216-4606-81ca-0cc88430b5f6": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "woman",
-        "bciAvId": 18269,
+        "composition": 710,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -24,10 +24,10 @@
       }
     },
     "boy-a6dca0d6-f7cd-401c-9972-b7cebf6de5c2": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "boy",
-        "bciAvId": 12888,
+        "composition": 178,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -35,10 +35,10 @@
       }
     },
     "girl-adb6d363-0d49-490f-91bc-815057126952": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "girl",
-        "bciAvId": 14439,
+        "composition": 351,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -46,10 +46,10 @@
       }
     },
     "self-1365ab30-bc8f-482b-be93-5ae20c3b1cd2": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "self",
-        "bciAvId": 16752,
+        "composition": 2343,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -57,10 +57,10 @@
       }
     },
     "baby-2fa768dc-a09f-4867-8cee-d7a65880a452": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "baby",
-        "bciAvId": 12603,
+        "composition": 140,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -68,10 +68,10 @@
       }
     },
     "child-800d3b9b-4b8b-4c16-9fbe-5d8b5d57c622": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "child",
-        "bciAvId": 13166,
+        "composition": 220,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -79,10 +79,10 @@
       }
     },
     "teenager-9ca7577c-7405-4727-b714-07c8230fb8ba": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "teenager",
-        "bciAvId": 17516,
+        "composition": 643,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -90,10 +90,10 @@
       }
     },
     "adult-0f00bed5-e4e0-4c5c-8850-9ca9ceb365df": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "adult",
-        "bciAvId": 12341,
+        "composition": 108,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -101,10 +101,10 @@
       }
     },
     "people-235fdf8c-8a5b-465d-951c-0d7b68c3e513": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "people",
-        "bciAvId": 14646,
+        "composition": 1758,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -112,10 +112,10 @@
       }
     },
     "friend-e847c5fe-f778-468a-b00b-51c7d916aee1": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "friend",
-        "bciAvId": 14401,
+        "composition": 1705,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -123,10 +123,10 @@
       }
     },
     "visitor-e459b392-5c25-4f50-be03-5257deb48c74": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "visitor",
-        "bciAvId": 18018,
+        "composition": 2692,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -134,10 +134,10 @@
       }
     },
     "15418-7f17845a-7d42-4cd6-af26-0710ed203fff": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "boss, manager",
-        "bciAvId": 15418,
+        "composition": 1973,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -145,10 +145,10 @@
       }
     },
     "teacher-37880c51-6c30-4100-a8f5-e8b1ff9df96a": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "teacher",
-        "bciAvId": 17513,
+        "composition": 2559,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -156,10 +156,10 @@
       }
     },
     "assistant-11da6fdf-0204-4b3b-9542-a921079b07cf": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "assistant",
-        "bciAvId": 14706,
+        "composition": 1803,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -167,10 +167,10 @@
       }
     },
     "therapist-5ef4736b-f66c-432c-bcfd-47898d4681f5": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "therapist",
-        "bciAvId": 20516,
+        "composition": 2799,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -178,10 +178,10 @@
       }
     },
     "doctor-9ede1485-1edf-4410-b7d4-f0eb673cfbc7": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "doctor",
-        "bciAvId": 13861,
+        "composition": 1559,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -189,10 +189,10 @@
       }
     },
     "nurse-351287c3-fb08-45b6-aa63-88897a72ef76": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "nurse",
-        "bciAvId": 15905,
+        "composition": 2093,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -200,14 +200,10 @@
       }
     },
     "SVG:16161/16420:SVG-99db1e45-7d6c-4dbe-af0a-fe481302038a": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "police officer",
-        "bciAvId": [
-          16161,
-          "/",
-          16420
-        ],
+        "composition": [513, "/", 548],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -215,10 +211,10 @@
       }
     },
     "God-f653e999-1176-4a3b-82b7-a7b673a03bad": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "God",
-        "bciAvId": 14451,
+        "composition": 355,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

@@ -10,13 +10,6 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          name: "server",
-          include: ["./src/server/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
-        }
-      },
-      {
-        extends: true,
-        test: {
           name: "client",
           include: ["./src/client/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
           browser: {

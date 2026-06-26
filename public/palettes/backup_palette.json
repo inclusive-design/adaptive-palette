@@ -5,7 +5,7 @@
       "type": "CommandGoBackCell",
       "options": {
         "label": "Back",
-        "bciAvId":  [ 12613, ";", 24670 ],
+        "composition": [145, ";", 907],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,

@@ -1,6 +1,7 @@
 /*
- * Copyright 2024-2025 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -43,9 +44,9 @@ const MAX_MATCHES_OUTPUT = 7;
 function initCellTypesSelect () {
   const cellTypesSelect = document.getElementById("cellTypes") as HTMLSelectElement;
   Object.keys(cellTypeRegistry).forEach ((cellType) => {
-    // The "cell" type `ContentBmwEncoding` is for an array of symbols within
+    // The "cell" type `ContentEncoding` is for an array of symbols within
     // a content area, not for cells within a palette.  Avoid for now.
-    if (cellType !== "ContentBmwEncoding") {
+    if (cellType !== "ContentEncoding") {
       cellTypesSelect.add(new Option(cellType));
     }
   });
@@ -64,27 +65,47 @@ function renderExamples() {
   // Slash example
   render(html`
     <${BlissSymbol}
-      bciAvId=${[ 12378, "/", 25582 ]}
+      composition=${[ 122, "/", 1056 ]}
       label="slash - half space between symbols (raccoon)"
       isPresentation=false
       labelledBy="slashExampleLabel"
     />
     `, document.getElementById("slashExample"));
 
+  // Double slash example
+  render(html`
+    <${BlissSymbol}
+      composition=${[ 122, "//", 1056 ]}
+      label="double slash - full space between symbols (raccoon)"
+      isPresentation=false
+      labelledBy="doubleSlashExampleLabel"
+    />
+    `, document.getElementById("doubleSlashExample"));
+
   // Semi-colon example
   render(html`
     <${BlissSymbol}
-      bciAvId=${[ 12378, ";", 9011, "/", 25582 ]}
+      composition=${[ 122, ";", 99, "/", 1056 ]}
       label="semi-colon - superimpose plural indicator symbol (raccoons)"
       isPresentation=false
       labelledBy="semicolonExampleLabel"
     />
   `, document.getElementById("semicolonExample"));
 
+  // Double semi-colon example
+  render(html`
+    <${BlissSymbol}
+      composition=${[ 122, "/", 1056, ";;", 99 ]}
+      label="double semi-colon - superimpose plural indicator symbol (raccoons)"
+      isPresentation=false
+      labelledBy="doubleSemicolonExampleLabel"
+    />
+  `, document.getElementById("doubleSemicolonExample"));
+
   // Kerning example (relative kerning)
   render(html`
     <${BlissSymbol}
-      bciAvId=${[ 14164, "/", "RK:-2", "/", 16164 ]}
+      composition=${[ 313, "/", "RK:-2", "/", 516 ]}
       label="kerning - quarter space between symbols (pain)"
       isPresentation=false
       labelledBy="kerningExampleLabel"
@@ -94,7 +115,7 @@ function renderExamples() {
   // X example
   render(html`
     <${BlissSymbol}
-      bciAvId=${[ "XH", "/", "Xo", "/", "Xl", "/", "Xl", "/", "Xi", "/", "Xs" ]}
+      composition=${[ "XH", "/", "Xo", "/", "Xl", "/", "Xl", "/", "Xi", "/", "Xs" ]}
       label="'X' for letters - (Hollis)"
       isPresentation=false
       labelledBy="XExampleLabel"
@@ -181,10 +202,9 @@ function makeGlossesArrays (): string[][] {
   const glossRows = glossRowsText.split("\n");
   const arrayofRows: string[][] = [];
   glossRows.forEach((row) => {
-    // Make an array of strings from each row, removing any blank items. Then
-    // remove any begining or trailing white space.
-    const rowArray = row.split(" ").filter((item) => item.length !== 0);
-    rowArray.forEach((item, i, arr) => arr[i] = item.trim());
+    // GLOSS:...:GLOSS items may contain spaces inside — match them as a single
+    // token before falling back to any non-space sequence.
+    const rowArray = row.match(/GLOSS:.+?:GLOSS(?:LABEL:.+?:LABEL)?|\S+LABEL:.+?:LABEL|\S+/g) || [];
     arrayofRows.push(rowArray);
   });
   return arrayofRows;

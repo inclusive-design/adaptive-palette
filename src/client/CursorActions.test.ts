@@ -1,6 +1,6 @@
 import { 
-  bciAvIdEqual,
-  bciAvIdToSkip,
+  compositionIdEqual,
+  SymbolCompositionToSkip,
   isSkipSymbol,
   isCombined,
   moveCursor,
@@ -21,40 +21,40 @@ const testInput = (
   caretPosition: number
 ): ContentSignalDataType => ({ payloads, caretPosition });
 
-describe("bciAvIdEqual", () => {
+describe("compositionIdEqual", () => {
   test("general behaviour", () => {
-    expect(bciAvIdEqual(42, 42)).toBe(true);
-    expect(bciAvIdEqual(1, 2)).toBe(false);
-    expect(bciAvIdEqual([1, "/", 2], [1, "/", 2])).toBe(true);
-    expect(bciAvIdEqual([1, "/", 2], [1, "/", 3])).toBe(false);
-    expect(bciAvIdEqual([1, 2], [1, 2, 3])).toBe(false);
-    expect(bciAvIdEqual(1, [1])).toBe(false);
-    expect(bciAvIdEqual([1], 1)).toBe(false);
+    expect(compositionIdEqual(42, 42)).toBe(true);
+    expect(compositionIdEqual(1, 2)).toBe(false);
+    expect(compositionIdEqual([1, "/", 2], [1, "/", 2])).toBe(true);
+    expect(compositionIdEqual([1, "/", 2], [1, "/", 3])).toBe(false);
+    expect(compositionIdEqual([1, 2], [1, 2, 3])).toBe(false);
+    expect(compositionIdEqual(1, [1])).toBe(false);
+    expect(compositionIdEqual([1], 1)).toBe(false);
   });
 });
 
 describe("isSkipSymbol", () => {
   test("general behaviour", () => {
-    expect(isSkipSymbol(testSymbolA, bciAvIdToSkip)).toBe(false);
-    expect(isSkipSymbol(combineSymbol, bciAvIdToSkip)).toBe(true);
+    expect(isSkipSymbol(testSymbolA, SymbolCompositionToSkip)).toBe(false);
+    expect(isSkipSymbol(combineSymbol, SymbolCompositionToSkip)).toBe(true);
   });
 });
 
 describe("isCombined", () => {
   it("returns false for empty payloads", () => {
-    expect(isCombined([], bciAvIdToSkip)).toBe(false);
+    expect(isCombined([], SymbolCompositionToSkip)).toBe(false);
   });
 
   it("returns false for a single combine symbol", () => {
-    expect(isCombined([combineSymbol], bciAvIdToSkip)).toBe(false);
+    expect(isCombined([combineSymbol], SymbolCompositionToSkip)).toBe(false);
   });
 
   it("returns false for unwrapped combine symbol", () => {
-    expect(isCombined([combineSymbol, testSymbolA], bciAvIdToSkip));
+    expect(isCombined([combineSymbol, testSymbolA], SymbolCompositionToSkip));
   });
 
   it("returns true for an array of symbols wrapped in combine symbols", () => {
-    expect(isCombined([combineSymbol, testSymbolA, combineSymbol], bciAvIdToSkip)).toBe(true);
+    expect(isCombined([combineSymbol, testSymbolA, combineSymbol], SymbolCompositionToSkip)).toBe(true);
   });
 });
 
@@ -84,17 +84,17 @@ describe("moveCursor", () => {
 
   describe("with a combine symbol in the middle", () => {
     it("goes past it when incrementing", () => {
-      const result = moveCursor(1, testInput([testSymbolA, combineSymbol, testSymbolB], 0), bciAvIdToSkip);
+      const result = moveCursor(1, testInput([testSymbolA, combineSymbol, testSymbolB], 0), SymbolCompositionToSkip);
       expect(result.caretPosition).toBe(2);
     });
 
     it("goes past it when decrementing", () => {
-      const result = moveCursor(-1, testInput([testSymbolA, combineSymbol, testSymbolB], 2), bciAvIdToSkip);
+      const result = moveCursor(-1, testInput([testSymbolA, combineSymbol, testSymbolB], 2), SymbolCompositionToSkip);
       expect(result.caretPosition).toBe(0);
     });
 
     it("goes past multiple consecutive combine symbols", () => {
-      const result = moveCursor(1, testInput([testSymbolA, combineSymbol, combineSymbol, testSymbolB], 0), bciAvIdToSkip);
+      const result = moveCursor(1, testInput([testSymbolA, combineSymbol, combineSymbol, testSymbolB], 0), SymbolCompositionToSkip);
       expect(result.caretPosition).toBe(3);
     });
   });
@@ -102,18 +102,18 @@ describe("moveCursor", () => {
   describe("in a pair of combine symbols", () => {
     it("disallows the caret from going out of the leading combine", () => {
       const combinedInput = testInput([combineSymbol, testSymbolA, combineSymbol], 1);
-      const result = moveCursor(-1, combinedInput, bciAvIdToSkip);
+      const result = moveCursor(-1, combinedInput, SymbolCompositionToSkip);
       expect(result).toBe(combinedInput);
     });
 			
     it("disallows the caret from going out of the trailing combine", () => {
       const combinedInput = testInput([combineSymbol, testSymbolA, combineSymbol], 1);
-      const result = moveCursor(1, combinedInput, bciAvIdToSkip);
+      const result = moveCursor(1, combinedInput, SymbolCompositionToSkip);
       expect(result).toBe(combinedInput);
     });
 
     it("move normally inside of the combine symbols", () => {
-      const result = moveCursor(1, testInput([combineSymbol, testSymbolA, testSymbolB, combineSymbol], 1), bciAvIdToSkip);
+      const result = moveCursor(1, testInput([combineSymbol, testSymbolA, testSymbolB, combineSymbol], 1), SymbolCompositionToSkip);
       expect(result.caretPosition).toBe(2);
     });
   });
@@ -121,48 +121,48 @@ describe("moveCursor", () => {
 
 describe("deleteAtCaret", () => {
   it("removes the symbol at the caret and move caret back by 1", () => {
-    const result = deleteAtCaret(testInput([testSymbolA, testSymbolB, testSymbolC], 1), bciAvIdToSkip);
+    const result = deleteAtCaret(testInput([testSymbolA, testSymbolB, testSymbolC], 1), SymbolCompositionToSkip);
     expect(result.payloads).toEqual([testSymbolA, testSymbolC]);
     expect(result.caretPosition).toBe(0);
   });
 
   it("deletes the first symbol and lands the caret at -1", () => {
-    const result = deleteAtCaret(testInput([testSymbolA, testSymbolB], 0), bciAvIdToSkip);
+    const result = deleteAtCaret(testInput([testSymbolA, testSymbolB], 0), SymbolCompositionToSkip);
     expect(result.payloads).toEqual([testSymbolB]);
     expect(result.caretPosition).toBe(-1);
   });
 
   it("no effect to the payloads at -1", () => {
     const boundaryInput = testInput([testSymbolA], -1);
-    expect(deleteAtCaret(boundaryInput, bciAvIdToSkip)).toBe(boundaryInput);
+    expect(deleteAtCaret(boundaryInput, SymbolCompositionToSkip)).toBe(boundaryInput);
   });
 
   it("no effect when payloads is empty", () => {
     const emptyInput = testInput([], -1);
-    expect(deleteAtCaret(emptyInput, bciAvIdToSkip)).toBe(emptyInput);
+    expect(deleteAtCaret(emptyInput, SymbolCompositionToSkip)).toBe(emptyInput);
   });
 
   it("moves the caret back past a single combine symbol", () => {
-    const result = deleteAtCaret(testInput([testSymbolA, combineSymbol, testSymbolB], 2), bciAvIdToSkip);
+    const result = deleteAtCaret(testInput([testSymbolA, combineSymbol, testSymbolB], 2), SymbolCompositionToSkip);
     expect(result.payloads).toEqual([testSymbolA, combineSymbol]);
     expect(result.caretPosition).toBe(0);
   });
 
   it("move the caret back past multiple combine symbols", () => {
-    const result = deleteAtCaret(testInput([testSymbolA, combineSymbol, combineSymbol, testSymbolB], 3), bciAvIdToSkip);
+    const result = deleteAtCaret(testInput([testSymbolA, combineSymbol, combineSymbol, testSymbolB], 3), SymbolCompositionToSkip);
     expect(result.payloads).toEqual([testSymbolA, combineSymbol, combineSymbol]);
     expect(result.caretPosition).toBe(0);
   });
 
   describe("inside a pair of combines", () => {
     it("moves the caret onto the next symbol when the previous symbol is the leading skip", () => {
-      const result = deleteAtCaret(testInput([combineSymbol, testSymbolA, testSymbolB, combineSymbol], 1), bciAvIdToSkip);
+      const result = deleteAtCaret(testInput([combineSymbol, testSymbolA, testSymbolB, combineSymbol], 1), SymbolCompositionToSkip);
       expect(result.payloads).toEqual([combineSymbol, testSymbolB, combineSymbol]);
       expect(result.caretPosition).toBe(1);
     });
 
     it("strips the combine entirely when delete empties it", () => {
-      const result = deleteAtCaret(testInput([combineSymbol, testSymbolA, combineSymbol], 1), bciAvIdToSkip);
+      const result = deleteAtCaret(testInput([combineSymbol, testSymbolA, combineSymbol], 1), SymbolCompositionToSkip);
       expect(result.payloads).toEqual([]);
       expect(result.caretPosition).toBe(-1);
     });
@@ -190,13 +190,13 @@ describe("combineContent", () => {
 
 describe("uncombineContent", () => {
   it("removes the boundary combine symbols and shifts the caret back by 1", () => {
-    const result = uncombineContent(testInput([combineSymbol, testSymbolA, testSymbolB, combineSymbol], 2), bciAvIdToSkip);
+    const result = uncombineContent(testInput([combineSymbol, testSymbolA, testSymbolB, combineSymbol], 2), SymbolCompositionToSkip);
     expect(result.payloads).toEqual([testSymbolA, testSymbolB]);
     expect(result.caretPosition).toBe(1);
   });
 
   it("no effect when there are no combine symbols", () => {
     const uncombinedInput = testInput([testSymbolA, testSymbolB], 0);
-    expect(uncombineContent(uncombinedInput, bciAvIdToSkip)).toBe(uncombinedInput);
+    expect(uncombineContent(uncombinedInput, SymbolCompositionToSkip)).toBe(uncombinedInput);
   });
 });

@@ -1,6 +1,7 @@
 /*
- * Copyright 2025-2026 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -14,7 +15,7 @@ import { useState } from "preact/hooks";
 import { html } from "htm/preact";
 
 import { MatchType } from "./index.d";
-import { findBciAvId, findCompositionsUsingId } from "./BciAvUtils";
+import { findSymbolByGloss, findSymbolsContainingBciAvId } from "./BciAvUtils";
 import { GlossSearchPalette } from "./GlossSearchPalette";
 
 export const GLOSS_ENTRY_FIELD_ID = "glossSearchField";
@@ -36,9 +37,9 @@ export function ActionSearchGloss(): VNode {
     if (text.length > 0) {
       const numberId = Number(text);
       if (isNaN(numberId)) {
-        currentMatches = findBciAvId(text);
+        currentMatches = findSymbolByGloss(text);
       } else {
-        currentMatches = findCompositionsUsingId(numberId);
+        currentMatches = findSymbolsContainingBciAvId(numberId);
       }
     }
 

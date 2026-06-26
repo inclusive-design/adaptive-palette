@@ -16,13 +16,13 @@ import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { composeWordContents, COMPOSE_AREA_ID } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
-import { isCombined, combineContent, uncombineContent, bciAvIdToSkip } from "./CursorActions";
+import { isCombined, combineContent, uncombineContent, SymbolCompositionToSkip } from "./CursorActions";
 import "./ActionModifierCell.scss";
 
 const COMBINE_MARKER_PAYLOAD = {
   "id": "foo",
   "label": "",
-  "bciAvId": 13382,
+  "composition": 233,
   "modifierInfo": []
 };
 
@@ -33,15 +33,14 @@ type ToggleMakeCombinationPropsType = {
 
 export function ToggleMakeCombination (props: ToggleMakeCombinationPropsType): VNode {
   const {
-    columnStart, columnSpan, rowStart, rowSpan, label
+    columnStart, columnSpan, rowStart, rowSpan, label, composition
   } = props.options;
-  const combineMarkerBciAvId = props.options.bciAvId;
 
   const { payloads } = composeWordContents.value;
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
   const disabled = payloads.length === 0;
 
-  const isCombinedNow = isCombined(payloads, bciAvIdToSkip);
+  const isCombinedNow = isCombined(payloads, SymbolCompositionToSkip);
 
   const cellClicked = () => {
     if (payloads.length === 0) {
@@ -49,7 +48,7 @@ export function ToggleMakeCombination (props: ToggleMakeCombinationPropsType): V
     }
 
     if (isCombinedNow) {
-      const updatedPayloads = uncombineContent(composeWordContents.value, bciAvIdToSkip);
+      const updatedPayloads = uncombineContent(composeWordContents.value, SymbolCompositionToSkip);
       if (updatedPayloads !== composeWordContents.value) {
         composeWordContents.value = updatedPayloads;
         speak("remove combination");
@@ -72,7 +71,7 @@ export function ToggleMakeCombination (props: ToggleMakeCombinationPropsType): V
       aria-controls="${COMPOSE_AREA_ID}"
       aria-pressed="${isCombinedNow}">
       <${BlissSymbol}
-        bciAvId=${combineMarkerBciAvId}
+        composition=${composition}
         label=${label}
         isPresentation=true
       />

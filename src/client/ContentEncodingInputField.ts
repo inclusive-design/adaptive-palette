@@ -15,16 +15,16 @@ import { Signal } from "@preact/signals";
 
 import { BlissSymbol } from "./BlissSymbol";
 import { contentSignalMap } from "./GlobalData";
-import { ContentBmwEncodingType, EncodingType, ContentSignalDataType } from "./index.d";
+import { ContentEncodingType, EncodingType, ContentSignalDataType } from "./index.d";
 import { generateGridStyle, speak } from "./GlobalUtils";
 import { moveCursor } from "./CursorActions";
-import "./ContentBmwEncoding.scss";
+import "./ContentEncoding.scss";
 
 const isApplePlatform = navigator.platform.startsWith("Mac") || navigator.platform.startsWith("iPhone") || navigator.platform.startsWith("iPad");
 
 type ContentEncodingInputFieldProps = {
   id: string,
-  options: ContentBmwEncodingType,
+  options: ContentEncodingType,
   contentsSignal: Signal<ContentSignalDataType>,
   ariaLabel: string
  }
@@ -50,21 +50,21 @@ function generateMarkupArray (payloadArray: Array<EncodingType>, caretPos: numbe
     if (index === 0 && caretPos === -1) {
       return html`
         <div class="blissSymbol insertionCaret">
-          <${BlissSymbol} bciAvId=${payload.bciAvId} label=${payload.label} isPresentation="true" />
+          <${BlissSymbol} composition=${payload.composition} label=${payload.label} isPresentation="true" />
         </div>
       `;
     }
     else if (index === caretPos) {
       return html`
         <div class="blissSymbol cursorCaret">
-          <${BlissSymbol} bciAvId=${payload.bciAvId} label=${payload.label} isPresentation="true" />
+          <${BlissSymbol} composition=${payload.composition} label=${payload.label} isPresentation="true" />
         </div>
       `;
     }
     else {
       return html`
         <div class="blissSymbol">
-          <${BlissSymbol} bciAvId=${payload.bciAvId} label=${payload.label} isPresentation="true" />
+          <${BlissSymbol} composition=${payload.composition} label=${payload.label} isPresentation="true" />
         </div>
       `;
     }
@@ -133,7 +133,7 @@ export function ContentEncodingInputField (props: ContentEncodingInputFieldProps
   return html`
     <div
       id="${id}"
-      class="bmwEncodingArea"
+      class="contentEncodingArea"
       role="textbox"
       aria-label="${ariaLabel}"
       aria-readonly="true"

@@ -1,6 +1,7 @@
 /*
- * Copyright 2024 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -9,7 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 import {
-  JsonPaletteType, SymbolEncodingType, ContentSignalDataType, BciAvIdType
+  JsonPaletteType, SymbolEncodingType, ContentSignalDataType, SymbolCompositionType
 } from "./index.d";
 
 /**
@@ -137,7 +138,7 @@ function clamp (value: number, min: number, max: number) {
 /**
  * Add the given symbol to the current contents at the given caret position.
  *
- * @param {BciAvIdType} bciAvIdToAdd - Symbol to add to current symbol
+ * @param {SymbolCompositionType} compositionIdToAdd - Symbol to add to current symbol
  * @param {string} label - The label associated with `bciAvIdToAdd`
  * @param {boolean} isModifier - Indicates if `bciAvIdToAdd` is a modifier symbol
  * @param {ContentSignalDataType} encodingContents - Contents to add the symbol to.
@@ -145,38 +146,38 @@ function clamp (value: number, min: number, max: number) {
  *                            append (`false`)
  * @return {ContentSignalDataType} - the modified contents.
  */
-function composeBlissWord (bciAvIdToAdd: BciAvIdType, label: string, isModifier: boolean, encodingContents: ContentSignalDataType, prepend?: boolean): ContentSignalDataType {
-  // Guarantee that `bciAvIdToAdd` is the array form
-  const normalizedBciAvIdToAdd: (number | string)[] =
-    typeof bciAvIdToAdd === "number" ? [bciAvIdToAdd] : bciAvIdToAdd;
+function composeBlissWord (compositionIdToAdd: SymbolCompositionType, label: string, isModifier: boolean, encodingContents: ContentSignalDataType, prepend?: boolean): ContentSignalDataType {
+  // Guarantee that `compositionIdToAdd` is the array form
+  const normalizedCompositionIdToAdd: (number | string)[] =
+    typeof compositionIdToAdd === "number" ? [compositionIdToAdd] : compositionIdToAdd;
 
   // Get the symbol at the caret position.
   const { caretPosition, payloads } = encodingContents;
 
 
   const symbolToEdit = payloads[caretPosition];
-  let newBciAvId = normalizedBciAvIdToAdd;
+  let newCompositionId = normalizedCompositionIdToAdd;
   
   if (caretPosition < 0) {
     symbolToEdit.id = "foobar";
     symbolToEdit.label = label;
-    symbolToEdit.bciAvId = normalizedBciAvIdToAdd;
+    symbolToEdit.composition = normalizedCompositionIdToAdd;
     symbolToEdit.modifierInfo = [];
   }
   else {
-    newBciAvId = (
-      typeof symbolToEdit.bciAvId === "number" ?
-        [symbolToEdit.bciAvId] :
-        symbolToEdit.bciAvId
+    newCompositionId = (
+      typeof symbolToEdit.composition === "number" ?
+        [symbolToEdit.composition] :
+        symbolToEdit.composition
     );
     if (prepend) {
-      newBciAvId = [ ...normalizedBciAvIdToAdd, "/", ...newBciAvId ];
+      newCompositionId = [ ...normalizedCompositionIdToAdd, "/", ...newCompositionId ];
     }
     else {
-      newBciAvId = [ ...newBciAvId, "/", ...normalizedBciAvIdToAdd ];
+      newCompositionId = [ ...newCompositionId, "/", ...normalizedCompositionIdToAdd ];
     }
   }
-  // If the `bciAvIdToAdd` is a modifier, push the new modifier information
+  // If the `compositionIdToAdd` is a modifier, push the new modifier information
   // into the `modifierInfo` of the `symbolToEdit`, tracking the order in which
   // the modifiers were added.
   let newLabel;
@@ -185,7 +186,7 @@ function composeBlissWord (bciAvIdToAdd: BciAvIdType, label: string, isModifier:
       symbolToEdit.modifierInfo = [];
     }
     symbolToEdit.modifierInfo.push({
-      modifierId: normalizedBciAvIdToAdd,
+      modifierId: normalizedCompositionIdToAdd,
       modifierGloss: label,
       isPrepended: prepend ?? false
     });
@@ -195,9 +196,9 @@ function composeBlissWord (bciAvIdToAdd: BciAvIdType, label: string, isModifier:
     newLabel = ( prepend ? `${label} ${symbolToEdit.label}` : `${symbolToEdit.label} ${label}` );
   }
   payloads[caretPosition] = {
-    "id": symbolToEdit.id + newBciAvId.join(""),
+    "id": symbolToEdit.id + newCompositionId.join(""),
     "label": newLabel,
-    "bciAvId": newBciAvId,
+    "composition": newCompositionId,
     "modifierInfo": symbolToEdit.modifierInfo
   };
   return {

@@ -2,12 +2,10 @@
   "name": "body_related",
   "cells": {
     "SVG:12870:SVG-b7f42886-c260-408a-90ab-11f1d5bd6a44": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "body",
-        "bciAvId": [
-          12870
-        ],
+        "composition": [171],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -15,10 +13,10 @@
       }
     },
     "14689-9a19d0a3-8afb-4d74-8db1-dbe214f9edb1": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "head",
-        "bciAvId": 14689,
+        "composition": 376,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -26,12 +24,10 @@
       }
     },
     "SVG:14661:SVG-72911ecb-47e3-43f0-b171-ea7225bd06a6": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "hair",
-        "bciAvId": [
-          14661
-        ],
+        "composition": [372],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -39,10 +35,10 @@
       }
     },
     "ear-24c227e5-a7fa-4652-b43e-402dc9c4982e": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "ear",
-        "bciAvId": 13894,
+        "composition": 278,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -50,10 +46,10 @@
       }
     },
     "eye-57f2f1b5-ef20-4b6b-a1e3-d22b6b5fcc52": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "eye",
-        "bciAvId": 14133,
+        "composition": 303,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -61,10 +57,10 @@
       }
     },
     "nose-3741c35b-0e76-41aa-81f9-c4e7b7ca9208": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "nose",
-        "bciAvId": 15732,
+        "composition": 473,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -72,10 +68,10 @@
       }
     },
     "15666-49419fc6-3f27-48f4-acbd-594dde32cced": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "mouth",
-        "bciAvId": 15666,
+        "composition": 457,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -83,10 +79,10 @@
       }
     },
     "teeth-21a03a13-7557-4a59-bdb2-48f31b56c93b": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "teeth",
-        "bciAvId": 17517,
+        "composition": 644,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -94,12 +90,10 @@
       }
     },
     "SVG:15699:SVG-2917e8b4-557f-4f5e-9712-6b21cb3ef346": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "neck",
-        "bciAvId": [
-          15699
-        ],
+        "composition": [465],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -107,10 +101,10 @@
       }
     },
     "hand-4b2e74c9-7c4e-4bca-9232-3af87739f893": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "hand",
-        "bciAvId": 14667,
+        "composition": 374,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -118,10 +112,10 @@
       }
     },
     "stomach-09b5da0a-7a26-4e55-8f3c-a25343dd8009": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "stomach",
-        "bciAvId": 17265,
+        "composition": 628,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -129,12 +123,10 @@
       }
     },
     "SVG:12609:SVG-cf3b1ff9-3d18-4fa1-89c9-026f4e15782c": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "back (body)",
-        "bciAvId": [
-          12609
-        ],
+        "composition": [143],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -142,10 +134,10 @@
       }
     },
     "buttocks-794dfa42-d9f2-47ef-97ab-89892834cff1": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "buttocks",
-        "bciAvId": 13097,
+        "composition": 194,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -153,10 +145,10 @@
       }
     },
     "leg-f30381c5-e8fa-4999-b155-5b70b590ddee": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "leg",
-        "bciAvId": 15188,
+        "composition": 417,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -164,10 +156,10 @@
       }
     },
     "foot-febfa2f9-6614-4f1e-8978-fab05d6715e9": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "foot",
-        "bciAvId": 14379,
+        "composition": 330,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -175,10 +167,10 @@
       }
     },
     "arm-cd6ec228-b0b7-44d7-8de2-9007170de098": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "arm",
-        "bciAvId": 12577,
+        "composition": 132,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -186,10 +178,10 @@
       }
     },
     "hug-eac489d5-b77a-44fb-be83-e92ded379ee6": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "hug",
-        "bciAvId": 14909,
+        "composition": 1834,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -197,12 +189,10 @@
       }
     },
     "SVG:24816:SVG-70bf1069-8074-40cf-bdbf-fd1b84e5f30e": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "massage",
-        "bciAvId": [
-          24816
-        ],
+        "composition": [106, ";", 81, "/", "RK:-2", "/", 374, "/", 718],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -210,10 +200,10 @@
       }
     },
     "makeup-7d1b95be-b1a4-4de3-be1c-3db093e36354": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "makeup",
-        "bciAvId": 15413,
+        "composition": 1971,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -221,10 +211,10 @@
       }
     },
     "medicine-2a6a4edd-a6e1-4ef2-aa70-b09c68bb7814": {
-      "type": "ActionBmwCodeCell",
+      "type": "ActionCodeCell",
       "options": {
         "label": "medicine",
-        "bciAvId": 15448,
+        "composition": 1996,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,
