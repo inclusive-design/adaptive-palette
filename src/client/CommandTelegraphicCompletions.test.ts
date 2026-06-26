@@ -100,4 +100,21 @@ describe("CommandTelegraphicCompletions component", () => {
     const llmOptions = screen.getAllByRole<HTMLOptionElement>("option");
     expect(llmOptions).toHaveLength(3);
   });
+
+  test("Render the 'Enable thinking' checkbox, unchecked by default", async () => {
+    adaptivePaletteGlobals.LLMs = LLM_NAMES;
+    render(html`<${CommandTelegraphicCompletions} stream=${false} />`);
+
+    const checkbox = await screen.findByRole("checkbox", { name: /enable thinking/i });
+    expect(checkbox).not.toBeChecked();
+    expect(checkbox).toBeEnabled();
+  });
+
+  test("'Enable thinking' checkbox disabled when no models available", async () => {
+    render(html`<${CommandTelegraphicCompletions} stream=${false} />`);
+
+    const checkbox = await screen.findByRole("checkbox", { name: /enable thinking/i });
+    expect(checkbox).toBeDisabled();
+    expect(checkbox).not.toBeChecked();
+  });
 });

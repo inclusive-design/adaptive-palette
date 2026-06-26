@@ -28,6 +28,8 @@ export const LLM_SELECT_ID            = "LLMSelect";
 export const NO_MODELS_AVAILABLE      = "No models available";
 export const WORKING_MESSAGE          = "Working ...";
 export const CANNOT_COMPLETE_MESSAGE  = "Error: Could not get completions.";
+export const THINKING_CHECKBOX_ID    = "thinkingEnabled";
+export const THINKING_LABEL          = "Enable thinking";
 
 type CommandTelegraphicCompletionsProps = {
   stream: boolean;
@@ -42,6 +44,7 @@ export function CommandTelegraphicCompletions(props: CommandTelegraphicCompletio
     llmDisabled ? NO_MODELS_AVAILABLE : adaptivePaletteGlobals.LLMs[0]
   );
   const [isFetching, setIsFetching] = useState(false); // Added loading state
+  const [thinkingEnabled, setThinkingEnabled] = useState(false);
 
   // Declarative array mapping
   const llmOptions = llmDisabled
@@ -111,6 +114,17 @@ export function CommandTelegraphicCompletions(props: CommandTelegraphicCompletio
           <button onClick=${removeSuggestions} disabled=${llmDisabled}>
             ${CANCEL_BUTTON_LABEL}
           </button>
+          <br />
+          <label for=${THINKING_CHECKBOX_ID}>
+            <input
+              type="checkbox"
+              id=${THINKING_CHECKBOX_ID}
+              checked=${thinkingEnabled}
+              disabled=${llmDisabled || isFetching}
+              onChange=${() => setThinkingEnabled(!thinkingEnabled)}
+            />
+            ${" "}${THINKING_LABEL}
+          </label>
         </fieldset>
       </form>
     </div>
