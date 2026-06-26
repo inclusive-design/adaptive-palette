@@ -55,7 +55,10 @@ adaptivePaletteGlobals.paletteStore.addPalette(topPalette);
 adaptivePaletteGlobals.paletteStore.addPalette(modifiersPalette);
 
 adaptivePaletteGlobals.navigationStack.currentPalette = { palette: firstLayer, htmlElement: getRequiredElement("mainPaletteDisplayArea") };
-render(html`<${Palette} json=${composeWordsArea} />`, document.getElementById("compose_words_palette"));
+const composeWordsContainer = document.getElementById("compose_words_palette");
+if(composeWordsContainer) {
+  render(html`<${Palette} json=${composeWordsArea} />`, composeWordsContainer);
+}
 render(html`<${Palette} json=${inputArea} />`, getRequiredElement("input_palette"));
 render(html`<${Palette} json=${goBackCell} />`, getRequiredElement("backup_palette"));
 render(html`<${Palette} json=${topPalette} />`, getRequiredElement("indicators"));
@@ -107,10 +110,12 @@ function getRequiredElement(id) {
  */
 function elementAllowsTextEntry(element) {
   if (!(element instanceof HTMLElement)) { return false; }
-  return element.id !== INPUT_AREA_ID || element.id === COMPOSE_AREA_ID && (
+  const isInputArea = element.id === INPUT_AREA_ID;
+  const isComposeArea = element.id === COMPOSE_AREA_ID;
+  return !isInputArea || (isComposeArea && (
     (element instanceof HTMLInputElement && textInputTypes.includes(element.type)) ||
     element instanceof HTMLTextAreaElement ||
     element instanceof HTMLSelectElement ||
     element.getAttribute("role") === "textbox"
-  );
+  ));
 }
