@@ -100,3 +100,4 @@ describe("CommandTelegraphicCompletions component", () => {
     const llmOptions = screen.getAllByRole<HTMLOptionElement>("option");
     expect(llmOptions).toHaveLength(3);
   });
+});
