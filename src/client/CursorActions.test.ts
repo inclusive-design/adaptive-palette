@@ -40,24 +40,24 @@ describe("isCombined", () => {
 describe("moveCursor", () => {
   describe("with no combine symbols in payloads", () => {
     it("increments by 1", () => {
-      const result = moveCursor(1, testInput([testSymbolA, testSymbolB], -1), []);
+      const result = moveCursor(1, testInput([testSymbolA, testSymbolB], -1), combineSymbolId);
       expect(result.caretPosition).toBe(0);
     });
 
     it("clamps at the upper bound", () => {
       const upperBoundInput = testInput([testSymbolA, testSymbolB], 1);
-      const result = moveCursor(1, upperBoundInput, []);
+      const result = moveCursor(1, upperBoundInput, combineSymbolId);
       expect(result).toBe(upperBoundInput);
     });
 
     it("clamps at the lower bound", () => {
-      const result = moveCursor(-1, testInput([testSymbolA, testSymbolB], 0), []);
+      const result = moveCursor(-1, testInput([testSymbolA, testSymbolB], 0), combineSymbolId);
       expect(result.caretPosition).toBe(-1);
     });
 
     it("returns the same reference when no movement happens", () => {
       const emptyInput = testInput([], -1);
-      expect(moveCursor(1, emptyInput, [])).toBe(emptyInput);
+      expect(moveCursor(1, emptyInput, combineSymbolId)).toBe(emptyInput);
     });
   });
 
