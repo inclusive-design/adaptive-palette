@@ -15,7 +15,7 @@ import { loadPaletteFromJsonFile, speak } from "./GlobalUtils";
 import { goBackImpl } from "./CommandGoBackCell";
 import {
   initAdaptivePaletteGlobals, adaptivePaletteGlobals,
-  INPUT_AREA_ID, COMPOSE_AREA_ID
+  INPUT_AREA_ID
 } from "./GlobalData";
 
 import "./index.scss";

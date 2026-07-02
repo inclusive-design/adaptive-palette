@@ -12,12 +12,10 @@
 
 import type {
   ContentSignalDataType,
-  SymbolEncodingType,
-  SymbolCompositionType
+  SymbolEncodingType
 } from "./index.d";
 
 import { clamp } from "./GlobalUtils";
-import { combineSymbolId } from "./GlobalData";
 
 /**
  * Check if payloads is a wrapped in combine symbols
@@ -88,7 +86,7 @@ function deleteAtCaret (contentSignal: ContentSignalDataType, combineSymbolId: n
   // If the position fell off the left side but the array still leads with a combine symbol
   // the caret is now outside the wrap. Try to find a symbol inside the wrap by going right
 
-  if (newCaretPosition === -1 && newEncodingContents.length > 0 && newEncodingContents[0] === combineSymbolId) {
+  if (newCaretPosition === -1 && newEncodingContents.length > 0 && newEncodingContents[0].composition === combineSymbolId) {
     let updatedPosition = 1;
     while (updatedPosition < newEncodingContents.length && newEncodingContents[updatedPosition].composition === combineSymbolId) {
       updatedPosition += 1;
@@ -118,8 +116,14 @@ function combineContent (contentSignal: ContentSignalDataType, combineSymbol: Sy
 function uncombineContent (contentSignal: ContentSignalDataType, combineSymbolId: number): ContentSignalDataType {
   const { payloads, caretPosition } = contentSignal;
 
-  const firstCombineIndex = payloads.findIndex(p => p.composition === combineSymbolId);
-  const lastCombineIndex = payloads.findLastIndex(p => p.composition === combineSymbolId);
+  const firstCombineIndex = payloads.findIndex((p) => p.composition === combineSymbolId);
+  let lastCombineIndex = -1;
+  for (let i = payloads.length -1; i >=0; i--) {
+    if (payloads[i].composition === combineSymbolId) {
+      lastCombineIndex = i;
+      break;
+    }
+  }
 
   if (firstCombineIndex === -1 || firstCombineIndex === lastCombineIndex) {
     return contentSignal;
