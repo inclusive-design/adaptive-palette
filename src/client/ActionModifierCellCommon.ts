@@ -15,7 +15,7 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { INPUT_AREA_ID, COMPOSE_AREA_ID, contentSignalMap, isComposing } from "./GlobalData";
-import { composeBlissWord, generateGridStyle, speak } from "./GlobalUtils";
+import { addModifier, generateGridStyle, speak } from "./GlobalUtils";
 import "./ActionModifierCell.scss";
 
 export type ActionModifierCodeCellPropsType = {
@@ -45,7 +45,7 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
   const disabled = contentsSignal.value.caretPosition === -1;
 
   const cellClicked = () => {
-    const newContents = composeBlissWord(modifierComposition, label, true, contentsSignal.value, prepend);
+    const newContents = addModifier(modifierComposition, label, contentsSignal.value, prepend);
     const { payloads, caretPosition } = newContents;
     contentsSignal.value = newContents;
     speak(payloads[caretPosition].label);

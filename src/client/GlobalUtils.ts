@@ -140,13 +140,12 @@ function clamp (value: number, min: number, max: number) {
  *
  * @param {SymbolCompositionType} compositionIdToAdd - Symbol to add to current symbol
  * @param {string} label - The label associated with `bciAvIdToAdd`
- * @param {boolean} isModifier - Indicates if `bciAvIdToAdd` is a modifier symbol
  * @param {ContentSignalDataType} encodingContents - Contents to add the symbol to.
  * @param {boolean} prepend - Optional flag to allow prepending, default is to
  *                            append (`false`)
  * @return {ContentSignalDataType} - the modified contents.
  */
-function composeBlissWord (compositionIdToAdd: SymbolCompositionType, label: string, isModifier: boolean, encodingContents: ContentSignalDataType, prepend?: boolean): ContentSignalDataType {
+function addModifier (compositionIdToAdd: SymbolCompositionType, label: string, encodingContents: ContentSignalDataType, prepend?: boolean): ContentSignalDataType {
   // Guarantee that `compositionIdToAdd` is the array form
   const normalizedCompositionIdToAdd: (number | string)[] =
     typeof compositionIdToAdd === "number" ? [compositionIdToAdd] : compositionIdToAdd;
@@ -177,27 +176,22 @@ function composeBlissWord (compositionIdToAdd: SymbolCompositionType, label: str
       newCompositionId = [ ...newCompositionId, "/", ...normalizedCompositionIdToAdd ];
     }
   }
-  // If the `compositionIdToAdd` is a modifier, push the new modifier information
+  // push the new modifier information
   // into the `modifierInfo` of the `symbolToEdit`, tracking the order in which
   // the modifiers were added.
-  let newLabel;
-  if (isModifier) {
-    if (!symbolToEdit.modifierInfo) {
-      symbolToEdit.modifierInfo = [];
-    }
-    symbolToEdit.modifierInfo.push({
-      modifierId: normalizedCompositionIdToAdd,
-      modifierGloss: label,
-      isPrepended: prepend ?? false
-    });
-    newLabel = `${label} ${symbolToEdit.label}`;
+
+  if (!symbolToEdit.modifierInfo) {
+    symbolToEdit.modifierInfo = [];
   }
-  else {
-    newLabel = ( prepend ? `${label} ${symbolToEdit.label}` : `${symbolToEdit.label} ${label}` );
-  }
+  symbolToEdit.modifierInfo.push({
+    modifierId: normalizedCompositionIdToAdd,
+    modifierGloss: label,
+    isPrepended: prepend ?? false
+  });
+
   payloads[caretPosition] = {
     "id": symbolToEdit.id + newCompositionId.join(""),
-    "label": newLabel,
+    "label": `${label} ${symbolToEdit.label}`,
     "composition": newCompositionId,
     "modifierInfo": symbolToEdit.modifierInfo
   };
@@ -213,5 +207,5 @@ export {
   loadPaletteFromJsonFile,
   insertWordAtCaret,
   clamp,
-  composeBlissWord
+  addModifier
 };

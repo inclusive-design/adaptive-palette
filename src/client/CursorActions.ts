@@ -32,6 +32,31 @@ function isCombined(payloads: Array<SymbolEncodingType>, combineSymbolId: number
   );
 }
 
+/**
+ * Find next non combine symbol in the direction traversing
+ * 
+ * @param {Array<SymbolEncodingType>} payloads - An array of input symbols
+ * @param {number} startIndex - Beginning index of the traverse
+ * @param {number} direction - Direction of the traverse, -1 or 1
+ * @param {number} combineSymbolId - Id of the combine symbol
+ * 
+ */
+function findNextNonCombineSymbol(payloads: Array<SymbolEncodingType>, startIndex: number, direction: number, combineSymbolId: number) {
+  let currentIndex = startIndex;
+  while (currentIndex >= 0 && currentIndex < payloads.length && payloads[currentIndex].composition === combineSymbolId) {
+    currentIndex += direction;
+  }
+  return currentIndex;
+}
+
+/**
+ * Update the cursor movement by updating the content signal
+ * 
+ * @param {number} positionChange - Position change of the cursor, negative value indicating cursor moving left
+ * @param {ContentSignalDataType} contentSignal - Signal representing the current payloads
+ * @param {number} combineSymbolId - Id of the combine symbol
+ * 
+ */
 function moveCursor (positionChange: number, contentSignal: ContentSignalDataType, combineSymbolId: number) {
   const { payloads, caretPosition } = contentSignal;
   const max = payloads.length - 1;
@@ -43,14 +68,11 @@ function moveCursor (positionChange: number, contentSignal: ContentSignalDataTyp
 
   const direction = Math.sign(positionChange);
   if (direction !== 0) {
-    while (newPosition >= 0 && newPosition <= max && payloads[newPosition].composition === combineSymbolId) {
-      const updatedPosition = newPosition + direction;
-      if (updatedPosition < min || updatedPosition > max) {
-        newPosition = caretPosition;
-        break;
-      }
-      newPosition = updatedPosition;
-    }
+    // Use the helper function to find the next position
+    const candidatePosition = findNextNonCombineSymbol(payloads, newPosition, direction, combineSymbolId);
+    
+    // If the next position pushes us out of bounds, revert to original caretPosition
+    newPosition = (candidatePosition < min || candidatePosition > max) ? caretPosition: candidatePosition;
   }
 
   if (newPosition === caretPosition) {
@@ -63,6 +85,13 @@ function moveCursor (positionChange: number, contentSignal: ContentSignalDataTyp
   };
 };
 
+/**
+ * Delete symbol at current caret position
+ * 
+ * @param {ContentSignalDataType} contentSignal - Signal representing the current payloads
+ * @param {number} combineSymbolId - Id of the combine symbol
+ * 
+ */
 function deleteAtCaret (contentSignal: ContentSignalDataType, combineSymbolId: number): ContentSignalDataType {
   const { payloads, caretPosition } = contentSignal;
 
@@ -78,19 +107,13 @@ function deleteAtCaret (contentSignal: ContentSignalDataType, combineSymbolId: n
   newEncodingContents.splice(caretPosition, 1);
 
   // Walk the caret left, skipping over any combine symbols
-  let newCaretPosition = caretPosition - 1;
-  while (newCaretPosition >= 0 && newEncodingContents[newCaretPosition].composition === combineSymbolId) {
-    newCaretPosition -= 1;
-  }
+  let newCaretPosition = findNextNonCombineSymbol(newEncodingContents, caretPosition - 1, -1, combineSymbolId);
 
   // If the position fell off the left side but the array still leads with a combine symbol
   // the caret is now outside the wrap. Try to find a symbol inside the wrap by going right
 
   if (newCaretPosition === -1 && newEncodingContents.length > 0 && newEncodingContents[0].composition === combineSymbolId) {
-    let updatedPosition = 1;
-    while (updatedPosition < newEncodingContents.length && newEncodingContents[updatedPosition].composition === combineSymbolId) {
-      updatedPosition += 1;
-    }
+    const updatedPosition = findNextNonCombineSymbol(newEncodingContents, 1, 1, combineSymbolId);
 
     if (updatedPosition >= newEncodingContents.length) {
       // Only combine symbols in the payloads, remove the symbols and reset
@@ -103,6 +126,13 @@ function deleteAtCaret (contentSignal: ContentSignalDataType, combineSymbolId: n
   return { payloads: newEncodingContents, caretPosition: newCaretPosition };
 }
 
+/**
+ * Wrap current content with combine symbols
+ * 
+ * @param {ContentSignalDataType} contentSignal - Signal representing the current payloads
+ * @param {SymbolEncodingType} combineSymbol - Symbol Encoding of combine symbol
+ * 
+ */
 function combineContent (contentSignal: ContentSignalDataType, combineSymbol: SymbolEncodingType): ContentSignalDataType {
   const { payloads, caretPosition } = contentSignal;
   if (payloads.length === 0) return contentSignal;
@@ -113,17 +143,18 @@ function combineContent (contentSignal: ContentSignalDataType, combineSymbol: Sy
   };
 }
 
+/**
+ * Unwrap current content with combine symbols
+ * 
+ * @param {ContentSignalDataType} contentSignal - Signal representing the current payloads
+ * @param {SymbolEncodingType} combineSymbol - Symbol Encoding of combine symbol
+ * 
+ */
 function uncombineContent (contentSignal: ContentSignalDataType, combineSymbolId: number): ContentSignalDataType {
   const { payloads, caretPosition } = contentSignal;
 
   const firstCombineIndex = payloads.findIndex((p) => p.composition === combineSymbolId);
-  let lastCombineIndex = -1;
-  for (let i = payloads.length -1; i >=0; i--) {
-    if (payloads[i].composition === combineSymbolId) {
-      lastCombineIndex = i;
-      break;
-    }
-  }
+  const lastCombineIndex = payloads.findLastIndex((p) => p.composition === combineSymbolId);
 
   if (firstCombineIndex === -1 || firstCombineIndex === lastCombineIndex) {
     return contentSignal;
