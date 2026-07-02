@@ -51,7 +51,7 @@ import { ContentComposeWordsEntry } from "./ContentComposeWordsEntry";
 import { ContentEncoding } from "./ContentEncoding";
 import { PaletteStore } from "./PaletteStore";
 import { NavigationStack } from "./NavigationStack";
-import { ToggleMakeCombination } from "./ToggleMakeCombination";
+import { ToggleCombineMarker } from "./ToggleCombineMarker";
 
 export const cellTypeRegistry = {
   "ActionCodeCell": ActionCodeCell,
@@ -71,7 +71,7 @@ export const cellTypeRegistry = {
   "CommandGoBackCell": CommandGoBackCell,
   "ContentComposeWordsEntry": ContentComposeWordsEntry,
   "ContentEncoding": ContentEncoding,
-  "ToggleMakeCombination": ToggleMakeCombination
+  "ToggleCombineMarker": ToggleCombineMarker
 };
 
 export const SYSTEM_PROMPTS_KEY = "Telegraphic System Prompts";
@@ -127,12 +127,6 @@ export const changeEncodingContents = signal<ContentSignalDataType>({
   caretPosition: -1,
 });
 
-/**
- * Signals for tracking the contents of the word composition input area when
- * the user is composing a Bliss-word.  The contents signal has the same
- * structure as the `changeEncodingContents` above.  The isComposing is a state
- * to indicate whether the mode of the palette is for composing Bliss-words
- */
 export const composeWordContents = signal<ContentSignalDataType>({
   payloads: [],
   caretPosition: -1,
@@ -142,7 +136,7 @@ export const composeWordContents = signal<ContentSignalDataType>({
  * Some of the CommandXxx components use an `aria-controls` to associate them
  * with the element that they control.  For thes components, there is an
  * `ariaControls` field in the associated palette definition .json file.  The
- * follwoing map defines which content signal (see immediatly above) goes with
+ * following map defines which content signal (see immediatly above) goes with
  * which aria controlled element.
  * TODO: add a type for the map in `index.d.ts`.
  */
@@ -153,6 +147,13 @@ export const contentSignalMap = {
   "content-encoding-area": changeEncodingContents,
   "compose-words-entry": composeWordContents
 };
+
+/**
+ * Signals for tracking the contents of the word composition input area when
+ * the user is composing a Bliss-word.  The contents signal has the same
+ * structure as the `changeEncodingContents` above.  The isComposing is a state
+ * to indicate whether the mode of the palette is for composing Bliss-words
+ */
 export const isComposing = signal(false);
 
 /**
@@ -161,3 +162,5 @@ export const isComposing = signal(false);
  * completions.
  */
 export const sentenceCompletionsSignal = signal<string[]>([]);
+
+export const combineSymbolId = 233;

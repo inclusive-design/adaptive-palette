@@ -110,12 +110,10 @@ function getRequiredElement(id) {
  */
 function elementAllowsTextEntry(element) {
   if (!(element instanceof HTMLElement)) { return false; }
-  const isInputArea = element.id === INPUT_AREA_ID;
-  const isComposeArea = element.id === COMPOSE_AREA_ID;
-  return !isInputArea || (isComposeArea && (
+  return element.id !== INPUT_AREA_ID && (
     (element instanceof HTMLInputElement && textInputTypes.includes(element.type)) ||
     element instanceof HTMLTextAreaElement ||
     element instanceof HTMLSelectElement ||
     element.getAttribute("role") === "textbox"
-  ));
+  );
 }

@@ -14,7 +14,7 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
-import { changeEncodingContents } from "./GlobalData";
+import { INPUT_AREA_ID, COMPOSE_AREA_ID, contentSignalMap, isComposing } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
 import "./ActionIndicatorCell.scss";
 
@@ -35,7 +35,9 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   // input field (if any) has a modifier AND if there is more than one symbol in
   // the encoding.
   let disabled = true;
-  const { payloads, caretPosition } = changeEncodingContents.value;
+  const ariaControls =  ( isComposing.value ? COMPOSE_AREA_ID : INPUT_AREA_ID );
+  const contentsSignal = contentSignalMap[ariaControls];
+  const { payloads, caretPosition } = contentsSignal.value;
   if (payloads.length !== 0 && caretPosition !== -1) {
     const caretSymbol = payloads[caretPosition];
     disabled = !caretSymbol.modifierInfo || caretSymbol.modifierInfo.length === 0;
@@ -44,7 +46,7 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   const cellClicked = () => {
     // Get the last symbol in the editing area, and create an initial
     // `newBciAvId` and `newLabel`.
-    const { caretPosition, payloads } = changeEncodingContents.value;
+    const { caretPosition, payloads } = contentsSignal.value;
     const symbolToEdit = payloads[caretPosition];
     let newComposition = (
       typeof symbolToEdit.composition === "number" ?
@@ -81,7 +83,7 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
       "composition": newComposition,
       "modifierInfo": symbolToEdit.modifierInfo
     };
-    changeEncodingContents.value = {
+    contentsSignal.value = {
       payloads: payloads,
       caretPosition: caretPosition
     };

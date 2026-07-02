@@ -1,6 +1,7 @@
 /*
- * Copyright 2026 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -14,24 +15,24 @@ import { html } from "htm/preact";
 
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
-import { composeWordContents, COMPOSE_AREA_ID } from "./GlobalData";
+import { combineSymbolId, composeWordContents, COMPOSE_AREA_ID } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
-import { isCombined, combineContent, uncombineContent, SymbolCompositionToSkip } from "./CursorActions";
+import { isCombined, combineContent, uncombineContent } from "./CursorActions";
 import "./ActionModifierCell.scss";
 
 const COMBINE_MARKER_PAYLOAD = {
-  "id": "foo",
+  "id": "combine-marker",
   "label": "",
   "composition": 233,
   "modifierInfo": []
 };
 
-type ToggleMakeCombinationPropsType = {
+type ToggleCombineMarkerPropsType = {
   id: string,
   options: BlissSymbolInfoType & LayoutInfoType
 };
 
-export function ToggleMakeCombination (props: ToggleMakeCombinationPropsType): VNode {
+export function ToggleCombineMarker (props: ToggleCombineMarkerPropsType): VNode {
   const {
     columnStart, columnSpan, rowStart, rowSpan, label, composition
   } = props.options;
@@ -40,7 +41,7 @@ export function ToggleMakeCombination (props: ToggleMakeCombinationPropsType): V
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
   const disabled = payloads.length === 0;
 
-  const isCombinedNow = isCombined(payloads, SymbolCompositionToSkip);
+  const isCombinedNow = isCombined(payloads, combineSymbolId);
 
   const cellClicked = () => {
     if (payloads.length === 0) {
@@ -48,16 +49,16 @@ export function ToggleMakeCombination (props: ToggleMakeCombinationPropsType): V
     }
 
     if (isCombinedNow) {
-      const updatedPayloads = uncombineContent(composeWordContents.value, SymbolCompositionToSkip);
+      const updatedPayloads = uncombineContent(composeWordContents.value, combineSymbolId);
       if (updatedPayloads !== composeWordContents.value) {
         composeWordContents.value = updatedPayloads;
-        speak("remove combination");
+        speak("remove combine markers");
       }
     } else {
       composeWordContents.value = combineContent(
         composeWordContents.value, COMBINE_MARKER_PAYLOAD
       );
-      speak("add combination");
+      speak("add combine markers");
     }
   };
 

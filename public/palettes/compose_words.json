@@ -58,8 +58,8 @@
           "ariaControls": "compose-words-entry"
       }
     },
-    "toggle-make-combination": {
-      "type": "ToggleMakeCombination",
+    "toggle-combine-marker": {
+      "type": "ToggleCombineMarker",
       "options": {
           "label": "Combine",
           "composition": 233,

@@ -1,6 +1,7 @@
 /*
- * Copyright 2023-2026 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -17,6 +18,7 @@ import { BlissSymbol } from "./BlissSymbol";
 import { contentSignalMap } from "./GlobalData";
 import { ContentEncodingType, EncodingType, ContentSignalDataType } from "./index.d";
 import { generateGridStyle, speak } from "./GlobalUtils";
+import { combineSymbolId } from "./GlobalData";
 import { moveCursor } from "./CursorActions";
 import "./ContentEncoding.scss";
 
@@ -72,19 +74,19 @@ function generateMarkupArray (payloadArray: Array<EncodingType>, caretPos: numbe
 }
 
 export function incrementCursor (contentSignal: Signal<ContentSignalDataType>) {
-  contentSignal.value = moveCursor(1, contentSignal.value);
+  contentSignal.value = moveCursor(1, contentSignal.value, combineSymbolId);
 }
 
 export function decrementCursor (contentSignal: Signal<ContentSignalDataType>) {
-  contentSignal.value = moveCursor(-1, contentSignal.value);
+  contentSignal.value = moveCursor(-1, contentSignal.value, combineSymbolId);
 }
 
 export function moveCursorToHome (contentSignal: Signal<ContentSignalDataType>) {
-  contentSignal.value = moveCursor(Number.NEGATIVE_INFINITY, contentSignal.value);
+  contentSignal.value = moveCursor(Number.NEGATIVE_INFINITY, contentSignal.value, combineSymbolId);
 };
 
 export function moveCursorToEnd (contentSignal: Signal<ContentSignalDataType>) {
-  contentSignal.value = moveCursor(Number.POSITIVE_INFINITY, contentSignal.value);
+  contentSignal.value = moveCursor(Number.POSITIVE_INFINITY, contentSignal.value, combineSymbolId);
 };
 
 function handleKeyDown(event: KeyboardEvent) {
