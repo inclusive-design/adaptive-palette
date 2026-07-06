@@ -46,7 +46,7 @@ export async function getModelNames(): Promise<string[]> {
  *                                https://github.com/ollama/ollama-js/issues/135
  *                                https://github.com/ollama/ollama-js/issues/187
  */
-export async function queryChat (query: string, modelName: string, streamResp: boolean, systemPrompt?: string, thinkEnabled?: boolean): Promise<ChatResponse | AsyncIterable<ChatResponse>> {
+export async function queryChat (query: string, modelName: string, streamResp: boolean, systemPrompt?: string): Promise<ChatResponse | AsyncIterable<ChatResponse>> {
   const messageArray = [];
   if (systemPrompt && systemPrompt.length !== 0) {
     messageArray.push({
@@ -86,7 +86,7 @@ export async function queryChat (query: string, modelName: string, streamResp: b
     model: modelName,
     messages: messageArray,
     keep_alive: 15,
-    think: thinkEnabled ?? false
+    think: false
   };
   if (streamResp) {
     return await ollama.chat({ ...request, stream: true });

@@ -142,27 +142,5 @@ describe("ollamaApi unit tests", (): void => {
       // Verify we actually get the async iterable back
       expect(typeof (response as AsyncIterable<unknown>)[Symbol.asyncIterator]).toBe("function");
     });
-
-    test("should pass think: false by default when thinkEnabled is not provided", async () => {
-      mockedOllama.chat.mockResolvedValue(mockResponse as unknown as OllamaChatResponse);
-
-      await queryChat(mockQuery, mockModel, false);
-      expect(mockedOllama.chat).toHaveBeenCalledWith(
-        expect.objectContaining({
-          think: false,
-        })
-      );
-    });
-
-    test("should pass think: true when thinkEnabled is true", async () => {
-      mockedOllama.chat.mockResolvedValue(mockResponse as unknown as OllamaChatResponse);
-
-      await queryChat(mockQuery, mockModel, false, "", true);
-      expect(mockedOllama.chat).toHaveBeenCalledWith(
-        expect.objectContaining({
-          think: true,
-        })
-      );
-    });
   });
 });
