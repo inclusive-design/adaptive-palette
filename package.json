@@ -14,7 +14,7 @@
   "dependencies": {
     "@preact/signals": "^2.9.0",
     "@types/node": "^25.9.3",
-    "bliss-svg-builder": "^1.0.0-rc.2",
+    "bliss-svg-builder": "^1.0.0-rc.4",
     "htm": "^3.1.1",
     "ollama": "^0.6.3",
     "preact": "^10.23.2",
