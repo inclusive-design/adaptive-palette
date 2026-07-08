@@ -57,7 +57,7 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
       class="actionModifierCell"
       style="${gridStyles}"
       onClick=${cellClicked}
-      disabled="${disabled}"
+      disabled=${disabled}
       aria-controls="${ariaControls}">
       <${BlissSymbol}
         composition=${modifierComposition}

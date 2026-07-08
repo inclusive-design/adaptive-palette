@@ -10,7 +10,8 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { generateGridStyle, clamp } from "./GlobalUtils";
+import { generateGridStyle, clamp, getContentSignal } from "./GlobalUtils";
+import { contentSignalMap } from "./GlobalData";
 
 describe("Test global utility functions", (): void => {
 
@@ -53,5 +54,14 @@ describe("Test global utility functions", (): void => {
 
   test("Test clamp function where value is in range", (): void => {
     expect(clamp(1, 0, 2)).toBe(1);
+  });
+
+  test("getContentSignal returns corresponding signal for given ariaControls", (): void => {
+    const mockAriaControls = "content-encoding-area";
+    expect(getContentSignal(mockAriaControls)).toBe(contentSignalMap[mockAriaControls]);
+  });
+
+  test("getContentSignal returns null if given ariaControls doesn't exist", (): void => {
+    expect(getContentSignal("fakeAriaControls")).toBeUndefined();
   });
 });

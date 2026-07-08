@@ -55,7 +55,7 @@ export function CommandAddComposition (props: CommandAddCompositionProps): VNode
     changeEncodingContents.value = insertWordAtCaret(
       composedPayload, payloads, caretPosition
     );
-    speak(label);
+    speak(composedLabel);
     composeWordContents.value = { payloads: [], caretPosition: -1 };
     isComposing.value = false;
   };
@@ -67,7 +67,7 @@ export function CommandAddComposition (props: CommandAddCompositionProps): VNode
       style="${gridStyles}"
       aria-controls=${ariaControls}
       onClick=${cellClicked}
-      disabled="${disabled}">
+      disabled=${disabled}>
       <${BlissSymbol} composition=${composition} label=${label}/>
     </button>
   `;

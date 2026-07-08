@@ -90,7 +90,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       class="actionIndicatorCell"
       style="${gridStyles}"
       onClick=${cellClicked}
-      disabled="${disabled}"
+      disabled=${disabled}
       aria-controls="${ariaControls}">
       <${BlissSymbol}
         composition=${indicatorId}

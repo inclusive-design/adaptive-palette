@@ -91,7 +91,7 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   };
 
   return html`
-    <button id="${props.id}" class="actionIndicatorCell" style="${gridStyles}" onClick=${cellClicked} disabled="${disabled}">
+    <button id="${props.id}" class="actionIndicatorCell" style="${gridStyles}" onClick=${cellClicked} disabled=${disabled}>
       <${BlissSymbol}
         composition=${removeModifierComposition}
         label=${label}

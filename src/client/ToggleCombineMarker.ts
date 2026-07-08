@@ -68,7 +68,7 @@ export function ToggleCombineMarker (props: ToggleCombineMarkerPropsType): VNode
       class="actionModifierCell"
       style="${gridStyles}"
       onClick=${cellClicked}
-      disabled="${disabled}"
+      disabled=${disabled}
       aria-controls="${COMPOSE_AREA_ID}"
       aria-pressed="${isCombinedNow}">
       <${BlissSymbol}

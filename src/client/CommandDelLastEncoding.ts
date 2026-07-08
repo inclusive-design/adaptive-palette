@@ -15,7 +15,7 @@ import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { contentSignalMap, combineSymbolId } from "./GlobalData";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle, speak, getContentSignal } from "./GlobalUtils";
 import { deleteAtCaret } from "./CursorActions";
 
 type CommandDelLastEncodingProps = {
@@ -32,12 +32,15 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNo
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
-    const contentSignal = contentSignalMap[ariaControls as keyof typeof contentSignalMap];
+    const contentSignal = getContentSignal(ariaControls);
+    if (!contentSignal) {
+      return;
+    }
     const updatedContentSignal = deleteAtCaret(contentSignal.value, combineSymbolId);
     if (updatedContentSignal !== contentSignal.value) {
       contentSignal.value = updatedContentSignal;
-      speak(label);
     }
+    speak(label);
   };
 
   return html`

@@ -15,14 +15,13 @@ import { html } from "htm/preact";
 import { Signal } from "@preact/signals";
 
 import { BlissSymbol } from "./BlissSymbol";
-import { contentSignalMap } from "./GlobalData";
 import { ContentEncodingType, EncodingType, ContentSignalDataType } from "./index.d";
 import { generateGridStyle, speak } from "./GlobalUtils";
 import { combineSymbolId } from "./GlobalData";
 import { moveCursor } from "./CursorActions";
 import "./ContentEncoding.scss";
 
-const isApplePlatform = navigator.platform.startsWith("Mac") || navigator.platform.startsWith("iPhone") || navigator.platform.startsWith("iPad");
+const isApplePlatform = /Mac|iPod|iPhone|iPad/.test(navigator.userAgent);
 
 type ContentEncodingInputFieldProps = {
   id: string,
@@ -49,27 +48,19 @@ function generateMarkupArray (payloadArray: Array<EncodingType>, caretPos: numbe
   // to check for a length of zero within the mapping function.
   return payloadArray.map((payload, index) => {
     // Check inserting before first symbol
-    if (index === 0 && caretPos === -1) {
-      return html`
-        <div class="blissSymbol insertionCaret">
-          <${BlissSymbol} composition=${payload.composition} label=${payload.label} isPresentation="true" />
-        </div>
-      `;
-    }
-    else if (index === caretPos) {
-      return html`
-        <div class="blissSymbol cursorCaret">
-          <${BlissSymbol} composition=${payload.composition} label=${payload.label} isPresentation="true" />
-        </div>
-      `;
-    }
-    else {
-      return html`
-        <div class="blissSymbol">
-          <${BlissSymbol} composition=${payload.composition} label=${payload.label} isPresentation="true" />
-        </div>
-      `;
-    }
+    const isInsertion = index === 0 && caretPos === -1;
+    const isCursor = index === caretPos;
+    
+    // Combine classes based on conditions
+    let className = "blissSymbol";
+    if (isInsertion) className += " insertionCaret";
+    if (isCursor) className += " cursorCaret";
+
+    return html`
+      <div class="${className}">
+        <${BlissSymbol} composition=${payload.composition} label=${payload.label} isPresentation="true" />
+      </div>
+    `;
   });
 }
 
@@ -89,40 +80,6 @@ export function moveCursorToEnd (contentSignal: Signal<ContentSignalDataType>) {
   contentSignal.value = moveCursor(Number.POSITIVE_INFINITY, contentSignal.value, combineSymbolId);
 };
 
-function handleKeyDown(event: KeyboardEvent) {
-  const element = event.target as HTMLElement;
-  const contentSignal = contentSignalMap[element.id as keyof typeof contentSignalMap];
-  if ((!(isApplePlatform && event.metaKey) && event.key === "ArrowLeft") || event.key === "ArrowDown") {
-    decrementCursor(contentSignal);
-    speak("backward");
-  }
-
-  if ((!(isApplePlatform && event.metaKey) && event.key === "ArrowRight") || event.key === "ArrowUp") {
-    incrementCursor(contentSignal);
-    speak("forward");
-  }
-
-  if (
-    event.key === "Home" ||
-    (event.ctrlKey && event.key === "a") ||
-    (isApplePlatform && event.metaKey && event.key === "ArrowLeft")
-  ) {
-    event.preventDefault();
-    moveCursorToHome(contentSignal);
-    speak("move cursor to start");
-  }
-
-  if (
-    event.key === "End" ||
-    (event.ctrlKey && event.key === "e") ||
-    (isApplePlatform && event.metaKey && event.key === "ArrowRight")
-  ) {
-    event.preventDefault();
-    moveCursorToEnd(contentSignal);
-    speak("move cursor to end");
-  }
-}
-
 export function ContentEncodingInputField (props: ContentEncodingInputFieldProps): VNode {
   const { id, options, contentsSignal, ariaLabel } = props;
   const { columnStart, columnSpan, rowStart, rowSpan } = options;
@@ -131,6 +88,41 @@ export function ContentEncodingInputField (props: ContentEncodingInputFieldProps
   const contentsMarkupArray = generateMarkupArray(
     contentsSignal.value.payloads, contentsSignal.value.caretPosition
   );
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    const element = event.target as HTMLElement;
+    if ((!(isApplePlatform && event.metaKey) && event.key === "ArrowLeft") || event.key === "ArrowDown") {
+      event.preventDefault();
+      decrementCursor(contentsSignal);
+      speak("backward");
+    }
+
+    if ((!(isApplePlatform && event.metaKey) && event.key === "ArrowRight") || event.key === "ArrowUp") {
+      event.preventDefault();
+      incrementCursor(contentsSignal);
+      speak("forward");
+    }
+
+    if (
+      event.key === "Home" ||
+      (event.ctrlKey && event.key === "a") ||
+      (isApplePlatform && event.metaKey && event.key === "ArrowLeft")
+    ) {
+      event.preventDefault();
+      moveCursorToHome(contentsSignal);
+      speak("move cursor to start");
+    }
+
+    if (
+      event.key === "End" ||
+      (event.ctrlKey && event.key === "e") ||
+      (isApplePlatform && event.metaKey && event.key === "ArrowRight")
+    ) {
+      event.preventDefault();
+      moveCursorToEnd(contentsSignal);
+      speak("move cursor to end");
+    }
+  }
 
   return html`
     <div

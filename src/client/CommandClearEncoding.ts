@@ -15,7 +15,7 @@ import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { contentSignalMap } from "./GlobalData";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle, speak, getContentSignal } from "./GlobalUtils";
 
 type CommandClearEncodingProps = {
   id: string,
@@ -31,7 +31,11 @@ export function CommandClearEncoding (props: CommandClearEncodingProps): VNode {
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
-    contentSignalMap[ariaControls as keyof typeof contentSignalMap].value = {
+    const contentSignal = getContentSignal(ariaControls);
+    if (!contentSignal) {
+      return;
+    }
+    contentSignal.value = {
       payloads: [],
       caretPosition: -1
     };

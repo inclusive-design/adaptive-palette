@@ -15,7 +15,7 @@ import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { incrementCursor } from "./ContentEncodingInputField";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle, speak, getContentSignal } from "./GlobalUtils";
 import { contentSignalMap } from "./GlobalData";
 
 type CommandCursorForwardProps = {
@@ -35,7 +35,11 @@ export function CommandCursorForward (props: CommandCursorForwardProps): VNode {
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
-    incrementCursor(contentSignalMap[ariaControls as keyof typeof contentSignalMap]);
+    const contentSignal = getContentSignal(ariaControls);
+    if (!contentSignal) {
+      return;
+    }
+    incrementCursor(contentSignal);
     speak(label);
   };
 

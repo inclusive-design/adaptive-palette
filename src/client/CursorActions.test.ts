@@ -95,6 +95,16 @@ describe("moveCursor", () => {
       const result = moveCursor(1, testInput([combineSymbol, testSymbolA, testSymbolB, combineSymbol], 1), combineSymbolId);
       expect(result.caretPosition).toBe(2);
     });
+
+    it("move to home", () => {
+      const result = moveCursor(Number.NEGATIVE_INFINITY, testInput([combineSymbol, testSymbolA, testSymbolB, combineSymbol], 2), combineSymbolId);
+      expect(result.caretPosition).toBe(1);
+    });
+
+    it("move to end", () => {
+      const result = moveCursor(Number.POSITIVE_INFINITY, testInput([combineSymbol, testSymbolA, testSymbolB, combineSymbol], 1), combineSymbolId);
+      expect(result.caretPosition).toBe(2);
+    });
   });
 });
 

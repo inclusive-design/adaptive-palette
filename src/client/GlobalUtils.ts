@@ -12,7 +12,7 @@
 import {
   JsonPaletteType, SymbolEncodingType, ContentSignalDataType, SymbolCompositionType
 } from "./index.d";
-
+import { contentSignalMap } from "./GlobalData";
 /**
  * Global Utility Functions
  */
@@ -158,12 +158,8 @@ function addModifier (compositionIdToAdd: SymbolCompositionType, label: string, 
   let newCompositionId = normalizedCompositionIdToAdd;
   
   if (caretPosition < 0) {
-    symbolToEdit.id = "foobar";
-    symbolToEdit.label = label;
-    symbolToEdit.composition = normalizedCompositionIdToAdd;
-    symbolToEdit.modifierInfo = [];
-  }
-  else {
+    console.error("Error: invalid caret position");
+  } else {
     newCompositionId = (
       typeof symbolToEdit.composition === "number" ?
         [symbolToEdit.composition] :
@@ -201,11 +197,23 @@ function addModifier (compositionIdToAdd: SymbolCompositionType, label: string, 
   };
 }
 
+/*
+* Get a signal corresponding to ariaControls value
+*/
+function getContentSignal (ariaControls: string): Signal<ContentSignalDataType> | undefined {
+  if (Object.prototype.hasOwnProperty.call(contentSignalMap, ariaControls)) {
+    return contentSignalMap[ariaControls as keyof typeof contentSignalMap];
+  }
+  console.warn(`No content signal registered for ariaControls/id "${ariaControls}"`);
+  return undefined;
+}
+
 export {
   generateGridStyle,
   speak,
   loadPaletteFromJsonFile,
   insertWordAtCaret,
   clamp,
-  addModifier
+  addModifier,
+  getContentSignal
 };

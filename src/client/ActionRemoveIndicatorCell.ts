@@ -87,7 +87,7 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
       class="actionIndicatorCell"
       style="${gridStyles}"
       onClick=${cellClicked}
-      disabled="${disabled}"
+      disabled=${disabled}
       aria-controls="${ariaControls}">
       <${BlissSymbol}
         composition=${removeIndicatorComposition}

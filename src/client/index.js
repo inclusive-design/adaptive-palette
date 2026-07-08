@@ -15,7 +15,8 @@ import { loadPaletteFromJsonFile, speak } from "./GlobalUtils";
 import { goBackImpl } from "./CommandGoBackCell";
 import {
   initAdaptivePaletteGlobals, adaptivePaletteGlobals,
-  INPUT_AREA_ID
+  INPUT_AREA_ID,
+  COMPOSE_AREA_ID
 } from "./GlobalData";
 
 import "./index.scss";
@@ -110,7 +111,7 @@ function getRequiredElement(id) {
  */
 function elementAllowsTextEntry(element) {
   if (!(element instanceof HTMLElement)) { return false; }
-  return element.id !== INPUT_AREA_ID && (
+  return element.id !== INPUT_AREA_ID && element.id !== COMPOSE_AREA_ID && (
     (element instanceof HTMLInputElement && textInputTypes.includes(element.type)) ||
     element instanceof HTMLTextAreaElement ||
     element instanceof HTMLSelectElement ||

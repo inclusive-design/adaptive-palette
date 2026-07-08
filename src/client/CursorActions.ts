@@ -72,7 +72,10 @@ function moveCursor (positionChange: number, contentSignal: ContentSignalDataTyp
     const candidatePosition = findNextNonCombineSymbol(payloads, newPosition, direction, combineSymbolId);
     
     // If the next position pushes us out of bounds, revert to original caretPosition
-    newPosition = (candidatePosition < min || candidatePosition > max) ? caretPosition: candidatePosition;
+    newPosition = (candidatePosition < min || candidatePosition > max) ? caretPosition : candidatePosition;
+    if (newPosition !== candidatePosition) {
+      newPosition = findNextNonCombineSymbol(payloads, clamp(caretPosition + positionChange, min, max), direction * -1, combineSymbolId);
+    }
   }
 
   if (newPosition === caretPosition) {
