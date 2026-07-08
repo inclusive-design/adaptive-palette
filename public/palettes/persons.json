@@ -5,7 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "person",
-        "bciAvId": 16161,
+        "composition": 513,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -16,11 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "I, me",
-        "bciAvId": [
-          16161,
-          "/",
-          8497
-        ],
+        "composition": [513, "/", 10],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -31,11 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "you",
-        "bciAvId": [
-          16161,
-          "/",
-          8498
-        ],
+        "composition": [513, "/", 11],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -46,11 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "he, him",
-        "bciAvId": [
-          15416,
-          "/",
-          8499
-        ],
+        "composition": [433, "/", 12],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -61,11 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "she, her",
-        "bciAvId": [
-          18269,
-          "/",
-          8499
-        ],
+        "composition": [710, "/", 12],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -76,13 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "we, us",
-        "bciAvId": [
-          16161,
-          ";",
-          9011,
-          "/",
-          8497
-        ],
+        "composition": [513, ";", 99, "/", 10],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -93,13 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "you",
-        "bciAvId": [
-          16161,
-          ";",
-          9011,
-          "/",
-          8498
-        ],
+        "composition": [513, ";", 99, "/", 11],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -110,13 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "they, them",
-        "bciAvId": [
-          16161,
-          ";",
-          9011,
-          "/",
-          8499
-        ],
+        "composition": [513, ";", 99, "/", 12],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -127,11 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "anyone",
-        "bciAvId": [
-          12321,
-          "/",
-          16161
-        ],
+        "composition": [100, "/", 513],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -142,13 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "my, mine",
-        "bciAvId": [
-          16161,
-          "/",
-          8497,
-          "/",
-          12663
-        ],
+        "composition": [513, "/", 10, "/", 160],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -159,7 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "family",
-        "bciAvId": 13427,
+        "composition": 246,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -170,7 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "father",
-        "bciAvId": 14157,
+        "composition": 312,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -181,7 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "mother",
-        "bciAvId": 15662,
+        "composition": 455,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -192,11 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "brother",
-        "bciAvId": [
-          17209,
-          "/",
-          8498
-        ],
+        "composition": [607, "/", 11],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -207,11 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "sister",
-        "bciAvId": [
-          13638,
-          "/",
-          8498
-        ],
+        "composition": [257, "/", 11],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -222,7 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "relative",
-        "bciAvId": 16481,
+        "composition": 560,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -233,7 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "grandfather",
-        "bciAvId": 14626,
+        "composition": 358,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -244,7 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "grandmother",
-        "bciAvId": 14629,
+        "composition": 361,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -255,7 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "uncle",
-        "bciAvId": 17967,
+        "composition": 675,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -266,7 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "aunt",
-        "bciAvId": 12596,
+        "composition": 137,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

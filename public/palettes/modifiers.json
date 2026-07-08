@@ -5,7 +5,7 @@
       "type": "ActionPostModifierCell",
       "options": {
         "label": "very",
-        "bciAvId": 14947,
+        "composition": 401,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -16,7 +16,7 @@
       "type": "ActionPreModifierCell",
       "options": {
         "label": "without",
-        "bciAvId": 15474,
+        "composition": 449,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -27,7 +27,7 @@
       "type": "ActionPreModifierCell",
       "options": {
         "label": "opposite of",
-        "bciAvId": 15927,
+        "composition": 486,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -38,7 +38,7 @@
       "type": "ActionPreModifierCell",
       "options": {
         "label": "generalization",
-        "bciAvId": 14430,
+        "composition": 348,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -49,9 +49,7 @@
       "type": "ActionPreModifierCell",
       "options": {
         "label": "part of",
-        "bciAvId": [
-          15972
-        ],
+        "composition": [502],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -62,7 +60,7 @@
       "type": "ActionPreModifierCell",
       "options": {
         "label": "group of",
-        "bciAvId": [ 14647 ],
+        "composition": [368],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 6,
@@ -73,7 +71,7 @@
       "type": "ActionPreModifierCell",
       "options": {
         "label": "more",
-        "bciAvId": [ 24879 ],
+        "composition": [937],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 7,
@@ -84,7 +82,7 @@
       "type": "ActionPreModifierCell",
       "options": {
         "label": "most",
-        "bciAvId": [ 24944 ],
+        "composition": [968],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 8,
@@ -95,7 +93,7 @@
       "type": "ActionPreModifierCell",
       "options": {
         "label": "metaphor",
-        "bciAvId": 15460,
+        "composition": 444,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 9,
@@ -106,9 +104,7 @@
       "type": "ActionPreModifierCell",
       "options": {
         "label": "Bliss name",
-        "bciAvId": [
-          21624
-        ],
+        "composition": [753],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 10,
@@ -119,7 +115,7 @@
       "type": "ActionPreModifierCell",
       "options": {
         "label": "slang",
-        "bciAvId": 24961,
+        "composition": 970,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 11,
@@ -130,9 +126,7 @@
       "type": "ActionPreModifierCell",
       "options": {
         "label": "coarse slang",
-        "bciAvId": [
-          24962
-        ],
+        "composition": [971],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 12,
@@ -143,9 +137,7 @@
       "type": "ActionPostModifierCell",
       "options": {
         "label": "belongs to",
-        "bciAvId": [
-          12663
-        ],
+        "composition": [160],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 13,
@@ -156,7 +148,7 @@
       "type": "ActionRemoveModifierCell",
       "options": {
         "label": "Undo",
-        "bciAvId": [ 17449, ";", 24670, "/", 12335, "/", 12656 ],
+        "composition": [634, ";", 907, "/", 106, "/", 158],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 14,

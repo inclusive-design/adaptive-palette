@@ -5,7 +5,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "question",
-        "bciAvId": 12588,
+        "composition": 1234,
         "branchTo": "questions",
         "rowStart": 1,
         "rowSpan": 1,
@@ -17,11 +17,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "be (to)",
-        "bciAvId": [
-          24443,
-          ";",
-          8993
-        ],
+        "composition": [894, ";", 81],
         "branchTo": "to_be",
         "rowStart": 1,
         "rowSpan": 1,
@@ -33,11 +29,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "much, many",
-        "bciAvId": [
-          14647,
-          ";",
-          8998
-        ],
+        "composition": [368, ";", 86],
         "branchTo": "much_many",
         "rowStart": 1,
         "rowSpan": 1,
@@ -49,9 +41,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "body",
-        "bciAvId": [
-          12870
-        ],
+        "composition": [171],
         "branchTo": "body_related",
         "rowStart": 1,
         "rowSpan": 1,
@@ -63,9 +53,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "food",
-        "bciAvId": [
-          14377
-        ],
+        "composition": [329],
         "branchTo": "food",
         "rowStart": 1,
         "rowSpan": 1,
@@ -78,7 +66,7 @@
       "options": {
         "label": "drink",
         "branchTo": "drink",
-        "bciAvId": 13881,
+        "composition": 275,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 6,
@@ -89,9 +77,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "a, an",
-        "bciAvId": [
-          12321
-        ],
+        "composition": [100],
         "branchTo": "a_an",
         "rowStart": 2,
         "rowSpan": 1,
@@ -103,7 +89,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "say",
-        "bciAvId": 16728,
+        "composition": 2325,
         "branchTo": "say_speak",
         "rowStart": 2,
         "rowSpan": 1,
@@ -115,7 +101,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "angry",
-        "bciAvId": [ 14647, "/", 14164, ";", 8998, "/", 15928 ],
+        "composition": [368, "/", 313, ";", 86, "/", 487],
         "branchTo": "feelings",
         "rowStart": 2,
         "rowSpan": 1,
@@ -127,7 +113,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "clothing",
-        "bciAvId": 13366,
+        "composition": 229,
         "branchTo": "clothes",
         "rowStart": 2,
         "rowSpan": 1,
@@ -139,7 +125,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "thing",
-        "bciAvId": 17717,
+        "composition": 651,
         "branchTo": "things",
         "rowStart": 2,
         "rowSpan": 1,
@@ -151,7 +137,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "blissymbol",
-        "bciAvId": 12857,
+        "composition": 167,
         "branchTo": "bliss_symbol",
         "rowStart": 2,
         "rowSpan": 1,
@@ -163,9 +149,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "person",
-        "bciAvId": [
-          16161
-        ],
+        "composition": [513],
         "branchTo": "persons",
         "rowStart": 3,
         "rowSpan": 1,
@@ -177,9 +161,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "do, does",
-        "bciAvId": [
-          13860
-        ],
+        "composition": [106, ";", 81],
         "branchTo": "do_does",
         "rowStart": 3,
         "rowSpan": 1,
@@ -191,11 +173,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "big, large",
-        "bciAvId": [
-          24875,
-          ";",
-          8998
-        ],
+        "composition": [936, ";", 86],
         "branchTo": "big_large",
         "rowStart": 3,
         "rowSpan": 1,
@@ -207,9 +185,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "vehicle",
-        "bciAvId": [
-          18010
-        ],
+        "composition": [688],
         "branchTo": "vehicle",
         "rowStart": 3,
         "rowSpan": 1,
@@ -221,7 +197,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "place",
-        "bciAvId": 16193,
+        "composition": 531,
         "branchTo": "place",
         "rowStart": 3,
         "rowSpan": 1,
@@ -233,7 +209,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "room",
-        "bciAvId": 16687,
+        "composition": 572,
         "rowStart": 3,
         "branchTo": "room",
         "rowSpan": 1,
@@ -245,7 +221,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "man",
-        "bciAvId": 15416,
+        "composition": 433,
         "branchTo": "man_woman",
         "rowStart": 4,
         "rowSpan": 1,
@@ -257,7 +233,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "think",
-        "bciAvId": 17718,
+        "composition": 2593,
         "branchTo": "think",
         "rowStart": 4,
         "rowSpan": 1,
@@ -269,7 +245,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "early",
-        "bciAvId": 13896,
+        "composition": 1581,
         "branchTo": "early_time",
         "rowStart": 4,
         "rowSpan": 1,
@@ -281,7 +257,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "environment",
-        "bciAvId": 13942,
+        "composition": 294,
         "branchTo": "environment",
         "rowStart": 4,
         "rowSpan": 1,
@@ -293,9 +269,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "time",
-        "bciAvId": [
-          17732
-        ],
+        "composition": [655],
         "branchTo": "time",
         "rowStart": 4,
         "rowSpan": 1,
@@ -307,7 +281,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "day",
-        "bciAvId": 13639,
+        "composition": 258,
         "branchTo": "day_night",
         "rowStart": 4,
         "rowSpan": 1,

@@ -1,6 +1,7 @@
 /*
- * Copyright 2023-2026 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -14,7 +15,7 @@
  */
 import { signal } from "@preact/signals";
 import { getModelNames } from "./ollamaApi";
-import type { ContentSignalDataType, BlissaryMapEntryType } from "./index.d";
+import type { ContentSignalDataType, BlissSymbolEntry } from "./index.d";
 
 // NOTE: this import causes a warning serving the application using the `vite`
 // server.  The warning suggests to *not* use the `public` folder but to use
@@ -40,14 +41,17 @@ import { ActionPostModifierCell } from "./ActionPostModifierCell";
 import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
 import { ActionRemoveModifierCell } from "./ActionRemoveModifierCell";
 import { ActionTextCell } from "./ActionTextCell";
+import { CommandAddComposition } from "./CommandAddComposition";
 import { CommandClearEncoding } from "./CommandClearEncoding";
 import { CommandCursorBackward } from "./CommandCursorBackward";
 import { CommandCursorForward } from "./CommandCursorForward";
 import { CommandDelLastEncoding } from "./CommandDelLastEncoding";
 import { CommandGoBackCell } from "./CommandGoBackCell";
+import { ContentComposeWordsEntry } from "./ContentComposeWordsEntry";
 import { ContentEncoding } from "./ContentEncoding";
 import { PaletteStore } from "./PaletteStore";
 import { NavigationStack } from "./NavigationStack";
+import { ToggleCombineMarker } from "./ToggleCombineMarker";
 
 export const cellTypeRegistry = {
   "ActionCodeCell": ActionCodeCell,
@@ -59,12 +63,15 @@ export const cellTypeRegistry = {
   "ActionRemoveIndicatorCell": ActionRemoveIndicatorCell,
   "ActionRemoveModifierCell": ActionRemoveModifierCell,
   "ActionTextCell": ActionTextCell,
+  "CommandAddComposition": CommandAddComposition,
   "CommandClearEncoding": CommandClearEncoding,
   "CommandCursorBackward": CommandCursorBackward,
   "CommandCursorForward": CommandCursorForward,
   "CommandDelLastEncoding": CommandDelLastEncoding,
   "CommandGoBackCell": CommandGoBackCell,
+  "ContentComposeWordsEntry": ContentComposeWordsEntry,
   "ContentEncoding": ContentEncoding,
+  "ToggleCombineMarker": ToggleCombineMarker
 };
 
 export const SYSTEM_PROMPTS_KEY = "Telegraphic System Prompts";
@@ -74,11 +81,7 @@ export const SYSTEM_PROMPTS_KEY = "Telegraphic System Prompts";
  * and create the PaletterStore and NavigationStack objects.
  */
 export const adaptivePaletteGlobals = {
-  // The map between the BCI-AV IDs and the code consumed by the Bliss SVG
-  // builder.  The map itself is set asynchronously.
-  blissaryIdMapUrl: "https://raw.githubusercontent.com/hlridge/Bliss-Blissary-BCI-ID-Map/main/blissary_to_bci_mapping.json",
-  blissaryIdMap: null as BlissaryMapEntryType[] | null,
-  bciAvSymbols: bliss_symbols,
+  symbols: bliss_symbols as BlissSymbolEntry[],
   paletteStore: new PaletteStore(),
   navigationStack: new NavigationStack(),
   LLMs: [] as string[],
@@ -94,11 +97,6 @@ export const adaptivePaletteGlobals = {
   mainPaletteContainerId: ""
 };
 
-export async function loadBlissaryIdMap (): Promise<BlissaryMapEntryType[]> {
-  const response = await fetch(adaptivePaletteGlobals.blissaryIdMapUrl);
-  return await response.json() as BlissaryMapEntryType[];
-}
-
 /**
  * Initialize the `adaptivePaletteGlobals` structure.
  * @param {HTMLElement} mainPaletteContainerId  - Optional argument specifying
@@ -110,7 +108,6 @@ export async function loadBlissaryIdMap (): Promise<BlissaryMapEntryType[]> {
  *                                                the `<body>delement.
  */
 export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string): Promise<void> {
-  adaptivePaletteGlobals.blissaryIdMap = await loadBlissaryIdMap();
   adaptivePaletteGlobals.LLMs = await getModelNames();
   adaptivePaletteGlobals.mainPaletteContainerId = mainPaletteContainerId || "";
 
@@ -130,9 +127,40 @@ export const changeEncodingContents = signal<ContentSignalDataType>({
   caretPosition: -1,
 });
 
+export const composeWordContents = signal<ContentSignalDataType>({
+  payloads: [],
+  caretPosition: -1,
+});
+
+/**
+ * Some of the CommandXxx components use an `aria-controls` to associate them
+ * with the element that they control.  For thes components, there is an
+ * `ariaControls` field in the associated palette definition .json file.  The
+ * following map defines which content signal (see immediatly above) goes with
+ * which aria controlled element.
+ * TODO: add a type for the map in `index.d.ts`.
+ */
+export const INPUT_AREA_ID = "content-encoding-area";
+export const COMPOSE_AREA_ID = "compose-words-entry";
+
+export const contentSignalMap = {
+  "content-encoding-area": changeEncodingContents,
+  "compose-words-entry": composeWordContents
+};
+
+/**
+ * Signals for tracking the contents of the word composition input area when
+ * the user is composing a Bliss-word.  The contents signal has the same
+ * structure as the `changeEncodingContents` above.  The isComposing is a state
+ * to indicate whether the mode of the palette is for composing Bliss-words
+ */
+export const isComposing = signal(false);
+
 /**
  * Signal for updating the contents of the SentenceCompletion area.  The value
  * of the signal is the current array of sentences that are offered as possible
  * completions.
  */
 export const sentenceCompletionsSignal = signal<string[]>([]);
+
+export const combineSymbolId = 233;

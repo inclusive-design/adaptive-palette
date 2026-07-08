@@ -5,7 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "food",
-        "bciAvId": 14377,
+        "composition": 329,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -16,7 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "dessert",
-        "bciAvId": 13664,
+        "composition": 1531,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -27,7 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "bread",
-        "bciAvId": 12895,
+        "composition": 180,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -38,7 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "bun",
-        "bciAvId": 16683,
+        "composition": 570,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -49,7 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "cookie",
-        "bciAvId": 13409,
+        "composition": 1459,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -60,7 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "sandwich",
-        "bciAvId": 16718,
+        "composition": 2316,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -71,7 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "spread",
-        "bciAvId": 17238,
+        "composition": 617,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -82,7 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "sauce",
-        "bciAvId": 20522,
+        "composition": 722,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -93,7 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "marmalade",
-        "bciAvId": 14965,
+        "composition": 1876,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -104,7 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "cheese",
-        "bciAvId": 13157,
+        "composition": 215,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -115,7 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "meat",
-        "bciAvId": 15444,
+        "composition": 1992,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -126,7 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "sausage",
-        "bciAvId": 16726,
+        "composition": 2324,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -137,7 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "hamburger",
-        "bciAvId": 20770,
+        "composition": 2844,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -148,7 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "pizza",
-        "bciAvId": 16192,
+        "composition": 2166,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -159,7 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "pasta",
-        "bciAvId": 22129,
+        "composition": 3255,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -170,7 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "pie",
-        "bciAvId": 16173,
+        "composition": 2158,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -181,7 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "egg",
-        "bciAvId": 13912,
+        "composition": 285,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -192,7 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "salad",
-        "bciAvId": 16709,
+        "composition": 577,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -203,7 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "soup",
-        "bciAvId": 17218,
+        "composition": 609,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -214,7 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "shellfish",
-        "bciAvId": 25681,
+        "composition": 1111,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

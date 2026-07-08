@@ -1,6 +1,7 @@
 /*
- * Copyright 2025 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -25,7 +26,7 @@ describe("ActionPreModifierCell render tests", (): void => {
       "rowSpan": "2",
       "columnStart": "2",
       "columnSpan": "1",
-      "bciAvId": 15927
+      "composition": 486
     }
   };
 
@@ -72,7 +73,7 @@ describe("ActionPreModifierCell render tests", (): void => {
       payloads: [{
         id: "fake-id",
         label: "building",
-        bciAvId: 14905
+        composition: 392
       }],
       caretPosition: 0
     };

@@ -1,6 +1,7 @@
 /*
- * Copyright 2024 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -9,7 +10,8 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { generateGridStyle, clamp } from "./GlobalUtils";
+import { generateGridStyle, clamp, getContentSignal } from "./GlobalUtils";
+import { contentSignalMap } from "./GlobalData";
 
 describe("Test global utility functions", (): void => {
 
@@ -52,5 +54,14 @@ describe("Test global utility functions", (): void => {
 
   test("Test clamp function where value is in range", (): void => {
     expect(clamp(1, 0, 2)).toBe(1);
+  });
+
+  test("getContentSignal returns corresponding signal for given ariaControls", (): void => {
+    const mockAriaControls = "content-encoding-area";
+    expect(getContentSignal(mockAriaControls)).toBe(contentSignalMap[mockAriaControls]);
+  });
+
+  test("getContentSignal returns null if given ariaControls doesn't exist", (): void => {
+    expect(getContentSignal("fakeAriaControls")).toBeUndefined();
   });
 });

@@ -1,6 +1,7 @@
 /*
- * Copyright 2024 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -8,8 +9,10 @@
  * You may obtain a copy of the License at
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
-import { JsonPaletteType, SymbolEncodingType, ContentSignalDataType } from "./index.d";
-
+import {
+  JsonPaletteType, SymbolEncodingType, ContentSignalDataType, SymbolCompositionType
+} from "./index.d";
+import { contentSignalMap } from "./GlobalData";
 /**
  * Global Utility Functions
  */
@@ -132,10 +135,85 @@ function clamp (value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
 
+/**
+ * Add the given symbol to the current contents at the given caret position.
+ *
+ * @param {SymbolCompositionType} compositionIdToAdd - Symbol to add to current symbol
+ * @param {string} label - The label associated with `bciAvIdToAdd`
+ * @param {ContentSignalDataType} encodingContents - Contents to add the symbol to.
+ * @param {boolean} prepend - Optional flag to allow prepending, default is to
+ *                            append (`false`)
+ * @return {ContentSignalDataType} - the modified contents.
+ */
+function addModifier (compositionIdToAdd: SymbolCompositionType, label: string, encodingContents: ContentSignalDataType, prepend?: boolean): ContentSignalDataType {
+  // Guarantee that `compositionIdToAdd` is the array form
+  const normalizedCompositionIdToAdd: (number | string)[] =
+    typeof compositionIdToAdd === "number" ? [compositionIdToAdd] : compositionIdToAdd;
+
+  // Get the symbol at the caret position.
+  const { caretPosition, payloads } = encodingContents;
+
+
+  const symbolToEdit = payloads[caretPosition];
+  let newCompositionId = normalizedCompositionIdToAdd;
+  
+  if (caretPosition < 0) {
+    console.error("Error: invalid caret position");
+  } else {
+    newCompositionId = (
+      typeof symbolToEdit.composition === "number" ?
+        [symbolToEdit.composition] :
+        symbolToEdit.composition
+    );
+    if (prepend) {
+      newCompositionId = [ ...normalizedCompositionIdToAdd, "/", ...newCompositionId ];
+    }
+    else {
+      newCompositionId = [ ...newCompositionId, "/", ...normalizedCompositionIdToAdd ];
+    }
+  }
+  // push the new modifier information
+  // into the `modifierInfo` of the `symbolToEdit`, tracking the order in which
+  // the modifiers were added.
+
+  if (!symbolToEdit.modifierInfo) {
+    symbolToEdit.modifierInfo = [];
+  }
+  symbolToEdit.modifierInfo.push({
+    modifierId: normalizedCompositionIdToAdd,
+    modifierGloss: label,
+    isPrepended: prepend ?? false
+  });
+
+  payloads[caretPosition] = {
+    "id": symbolToEdit.id + newCompositionId.join(""),
+    "label": `${label} ${symbolToEdit.label}`,
+    "composition": newCompositionId,
+    "modifierInfo": symbolToEdit.modifierInfo
+  };
+  return {
+    payloads: payloads,
+    caretPosition: caretPosition
+  };
+}
+
+/*
+* Get a signal corresponding to ariaControls value
+*/
+function getContentSignal (ariaControls: string): Signal<ContentSignalDataType> | undefined {
+  if (Object.prototype.hasOwnProperty.call(contentSignalMap, ariaControls)) {
+    return contentSignalMap[ariaControls as keyof typeof contentSignalMap];
+  }
+  console.warn(`No content signal registered for ariaControls/id "${ariaControls}"`);
+  return undefined;
+}
+
 export {
   generateGridStyle,
   speak,
   loadPaletteFromJsonFile,
   insertWordAtCaret,
-  clamp
+  clamp,
+  addModifier,
+  getContentSignal
 };

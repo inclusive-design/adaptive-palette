@@ -5,7 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "blissymbol",
-        "bciAvId": 12857,
+        "composition": 167,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -16,11 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "word",
-        "bciAvId": [
-          15972,
-          "/",
-          15172
-        ],
+        "composition": [502, "/", 414],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -31,11 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "internet",
-        "bciAvId": [
-          13365,
-          "/",
-          25552
-        ],
+        "composition": [228, "/", 1026],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -46,11 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "problem",
-        "bciAvId": [
-          16445,
-          "/",
-          24884
-        ],
+        "composition": [553, "/", 940],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -61,7 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "idea",
-        "bciAvId": 14926,
+        "composition": 397,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -72,7 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "secret",
-        "bciAvId": 16745,
+        "composition": 583,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -83,7 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "gathering",
-        "bciAvId": 14427,
+        "composition": 346,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -94,13 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "party",
-        "bciAvId": [
-          14427,
-          "/",
-          14164,
-          "/",
-          17983
-        ],
+        "composition": [346, "/", 313, "/", 678],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -111,11 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "club",
-        "bciAvId": [
-          14427,
-          "/",
-          24916
-        ],
+        "composition": [346, "/", 955],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -126,11 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "hobby",
-        "bciAvId": [
-          12335,
-          "/",
-          24916
-        ],
+        "composition": [106, "/", 955],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -141,11 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "gift",
-        "bciAvId": [
-          17717,
-          "/",
-          24903
-        ],
+        "composition": [651, "/", 949],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -156,17 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "toy",
-        "bciAvId": [
-          17717,
-          "/",
-          12335,
-          "/",
-          "RK:-2",
-          "/",
-          14164,
-          "/",
-          17983
-        ],
+        "composition": [651, "/", 106, "/", "RK:-2", "/", 313, "/", 678],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -177,13 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "play, game",
-        "bciAvId": [
-          12335,
-          "/",
-          "RK:-2",
-          "/",
-          14164
-        ],
+        "composition": [106, "/", "RK:-2", "/", 313],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -194,7 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "ball",
-        "bciAvId": 12621,
+        "composition": 148,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -205,7 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "camera",
-        "bciAvId": 13111,
+        "composition": 198,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -216,11 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "picture",
-        "bciAvId": [
-          14133,
-          "/",
-          13934
-        ],
+        "composition": [303, "/", 291],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -231,11 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "music",
-        "bciAvId": [
-          13894,
-          "/",
-          15682
-        ],
+        "composition": [278, "/", 462],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -246,13 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "gymnastics",
-        "bciAvId": [
-          20518,
-          "/",
-          20517,
-          "/",
-          16194
-        ],
+        "composition": [719, "/", 718, "/", 532],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -263,7 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "sport",
-        "bciAvId": 20518,
+        "composition": 719,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -274,7 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "race",
-        "bciAvId": 16451,
+        "composition": 554,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

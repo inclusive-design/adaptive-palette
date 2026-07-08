@@ -5,7 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "question",
-        "bciAvId": 12588,
+        "composition": 1234,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -16,11 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "who",
-        "bciAvId": [
-          18229,
-          "/",
-          16161
-        ],
+        "composition": [699, "/", 513],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -31,11 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "what",
-        "bciAvId": [
-          18229,
-          "/",
-          17717
-        ],
+        "composition": [699, "/", 651],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -46,11 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "which",
-        "bciAvId": [
-          18229,
-          "/",
-          15972
-        ],
+        "composition": [699, "/", 502],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -61,7 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "not",
-        "bciAvId": [ 15474, "/", 14947 ],
+        "composition": [449, "/", 401],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -72,9 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "when",
-        "bciAvId": [
-          18235
-        ],
+        "composition": [699, "/", 655],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -85,9 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "where",
-        "bciAvId": [
-          18237
-        ],
+        "composition": [703],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -98,9 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "how",
-        "bciAvId": [
-          14907
-        ],
+        "composition": [699, "/", 106],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -111,7 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "why",
-        "bciAvId": 18249,
+        "composition": 2745,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -122,7 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "maybe",
-        "bciAvId": 16226,
+        "composition": 2190,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -133,9 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "that",
-        "bciAvId": [
-          24309
-        ],
+        "composition": [891],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -146,7 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "but",
-        "bciAvId": 13094,
+        "composition": 192,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -157,9 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "so",
-        "bciAvId": [
-          17708
-        ],
+        "composition": [650],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -170,7 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "with",
-        "bciAvId": 18267,
+        "composition": 709,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -181,7 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "and",
-        "bciAvId": 12374,
+        "composition": 120,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -192,7 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "ago",
-        "bciAvId": 12352,
+        "composition": 112,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -203,7 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "now",
-        "bciAvId": 15736,
+        "composition": 474,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -214,7 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "then",
-        "bciAvId": 17705,
+        "composition": 648,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -225,7 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "again",
-        "bciAvId": 12350,
+        "composition": 110,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -236,7 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "or",
-        "bciAvId": 15929,
+        "composition": 488,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

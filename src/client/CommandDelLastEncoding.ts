@@ -1,6 +1,7 @@
 /*
- * Copyright 2023-2025 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -12,9 +13,10 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
-import { changeEncodingContents } from "./GlobalData";
+import { contentSignalMap, combineSymbolId } from "./GlobalData";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle, speak, getContentSignal } from "./GlobalUtils";
+import { deleteAtCaret } from "./CursorActions";
 
 type CommandDelLastEncodingProps = {
   id: string,
@@ -25,24 +27,18 @@ type CommandDelLastEncodingProps = {
 
 export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNode {
   const { id, options } = props;
-  const { label, bciAvId, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
+  const { label, composition, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
-    const { payloads, caretPosition } = changeEncodingContents.value;
-
-    // Nothing to do if:
-    // - there are no symbols (payloads), or
-    // - there are symbols, but the caret is for inserting before the first
-    //   symbol
-    if (payloads.length !== 0 && caretPosition !== -1) {
-      const newEncodingContents = [...changeEncodingContents.value.payloads];
-      newEncodingContents.splice(caretPosition, 1);
-      changeEncodingContents.value = {
-        payloads: newEncodingContents,
-        caretPosition: caretPosition - 1
-      };
+    const contentSignal = getContentSignal(ariaControls);
+    if (!contentSignal) {
+      return;
+    }
+    const updatedContentSignal = deleteAtCaret(contentSignal.value, combineSymbolId);
+    if (updatedContentSignal !== contentSignal.value) {
+      contentSignal.value = updatedContentSignal;
     }
     speak(label);
   };
@@ -54,7 +50,7 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNo
       style="${gridStyles}"
       aria-controls=${ariaControls}
       onClick=${cellClicked}>
-      <${BlissSymbol} bciAvId=${bciAvId} label=${label}/>
+      <${BlissSymbol} composition=${composition} label=${label}/>
     </button>
   `;
 }

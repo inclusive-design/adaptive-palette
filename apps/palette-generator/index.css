@@ -1,0 +1,46 @@
+/*
+  * App-specific styles
+  */
+body#paletteGenerator {
+  background-color: white;
+  margin-left: 1em;
+}
+
+#paletteGeneratorArea {
+  width:50%
+}
+
+#paletteDisplay {
+  border: 2px solid black;
+}
+
+#noErrors {
+  display:none
+}
+
+/*
+  * Needed to override palette button styles.
+  * TODO: modify palette's index.scss to add a class specifically for palette
+  * buttons, something like `button.palette { ... }`.`
+  */
+button.usual {
+  text-transform: none;
+  overflow: visible;
+  font-family: serif;
+  font-size: inherit;
+  margin: 0;
+  padding-top: 0.25em;
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+  padding-bottom: 0.25em;
+  color: #000;
+}
+button.usual:disabled {
+  pointer-events: none;
+}
+button.usual:hover {
+  background-color: darkGray;
+}
+.margin-bottom {
+  margin-bottom: 1em;
+}

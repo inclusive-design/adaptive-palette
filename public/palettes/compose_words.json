@@ -1,0 +1,86 @@
+{
+  "name": "Compose Words",
+  "cells": {
+    "compose-words-entry": {
+      "type": "ContentComposeWordsEntry",
+      "options": {
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 1,
+          "columnSpan": 3
+      }
+    },
+    "command-move-caret-backwards": {
+      "type": "CommandCursorBackward",
+      "options": {
+          "label": "Backward",
+          "composition": [145, ";", 907],
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 4,
+          "columnSpan": 1,
+          "ariaControls": "compose-words-entry"
+      }
+    },
+    "command-move-caret-forwards": {
+      "type": "CommandCursorForward",
+      "options": {
+          "label": "Forward",
+          "composition": [335, ";", 907],
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 5,
+          "columnSpan": 1,
+          "ariaControls": "compose-words-entry"
+      }
+    },
+    "command-del-last-encoding": {
+      "type": "CommandDelLastEncoding",
+      "options": {
+          "label": "Delete",
+          "composition": [939, ";", 907],
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 6,
+          "columnSpan": 1,
+          "ariaControls": "compose-words-entry"
+      }
+    },
+    "command-clear-encoding": {
+      "type": "CommandClearEncoding",
+      "options": {
+          "label": "Delete all",
+          "composition": [939, ";", 907, "//", 117],
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 7,
+          "columnSpan": 1,
+          "ariaControls": "compose-words-entry"
+      }
+    },
+    "toggle-combine-marker": {
+      "type": "ToggleCombineMarker",
+      "options": {
+          "label": "Combine",
+          "composition": 233,
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 8,
+          "columnSpan": 1,
+          "ariaControls": "compose-words-entry"
+      }
+    },
+    "command-add-composition": {
+      "type": "CommandAddComposition",
+      "options": {
+          "label": "Add",
+          "composition": [ 107, ";", 907 ],
+          "rowStart": 1,
+          "rowSpan": 1,
+          "columnStart": 9,
+          "columnSpan": 1,
+          "ariaControls": "compose-words-entry"
+      }
+    }
+  }
+}

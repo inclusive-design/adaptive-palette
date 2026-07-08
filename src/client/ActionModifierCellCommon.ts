@@ -1,6 +1,7 @@
 /*
- * Copyright 2025 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -13,8 +14,8 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
-import { changeEncodingContents } from "./GlobalData";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { INPUT_AREA_ID, COMPOSE_AREA_ID, contentSignalMap, isComposing } from "./GlobalData";
+import { addModifier, generateGridStyle, speak } from "./GlobalUtils";
 import "./ActionModifierCell.scss";
 
 export type ActionModifierCodeCellPropsType = {
@@ -28,61 +29,38 @@ export type ActionModifierCodeCellPropsType = {
  */
 export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType, prepend: boolean): VNode {
   const {
-    columnStart, columnSpan, rowStart, rowSpan, label
+    columnStart, columnSpan, rowStart, rowSpan, label, composition
   } = props.options;
 
-  // Get the modifier BCI AV ID and make sure it's an array.
-  const modifierBciAvId = (
-    typeof props.options.bciAvId === "number" ?
-      [props.options.bciAvId] :
-      props.options.bciAvId
+  // Get the modifier composition and make sure it's an array.
+  const modifierComposition = (
+    typeof composition === "number" ?
+      [composition] :
+      composition
   );
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
-  const disabled = changeEncodingContents.value.caretPosition === -1;
+  const ariaControls = ( isComposing.value ? COMPOSE_AREA_ID : INPUT_AREA_ID);
+  const contentsSignal = contentSignalMap[ariaControls];
+  const disabled = contentsSignal.value.caretPosition === -1;
 
   const cellClicked = () => {
-    // Get the symbol at the caret position in the editing area.
-    const { caretPosition, payloads } = changeEncodingContents.value;
-    const symbolToEdit = payloads[caretPosition];
-    let newBciAvId = (
-      typeof symbolToEdit.bciAvId === "number" ?
-        [symbolToEdit.bciAvId] :
-        symbolToEdit.bciAvId
-    );
-    if (prepend) {
-      newBciAvId = [ ...modifierBciAvId, "/", ...newBciAvId ];
-    }
-    else {
-      newBciAvId = [ ...newBciAvId, "/", ...modifierBciAvId ];
-    }
-    // Push the current modifier information onto the `modifierInfo` of the
-    // `symbolToEdit`, tracking the order in which the modifiers were added.
-    if (!symbolToEdit.modifierInfo) {
-      symbolToEdit.modifierInfo = [];
-    }
-    symbolToEdit.modifierInfo.push({
-      modifierId: modifierBciAvId,
-      modifierGloss: label,
-      isPrepended: prepend
-    });
-    payloads[caretPosition] = {
-      "id": symbolToEdit.id + props.id,
-      "label": `${label} ${symbolToEdit.label}`,
-      "bciAvId": newBciAvId,
-      "modifierInfo": symbolToEdit.modifierInfo
-    };
-    changeEncodingContents.value = {
-      payloads: payloads,
-      caretPosition: caretPosition
-    };
-    speak(`${label} ${symbolToEdit.label}`);
+    const newContents = addModifier(modifierComposition, label, contentsSignal.value, prepend);
+    const { payloads, caretPosition } = newContents;
+    contentsSignal.value = newContents;
+    speak(payloads[caretPosition].label);
   };
 
   return html`
-    <button id="${props.id}" class="actionModifierCell" style="${gridStyles}" onClick=${cellClicked} disabled="${disabled}">
+    <button
+      id="${props.id}"
+      class="actionModifierCell"
+      style="${gridStyles}"
+      onClick=${cellClicked}
+      disabled=${disabled}
+      aria-controls="${ariaControls}">
       <${BlissSymbol}
-        bciAvId=${modifierBciAvId}
+        composition=${modifierComposition}
         label=${label}
         isPresentation=true
       />

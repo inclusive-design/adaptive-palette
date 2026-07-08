@@ -5,7 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "vehicle",
-        "bciAvId": 18010,
+        "composition": 688,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -16,7 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "wheelchair",
-        "bciAvId": 18233,
+        "composition": 701,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -27,11 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "electric wheelchair",
-        "bciAvId": [
-          18233,
-          "/",
-          13918
-        ],
+        "composition": [701, "/", 288],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -42,11 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "bicycle",
-        "bciAvId": [
-          8498,
-          "/",
-          18232
-        ],
+        "composition": [11, "/", 700],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -57,7 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "car",
-        "bciAvId": 13121,
+        "composition": 202,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -68,11 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "taxi",
-        "bciAvId": [
-          13121,
-          "/",
-          15212
-        ],
+        "composition": [202, "/", 426],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -83,7 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "bus",
-        "bciAvId": 13089,
+        "composition": 188,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -94,11 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "train",
-        "bciAvId": [
-          14647,
-          "/",
-          18010
-        ],
+        "composition": [368, "/", 688],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -109,7 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "aeroplane",
-        "bciAvId": 12357,
+        "composition": 115,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -120,7 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "boat,ship",
-        "bciAvId": 12869,
+        "composition": 170,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -131,13 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "hotel, motel",
-        "bciAvId": [
-          14905,
-          "/",
-          16161,
-          "/",
-          17779
-        ],
+        "composition": [392, "/", 513, "/", 667],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -148,7 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "trip",
-        "bciAvId": 17779,
+        "composition": 667,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -159,11 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "outing",
-        "bciAvId": [
-          15189,
-          "/",
-          15943
-        ],
+        "composition": [418, "/", 491],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -174,11 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "ticket",
-        "bciAvId": [
-          15962,
-          "/",
-          14952
-        ],
+        "composition": [497, "/", 402],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -189,7 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "suitcase",
-        "bciAvId": 12618,
+        "composition": 147,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -200,15 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "city",
-        "bciAvId": [
-          14647,
-          "/",
-          14647,
-          "/",
-          14647,
-          "/",
-          14905
-        ],
+        "composition": [368, "/", 368, "/", 368, "/", 392],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -219,7 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "country",
-        "bciAvId": 13423,
+        "composition": 243,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -230,7 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "stuff",
-        "bciAvId": 15431,
+        "composition": 438,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -241,15 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "plastic",
-        "bciAvId": [
-          13158,
-          "/",
-          14647,
-          "/",
-          14133,
-          "/",
-          17717
-        ],
+        "composition": [216, "/", 368, "/", 303, "/", 651],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -260,11 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "metal",
-        "bciAvId": [
-          15431,
-          "/",
-          23150
-        ],
+        "composition": [438, "/", 814],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

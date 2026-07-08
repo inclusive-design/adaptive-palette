@@ -5,11 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "be (to)",
-        "bciAvId": [
-          24443,
-          ";",
-          8993
-        ],
+        "composition": [894, ";", 81],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -20,11 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "was, were",
-        "bciAvId": [
-          24443,
-          ";",
-          9004
-        ],
+        "composition": [894, ";", 92],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -35,13 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "become",
-        "bciAvId": [
-          14390,
-          ";",
-          8993,
-          "/",
-          24443
-        ],
+        "composition": [335, ";", 81, "/", 894],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -52,7 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "want",
-        "bciAvId": 18035,
+        "composition": 2705,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -63,7 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "live",
-        "bciAvId": 15223,
+        "composition": 1947,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -74,11 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "have, has",
-        "bciAvId": [
-          24912,
-          ";",
-          8993
-        ],
+        "composition": [953, ";", 81],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -89,11 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "had",
-        "bciAvId": [
-          24912,
-          ";",
-          9004
-        ],
+        "composition": [953, ";", 92],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -104,11 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "can, be able",
-        "bciAvId": [
-          25520,
-          ";",
-          8993
-        ],
+        "composition": [994, ";", 81],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -119,7 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "must",
-        "bciAvId": 15685,
+        "composition": 2051,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -130,11 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "be called",
-        "bciAvId": [
-          15691,
-          ";",
-          8993
-        ],
+        "composition": [464, ";", 81],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -145,7 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "begin",
-        "bciAvId": 12657,
+        "composition": 1279,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -156,7 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "come",
-        "bciAvId": 13383,
+        "composition": 1440,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -167,7 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "continue",
-        "bciAvId": 13404,
+        "composition": 1454,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -178,7 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "try",
-        "bciAvId": 17787,
+        "composition": 2643,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -189,9 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "stop",
-        "bciAvId": [
-          13935
-        ],
+        "composition": [292],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -202,7 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "get",
-        "bciAvId": 14435,
+        "composition": 1726,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -213,7 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "give",
-        "bciAvId": 14440,
+        "composition": 1729,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -224,7 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "exchange",
-        "bciAvId": 14118,
+        "composition": 1620,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -235,7 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "catch",
-        "bciAvId": 13131,
+        "composition": 1380,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -246,7 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "borrow",
-        "bciAvId": 12877,
+        "composition": 1322,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

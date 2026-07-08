@@ -5,11 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "much, many",
-        "bciAvId": [
-          14647,
-          ";",
-          8998
-        ],
+        "composition": [368, ";", 86],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -20,7 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "more",
-        "bciAvId": 15654,
+        "composition": 2029,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -31,7 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "most",
-        "bciAvId": 15661,
+        "composition": 2035,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -42,7 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "near",
-        "bciAvId": 15697,
+        "composition": 2061,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -53,7 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "different",
-        "bciAvId": 13675,
+        "composition": 262,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -64,7 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "happy",
-        "bciAvId": 14676,
+        "composition": 1780,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -75,7 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "sad",
-        "bciAvId": 16702,
+        "composition": 2304,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -86,7 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "upset",
-        "bciAvId": 17985,
+        "composition": 2671,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -97,7 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "afraid",
-        "bciAvId": 12347,
+        "composition": 1181,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -108,7 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "anxious",
-        "bciAvId": 12398,
+        "composition": 1211,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -119,7 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "good",
-        "bciAvId": 12645,
+        "composition": 1270,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -130,7 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "bad",
-        "bciAvId": 12615,
+        "composition": 1250,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -141,7 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "beautiful",
-        "bciAvId": 12645,
+        "composition": 1270,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -152,7 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "funny",
-        "bciAvId": 14414,
+        "composition": 1715,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -163,7 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "boring",
-        "bciAvId": 24827,
+        "composition": 4759,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -174,7 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "nice",
-        "bciAvId": 15717,
+        "composition": 2076,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -185,7 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "troublesome",
-        "bciAvId": 24821,
+        "composition": 4754,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -196,7 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "communication",
-        "bciAvId": 13390,
+        "composition": 1444,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -207,7 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "uncomfortable",
-        "bciAvId": 17968,
+        "composition": 2657,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -218,11 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "in love",
-        "bciAvId": [
-          15399,
-          ";",
-          8998
-        ],
+        "composition": [431, ";", 86],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

@@ -1,6 +1,7 @@
 /*
- * Copyright 2025 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -13,7 +14,7 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
-import { changeEncodingContents } from "./GlobalData";
+import { INPUT_AREA_ID, COMPOSE_AREA_ID, contentSignalMap, isComposing } from "./GlobalData";
 import { generateGridStyle, speak } from "./GlobalUtils";
 import "./ActionIndicatorCell.scss";
 
@@ -26,7 +27,7 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   const {
     columnStart, columnSpan, rowStart, rowSpan, label
   } = props.options;
-  const removeModifierBciAvId = props.options.bciAvId;
+  const removeModifierComposition = props.options.composition;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
@@ -34,7 +35,9 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   // input field (if any) has a modifier AND if there is more than one symbol in
   // the encoding.
   let disabled = true;
-  const { payloads, caretPosition } = changeEncodingContents.value;
+  const ariaControls =  ( isComposing.value ? COMPOSE_AREA_ID : INPUT_AREA_ID );
+  const contentsSignal = contentSignalMap[ariaControls];
+  const { payloads, caretPosition } = contentsSignal.value;
   if (payloads.length !== 0 && caretPosition !== -1) {
     const caretSymbol = payloads[caretPosition];
     disabled = !caretSymbol.modifierInfo || caretSymbol.modifierInfo.length === 0;
@@ -43,33 +46,33 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   const cellClicked = () => {
     // Get the last symbol in the editing area, and create an initial
     // `newBciAvId` and `newLabel`.
-    const { caretPosition, payloads } = changeEncodingContents.value;
+    const { caretPosition, payloads } = contentsSignal.value;
     const symbolToEdit = payloads[caretPosition];
-    let newBciAvId = (
-      typeof symbolToEdit.bciAvId === "number" ?
-        [symbolToEdit.bciAvId] :
-        symbolToEdit.bciAvId
+    let newComposition = (
+      typeof symbolToEdit.composition === "number" ?
+        [symbolToEdit.composition] :
+        symbolToEdit.composition
     );
     let newLabel = symbolToEdit.label;
 
     // Check for any modifier to remove -- if the symbol has no modifiers,
-    // leave the `newBciAvId` as is.
+    // leave the `newComposition` as is.
     const removeInfo = symbolToEdit.modifierInfo?.pop();
     if (removeInfo) {
       // Either the last modifer added was prepended to the beginning or
       // appended to the end. If it was prepended ...
       if (removeInfo.isPrepended) {
-        // ... the modifier is the first symbol in the `newBciAvId`.  Remove it
+        // ... the modifier is the first symbol in the `newComposition`.  Remove it
         // plus the following "/"
-        newBciAvId = newBciAvId.slice((removeInfo.modifierId as (string|number)[]).length + 1);
+        newComposition = newComposition.slice((removeInfo.modifierId as (string|number)[]).length + 1);
       }
       // If the last modifier added was appended to the end ...
       else {
-        // ... the modifier is the last symbol in the `newBciAvId`.  Remove it
+        // ... the modifier is the last symbol in the `newComposition`.  Remove it
         // from the end of the array.  Note: the "-1" is to account for the
-        // "/" preceding the modfier's bciAvId.
-        newBciAvId = newBciAvId.slice(
-          0, newBciAvId.length - (removeInfo.modifierId as (string|number)[]).length - 1
+        // "/" preceding the modifier's composition.
+        newComposition = newComposition.slice(
+          0, newComposition.length - (removeInfo.modifierId as (string|number)[]).length - 1
         );
       }
       newLabel = newLabel.replace(removeInfo.modifierGloss, "").trim();
@@ -77,10 +80,10 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
     payloads[caretPosition] = {
       "id": symbolToEdit.id,
       "label": newLabel,
-      "bciAvId": newBciAvId,
+      "composition": newComposition,
       "modifierInfo": symbolToEdit.modifierInfo
     };
-    changeEncodingContents.value = {
+    contentsSignal.value = {
       payloads: payloads,
       caretPosition: caretPosition
     };
@@ -88,9 +91,9 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   };
 
   return html`
-    <button id="${props.id}" class="actionIndicatorCell" style="${gridStyles}" onClick=${cellClicked} disabled="${disabled}">
+    <button id="${props.id}" class="actionIndicatorCell" style="${gridStyles}" onClick=${cellClicked} disabled=${disabled}>
       <${BlissSymbol}
-        bciAvId=${removeModifierBciAvId}
+        composition=${removeModifierComposition}
         label=${label}
         isPresentation=true
       />

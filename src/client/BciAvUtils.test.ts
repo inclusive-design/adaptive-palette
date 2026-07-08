@@ -1,6 +1,7 @@
 /*
- * Copyright 2025-2026 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -10,7 +11,7 @@
  */
 
 import { initAdaptivePaletteGlobals } from "./GlobalData";
-import { findBciAvId, findCompositionsUsingId } from "./BciAvUtils";
+import { findSymbolByGloss, findSymbolsContainingBciAvId } from "./BciAvUtils";
 
 describe("BciUtils module", (): void => {
 
@@ -18,39 +19,39 @@ describe("BciUtils module", (): void => {
   const BARK = "bark";
   const expectedBarkResults = [
     {
+      id: 3274,
       bciAvId: 22311,
       label: BARK,
-      composition: [16420, "/", 17783 ],
-      fullComposition: undefined
+      composition: [548, "/", 669 ],
     }, {
+      id: 4168,
       bciAvId: 24020,
-      label: `${BARK}-(to)`,
-      composition: [15666, ";", 8993, "/", 12380 ],
-      fullComposition: undefined
+      label: "to bark, to woof",
+      composition: [457, ";", 81, "/", 124 ],
     }
   ];
   const SPACE_ID = 17221;
   const expectedSpaceIdResults = [
     {
+      id: 611,
       bciAvId: 17221,
-      label: "space,dimension",
+      label: "space, dimension",
       composition: undefined,
-      fullComposition: undefined
     }, {
+      id: 5402,
       bciAvId: 25790,
       label: "sculpture",
-      composition: [ 23583, ";", 9009, "/", "RK:-2", "/", 14164, "/", 8499, "/", 17221 ],
-      fullComposition: [ 23583, ";", 9009, "/", "RK:-2", "/", 14164, "/", 8499, "/", 17221 ]
+      composition: [ 840, ";", 97, "/", "RK:-2", "/", 313, "/", 12, "/", 611 ],
     }
   ];
   // Search for the single symbol for male cousin.
-  const MALE_COUSIN = "cousin_(male)";
+  const MALE_COUSIN = "cousin (male)";
   const expectedCousionResults = [
     {
+      id: 5066,
       bciAvId: 25279,
       label: MALE_COUSIN,
-      composition: [17209, "/", 15912, "/", 8498, "/", 15968],
-      fullComposition: undefined
+      composition: [607, "/", 479, "/", 11, "/", 500],
     }
   ];
   const NO_SUCH_GLOSS = "noSuchGloss";
@@ -63,23 +64,23 @@ describe("BciUtils module", (): void => {
   }, 7000);
 
   test("Find multiple 'bark'", (): void => {
-    expect(findBciAvId(BARK)).toStrictEqual(expectedBarkResults);
+    expect(findSymbolByGloss(BARK)).toStrictEqual(expectedBarkResults);
   });
 
   test("Find single male cousin", (): void => {
-    expect(findBciAvId(MALE_COUSIN)).toStrictEqual(expectedCousionResults);
+    expect(findSymbolByGloss(MALE_COUSIN)).toStrictEqual(expectedCousionResults);
   });
 
   test("Search when no matching gloss", (): void => {
-    expect(findBciAvId(NO_SUCH_GLOSS)).toStrictEqual([]);
+    expect(findSymbolByGloss(NO_SUCH_GLOSS)).toStrictEqual([]);
   });
 
   test("Search based on a BCI AV ID", (): void => {
-    expect(findCompositionsUsingId(SPACE_ID)).toStrictEqual(expectedSpaceIdResults);
+    expect(findSymbolsContainingBciAvId(SPACE_ID)).toStrictEqual(expectedSpaceIdResults);
   });
 
   test("Search with invalid BCI AV ID", (): void => {
-    expect(findCompositionsUsingId(NO_SUCH_ID)).toStrictEqual([]);
+    expect(findSymbolsContainingBciAvId(NO_SUCH_ID)).toStrictEqual([]);
   });
 
 });

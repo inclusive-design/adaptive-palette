@@ -3,120 +3,120 @@
   "cells": {
     "aunt-30a32c78-56fe-4622-9fba-0416b68d72fc": {
       "type": "ActionCodeCell",
-        "options": {
-          "label": "Aunt",
-          "bciAvId": 12596,
-          "rowStart": 3,
-          "rowSpan": 1,
-          "columnStart": 1,
-          "columnSpan": 5
-        }
+      "options": {
+        "label": "Aunt",
+        "composition": 137,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 5
+      }
     },
     "mother-30a32c78-56fe-4622-9fba-0416b68d72fc": {
       "type": "ActionCodeCell",
-        "options": {
-          "label": "Mother",
-          "bciAvId": 15662,
-          "rowStart": 3,
-          "rowSpan": 1,
-          "columnStart": 6,
-          "columnSpan": 5
-        }
+      "options": {
+        "label": "Mother",
+        "composition": 455,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 6,
+        "columnSpan": 5
+      }
     },
     "cousinF-30a32c78-56fe-4622-9fba-0416b68d72fc": {
       "type": "ActionCodeCell",
-        "options": {
-          "label": "Cousin",
-          "bciAvId": 25280,
-          "rowStart": 3,
-          "rowSpan": 1,
-          "columnStart": 11,
-          "columnSpan": 4
-        }
+      "options": {
+        "label": "Cousin",
+        "composition": 5067,
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 11,
+        "columnSpan": 4
+      }
     },
     "sister-30a32c78-56fe-4622-9fba-0416b68d72fc": {
       "type": "ActionCodeCell",
-        "options": {
-          "label": "Sister",
-          "bciAvId":  16994 ,
-          "rowStart": 4,
-          "rowSpan": 1,
-          "columnStart": 1,
-          "columnSpan": 5
-        }
+      "options": {
+        "label": "Sister",
+        "composition": 2413,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 5
+      }
     },
     "me-30a32c78-56fe-4622-9fba-0416b68d72fc": {
       "type": "ActionCodeCell",
-        "options": {
-          "label": "Me",
-          "bciAvId":  14916,
-          "rowStart": 4,
-          "rowSpan": 1,
-          "columnStart": 6,
-          "columnSpan": 5
-        }
+      "options": {
+        "label": "Me",
+        "composition": 1840,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 6,
+        "columnSpan": 5
+      }
     },
     "brother-30a32c78-56fe-4622-9fba-0416b68d72fc": {
       "type": "ActionCodeCell",
-        "options": {
-          "label": "Brother",
-          "bciAvId":  12909,
-          "rowStart": 4,
-          "rowSpan": 1,
-          "columnStart": 11,
-          "columnSpan": 4
-        }
+      "options": {
+        "label": "Brother",
+        "composition": 1344,
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 11,
+        "columnSpan": 4
+      }
     },
     "cousinM-30a32c78-56fe-4622-9fba-0416b68d72fc": {
       "type": "ActionCodeCell",
-        "options": {
-          "label": "Cousin",
-          "bciAvId":  25279,
-          "rowStart": 5,
-          "rowSpan": 1,
-          "columnStart": 1,
-          "columnSpan": 5
-        }
+      "options": {
+        "label": "Cousin",
+        "composition": 5066,
+        "rowStart": 5,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 5
+      }
     },
     "father-30a32c78-56fe-4622-9fba-0416b68d72fc": {
       "type": "ActionCodeCell",
-        "options": {
-          "label": "Father",
-          "bciAvId":  14157,
-          "rowStart": 5,
-          "rowSpan": 1,
-          "columnStart": 6,
-          "columnSpan": 5
-        }
+      "options": {
+        "label": "Father",
+        "composition": 312,
+        "rowStart": 5,
+        "rowSpan": 1,
+        "columnStart": 6,
+        "columnSpan": 5
+      }
     },
     "uncle-30a32c78-56fe-4622-9fba-0416b68d72fc": {
       "type": "ActionCodeCell",
-        "options": {
-          "label": "Uncle",
-          "bciAvId":  17967,
-          "rowStart": 5,
-          "rowSpan": 1,
-          "columnStart": 11,
-          "columnSpan": 4
-        }
+      "options": {
+        "label": "Uncle",
+        "composition": 675,
+        "rowStart": 5,
+        "rowSpan": 1,
+        "columnStart": 11,
+        "columnSpan": 4
+      }
     },
     "bark-5c0e4a85-ccc0-4b43-8b89-dc54ac739543": {
       "type": "ActionCodeCell",
-        "options": {
-          "label": "Bark",
-          "bciAvId":  [ 15666, ";", 8993, "/", 12380 ],
-          "rowStart": 7,
-          "rowSpan": 1,
-          "columnStart": 1,
-          "columnSpan": 2
-        }
+      "options": {
+        "label": "Bark",
+        "composition": [457, ";", 81, "/", 124],
+        "rowStart": 7,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 2
+      }
     },
     "people-30a32c78-56fe-4622-9fba-0416b68d72fc": {
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "People",
         "branchTo": "People",
-        "bciAvId": 16161,
+        "composition": 513,
         "rowStart": 8,
         "rowSpan": 1,
         "columnStart": 1,

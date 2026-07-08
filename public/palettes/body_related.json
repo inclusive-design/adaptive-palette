@@ -5,9 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "body",
-        "bciAvId": [
-          12870
-        ],
+        "composition": [171],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -18,7 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "head",
-        "bciAvId": 14689,
+        "composition": 376,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -29,9 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "hair",
-        "bciAvId": [
-          14661
-        ],
+        "composition": [372],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -42,7 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "ear",
-        "bciAvId": 13894,
+        "composition": 278,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -53,7 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "eye",
-        "bciAvId": 14133,
+        "composition": 303,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -64,7 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "nose",
-        "bciAvId": 15732,
+        "composition": 473,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -75,7 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "mouth",
-        "bciAvId": 15666,
+        "composition": 457,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -86,7 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "teeth",
-        "bciAvId": 17517,
+        "composition": 644,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -97,9 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "neck",
-        "bciAvId": [
-          15699
-        ],
+        "composition": [465],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -110,7 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "hand",
-        "bciAvId": 14667,
+        "composition": 374,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -121,7 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "stomach",
-        "bciAvId": 17265,
+        "composition": 628,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -132,9 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "back (body)",
-        "bciAvId": [
-          12609
-        ],
+        "composition": [143],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -145,7 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "buttocks",
-        "bciAvId": 13097,
+        "composition": 194,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -156,7 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "leg",
-        "bciAvId": 15188,
+        "composition": 417,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -167,7 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "foot",
-        "bciAvId": 14379,
+        "composition": 330,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -178,7 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "arm",
-        "bciAvId": 12577,
+        "composition": 132,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -189,7 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "hug",
-        "bciAvId": 14909,
+        "composition": 1834,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -200,9 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "massage",
-        "bciAvId": [
-          24816
-        ],
+        "composition": [106, ";", 81, "/", "RK:-2", "/", 374, "/", 718],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -213,7 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "makeup",
-        "bciAvId": 15413,
+        "composition": 1971,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -224,7 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "medicine",
-        "bciAvId": 15448,
+        "composition": 1996,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

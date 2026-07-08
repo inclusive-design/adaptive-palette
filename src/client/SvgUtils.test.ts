@@ -1,6 +1,7 @@
 /*
- * Copyright 2023-2025 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -8,211 +9,181 @@
  * You may obtain a copy of the License at
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
-import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
+import { initAdaptivePaletteGlobals } from "./GlobalData";
 import {
-  bciToBlissaryId, bciAvIdToString, makeBciAvIdType, isIndicatorId,
-  findIndicators, isModifierId, findClassifierFromLeft, findBciAvSymbol,
-  decomposeBciAvId, BLISSARY_PATTERN_KEY, BCIAV_PATTERN_KEY,
-  getSvgElement, getSvgMarkupString,
+  compositionToBstr, bstrToComposition, isIndicator,
+  findIndicators, isModifier, findClassifierFromLeft, findSymbolByBciAvId,
+  getResolvedComposition, getSvgElement, getSvgMarkupString,
 } from "./SvgUtils";
 
 describe("SvgUtils module", (): void => {
-  const singleBciAvId = 23409;                        // Attachment
+  const singleId = 823;                             // CONJ.
   const expectedString = "B823";
 
-  const bciAvIdArray = [13639, "/", 15736 ];          // Today
-  const expectedConcatenation = "B258/B474";
+  const idArray = [ 106, "/", 12 ];                 // VERB+EN
+  const expectedConcatenation = "B106/B12";
 
-  const invalidBciAvId = 1;
+  const invalidId = 0;
 
-  const reviveBlissarySvgBuilderStr = "B206;B81/RK:-2/B473/B457";
-  const expectedBciAvIdRevive = [
-    13134, ";", 8993, "/", "RK:-2", "/", 15732, "/", 15666
+  const mixedSeparatorsBstr = "B206;B81/RK:-2/B473/B457";
+  const expectedMixedSeparatorsComposition = [
+    206, ";", 81, "/", "RK:-2", "/", 473, "/", 457
   ];
-  const reviveBciSvgBuilderStr = "13134;8993/RK:-2/15732/15666";
 
-  const badBciSvgBuilderStr       = "asdffr;1214343";
-  const badBlissarySvgBuilderStr  = "asdffr;B1214343";
-  const expectBciAvTypeBadResult: (string|number)[]  = [];
+  const abcBstr = "Xa/Xb/Xc";       // "a b c"
+  const expectedAbcComposition = [ "Xa", "/", "Xb", "/", "Xc" ];
 
-  const abcBlissarySvgBuilderStr = "Xa/Xb/Xc";        // "a b c"
-  const abcBciAvSvgBuilderStr    = "Xa/Xb/Xc";        // "a b c"
-  const expectedBciAvIdAbc = [ "Xa", "/", "Xb", "/", "Xc" ];
+  const multiWordBstr = "B2505//B348/B81/B86";
+  const expectedMultiWordComposition = [ 2505, "//", 348, "/", 81, "/", 86 ];
 
-  const multiWordBlissaryBuilderStr = "B2505//B348/B81/B86";
-  const multiWordBciAvIdBuilderStr = "17448//14430/8993/8998";
-  const expectedMultiWordBciAvid = [ 17448, "//", 14430, "/", 8993,  "/", 8998 ];
+  const doubleSemicolonBStr = "B206;B81/RK:-2/B473/B457;;B5996;;B99";
+  const expectedDoubleSemicolonComposition = [
+    206, ";", 81, "/", "RK:-2", "/", 473, "/", 457, ";;", 5996, ";;", 99
+  ];
 
-  const indicatorId = 8999;                           // "future action" indicator
-  const nonIndicatorId = 12334;                       // "action" word
-  const modifierId = 8515;                            // "5" (5 items or 5th)
-  const nonModifierId = 28043;                        // "continuous" indicator
-  const dontKnow = [ 15161, "/", 15733];
-  const fullDontKnow = [15162,";",8993,"/",15474,"/",14947];
-  const noHasNoModifiers = [ 15474, "/", 14947, "/", 14947 ]; // -!!
+  const hasAkKerningBStr = "B206;B81/AK:-2/B473/RK:-2/B457;;B5996";
+  const hasAkKerningComposition = [
+    206, ";", 81, "/", "AK:-2", "/", 473, "/", "RK:-2", "/", 457, ";;", 5996
+  ];
 
-  // Gloss for symbol is "remove indicator".  The `shortTwoWordBciAvId` uses
-  // the single BCI AV ID for the "remove" symbol.
-  const twoWordBciAvIdString = "17449;8993//14430/8993/8998";
-  const twoWordBlissaryString = "B634;B81//B348/B81/B86";
-  const twoWordBciAvId = [ 17449, ";", 8993, "//", 14430, "/", 8993, "/", 8998 ];
-  const shortTwoWordBciAvId = [ 17448, "//", 14430, "/", 8993, "/", 8998 ];
+  const indicatorId = 87;                            // "future action" indicator (bciAvId 8999)
+  const nonIndicatorId = 105;                        // "action" word (bciAvId 12334)
+  const modifierId = 24;                             // "5" (bciAvId 8515)
+  const nonModifierId = 903;                         // "continuous" indicator (bciAvId 28043)
 
-  // Github test runs suggested that more that 5000 msec was needed for these
-  // tests, so increased timeout to 7000.
+  const noHasNoModifiers = [ 449, "/", 401, "/", 401 ]; // IDs for bciAvId 15474, 14947
+
+  // Gloss for symbol is "remove indicator".
+  const twoWordIdString = "B634;B81//B348/B81/B86";
+  const twoWordId = [ 634, ";", 81, "//", 348, "/", 81, "/", 86 ];
+
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
   }, 7000);
 
-  test("Retrieve blissary id from BCI-AV-ID", (): void => {
-    const { blissaryIdMap } = adaptivePaletteGlobals;
-    expect(blissaryIdMap).toBeDefined();
-
-    if (!blissaryIdMap) {
-      throw new Error("blissaryIdMap is not defined in adaptivePaletteGlobals");
-    }
-
-    // Use the 100th entry in the map for testing.  There is nothing special
-    // about the 100th entry.  Just as good as any.
-    const blissaryIdMapEntry = blissaryIdMap[100];
-    if (!blissaryIdMapEntry) {
-      throw new Error("blissaryIdMapEntry at index 100 is undefined");
-    }
-
-    const result = bciToBlissaryId(blissaryIdMapEntry.bciAvId);
-    expect(result.blissaryId).toBe(blissaryIdMapEntry.blissaryId);
-  });
-
-  test("No blissary id for unknown BCI-AV-ID", (): void => {
-    expect(bciToBlissaryId(invalidBciAvId)).toBe(undefined);
-  });
-
   test("Create svg builder argument", (): void => {
-    let result = bciAvIdToString(singleBciAvId);
+    let result = compositionToBstr(singleId);
     expect(result).toBe(expectedString);
 
-    result = bciAvIdToString(bciAvIdArray);
+    result = compositionToBstr(idArray);
     expect(result).toBe(expectedConcatenation);
   });
 
-  test("Unknown BCI-AV-ID", (): void => {
-    expect(() => { bciAvIdToString(invalidBciAvId); }).toThrow();
+  test("Unknown id produces empty-ish SVG", (): void => {
+    expect(() => { compositionToBstr(invalidId); }).not.toThrow();
+    // invalidId=0 produces "B0" which BlissSVGBuilder may reject — test via getSvgMarkupString
+    expect(getSvgMarkupString(invalidId)).not.toBeDefined();
   });
 
-  test("Create a BciAvIdType from a Blissry SVG builder string", (): void => {
-    expect(makeBciAvIdType(reviveBlissarySvgBuilderStr)).toEqual(expectedBciAvIdRevive);
-    expect(makeBciAvIdType(abcBlissarySvgBuilderStr)).toEqual(expectedBciAvIdAbc);
-    expect(makeBciAvIdType(multiWordBlissaryBuilderStr)).toEqual(expectedMultiWordBciAvid);
-    // Using blissary pattern key, explicitly
-    expect(makeBciAvIdType(reviveBlissarySvgBuilderStr, BLISSARY_PATTERN_KEY)).toEqual(expectedBciAvIdRevive);
-    expect(makeBciAvIdType(abcBlissarySvgBuilderStr, BLISSARY_PATTERN_KEY)).toEqual(expectedBciAvIdAbc);
-    expect(makeBciAvIdType(multiWordBlissaryBuilderStr, BLISSARY_PATTERN_KEY)).toEqual(expectedMultiWordBciAvid);
+  test("Create a SymbolCompositionType from a Blissary SVG builder string", (): void => {
+    expect(bstrToComposition(mixedSeparatorsBstr)).toEqual(expectedMixedSeparatorsComposition);
+    expect(bstrToComposition(abcBstr)).toEqual(expectedAbcComposition);
+    expect(bstrToComposition(multiWordBstr)).toEqual(expectedMultiWordComposition);
+    expect(bstrToComposition(doubleSemicolonBStr)).toEqual(expectedDoubleSemicolonComposition);
+    expect(bstrToComposition(hasAkKerningBStr)).toEqual(hasAkKerningComposition);
   });
 
-  test("Create a BciAvIdType from a BCI-AV SVG builder string", (): void => {
-    expect(makeBciAvIdType(reviveBciSvgBuilderStr, BCIAV_PATTERN_KEY)).toEqual(expectedBciAvIdRevive);
-    expect(makeBciAvIdType(abcBciAvSvgBuilderStr, BCIAV_PATTERN_KEY)).toEqual(expectedBciAvIdAbc);
-    expect(makeBciAvIdType(multiWordBciAvIdBuilderStr, BCIAV_PATTERN_KEY)).toEqual(expectedMultiWordBciAvid);
+  test("Check bstrToComposition() when passing an invalid input", (): void => {
+    expect(bstrToComposition("asdffr;B1214343")).toEqual([]);
+    expect(bstrToComposition("")).toEqual([]);
   });
 
-  test("Check makeBciAvIdType() when passing an invalid input", (): void => {
-    expect(makeBciAvIdType(badBciSvgBuilderStr, BCIAV_PATTERN_KEY)).toEqual(expectBciAvTypeBadResult);
-    expect(makeBciAvIdType(badBlissarySvgBuilderStr, BLISSARY_PATTERN_KEY)).toEqual(expectBciAvTypeBadResult);
-    expect(makeBciAvIdType("", BCIAV_PATTERN_KEY)).toEqual(expectBciAvTypeBadResult);
-    expect(makeBciAvIdType("", BLISSARY_PATTERN_KEY)).toEqual(expectBciAvTypeBadResult);
-  });
-
-  test("Check for indicator or modifier BCI-AV-ID", (): void => {
-    expect(isIndicatorId(indicatorId)).toEqual(true);
-    expect(isIndicatorId(nonIndicatorId)).toEqual(false);
-    expect(isModifierId(modifierId)).toEqual(true);
-    expect(isModifierId(nonModifierId)).toEqual(false);
+  test("Check for indicator or modifier ID", (): void => {
+    expect(isIndicator(indicatorId)).toEqual(true);
+    expect(isIndicator(nonIndicatorId)).toEqual(false);
+    expect(isModifier(modifierId)).toEqual(true);
+    expect(isModifier(nonModifierId)).toEqual(false);
   });
 
   test("Find indicator positions", (): void => {
-    // The test BCI-AV-ID `expectedBciAvIdRevive` contains an action indicator
-    // over the first symbol "cause".
-    let indicatorPositions = findIndicators(expectedBciAvIdRevive);
+    // `expectedMixedSeparatorsComposition` contains an action indicator (id=81) over the first symbol.
+    let indicatorPositions = findIndicators(expectedMixedSeparatorsComposition);
     expect(indicatorPositions.length).toEqual(1);
     expect(indicatorPositions).toEqual([2]);
 
-    // `expectedBciAvIdAbc` has no indictors.  `singleBciAvId` is a single
-    // number BCI-AV-ID and has no indicators.
-    indicatorPositions = findIndicators(expectedBciAvIdAbc);
+    // `expectedAbcComposition` has no indicators.  `singleId` is a single number and has no indicators.
+    indicatorPositions = findIndicators(expectedAbcComposition);
     expect(indicatorPositions.length).toEqual(0);
-    indicatorPositions = findIndicators(singleBciAvId);
+    indicatorPositions = findIndicators(singleId);
     expect(indicatorPositions.length).toEqual(0);
   });
 
   test("Find first symbol after a modifier", (): void => {
-    // Prefix the `expectedBciAvIdRevive` with the `modifierId` modifier.
-    let modifiedRevive = [modifierId, "/", ...expectedBciAvIdRevive];
+    // Prefix the `expectedMixedSeparatorsComposition` with the `modifierId` modifier.
+    let modifiedRevive = [modifierId, "/", ...expectedMixedSeparatorsComposition];
     expect(findClassifierFromLeft(modifiedRevive)).toEqual(2);
 
     // Prefix again with two modifiers and a modifier suffix.
-    modifiedRevive = [modifierId, "/", modifierId, "/", ...expectedBciAvIdRevive, "/", modifierId];
+    modifiedRevive = [modifierId, "/", modifierId, "/", ...expectedMixedSeparatorsComposition, "/", modifierId];
     expect(findClassifierFromLeft(modifiedRevive)).toEqual(4);
 
-    // The original `expectedBciAvIdRevive` has no modifiers; also a single
-    // BCI-AV-ID has no modifiers (or it is one).
-    expect(findClassifierFromLeft(expectedBciAvIdRevive)).toEqual(0);
-    expect(findClassifierFromLeft(singleBciAvId)).toEqual(0);
+    // The original `expectedMixedSeparatorsComposition` has no modifiers; also a single id has no modifiers.
+    expect(findClassifierFromLeft(expectedMixedSeparatorsComposition)).toEqual(0);
+    expect(findClassifierFromLeft(singleId)).toEqual(0);
 
-    // The symbol for "no", which looks like -!!, appears to be made of all
-    // modifier symbols, but the negative sign is the classifier.  So,
-    // `findClassifierFromLeft()` should return zero in this case.
+    // The symbol for "no" is made of all modifier symbols, but the negative sign
+    // is the classifier, so `findClassifierFromLeft()` should return zero.
     expect(findClassifierFromLeft(noHasNoModifiers)).toEqual(0);
   });
 
   test("Check finding full symbol information", (): void => {
-    let actual = findBciAvSymbol(singleBciAvId);
-    expect(Number(actual?.id)).toBe(singleBciAvId);
+    let actual = findSymbolByBciAvId(23409);   // CONJ. bciAvId
+    expect(actual?.bciAvId).toBe(23409);
 
-    // Passing an invalid BCI AV Identifier or the array form of BciAvIdType
-    // should return `undefined`
-    actual = findBciAvSymbol(invalidBciAvId);
-    expect(actual).toEqual(undefined);
-    actual = findBciAvSymbol(bciAvIdArray);
+    // Passing an invalid BCI AV ID should return `undefined`
+    actual = findSymbolByBciAvId(1);
     expect(actual).toEqual(undefined);
   });
 
-  test("Deompositon checks for single ID, invalid ID, and array", (): void => {
-    expect(decomposeBciAvId(singleBciAvId)).toEqual([singleBciAvId]);
-    expect(decomposeBciAvId(invalidBciAvId)).toEqual(undefined);
-    expect(decomposeBciAvId(bciAvIdArray)).toEqual(bciAvIdArray);
-    expect(decomposeBciAvId(dontKnow)).toEqual(fullDontKnow);
+  test("Get resolved composition", (): void => {
+    expect(getResolvedComposition(99)).toEqual(99);
+    expect(getResolvedComposition(4749)).toEqual([106, ";", 81, "/", "RK:-2", "/", 374, "/", 718]);
+    expect(getResolvedComposition([1903, "/", 449, "/", 401 ])).toEqual([412, ";", 81, "/", 449, "/", 401 ]);
+    expect(getResolvedComposition([])).toEqual([]);
+    expect(getResolvedComposition(99999)).toEqual(null);
+    expect(getResolvedComposition([99999])).toEqual(null);
+    expect(getResolvedComposition([449, "/", 99999])).toEqual(null);
+    expect(getResolvedComposition([449, "/", 99999, "/", 449])).toEqual(null);
   });
 
-  test("Get SVG Element and markup for single BCI AV ID", (): void => {
-    expect(getSvgElement(singleBciAvId)).toBeDefined();
-    expect(getSvgMarkupString(singleBciAvId)).toBeDefined();
+  test("Get SVG Element and markup for single ID", (): void => {
+    expect(getSvgElement(singleId)).toBeDefined();
+    expect(getSvgMarkupString(singleId)).toBeDefined();
   });
 
-  test("Get SVG Element and markup for invalidBciAvId BCI AV ID", (): void => {
-    expect(getSvgElement(invalidBciAvId)).not.toBeDefined();
-    expect(getSvgMarkupString(invalidBciAvId)).not.toBeDefined();
+  test("Get SVG Element and markup for invalid id", (): void => {
+    expect(getSvgElement(invalidId)).not.toBeDefined();
+    expect(getSvgMarkupString(invalidId)).not.toBeDefined();
   });
 
-  test("Get SVG Element and markup for BCI AV ID using slash, semi-colon, and kern codes", (): void => {
-    expect(getSvgElement(expectedBciAvIdRevive)).toBeDefined();
-    expect(getSvgMarkupString(expectedBciAvIdRevive)).toBeDefined();
+  test("Get SVG Element and markup for id array using slash, semi-colon, and kern codes", (): void => {
+    expect(getSvgElement(expectedMixedSeparatorsComposition)).toBeDefined();
+    expect(getSvgMarkupString(expectedMixedSeparatorsComposition)).toBeDefined();
   });
 
-  test("Get SVG Element and markup for BCI AV ID using double-slash code", (): void => {
-    expect(getSvgElement(expectedMultiWordBciAvid)).toBeDefined();
-    expect(getSvgMarkupString(expectedMultiWordBciAvid)).toBeDefined();
+  test("Get SVG Element and markup for id array using double-slash code", (): void => {
+    expect(getSvgElement(expectedMultiWordComposition)).toBeDefined();
+    expect(getSvgMarkupString(expectedMultiWordComposition)).toBeDefined();
   });
 
-  test("Get SVG Element and markup for BCI AV ID using X code", (): void => {
-    expect(getSvgElement(expectedMultiWordBciAvid)).toBeDefined();
-    expect(getSvgMarkupString(expectedMultiWordBciAvid)).toBeDefined();
+  test("Get SVG Element and markup for id array using X code", (): void => {
+    expect(getSvgElement(expectedMultiWordComposition)).toBeDefined();
+    expect(getSvgMarkupString(expectedMultiWordComposition)).toBeDefined();
   });
 
   test("Multiword using '//'", (): void => {
-    expect(bciAvIdToString(twoWordBciAvId)).toBe(twoWordBlissaryString);
-    expect(makeBciAvIdType(twoWordBciAvIdString, BCIAV_PATTERN_KEY)).toEqual(twoWordBciAvId);
-    expect(makeBciAvIdType(twoWordBlissaryString, BLISSARY_PATTERN_KEY)).toEqual(twoWordBciAvId);
-    expect(makeBciAvIdType(twoWordBlissaryString)).toEqual(twoWordBciAvId);
-    expect(decomposeBciAvId(shortTwoWordBciAvId)).toEqual(twoWordBciAvId);
+    expect(compositionToBstr(twoWordId)).toBe(twoWordIdString);
+    expect(bstrToComposition(twoWordIdString)).toEqual(twoWordId);
+  });
+
+  test("Get SVG Element and markup for composite symbol (isCharacter: false)", (): void => {
+    // ID 1758 = "group (people)", isCharacter: false, composition: [368, "/", 513].
+    // BlissSVGBuilder does not have 1758 in its database; without resolving via
+    // symbol.composition, it returns an empty SVG (no paths).
+    const svgElement = getSvgElement(1758);
+    expect(svgElement).toBeDefined();
+    // Verify the SVG has actual content (not an empty <g>)
+    expect(svgElement?.querySelector("path, use, rect, circle, line, polyline, polygon")).not.toBe(null);
+    expect(getSvgMarkupString(1758)).toBeDefined();
   });
 });

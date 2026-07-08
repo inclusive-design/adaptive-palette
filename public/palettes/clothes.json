@@ -5,7 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "clothing",
-        "bciAvId": 13366,
+        "composition": 229,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -16,7 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "coat, sweater",
-        "bciAvId": 13371,
+        "composition": 1432,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -27,7 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "underwear",
-        "bciAvId": 17974,
+        "composition": 2662,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -38,7 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "shirt, blouse",
-        "bciAvId": 16957,
+        "composition": 2383,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -49,7 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "dress",
-        "bciAvId": 13876,
+        "composition": 1566,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -60,7 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "pants",
-        "bciAvId": 15961,
+        "composition": 2131,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -71,7 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "stockings",
-        "bciAvId": 17264,
+        "composition": 2489,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -82,7 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "shoes",
-        "bciAvId": 16959,
+        "composition": 2385,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -93,7 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "hat, cap",
-        "bciAvId": 14682,
+        "composition": 1786,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -104,7 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "helmet",
-        "bciAvId": 21615,
+        "composition": 3091,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -115,7 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "gloves",
-        "bciAvId": 14446,
+        "composition": 1733,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -126,7 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "pillow",
-        "bciAvId": 16177,
+        "composition": 522,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -137,7 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "blanket",
-        "bciAvId": 12854,
+        "composition": 1306,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -148,7 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "napkin",
-        "bciAvId": 15692,
+        "composition": 2056,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -159,7 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "bib",
-        "bciAvId": 12833,
+        "composition": 1289,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -170,7 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "money",
-        "bciAvId": 15484,
+        "composition": 451,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -181,7 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "clock",
-        "bciAvId": [ 17732, ";", 9009 ],
+        "composition": [655, ";", 97],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -192,7 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "glasses",
-        "bciAvId": 14443,
+        "composition": 353,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -203,7 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "brush",
-        "bciAvId": 12912,
+        "composition": 184,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -214,7 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "jewellery",
-        "bciAvId": 24826,
+        "composition": 4758,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

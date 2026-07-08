@@ -1,6 +1,7 @@
 /*
- * Copyright 2026 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -14,7 +15,7 @@ import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 import { vi } from "vitest";
 
-import { NO_BCI_AV_ID } from "./SentenceCompletionsPalette";
+import { NO_SYMBOL_ID } from "./SentenceCompletionsPalette";
 import { ActionTextCell } from "./ActionTextCell";
 import { speak } from "./GlobalUtils";
 
@@ -35,7 +36,7 @@ describe("ActionTextCell tests", (): void => {
       rowSpan: "2",
       columnStart: "2",
       columnSpan: "1",
-      bciAvId: NO_BCI_AV_ID
+      composition: NO_SYMBOL_ID
     }
   };
   const TEST_CELL_ID = "unique-test-uuid";

@@ -5,7 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "thing",
-        "bciAvId": 9009,
+        "composition": 97,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -16,7 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "paper",
-        "bciAvId": 15962,
+        "composition": 497,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -27,7 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "book",
-        "bciAvId": 12875,
+        "composition": 173,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -38,13 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "magazine",
-        "bciAvId": [
-          12875,
-          "/",
-          14647,
-          "/",
-          17732
-        ],
+        "composition": [173, "/", 368, "/", 655],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -55,13 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "calendar",
-        "bciAvId": [
-          15962,
-          "/",
-          13639,
-          "/",
-          15649
-        ],
+        "composition": [497, "/", 258, "/", 452],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -72,7 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "letter",
-        "bciAvId": 15198,
+        "composition": 421,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -83,11 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "e-mail",
-        "bciAvId": [
-          15198,
-          "/",
-          23476
-        ],
+        "composition": [421, "/", 829],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -98,7 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "parcel",
-        "bciAvId": 15966,
+        "composition": 499,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -109,11 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "CD",
-        "bciAvId": [
-          25601,
-          "/",
-          13894
-        ],
+        "composition": [1075, "/", 278],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -124,13 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "movie disc",
-        "bciAvId": [
-          25601,
-          "/",
-          14133,
-          "/",
-          13894
-        ],
+        "composition": [1075, "/", 303, "/", 278],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -141,13 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "radio",
-        "bciAvId": [
-          13934,
-          "/",
-          13894,
-          "/",
-          13918
-        ],
+        "composition": [291, "/", 278, "/", 288],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -158,15 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "TV",
-        "bciAvId": [
-          13934,
-          "/",
-          14133,
-          "/",
-          13894,
-          "/",
-          13918
-        ],
+        "composition": [291, "/", 303, "/", 278, "/", 288],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -177,15 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "DVD player",
-        "bciAvId": [
-          15406,
-          "/",
-          25601,
-          "/",
-          14133,
-          "/",
-          13894
-        ],
+        "composition": [432, "/", 1075, "/", 303, "/", 278],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -196,13 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "stereo",
-        "bciAvId": [
-          15406,
-          "/",
-          25601,
-          "/",
-          13894
-        ],
+        "composition": [432, "/", 1075, "/", 278],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -213,11 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "computer",
-        "bciAvId": [
-          15406,
-          "/",
-          23476
-        ],
+        "composition": [432, "/", 829],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -228,11 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "telephone",
-        "bciAvId": [
-          15172,
-          "/",
-          13918
-        ],
+        "composition": [414, "/", 288],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -243,7 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "key",
-        "bciAvId": 15144,
+        "composition": 407,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -254,7 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "container",
-        "bciAvId": 13403,
+        "composition": 239,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -265,7 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "tool",
-        "bciAvId": 17755,
+        "composition": 660,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -276,7 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "machine",
-        "bciAvId": 15406,
+        "composition": 432,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

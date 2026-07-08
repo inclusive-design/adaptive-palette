@@ -5,7 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "place",
-        "bciAvId": 16193,
+        "composition": 531,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -16,7 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "house",
-        "bciAvId": 14905,
+        "composition": 392,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -27,11 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "home",
-        "bciAvId": [
-          14905,
-          "/",
-          14164
-        ],
+        "composition": [392, "/", 313],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -42,13 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "flat",
-        "bciAvId": [
-          14905,
-          "/",
-          14932,
-          "/",
-          14905
-        ],
+        "composition": [392, "/", 398, "/", 392],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -59,13 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "group home",
-        "bciAvId": [
-          14905,
-          "/",
-          14647,
-          "/",
-          16161
-        ],
+        "composition": [392, "/", 368, "/", 513],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -76,13 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "school",
-        "bciAvId": [
-          14905,
-          "/",
-          24903,
-          "/",
-          15162
-        ],
+        "composition": [392, "/", 949, "/", 412],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -93,13 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "after school center",
-        "bciAvId": [
-          14905,
-          "/",
-          12335,
-          "/",
-          14396
-        ],
+        "composition": [392, "/", 106, "/", 336],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -110,13 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "day center",
-        "bciAvId": [
-          14905,
-          "/",
-          25555,
-          "/",
-          18273
-        ],
+        "composition": [392, "/", 1029, "/", 711],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -127,11 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "working place",
-        "bciAvId": [
-          14905,
-          "/",
-          18273
-        ],
+        "composition": [392, "/", 711],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -142,7 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "street",
-        "bciAvId": 17441,
+        "composition": 632,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -153,11 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "post office",
-        "bciAvId": [
-          14905,
-          "/",
-          15198
-        ],
+        "composition": [392, "/", 421],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -168,11 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "bank",
-        "bciAvId": [
-          14905,
-          "/",
-          15484
-        ],
+        "composition": [392, "/", 451],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -183,11 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "hospital",
-        "bciAvId": [
-          14905,
-          "/",
-          24920
-        ],
+        "composition": [392, "/", 958],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -198,13 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "theatre",
-        "bciAvId": [
-          14905,
-          "/",
-          14133,
-          "/",
-          13894
-        ],
+        "composition": [392, "/", 303, "/", 278],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -215,15 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "museum",
-        "bciAvId": [
-          14905,
-          "/",
-          17717,
-          ";",
-          9011,
-          "/",
-          24916
-        ],
+        "composition": [392, "/", 651, ";", 99, "/", 955],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -234,7 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "shop",
-        "bciAvId": 23223,
+        "composition": 819,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -245,7 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "restaurant",
-        "bciAvId": 16498,
+        "composition": 2275,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -256,7 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "farm",
-        "bciAvId": 14151,
+        "composition": 311,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -267,7 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "garden",
-        "bciAvId": 14422,
+        "composition": 344,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -278,7 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "countryside",
-        "bciAvId": 13424,
+        "composition": 244,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

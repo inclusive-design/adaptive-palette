@@ -1,6 +1,7 @@
 /*
- * Copyright 2023-2026 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -10,10 +11,14 @@
  */
 import { render } from "preact";
 import { html } from "htm/preact";
-import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
 import { loadPaletteFromJsonFile, speak } from "./GlobalUtils";
 import { goBackImpl } from "./CommandGoBackCell";
-import { INPUT_AREA_ID } from "./ContentEncoding";
+import {
+  initAdaptivePaletteGlobals, adaptivePaletteGlobals,
+  INPUT_AREA_ID,
+  COMPOSE_AREA_ID
+} from "./GlobalData";
+
 import "./index.scss";
 
 // Initialize any globals used elsewhere in the code.
@@ -30,6 +35,7 @@ import { ActionSvgEntryField } from "./ActionSvgEntryField";
 const paletteFileMap = await loadPaletteFromJsonFile("/palettes/palette_file_map.json");
 const firstLayer = await loadPaletteFromJsonFile("/palettes/palettes.json");
 const goBackCell = await loadPaletteFromJsonFile("/palettes/backup_palette.json");
+const composeWordsArea = await loadPaletteFromJsonFile("/palettes/compose_words.json");
 const inputArea = await loadPaletteFromJsonFile("/palettes/input_area.json");
 const topPalette = await loadPaletteFromJsonFile("/palettes/top_palette.json");
 const modifiersPalette = await loadPaletteFromJsonFile("/palettes/modifiers.json");
@@ -44,11 +50,16 @@ if (!modifiersPalette) { throw new Error("Failed to load /palettes/modifiers.jso
 PaletteStore.paletteFileMap = /** @type {import("./index").PaletteFileMapType} */ (/** @type {unknown} */ (paletteFileMap));
 adaptivePaletteGlobals.paletteStore.addPalette(firstLayer);
 adaptivePaletteGlobals.paletteStore.addPalette(goBackCell);
+adaptivePaletteGlobals.paletteStore.addPalette(composeWordsArea);
 adaptivePaletteGlobals.paletteStore.addPalette(inputArea);
 adaptivePaletteGlobals.paletteStore.addPalette(topPalette);
 adaptivePaletteGlobals.paletteStore.addPalette(modifiersPalette);
 
 adaptivePaletteGlobals.navigationStack.currentPalette = { palette: firstLayer, htmlElement: getRequiredElement("mainPaletteDisplayArea") };
+const composeWordsContainer = document.getElementById("compose_words_palette");
+if(composeWordsContainer) {
+  render(html`<${Palette} json=${composeWordsArea} />`, composeWordsContainer);
+}
 render(html`<${Palette} json=${inputArea} />`, getRequiredElement("input_palette"));
 render(html`<${Palette} json=${goBackCell} />`, getRequiredElement("backup_palette"));
 render(html`<${Palette} json=${topPalette} />`, getRequiredElement("indicators"));
@@ -100,7 +111,7 @@ function getRequiredElement(id) {
  */
 function elementAllowsTextEntry(element) {
   if (!(element instanceof HTMLElement)) { return false; }
-  return element.id !== INPUT_AREA_ID && (
+  return element.id !== INPUT_AREA_ID && element.id !== COMPOSE_AREA_ID && (
     (element instanceof HTMLInputElement && textInputTypes.includes(element.type)) ||
     element instanceof HTMLTextAreaElement ||
     element instanceof HTMLSelectElement ||

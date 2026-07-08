@@ -1,6 +1,7 @@
 /*
- * Copyright 2025 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -12,9 +13,10 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
-import { decrementCursor } from "./ContentEncoding";
+import { decrementCursor } from "./ContentEncodingInputField";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle, speak, getContentSignal } from "./GlobalUtils";
+import { contentSignalMap } from "./GlobalData";
 
 type CommandCursorBackwardProps = {
   id: string,
@@ -28,12 +30,16 @@ type CommandCursorBackwardProps = {
 
 export function CommandCursorBackward (props: CommandCursorBackwardProps): VNode {
   const { id, options } = props;
-  const { label, bciAvId, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
+  const { label, composition, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
-    decrementCursor();
+    const contentSignal = getContentSignal(ariaControls);
+    if (!contentSignal) {
+      return;
+    }
+    decrementCursor(contentSignal);
     speak(label);
   };
 
@@ -44,7 +50,7 @@ export function CommandCursorBackward (props: CommandCursorBackwardProps): VNode
       style="${gridStyles}"
       aria-controls=${ariaControls}
       onClick=${cellClicked}>
-      <${BlissSymbol} bciAvId=${bciAvId} label=${label}/>
+      <${BlissSymbol} composition=${composition} label=${label}/>
     </button>
   `;
 }

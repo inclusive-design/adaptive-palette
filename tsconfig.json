@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "ES2023",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "types": ["node", "vitest/globals", "vitest/config"],
@@ -13,5 +13,9 @@
     "esModuleInterop": true,
     "alwaysStrict": true,
     "skipLibCheck": true
-  }
+  },
+  "include": [
+    "node_modules/vite/client.d.ts",
+    "src/client/**/*"
+  ]
 }
