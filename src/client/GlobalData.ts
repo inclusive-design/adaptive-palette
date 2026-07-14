@@ -113,8 +113,8 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
 
 /**
  * Signal for updating the contents of the ContentEncoding area.  The value
- * of the signal is the current array of EncodingType objects to display in the
- * ContentEncoding area and the position of the caret
+ * of the signal is the current array of SymbolEncodingType objects to display
+ * in the ContentEncoding area and the position of the caret
  */
 export const changeEncodingContents = signal<ContentSignalDataType>({
   payloads: [],

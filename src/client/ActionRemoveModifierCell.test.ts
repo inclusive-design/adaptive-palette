@@ -32,13 +32,11 @@ describe("ActionRemoveModifierCell render tests", (): void => {
   // The structure of these objects is what is added to or removed from the
   // `changeEncodingContents` signal value
   const blissWordNoModifier = {
-    id: "another-fake-id",
     label: "lonely",
     composition: [ 313, ";", 86, "/", 449, "/", 513 ],
     modifierInfo: []
   };
   const blissWordWithPreModifier = {
-    id: "yet-another-fake-id",
     label: "flame",
     composition: [ 15972, "/", 319 ],
     modifierInfo: [{
@@ -49,7 +47,6 @@ describe("ActionRemoveModifierCell render tests", (): void => {
   };
   const compositionAfterPreModifierRemoval = [ 319 ];
   const blissWordPrePostModifiers = {
-    id: "still-yet-another-fake-id",
     label: "angry",
     composition: [ 368, "/", 313, ";", 86, "/", 487 ],
     modifierInfo: [

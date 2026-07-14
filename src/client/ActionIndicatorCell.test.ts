@@ -71,11 +71,10 @@ describe("ActionIndicatorCell render tests", (): void => {
     // that an enabled ActionIndicatorCell otherwise has the same output.
     changeEncodingContents.value = {
       payloads: [{
-        id: "fake-id",
         label: "opposite",
         composition: 486
       }],
-      caretPosition: 0  // put the caret on the "fake-id" symbol
+      caretPosition: 0  // put the caret on the symbol above
     };
 
     render(html`

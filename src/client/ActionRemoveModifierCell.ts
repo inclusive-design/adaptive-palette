@@ -76,7 +76,6 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
       newLabel = newLabel.replace(removeInfo.modifierGloss, "").trim();
     }
     payloads[caretPosition] = {
-      "id": symbolToEdit.id,
       "label": newLabel,
       "composition": newComposition,
       "modifierInfo": symbolToEdit.modifierInfo

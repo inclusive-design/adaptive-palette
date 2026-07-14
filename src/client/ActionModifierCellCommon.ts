@@ -68,7 +68,6 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
       isPrepended: prepend
     });
     payloads[caretPosition] = {
-      "id": symbolToEdit.id + props.id,
       "label": `${label} ${symbolToEdit.label}`,
       "composition": newComposition,
       "modifierInfo": symbolToEdit.modifierInfo

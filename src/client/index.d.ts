@@ -55,10 +55,6 @@ export type JsonPaletteType = {
 
 export type ContentEncodingType = LayoutInfoType;
 
-export type EncodingType = BlissSymbolInfoType & {
-  id: string,
-};
-
 export type PaletteFileMapType = {
   [paletteName: string]: string
 }
@@ -82,9 +78,10 @@ export type ModifierInfoType = {
  * Symbol input area has associated content and caret position. Either or both
  * can change.
  */
-export type SymbolEncodingType = EncodingType & {
+export type SymbolEncodingType = BlissSymbolInfoType & {
   modifierInfo?: ModifierInfoType[]
 }
+
 export type ContentSignalDataType = {
   payloads: SymbolEncodingType[],
   caretPosition: number

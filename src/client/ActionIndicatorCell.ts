@@ -66,13 +66,11 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       newComposition = [ newComposition, ";", indicatorId ];
     }
     payloads[caretPosition] = {
-      // TODO:  what should the following two fields be?  For now the ID is
-      // the combination of the previous symbol plus the indicator.  The label
-      // is the same as before, but is spoken aloud with the indicator label.
-      "id": symbolToEdit.id + props.id,
+      // TODO:  what should the label be?  For now it is the same as before,
+      // but is spoken aloud with the indicator label.
       "label": symbolToEdit.label,
       "composition": newComposition,
-      "modifierInfo": symbolToEdit.modifierInfo
+      "modifierInfo": symbolToEdit.modifierInfo,
     };
     changeEncodingContents.value = {
       payloads: payloads,

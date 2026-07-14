@@ -71,7 +71,6 @@ describe("ActionPreModifierCell render tests", (): void => {
     // that an enabled ActionPreModifierCell otherwise has the same output.
     changeEncodingContents.value = {
       payloads: [{
-        id: "fake-id",
         label: "building",
         composition: 392
       }],

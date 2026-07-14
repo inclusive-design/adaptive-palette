@@ -71,7 +71,6 @@ describe("ActionPostModifierCell render tests", (): void => {
     // that an enabled ActionPostModifierCell otherwise has the same output.
     changeEncodingContents.value = {
       payloads: [{
-        id: "fake-id",
         label: "speak",
         composition: [ 457, ";", 81 ],
       }],

@@ -67,7 +67,6 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
       ...newCompositionArr.slice(indicatorIndex+1)
     ];
     payloads[caretPosition] = {
-      "id": symbolToEdit.id + props.id,
       "label": symbolToEdit.label,
       "composition": newComposition,
       "modifierInfo": symbolToEdit.modifierInfo

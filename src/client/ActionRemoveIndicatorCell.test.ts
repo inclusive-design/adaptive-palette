@@ -32,12 +32,10 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
   // The structure of these objects is what is added to or removed from the
   // `changeEncodingContents` signal value
   const blissWordNoIndicator = {
-    id: "another-fake-id",
     label: "opposite",
     composition: 486     // ID for bciAvId 15927 (opposite)
   };
   const blissWordWithIndicator = {
-    id: "yet-another-fake-id",
     label: "don't know",
     composition: [ 412, ";", 81, "/", 2088 ]   // IDs for bciAvId 15162, 8993, 15733
   };
