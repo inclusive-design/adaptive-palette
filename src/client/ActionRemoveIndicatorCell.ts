@@ -66,16 +66,20 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
       ...newCompositionArr.slice(0, indicatorIndex-1),
       ...newCompositionArr.slice(indicatorIndex+1)
     ];
+    // Limitation: if a modifier was applied after the indicator, restoring from
+    // baseLabel drops the modifier's text (see the matching note in ActionIndicatorCell.ts).
+    const restoredLabel = symbolToEdit.baseLabel ?? symbolToEdit.label;
     payloads[caretPosition] = {
-      "label": symbolToEdit.label,
+      "label": restoredLabel,
       "composition": newComposition,
+      "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
       "modifierInfo": symbolToEdit.modifierInfo
     };
     changeEncodingContents.value = {
       payloads: payloads,
       caretPosition: caretPosition
     };
-    speak(`${symbolToEdit.label}`);
+    speak(`${restoredLabel}`);
   };
 
   return html`

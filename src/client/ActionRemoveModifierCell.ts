@@ -78,7 +78,10 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
     payloads[caretPosition] = {
       "label": newLabel,
       "composition": newComposition,
-      "modifierInfo": symbolToEdit.modifierInfo
+      "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
+      "modifierInfo": symbolToEdit.modifierInfo,
+      "indicatorInfo": symbolToEdit.indicatorInfo,
+      "baseLabel": symbolToEdit.baseLabel
     };
     changeEncodingContents.value = {
       payloads: payloads,

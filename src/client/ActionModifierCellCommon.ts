@@ -70,7 +70,10 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
     payloads[caretPosition] = {
       "label": `${label} ${symbolToEdit.label}`,
       "composition": newComposition,
-      "modifierInfo": symbolToEdit.modifierInfo
+      "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
+      "modifierInfo": symbolToEdit.modifierInfo,
+      "indicatorInfo": symbolToEdit.indicatorInfo,
+      "baseLabel": symbolToEdit.baseLabel
     };
     changeEncodingContents.value = {
       payloads: payloads,

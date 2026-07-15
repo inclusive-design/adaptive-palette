@@ -58,6 +58,7 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
       "id": props.id,
       "label": theLabel,
       "composition": composition,
+      "userSelectedSymbolId": id,
       "modifierInfo": []
     };
     changeEncodingContents.value = insertWordAtCaret(

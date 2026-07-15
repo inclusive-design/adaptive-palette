@@ -1,24 +1,19 @@
 /*
  * Usage:
- * node build_final_labels_with_indicator.js <labelsJsonlFile> <explanationsJsonFile> <outputFile> <logFile>
+ * node build_final_labels_with_indicator.js <labelsJsonlFile> <outputFile>
  *
  * Example:
  * node build_final_labels_with_indicator.js \
  *   ./data/new_labels_with_indicator.jsonl \
- *   ../../public/data/bliss_symbol_explanations.json \
- *   ../../public/data/new_labels_with_indicator.json \
- *   ./data/build_error.log
+ *   ../../public/data/new_labels_with_indicator.json
  *
- * Post-processes LLM-generated indicator labels into a flat lookup:
- * Bliss composition string (B-prefix stripped) -> label.
+ * Post-processes LLM-generated indicator labels into a flat, id-keyed lookup:
+ * "{wordId}_{indicatorId}" -> newLabel. The key is the row's `targetId`, which is
+ * already unique by construction (one row per word+indicator pair) -- a duplicate
+ * targetId indicates corrupt input and is a hard error.
  */
 
 import fs from "fs";
-import { BlissSVGBuilder } from "bliss-svg-builder";
-
-/**
- * @typedef {{ id: number, composition?: (string | number)[] }} ExplanationItem
- */
 
 /**
  * @typedef {{ targetId: string, wordId: number, indicatorId: number, newLabel: string }} LabelRow
@@ -27,40 +22,16 @@ import { BlissSVGBuilder } from "bliss-svg-builder";
 /**
  * Parse and validate CLI arguments.
  * @param {string[]} argv
- * @returns {{ labelsFile: string, explanationsFile: string, outputFile: string, logFile: string }}
+ * @returns {{ labelsFile: string, outputFile: string }}
  */
 function parseArgs(argv) {
-  if (argv.length !== 4) {
+  if (argv.length !== 2) {
     console.error("Error: Invalid arguments.");
-    console.error("Usage: node build_final_labels_with_indicator.js <labelsJsonlFile> <explanationsJsonFile> <outputFile> <logFile>");
+    console.error("Usage: node build_final_labels_with_indicator.js <labelsJsonlFile> <outputFile>");
     process.exit(1);
   }
-  const [labelsFile, explanationsFile, outputFile, logFile] = argv;
-  return { labelsFile, explanationsFile, outputFile, logFile };
-}
-
-/**
- * Read and parse the explanations JSON file into a lookup Map keyed by id.
- * @param {string} fileName
- * @returns {Map<number, ExplanationItem>}
- */
-function readExplanationsMap(fileName) {
-  let rawData;
-  try {
-    rawData = fs.readFileSync(fileName, "utf8");
-  } catch {
-    console.error(`Error: Failed to read "${fileName}". Make sure the file exists.`);
-    process.exit(1);
-  }
-  /** @type {ExplanationItem[]} */
-  let items;
-  try {
-    items = JSON.parse(rawData);
-  } catch {
-    console.error(`Error: Failed to parse "${fileName}". Make sure the file is valid JSON.`);
-    process.exit(1);
-  }
-  return new Map(items.map(item => [item.id, item]));
+  const [labelsFile, outputFile] = argv;
+  return { labelsFile, outputFile };
 }
 
 /**
@@ -92,76 +63,28 @@ function readLabelRows(fileName) {
 }
 
 /**
- * Build the composition DSL segment for an explanation item: joins the "composition"
- * array (numbers -> "B"-prefixed, separators passed through) or, for atomic characters
- * with no "composition" key, falls back to "B" + the item's own id.
- * @param {ExplanationItem} item
- * @returns {string}
- */
-function buildCompositionSegment(item) {
-  if (item.composition) {
-    return item.composition.map(part => typeof part === "number" ? `B${part}` : part).join("");
-  }
-  return `B${item.id}`;
-}
-
-/**
- * Process all label rows into the output lookup object: composition string (B-prefix
- * stripped) -> newLabel. Rows referencing a missing wordId are skipped and logged.
- * Any BlissSVGBuilder warning halts the whole script (logged via console.error, then
- * process.exit(1)). A composition collision (two rows resolving to the same output key)
- * is logged - with the targetId/newLabel of both the previous and the new row - and
- * overwrites (last write wins).
+ * Build the id-keyed output map: `targetId` -> `newLabel`. `targetId` is unique by
+ * construction (one row per word+indicator pair); a duplicate indicates corrupt
+ * input and is a hard error (logged, then `process.exit(1)`).
  * @param {LabelRow[]} rows
- * @param {Map<number, ExplanationItem>} explanationsMap
- * @param {{ warn: (msg: string) => void, error: (msg: string) => void }} logger
- * @returns {{ output: Record<string, string>, skipped: number, overwritten: number }}
+ * @returns {Record<string, string>}
  */
-function processRows(rows, explanationsMap, logger) {
+function processRows(rows) {
   /** @type {Record<string, string>} */
   const output = {};
-  /** @type {Map<string, { targetId: string, newLabel: string }>} */
-  const keySources = new Map();
-  let skipped = 0;
-  let overwritten = 0;
 
   for (const row of rows) {
-    const item = explanationsMap.get(row.wordId);
-    if (!item) {
-      logger.warn(`Warning: Skipping targetId "${row.targetId}" - wordId ${row.wordId} not found in explanations file.`);
-      skipped++;
-      continue;
-    }
-
-    const compositionSegment = buildCompositionSegment(item);
-    const dsl = `${compositionSegment};;B${row.indicatorId}`;
-    const builder = new BlissSVGBuilder(dsl);
-
-    if (builder.warnings.length) {
-      logger.error(
-        `Error: BlissSVGBuilder produced ${builder.warnings.length} warning(s) for targetId "${row.targetId}" (dsl: "${dsl}"):\n` +
-        builder.warnings.map(w => `  - [${w.code}] ${w.message} (source: "${w.source}")`).join("\n")
+    if (Object.prototype.hasOwnProperty.call(output, row.targetId)) {
+      console.error(
+        `Error: Duplicate targetId "${row.targetId}" found in labels file - targetId must be unique. ` +
+        "This indicates corrupt input data."
       );
+      process.exit(1);
     }
-
-    const rawKey = builder.toString({ flattenIndicators: true });
-    const key = rawKey.replace(/B(\d+)/g, "$1");
-
-    if (Object.prototype.hasOwnProperty.call(output, key)) {
-      const previous = keySources.get(key);
-      logger.warn(
-        `Warning: Duplicate composition key "${key}" - overwriting previous label.\n` +
-        `  - previous: targetId "${previous.targetId}", newLabel "${previous.newLabel}"\n` +
-        `  - new:      targetId "${row.targetId}", newLabel "${row.newLabel}"`
-      );
-      overwritten++;
-    }
-
-    output[key] = row.newLabel;
-    keySources.set(key, { targetId: row.targetId, newLabel: row.newLabel });
+    output[row.targetId] = row.newLabel;
   }
 
-  return { output, skipped, overwritten };
+  return output;
 }
 
 /**
@@ -178,46 +101,11 @@ function writeOutput(fileName, output) {
   }
 }
 
-/**
- * Create a logger that both prints to the console and accumulates lines to be
- * flushed to a log file via flushToFile().
- * @param {string} fileName
- * @returns {{ warn: (msg: string) => void, error: (msg: string) => void, flushToFile: () => void }}
- */
-function createLogger(fileName) {
-  /** @type {string[]} */
-  const lines = [];
-  return {
-    warn(msg) {
-      console.warn(msg);
-      lines.push(msg);
-    },
-    error(msg) {
-      console.error(msg);
-      lines.push(msg);
-    },
-    flushToFile() {
-      try {
-        fs.writeFileSync(fileName, lines.join("\n\n") + (lines.length ? "\n" : ""), "utf8");
-      } catch {
-        console.error(`Error: Failed to write to "${fileName}". Check directory permissions.`);
-        process.exit(1);
-      }
-    }
-  };
-}
-
 // Main execution
-const { labelsFile, explanationsFile, outputFile, logFile } = parseArgs(process.argv.slice(2));
-const logger = createLogger(logFile);
-const explanationsMap = readExplanationsMap(explanationsFile);
+const { labelsFile, outputFile } = parseArgs(process.argv.slice(2));
 const rows = readLabelRows(labelsFile);
-const { output, skipped, overwritten } = processRows(rows, explanationsMap, logger);
+const output = processRows(rows);
 writeOutput(outputFile, output);
-logger.flushToFile();
 
 console.log("\n=== Processing Report ===");
 console.log(`Report: Processed ${rows.length} input rows into ${Object.keys(output).length} entries in ${outputFile}`);
-console.log(`Report: Skipped ${skipped} row(s) with missing wordId.`);
-console.log(`Report: ${overwritten} duplicate composition key(s) overwritten.`);
-console.log(`Report: Warnings/errors written to "${logFile}".`);

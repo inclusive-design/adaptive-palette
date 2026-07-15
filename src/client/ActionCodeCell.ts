@@ -40,6 +40,7 @@ export function ActionCodeCell (props: ActionCodeCellPropsType): VNode {
       "id": props.id,
       "label": props.options.label,
       "composition": payloadComposition,
+      "userSelectedSymbolId": typeof composition === "number" ? composition : undefined,
       "modifierInfo": []
     };
     const{ caretPosition, payloads } = changeEncodingContents.value;

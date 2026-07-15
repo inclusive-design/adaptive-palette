@@ -15,7 +15,8 @@
  */
 import { signal } from "@preact/signals";
 import { getModelNames } from "./ollamaApi";
-import type { ContentSignalDataType, BlissSymbolEntry } from "./index.d";
+import { initIndicatorLabels } from "./IndicatorLabelsUtils";
+import type { ContentSignalDataType, BlissSymbolEntry, AdaptivePaletteConfigType } from "./index.d";
 
 // NOTE: this import causes a warning serving the application using the `vite`
 // server.  The warning suggests to *not* use the `public` folder but to use
@@ -79,6 +80,8 @@ export const adaptivePaletteGlobals = {
   paletteStore: new PaletteStore(),
   navigationStack: new NavigationStack(),
   LLMs: [] as string[],
+  config: { indicatorLabelLookup: { useOllamaFallback: false, model: "" } } as AdaptivePaletteConfigType,
+  indicatorLabels: {} as Record<string, string>,
   systemPrompts: {
     "What express": "What does this express? Give the top five answers.  Do not add a preamble like, 'Here are the top five answers.'",
     "Single Sentence": "Convert the telegraphic speech to a single sentence. Give the top five best answers.  Answer with a single grammatically correct sentence.  Number the five answers clearly.  Do not add a preamble like, 'Here are the top five answers.'",
@@ -90,6 +93,38 @@ export const adaptivePaletteGlobals = {
   //
   mainPaletteContainerId: ""
 };
+
+/**
+ * Fetch and validate `public/config.json`. Any failure -- missing file, missing
+ * `indicatorLabelLookup` section, malformed JSON, failed fetch -- silently disables
+ * the Ollama fallback tier; no user-facing error, per design.
+ * @returns {Promise<AdaptivePaletteConfigType>}
+ */
+async function loadConfig (): Promise<AdaptivePaletteConfigType> {
+  const disabled: AdaptivePaletteConfigType = {
+    indicatorLabelLookup: { useOllamaFallback: false, model: "" }
+  };
+  try {
+    const response = await fetch("/config.json");
+    if (!response.ok) {
+      return disabled;
+    }
+    const parsed: unknown = await response.json();
+    const section = (parsed as { indicatorLabelLookup?: unknown })?.indicatorLabelLookup as
+      { useOllamaFallback?: unknown; model?: unknown } | undefined;
+    if (!section || typeof section.useOllamaFallback !== "boolean") {
+      return disabled;
+    }
+    return {
+      indicatorLabelLookup: {
+        useOllamaFallback: section.useOllamaFallback,
+        model: typeof section.model === "string" ? section.model : ""
+      }
+    };
+  } catch {
+    return disabled;
+  }
+}
 
 /**
  * Initialize the `adaptivePaletteGlobals` structure.
@@ -104,6 +139,8 @@ export const adaptivePaletteGlobals = {
 export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string): Promise<void> {
   adaptivePaletteGlobals.LLMs = await getModelNames();
   adaptivePaletteGlobals.mainPaletteContainerId = mainPaletteContainerId || "";
+  adaptivePaletteGlobals.config = await loadConfig();
+  await initIndicatorLabels();
 
   // Set up the system prompts.
   window.localStorage.setItem(

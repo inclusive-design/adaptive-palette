@@ -10,11 +10,20 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render, screen } from "@testing-library/preact";
+import { vi } from "vitest";
+import { render, screen, fireEvent, waitFor } from "@testing-library/preact";
 import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
 import { ActionIndicatorCell } from "./ActionIndicatorCell";
+import * as IndicatorLabels from "./IndicatorLabelsUtils";
+
+vi.mock("./IndicatorLabels", () => ({
+  initIndicatorLabels: vi.fn().mockResolvedValue(undefined),
+  getNewLabel: vi.fn()
+}));
+
+const mockedGetNewLabel = vi.mocked(IndicatorLabels.getNewLabel);
 
 describe("ActionIndicatorCell render tests", (): void => {
 
@@ -32,6 +41,10 @@ describe("ActionIndicatorCell render tests", (): void => {
 
   beforeAll(async (): Promise<void> => {
     await initAdaptivePaletteGlobals();
+  });
+
+  beforeEach((): void => {
+    mockedGetNewLabel.mockReset();
   });
 
   test("Single ActionIndicatorCell rendering, disabled", async (): Promise<void> => {
@@ -108,6 +121,97 @@ describe("ActionIndicatorCell render tests", (): void => {
     changeEncodingContents.value.caretPosition = -1;
     button = await screen.findByRole("button", {name: testCell.options.label});
     expect(button.getAttribute("disabled")).toBeDefined();
+  });
+
+  test("Applying an indicator resolves a new label from the pregenerated tier and updates label + indicatorInfo", async (): Promise<void> => {
+    mockedGetNewLabel.mockResolvedValue("helper");
+
+    changeEncodingContents.value = {
+      payloads: [{
+        label: "help",
+        composition: 382,
+        userSelectedSymbolId: 382
+      }],
+      caretPosition: 0
+    };
+
+    render(html`
+      <${ActionIndicatorCell}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />`
+    );
+    const button = await screen.findByRole("button", {name: testCell.options.label});
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(changeEncodingContents.value.payloads[0].label).toBe("helper");
+    });
+
+    const updated = changeEncodingContents.value.payloads[0];
+    expect(updated.indicatorInfo).toStrictEqual([testCell.options.composition]);
+    expect(updated.baseLabel).toBe("help");
+    expect(updated.userSelectedSymbolId).toBe(382);
+  });
+
+  test("Replacing an indicator derives the prompt from baseLabel, not the swapped label", async (): Promise<void> => {
+    mockedGetNewLabel.mockResolvedValue("aided");
+
+    changeEncodingContents.value = {
+      payloads: [{
+        label: "helper",
+        baseLabel: "help",
+        composition: [382, ";", 97],
+        indicatorInfo: [97],
+        userSelectedSymbolId: 382
+      }],
+      caretPosition: 0
+    };
+
+    render(html`
+      <${ActionIndicatorCell}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />`
+    );
+    const button = await screen.findByRole("button", {name: testCell.options.label});
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(changeEncodingContents.value.payloads[0].label).toBe("aided");
+    });
+
+    expect(mockedGetNewLabel).toHaveBeenCalledWith(
+      expect.objectContaining({ baseLabel: "help", indicatorInfo: [testCell.options.composition] }),
+      testCell.options.composition
+    );
+    expect(changeEncodingContents.value.payloads[0].baseLabel).toBe("help");
+  });
+
+  test("Symbol without userSelectedSymbolId leaves the label unchanged when Ollama is off", async (): Promise<void> => {
+    mockedGetNewLabel.mockResolvedValue(undefined);
+
+    changeEncodingContents.value = {
+      payloads: [{
+        label: "hand-built",
+        composition: [1, "/", 2]
+      }],
+      caretPosition: 0
+    };
+
+    render(html`
+      <${ActionIndicatorCell}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />`
+    );
+    const button = await screen.findByRole("button", {name: testCell.options.label});
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(mockedGetNewLabel).toHaveBeenCalledTimes(1);
+    });
+    expect(changeEncodingContents.value.payloads[0].label).toBe("hand-built");
   });
 
 });

@@ -79,8 +79,20 @@ export type ModifierInfoType = {
  * can change.
  */
 export type SymbolEncodingType = BlissSymbolInfoType & {
-  modifierInfo?: ModifierInfoType[]
+  userSelectedSymbolId?: number,   // dictionary id of the originally selected symbol
+  modifierInfo?: ModifierInfoType[],
+  indicatorInfo?: number[],        // id(s) of the indicator(s) currently applied
+  baseLabel?: string               // label before any indicator swap; set when a swap occurs
 }
+
+export type IndicatorLabelLookupConfigType = {
+  useOllamaFallback: boolean,
+  model: string
+};
+
+export type AdaptivePaletteConfigType = {
+  indicatorLabelLookup: IndicatorLabelLookupConfigType
+};
 
 export type ContentSignalDataType = {
   payloads: SymbolEncodingType[],

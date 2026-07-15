@@ -40,6 +40,13 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     composition: [ 412, ";", 81, "/", 2088 ]   // IDs for bciAvId 15162, 8993, 15733
   };
   const compositionAfterIndicatorRemoval = [ 412, "/", 2088 ];  // IDs for bciAvId 15162, 15733
+  const blissWordWithIndicatorAndBaseLabel = {
+    label: "helper",
+    baseLabel: "help",
+    composition: [ 382, ";", 97 ],
+    indicatorInfo: [ 97 ],
+    userSelectedSymbolId: 382
+  };
 
   beforeAll(async (): Promise<void> => {
     await initAdaptivePaletteGlobals();
@@ -150,5 +157,28 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     expect(removeIndicatorButton.getAttribute("disabled")).toBeDefined();
     const lastSymbol = changeEncodingContents.value.payloads[changeEncodingContents.value.payloads.length-1];
     expect(lastSymbol.composition).toStrictEqual(compositionAfterIndicatorRemoval);
+  });
+
+  test("ActionRemoveIndicatorCell restores label from baseLabel and clears baseLabel/indicatorInfo", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [blissWordWithIndicatorAndBaseLabel],
+      caretPosition: 0
+    };
+    render(html`
+      <${ActionRemoveIndicatorCell}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />`
+    );
+    const removeIndicatorButton = await screen.findByRole("button", {name: testCell.options.label});
+    expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
+
+    fireEvent.click(removeIndicatorButton);
+
+    const restored = changeEncodingContents.value.payloads[0];
+    expect(restored.label).toBe("help");
+    expect(restored.baseLabel).toBeUndefined();
+    expect(restored.indicatorInfo).toBeUndefined();
+    expect(restored.userSelectedSymbolId).toBe(382);
   });
 });
