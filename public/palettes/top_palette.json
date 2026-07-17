@@ -5,7 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "yes",
-        "composition": [120, "/", 401, "/", 401],
+        "composition": 2776,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -16,7 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "no",
-        "composition": [449, "/", 401, "/", 401],
+        "composition": 2080,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,

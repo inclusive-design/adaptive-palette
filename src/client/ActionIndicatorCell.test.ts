@@ -18,7 +18,7 @@ import { initAdaptivePaletteGlobals, changeEncodingContents } from "./GlobalData
 import { ActionIndicatorCell } from "./ActionIndicatorCell";
 import * as IndicatorLabels from "./IndicatorLabelsUtils";
 
-vi.mock("./IndicatorLabels", () => ({
+vi.mock("./IndicatorLabelsUtils", () => ({
   initIndicatorLabels: vi.fn().mockResolvedValue(undefined),
   getNewLabel: vi.fn()
 }));
@@ -182,8 +182,10 @@ describe("ActionIndicatorCell render tests", (): void => {
     });
 
     expect(mockedGetNewLabel).toHaveBeenCalledWith(
-      expect.objectContaining({ baseLabel: "help", indicatorInfo: [testCell.options.composition] }),
-      testCell.options.composition
+      382,          // userSelectedSymbolId preserved from the original symbol
+      "helper",     // current (pre-swap) label
+      "help",       // baseLabel preserved, not overwritten by the swapped label
+      testCell.options.composition   // indicatorId (99) -- the indicator being applied
     );
     expect(changeEncodingContents.value.payloads[0].baseLabel).toBe("help");
   });

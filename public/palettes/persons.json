@@ -16,7 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "I, me",
-        "composition": [513, "/", 10],
+        "composition": 1840,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -27,7 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "you",
-        "composition": [513, "/", 11],
+        "composition": 2785,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -38,7 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "he, him",
-        "composition": [433, "/", 12],
+        "composition": 1791,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -49,7 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "she, her",
-        "composition": [710, "/", 12],
+        "composition": 2377,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -60,7 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "we, us",
-        "composition": [513, ";", 99, "/", 10],
+        "composition": 2717,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -71,7 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "you",
-        "composition": [513, ";", 99, "/", 11],
+        "composition": 2784,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -82,7 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "they, them",
-        "composition": [513, ";", 99, "/", 12],
+        "composition": 2589,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -93,7 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "anyone",
-        "composition": [100, "/", 513],
+        "composition": 1212,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -104,7 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "my, mine",
-        "composition": [513, "/", 10, "/", 160],
+        "composition": 2052,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -148,7 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "brother",
-        "composition": [607, "/", 11],
+        "composition": 1344,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -159,7 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "sister",
-        "composition": [257, "/", 11],
+        "composition": 2413,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,

@@ -5,7 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "be (to)",
-        "composition": [894, ";", 81],
+        "composition": 1267,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -27,7 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "become",
-        "composition": [335, ";", 81, "/", 894],
+        "composition": 1273,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -60,7 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "have, has",
-        "composition": [953, ";", 81],
+        "composition": 1789,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -82,7 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "can, be able",
-        "composition": [994, ";", 81],
+        "composition": 1370,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -104,7 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "be called",
-        "composition": [464, ";", 81],
+        "composition": 4784,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,

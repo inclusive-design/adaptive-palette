@@ -27,7 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "electric wheelchair",
-        "composition": [701, "/", 288],
+        "composition": 1596,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -38,7 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "bicycle",
-        "composition": [11, "/", 700],
+        "composition": 1290,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -60,7 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "taxi",
-        "composition": [202, "/", 426],
+        "composition": 2555,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -82,7 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "train",
-        "composition": [368, "/", 688],
+        "composition": 2629,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -115,7 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "hotel, motel",
-        "composition": [392, "/", 513, "/", 667],
+        "composition": 1829,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -137,7 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "outing",
-        "composition": [418, "/", 491],
+        "composition": 2119,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -148,7 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "ticket",
-        "composition": [497, "/", 402],
+        "composition": 2601,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -170,7 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "city",
-        "composition": [368, "/", 368, "/", 368, "/", 392],
+        "composition": 3609,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -203,7 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "plastic",
-        "composition": [216, "/", 368, "/", 303, "/", 651],
+        "composition": 2168,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -214,7 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "metal",
-        "composition": [438, "/", 814],
+        "composition": 2005,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

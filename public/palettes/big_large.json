@@ -5,7 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "big, large",
-        "composition": [936, ";", 86],
+        "composition": 1291,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -16,7 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "little, small",
-        "composition": [956, ";", 86],
+        "composition": 1945,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -27,7 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "long",
-        "composition": [420, ";", 86],
+        "composition": 1951,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -38,7 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "high",
-        "composition": [952, ";", 86],
+        "composition": 1807,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -49,7 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "linear",
-        "composition": [428, ";", 86],
+        "composition": 1940,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -60,7 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "wet",
-        "composition": [695, ";", 86],
+        "composition": 2728,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -71,7 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "dirty",
-        "composition": [368, "/", 303, ";", 86, "/", 270],
+        "composition": 1548,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -82,7 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "broken",
-        "composition": [933, ";", 84],
+        "composition": 1343,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -93,7 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "disgusting",
-        "composition": [642, ";", 86, "/", 449, "/", 401, "/", 401],
+        "composition": 3316,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -104,7 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "expensive",
-        "composition": [451, ";", 86, "/", 331, "/", 651, "/", 936],
+        "composition": 3545,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -115,7 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "hot",
-        "composition": [642, ";", 86, "/", 319],
+        "composition": 1827,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -126,7 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "soft",
-        "composition": [374, ";", 86, "/", 1049],
+        "composition": 2450,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -137,7 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "thick",
-        "composition": [1034, ";", 86],
+        "composition": 5594,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -148,7 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "round,circular",
-        "composition": [303, ";", 86, "/", 651, "/", 636],
+        "composition": 2297,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -159,7 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "square",
-        "composition": [303, ";", 86, "/", 651, "/", 291],
+        "composition": 2478,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -170,7 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "difficult",
-        "composition": [940, ";", 86],
+        "composition": 1541,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -181,7 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "quick",
-        "composition": [335, ";", 86, "/", 401],
+        "composition": 2232,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -192,7 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "heavy",
-        "composition": [697, ";", 86, "/", 271],
+        "composition": 1799,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -203,7 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "full",
-        "composition": [947, ";", 86],
+        "composition": 1714,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -214,7 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "strong",
-        "composition": [967, ";", 86],
+        "composition": 2502,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

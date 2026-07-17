@@ -16,7 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "who",
-        "composition": [699, "/", 513],
+        "composition": 2740,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -27,7 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "what",
-        "composition": [699, "/", 651],
+        "composition": 2732,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -38,7 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "which",
-        "composition": [699, "/", 502],
+        "composition": 2736,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -49,7 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "not",
-        "composition": [449, "/", 401],
+        "composition": 2088,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -60,7 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "when",
-        "composition": [699, "/", 655],
+        "composition": 2734,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -82,7 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "how",
-        "composition": [699, "/", 106],
+        "composition": 1832,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,

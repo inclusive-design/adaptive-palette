@@ -16,6 +16,7 @@
 import { signal } from "@preact/signals";
 import { getModelNames } from "./ollamaApi";
 import { initIndicatorLabels } from "./IndicatorLabelsUtils";
+import { initSvgCompositeDefinitions } from "./SvgUtils";
 import type { ContentSignalDataType, BlissSymbolEntry, AdaptivePaletteConfigType } from "./index.d";
 
 // NOTE: this import causes a warning serving the application using the `vite`
@@ -137,6 +138,7 @@ async function loadConfig (): Promise<AdaptivePaletteConfigType> {
  *                                                the `<body>delement.
  */
 export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string): Promise<void> {
+  initSvgCompositeDefinitions();
   adaptivePaletteGlobals.LLMs = await getModelNames();
   adaptivePaletteGlobals.mainPaletteContainerId = mainPaletteContainerId || "";
   adaptivePaletteGlobals.config = await loadConfig();

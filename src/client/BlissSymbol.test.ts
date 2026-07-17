@@ -69,10 +69,15 @@ describe("BlissSymbol render tests", (): void => {
     if (!parentNode) {
       throw new Error("Parent node of blissSymbolLabelDiv is null");
     }
+    // getSvgElement now always returns a builder's SVG, even for an unknown id.
+    // In this case, it just has no content, and BlissSVGBuilder reports the problem,
+    // rather than by yielding no SVG at all.
     const svgElement = parentNode.querySelector("svg");
     const parentChildren = parentNode.childNodes;
-    expect(parentChildren.length).toBe(1);
-    expect(svgElement).toBe(null);
+    expect(parentChildren.length).toBe(2);
+    expect(svgElement).not.toBe(null);
+    expect(svgElement?.getAttribute("aria-hidden")).toBe("true");
+    expect(svgElement?.querySelector("path, use, rect, circle, line, polyline, polygon")).toBe(null);
   });
 
   test(`BlissSymbol defined by an array of composition ids (${arraySymbol.label})`, async (): Promise<void> => {

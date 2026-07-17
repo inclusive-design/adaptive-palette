@@ -32,20 +32,17 @@ export function BlissSymbol (props: BlissSymbolPropsType): VNode {
   const { composition, label, isPresentation, labelledBy } = props;
   const svgElement = getSvgElement(composition);
 
-  let svgMarkupString = "";
-  if (svgElement) {
-    // Deal with aria markup, depending on whether the SVG is for presentation only or
-    // associates with a labelled area.
-    if (isPresentation === "true") {
-      svgElement.setAttribute("aria-hidden", "true");
-    } else {
-      svgElement.setAttribute("role", `${GRAPHIC_ROLE}`);
-      if (labelledBy) {
-        svgElement.setAttribute("aria-labelledby", labelledBy);
-      }
+  // Deal with aria markup, depending on whether the SVG is for presentation only or
+  // associates with a labelled area.
+  if (isPresentation === "true") {
+    svgElement.setAttribute("aria-hidden", "true");
+  } else {
+    svgElement.setAttribute("role", `${GRAPHIC_ROLE}`);
+    if (labelledBy) {
+      svgElement.setAttribute("aria-labelledby", labelledBy);
     }
-    svgMarkupString = svgElement.outerHTML;
   }
+  const svgMarkupString = svgElement.outerHTML;
 
   // The construction below is _only_ for the unit tests to avoid the error:
   // "Argument of type 'any[]' is not assignable to parameter of type

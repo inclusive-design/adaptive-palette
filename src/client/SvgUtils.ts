@@ -93,12 +93,62 @@ export function bstrToComposition(bstr: string): SymbolCompositionType {
  *                    e.g., "B106/B12".
  */
 export function compositionToBstr (id: SymbolCompositionType): string {
+  const toToken = (item: number | string): string => {
+    if (typeof item !== "number") {
+      return item;
+    }
+    const symbol = adaptivePaletteGlobals.symbols.find(s => s.id === item);
+    if (symbol && !symbol.isCharacter) {
+      // Composite (word-level) symbols are registered as bare-id aliases via
+      // initSvgCompositeDefinitions()/BlissSVGBuilder.define(), so the id itself
+      // is a valid code. For composites whose alias registration failed (e.g. an
+      // internal kerning coordinate such as "RK:-2"), fall back to inlining this
+      // composite's own flattened composition directly -- safe since compositions
+      // never nest another composite.
+      return BlissSVGBuilder.isDefined(String(item))
+        ? String(item)
+        : compositionToBstr(symbol.composition as SymbolCompositionType);
+    }
+    // Character symbols always use BlissSVGBuilder's native "B<id>" code, never a
+    // bare-id alias -- even though composite symbols' aliases would resolve to the
+    // same content, the ";" single-character indicator operator only recognizes a
+    // native "B<id>" code as "a single character" on its left-hand side. A bare
+    // alias id reads as an opaque word, so BlissSVGBuilder silently drops the
+    // indicator (MISPLACED_CHARACTER_INDICATOR warning). Unknown ids also fall here.
+    return "B" + item;
+  };
+
   if (typeof id === "number") {
-    return "B" + id;
+    return toToken(id);
   }
-  return id.map(
-    item => typeof item === "number" ? "B" + item : item
-  ).join("");
+  return id.map(toToken).join("");
+}
+
+/**
+ * Register every composite symbol (`isCharacter: false`) in
+ * `adaptivePaletteGlobals.symbols` as a `BlissSVGBuilder` alias, keyed by its
+ * own numeric ID, aliasing to its flattened base-character bstr. Character
+ * symbols are deliberately NOT registered: they must always be referenced by
+ * their native `"B<id>"` code (see the comment in `compositionToBstr()`), so
+ * a bare-id alias for them would be both unnecessary and misleading.
+ * Called once from `initAdaptivePaletteGlobals()`.
+ * Note: if a composite symbol contains internal kerning coordinate such as
+ * "RK:-2", the alias registration will be rejected. 168 symbols are rejected
+ * for this reason.
+ */
+export function initSvgCompositeDefinitions (): void {
+  const definitions: Record<string, { codeString: string }> = {};
+  for (const symbol of adaptivePaletteGlobals.symbols) {
+    if (!symbol.isCharacter) {
+      definitions[String(symbol.id)] = {
+        codeString: compositionToBstr(symbol.composition as SymbolCompositionType)
+      };
+    }
+  }
+  const result = BlissSVGBuilder.define(definitions);
+  if (result.errors.length) {
+    console.error(`BlissSVGBuilder.define(): ${result.errors.length} symbol(s) failed to register due to internal coordinates`);
+  }
 }
 
 /*
@@ -199,64 +249,32 @@ export function findSymbolByBciAvId (bciAvId: number) {
 }
 
 /**
- * Resolve a symbol ID or array of IDs to their corresponding compositions.
+ * Create and return the builder from a string based on the given
+ * SymbolCompositionType. `BlissSVGBuilder` never throws for an unknown or
+ * malformed code — it reports the problem via `builder.warnings` instead and
+ * still returns a usable (empty-content) builder, so this always returns a
+ * builder. Warnings are logged via `console.error` for diagnosis. Falls
+ * back to an empty builder if the constructor itself throws (rare — e.g.
+ * extremely long input).
  * @param {SymbolCompositionType} id - A ID (a number) or an array of
  *                           IDs and separators, e.g.
  *                           `[ 106, "/", 12 ]`
- * @return {SymbolCompositionType | null} - The resolved composition, or `null` if the ID is invalid.
+ * @return {BlissSVGBuilder} - The corresponding builder.
  */
-export function getResolvedComposition (id: SymbolCompositionType): SymbolCompositionType | null {
-  const resolve = (single: number): SymbolCompositionType =>
-    adaptivePaletteGlobals.symbols.find(s => s.id === single)?.composition ?? single;
-
-  if (typeof id === "number") {
-    if (!adaptivePaletteGlobals.symbols.find(s => s.id === id)) return null;
-    id = resolve(id);
-  }
-  else {
-    const resolved: (number | string)[] = [];
-    for (const item of id) {
-      if (typeof item === "number") {
-        if (!adaptivePaletteGlobals.symbols.find(s => s.id === item)) return null;
-        const r = resolve(item);
-        resolved.push(...(Array.isArray(r) ? r : [r]));
-      } else {
-        resolved.push(item);
-      }
-    }
-    id = resolved;
-  }
-
-  return id;
-}
-
-/**
- * Create and return the builder from a string based on the given SymbolCompositionType.
- * If the SymbolCompositionType is invalid, `null` is returned.
- * @param {SymbolCompositionType} id - A ID (a number) or an array of
- *                           IDs and separators, e.g.
- *                           `[ 106, "/", 12 ]`
- * @return {BlissSVGBuilder} - The corresponding SVG markup, or `null`.
- */
-function getSvgBuilder (id: SymbolCompositionType): BlissSVGBuilder | null {
-  // Composite IDs (isCharacter: false) aren't in the builder's internal
-  // database and render as empty SVGs, so replace any composite ID — whether
-  // passed on its own or nested in an array — with its base-character
-  // composition.
-  const resolvedId = getResolvedComposition(id);
-  if (resolvedId === null) {
-    console.error(`Unknown id = ${String(id)}`);
-    return null;
-  }
-
-  let builder;
+function getSvgBuilder (composition: SymbolCompositionType): BlissSVGBuilder {
+  let builder: BlissSVGBuilder;
   try {
-    builder = new BlissSVGBuilder(compositionToBstr(resolvedId));
-  }
-  catch (err) {
+    builder = new BlissSVGBuilder(compositionToBstr(composition));
+  } catch (err) {
     console.error(err);
-    console.error(`Unknown id = ${String(id)}`);
-    builder = null;
+    console.error(`Unknown composition = ${String(composition)}`);
+    builder = new BlissSVGBuilder();
+  }
+  if (builder.warnings.length) {
+    console.error(`Unknown composition = ${String(composition)}`);
+    builder.warnings.forEach(warning => {
+      console.error(`  - [${warning.code}] ${warning.message} (source: "${warning.source}")`);
+    });
   }
   return builder;
 }
@@ -264,25 +282,23 @@ function getSvgBuilder (id: SymbolCompositionType): BlissSVGBuilder | null {
 /**
  * Get the SVG markup as a string based on the given ID or array.
  *
- * @param {SymbolCompositionType} id - A ID (a number) or an array of
+ * @param {SymbolCompositionType} composition - A ID (a number) or an array of
  *                           IDs and separators, e.g.
  *                           `[ 106, "/", 12 ]`
- * @return {String} - The corresponding SVG markup, or `undefined`.
+ * @return {String} - The corresponding SVG markup.
  */
-export function getSvgMarkupString (id: SymbolCompositionType): string | undefined {
-  const builder = getSvgBuilder(id);
-  return ( builder ? builder.svgCode : undefined );
+export function getSvgMarkupString (composition: SymbolCompositionType): string {
+  return getSvgBuilder(composition).svgCode;
 }
 
 /**
  * Get the SVG markup as a DOM element based on the given ID or array.
  *
- * @param {SymbolCompositionType} id - A ID (a number) or an array of
+ * @param {SymbolCompositionType} composition - A ID (a number) or an array of
  *                           IDs and separators, e.g.
  *                           `[ 106, "/", 12 ]`
- * @return {Element} - The corresponding SVG markup, or `undefined`.
+ * @return {Element} - The corresponding SVG markup.
  */
-export function getSvgElement (id: SymbolCompositionType): SVGElement | undefined {
-  const builder = getSvgBuilder(id);
-  return ( builder ? builder.svgElement : undefined );
+export function getSvgElement (composition: SymbolCompositionType): SVGElement {
+  return getSvgBuilder(composition).svgElement;
 }

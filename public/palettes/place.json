@@ -27,7 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "home",
-        "composition": [392, "/", 313],
+        "composition": 1816,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -38,7 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "flat",
-        "composition": [392, "/", 398, "/", 392],
+        "composition": 1215,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -49,7 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "group home",
-        "composition": [392, "/", 368, "/", 513],
+        "composition": 2270,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -60,7 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "school",
-        "composition": [392, "/", 949, "/", 412],
+        "composition": 2331,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -71,7 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "after school center",
-        "composition": [392, "/", 106, "/", 336],
+        "composition": 3478,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -82,7 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "day center",
-        "composition": [392, "/", 1029, "/", 711],
+        "composition": 5361,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -93,7 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "working place",
-        "composition": [392, "/", 711],
+        "composition": 3700,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -115,7 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "post office",
-        "composition": [392, "/", 421],
+        "composition": 2191,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -126,7 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "bank",
-        "composition": [392, "/", 451],
+        "composition": 1256,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -137,7 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "hospital",
-        "composition": [392, "/", 958],
+        "composition": 1825,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -148,7 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "theatre",
-        "composition": [392, "/", 303, "/", 278],
+        "composition": 3687,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -159,7 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "museum",
-        "composition": [392, "/", 651, ";", 99, "/", 955],
+        "composition": 2045,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,

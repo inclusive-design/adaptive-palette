@@ -91,7 +91,7 @@ describe("ActionGlossSearchCell render tests", (): void => {
 
     const spanEl = document.querySelector(".actionGlossSearchCell span");
     expect(spanEl).not.toBeNull();
-    expect(spanEl!.textContent).toBe("22311 . B3274 . B3274");
+    expect(spanEl!.textContent).toBe("22311 . 3274 . 3274");
   });
 
   test("ActionGlossSearchCell rendering with BCI AV ID search", (): void => {

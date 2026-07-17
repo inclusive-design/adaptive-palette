@@ -17,7 +17,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "be (to)",
-        "composition": [894, ";", 81],
+        "composition": 1267,
         "branchTo": "to_be",
         "rowStart": 1,
         "rowSpan": 1,
@@ -29,7 +29,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "much, many",
-        "composition": [368, ";", 86],
+        "composition": 2042,
         "branchTo": "much_many",
         "rowStart": 1,
         "rowSpan": 1,
@@ -101,7 +101,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "angry",
-        "composition": [368, "/", 313, ";", 86, "/", 487],
+        "composition": 1198,
         "branchTo": "feelings",
         "rowStart": 2,
         "rowSpan": 1,
@@ -161,7 +161,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "do, does",
-        "composition": [106, ";", 81],
+        "composition": 1558,
         "branchTo": "do_does",
         "rowStart": 3,
         "rowSpan": 1,
@@ -173,7 +173,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "big, large",
-        "composition": [936, ";", 86],
+        "composition": 1291,
         "branchTo": "big_large",
         "rowStart": 3,
         "rowSpan": 1,
