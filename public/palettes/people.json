@@ -8,7 +8,7 @@
         "composition": 1470,
         "rowStart": 3,
         "rowSpan": 1,
-        "columnStart": 2,
+        "columnStart": 1,
         "columnSpan": 4
       }
     },
@@ -19,7 +19,7 @@
         "composition": 710,
         "rowStart": 3,
         "rowSpan": 1,
-        "columnStart": 6,
+        "columnStart": 5,
         "columnSpan": 4
       }
     },
@@ -30,7 +30,7 @@
         "composition": 1803,
         "rowStart": 3,
         "rowSpan": 1,
-        "columnStart": 10,
+        "columnStart": 9,
         "columnSpan": 4
       }
     },
@@ -41,7 +41,7 @@
         "composition": 351,
         "rowStart": 4,
         "rowSpan": 1,
-        "columnStart": 2,
+        "columnStart": 1,
         "columnSpan": 4
       }
     },
@@ -52,7 +52,7 @@
         "composition": 513,
         "rowStart": 4,
         "rowSpan": 1,
-        "columnStart": 6,
+        "columnStart": 5,
         "columnSpan": 4
       }
     },
@@ -63,7 +63,7 @@
         "composition": 178,
         "rowStart": 4,
         "rowSpan": 1,
-        "columnStart": 10,
+        "columnStart": 9,
         "columnSpan": 4
       }
     },
@@ -74,7 +74,7 @@
         "composition": 1758,
         "rowStart": 5,
         "rowSpan": 1,
-        "columnStart": 2,
+        "columnStart": 1,
         "columnSpan": 4
       }
     },
@@ -85,7 +85,7 @@
         "composition": 433,
         "rowStart": 5,
         "rowSpan": 1,
-        "columnStart": 6,
+        "columnStart": 5,
         "columnSpan": 4
       }
     },
@@ -96,7 +96,7 @@
         "composition": 2183,
         "rowStart": 5,
         "rowSpan": 1,
-        "columnStart": 10,
+        "columnStart": 9,
         "columnSpan": 4
       }
     },
@@ -108,30 +108,8 @@
         "composition": 730,
         "rowStart": 6,
         "rowSpan": 1,
-        "columnStart": 6,
+        "columnStart": 5,
         "columnSpan": 4
-      }
-    },
-    "back-up-10a32c78-56fe-4622-9fba-0416b68d72fc": {
-      "type": "CommandGoBackCell",
-      "options": {
-        "label": "Back",
-        "composition": [145, ";", 907],
-        "rowStart": 3,
-        "rowSpan": 1,
-        "columnStart": 1,
-        "columnSpan": 1
-      }
-    },
-    "back-up-20a32c78-56fe-4622-9fba-0416b68d72fc": {
-      "type": "CommandGoBackCell",
-      "options": {
-        "label": "Back",
-        "composition": [145, ";", 907],
-        "rowStart": 3,
-        "rowSpan": 1,
-        "columnStart": 14,
-        "columnSpan": 1
       }
     }
   }

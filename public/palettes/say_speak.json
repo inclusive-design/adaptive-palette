@@ -71,7 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "drink",
-        "composition": 275,
+        "composition": 1571,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -115,7 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "sleep",
-        "composition": 599,
+        "composition": 2424,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -148,7 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "shower",
-        "composition": 591,
+        "composition": 2392,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
