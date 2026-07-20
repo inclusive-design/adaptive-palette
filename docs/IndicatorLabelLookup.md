@@ -52,6 +52,31 @@ it can occur.
 | `src/client/ActionIndicatorCell.ts` | Applies an indicator, triggers label resolution |
 | `src/client/ActionRemoveIndicatorCell.ts` | Removes an indicator, restores `baseLabel` |
 
+## Indicator groups
+
+`public/data/indicators.json` splits its indicators into 4 groups:
+
+| Group | Marks |
+| --- | --- |
+| `Nominal` | Noun forms — plural, definite, thing/abstract sense, and combinations thereof |
+| `Verbal` | Verb forms — tense, voice, mood (action, past, future, passive, imperative, etc.) |
+| `Adjectival` | Description forms — adjective/adverb, participles, before/after-the-fact |
+| `Not planned for Unicode` | Grammatical roles not slated for Unicode encoding — indefinite, direct/indirect object, gender, person, possessive, diminutive |
+
+A symbol's `pos` (from `bliss_symbol_explanations.json`) determines which group(s) of
+indicators can apply to it:
+
+| `pos` | Applicable indicator group(s) |
+| --- | --- |
+| `noun`, `person` | `Nominal`, `Not planned for Unicode` |
+| `action` | `Verbal` |
+| `description` | `Adjectival` |
+
+This mapping defines which pairs are expected to have pre-generated labels in
+`public/data/new_labels_with_indicator.json`. A symbol whose `pos` is none of the above
+(or an indicator whose group matches no `pos`) has no pre-generated row and falls through
+to the resolution order's later tiers.
+
 ## Generating the lookup table
 
 **Goal:** produce `public/data/new_labels_with_indicator.json`, mapping every
