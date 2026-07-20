@@ -15,7 +15,6 @@
  */
 
 import fs from "fs";
-import path from "path";
 
 const GROUP_TO_POS = {
   "Nominal": ["noun", "person"],

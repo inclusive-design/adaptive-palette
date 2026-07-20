@@ -93,7 +93,6 @@ describe("IndicatorLabels", (): void => {
       { message: { role: "assistant", content: "walked" } } as Awaited<ReturnType<typeof queryChat>>
     );
 
-    const payload = { label: "walk", composition: [500], baseLabel: "walk" };
     const first = await getNewLabel(undefined, "walk", "walk", 97);
     const second = await getNewLabel(undefined, "walk", "walk", 97);
 

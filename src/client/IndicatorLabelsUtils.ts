@@ -10,7 +10,6 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import type { SymbolEncodingType } from ".";
 import { adaptivePaletteGlobals } from "./GlobalData";
 import { queryChat } from "./ollamaApi";
 
