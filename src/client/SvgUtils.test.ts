@@ -61,7 +61,7 @@ describe("SvgUtils module", (): void => {
 
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
-  }, 7000);
+  }, 10000);
 
   test("Create svg builder argument", (): void => {
     let result = compositionToBstr(singleId);

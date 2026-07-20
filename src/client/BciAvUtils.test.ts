@@ -61,7 +61,7 @@ describe("BciUtils module", (): void => {
   // tests, so increased timeout to 7000.
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
-  }, 7000);
+  }, 10000);
 
   test("Find multiple 'bark'", (): void => {
     expect(findSymbolByGloss(BARK)).toStrictEqual(expectedBarkResults);
