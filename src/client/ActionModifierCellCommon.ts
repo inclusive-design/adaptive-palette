@@ -67,19 +67,21 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
       modifierGloss: label,
       isPrepended: prepend
     });
+    const newLabel = prepend ? `${label} ${symbolToEdit.label}` : `${symbolToEdit.label} ${label}`;
     payloads[caretPosition] = {
-      "label": `${label} ${symbolToEdit.label}`,
+      "label": newLabel,
       "composition": newComposition,
       "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
       "modifierInfo": symbolToEdit.modifierInfo,
       "indicatorInfo": symbolToEdit.indicatorInfo,
-      "baseLabel": symbolToEdit.baseLabel
+      "baseLabel": symbolToEdit.baseLabel,
+      "baseModifierCount": symbolToEdit.baseModifierCount
     };
     changeEncodingContents.value = {
       payloads: payloads,
       caretPosition: caretPosition
     };
-    speak(`${label} ${symbolToEdit.label}`);
+    speak(newLabel);
   };
 
   return html`

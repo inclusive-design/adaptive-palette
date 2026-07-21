@@ -17,7 +17,9 @@ Input rows (from generate_indicator_label_prompts.js), one per line, first line 
   {"targetId":"101_99","wordId":101,"gloss":"...","pos":"noun","indicatorId":99,
    "indicatorName":"plural","prompt":"..."}
 
-Output rows (one per target, written immediately — crash-safe, resumable by targetId):
+Output rows (one per target, written immediately as they're generated). Each run
+overwrites `--output` from scratch; because generation is deterministic (see
+`do_sample=False` below), re-running after a crash reproduces the same file.
   {"targetId":"101_99","wordId":101,"gloss":"...","pos":"noun","indicatorId":99,
    "indicatorName":"plural","newLabel":"...","rawResponseText":"...","runner":"...",
    "promptVersion":"..."}
@@ -53,23 +55,6 @@ def extract_label(text: str) -> str:
         if line:
             return line
     return ""
-
-
-def load_existing_target_ids(output_path: Path) -> set:
-    """Load targetIds already present in the output file, for resumability."""
-    existing = set()
-    if not output_path.exists():
-        return existing
-    with open(output_path, encoding="utf-8") as f_existing:
-        for line in f_existing:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                existing.add(json.loads(line)["targetId"])
-            except (json.JSONDecodeError, KeyError, TypeError):
-                continue
-    return existing
 
 
 def load_model(model_path: str, quantize: bool):
@@ -115,7 +100,7 @@ def generate_response(model, tokenizer, prompt: str, system_prompt: str, max_tok
     inputs = tokenizer(text=text, return_tensors="pt").to(model.device)
     input_len = inputs["input_ids"].shape[-1]
 
-    outputs = model.generate(**inputs, max_new_tokens=max_tokens)
+    outputs = model.generate(**inputs, max_new_tokens=max_tokens, do_sample=False)
     response = tokenizer.decode(outputs[0][input_len:], skip_special_tokens=True)
     return response
 
@@ -129,7 +114,7 @@ def main():
     parser.add_argument("--prompts", required=True,
                         help="Path to prompt JSONL (output of generate_indicator_label_prompts.js)")
     parser.add_argument("--output", required=True,
-                        help="Path to write result JSONL (resumed if it already exists)")
+                        help="Path to write result JSONL (overwritten if it already exists)")
     parser.add_argument("--runner", default=None,
                         help="Label stored in each output row (default: model dir basename)")
     parser.add_argument("--prompt-version", default=None,
@@ -145,8 +130,6 @@ def main():
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    existing_ids = load_existing_target_ids(output_path)
-
     try:
         with open(args.prompts, encoding="utf-8") as f_in:
             all_lines = [line.strip() for line in f_in if line.strip()]
@@ -159,9 +142,8 @@ def main():
     model, tokenizer = load_model(args.model, args.quantize)
     print("Model loaded.", file=sys.stderr)
 
-    mode = "a" if existing_ids else "w"
+    mode = "w"
     count = 0
-    skipped = 0
     errors = 0
     with open(output_path, mode, encoding="utf-8") as f_out:
         for line in data_lines:
@@ -169,10 +151,6 @@ def main():
             try:
                 row = json.loads(line)
                 target_id = row["targetId"]
-                if target_id in existing_ids:
-                    skipped += 1
-                    continue
-
                 raw = generate_response(model, tokenizer, row["prompt"], system_prompt, args.max_tokens)
 
                 out_row = {
@@ -199,9 +177,12 @@ def main():
                 continue
 
     print(
-        f"\nDone. Wrote {count} rows ({skipped} already present, skipped, {errors} errors) to {output_path}",
+        f"\nDone. Wrote {count} rows ({errors} errors) to {output_path}",
         file=sys.stderr,
     )
+
+    if errors > 0:
+        sys.exit(1)
 
 
 if __name__ == "__main__":

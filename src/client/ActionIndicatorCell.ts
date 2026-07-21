@@ -15,7 +15,7 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle, speak, applyModifiersToLabel } from "./GlobalUtils";
 import { findIndicators, findClassifierFromLeft } from "./SvgUtils";
 import { getNewLabel } from "./IndicatorLabelsUtils";
 import "./ActionIndicatorCell.scss";
@@ -41,6 +41,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
     const symbolToEdit = payloads[caretPosition];
     let newComposition = symbolToEdit.composition;
     if (Array.isArray(newComposition)) {
+      newComposition = [...newComposition];
       const indicatorPositions = findIndicators(newComposition);
       const classifierIndex = findClassifierFromLeft(newComposition);
       // If there are no indicators on the symbol, then place the indicator
@@ -66,17 +67,19 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
     else {
       newComposition = [ newComposition, ";", indicatorId ];
     }
-    // Limitation: if a modifier (e.g. "big") was applied before this indicator,
-    // baseLabel/newLabel are derived from the bare dictionary word, so a resolved label
-    // silently drops the modifier's text (e.g. "big walk" -> "walked").
     const baseLabel = symbolToEdit.baseLabel ?? symbolToEdit.label;
+    // Track the length of `modifierInfo` at the moment `baseLabel` was captured because
+    // `baseLabel` already has any modifier text that existed when the indicator was applied.
+    // When more modifiers are added after this point, only reapply those to `baseLabel`.
+    const baseModifierCount = symbolToEdit.baseModifierCount ?? (symbolToEdit.modifierInfo?.length ?? 0);
     payloads[caretPosition] = {
       "label": symbolToEdit.label,
       "composition": newComposition,
       "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
       "modifierInfo": symbolToEdit.modifierInfo,
-      "indicatorInfo": [indicatorId],
-      "baseLabel": baseLabel
+      "indicatorInfo": indicatorId,
+      "baseLabel": baseLabel,
+      "baseModifierCount": baseModifierCount
     };
     changeEncodingContents.value = {
       payloads: payloads,
@@ -90,16 +93,21 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       JSON.stringify(latest.payloads[caretPosition].composition) === JSON.stringify(newComposition);
 
     if (newLabel !== undefined && stillCurrent) {
+      // Apply modifier labels so their text isn't lost (e.g. "big walk" + indicator -> "big walked", not "walked").
+      // When there's no `userSelectedSymbolId`, skip this section because modifier text is already folded into
+      // `baseLabel` before it reaches the Ollama prompt. Re-wrapping here would double it.
+      const finalLabel = symbolToEdit.userSelectedSymbolId !== undefined
+        ? applyModifiersToLabel(newLabel, symbolToEdit.modifierInfo)
+        : newLabel;
       latest.payloads[caretPosition] = {
         ...latest.payloads[caretPosition],
-        "label": newLabel,
-        "baseLabel": baseLabel
+        "label": finalLabel
       };
       changeEncodingContents.value = {
         payloads: latest.payloads,
         caretPosition: latest.caretPosition
       };
-      speak(newLabel);
+      speak(finalLabel);
     } else if (newLabel === undefined && stillCurrent) {
       speak(`${symbolToEdit.label}, ${props.options.label}`);
     }

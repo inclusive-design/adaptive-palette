@@ -149,7 +149,7 @@ describe("ActionIndicatorCell render tests", (): void => {
     });
 
     const updated = changeEncodingContents.value.payloads[0];
-    expect(updated.indicatorInfo).toStrictEqual([testCell.options.composition]);
+    expect(updated.indicatorInfo).toBe(testCell.options.composition);
     expect(updated.baseLabel).toBe("help");
     expect(updated.userSelectedSymbolId).toBe(382);
   });
@@ -162,7 +162,7 @@ describe("ActionIndicatorCell render tests", (): void => {
         label: "helper",
         baseLabel: "help",
         composition: [382, ";", 97],
-        indicatorInfo: [97],
+        indicatorInfo: 97,
         userSelectedSymbolId: 382
       }],
       caretPosition: 0
@@ -214,6 +214,122 @@ describe("ActionIndicatorCell render tests", (): void => {
       expect(mockedGetNewLabel).toHaveBeenCalledTimes(1);
     });
     expect(changeEncodingContents.value.payloads[0].label).toBe("hand-built");
+  });
+
+  test("Composition and indicatorInfo update synchronously before the label resolves", async (): Promise<void> => {
+    let resolveGetNewLabel: (value: string | undefined) => void;
+    mockedGetNewLabel.mockImplementation(() => new Promise((resolve) => {
+      resolveGetNewLabel = resolve;
+    }));
+
+    changeEncodingContents.value = {
+      payloads: [{
+        label: "help",
+        composition: 382,
+        userSelectedSymbolId: 382
+      }],
+      caretPosition: 0
+    };
+
+    render(html`
+      <${ActionIndicatorCell}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />`
+    );
+    const button = await screen.findByRole("button", {name: testCell.options.label});
+    fireEvent.click(button);
+
+    // The glyph (composition/indicatorInfo) must update immediately -- before
+    // getNewLabel resolves. The label catches up once it does.
+    await waitFor(() => {
+      expect(changeEncodingContents.value.payloads[0].indicatorInfo).toBe(testCell.options.composition);
+    });
+    expect(changeEncodingContents.value.payloads[0].composition).toStrictEqual([382, ";", testCell.options.composition]);
+    expect(changeEncodingContents.value.payloads[0].label).toBe("help");
+
+    resolveGetNewLabel!("helper");
+    await waitFor(() => {
+      expect(changeEncodingContents.value.payloads[0].label).toBe("helper");
+    });
+  });
+
+  test("A resolution from a superseded indicator click is dropped once a different indicator has been applied", async (): Promise<void> => {
+    let resolveFirst: (value: string | undefined) => void;
+    let resolveSecond: (value: string | undefined) => void;
+    mockedGetNewLabel
+      .mockImplementationOnce(() => new Promise((resolve) => { resolveFirst = resolve; }))
+      .mockImplementationOnce(() => new Promise((resolve) => { resolveSecond = resolve; }));
+
+    changeEncodingContents.value = {
+      payloads: [{
+        label: "help",
+        composition: 382,
+        userSelectedSymbolId: 382
+      }],
+      caretPosition: 0
+    };
+
+    const otherCell = {
+      options: { ...testCell.options, label: "Other indicator", composition: 100 }
+    };
+
+    render(html`
+      <${ActionIndicatorCell} id="cell-a" options=${testCell.options} />
+      <${ActionIndicatorCell} id="cell-b" options=${otherCell.options} />
+    `);
+
+    const buttonA = await screen.findByRole("button", {name: testCell.options.label});
+    const buttonB = await screen.findByRole("button", {name: otherCell.options.label});
+
+    fireEvent.click(buttonA);   // click A: applies indicator 99
+    await waitFor(() => expect(mockedGetNewLabel).toHaveBeenCalledTimes(1));
+    fireEvent.click(buttonB);   // click B: applies indicator 100 before A resolves
+    await waitFor(() => expect(mockedGetNewLabel).toHaveBeenCalledTimes(2));
+
+    const compositionAfterB = changeEncodingContents.value.payloads[0].composition;
+
+    resolveFirst!("A-result");
+    // Let A's promise settle without a synchronous way to observe it.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(changeEncodingContents.value.payloads[0].label).toBe("help");   // A's result dropped
+    expect(changeEncodingContents.value.payloads[0].composition).toStrictEqual(compositionAfterB);
+
+    resolveSecond!("B-result");
+    await waitFor(() => {
+      expect(changeEncodingContents.value.payloads[0].label).toBe("B-result");
+    });
+  });
+
+  test("Applying an indicator after a modifier keeps the modifier's text in the resolved label", async (): Promise<void> => {
+    mockedGetNewLabel.mockResolvedValue("walked");
+
+    changeEncodingContents.value = {
+      payloads: [{
+        label: "big walk",
+        composition: [368, "/", 382],
+        userSelectedSymbolId: 382,
+        modifierInfo: [{ modifierId: [368], modifierGloss: "big", isPrepended: true }]
+      }],
+      caretPosition: 0
+    };
+
+    render(html`
+      <${ActionIndicatorCell}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />`
+    );
+    const button = await screen.findByRole("button", {name: testCell.options.label});
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(changeEncodingContents.value.payloads[0].label).toBe("big walked");
+    });
+    expect(changeEncodingContents.value.payloads[0].baseLabel).toBe("big walk");
+    expect(changeEncodingContents.value.payloads[0].composition).toStrictEqual(
+      [368, "/", 382, ";", testCell.options.composition]
+    );
   });
 
 });

@@ -6,7 +6,7 @@
 # in compliance with this License.
 #
 # You may obtain a copy of the BSD 3-Clause License at
-# https://github.com/inclusive-design/baby-bliss-bot/blob/main/LICENSE
+# https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
 
 #SBATCH --job-name=new_labels_with_indicator_gemma-4-31B-it
 #SBATCH --time 2-00:00

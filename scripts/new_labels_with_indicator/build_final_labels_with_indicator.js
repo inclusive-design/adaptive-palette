@@ -81,6 +81,13 @@ function processRows(rows) {
       );
       process.exit(1);
     }
+    if (typeof row.newLabel !== "string" || row.newLabel.trim().length === 0) {
+      console.error(
+        `Error: Missing or empty newLabel for targetId "${row.targetId}". ` +
+        "This indicates corrupt input data."
+      );
+      process.exit(1);
+    }
     output[row.targetId] = row.newLabel;
   }
 

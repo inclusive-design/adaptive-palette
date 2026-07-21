@@ -25,7 +25,7 @@ composition string, is the lookup key.
 
 1. **Pre-generated table** — offline lookup keyed by `{symbolId}_{indicatorId}`.
    Instant, no network round-trip.
-2. **Optional live LLM query (Ollama)** — fallback for symbols missing from the table
+2. **Optional live model query (Ollama)** — fallback for symbols missing from the table
    (typically hand-built compositions with no dictionary id). Off by default, gated by
    config, since it depends on the AAC user's device running Ollama.
 3. **Unchanged label** — neither tier resolves; the indicator still applies and draws,
@@ -35,16 +35,25 @@ Indicator application never blocks on the lookup: the glyph renders immediately,
 label updates once resolution completes. Every failure mode (missing data file,
 malformed config, unreachable LLM, no dictionary id) degrades to "leave the label as is."
 
-**Known limitation:** the lookup is not modifier-aware. Applying/removing an indicator on
-a symbol that also has a modifier (e.g. "big") can drop the modifier's text from the
-label ("big walk" + past tense → "walked"). Called out in code comments at the two spots
-it can occur.
+**Modifier/indicator interaction:** `baseModifierCount` records how many `modifierInfo`
+entries existed at the moment `baseLabel` was captured (i.e. when an indicator was first
+applied to a symbol that already had modifier(s)). `baseLabel`'s text already has those
+earlier modifiers baked in, so `ActionRemoveIndicatorCell.ts` only reapplies the
+modifiers added *after* that point (`modifierInfo.slice(baseModifierCount)`) when
+restoring the bare label. `ActionRemoveModifierCell.ts` keeps `baseLabel` and
+`baseModifierCount` in sync going the other direction: removing a modifier that predates
+the `baseLabel` snapshot strips it from `baseLabel` too and decrements
+`baseModifierCount`, so a later indicator removal doesn't resurrect text the user already
+removed. This is exercised for the orderings covered in `ActionIndicatorCell.test.ts`,
+`ActionRemoveIndicatorCell.test.ts`, and `ActionRemoveModifierCell.test.ts` (modifier
+then indicator, indicator then modifier, and removal in either order); orderings outside
+those tests are not verified.
 
 ## File locations
 
 | File | Role |
 | --- | --- |
-| `src/client/IndicatorLabels.ts` | Client module: loads the table + indicator metadata, implements the resolution order |
+| `src/client/IndicatorLabelsUtils.ts` | Client module: loads the table + indicator metadata, implements the resolution order |
 | `public/data/new_labels_with_indicator.json` | Pre-generated lookup table, `{symbolId}_{indicatorId} -> label` |
 | `public/data/indicators.json` | Indicator metadata (id, group, name, purpose) |
 | `public/data/bliss_symbol_explanations.json` | Bliss vocabulary (gloss, pos, explanation) used to build LLM prompts |
@@ -102,8 +111,9 @@ Output: JSONL, one `_meta` row (shared system prompt) followed by one row per pa
 
 ### Step 2 — Run the LLM
 
-Query a local HuggingFace model with each prompt. Resumable by `targetId` — safe to
-re-run after a crash. This step needs a GPU and typically runs as a batch job on
+Query a local HuggingFace model with each prompt. Each run overwrites `--output` from
+scratch and generates deterministically (greedy decoding), so re-running after a crash
+reproduces the same file. This step needs a GPU and typically runs as a batch job on
 the server provided by Alliance Canada. (see `job_run_new_labels_with_indicator.sh`
 for the Slurm job used in the server).
 
@@ -131,3 +141,10 @@ node scripts/new_labels_with_indicator/build_final_labels_with_indicator.js \
 Rebuilding after a vocabulary or indicator-table change requires only Steps 1–3.
 Step 2 (the LLM pass) only needs to be re-run when word/indicator prompts themselves
 change.
+
+**Note on model choice:** the batch builder (Step 2) and the runtime Ollama fallback
+(tier 2 above) intentionally use different models — e.g. `gemma-4-31B-it` for the offline
+HPC batch job versus `gemma4:12b` in `public/config.json` for the runtime tier. The
+builder runs once, offline, with a GPU available, so it favors a larger, more accurate
+model; the runtime tier must run live on the AAC user's own device, so it favors a
+model small enough to be feasible there. This is not a mismatch to reconcile.

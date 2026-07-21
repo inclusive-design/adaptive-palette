@@ -37,7 +37,6 @@ export function ActionCodeCell (props: ActionCodeCellPropsType): VNode {
     // The payload includes an empty `modifierInfo` for this new symbol.
     const payloadComposition = (symbol?.composition ?? props.options.composition);
     const payload = {
-      "id": props.id,
       "label": props.options.label,
       "composition": payloadComposition,
       "userSelectedSymbolId": typeof composition === "number" ? composition : undefined,

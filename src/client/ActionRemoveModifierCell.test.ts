@@ -63,6 +63,24 @@ describe("ActionRemoveModifierCell render tests", (): void => {
   };
   const compositionAfterOneModifierRemoved = [368, "/", 313, ";", 86 ];
   const compositionAfterBothModifiersRemoved = [313, ";", 86 ];
+  const blissWordModifierThenIndicator = {
+    label: "big walked",
+    baseLabel: "big walk",
+    baseModifierCount: 1,
+    composition: [ 368, "/", 382, ";", 97 ],
+    indicatorInfo: 97,
+    modifierInfo: [{ modifierId: [368], modifierGloss: "big", isPrepended: true }],
+    userSelectedSymbolId: 382
+  };
+  const blissWordIndicatorThenModifier = {
+    label: "big walked",
+    baseLabel: "walk",
+    baseModifierCount: 0,
+    composition: [ 368, "/", 382, ";", 97 ],
+    indicatorInfo: 97,
+    modifierInfo: [{ modifierId: [368], modifierGloss: "big", isPrepended: true }],
+    userSelectedSymbolId: 382
+  };
 
   beforeAll(async (): Promise<void> => {
     await initAdaptivePaletteGlobals();
@@ -210,5 +228,49 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
     lastSymbol = changeEncodingContents.value.payloads[changeEncodingContents.value.payloads.length-1];
     expect(lastSymbol.composition).toStrictEqual(compositionAfterBothModifiersRemoved);
+  });
+
+  test("ActionRemoveModifierCell keeps baseLabel/baseModifierCount in sync when removing a modifier that predates an applied indicator", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [blissWordModifierThenIndicator],
+      caretPosition: 0
+    };
+    render(html`
+      <${ActionRemoveModifierCell}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />`
+    );
+    const removeModifierButton = await screen.findByRole("button", {name: testCell.options.label});
+    expect(removeModifierButton.getAttribute("disabled")).toBeNull();
+
+    fireEvent.click(removeModifierButton);
+
+    const updated = changeEncodingContents.value.payloads[0];
+    expect(updated.label).toBe("walked");
+    expect(updated.baseLabel).toBe("walk");
+    expect(updated.baseModifierCount).toBe(0);
+  });
+
+  test("ActionRemoveModifierCell leaves baseLabel/baseModifierCount untouched when removing a modifier that postdates an applied indicator", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [blissWordIndicatorThenModifier],
+      caretPosition: 0
+    };
+    render(html`
+      <${ActionRemoveModifierCell}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />`
+    );
+    const removeModifierButton = await screen.findByRole("button", {name: testCell.options.label});
+    expect(removeModifierButton.getAttribute("disabled")).toBeNull();
+
+    fireEvent.click(removeModifierButton);
+
+    const updated = changeEncodingContents.value.payloads[0];
+    expect(updated.label).toBe("walked");
+    expect(updated.baseLabel).toBe("walk");
+    expect(updated.baseModifierCount).toBe(0);
   });
 });

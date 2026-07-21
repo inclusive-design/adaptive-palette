@@ -81,8 +81,9 @@ export type ModifierInfoType = {
 export type SymbolEncodingType = BlissSymbolInfoType & {
   userSelectedSymbolId?: number,   // dictionary id of the originally selected symbol
   modifierInfo?: ModifierInfoType[],
-  indicatorInfo?: number[],        // id(s) of the indicator(s) currently applied
-  baseLabel?: string               // label before any indicator swap; set when a swap occurs
+  indicatorInfo?: number,          // id of the indicator currently applied
+  baseLabel?: string,              // label before any indicator swap; set when a swap occurs
+  baseModifierCount?: number       // number of modifierInfo entries present when baseLabel was captured
 }
 
 export type IndicatorLabelLookupConfigType = {

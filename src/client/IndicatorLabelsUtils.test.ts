@@ -12,7 +12,7 @@
 
 import { vi } from "vitest";
 import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
-import { getNewLabel, initIndicatorLabels } from "./IndicatorLabelsUtils";
+import { getNewLabel, initIndicatorLabels, resetOllamaCacheForTests } from "./IndicatorLabelsUtils";
 import { queryChat } from "./ollamaApi";
 
 vi.mock("./ollamaApi", async (importOriginal) => {
@@ -43,6 +43,7 @@ describe("IndicatorLabels", (): void => {
       });
     }));
     await initIndicatorLabels();
+    resetOllamaCacheForTests();
     adaptivePaletteGlobals.config = { indicatorLabelLookup: { useOllamaFallback: false, model: "" } };
   });
 
@@ -99,6 +100,53 @@ describe("IndicatorLabels", (): void => {
     expect(first).toBe("walked");
     expect(second).toBe("walked");
     expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+  });
+
+  test("concurrent calls for the same key dedupe to a single Ollama query", async (): Promise<void> => {
+    adaptivePaletteGlobals.config = { indicatorLabelLookup: { useOllamaFallback: true, model: "gemma4:12b" } };
+    let resolveQuery: (value: Awaited<ReturnType<typeof queryChat>>) => void;
+    mockedQueryChat.mockImplementation(() => new Promise((resolve) => {
+      resolveQuery = resolve;
+    }));
+
+    const first = getNewLabel(undefined, "run", "run", 97);
+    const second = getNewLabel(undefined, "run", "run", 97);
+
+    resolveQuery!({ message: { role: "assistant", content: "ran" } } as Awaited<ReturnType<typeof queryChat>>);
+
+    expect(await first).toBe("ran");
+    expect(await second).toBe("ran");
+    expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+  });
+
+  test("thrown error is cached like an empty result: second call does not re-query", async (): Promise<void> => {
+    adaptivePaletteGlobals.config = { indicatorLabelLookup: { useOllamaFallback: true, model: "gemma4:12b" } };
+    mockedQueryChat.mockRejectedValue(new Error("connection refused"));
+
+    const first = await getNewLabel(undefined, "jump", "jump", 97);
+    const second = await getNewLabel(undefined, "jump", "jump", 97);
+
+    expect(first).toBeUndefined();
+    expect(second).toBeUndefined();
+    expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+  });
+
+  test("buildOllamaPrompt path returns undefined for an unknown indicatorId, without querying Ollama", async (): Promise<void> => {
+    adaptivePaletteGlobals.config = { indicatorLabelLookup: { useOllamaFallback: true, model: "gemma4:12b" } };
+
+    const result = await getNewLabel(undefined, "unknownIndicator", "unknownIndicator", 99999);
+
+    expect(result).toBeUndefined();
+    expect(mockedQueryChat).not.toHaveBeenCalled();
+  });
+
+  test("buildOllamaPrompt path returns undefined when userSelectedSymbolId is not found in symbols, without querying Ollama", async (): Promise<void> => {
+    adaptivePaletteGlobals.config = { indicatorLabelLookup: { useOllamaFallback: true, model: "gemma4:12b" } };
+
+    const result = await getNewLabel(999999999, "ghost", undefined, 97);
+
+    expect(result).toBeUndefined();
+    expect(mockedQueryChat).not.toHaveBeenCalled();
   });
 
 });

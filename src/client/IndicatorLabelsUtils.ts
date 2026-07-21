@@ -36,7 +36,7 @@ Word "able" (description) + indicator "adverb" -> ably
 Respond with ONLY the resulting label. No punctuation, no quotation marks, no explanation, no preamble, no restating the word.`;
 
 let indicatorsById = new Map<number, IndicatorInfoEntry>();
-const ollamaCache = new Map<string, string | undefined>();
+const ollamaCache = new Map<string, Promise<string | undefined>>();
 
 /**
  * Load the pregenerated id-keyed label lookup (stored on
@@ -75,15 +75,18 @@ function toIndicatorName (name: string): string {
 }
 
 /**
- * Build the Ollama user prompt for a payload + indicator pair, mirroring `buildPrompt()`
- * in `scripts/new_labels_with_indicator/generate_indicator_label_prompts.js`. When the
- * payload's dictionary symbol is known, gloss/pos/explanation come from
+ * Build the Ollama user prompt for a symbol + indicator pair, mirroring `buildPrompt()`
+ * in `scripts/new_labels_with_indicator/generate_indicator_label_prompts.js`. When
+ * `userSelectedSymbolId` is known, gloss/pos/explanation come from
  * `adaptivePaletteGlobals.symbols` (this also covers pos-mismatched pairs the batch
  * pipeline skipped via `GROUP_TO_POS`); otherwise the prompt falls back to `baseLabel`
- * with no part of speech. Returns undefined if the indicator id is not in the loaded
- * table, or if a `userSelectedSymbolId` is set but not found in `adaptivePaletteGlobals.symbols`.
- * @param {SymbolEncodingType} payload
- * @param {number} indicatorId
+ * (or `label` if unset), with no part of speech. Returns undefined if the indicator id
+ * is not in the loaded table, or if `userSelectedSymbolId` is set but not found in
+ * `adaptivePaletteGlobals.symbols`.
+ * @param {number | undefined} userSelectedSymbolId - Dictionary id of the originally selected symbol, if any.
+ * @param {string} label - The symbol's current label.
+ * @param {string | undefined} baseLabel - The label before any indicator swap; used as the prompt's word when `userSelectedSymbolId` is unset.
+ * @param {number} indicatorId - The id of the indicator being applied.
  * @returns {string | undefined}
  */
 function buildOllamaPrompt ( userSelectedSymbolId: number | undefined, label: string, baseLabel: string | undefined, indicatorId: number): string | undefined {
@@ -113,11 +116,14 @@ function buildOllamaPrompt ( userSelectedSymbolId: number | undefined, label: st
  * in docs/IndicatorLabelLookup.md:
  *   1. Pregenerated id lookup (`"{userSelectedSymbolId}_{indicatorId}"`).
  *   2. Ollama query, only when `adaptivePaletteGlobals.config.indicatorLabelLookup.useOllamaFallback`
- *      is true. Results are cached in-memory for the session, keyed by the symbol id
- *      when known, otherwise by `baseLabel`.
+ *      is true. Results are cached in-memory for the session, keyed by
+ *      `"{userSelectedSymbolId}_{indicatorId}"` when the symbol id is known, otherwise by
+ *      `"{baseLabel ?? label}_{indicatorId}"`.
  *   3. undefined -- caller keeps the label unchanged.
- * @param {SymbolEncodingType} payload
- * @param {number} indicatorId
+ * @param {number | undefined} userSelectedSymbolId - Dictionary id of the originally selected symbol, if any.
+ * @param {string} label - The symbol's current label.
+ * @param {string | undefined} baseLabel - The label before any indicator swap, if one occurred.
+ * @param {number} indicatorId - The id of the indicator being applied.
  * @returns {Promise<string | undefined>}
  */
 export async function getNewLabel (userSelectedSymbolId: number | undefined, label: string, baseLabel: string | undefined, indicatorId: number): Promise<string | undefined> {
@@ -128,8 +134,8 @@ export async function getNewLabel (userSelectedSymbolId: number | undefined, lab
     }
   }
 
-  // Fallback: query Ollama when new label is not found in the pregenerated data.
-  // if queryOllama is enabled in the config.  If the query fails, return undefined.
+  // Fallback: query Ollama when new label is not found in the pregenerated data if
+  // `useOllamaFallback` is enabled in the config. If the query fails, return undefined.
   if (!adaptivePaletteGlobals.config.indicatorLabelLookup.useOllamaFallback) {
     return undefined;
   }
@@ -137,8 +143,9 @@ export async function getNewLabel (userSelectedSymbolId: number | undefined, lab
   const cacheKey = userSelectedSymbolId !== undefined
     ? `${userSelectedSymbolId}_${indicatorId}`
     : `${baseLabel ?? label}_${indicatorId}`;
-  if (ollamaCache.has(cacheKey)) {
-    return ollamaCache.get(cacheKey);
+  const cached = ollamaCache.get(cacheKey);
+  if (cached) {
+    return cached;
   }
 
   const prompt = buildOllamaPrompt(userSelectedSymbolId, label, baseLabel, indicatorId);
@@ -150,15 +157,27 @@ export async function getNewLabel (userSelectedSymbolId: number | undefined, lab
   if (!modelName) {
     return undefined;
   }
+  // Cache the promise itself, set synchronously before awaiting it, so a second call for the
+  // same key made before this one resolves finds the in-flight promise instead of firing its
+  // own query. Both an empty response and a thrown error resolve to `undefined` and are cached
+  // the same way, for the rest of the session.
+  const resultPromise = queryChat(prompt, modelName, false, SYSTEM_PROMPT)
+    .then((response) => {
+      const content = "message" in response ? (response.message?.content || "") : "";
+      return content.trim().length > 0 ? content.trim() : undefined;
+    })
+    .catch((error) => {
+      console.error(`Error querying Ollama for a new label after applying an indicator: ${String(error)}`);
+      return undefined;
+    });
+  ollamaCache.set(cacheKey, resultPromise);
+  return resultPromise;
+}
 
-  try {
-    const response = await queryChat(prompt, modelName, false, SYSTEM_PROMPT);
-    const content = "message" in response ? (response.message?.content || "") : "";
-    const result = content.trim().length > 0 ? content.trim() : undefined;
-    ollamaCache.set(cacheKey, result);
-    return result;
-  } catch (error) {
-    console.error(`Error querying Ollama for indicator label: ${String(error)}`);
-    return undefined;
-  }
+/**
+ * Clear the in-memory Ollama result cache. Test-only: without this, a cache key reused
+ * across test cases would silently serve a stale cached result.
+ */
+export function resetOllamaCacheForTests (): void {
+  ollamaCache.clear();
 }

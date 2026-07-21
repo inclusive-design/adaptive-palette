@@ -10,12 +10,26 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+import { vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/preact";
 import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals, adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
 import { Palette } from "./Palette";
 import { goBackImpl } from "./CommandGoBackCell";
+import * as IndicatorLabels from "./IndicatorLabelsUtils";
+
+// Mock the indicator label lookup so the "add/remove indicator" step of the label
+// coordination test below can resolve a controlled label instead of depending on a
+// network fetch or Ollama call. An un-configured `getNewLabel()` call resolves to
+// `undefined`, which matches every other test in this file that adds an indicator
+// without expecting a resolved label -- so this mock does not change their behaviour.
+vi.mock("./IndicatorLabelsUtils", () => ({
+  initIndicatorLabels: vi.fn().mockResolvedValue(undefined),
+  getNewLabel: vi.fn()
+}));
+
+const mockedGetNewLabel = vi.mocked(IndicatorLabels.getNewLabel);
 
 describe("Palette integration test", () => {
 
@@ -665,5 +679,72 @@ describe("Palette integration test", () => {
     expect(changeEncodingContents.value.caretPosition).toBe(-1);
     expect(contentArea.childElementCount).not.toBe(0);
     expect(contentArea.children[0].className.includes("insertionCaret")).toBe(true);
+  });
+
+  test("label stays correct through add modifier -> add indicator -> add modifier -> remove modifier -> remove indicator -> add modifier", async() => {
+    // Setup: add the `testPalette`, the indicator strip, and the modifier strip.
+    // Clear out any contents in the content area first.
+    render(html`<${Palette} json=${testPalette}/>`);
+    render(html`<${Palette} json=${testIndicatorPalette}/>`);
+    render(html`<${Palette} json=${testModifierPalette}/>`);
+    const clearButton = await screen.findByText("Clear");
+    fireEvent.click(clearButton);
+    const contentArea = await screen.findByLabelText("Input Area");
+    expect(contentArea.childNodes.length).toBe(0);
+
+    const secondCell = await screen.findByText("Second Cell");
+    const addOppositeButton = await screen.findByText("opposite of");
+    const addIntensityButton = await screen.findByText("intensity");
+    const addPluralButton = await screen.findByText("plural");
+    const removeModifierButton = await screen.findByText("remove a modifier");
+    const removeIndicatorButton = await screen.findByText("remove indicator");
+
+    // Add "Second Cell" -- its composition (823) is a number, so it gets a
+    // `userSelectedSymbolId`, which is what makes the label-resolving indicator
+    // path (mocked below) engage its modifier re-wrapping logic.
+    fireEvent.click(secondCell);
+    let symbol = changeEncodingContents.value.payloads[0];
+    expect(symbol.label).toBe("Second Cell");
+
+    // Add a modifier ("opposite of", prepended).
+    fireEvent.click(addOppositeButton);
+    symbol = changeEncodingContents.value.payloads[0];
+    expect(symbol.label).toBe("opposite of Second Cell");
+
+    // Add an indicator ("plural"). The resolved label is mocked; since the symbol
+    // has a `userSelectedSymbolId`, the resolved label gets re-wrapped in the
+    // modifiers tracked so far ("opposite of").
+    mockedGetNewLabel.mockResolvedValueOnce("cells");
+    fireEvent.click(addPluralButton);
+    await waitFor(() => {
+      symbol = changeEncodingContents.value.payloads[0];
+      expect(symbol.label).toBe("opposite of cells");
+    });
+    expect(symbol.baseLabel).toBe("opposite of Second Cell");
+    expect(symbol.baseModifierCount).toBe(1);
+
+    // Add another modifier ("intensity", appended) on top of the indicator's result.
+    fireEvent.click(addIntensityButton);
+    symbol = changeEncodingContents.value.payloads[0];
+    expect(symbol.label).toBe("opposite of cells intensity");
+
+    // Remove that modifier again -- back to the indicator's resolved label.
+    fireEvent.click(removeModifierButton);
+    symbol = changeEncodingContents.value.payloads[0];
+    expect(symbol.label).toBe("opposite of cells");
+
+    // Remove the indicator -- the label restores to the pre-indicator, modifier-wrapped
+    // label ("opposite of Second Cell"), and baseLabel/baseModifierCount/indicatorInfo clear.
+    fireEvent.click(removeIndicatorButton);
+    symbol = changeEncodingContents.value.payloads[0];
+    expect(symbol.label).toBe("opposite of Second Cell");
+    expect(symbol.baseLabel).toBeUndefined();
+    expect(symbol.baseModifierCount).toBeUndefined();
+    expect(symbol.indicatorInfo).toBeUndefined();
+
+    // Add one more modifier after the indicator is gone.
+    fireEvent.click(addIntensityButton);
+    symbol = changeEncodingContents.value.payloads[0];
+    expect(symbol.label).toBe("opposite of Second Cell intensity");
   });
 });

@@ -44,7 +44,25 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     label: "helper",
     baseLabel: "help",
     composition: [ 382, ";", 97 ],
-    indicatorInfo: [ 97 ],
+    indicatorInfo: 97,
+    userSelectedSymbolId: 382
+  };
+  const blissWordIndicatorThenModifier = {
+    label: "big walked",
+    baseLabel: "walk",
+    baseModifierCount: 0,
+    composition: [ 368, "/", 382, ";", 97 ],
+    indicatorInfo: 97,
+    modifierInfo: [{ modifierId: [368], modifierGloss: "big", isPrepended: true }],
+    userSelectedSymbolId: 382
+  };
+  const blissWordModifierThenIndicator = {
+    label: "big walked",
+    baseLabel: "big walk",
+    baseModifierCount: 1,
+    composition: [ 368, "/", 382, ";", 97 ],
+    indicatorInfo: 97,
+    modifierInfo: [{ modifierId: [368], modifierGloss: "big", isPrepended: true }],
     userSelectedSymbolId: 382
   };
 
@@ -180,5 +198,51 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     expect(restored.baseLabel).toBeUndefined();
     expect(restored.indicatorInfo).toBeUndefined();
     expect(restored.userSelectedSymbolId).toBe(382);
+  });
+
+  test("ActionRemoveIndicatorCell keeps a modifier applied after the indicator when restoring baseLabel", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [blissWordIndicatorThenModifier],
+      caretPosition: 0
+    };
+    render(html`
+      <${ActionRemoveIndicatorCell}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />`
+    );
+    const removeIndicatorButton = await screen.findByRole("button", {name: testCell.options.label});
+    expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
+
+    fireEvent.click(removeIndicatorButton);
+
+    const restored = changeEncodingContents.value.payloads[0];
+    expect(restored.label).toBe("big walk");
+    expect(restored.baseLabel).toBeUndefined();
+    expect(restored.baseModifierCount).toBeUndefined();
+    expect(restored.indicatorInfo).toBeUndefined();
+  });
+
+  test("ActionRemoveIndicatorCell does not double-count a modifier applied before the indicator when restoring baseLabel", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [blissWordModifierThenIndicator],
+      caretPosition: 0
+    };
+    render(html`
+      <${ActionRemoveIndicatorCell}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />`
+    );
+    const removeIndicatorButton = await screen.findByRole("button", {name: testCell.options.label});
+    expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
+
+    fireEvent.click(removeIndicatorButton);
+
+    const restored = changeEncodingContents.value.payloads[0];
+    expect(restored.label).toBe("big walk");
+    expect(restored.baseLabel).toBeUndefined();
+    expect(restored.baseModifierCount).toBeUndefined();
+    expect(restored.indicatorInfo).toBeUndefined();
   });
 });
