@@ -139,10 +139,14 @@ async function loadConfig (): Promise<AdaptivePaletteConfigType> {
  */
 export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string): Promise<void> {
   initSvgCompositeDefinitions();
-  adaptivePaletteGlobals.LLMs = await getModelNames();
   adaptivePaletteGlobals.mainPaletteContainerId = mainPaletteContainerId || "";
-  adaptivePaletteGlobals.config = await loadConfig();
-  await initIndicatorLabels();
+  const [ llms, config ] = await Promise.all([
+    getModelNames(),
+    loadConfig(),
+    initIndicatorLabels()
+  ]);
+  adaptivePaletteGlobals.LLMs = llms;
+  adaptivePaletteGlobals.config = config;
 
   // Set up the system prompts.
   window.localStorage.setItem(

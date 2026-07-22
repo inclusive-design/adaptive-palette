@@ -34,15 +34,18 @@ export function BlissSymbol (props: BlissSymbolPropsType): VNode {
 
   // Deal with aria markup, depending on whether the SVG is for presentation only or
   // associates with a labelled area.
-  if (isPresentation === "true") {
-    svgElement.setAttribute("aria-hidden", "true");
-  } else {
-    svgElement.setAttribute("role", `${GRAPHIC_ROLE}`);
-    if (labelledBy) {
-      svgElement.setAttribute("aria-labelledby", labelledBy);
+  let svgMarkupString = "";
+  if (svgElement) {
+    if (isPresentation === "true") {
+      svgElement.setAttribute("aria-hidden", "true");
+    } else {
+      svgElement.setAttribute("role", `${GRAPHIC_ROLE}`);
+      if (labelledBy) {
+        svgElement.setAttribute("aria-labelledby", labelledBy);
+      }
     }
+    svgMarkupString = svgElement.outerHTML;
   }
-  const svgMarkupString = svgElement.outerHTML;
 
   // The construction below is _only_ for the unit tests to avoid the error:
   // "Argument of type 'any[]' is not assignable to parameter of type

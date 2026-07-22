@@ -79,11 +79,17 @@ export type ModifierInfoType = {
  * can change.
  */
 export type SymbolEncodingType = BlissSymbolInfoType & {
-  userSelectedSymbolId?: number,   // dictionary id of the originally selected symbol
+  // Dictionary id of the originally selected symbol. Only set when the symbol is
+  // selected from the dictionary and not when it is a composed symbol. It's
+  // currently used to look up the new label when an indicator is applied to a symbol.
+  userSelectedSymbolId?: number,   
   modifierInfo?: ModifierInfoType[],
-  indicatorInfo?: number,          // id of the indicator currently applied
-  baseLabel?: string,              // label before any indicator swap; set when a swap occurs
-  baseModifierCount?: number       // number of modifierInfo entries present when baseLabel was captured
+  // id of the indicator currently applied
+  indicatorInfo?: number,
+  // label before any indicator swap; set when a swap occurs
+  baseLabel?: string,
+  // number of modifierInfo entries present when baseLabel was captured
+  baseModifierCount?: number
 }
 
 export type IndicatorLabelLookupConfigType = {
