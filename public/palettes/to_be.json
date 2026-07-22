@@ -159,7 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "stop",
-        "composition": [292],
+        "composition": 292,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,

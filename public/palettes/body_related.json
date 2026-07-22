@@ -5,7 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "body",
-        "composition": [171],
+        "composition": 171,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -27,7 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "hair",
-        "composition": [372],
+        "composition": 372,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -93,7 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "neck",
-        "composition": [465],
+        "composition": 465,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -126,7 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "back (body)",
-        "composition": [143],
+        "composition": 143,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,

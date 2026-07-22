@@ -71,7 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "where",
-        "composition": [703],
+        "composition": 703,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -115,7 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "that",
-        "composition": [891],
+        "composition": 891,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -137,7 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "so",
-        "composition": [650],
+        "composition": 650,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
