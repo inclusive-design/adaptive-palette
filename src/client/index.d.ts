@@ -93,7 +93,7 @@ export type SymbolEncodingType = BlissSymbolInfoType & {
 }
 
 export type IndicatorLabelLookupConfigType = {
-  useOllamaFallback: boolean,
+  useModelQueryFallback: boolean,
   model: string
 };
 

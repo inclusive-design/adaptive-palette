@@ -44,7 +44,7 @@ describe("IndicatorLabels", (): void => {
     }));
     await initIndicatorLabels();
     resetOllamaCacheForTests();
-    adaptivePaletteGlobals.config = { indicatorLabelLookup: { useOllamaFallback: false, model: "" } };
+    adaptivePaletteGlobals.config = { indicatorLabelLookup: { useModelQueryFallback: false, model: "" } };
   });
 
   afterEach((): void => {
@@ -70,7 +70,7 @@ describe("IndicatorLabels", (): void => {
   });
 
   test("tier 1 miss, Ollama on: queries Ollama with the expected system/user prompts", async (): Promise<void> => {
-    adaptivePaletteGlobals.config = { indicatorLabelLookup: { useOllamaFallback: true, model: "gemma4:12b" } };
+    adaptivePaletteGlobals.config = { indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" } };
     mockedQueryChat.mockResolvedValue(
       { message: { role: "assistant", content: " helper " } } as Awaited<ReturnType<typeof queryChat>>
     );
@@ -89,7 +89,7 @@ describe("IndicatorLabels", (): void => {
   });
 
   test("second identical call is served from cache, no re-query", async (): Promise<void> => {
-    adaptivePaletteGlobals.config = { indicatorLabelLookup: { useOllamaFallback: true, model: "gemma4:12b" } };
+    adaptivePaletteGlobals.config = { indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" } };
     mockedQueryChat.mockResolvedValue(
       { message: { role: "assistant", content: "walked" } } as Awaited<ReturnType<typeof queryChat>>
     );
@@ -103,7 +103,7 @@ describe("IndicatorLabels", (): void => {
   });
 
   test("concurrent calls for the same key dedupe to a single Ollama query", async (): Promise<void> => {
-    adaptivePaletteGlobals.config = { indicatorLabelLookup: { useOllamaFallback: true, model: "gemma4:12b" } };
+    adaptivePaletteGlobals.config = { indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" } };
     let resolveQuery: (value: Awaited<ReturnType<typeof queryChat>>) => void;
     mockedQueryChat.mockImplementation(() => new Promise((resolve) => {
       resolveQuery = resolve;
@@ -120,7 +120,7 @@ describe("IndicatorLabels", (): void => {
   });
 
   test("thrown error is cached like an empty result: second call does not re-query", async (): Promise<void> => {
-    adaptivePaletteGlobals.config = { indicatorLabelLookup: { useOllamaFallback: true, model: "gemma4:12b" } };
+    adaptivePaletteGlobals.config = { indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" } };
     mockedQueryChat.mockRejectedValue(new Error("connection refused"));
 
     const first = await getNewLabel(undefined, "jump", "jump", 97);
@@ -132,7 +132,7 @@ describe("IndicatorLabels", (): void => {
   });
 
   test("buildOllamaPrompt path returns undefined for an unknown indicatorId, without querying Ollama", async (): Promise<void> => {
-    adaptivePaletteGlobals.config = { indicatorLabelLookup: { useOllamaFallback: true, model: "gemma4:12b" } };
+    adaptivePaletteGlobals.config = { indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" } };
 
     const result = await getNewLabel(undefined, "unknownIndicator", "unknownIndicator", 99999);
 
@@ -141,7 +141,7 @@ describe("IndicatorLabels", (): void => {
   });
 
   test("buildOllamaPrompt path returns undefined when userSelectedSymbolId is not found in symbols, without querying Ollama", async (): Promise<void> => {
-    adaptivePaletteGlobals.config = { indicatorLabelLookup: { useOllamaFallback: true, model: "gemma4:12b" } };
+    adaptivePaletteGlobals.config = { indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" } };
 
     const result = await getNewLabel(999999999, "ghost", undefined, 97);
 

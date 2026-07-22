@@ -115,7 +115,7 @@ function buildOllamaPrompt ( userSelectedSymbolId: number | undefined, label: st
  * Resolve the new label for a symbol + indicator pair through the resolution order described
  * in docs/IndicatorLabelLookup.md:
  *   1. Pregenerated id lookup (`"{userSelectedSymbolId}_{indicatorId}"`).
- *   2. Ollama query, only when `adaptivePaletteGlobals.config.indicatorLabelLookup.useOllamaFallback`
+ *   2. Ollama query, only when `adaptivePaletteGlobals.config.indicatorLabelLookup.useModelQueryFallback`
  *      is true. Results are cached in-memory for the session, keyed by
  *      `"{userSelectedSymbolId}_{indicatorId}"` when the symbol id is known, otherwise by
  *      `"{baseLabel ?? label}_{indicatorId}"`.
@@ -135,8 +135,8 @@ export async function getNewLabel (userSelectedSymbolId: number | undefined, lab
   }
 
   // Fallback: query Ollama when new label is not found in the pregenerated data if
-  // `useOllamaFallback` is enabled in the config. If the query fails, return undefined.
-  if (!adaptivePaletteGlobals.config.indicatorLabelLookup.useOllamaFallback) {
+  // `useModelQueryFallback` is enabled in the config. If the query fails, return undefined.
+  if (!adaptivePaletteGlobals.config.indicatorLabelLookup.useModelQueryFallback) {
     return undefined;
   }
 

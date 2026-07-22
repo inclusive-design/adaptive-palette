@@ -81,7 +81,7 @@ export const adaptivePaletteGlobals = {
   paletteStore: new PaletteStore(),
   navigationStack: new NavigationStack(),
   LLMs: [] as string[],
-  config: { indicatorLabelLookup: { useOllamaFallback: false, model: "" } } as AdaptivePaletteConfigType,
+  config: { indicatorLabelLookup: { useModelQueryFallback: false, model: "" } } as AdaptivePaletteConfigType,
   indicatorLabels: {} as Record<string, string>,
   systemPrompts: {
     "What express": "What does this express? Give the top five answers.  Do not add a preamble like, 'Here are the top five answers.'",
@@ -103,7 +103,7 @@ export const adaptivePaletteGlobals = {
  */
 async function loadConfig (): Promise<AdaptivePaletteConfigType> {
   const disabled: AdaptivePaletteConfigType = {
-    indicatorLabelLookup: { useOllamaFallback: false, model: "" }
+    indicatorLabelLookup: { useModelQueryFallback: false, model: "" }
   };
   try {
     const response = await fetch("/config.json");
@@ -112,13 +112,13 @@ async function loadConfig (): Promise<AdaptivePaletteConfigType> {
     }
     const parsed: unknown = await response.json();
     const section = (parsed as { indicatorLabelLookup?: unknown })?.indicatorLabelLookup as
-      { useOllamaFallback?: unknown; model?: unknown } | undefined;
-    if (!section || typeof section.useOllamaFallback !== "boolean") {
+      { useModelQueryFallback?: unknown; model?: unknown } | undefined;
+    if (!section || typeof section.useModelQueryFallback !== "boolean") {
       return disabled;
     }
     return {
       indicatorLabelLookup: {
-        useOllamaFallback: section.useOllamaFallback,
+        useModelQueryFallback: section.useModelQueryFallback,
         model: typeof section.model === "string" ? section.model : ""
       }
     };

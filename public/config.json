@@ -1,6 +1,6 @@
 {
   "indicatorLabelLookup": {
-    "useOllamaFallback": false,
+    "useModelQueryFallback": false,
     "model": "gemma4:12b"
   }
 }
