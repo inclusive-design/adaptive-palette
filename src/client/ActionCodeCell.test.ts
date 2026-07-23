@@ -102,4 +102,25 @@ describe("ActionCodeCell render tests", (): void => {
     expect(changeEncodingContents.value.payloads[0].userSelectedSymbolId).toBeUndefined();
   });
 
+  test("Clicking an ActionCodeCell with a single-number array composition sets userSelectedSymbolId", async (): Promise<void> => {
+    const singleElementArrayTestCell = {
+      options: {
+        "label": "percent",
+        "composition": [ 2 ]
+      }
+    };
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+
+    render(html`
+      <${ActionCodeCell}
+        id="single-element-array-cell-uuid"
+        options=${singleElementArrayTestCell.options}
+      />`
+    );
+    const button = await screen.findByRole("button", {name: singleElementArrayTestCell.options.label});
+    fireEvent.click(button);
+
+    expect(changeEncodingContents.value.payloads[0].userSelectedSymbolId).toBe(2);
+  });
+
 });

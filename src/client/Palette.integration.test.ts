@@ -30,7 +30,6 @@ vi.mock("./IndicatorLabelsUtils", () => ({
 }));
 
 const mockedGetStaticNewLabel = vi.mocked(IndicatorLabels.getStaticNewLabel);
-const mockedGetNewLabelViaModelQuery = vi.mocked(IndicatorLabels.getNewLabelViaModelQuery);
 
 describe("Palette integration test", () => {
 
