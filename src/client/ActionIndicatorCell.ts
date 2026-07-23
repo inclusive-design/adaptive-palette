@@ -17,7 +17,7 @@ import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { generateGridStyle, speak, applyModifiersToLabel } from "./GlobalUtils";
 import { findIndicators, findClassifierFromLeft } from "./SvgUtils";
-import { getNewLabel } from "./IndicatorLabelsUtils";
+import { getStaticNewLabel, getNewLabelViaModelQuery } from "./IndicatorLabelsUtils";
 import "./ActionIndicatorCell.scss";
 
 type ActionIndicatorCodeCellPropsType = {
@@ -86,19 +86,20 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       caretPosition: caretPosition
     };
 
-    const newLabel = await getNewLabel(symbolToEdit.userSelectedSymbolId, symbolToEdit.label, baseLabel, indicatorId);
+    const isStillCurrent = () => {
+      const latest = changeEncodingContents.value;
+      return latest.payloads[caretPosition] !== undefined &&
+        JSON.stringify(latest.payloads[caretPosition].composition) === JSON.stringify(newComposition);
+    };
 
-    const latest = changeEncodingContents.value;
-    const stillCurrent = latest.payloads[caretPosition] !== undefined &&
-      JSON.stringify(latest.payloads[caretPosition].composition) === JSON.stringify(newComposition);
-
-    if (newLabel !== undefined && stillCurrent) {
-      // Apply modifier labels so their text isn't lost (e.g. "big walk" + indicator -> "big walked", not "walked").
-      // When there's no `userSelectedSymbolId`, skip this section because modifier text is already folded into
-      // `baseLabel` before it reaches the Ollama prompt. Re-wrapping here would double it.
+    // Apply modifier labels so their text isn't lost (e.g. "big walk" + indicator -> "big walked", not "walked").
+    // When there's no `userSelectedSymbolId`, skip this because modifier text is already folded into
+    // `baseLabel` before it reaches the Ollama prompt. Re-wrapping here would double it.
+    const applyLabel = (label: string) => {
+      const latest = changeEncodingContents.value;
       const finalLabel = symbolToEdit.userSelectedSymbolId !== undefined
-        ? applyModifiersToLabel(newLabel, symbolToEdit.modifierInfo)
-        : newLabel;
+        ? applyModifiersToLabel(label, symbolToEdit.modifierInfo)
+        : label;
       latest.payloads[caretPosition] = {
         ...latest.payloads[caretPosition],
         "label": finalLabel
@@ -108,8 +109,40 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
         caretPosition: latest.caretPosition
       };
       speak(finalLabel);
-    } else if (newLabel === undefined && stillCurrent) {
-      speak(`${symbolToEdit.label}, ${props.options.label}`);
+    };
+
+    const unchangedMessage = `${symbolToEdit.label}, ${props.options.label}`;
+
+    // Every branch below announces something immediately -- synchronously, before any real
+    // async wait -- so a click always gets audio feedback even if a later click supersedes it
+    // first. Only the resolution after a genuinely in-flight model query (the "pending" branch)
+    // is gated on `isStillCurrent()`.
+    const staticLabel = getStaticNewLabel(symbolToEdit.userSelectedSymbolId, indicatorId);
+    if (staticLabel !== undefined) {
+      applyLabel(staticLabel);
+      return;
+    }
+
+    const modelResult = getNewLabelViaModelQuery(symbolToEdit.userSelectedSymbolId, symbolToEdit.label, baseLabel, indicatorId);
+
+    if (modelResult.status === "cached" && modelResult.label !== undefined) {
+      applyLabel(modelResult.label);
+      return;
+    }
+    if (modelResult.status !== "pending") {
+      speak(unchangedMessage);
+      return;
+    }
+
+    speak(`${unchangedMessage} loading new label`);
+    const newLabel = await modelResult.promise;
+    if (!isStillCurrent()) {
+      return;
+    }
+    if (newLabel !== undefined) {
+      applyLabel(newLabel);
+    } else {
+      speak(unchangedMessage);
     }
   };
 

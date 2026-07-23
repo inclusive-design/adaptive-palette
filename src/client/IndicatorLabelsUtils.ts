@@ -36,7 +36,15 @@ Word "able" (description) + indicator "adverb" -> ably
 Respond with ONLY the resulting label. No punctuation, no quotation marks, no explanation, no preamble, no restating the word.`;
 
 let indicatorsById = new Map<number, IndicatorInfoEntry>();
-const ollamaCache = new Map<string, Promise<string | undefined>>();
+// An entry is a `Promise` while its query is in flight, and gets overwritten with the
+// settled value (string or `undefined`) once it resolves. Presence is checked with
+// `.has()`, not `!== undefined`, since a settled miss is stored as literal `undefined`.
+const ollamaCache = new Map<string, string | undefined | Promise<string | undefined>>();
+
+export type ModelQueryResult =
+  | { status: "not-viable" }
+  | { status: "cached", label: string | undefined }
+  | { status: "pending", promise: Promise<string | undefined> };
 
 /**
  * Load the pregenerated id-keyed label lookup (stored on
@@ -112,56 +120,68 @@ function buildOllamaPrompt ( userSelectedSymbolId: number | undefined, label: st
 }
 
 /**
- * Resolve the new label for a symbol + indicator pair through the resolution order described
- * in docs/IndicatorLabelLookup.md:
- *   1. Pregenerated id lookup (`"{userSelectedSymbolId}_{indicatorId}"`).
- *   2. Ollama query, only when `adaptivePaletteGlobals.config.indicatorLabelLookup.useModelQueryFallback`
- *      is true. Results are cached in-memory for the session, keyed by
- *      `"{userSelectedSymbolId}_{indicatorId}"` when the symbol id is known, otherwise by
- *      `"{baseLabel ?? label}_{indicatorId}"`.
- *   3. undefined -- caller keeps the label unchanged.
+ * Resolve the new label for a symbol + indicator pair through tier 1 of the resolution
+ * order described in docs/IndicatorLabelLookup.md: the pregenerated id lookup
+ * (`"{userSelectedSymbolId}_{indicatorId}"`). Synchronous -- no network/model involved.
+ * @param {number | undefined} userSelectedSymbolId - Dictionary id of the originally selected symbol, if any.
+ * @param {number} indicatorId - The id of the indicator being applied.
+ * @returns {string | undefined}
+ */
+export function getStaticNewLabel (userSelectedSymbolId: number | undefined, indicatorId: number): string | undefined {
+  if (userSelectedSymbolId === undefined) {
+    return undefined;
+  }
+  return adaptivePaletteGlobals.indicatorLabels[`${userSelectedSymbolId}_${indicatorId}`];
+}
+
+/**
+ * Resolve the new label for a symbol + indicator pair through tier 2 of the resolution
+ * order described in docs/IndicatorLabelLookup.md: an model query, only when
+ * `adaptivePaletteGlobals.config.indicatorLabelLookup.useModelQueryFallback` is true and
+ * a prompt can be built. Results are cached in-memory for the session, keyed by
+ * `"{userSelectedSymbolId}_{indicatorId}"` when the symbol id is known, otherwise by
+ * `"{baseLabel ?? label}_{indicatorId}"`. Whether the fallback is viable, already
+ * settled, or needs a fresh query is all decided synchronously, so the caller can choose
+ * the right immediate announcement before awaiting anything.
  * @param {number | undefined} userSelectedSymbolId - Dictionary id of the originally selected symbol, if any.
  * @param {string} label - The symbol's current label.
  * @param {string | undefined} baseLabel - The label before any indicator swap, if one occurred.
  * @param {number} indicatorId - The id of the indicator being applied.
- * @returns {Promise<string | undefined>}
+ * @returns {ModelQueryResult}
  */
-export async function getNewLabel (userSelectedSymbolId: number | undefined, label: string, baseLabel: string | undefined, indicatorId: number): Promise<string | undefined> {
-  if (userSelectedSymbolId !== undefined) {
-    const newLabel = adaptivePaletteGlobals.indicatorLabels[`${userSelectedSymbolId}_${indicatorId}`];
-    if (newLabel !== undefined) {
-      return newLabel;
-    }
+export function getNewLabelViaModelQuery (userSelectedSymbolId: number | undefined, label: string, baseLabel: string | undefined, indicatorId: number): ModelQueryResult {
+  if (!adaptivePaletteGlobals.config.indicatorLabelLookup.useModelQueryFallback) {
+    return { status: "not-viable" };
   }
 
-  // Fallback: query Ollama when new label is not found in the pregenerated data if
-  // `useModelQueryFallback` is enabled in the config. If the query fails, return undefined.
-  if (!adaptivePaletteGlobals.config.indicatorLabelLookup.useModelQueryFallback) {
-    return undefined;
+  const prompt = buildOllamaPrompt(userSelectedSymbolId, label, baseLabel, indicatorId);
+  if (!prompt) {
+    return { status: "not-viable" };
+  }
+
+  const modelName = adaptivePaletteGlobals.config.indicatorLabelLookup.model || adaptivePaletteGlobals.LLMs[0];
+  if (!modelName) {
+    return { status: "not-viable" };
   }
 
   const cacheKey = userSelectedSymbolId !== undefined
     ? `${userSelectedSymbolId}_${indicatorId}`
     : `${baseLabel ?? label}_${indicatorId}`;
-  const cached = ollamaCache.get(cacheKey);
-  if (cached) {
-    return cached;
+
+  if (ollamaCache.has(cacheKey)) {
+    const entry = ollamaCache.get(cacheKey);
+    if (entry instanceof Promise) {
+      return { status: "pending", promise: entry };
+    }
+    return { status: "cached", label: entry };
   }
 
-  const prompt = buildOllamaPrompt(userSelectedSymbolId, label, baseLabel, indicatorId);
-  if (!prompt) {
-    return undefined;
-  }
-
-  const modelName = adaptivePaletteGlobals.config.indicatorLabelLookup.model || adaptivePaletteGlobals.LLMs[0];
-  if (!modelName) {
-    return undefined;
-  }
   // Cache the promise itself, set synchronously before awaiting it, so a second call for the
-  // same key made before this one resolves finds the in-flight promise instead of firing its
-  // own query. Both an empty response and a thrown error resolve to `undefined` and are cached
-  // the same way, for the rest of the session.
-  const resultPromise = queryChat(prompt, modelName, false, SYSTEM_PROMPT)
+  // same key made before this one settles finds the in-flight promise instead of firing its
+  // own query. Both an empty response and a thrown error resolve to `undefined`; once settled,
+  // the cache entry is overwritten with the plain value (string or `undefined`) for the rest
+  // of the session.
+  const resultPromise: Promise<string | undefined> = queryChat(prompt, modelName, false, SYSTEM_PROMPT)
     .then((response) => {
       const content = "message" in response ? (response.message?.content || "") : "";
       return content.trim().length > 0 ? content.trim() : undefined;
@@ -169,9 +189,13 @@ export async function getNewLabel (userSelectedSymbolId: number | undefined, lab
     .catch((error) => {
       console.error(`Error querying Ollama for a new label after applying an indicator: ${String(error)}`);
       return undefined;
+    })
+    .then((result) => {
+      ollamaCache.set(cacheKey, result);
+      return result;
     });
   ollamaCache.set(cacheKey, resultPromise);
-  return resultPromise;
+  return { status: "pending", promise: resultPromise };
 }
 
 /**

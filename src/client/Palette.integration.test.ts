@@ -21,15 +21,16 @@ import * as IndicatorLabels from "./IndicatorLabelsUtils";
 
 // Mock the indicator label lookup so the "add/remove indicator" step of the label
 // coordination test below can resolve a controlled label instead of depending on a
-// network fetch or Ollama call. An un-configured `getNewLabel()` call resolves to
-// `undefined`, which matches every other test in this file that adds an indicator
-// without expecting a resolved label -- so this mock does not change their behaviour.
+// network fetch or Ollama call. An un-configured `getStaticNewLabel()` call returns
+// `undefined` and `getNewLabelViaModelQuery()` reports "not-viable"
 vi.mock("./IndicatorLabelsUtils", () => ({
   initIndicatorLabels: vi.fn().mockResolvedValue(undefined),
-  getNewLabel: vi.fn()
+  getStaticNewLabel: vi.fn().mockReturnValue(undefined),
+  getNewLabelViaModelQuery: vi.fn().mockReturnValue({ status: "not-viable" })
 }));
 
-const mockedGetNewLabel = vi.mocked(IndicatorLabels.getNewLabel);
+const mockedGetStaticNewLabel = vi.mocked(IndicatorLabels.getStaticNewLabel);
+const mockedGetNewLabelViaModelQuery = vi.mocked(IndicatorLabels.getNewLabelViaModelQuery);
 
 describe("Palette integration test", () => {
 
@@ -714,7 +715,7 @@ describe("Palette integration test", () => {
     // Add an indicator ("plural"). The resolved label is mocked; since the symbol
     // has a `userSelectedSymbolId`, the resolved label gets re-wrapped in the
     // modifiers tracked so far ("opposite of").
-    mockedGetNewLabel.mockResolvedValueOnce("cells");
+    mockedGetStaticNewLabel.mockReturnValueOnce("cells");
     fireEvent.click(addPluralButton);
     await waitFor(() => {
       symbol = changeEncodingContents.value.payloads[0];

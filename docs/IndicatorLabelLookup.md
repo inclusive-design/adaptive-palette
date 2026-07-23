@@ -35,6 +35,17 @@ Indicator application never blocks on the lookup: the glyph renders immediately,
 label updates once resolution completes. Every failure mode (missing data file,
 malformed config, unreachable LLM, no dictionary id) degrades to "leave the label as is."
 
+**Label announcement order:**
+
+A click on an indicator always gets audio feedback immediately:
+
+1. If the symbol and indicator combination exists in the pre-generated lookup table, announce the updated label immediately.
+2. If no match is found in the lookup table but the system needs time to query the backend
+model, announce: "{symbol label} {indicator label} — loading new label"
+No match or fallback available
+3. If neither a lookup nor a model fallback is available, announce: "{symbol label} {indicator label}".
+In this case, the label remains unchanged.
+
 **Modifier/indicator interaction:** `baseModifierCount` records how many `modifierInfo`
 entries existed at the moment `baseLabel` was captured (i.e. when an indicator was first
 applied to a symbol that already had modifier(s)). `baseLabel`'s text already has those
