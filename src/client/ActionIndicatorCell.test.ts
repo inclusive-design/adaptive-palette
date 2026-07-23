@@ -446,6 +446,58 @@ describe("ActionIndicatorCell render tests", (): void => {
     });
   });
 
+  test("A pending label resolves even if a modifier changes the composition of the same slot first", async (): Promise<void> => {
+    let resolveQuery: (value: string | undefined) => void;
+    mockedGetNewLabelViaModelQuery.mockReturnValue({
+      status: "pending",
+      promise: new Promise((resolve) => { resolveQuery = resolve; })
+    });
+
+    changeEncodingContents.value = {
+      payloads: [{
+        label: "help",
+        composition: 382,
+        userSelectedSymbolId: 382
+      }],
+      caretPosition: 0
+    };
+
+    render(html`
+      <${ActionIndicatorCell}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />`
+    );
+    const button = await screen.findByRole("button", {name: testCell.options.label});
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(changeEncodingContents.value.payloads[0].indicatorInfo).toBe(testCell.options.composition);
+    });
+
+    // A modifier is applied to the same slot before the indicator's label resolves.
+    // It rewrites `composition` and `label` but preserves `indicatorInfo`, since the
+    // indicator itself is still applied.
+    const current = changeEncodingContents.value.payloads[0];
+    changeEncodingContents.value = {
+      payloads: [{
+        ...current,
+        label: "big help",
+        composition: [368, "/", ...(current.composition as (string|number)[])]
+      }],
+      caretPosition: 0
+    };
+
+    resolveQuery!("helper");
+    // The resolved label must still be applied -- not silently dropped -- even though
+    // `composition` changed after the indicator click. The modifier's own composition
+    // and label edits made in the meantime are preserved.
+    await waitFor(() => {
+      expect(changeEncodingContents.value.payloads[0].label).toBe("helper");
+    });
+    expect(changeEncodingContents.value.payloads[0].composition).toStrictEqual([368, "/", 382, ";", testCell.options.composition]);
+  });
+
   test("Applying an indicator after a modifier keeps the modifier's text in the resolved label", async (): Promise<void> => {
     mockedGetStaticNewLabel.mockReturnValue("walked");
 

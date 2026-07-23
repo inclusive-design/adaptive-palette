@@ -86,10 +86,14 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       caretPosition: caretPosition
     };
 
+    // Compares `indicatorInfo`, not the full `composition`, because a modifier applied to the
+    // same slot while this indicator's label is still resolving changes `composition` without
+    // superseding the indicator itself -- the resolved label would otherwise be dropped even
+    // though the indicator is still legitimately applied.
     const isStillCurrent = () => {
       const latest = changeEncodingContents.value;
       return latest.payloads[caretPosition] !== undefined &&
-        JSON.stringify(latest.payloads[caretPosition].composition) === JSON.stringify(newComposition);
+        latest.payloads[caretPosition].indicatorInfo === indicatorId;
     };
 
     // Apply modifier labels so their text isn't lost (e.g. "big walk" + indicator -> "big walked", not "walked").
