@@ -28,7 +28,5 @@ jobs:
           npm --version
       - name: NPM install (ci)
         run: npm ci
-      - name: Build client
-        run: npm run build:client
-      - name: Build server
-        run: npm run build:server
+      - name: Build
+        run: npm run build

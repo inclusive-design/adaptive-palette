@@ -7,9 +7,6 @@ dist
 !.vscode/extensions.json
 .DS_Store
 
-# Application files and folders
-vectorStore
-
 # Testing related artifacts
 /**/__screenshots__/
 .vitest-attachments
