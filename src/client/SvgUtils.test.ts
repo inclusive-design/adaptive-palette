@@ -92,18 +92,6 @@ describe("SvgUtils module", (): void => {
     expect(BlissSVGBuilder.isDefined("823")).toBe(false);
   });
 
-  test("compositionToBstr falls back to inline expansion when a composite's alias registration fails", (): void => {
-    // 4749 = "to massage", composition: [106, ";", 81, "/", "RK:-2", "/", 374, "/", 718].
-    // BlissSVGBuilder.define() rejects this codeString (word separator "/" combined
-    // with an internal kerning coordinate "RK:-2"), so it's NOT registered as an alias.
-    expect(BlissSVGBuilder.isDefined("4749")).toBe(false);
-    // compositionToBstr must fall back to the full inline expansion rather than
-    // emitting an unresolvable bare "4749" token.
-    expect(compositionToBstr(4749)).toBe("B106;B81/RK:-2/B374/B718");
-    // And it must still render real content, not an empty SVG.
-    expect(getSvgMarkupString(4749)).toBe(getSvgMarkupString([106, ";", 81, "/", "RK:-2", "/", 374, "/", 718]));
-  });
-
   test("Unknown id produces empty-ish SVG", (): void => {
     expect(() => { compositionToBstr(invalidId); }).not.toThrow();
     // invalidId=0 produces "B0" which BlissSVGBuilder doesn't recognize -- it now

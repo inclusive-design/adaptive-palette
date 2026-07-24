@@ -101,20 +101,15 @@ export function compositionToBstr (id: SymbolCompositionType): string {
     if (symbol && !symbol.isCharacter) {
       // Composite (word-level) symbols are registered as bare-id aliases via
       // initSvgCompositeDefinitions()/BlissSVGBuilder.define(), so the id itself
-      // is a valid code. For composites whose alias registration failed (e.g. an
-      // internal kerning coordinate such as "RK:-2"), fall back to inlining this
-      // composite's own flattened composition directly -- safe since compositions
-      // never nest another composite.
+      // is a valid code. For composites whose alias registration failed, fall
+      // back to inlining this composite's own flattened composition directly --
+      // safe since compositions never nest another composite.
       return BlissSVGBuilder.isDefined(String(item))
         ? String(item)
         : compositionToBstr(symbol.composition as SymbolCompositionType);
     }
     // Character symbols always use BlissSVGBuilder's native "B<id>" code, never a
-    // bare-id alias -- even though composite symbols' aliases would resolve to the
-    // same content, the ";" single-character indicator operator only recognizes a
-    // native "B<id>" code as "a single character" on its left-hand side. A bare
-    // alias id reads as an opaque word, so BlissSVGBuilder silently drops the
-    // indicator (MISPLACED_CHARACTER_INDICATOR warning). Unknown ids also fall here.
+    // bare-id alias. Unknown ids also fall here.
     return "B" + item;
   };
 
@@ -132,9 +127,9 @@ export function compositionToBstr (id: SymbolCompositionType): string {
  * their native `"B<id>"` code (see the comment in `compositionToBstr()`), so
  * a bare-id alias for them would be both unnecessary and misleading.
  * Called once from `initAdaptivePaletteGlobals()`.
- * Note: if a composite symbol contains internal kerning coordinate such as
- * "RK:-2", the alias registration will be rejected. 168 symbols are rejected
- * for this reason.
+ * Note: BlissSVGBuilder.define() can still reject a composite's codeString
+ * (e.g. composition with "XOH"). compositionToBstr() falls back to inline
+ * expansion for any composite whose alias fails to register.
  */
 export function initSvgCompositeDefinitions (): void {
   const definitions: Record<string, { codeString: string }> = {};
