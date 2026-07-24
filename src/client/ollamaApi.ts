@@ -85,7 +85,8 @@ export async function queryChat (query: string, modelName: string, streamResp: b
   const request = {
     model: modelName,
     messages: messageArray,
-    keep_alive: 15
+    keep_alive: 15,
+    think: false
   };
   if (streamResp) {
     return await ollama.chat({ ...request, stream: true });
