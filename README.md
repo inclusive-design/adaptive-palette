@@ -136,5 +136,15 @@ pipeline that maps every symbol+indicator pair that the vocabulary supports to i
 - [Palette JSON Generator](./docs/PaletteJsonGenerator.md): how to use the web-based Palette Generator app to
   create custom Bliss symbol palettes from gloss words, BCI AV IDs, or SVG builder strings.
   - [Script directory](apps/palette-generator/)
-- [Client Developer Documentation](./docs/DeveloperDoc.md): technical guide for developers building the
-  adaptive palette client side with Preact.
+- [Developer Documentation](./docs/DeveloperDoc.md): technical guide for developers building the
+  adaptive palette with Preact.
+
+## Attribution
+
+The following data file is adapted from [Blissary.com](https://blissary.com), which builds upon the work
+of [Blissymbolics Communication International (BCI)](https://blissymbolics.org).
+
+In accordance with the ShareAlike clause, this adapted file is also licensed under
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/):
+
+- [`public/data/bliss_symbol_explanations.json`](./public/data/bliss_symbol_explanations.json)

@@ -57,12 +57,17 @@ render(html`<${Palette} json=${firstLayer} />`, getRequiredElement("mainPaletteD
 render(html`<${Palette} json=${modifiersPalette} />`, getRequiredElement("modifiers"));
 
 // Forms for interacting with LLMs
-render(html`<${DialogPromptEntries} />`, getRequiredElement("llmPrompt"));
-render(
-  html`<${CommandTelegraphicCompletions} model="llama3.1:latest" stream=${false} />`,
-  getRequiredElement("askForLlmSuggestions")
-);
-render(html`<${SentenceCompletionsPalette} />`, getRequiredElement("llmSuggestions"));
+const llmInteraction = getRequiredElement("llmInteraction");
+if (adaptivePaletteGlobals.LLMs.length > 0) {
+  render(html`<${DialogPromptEntries} />`, getRequiredElement("llmPrompt"));
+  render(
+    html`<${CommandTelegraphicCompletions} model="llama3.1:latest" stream=${false} />`,
+    getRequiredElement("askForLlmSuggestions")
+  );
+  render(html`<${SentenceCompletionsPalette} />`, getRequiredElement("llmSuggestions"));
+} else {
+  llmInteraction.innerHTML = "<p>No models available. Start Ollama to enable AI features.</p>";
+}
 
 // Forms for entering SVG strings and searching the AV
 render(html`<${ActionSvgEntryField} />`, getRequiredElement("svgBuilderStringEntry"));

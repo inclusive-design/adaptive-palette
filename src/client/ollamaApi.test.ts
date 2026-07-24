@@ -81,6 +81,7 @@ describe("ollamaApi unit tests", (): void => {
       expect(mockedOllama.chat).toHaveBeenCalledWith({
         model: mockModel,
         keep_alive: 15,
+        think: false,
         stream: false,
         messages: [
           { role: "user", content: mockQuery },
@@ -97,6 +98,7 @@ describe("ollamaApi unit tests", (): void => {
       expect(mockedOllama.chat).toHaveBeenCalledWith({
         model: mockModel,
         keep_alive: 15,
+        think: false,
         stream: false,
         messages: [
           { role: "system", content: systemPrompt },

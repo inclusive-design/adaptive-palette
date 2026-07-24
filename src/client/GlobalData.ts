@@ -77,7 +77,7 @@ export const SYSTEM_PROMPTS_KEY = "Telegraphic System Prompts";
  * and create the PaletterStore and NavigationStack objects.
  */
 export const adaptivePaletteGlobals = {
-  symbols: bliss_symbols as BlissSymbolEntry[],
+  symbols: bliss_symbols.data as BlissSymbolEntry[],
   paletteStore: new PaletteStore(),
   navigationStack: new NavigationStack(),
   LLMs: [] as string[],
