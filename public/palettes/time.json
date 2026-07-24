@@ -5,7 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "time",
-        "bciAvId": 17732,
+        "composition": 655,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -16,7 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "minute",
-        "bciAvId": 15475,
+        "composition": 2015,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -27,7 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "hour",
-        "bciAvId": 14904,
+        "composition": 1830,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -38,7 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "week",
-        "bciAvId": 18217,
+        "composition": 2721,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -49,7 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "month",
-        "bciAvId": 15649,
+        "composition": 452,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -60,7 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "year",
-        "bciAvId": 18289,
+        "composition": 716,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -71,7 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "spring",
-        "bciAvId": 17241,
+        "composition": 2476,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -82,7 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "summer",
-        "bciAvId": 17460,
+        "composition": 2515,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -93,15 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "autumn",
-        "bciAvId": [
-          17462,
-          "/",
-          8499,
-          "/",
-          15183,
-          "/",
-          13869
-        ],
+        "composition": [636, "/", 12, "/", 416, "/", 271],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -112,7 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "winter",
-        "bciAvId": 18262,
+        "composition": 2753,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -123,7 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "Christmas",
-        "bciAvId": 13181,
+        "composition": 1412,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -134,7 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "Easter",
-        "bciAvId": 13903,
+        "composition": 1585,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -145,7 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "holiday",
-        "bciAvId": 14884,
+        "composition": 1815,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -156,7 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "birthday",
-        "bciAvId": 12846,
+        "composition": 1298,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -167,7 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "vacation",
-        "bciAvId": 17995,
+        "composition": 2678,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -178,7 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "weather",
-        "bciAvId": 18214,
+        "composition": 696,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -189,7 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "rain",
-        "bciAvId": 16455,
+        "composition": 556,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -200,7 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "snow",
-        "bciAvId": 17192,
+        "composition": 604,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -211,7 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "air",
-        "bciAvId": 12356,
+        "composition": 114,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -222,7 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "wind",
-        "bciAvId": 18255,
+        "composition": 705,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

@@ -1,6 +1,7 @@
 /*
- * Copyright 2023-2026 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -67,7 +68,7 @@ const goBackToPalette = async (event: Event): Promise<void> => {
 export function CommandGoBackCell (props: CommandGoBackCellPropsType): VNode {
 
   const {
-    columnStart, columnSpan, rowStart, rowSpan, bciAvId, label
+    columnStart, columnSpan, rowStart, rowSpan, composition, label
   } = props.options;
   const ariaControlsId = adaptivePaletteGlobals.mainPaletteContainerId;
 
@@ -80,7 +81,7 @@ export function CommandGoBackCell (props: CommandGoBackCellPropsType): VNode {
     <button
       id="${props.id}" class="btn-command" style="${gridStyles}"
       aria-controls="${ariaControlsId}" onClick=${goBackToPalette}>
-      <${BlissSymbol} bciAvId=${bciAvId} label=${label} />
+      <${BlissSymbol} composition=${composition} label=${label} />
     </button>
   `;
 }

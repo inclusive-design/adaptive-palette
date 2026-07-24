@@ -5,7 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "angry",
-        "bciAvId": [ 14647, "/", 14164, ";", 8998, "/", 15928 ],
+        "composition": [368, "/", 313, ";", 86, "/", 487],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -16,7 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "frustrated",
-        "bciAvId": 14408,
+        "composition": 1710,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -27,7 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "mean",
-        "bciAvId": 15439,
+        "composition": 1989,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -38,7 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "painful",
-        "bciAvId": 15955,
+        "composition": 2126,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -49,7 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "sick",
-        "bciAvId": 16973,
+        "composition": 2396,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -60,7 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "tired",
-        "bciAvId": 17735,
+        "composition": 2605,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -71,7 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "hungry",
-        "bciAvId": 14912,
+        "composition": 1837,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -82,7 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "thirsty",
-        "bciAvId": 17719,
+        "composition": 2594,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -93,7 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "lonely",
-        "bciAvId": 15228,
+        "composition": 1950,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -104,7 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "strange",
-        "bciAvId": 17274,
+        "composition": 2496,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -115,7 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "wrong",
-        "bciAvId": 12615,
+        "composition": 1250,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -126,7 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "smart",
-        "bciAvId": 17015,
+        "composition": 2430,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -137,7 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "stupid",
-        "bciAvId": 17447,
+        "composition": 2504,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -148,7 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "interesting",
-        "bciAvId": 14948,
+        "composition": 1863,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -159,7 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "important",
-        "bciAvId": 14930,
+        "composition": 1849,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -170,7 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "certain",
-        "bciAvId": 24049,
+        "composition": 4195,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -181,7 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "careful",
-        "bciAvId": 13123,
+        "composition": 1376,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -192,7 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "dangerous",
-        "bciAvId": 13633,
+        "composition": 1504,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -203,7 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "together",
-        "bciAvId": 17746,
+        "composition": 2614,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -214,7 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "dead",
-        "bciAvId": 13642,
+        "composition": 1511,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

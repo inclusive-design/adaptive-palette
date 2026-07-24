@@ -1,6 +1,7 @@
 /*
- * Copyright 2024 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -26,7 +27,7 @@ describe("ActionBranchToPaletteCell render tests", (): void => {
       "rowSpan": "12",
       "columnStart": "33",
       "columnSpan": "11",
-      "bciAvId": [ 16161, "/", 9011 ]
+      "composition": [ 513, "/", 99 ]   // IDsfor bciAvIds 16161, 9011
     }
   };
 

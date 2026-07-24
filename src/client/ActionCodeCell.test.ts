@@ -1,6 +1,7 @@
 /*
- * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -25,7 +26,7 @@ describe("ActionCodeCell render tests", (): void => {
       "rowSpan": "2",
       "columnStart": "2",
       "columnSpan": "1",
-      "bciAvId": [ 12335, "/", 8499 ]   // VERB+EN
+      "composition": [ 106, "/", 12 ]   // VERB+EN (IDs for bciAvIds 12335, 8499)
     }
   };
 
@@ -59,6 +60,10 @@ describe("ActionCodeCell render tests", (): void => {
 
     // Check disabled state (should be enabled)
     expect(button.getAttribute("disabled")).toBe(null);
+
+    // Check that SVG is rendered (composition field must be set; bciAvId would leave it undefined)
+    const svgElement = button.querySelector("svg");
+    expect(svgElement).not.toBe(null);
   });
 
 });

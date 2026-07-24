@@ -5,7 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "environment",
-        "bciAvId": 13942,
+        "composition": 294,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -16,7 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "animal",
-        "bciAvId": 12378,
+        "composition": 122,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -27,7 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "bird",
-        "bciAvId": 12837,
+        "composition": 163,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -38,7 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "fish",
-        "bciAvId": 14188,
+        "composition": 321,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -49,7 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "snake",
-        "bciAvId": 17189,
+        "composition": 602,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -60,7 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "insect",
-        "bciAvId": 14943,
+        "composition": 400,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -71,7 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "tree",
-        "bciAvId": 17775,
+        "composition": 666,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -82,7 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "flower",
-        "bciAvId": 14205,
+        "composition": 325,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -93,7 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "seed",
-        "bciAvId": 16749,
+        "composition": 584,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -104,7 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "forest",
-        "bciAvId": 14386,
+        "composition": 1693,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -115,7 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "lake",
-        "bciAvId": 15168,
+        "composition": 1908,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -126,7 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "island",
-        "bciAvId": 14958,
+        "composition": 404,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -137,7 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "ice",
-        "bciAvId": 14919,
+        "composition": 394,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -148,7 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "water",
-        "bciAvId": 18209,
+        "composition": 695,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -159,7 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "fire",
-        "bciAvId": 14183,
+        "composition": 319,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -170,7 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "mountain",
-        "bciAvId": 15663,
+        "composition": 456,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -181,7 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "land",
-        "bciAvId": 13901,
+        "composition": 281,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -192,7 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "sky",
-        "bciAvId": 17006,
+        "composition": 597,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -203,7 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "sun",
-        "bciAvId": 17462,
+        "composition": 636,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -214,7 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "star",
-        "bciAvId": 17252,
+        "composition": 622,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

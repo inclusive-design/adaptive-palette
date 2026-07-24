@@ -5,7 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "yes",
-        "bciAvId": [ 12374, "/", 14947, "/", 14947 ],
+        "composition": [120, "/", 401, "/", 401],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -16,7 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "no",
-        "bciAvId": [ 15474, "/", 14947, "/", 14947 ],
+        "composition": [449, "/", 401, "/", 401],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -27,13 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "don't know",
-        "bciAvId": [
-          15161,
-          "/",
-          15474,
-          "/",
-          14947
-        ],
+        "composition": [412, ";", 81, "/", 449, "/", 401],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -44,7 +38,7 @@
       "type": "ActionIndicatorCell",
       "options": {
         "label": "action",
-        "bciAvId": 8993,
+        "composition": 81,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -55,7 +49,7 @@
       "type": "ActionIndicatorCell",
       "options": {
         "label": "past",
-        "bciAvId": 9004,
+        "composition": 92,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -66,7 +60,7 @@
       "type": "ActionIndicatorCell",
       "options": {
         "label": "present",
-        "bciAvId": 24807,
+        "composition": 928,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 6,
@@ -77,7 +71,7 @@
       "type": "ActionIndicatorCell",
       "options": {
         "label": "future",
-        "bciAvId": 8999,
+        "composition": 87,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 7,
@@ -88,7 +82,7 @@
       "type": "ActionIndicatorCell",
       "options": {
         "label": "plural",
-        "bciAvId": 9011,
+        "composition": 99,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 8,
@@ -99,7 +93,7 @@
       "type": "ActionIndicatorCell",
       "options": {
         "label": "description",
-        "bciAvId": 8998,
+        "composition": 86,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 9,
@@ -110,7 +104,7 @@
       "type": "ActionIndicatorCell",
       "options": {
         "label": "concrete thing",
-        "bciAvId": 9009 ,
+        "composition": 97,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 10,
@@ -121,7 +115,7 @@
       "type": "ActionIndicatorCell",
       "options": {
         "label": "command",
-        "bciAvId": 24670 ,
+        "composition": 907,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 11,
@@ -132,7 +126,7 @@
       "type": "ActionRemoveIndicatorCell",
       "options": {
         "label": "Remove indicator",
-        "bciAvId": [ 17449, ";", 24670, "//", 14430, "/", 8993,  "/", 9011 ],
+        "composition": [634, ";", 907, "//", 348, "/", 81, "/", 99],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 12,

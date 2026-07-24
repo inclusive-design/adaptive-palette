@@ -5,7 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "day",
-        "bciAvId": 13639,
+        "composition": 258,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -16,7 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "night",
-        "bciAvId": 15719,
+        "composition": 470,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -27,7 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "early morning",
-        "bciAvId": 15656,
+        "composition": 454,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -38,7 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "evening",
-        "bciAvId": 13950,
+        "composition": 298,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -49,7 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "break",
-        "bciAvId": 16497,
+        "composition": 2274,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -60,17 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "morning",
-        "bciAvId": [
-          13639,
-          "/",
-          12656,
-          "/",
-          8497,
-          "/",
-          "RK:-1",
-          "/",
-          8498
-        ],
+        "composition": [258, "/", 158, "/", 10, "/", "RK:-1", "/", 11],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -81,17 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "afternoon",
-        "bciAvId": [
-          13639,
-          "/",
-          12348,
-          "/",
-          8497,
-          "/",
-          "RK:-1",
-          "/",
-          8498
-        ],
+        "composition": [258, "/", 109, "/", 10, "/", "RK:-1", "/", 11],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -102,7 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "yesterday",
-        "bciAvId": 18295,
+        "composition": 2777,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -113,7 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "today",
-        "bciAvId": 17744,
+        "composition": 2613,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -124,7 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "tomorrow",
-        "bciAvId": 17750,
+        "composition": 2617,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -135,7 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "Sunday",
-        "bciAvId": 17464,
+        "composition": 2518,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -146,7 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "Monday",
-        "bciAvId": 15483,
+        "composition": 2022,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -157,7 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "Tuesday",
-        "bciAvId": 17790,
+        "composition": 2646,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -168,7 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "Wednesday",
-        "bciAvId": 18216,
+        "composition": 2720,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -179,7 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "Thursday",
-        "bciAvId": 17728,
+        "composition": 2600,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -190,7 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "Friday",
-        "bciAvId": 14400,
+        "composition": 1704,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -201,7 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "Saturday",
-        "bciAvId": 16722,
+        "composition": 2320,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -212,7 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "weekend",
-        "bciAvId": 25217,
+        "composition": 5033,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -223,7 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "past",
-        "bciAvId": 12352,
+        "composition": 112,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -234,7 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "future",
-        "bciAvId": 14417,
+        "composition": 341,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

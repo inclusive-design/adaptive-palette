@@ -1,6 +1,7 @@
 /*
- * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -12,12 +13,12 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { getSvgElement } from "./SvgUtils";
-import { BciAvIdType } from "./index.d";
+import { SymbolCompositionType } from "./index.d";
 
 export const GRAPHIC_ROLE = "graphic-symbol img";
 
 type BlissSymbolPropsType = {
-  bciAvId: BciAvIdType,
+  composition: SymbolCompositionType,
   label: string,
   // Aria markup information for svg part of the BlissSymbol.  The first is
   // really a boolean, but the html template function converts it to string
@@ -28,8 +29,8 @@ type BlissSymbolPropsType = {
 }
 
 export function BlissSymbol (props: BlissSymbolPropsType): VNode {
-  const { bciAvId, label, isPresentation, labelledBy } = props;
-  const svgElement = getSvgElement(bciAvId);
+  const { composition, label, isPresentation, labelledBy } = props;
+  const svgElement = getSvgElement(composition);
 
   let svgMarkupString = "";
   if (svgElement) {

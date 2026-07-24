@@ -1,6 +1,7 @@
 /*
- * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -26,11 +27,11 @@ describe("Palette component", (): void => {
         "type": "ActionCodeCell",
         "options": {
           "label": "First Cell",
-          "bciAvId": [
-            17720,
+          "composition": [
+            652,
             "/",
-            17697
-          ],
+            646
+          ],   // IDsfor bciAvIds 17720, 17697
           "rowStart": 3,
           "rowSpan": 1,
           "columnStart": 3,
@@ -41,7 +42,7 @@ describe("Palette component", (): void => {
         "type": "ActionCodeCell",
         "options": {
           "label": "Second Cell",
-          "bciAvId": 23409,
+          "composition": 823,
           "rowStart": 3,
           "rowSpan": 1,
           "columnStart": 4,
@@ -52,11 +53,11 @@ describe("Palette component", (): void => {
         "type": "ActionCodeCell",
         "options": {
           "label": "Third Cell",
-          "bciAvId": [
-            25554,
+          "composition": [
+            1028,
             "/",
-            12335
-          ],
+            106
+          ],   // IDsfor bciAvIds 25554, 12335
           "rowStart": 3,
           "rowSpan": 1,
           "columnStart": 5,

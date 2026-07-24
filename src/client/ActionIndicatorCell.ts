@@ -1,6 +1,7 @@
 /*
- * Copyright 2024-2025 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -27,7 +28,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
   const {
     columnStart, columnSpan, rowStart, rowSpan, label
   } = props.options;
-  const indicatorBciAvId = props.options.bciAvId;
+  const indicatorId = props.options.composition as number;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
   const disabled = changeEncodingContents.value.caretPosition === -1;
@@ -37,10 +38,10 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
     // locations within it to replace any existing indicator.
     const { caretPosition, payloads } = changeEncodingContents.value;
     const symbolToEdit = payloads[caretPosition];
-    let newBciAvId = symbolToEdit.bciAvId;
-    if (newBciAvId.constructor === Array) {
-      const indicatorPositions = findIndicators(newBciAvId);
-      const classifierIndex = findClassifierFromLeft(newBciAvId);
+    let newComposition = symbolToEdit.composition;
+    if (Array.isArray(newComposition)) {
+      const indicatorPositions = findIndicators(newComposition);
+      const classifierIndex = findClassifierFromLeft(newComposition);
       // If there are no indicators on the symbol, then place the indicator
       // above the first symbol that is not a modifier.  Otherwise, replace the
       // current indicator with the new one at the same position.
@@ -50,19 +51,19 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       // 3. insert the ";" separator for indicators followed by the indicator id,
       // 4. insert the rest of the array as it was.
       if (indicatorPositions.length === 0) {
-        newBciAvId = [
-          ...newBciAvId.slice(0, classifierIndex+1),
-          ";", indicatorBciAvId as number,
-          ...newBciAvId.slice(classifierIndex+1)
+        newComposition = [
+          ...newComposition.slice(0, classifierIndex+1),
+          ";", indicatorId,
+          ...newComposition.slice(classifierIndex+1)
         ];
       }
       indicatorPositions.forEach((position) => {
-        (newBciAvId as (string|number)[])[position] = indicatorBciAvId as number;
+        (newComposition as (string|number)[])[position] = indicatorId;
       });
     }
-    // The BCI AV ID is a single identifier, not an svg builder array.
+    // The composition is a single identifier, not an svg builder array.
     else {
-      newBciAvId = [ newBciAvId as number, ";", indicatorBciAvId as number ];
+      newComposition = [ newComposition, ";", indicatorId ];
     }
     payloads[caretPosition] = {
       // TODO:  what should the following two fields be?  For now the ID is
@@ -70,7 +71,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       // is the same as before, but is spoken aloud with the indicator label.
       "id": symbolToEdit.id + props.id,
       "label": symbolToEdit.label,
-      "bciAvId": newBciAvId,
+      "composition": newComposition,
       "modifierInfo": symbolToEdit.modifierInfo
     };
     changeEncodingContents.value = {
@@ -83,7 +84,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
   return html`
     <button id="${props.id}" class="actionIndicatorCell" style="${gridStyles}" onClick=${cellClicked} disabled="${disabled}">
       <${BlissSymbol}
-        bciAvId=${indicatorBciAvId}
+        composition=${indicatorId}
         label=${label}
         isPresentation=true
       />

@@ -5,7 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "room",
-        "bciAvId": 16687,
+        "composition": 572,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -16,7 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "toilet",
-        "bciAvId": 17747,
+        "composition": 659,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -27,7 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "kitchen",
-        "bciAvId": 15154,
+        "composition": 1899,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -38,7 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "stairs",
-        "bciAvId": 17247,
+        "composition": 619,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -49,7 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "window",
-        "bciAvId": 18256,
+        "composition": 706,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -60,7 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "table",
-        "bciAvId": 17493,
+        "composition": 639,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -71,7 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "chair",
-        "bciAvId": 13148,
+        "composition": 212,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -82,7 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "bed",
-        "bciAvId": 12649,
+        "composition": 156,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -93,7 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "shelf",
-        "bciAvId": 16953,
+        "composition": 587,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -104,11 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "mirror",
-        "bciAvId": [
-          22384,
-          ";",
-          9009
-        ],
+        "composition": [784, ";", 97],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -119,7 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "cupboard",
-        "bciAvId": 13622,
+        "composition": 252,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -130,7 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "chest of drawers",
-        "bciAvId": 13162,
+        "composition": 219,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -141,7 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "stove",
-        "bciAvId": 17273,
+        "composition": 630,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -152,7 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "electricity",
-        "bciAvId": 13918,
+        "composition": 288,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -163,7 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "battery",
-        "bciAvId": 12638,
+        "composition": 1266,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -174,13 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "lamp",
-        "bciAvId": [
-          15208,
-          ";",
-          9009,
-          "/",
-          13918
-        ],
+        "composition": [424, ";", 97, "/", 288],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -191,7 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "bottle",
-        "bciAvId": 12880,
+        "composition": 174,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -202,11 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "scissors",
-        "bciAvId": [
-          16736,
-          ";",
-          8993
-        ],
+        "composition": [581, ";", 81],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -217,7 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "needle",
-        "bciAvId": 15703,
+        "composition": 468,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -228,13 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "strap",
-        "bciAvId": [
-          15214,
-          ";",
-          9009,
-          "/",
-          23409
-        ],
+        "composition": [428, ";", 97, "/", 823],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

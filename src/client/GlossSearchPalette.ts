@@ -1,6 +1,7 @@
 /*
- * Copyright 2025-2026 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -60,15 +61,17 @@ export function makeMatchesPalette (
     const cell = {
       type: "ActionGlossSearchCell",
       options: {
-        label: `${searchTerm}: ${match.label}`,
+        id: match.id,
         bciAvId: match.bciAvId,
+        label: `${searchTerm}: ${match.label}`,
+        composition: match.composition ?? match.id,
         rowStart: currentRow,
         rowSpan: 1,
         columnStart: currentCol,
         columnSpan: 1
       }
     };
-    jsonPalette.cells[`${match.label}-${match.bciAvId}`] = cell;
+    jsonPalette.cells[`${match.label}-${match.id}`] = cell;
 
     // Update rows, columns, etc.
     colIndex++;

@@ -1,6 +1,7 @@
 /*
- * Copyright 2024-2026 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -239,24 +240,20 @@ function setAskButtonsEnabledState() {
  */
 async function queryEachModel (promptText) {
   const names = await getModelNames();
-  let count = 0;
-  names.forEach ((modelName) => {
+  await Promise.all(names.map(async (modelName) => {
     await queryChat(promptText, modelName)
       .then(async (response) => {
         const outputEl = createOutputSection(modelName);
         await outputResult(response, outputEl, "No Result");
-        count++;
-
-        // Clear the general "Working..." message after all models have been
-        // queried, and scroll to the bottom
-        if (count === names.length) {
-          await outputResult([], document.getElementById("ollamaOutput"), "");
-          document.body.scrollTop = document.body.scrollHeight;
-        }
       }).catch((error) => {
         console.error(`Error querying model ${modelName}:`, error);
       });
-  });
+  }));
+
+  // Clear the general "Working..." message after all models have been
+  // queried, and scroll to the bottom
+  /** @type {HTMLElement} */ (document.getElementById("ollamaOutput")).innerText = "";
+  document.body.scrollTop = document.body.scrollHeight;
 }
 
 /**

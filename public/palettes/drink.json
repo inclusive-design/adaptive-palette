@@ -5,7 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "drink",
-        "bciAvId": 13881,
+        "composition": 275,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -16,7 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "milk",
-        "bciAvId": 15468,
+        "composition": 2011,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -27,11 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "fruit juice",
-        "bciAvId": [
-          13881,
-          "/",
-          14405
-        ],
+        "composition": [275, "/", 338],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -42,11 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "fizzy drink",
-        "bciAvId": [
-          13881,
-          "/",
-          14424
-        ],
+        "composition": [275, "/", 345],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -57,7 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "liquor",
-        "bciAvId": 12359,
+        "composition": 116,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -68,7 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "coffee",
-        "bciAvId": 13373,
+        "composition": 1434,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -79,7 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "tea",
-        "bciAvId": 17511,
+        "composition": 2557,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -90,7 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "salt",
-        "bciAvId": 26235,
+        "composition": 5745,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -101,7 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "sugar",
-        "bciAvId": 17453,
+        "composition": 2508,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -112,7 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "flavouring",
-        "bciAvId": 14198,
+        "composition": 1678,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -123,7 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "yoghurt",
-        "bciAvId": 18296,
+        "composition": 2778,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -134,7 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "vegetable",
-        "bciAvId": 18004,
+        "composition": 684,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -145,7 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "fruit",
-        "bciAvId": 14405,
+        "composition": 338,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -156,7 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "ice cream",
-        "bciAvId": 14921,
+        "composition": 395,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -167,7 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "candy",
-        "bciAvId": 22376,
+        "composition": 3332,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -178,7 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "straw",
-        "bciAvId": 17277,
+        "composition": 2499,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -189,7 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "glass",
-        "bciAvId": 14442,
+        "composition": 352,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -200,7 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "dish",
-        "bciAvId": 13690,
+        "composition": 265,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -211,7 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "spoon",
-        "bciAvId": 17233,
+        "composition": 614,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -222,7 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "knife",
-        "bciAvId": 15159,
+        "composition": 411,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

@@ -5,11 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "do, does",
-        "bciAvId": [
-          12335,
-          ";",
-          8993
-        ],
+        "composition": [106, ";", 81],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -20,9 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "work",
-        "bciAvId": [
-          18273
-        ],
+        "composition": [711],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -33,13 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "read",
-        "bciAvId": [
-          14133,
-          ";",
-          8993,
-          "/",
-          15962
-        ],
+        "composition": [303, ";", 81, "/", 497],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -50,11 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "write",
-        "bciAvId": [
-          15991,
-          ";",
-          8993
-        ],
+        "composition": [509, ";", 81],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -65,15 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "draw, paint",
-        "bciAvId": [
-          15991,
-          ";",
-          8993,
-          "/",
-          14133,
-          "/",
-          13934
-        ],
+        "composition": [509, ";", 81, "/", 303, "/", 291],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -84,13 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "cook",
-        "bciAvId": [
-          14183,
-          ";",
-          8993,
-          "/",
-          14377
-        ],
+        "composition": [319, ";", 81, "/", 329],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -101,15 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "bake (to)",
-        "bciAvId": [
-          14183,
-          ";",
-          8993,
-          "/",
-          14377,
-          "/",
-          13934
-        ],
+        "composition": [319, ";", 81, "/", 329, "/", 291],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -120,13 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "purchase (to)",
-        "bciAvId": [
-          15484,
-          ";",
-          8993,
-          "/",
-          17717
-        ],
+        "composition": [451, ";", 81, "/", 651],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -137,15 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "cost (to)",
-        "bciAvId": [
-          15484,
-          ";",
-          8993,
-          "/",
-          14381,
-          "/",
-          17717
-        ],
+        "composition": [451, ";", 81, "/", 331, "/", 651],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -156,11 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "count (to)",
-        "bciAvId": [
-          15742,
-          ";",
-          8993
-        ],
+        "composition": [478, ";", 81],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -171,17 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "play (to)",
-        "bciAvId": [
-          12335,
-          ";",
-          8993,
-          "/",
-          "RK:-2",
-          "/",
-          14164,
-          "/",
-          17983
-        ],
+        "composition": [106, ";", 81, "/", "RK:-2", "/", 313, "/", 678],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -192,13 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "sing",
-        "bciAvId": [
-          15666,
-          ";",
-          8993,
-          "/",
-          15682
-        ],
+        "composition": [457, ";", 81, "/", 462],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -209,13 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "dance",
-        "bciAvId": [
-          15189,
-          ";",
-          8993,
-          "/",
-          15682
-        ],
+        "composition": [418, ";", 81, "/", 462],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -226,13 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "swim",
-        "bciAvId": [
-          17724,
-          ";",
-          8993,
-          "/",
-          18209
-        ],
+        "composition": [653, ";", 81, "/", 695],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -243,7 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "ride",
-        "bciAvId": 16509,
+        "composition": 2283,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -254,11 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "ride",
-        "bciAvId": [
-          25603,
-          ";",
-          8993
-        ],
+        "composition": [1077, ";", 81],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -269,11 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "drive",
-        "bciAvId": [
-          13121,
-          ";",
-          8993
-        ],
+        "composition": [202, ";", 81],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -284,11 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "meet",
-        "bciAvId": [
-          25583,
-          ";",
-          8993
-        ],
+        "composition": [1057, ";", 81],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -299,11 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "turn",
-        "bciAvId": [
-          25627,
-          ";",
-          8993
-        ],
+        "composition": [1101, ";", 81],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -314,13 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "fall",
-        "bciAvId": [
-          13869,
-          ";",
-          8993,
-          "/",
-          14947
-        ],
+        "composition": [271, ";", 81, "/", 401],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

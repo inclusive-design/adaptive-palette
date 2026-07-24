@@ -5,11 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "big, large",
-        "bciAvId": [
-          24875,
-          ";",
-          8998
-        ],
+        "composition": [936, ";", 86],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -20,11 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "little, small",
-        "bciAvId": [
-          24917,
-          ";",
-          8998
-        ],
+        "composition": [956, ";", 86],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -35,11 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "long",
-        "bciAvId": [
-          15193,
-          ";",
-          8998
-        ],
+        "composition": [420, ";", 86],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -50,11 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "high",
-        "bciAvId": [
-          24909,
-          ";",
-          8998
-        ],
+        "composition": [952, ";", 86],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -65,11 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "linear",
-        "bciAvId": [
-          15214,
-          ";",
-          8998
-        ],
+        "composition": [428, ";", 86],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -80,11 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "wet",
-        "bciAvId": [
-          18209,
-          ";",
-          8998
-        ],
+        "composition": [695, ";", 86],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -95,15 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "dirty",
-        "bciAvId": [
-          14647,
-          "/",
-          14133,
-          ";",
-          8998,
-          "/",
-          13867
-        ],
+        "composition": [368, "/", 303, ";", 86, "/", 270],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -114,11 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "broken",
-        "bciAvId": [
-          24852,
-          ";",
-          8996
-        ],
+        "composition": [933, ";", 84],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -129,17 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "disgusting",
-        "bciAvId": [
-          17506,
-          ";",
-          8998,
-          "/",
-          15474,
-          "/",
-          14947,
-          "/",
-          14947
-        ],
+        "composition": [642, ";", 86, "/", 449, "/", 401, "/", 401],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -150,17 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "expensive",
-        "bciAvId": [
-          15484,
-          ";",
-          8998,
-          "/",
-          14381,
-          "/",
-          17717,
-          "/",
-          24875
-        ],
+        "composition": [451, ";", 86, "/", 331, "/", 651, "/", 936],
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -171,13 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "hot",
-        "bciAvId": [
-          17506,
-          ";",
-          8998,
-          "/",
-          14183
-        ],
+        "composition": [642, ";", 86, "/", 319],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -188,13 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "soft",
-        "bciAvId": [
-          14667,
-          ";",
-          8998,
-          "/",
-          25575
-        ],
+        "composition": [374, ";", 86, "/", 1049],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -205,11 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "thick",
-        "bciAvId": [
-          25560,
-          ";",
-          8998
-        ],
+        "composition": [1034, ";", 86],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -220,15 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "round,circular",
-        "bciAvId": [
-          14133,
-          ";",
-          8998,
-          "/",
-          17717,
-          "/",
-          17462
-        ],
+        "composition": [303, ";", 86, "/", 651, "/", 636],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -239,15 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "square",
-        "bciAvId": [
-          14133,
-          ";",
-          8998,
-          "/",
-          17717,
-          "/",
-          13934
-        ],
+        "composition": [303, ";", 86, "/", 651, "/", 291],
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -258,11 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "difficult",
-        "bciAvId": [
-          24884,
-          ";",
-          8998
-        ],
+        "composition": [940, ";", 86],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -273,13 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "quick",
-        "bciAvId": [
-          14390,
-          ";",
-          8998,
-          "/",
-          14947
-        ],
+        "composition": [335, ";", 86, "/", 401],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -290,13 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "heavy",
-        "bciAvId": [
-          18221,
-          ";",
-          8998,
-          "/",
-          13869
-        ],
+        "composition": [697, ";", 86, "/", 271],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -307,11 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "full",
-        "bciAvId": [
-          24897,
-          ";",
-          8998
-        ],
+        "composition": [947, ";", 86],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -322,11 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "strong",
-        "bciAvId": [
-          24941,
-          ";",
-          8998
-        ],
+        "composition": [967, ";", 86],
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

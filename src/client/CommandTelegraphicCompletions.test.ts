@@ -1,6 +1,7 @@
 /*
- * Copyright 2025-2026 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -31,7 +32,7 @@ describe("CommandTelegraphicCompletions component", () => {
     payloads: [{
       id: "fake-uuid",
       label: "dog",
-      bciAvId: [12380],
+      composition: [124],
       modifierInfo: []
     }],
     caretPosition: 1

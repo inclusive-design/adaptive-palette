@@ -1,6 +1,7 @@
 /*
- * Copyright 2026 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -13,7 +14,7 @@ import { render, screen } from "@testing-library/preact";
 import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals } from "./GlobalData";
-import { MatchType } from "./index.d";
+import { MatchType, SymbolCompositionType } from "./index.d";
 import {
   GlossSearchPalette, GLOSS_MATCHES_PALETTE, makeMatchesPalette
 } from "./GlossSearchPalette";
@@ -22,15 +23,15 @@ describe("GlossSearchPalette tests", (): void => {
 
   const testMatches: MatchType[] = [
     {
+      id: 3274,
       bciAvId: 22311,
       label: "bark",
-      composition: [16420, "/", 17783 ],
-      fullComposition: undefined
+      composition: [548, "/", 669]
     }, {
+      id: 4168,
       bciAvId: 24020,
       label: "bark-(to)",
-      composition: [15666, ";", 8993, "/", 12380 ],
-      fullComposition: undefined
+      composition: [457, ";", 81, "/", 124]
     }
   ];
 
@@ -101,12 +102,14 @@ describe("GlossSearchPalette tests", (): void => {
     interface ExpectedCellShape {
       type: string;
       options: {
-        label: string;
+        id: number;
         bciAvId: number;
+        label: string;
+        composition: SymbolCompositionType;
         rowStart: number;
-        rowSpan: 1,
+        rowSpan: 1;
         columnStart: number;
-        columnSpan: 1
+        columnSpan: 1;
       }
     };
 
@@ -124,6 +127,8 @@ describe("GlossSearchPalette tests", (): void => {
     expect(cellKeys[0].startsWith(BARK)).toBe(true);
     expect(firstCell.type).toEqual("ActionGlossSearchCell");
     expect(firstCell.options.label).toEqual(`${BARK}: ${testMatches[0].label}`);
+    expect(firstCell.options.id).toBe(testMatches[0].id);
+    expect(firstCell.options.bciAvId).toBe(testMatches[0].bciAvId);
 
     // Validate positioning logic (startRow: 1, startCol: 1)
     expect(firstCell.options.rowStart).toBe(1);

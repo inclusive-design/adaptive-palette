@@ -1,6 +1,7 @@
 /*
- * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -25,7 +26,7 @@ type CommandClearEncodingProps = {
 
 export function CommandClearEncoding (props: CommandClearEncodingProps): VNode {
   const { id, options } = props;
-  const { label, bciAvId, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
+  const { label, composition, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
@@ -44,7 +45,7 @@ export function CommandClearEncoding (props: CommandClearEncodingProps): VNode {
       style="${gridStyles}"
       aria-controls=${ariaControls}
       onClick=${cellClicked}>
-      <${BlissSymbol} bciAvId=${bciAvId} label=${label} />
+      <${BlissSymbol} composition=${composition} label=${label} />
     </button>
   `;
 }

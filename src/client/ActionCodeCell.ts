@@ -1,6 +1,7 @@
 /*
- * Copyright 2023-2025 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -13,9 +14,8 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from ".";
 import { BlissSymbol } from "./BlissSymbol";
-import { changeEncodingContents } from "./GlobalData";
+import { changeEncodingContents, adaptivePaletteGlobals } from "./GlobalData";
 import { generateGridStyle, speak, insertWordAtCaret } from "./GlobalUtils";
-import { decomposeBciAvId } from "./SvgUtils";
 import "./ActionCodeCell.scss";
 
 type ActionCodeCellPropsType = {
@@ -25,19 +25,21 @@ type ActionCodeCellPropsType = {
 
 export function ActionCodeCell (props: ActionCodeCellPropsType): VNode {
   const {
-    columnStart, columnSpan, rowStart, rowSpan, bciAvId, label
+    columnStart, columnSpan, rowStart, rowSpan, composition, label
   } = props.options;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = () => {
-    const composition = decomposeBciAvId(bciAvId);
+    const symbol = typeof composition === "number"
+      ? adaptivePaletteGlobals.symbols.find(s => s.id === composition)
+      : null;
     // The payload includes an empty `modifierInfo` for this new symbol.
-    const payloadBciAvId = ( composition ? composition : props.options.bciAvId );
+    const payloadComposition = (symbol?.composition ?? props.options.composition);
     const payload = {
       "id": props.id,
       "label": props.options.label,
-      "bciAvId": payloadBciAvId,
+      "composition": payloadComposition,
       "modifierInfo": []
     };
     const{ caretPosition, payloads } = changeEncodingContents.value;
@@ -48,7 +50,7 @@ export function ActionCodeCell (props: ActionCodeCellPropsType): VNode {
   return html`
     <button id="${props.id}" class="ActionCodeCell" style="${gridStyles}" onClick=${cellClicked}>
       <${BlissSymbol}
-        bciAvId=${bciAvId}
+        composition=${composition}
         label=${label}
         isPresentation=true
       />

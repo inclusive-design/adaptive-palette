@@ -1,6 +1,7 @@
 /*
- * Copyright 2023-2024 Inclusive Design Research Centre, OCAD University
- * All rights reserved.
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -47,21 +48,21 @@ function generateMarkupArray (payloadArray: Array<EncodingType>, caretPos: numbe
     if (index === 0 && caretPos === -1) {
       return html`
         <div class="blissSymbol insertionCaret">
-          <${BlissSymbol} bciAvId=${payload.bciAvId} label=${payload.label} isPresentation="true" />
+          <${BlissSymbol} composition=${payload.composition} label=${payload.label} isPresentation="true" />
         </div>
       `;
     }
     else if (index === caretPos) {
       return html`
         <div class="blissSymbol cursorCaret">
-          <${BlissSymbol} bciAvId=${payload.bciAvId} label=${payload.label} isPresentation="true" />
+          <${BlissSymbol} composition=${payload.composition} label=${payload.label} isPresentation="true" />
         </div>
       `;
     }
     else {
       return html`
         <div class="blissSymbol">
-          <${BlissSymbol} bciAvId=${payload.bciAvId} label=${payload.label} isPresentation="true" />
+          <${BlissSymbol} composition=${payload.composition} label=${payload.label} isPresentation="true" />
         </div>
       `;
     }
