@@ -38,7 +38,8 @@ export async function fetchBlissGlossJson (): Promise<BlissSymbolEntry[]> {
   // Read and parse the Bliss gloss JSON file
   try {
     const fetchResponse = await fetch("/data/bliss_symbol_explanations.json");
-    bliss_gloss = await fetchResponse.json() as BlissSymbolEntry[];
+    const json = await fetchResponse.json() as { data: BlissSymbolEntry[] };
+    bliss_gloss = json.data;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.error(`Error fetching 'bliss_symbol_explanations.json': ${message}`);
