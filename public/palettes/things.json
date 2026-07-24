@@ -38,7 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "magazine",
-        "composition": [173, "/", 368, "/", 655],
+        "composition": 1965,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -49,7 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "calendar",
-        "composition": [497, "/", 258, "/", 452],
+        "composition": 1368,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -71,7 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "e-mail",
-        "composition": [421, "/", 829],
+        "composition": 3776,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -93,7 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "CD",
-        "composition": [1075, "/", 278],
+        "composition": 2252,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -104,7 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "movie disc",
-        "composition": [1075, "/", 303, "/", 278],
+        "composition": 4624,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -115,7 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "radio",
-        "composition": [291, "/", 278, "/", 288],
+        "composition": 2237,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -126,7 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "TV",
-        "composition": [291, "/", 303, "/", 278, "/", 288],
+        "composition": 2563,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -137,7 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "DVD player",
-        "composition": [432, "/", 1075, "/", 303, "/", 278],
+        "composition": 4625,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -148,7 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "stereo",
-        "composition": [432, "/", 1075, "/", 278],
+        "composition": 2253,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -159,7 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "computer",
-        "composition": [432, "/", 829],
+        "composition": 3742,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -170,7 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "telephone",
-        "composition": [414, "/", 288],
+        "composition": 2562,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,

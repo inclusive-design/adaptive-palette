@@ -25,8 +25,13 @@ type ActionCodeCellPropsType = {
 
 export function ActionCodeCell (props: ActionCodeCellPropsType): VNode {
   const {
-    columnStart, columnSpan, rowStart, rowSpan, composition, label
+    columnStart, columnSpan, rowStart, rowSpan, label
   } = props.options;
+  let { composition } = props.options;
+  // Normalize a single-number array (e.g. `[1433]`) is equivalent to the bare number `1433`
+  if (Array.isArray(composition) && composition.length === 1 && typeof composition[0] === "number") {
+    composition = composition[0];
+  }
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
@@ -37,9 +42,9 @@ export function ActionCodeCell (props: ActionCodeCellPropsType): VNode {
     // The payload includes an empty `modifierInfo` for this new symbol.
     const payloadComposition = (symbol?.composition ?? props.options.composition);
     const payload = {
-      "id": props.id,
       "label": props.options.label,
       "composition": payloadComposition,
+      "userSelectedSymbolId": typeof composition === "number" ? composition : undefined,
       "modifierInfo": []
     };
     const{ caretPosition, payloads } = changeEncodingContents.value;

@@ -15,7 +15,7 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType, ContentSignalDataType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle, speak, applyModifiersToLabel } from "./GlobalUtils";
 import { findIndicators } from "./SvgUtils";
 import "./ActionIndicatorCell.scss";
 
@@ -62,21 +62,37 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
     const symbolToEdit = payloads[caretPosition];
     let newComposition = symbolToEdit.composition;
     const newCompositionArr = newComposition as (string|number)[];
-    newComposition = [
-      ...newCompositionArr.slice(0, indicatorIndex-1),
-      ...newCompositionArr.slice(indicatorIndex+1)
-    ];
+    // A ";" normally precedes the indicator (added when it was applied) and
+    // must be removed along with it. Malformed hand-authored palette JSON
+    // could place an indicator with no preceding ";" -- guard rather than
+    // blindly consuming one extra element.
+    const hasSeparator = indicatorIndex > 0 && newCompositionArr[indicatorIndex - 1] === ";";
+    newComposition = hasSeparator
+      ? [
+        ...newCompositionArr.slice(0, indicatorIndex - 1),
+        ...newCompositionArr.slice(indicatorIndex + 1)
+      ]
+      : [
+        ...newCompositionArr.slice(0, indicatorIndex),
+        ...newCompositionArr.slice(indicatorIndex + 1)
+      ];
+    // `baseLabel` already has any modifier text that existed *before* the indicator was first
+    // applied baked into it, so only reapply the modifiers added *after* that point -- tracked
+    // by `baseModifierCount`, the length of `modifierInfo` at the moment `baseLabel` was captured.
+    const restoredBare = symbolToEdit.baseLabel ?? symbolToEdit.label;
+    const modifiersAppliedAfterIndicator = symbolToEdit.modifierInfo?.slice(symbolToEdit.baseModifierCount ?? 0);
+    const restoredLabel = applyModifiersToLabel(restoredBare, modifiersAppliedAfterIndicator);
     payloads[caretPosition] = {
-      "id": symbolToEdit.id + props.id,
-      "label": symbolToEdit.label,
+      "label": restoredLabel,
       "composition": newComposition,
+      "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
       "modifierInfo": symbolToEdit.modifierInfo
     };
     changeEncodingContents.value = {
       payloads: payloads,
       caretPosition: caretPosition
     };
-    speak(`${symbolToEdit.label}`);
+    speak(`${restoredLabel}`);
   };
 
   return html`

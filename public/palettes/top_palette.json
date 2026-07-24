@@ -5,21 +5,10 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "yes",
-        "composition": [120, "/", 401, "/", 401],
+        "composition": 2776,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
-        "columnSpan": 1
-      }
-    },
-    "SVG:15474/14947/14947:SVG-29984eee-0f35-4b91-a2d6-d6c2051b175c": {
-      "type": "ActionCodeCell",
-      "options": {
-        "label": "no",
-        "composition": [449, "/", 401, "/", 401],
-        "rowStart": 1,
-        "rowSpan": 1,
-        "columnStart": 2,
         "columnSpan": 1
       }
     },
@@ -30,7 +19,7 @@
         "composition": [412, ";", 81, "/", 449, "/", 401],
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 3,
+        "columnStart": 2,
         "columnSpan": 1
       }
     },
@@ -41,7 +30,7 @@
         "composition": 81,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 4,
+        "columnStart": 3,
         "columnSpan": 1
       }
     },
@@ -52,7 +41,7 @@
         "composition": 92,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 5,
+        "columnStart": 4,
         "columnSpan": 1
       }
     },
@@ -63,7 +52,7 @@
         "composition": 928,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 6,
+        "columnStart": 5,
         "columnSpan": 1
       }
     },
@@ -74,7 +63,7 @@
         "composition": 87,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 7,
+        "columnStart": 6,
         "columnSpan": 1
       }
     },
@@ -85,7 +74,7 @@
         "composition": 99,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 8,
+        "columnStart": 7,
         "columnSpan": 1
       }
     },
@@ -96,7 +85,7 @@
         "composition": 86,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 9,
+        "columnStart": 8,
         "columnSpan": 1
       }
     },
@@ -107,7 +96,7 @@
         "composition": 97,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 10,
+        "columnStart": 9,
         "columnSpan": 1
       }
     },
@@ -118,7 +107,7 @@
         "composition": 907,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 11,
+        "columnStart": 10,
         "columnSpan": 1
       }
     },
@@ -127,6 +116,17 @@
       "options": {
         "label": "Remove indicator",
         "composition": [634, ";", 907, "//", 348, "/", 81, "/", 99],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 11,
+        "columnSpan": 1
+      }
+    },
+    "SVG:15474/14947/14947:SVG-29984eee-0f35-4b91-a2d6-d6c2051b175c": {
+      "type": "ActionCodeCell",
+      "options": {
+        "label": "no",
+        "composition": 2080,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 12,

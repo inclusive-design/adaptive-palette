@@ -10,7 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render, screen } from "@testing-library/preact";
+import { render, screen, fireEvent } from "@testing-library/preact";
 import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
@@ -71,7 +71,6 @@ describe("ActionPreModifierCell render tests", (): void => {
     // that an enabled ActionPreModifierCell otherwise has the same output.
     changeEncodingContents.value = {
       payloads: [{
-        id: "fake-id",
         label: "building",
         composition: 392
       }],
@@ -108,6 +107,26 @@ describe("ActionPreModifierCell render tests", (): void => {
     changeEncodingContents.value.caretPosition = -1;
     button = await screen.findByRole("button", {name: testCell.options.label});
     expect(button.getAttribute("disabled")).toBeDefined();
+  });
+
+  test("Applying a pre modifier prepends its text to the label", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [{
+        label: "building",
+        composition: 392
+      }],
+      caretPosition: 0
+    };
+    render(html`
+      <${ActionPreModifierCell}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />`
+    );
+    const button = await screen.findByRole("button", {name: testCell.options.label});
+    fireEvent.click(button);
+
+    expect(changeEncodingContents.value.payloads[0].label).toBe("oppposite of building");
   });
 
 });

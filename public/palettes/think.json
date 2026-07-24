@@ -5,7 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "think",
-        "composition": [447, ";", 81],
+        "composition": 2593,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -16,7 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "know",
-        "composition": [412, ";", 81],
+        "composition": 1903,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -27,7 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "understand",
-        "composition": [1103, ";", 81],
+        "composition": 2661,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -38,7 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "forget",
-        "composition": [948, ";", 81],
+        "composition": 1694,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -49,7 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "take away, destroy",
-        "composition": [939, ";", 81],
+        "composition": 1532,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -60,7 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "desire",
-        "composition": [930, ";", 81],
+        "composition": 2757,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -71,7 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "guess",
-        "composition": [802, ";", 81, "/", 1069],
+        "composition": 1762,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -82,7 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "decide",
-        "composition": [260, ";", 81],
+        "composition": 1516,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -93,7 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "need",
-        "composition": [467, ";", 81],
+        "composition": 2063,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -104,7 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "help",
-        "composition": [382, ";", 81],
+        "composition": 1802,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -115,7 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "keep",
-        "composition": [239, ";", 81, "/", 341],
+        "composition": 1891,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -126,7 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "close",
-        "composition": [291, ";", 81],
+        "composition": 1428,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -137,7 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "find",
-        "composition": [303, ";", 81, "/", 1044],
+        "composition": 1664,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -148,7 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "put",
-        "composition": [531, ";", 81],
+        "composition": 2229,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -159,7 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "wait",
-        "composition": [292, ";", 81, "/", 426],
+        "composition": 2702,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -170,7 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "promise",
-        "composition": [457, ";", 81, "/", 106, "/", 341],
+        "composition": 2210,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -181,7 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "pretend",
-        "composition": [945, ";", 86],
+        "composition": 1969,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -192,7 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "call",
-        "composition": [414, ";", 81, "/", 288],
+        "composition": 3457,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -203,7 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "marry",
-        "composition": [437, ";", 81],
+        "composition": 1978,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -214,7 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "fight",
-        "composition": [934, ";", 81],
+        "composition": 1660,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

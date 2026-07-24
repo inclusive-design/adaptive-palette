@@ -16,7 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "word",
-        "composition": [502, "/", 414],
+        "composition": 2761,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -27,7 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "internet",
-        "composition": [228, "/", 1026],
+        "composition": 3829,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -38,7 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "problem",
-        "composition": [553, "/", 940],
+        "composition": 2209,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -82,7 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "party",
-        "composition": [346, "/", 313, "/", 678],
+        "composition": 2137,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -93,7 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "club",
-        "composition": [346, "/", 955],
+        "composition": 1430,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -104,7 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "hobby",
-        "composition": [106, "/", 955],
+        "composition": 1812,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -115,7 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "gift",
-        "composition": [651, "/", 949],
+        "composition": 1728,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -126,7 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "toy",
-        "composition": [651, "/", 106, "/", "RK:-2", "/", 313, "/", 678],
+        "composition": 2626,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -137,7 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "play, game",
-        "composition": [106, "/", "RK:-2", "/", 313],
+        "composition": 3896,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -170,7 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "picture",
-        "composition": [303, "/", 291],
+        "composition": 2157,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -181,7 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "music",
-        "composition": [278, "/", 462],
+        "composition": 2046,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -192,7 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "gymnastics",
-        "composition": [719, "/", 718, "/", 532],
+        "composition": 3109,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,

@@ -15,7 +15,9 @@
  */
 import { signal } from "@preact/signals";
 import { getModelNames } from "./ollamaApi";
-import type { ContentSignalDataType, BlissSymbolEntry } from "./index.d";
+import { initIndicatorLabels } from "./IndicatorLabelsUtils";
+import { initSvgCompositeDefinitions } from "./SvgUtils";
+import type { ContentSignalDataType, BlissSymbolEntry, AdaptivePaletteConfigType } from "./index.d";
 
 // NOTE: this import causes a warning serving the application using the `vite`
 // server.  The warning suggests to *not* use the `public` folder but to use
@@ -79,6 +81,8 @@ export const adaptivePaletteGlobals = {
   paletteStore: new PaletteStore(),
   navigationStack: new NavigationStack(),
   LLMs: [] as string[],
+  config: { indicatorLabelLookup: { useModelQueryFallback: false, model: "" } } as AdaptivePaletteConfigType,
+  indicatorLabels: {} as Record<string, string>,
   systemPrompts: {
     "What express": "What does this express? Give the top five answers.  Do not add a preamble like, 'Here are the top five answers.'",
     "Single Sentence": "Convert the telegraphic speech to a single sentence. Give the top five best answers.  Answer with a single grammatically correct sentence.  Number the five answers clearly.  Do not add a preamble like, 'Here are the top five answers.'",
@@ -92,6 +96,38 @@ export const adaptivePaletteGlobals = {
 };
 
 /**
+ * Fetch and validate `public/config.json`. Any failure -- missing file, missing
+ * `indicatorLabelLookup` section, malformed JSON, failed fetch -- silently disables
+ * the Ollama fallback tier; no user-facing error, per design.
+ * @returns {Promise<AdaptivePaletteConfigType>}
+ */
+async function loadConfig (): Promise<AdaptivePaletteConfigType> {
+  const disabled: AdaptivePaletteConfigType = {
+    indicatorLabelLookup: { useModelQueryFallback: false, model: "" }
+  };
+  try {
+    const response = await fetch("/config.json");
+    if (!response.ok) {
+      return disabled;
+    }
+    const parsed: unknown = await response.json();
+    const section = (parsed as { indicatorLabelLookup?: unknown })?.indicatorLabelLookup as
+      { useModelQueryFallback?: unknown; model?: unknown } | undefined;
+    if (!section || typeof section.useModelQueryFallback !== "boolean") {
+      return disabled;
+    }
+    return {
+      indicatorLabelLookup: {
+        useModelQueryFallback: section.useModelQueryFallback,
+        model: typeof section.model === "string" ? section.model : ""
+      }
+    };
+  } catch {
+    return disabled;
+  }
+}
+
+/**
  * Initialize the `adaptivePaletteGlobals` structure.
  * @param {HTMLElement} mainPaletteContainerId  - Optional argument specifying
  *                                                the id of a container element,
@@ -102,8 +138,15 @@ export const adaptivePaletteGlobals = {
  *                                                the `<body>delement.
  */
 export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string): Promise<void> {
-  adaptivePaletteGlobals.LLMs = await getModelNames();
+  initSvgCompositeDefinitions();
   adaptivePaletteGlobals.mainPaletteContainerId = mainPaletteContainerId || "";
+  const [ llms, config ] = await Promise.all([
+    getModelNames(),
+    loadConfig(),
+    initIndicatorLabels()
+  ]);
+  adaptivePaletteGlobals.LLMs = llms;
+  adaptivePaletteGlobals.config = config;
 
   // Set up the system prompts.
   window.localStorage.setItem(
@@ -113,8 +156,8 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
 
 /**
  * Signal for updating the contents of the ContentEncoding area.  The value
- * of the signal is the current array of EncodingType objects to display in the
- * ContentEncoding area and the position of the caret
+ * of the signal is the current array of SymbolEncodingType objects to display
+ * in the ContentEncoding area and the position of the caret
  */
 export const changeEncodingContents = signal<ContentSignalDataType>({
   payloads: [],

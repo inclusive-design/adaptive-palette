@@ -17,7 +17,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "be (to)",
-        "composition": [894, ";", 81],
+        "composition": 1267,
         "branchTo": "to_be",
         "rowStart": 1,
         "rowSpan": 1,
@@ -29,7 +29,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "much, many",
-        "composition": [368, ";", 86],
+        "composition": 2042,
         "branchTo": "much_many",
         "rowStart": 1,
         "rowSpan": 1,
@@ -41,7 +41,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "body",
-        "composition": [171],
+        "composition": 171,
         "branchTo": "body_related",
         "rowStart": 1,
         "rowSpan": 1,
@@ -53,7 +53,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "food",
-        "composition": [329],
+        "composition": 329,
         "branchTo": "food",
         "rowStart": 1,
         "rowSpan": 1,
@@ -77,7 +77,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "a, an",
-        "composition": [100],
+        "composition": 100,
         "branchTo": "a_an",
         "rowStart": 2,
         "rowSpan": 1,
@@ -101,7 +101,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "angry",
-        "composition": [368, "/", 313, ";", 86, "/", 487],
+        "composition": 1198,
         "branchTo": "feelings",
         "rowStart": 2,
         "rowSpan": 1,
@@ -149,7 +149,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "person",
-        "composition": [513],
+        "composition": 513,
         "branchTo": "persons",
         "rowStart": 3,
         "rowSpan": 1,
@@ -161,7 +161,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "do, does",
-        "composition": [106, ";", 81],
+        "composition": 1558,
         "branchTo": "do_does",
         "rowStart": 3,
         "rowSpan": 1,
@@ -173,7 +173,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "big, large",
-        "composition": [936, ";", 86],
+        "composition": 1291,
         "branchTo": "big_large",
         "rowStart": 3,
         "rowSpan": 1,
@@ -185,7 +185,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "vehicle",
-        "composition": [688],
+        "composition": 688,
         "branchTo": "vehicle",
         "rowStart": 3,
         "rowSpan": 1,
@@ -269,7 +269,7 @@
       "type": "ActionBranchToPaletteCell",
       "options": {
         "label": "time",
-        "composition": [655],
+        "composition": 655,
         "branchTo": "time",
         "rowStart": 4,
         "rowSpan": 1,

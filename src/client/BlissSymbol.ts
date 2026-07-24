@@ -32,10 +32,10 @@ export function BlissSymbol (props: BlissSymbolPropsType): VNode {
   const { composition, label, isPresentation, labelledBy } = props;
   const svgElement = getSvgElement(composition);
 
+  // Deal with aria markup, depending on whether the SVG is for presentation only or
+  // associates with a labelled area.
   let svgMarkupString = "";
   if (svgElement) {
-    // Deal with aria markup, depending on whether the SVG is for presentation only or
-    // associates with a labelled area.
     if (isPresentation === "true") {
       svgElement.setAttribute("aria-hidden", "true");
     } else {

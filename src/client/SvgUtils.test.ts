@@ -9,11 +9,13 @@
  * You may obtain a copy of the License at
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
+import { vi } from "vitest";
+import { BlissSVGBuilder } from "bliss-svg-builder";
 import { initAdaptivePaletteGlobals } from "./GlobalData";
 import {
   compositionToBstr, bstrToComposition, isIndicator,
   findIndicators, isModifier, findClassifierFromLeft, findSymbolByBciAvId,
-  getResolvedComposition, getSvgElement, getSvgMarkupString,
+  getSvgElement, getSvgMarkupString,
 } from "./SvgUtils";
 
 describe("SvgUtils module", (): void => {
@@ -59,7 +61,7 @@ describe("SvgUtils module", (): void => {
 
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
-  }, 7000);
+  }, 10000);
 
   test("Create svg builder argument", (): void => {
     let result = compositionToBstr(singleId);
@@ -69,10 +71,33 @@ describe("SvgUtils module", (): void => {
     expect(result).toBe(expectedConcatenation);
   });
 
+  test("compositionToBstr treats composite ids as bare aliases", (): void => {
+    // 1291 = "big, large", isCharacter: false, composition: [936, ";", 86]
+    expect(compositionToBstr(1291)).toBe("1291");
+
+    // 1903 = "to know", isCharacter: false, composition: [412, ";", 81] -- mixed into
+    // an array alongside character ids 449 and 401, which keep their "B" prefix.
+    expect(compositionToBstr([1903, "/", 449, "/", 401])).toBe("1903/B449/B401");
+  });
+
+  test("initSvgCompositeDefinitions registers every composite symbol as a BlissSVGBuilder alias", (): void => {
+    // 1758 = "group (people)", isCharacter: false, composition: [368, "/", 513].
+    // Its own dictionary id should now resolve as an alias, with no `getResolvedComposition`
+    // step in the way.
+    expect(BlissSVGBuilder.isDefined("1758")).toBe(true);
+    expect(BlissSVGBuilder.getDefinition("1758")?.codeString).toBe("B368/B513");
+
+    // A character symbol (823 = CONJ.) is deliberately NOT registered as an alias:
+    // it must always be referenced by its native "B<id>" code (see compositionToBstr()).
+    expect(BlissSVGBuilder.isDefined("823")).toBe(false);
+  });
+
   test("Unknown id produces empty-ish SVG", (): void => {
     expect(() => { compositionToBstr(invalidId); }).not.toThrow();
-    // invalidId=0 produces "B0" which BlissSVGBuilder may reject — test via getSvgMarkupString
-    expect(getSvgMarkupString(invalidId)).not.toBeDefined();
+    // invalidId=0 produces "B0" which BlissSVGBuilder doesn't recognize -- it now
+    // always returns a builder (with a warning), rendering an empty <svg> rather
+    // than nothing.
+    expect(getSvgMarkupString(invalidId)).toBeDefined();
   });
 
   test("Create a SymbolCompositionType from a Blissary SVG builder string", (): void => {
@@ -135,15 +160,23 @@ describe("SvgUtils module", (): void => {
     expect(actual).toEqual(undefined);
   });
 
-  test("Get resolved composition", (): void => {
-    expect(getResolvedComposition(99)).toEqual(99);
-    expect(getResolvedComposition(4749)).toEqual([106, ";", 81, "/", "RK:-2", "/", 374, "/", 718]);
-    expect(getResolvedComposition([1903, "/", 449, "/", 401 ])).toEqual([412, ";", 81, "/", 449, "/", 401 ]);
-    expect(getResolvedComposition([])).toEqual([]);
-    expect(getResolvedComposition(99999)).toEqual(null);
-    expect(getResolvedComposition([99999])).toEqual(null);
-    expect(getResolvedComposition([449, "/", 99999])).toEqual(null);
-    expect(getResolvedComposition([449, "/", 99999, "/", 449])).toEqual(null);
+  test("Composite symbol renders identically via bare id and its expanded composition", (): void => {
+    // 1903 = "to know", isCharacter: false, composition: [412, ";", 81]
+    expect(getSvgMarkupString(1903)).toBe(getSvgMarkupString([412, ";", 81]));
+  });
+
+  test("getSvgBuilder logs console.error for an invalid id but still returns a builder", (): void => {
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+
+    const svgElement = getSvgElement(invalidId);
+    const svgMarkupString = getSvgMarkupString(invalidId);
+
+    expect(svgElement).toBeDefined();
+    expect(svgElement).not.toBeNull();
+    expect(svgMarkupString).toBeDefined();
+    expect(consoleErrorSpy).toHaveBeenCalled();
+
+    consoleErrorSpy.mockRestore();
   });
 
   test("Get SVG Element and markup for single ID", (): void => {
@@ -152,8 +185,10 @@ describe("SvgUtils module", (): void => {
   });
 
   test("Get SVG Element and markup for invalid id", (): void => {
-    expect(getSvgElement(invalidId)).not.toBeDefined();
-    expect(getSvgMarkupString(invalidId)).not.toBeDefined();
+    // For invalid ids, getSvgBuilder always returns a builder with empty content.
+    expect(getSvgElement(invalidId)).toBeDefined();
+    expect(getSvgElement(invalidId)).not.toBeNull();
+    expect(getSvgMarkupString(invalidId)).toBeDefined();
   });
 
   test("Get SVG Element and markup for id array using slash, semi-colon, and kern codes", (): void => {
@@ -178,8 +213,9 @@ describe("SvgUtils module", (): void => {
 
   test("Get SVG Element and markup for composite symbol (isCharacter: false)", (): void => {
     // ID 1758 = "group (people)", isCharacter: false, composition: [368, "/", 513].
-    // BlissSVGBuilder does not have 1758 in its database; without resolving via
-    // symbol.composition, it returns an empty SVG (no paths).
+    // Registered by initSvgCompositeDefinitions() as a bare-id alias to "B368/B513",
+    // so BlissSVGBuilder resolves it to real content without any resolution step
+    // in SvgUtils.ts itself.
     const svgElement = getSvgElement(1758);
     expect(svgElement).toBeDefined();
     // Verify the SVG has actual content (not an empty <g>)

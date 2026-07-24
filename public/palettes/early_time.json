@@ -5,7 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "early",
-        "composition": [158, "/", 655, ";", 86],
+        "composition": 1581,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -16,7 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "always",
-        "composition": [655, ";", 86, "/", 117],
+        "composition": 1191,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -27,7 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "often",
-        "composition": [368, "/", 655, ";", 86],
+        "composition": 2100,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -38,7 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "sometimes",
-        "composition": [502, "/", 655, ";", 86],
+        "composition": 2454,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -49,7 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "suddenly",
-        "composition": [655, ";", 86, "/", 425],
+        "composition": 2507,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -60,7 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "new",
-        "composition": [1061, ";", 86],
+        "composition": 2070,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -71,7 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "old",
-        "composition": [486, "/", 220, ";", 86],
+        "composition": 2102,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -82,7 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "recently",
-        "composition": [503, ";", 86, "/", 1060],
+        "composition": 2250,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -93,7 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "soon",
-        "composition": [341, ";", 86, "/", 1060],
+        "composition": 2457,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -104,7 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "ongoing",
-        "composition": [1162, ";", 86],
+        "composition": 4414,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -115,7 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "finished",
-        "composition": [106, ";", 86, "/", 117],
+        "composition": 4771,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -126,7 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "quiet",
-        "composition": [449, "/", 608, ";", 86, "/", 401],
+        "composition": 2233,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -148,7 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "open",
-        "composition": [484, ";", 86],
+        "composition": 2104,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -159,7 +159,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "only",
-        "composition": [894, ";", 86, "/", 10],
+        "composition": 1188,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 5,
@@ -170,7 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "left",
-        "composition": [1051, ";", 86],
+        "composition": 1924,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -181,7 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "first",
-        "composition": [10, ";", 86, "/", 4],
+        "composition": 1669,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -192,7 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "last",
-        "composition": [486, "/", 10, ";", 86, "/", 4],
+        "composition": 1912,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -203,7 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "next",
-        "composition": [10, ";", 86, "/", 4, "/", 109],
+        "composition": 2073,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -214,7 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "right",
-        "composition": [1078, ";", 86],
+        "composition": 2285,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

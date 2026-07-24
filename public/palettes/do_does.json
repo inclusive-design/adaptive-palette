@@ -5,7 +5,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "do, does",
-        "composition": [106, ";", 81],
+        "composition": 1558,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -16,7 +16,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "work",
-        "composition": [711],
+        "composition": 2762,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -27,7 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "read",
-        "composition": [303, ";", 81, "/", 497],
+        "composition": 2247,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -38,7 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "write",
-        "composition": [509, ";", 81],
+        "composition": 2770,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -49,7 +49,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "draw, paint",
-        "composition": [509, ";", 81, "/", 303, "/", 291],
+        "composition": 1564,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
@@ -60,7 +60,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "cook",
-        "composition": [319, ";", 81, "/", 329],
+        "composition": 1458,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 1,
@@ -71,7 +71,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "bake (to)",
-        "composition": [319, ";", 81, "/", 329, "/", 291],
+        "composition": 1252,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 2,
@@ -82,7 +82,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "purchase (to)",
-        "composition": [451, ";", 81, "/", 651],
+        "composition": 1360,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 3,
@@ -93,7 +93,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "cost (to)",
-        "composition": [451, ";", 81, "/", 331, "/", 651],
+        "composition": 4769,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 4,
@@ -104,7 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "count (to)",
-        "composition": [478, ";", 81],
+        "composition": 1469,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -115,7 +115,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "play (to)",
-        "composition": [106, ";", 81, "/", "RK:-2", "/", 313, "/", 678],
+        "composition": 2170,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 1,
@@ -126,7 +126,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "sing",
-        "composition": [457, ";", 81, "/", 462],
+        "composition": 2410,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 2,
@@ -137,7 +137,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "dance",
-        "composition": [418, ";", 81, "/", 462],
+        "composition": 1503,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 3,
@@ -148,7 +148,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "swim",
-        "composition": [653, ";", 81, "/", 695],
+        "composition": 2533,
         "rowStart": 3,
         "rowSpan": 1,
         "columnStart": 4,
@@ -170,7 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "ride",
-        "composition": [1077, ";", 81],
+        "composition": 2283,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -181,7 +181,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "drive",
-        "composition": [202, ";", 81],
+        "composition": 1572,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 2,
@@ -192,7 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "meet",
-        "composition": [1057, ";", 81],
+        "composition": 1997,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -203,7 +203,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "turn",
-        "composition": [1101, ";", 81],
+        "composition": 2651,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 4,
@@ -214,7 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "fall",
-        "composition": [271, ";", 81, "/", 401],
+        "composition": 1637,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,

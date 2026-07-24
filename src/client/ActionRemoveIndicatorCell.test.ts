@@ -32,16 +32,39 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
   // The structure of these objects is what is added to or removed from the
   // `changeEncodingContents` signal value
   const blissWordNoIndicator = {
-    id: "another-fake-id",
     label: "opposite",
     composition: 486     // ID for bciAvId 15927 (opposite)
   };
   const blissWordWithIndicator = {
-    id: "yet-another-fake-id",
     label: "don't know",
     composition: [ 412, ";", 81, "/", 2088 ]   // IDs for bciAvId 15162, 8993, 15733
   };
   const compositionAfterIndicatorRemoval = [ 412, "/", 2088 ];  // IDs for bciAvId 15162, 15733
+  const blissWordWithIndicatorAndBaseLabel = {
+    label: "helper",
+    baseLabel: "help",
+    composition: [ 382, ";", 97 ],
+    indicatorInfo: 97,
+    userSelectedSymbolId: 382
+  };
+  const blissWordIndicatorThenModifier = {
+    label: "big walked",
+    baseLabel: "walk",
+    baseModifierCount: 0,
+    composition: [ 368, "/", 382, ";", 97 ],
+    indicatorInfo: 97,
+    modifierInfo: [{ modifierId: [368], modifierGloss: "big", isPrepended: true }],
+    userSelectedSymbolId: 382
+  };
+  const blissWordModifierThenIndicator = {
+    label: "big walked",
+    baseLabel: "big walk",
+    baseModifierCount: 1,
+    composition: [ 368, "/", 382, ";", 97 ],
+    indicatorInfo: 97,
+    modifierInfo: [{ modifierId: [368], modifierGloss: "big", isPrepended: true }],
+    userSelectedSymbolId: 382
+  };
 
   beforeAll(async (): Promise<void> => {
     await initAdaptivePaletteGlobals();
@@ -152,5 +175,74 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     expect(removeIndicatorButton.getAttribute("disabled")).toBeDefined();
     const lastSymbol = changeEncodingContents.value.payloads[changeEncodingContents.value.payloads.length-1];
     expect(lastSymbol.composition).toStrictEqual(compositionAfterIndicatorRemoval);
+  });
+
+  test("ActionRemoveIndicatorCell restores label from baseLabel and clears baseLabel/indicatorInfo", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [blissWordWithIndicatorAndBaseLabel],
+      caretPosition: 0
+    };
+    render(html`
+      <${ActionRemoveIndicatorCell}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />`
+    );
+    const removeIndicatorButton = await screen.findByRole("button", {name: testCell.options.label});
+    expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
+
+    fireEvent.click(removeIndicatorButton);
+
+    const restored = changeEncodingContents.value.payloads[0];
+    expect(restored.label).toBe("help");
+    expect(restored.baseLabel).toBeUndefined();
+    expect(restored.indicatorInfo).toBeUndefined();
+    expect(restored.userSelectedSymbolId).toBe(382);
+  });
+
+  test("ActionRemoveIndicatorCell keeps a modifier applied after the indicator when restoring baseLabel", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [blissWordIndicatorThenModifier],
+      caretPosition: 0
+    };
+    render(html`
+      <${ActionRemoveIndicatorCell}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />`
+    );
+    const removeIndicatorButton = await screen.findByRole("button", {name: testCell.options.label});
+    expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
+
+    fireEvent.click(removeIndicatorButton);
+
+    const restored = changeEncodingContents.value.payloads[0];
+    expect(restored.label).toBe("big walk");
+    expect(restored.baseLabel).toBeUndefined();
+    expect(restored.baseModifierCount).toBeUndefined();
+    expect(restored.indicatorInfo).toBeUndefined();
+  });
+
+  test("ActionRemoveIndicatorCell does not double-count a modifier applied before the indicator when restoring baseLabel", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [blissWordModifierThenIndicator],
+      caretPosition: 0
+    };
+    render(html`
+      <${ActionRemoveIndicatorCell}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />`
+    );
+    const removeIndicatorButton = await screen.findByRole("button", {name: testCell.options.label});
+    expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
+
+    fireEvent.click(removeIndicatorButton);
+
+    const restored = changeEncodingContents.value.payloads[0];
+    expect(restored.label).toBe("big walk");
+    expect(restored.baseLabel).toBeUndefined();
+    expect(restored.baseModifierCount).toBeUndefined();
+    expect(restored.indicatorInfo).toBeUndefined();
   });
 });

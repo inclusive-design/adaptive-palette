@@ -9,7 +9,7 @@
  * You may obtain a copy of the License at
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
-import { JsonPaletteType, SymbolEncodingType, ContentSignalDataType } from "./index.d";
+import { JsonPaletteType, SymbolEncodingType, ContentSignalDataType, ModifierInfoType } from "./index.d";
 
 /**
  * Global Utility Functions
@@ -133,10 +133,25 @@ function clamp (value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
 
+/**
+ * Rebuild a label by folding a symbol's tracked modifiers around a base label in the
+ * order they were applied.
+ * @param {string} baseLabel - The base label to wrap, with no modifier text applied.
+ * @param {ModifierInfoType[]} [modifierInfo] - The modifiers to fold in, in application order.
+ * @returns {string} - The base label wrapped in every tracked modifier.
+ */
+function applyModifiersToLabel (baseLabel: string, modifierInfo?: ModifierInfoType[]): string {
+  return (modifierInfo ?? []).reduce(
+    (label, modifier) => modifier.isPrepended ? `${modifier.modifierGloss} ${label}` : `${label} ${modifier.modifierGloss}`,
+    baseLabel
+  );
+}
+
 export {
   generateGridStyle,
   speak,
   loadPaletteFromJsonFile,
   insertWordAtCaret,
-  clamp
+  clamp,
+  applyModifiersToLabel
 };

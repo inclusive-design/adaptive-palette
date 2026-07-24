@@ -27,7 +27,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "fruit juice",
-        "composition": [275, "/", 338],
+        "composition": 1708,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -38,7 +38,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "fizzy drink",
-        "composition": [275, "/", 345],
+        "composition": 2449,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,

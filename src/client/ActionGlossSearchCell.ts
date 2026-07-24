@@ -55,9 +55,9 @@ export function ActionGlossSearchCell (props: ActionGlossSearchCellPropsType): V
     // Get value from the ref, fallback to proposedGloss if unavailable
     const theLabel = inputRef.current ? inputRef.current.value : proposedGloss;
     const payload = {
-      "id": props.id,
       "label": theLabel,
       "composition": composition,
+      "userSelectedSymbolId": id,
       "modifierInfo": []
     };
     changeEncodingContents.value = insertWordAtCaret(

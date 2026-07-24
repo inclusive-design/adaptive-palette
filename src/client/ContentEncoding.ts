@@ -14,7 +14,7 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
-import { ContentEncodingType, EncodingType } from "./index.d";
+import { ContentEncodingType, BlissSymbolInfoType } from "./index.d";
 import { generateGridStyle, clamp, speak } from "./GlobalUtils";
 import "./ContentEncoding.scss";
 
@@ -38,7 +38,7 @@ type ContentEncodingProps = {
  * @param {ContentSignalDataType} symbols: Array of symbols and caret position.
  * @return {Array<VNode>} - Array of markup for the symbols
  */
-function generateMarkupArray (payloadArray: Array<EncodingType>, caretPos: number): Array<VNode> {
+function generateMarkupArray (payloadArray: Array<BlissSymbolInfoType>, caretPos: number): Array<VNode> {
   // NOTE:  if there are no payloads in the `payloadArray`, the map() function
   // immediately returns an empty array.  That is, the function passed to map()
   // will execute only if `payloadArray.length` is non-zero -- there is no need

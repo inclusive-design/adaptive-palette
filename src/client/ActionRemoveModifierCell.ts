@@ -52,9 +52,12 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
         symbolToEdit.composition
     );
     let newLabel = symbolToEdit.label;
+    let newBaseLabel = symbolToEdit.baseLabel;
+    let newBaseModifierCount = symbolToEdit.baseModifierCount;
 
     // Check for any modifier to remove -- if the symbol has no modifiers,
     // leave the `newComposition` as is.
+    const modifierCountBeforeRemoval = symbolToEdit.modifierInfo?.length ?? 0;
     const removeInfo = symbolToEdit.modifierInfo?.pop();
     if (removeInfo) {
       // Either the last modifer added was prepended to the beginning or
@@ -74,12 +77,24 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
         );
       }
       newLabel = newLabel.replace(removeInfo.modifierGloss, "").trim();
+      // If the removed modifier predates `baseLabel`'s snapshot (i.e. it was
+      // already folded into `baseLabel`'s text when an indicator was applied),
+      // strip it from `baseLabel` too and shrink `baseModifierCount` to match --
+      // otherwise a later indicator removal would reapply/resurrect a modifier
+      // the user just explicitly removed.
+      if (newBaseLabel !== undefined && modifierCountBeforeRemoval <= (newBaseModifierCount ?? 0)) {
+        newBaseLabel = newBaseLabel.replace(removeInfo.modifierGloss, "").trim();
+        newBaseModifierCount = (newBaseModifierCount ?? 0) - 1;
+      }
     }
     payloads[caretPosition] = {
-      "id": symbolToEdit.id,
       "label": newLabel,
       "composition": newComposition,
-      "modifierInfo": symbolToEdit.modifierInfo
+      "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
+      "modifierInfo": symbolToEdit.modifierInfo,
+      "indicatorInfo": symbolToEdit.indicatorInfo,
+      "baseLabel": newBaseLabel,
+      "baseModifierCount": newBaseModifierCount
     };
     changeEncodingContents.value = {
       payloads: payloads,

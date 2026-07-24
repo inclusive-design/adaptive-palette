@@ -10,10 +10,10 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render, screen } from "@testing-library/preact";
+import { render, screen, fireEvent } from "@testing-library/preact";
 import { html } from "htm/preact";
 
-import { initAdaptivePaletteGlobals } from "./GlobalData";
+import { initAdaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
 import { ActionCodeCell } from "./ActionCodeCell";
 
 describe("ActionCodeCell render tests", (): void => {
@@ -64,6 +64,63 @@ describe("ActionCodeCell render tests", (): void => {
     // Check that SVG is rendered (composition field must be set; bciAvId would leave it undefined)
     const svgElement = button.querySelector("svg");
     expect(svgElement).not.toBe(null);
+  });
+
+  test("Clicking an ActionCodeCell with a numeric composition sets userSelectedSymbolId", async (): Promise<void> => {
+    const numericTestCell = {
+      options: {
+        "label": "percent",
+        "composition": 2
+      }
+    };
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+
+    render(html`
+      <${ActionCodeCell}
+        id="numeric-cell-uuid"
+        options=${numericTestCell.options}
+      />`
+    );
+    const button = await screen.findByRole("button", {name: numericTestCell.options.label});
+    fireEvent.click(button);
+
+    expect(changeEncodingContents.value.payloads[0].userSelectedSymbolId).toBe(2);
+  });
+
+  test("Clicking an ActionCodeCell with an array composition leaves userSelectedSymbolId undefined", async (): Promise<void> => {
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+
+    render(html`
+      <${ActionCodeCell}
+        id="array-cell-uuid"
+        options=${testCell.options}
+      />`
+    );
+    const button = await screen.findByRole("button", {name: testCell.options.label});
+    fireEvent.click(button);
+
+    expect(changeEncodingContents.value.payloads[0].userSelectedSymbolId).toBeUndefined();
+  });
+
+  test("Clicking an ActionCodeCell with a single-number array composition sets userSelectedSymbolId", async (): Promise<void> => {
+    const singleElementArrayTestCell = {
+      options: {
+        "label": "percent",
+        "composition": [ 2 ]
+      }
+    };
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+
+    render(html`
+      <${ActionCodeCell}
+        id="single-element-array-cell-uuid"
+        options=${singleElementArrayTestCell.options}
+      />`
+    );
+    const button = await screen.findByRole("button", {name: singleElementArrayTestCell.options.label});
+    fireEvent.click(button);
+
+    expect(changeEncodingContents.value.payloads[0].userSelectedSymbolId).toBe(2);
   });
 
 });

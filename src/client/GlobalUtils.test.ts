@@ -10,7 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { generateGridStyle, clamp } from "./GlobalUtils";
+import { generateGridStyle, clamp, applyModifiersToLabel } from "./GlobalUtils";
 
 describe("Test global utility functions", (): void => {
 
@@ -54,4 +54,32 @@ describe("Test global utility functions", (): void => {
   test("Test clamp function where value is in range", (): void => {
     expect(clamp(1, 0, 2)).toBe(1);
   });
+});
+
+describe("Test applyModifiersToLabel()", (): void => {
+
+  test("No modifierInfo returns the base label unchanged", (): void => {
+    expect(applyModifiersToLabel("walk")).toBe("walk");
+    expect(applyModifiersToLabel("walk", [])).toBe("walk");
+  });
+
+  test("A single prepended modifier goes before the word", (): void => {
+    expect(applyModifiersToLabel("walk", [
+      { modifierId: 400, modifierGloss: "big", isPrepended: true }
+    ])).toBe("big walk");
+  });
+
+  test("A single appended modifier goes after the word", (): void => {
+    expect(applyModifiersToLabel("walk", [
+      { modifierId: 401, modifierGloss: "quickly", isPrepended: false }
+    ])).toBe("walk quickly");
+  });
+
+  test("Multiple modifiers fold in application order", (): void => {
+    expect(applyModifiersToLabel("walk", [
+      { modifierId: 400, modifierGloss: "big", isPrepended: true },
+      { modifierId: 401, modifierGloss: "quickly", isPrepended: false }
+    ])).toBe("big walk quickly");
+  });
+
 });

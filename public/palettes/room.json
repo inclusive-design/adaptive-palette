@@ -104,7 +104,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "mirror",
-        "composition": [784, ";", 97],
+        "composition": 2803,
         "rowStart": 2,
         "rowSpan": 1,
         "columnStart": 5,
@@ -170,7 +170,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "lamp",
-        "composition": [424, ";", 97, "/", 288],
+        "composition": 1595,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 1,
@@ -192,7 +192,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "scissors",
-        "composition": [581, ";", 81],
+        "composition": 1500,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 3,
@@ -214,7 +214,7 @@
       "type": "ActionCodeCell",
       "options": {
         "label": "strap",
-        "composition": [428, ";", 97, "/", 823],
+        "composition": 2498,
         "rowStart": 4,
         "rowSpan": 1,
         "columnStart": 5,
