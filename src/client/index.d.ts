@@ -97,8 +97,17 @@ export type IndicatorLabelLookupConfigType = {
   model: string
 };
 
+export type TelegraphicTranslationConfigType = {
+  model: string,
+  numSentences: number,
+  maxStoredRecords: number,
+  systemPrompt: string,
+  userPrompt: string
+};
+
 export type AdaptivePaletteConfigType = {
-  indicatorLabelLookup: IndicatorLabelLookupConfigType
+  indicatorLabelLookup: IndicatorLabelLookupConfigType,
+  telegraphicTranslation?: TelegraphicTranslationConfigType
 };
 
 export type ContentSignalDataType = {
@@ -115,3 +124,19 @@ export type MatchType = {
   label: string,
   composition?: SymbolCompositionType
 }
+
+/*
+ * State of the sentence-translation area below the input palette.
+ * `ready` carries the telegraphic message and model that produced the
+ * sentences, so a record can be logged even after the input area changes.
+ */
+export type SentenceCompletionsStateType =
+  | { status: "idle" }
+  | { status: "working" }
+  | { status: "error" }
+  | {
+      status: "ready",
+      sentences: string[],
+      model: string,
+      telegraphicMessage: string
+    };

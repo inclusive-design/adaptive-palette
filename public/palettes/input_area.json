@@ -57,6 +57,18 @@
         "columnSpan": 1,
         "ariaControls": "content-encoding-area"
       }
+    },
+    "command-make-sentence": {
+      "type": "CommandMakeSentence",
+      "options": {
+        "label": "Make a sentence",
+        "composition": [840, ";", 81, "//", 368, "/", 502, "/", 414],
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 14,
+        "ariaControls": "sentenceChoices"
+      }
     }
   }
 }

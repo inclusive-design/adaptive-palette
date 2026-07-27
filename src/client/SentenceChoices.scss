@@ -1,0 +1,70 @@
+/*
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
+ *
+ * Licensed under the New BSD license. You may not use this file except in
+ * compliance with this License.
+ *
+ * You may obtain a copy of the License at
+ * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
+ */
+
+.sentenceChoices {
+  display: grid;
+  row-gap: 0.5rem;
+}
+
+.sentenceChoice {
+  background-color: white;
+  border: 0.15rem solid blue;
+  font-size: 1.1rem;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.sentenceStatus,
+.sentenceError {
+  border-radius: 1rem;
+  font-weight: bold;
+  margin: 0;
+  padding: 0.75rem 1rem;
+}
+
+.sentenceStatus {
+  background-color: #fffbe6;
+}
+
+/* The live region stays in the document at all times so announcements land in it;
+   it must not take up space while it has nothing to say. */
+.sentenceStatus:empty {
+  display: none;
+}
+
+.sentenceError {
+  background-color: #ffecec;
+}
+
+.sentenceTypeYourOwn {
+  column-gap: 0.5rem;
+  display: flex;
+
+  input {
+    border: 0.15rem dashed blue;
+    border-radius: 1rem;
+    flex: 1;
+    font-size: 1.1rem;
+    padding: 0.75rem 1rem;
+  }
+
+  button {
+    font-size: 1.1rem;
+    padding: 0.75rem 1.5rem;
+  }
+
+  /* Clears the message as well as the choices, so it is kept visually distinct from
+     Speak, which it sits beside. */
+  .sentenceDone {
+    background-color: lightsalmon;
+  }
+}

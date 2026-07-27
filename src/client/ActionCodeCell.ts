@@ -15,7 +15,7 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from ".";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents, adaptivePaletteGlobals } from "./GlobalData";
-import { generateGridStyle, speak, insertWordAtCaret } from "./GlobalUtils";
+import { generateGridStyle, speak, insertWordAtCaret, normalizeComposition } from "./GlobalUtils";
 import "./ActionCodeCell.scss";
 
 type ActionCodeCellPropsType = {
@@ -28,11 +28,7 @@ export function ActionCodeCell (props: ActionCodeCellPropsType): VNode {
     columnStart, columnSpan, rowStart, rowSpan, label
   } = props.options;
   let { composition } = props.options;
-  // Normalize a single-number array (e.g. `[1433]`) is equivalent to the bare number `1433`
-  if (Array.isArray(composition) && composition.length === 1 && typeof composition[0] === "number") {
-    composition = composition[0];
-  }
-
+  composition = normalizeComposition(composition);
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = () => {

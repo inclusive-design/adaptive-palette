@@ -11,7 +11,7 @@
  */
 import { render } from "preact";
 import { html } from "htm/preact";
-import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
+import { initAdaptivePaletteGlobals, adaptivePaletteGlobals, NO_MODELS_MESSAGE } from "./GlobalData";
 import { loadPaletteFromJsonFile, speak } from "./GlobalUtils";
 import { goBackImpl } from "./CommandGoBackCell";
 import { INPUT_AREA_ID } from "./ContentEncoding";
@@ -22,9 +22,7 @@ await initAdaptivePaletteGlobals("mainPaletteDisplayArea");
 
 import { PaletteStore } from "./PaletteStore";
 import { Palette } from "./Palette";
-import { CommandTelegraphicCompletions } from "./CommandTelegraphicCompletions";
-import { SentenceCompletionsPalette } from "./SentenceCompletionsPalette";
-import { DialogPromptEntries } from "./DialogPromptEntries";
+import { SentenceChoices } from "./SentenceChoices";
 import { ActionSearchGloss } from "./ActionSearchGloss";
 import { ActionSvgEntryField } from "./ActionSvgEntryField";
 
@@ -56,17 +54,12 @@ render(html`<${Palette} json=${topPalette} />`, getRequiredElement("indicators")
 render(html`<${Palette} json=${firstLayer} />`, getRequiredElement("mainPaletteDisplayArea"));
 render(html`<${Palette} json=${modifiersPalette} />`, getRequiredElement("modifiers"));
 
-// Forms for interacting with LLMs
-const llmInteraction = getRequiredElement("llmInteraction");
-if (adaptivePaletteGlobals.LLMs.length > 0) {
-  render(html`<${DialogPromptEntries} />`, getRequiredElement("llmPrompt"));
-  render(
-    html`<${CommandTelegraphicCompletions} model="llama3.1:latest" stream=${false} />`,
-    getRequiredElement("askForLlmSuggestions")
-  );
-  render(html`<${SentenceCompletionsPalette} />`, getRequiredElement("llmSuggestions"));
-} else {
-  llmInteraction.innerHTML = "<p>No models available. Start Ollama to enable AI features.</p>";
+// Sentence translation: the trigger button lives in the input area palette and hides
+// itself when unavailable, so only the status line needs wiring here.
+render(html`<${SentenceChoices} />`, getRequiredElement("sentenceChoices"));
+
+if (adaptivePaletteGlobals.LLMs.length === 0) {
+  getRequiredElement("aiStatus").textContent = NO_MODELS_MESSAGE;
 }
 
 // Forms for entering SVG strings and searching the AV

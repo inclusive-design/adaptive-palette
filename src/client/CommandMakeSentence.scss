@@ -10,13 +10,13 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-.actionTextCell {
-  border: 2px solid black;
-  color: black;
-  background-color: white;
-  margin-left: 1rem;
-  padding-inline: 0.5rem;
-  text-align: left;
-  font-size: 1rem;
-  width: 50%;
+.makeSentence {
+  background-color: #ffe14d;
+  font-size: 1.25rem;
+  padding: 0.75rem;
+  width: 100%;
+
+  &[aria-disabled="true"] {
+    background-color: silver;
+  }
 }

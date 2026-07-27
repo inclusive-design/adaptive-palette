@@ -17,7 +17,10 @@ import { signal } from "@preact/signals";
 import { getModelNames } from "./ollamaApi";
 import { initIndicatorLabels } from "./IndicatorLabelsUtils";
 import { initSvgCompositeDefinitions } from "./SvgUtils";
-import type { ContentSignalDataType, BlissSymbolEntry, AdaptivePaletteConfigType } from "./index.d";
+import type {
+  ContentSignalDataType, BlissSymbolEntry, AdaptivePaletteConfigType,
+  IndicatorLabelLookupConfigType, TelegraphicTranslationConfigType, SentenceCompletionsStateType
+} from "./index.d";
 
 // NOTE: this import causes a warning serving the application using the `vite`
 // server.  The warning suggests to *not* use the `public` folder but to use
@@ -42,12 +45,12 @@ import { ActionPreModifierCell } from "./ActionPreModifierCell";
 import { ActionPostModifierCell } from "./ActionPostModifierCell";
 import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
 import { ActionRemoveModifierCell } from "./ActionRemoveModifierCell";
-import { ActionTextCell } from "./ActionTextCell";
 import { CommandClearEncoding } from "./CommandClearEncoding";
 import { CommandCursorBackward } from "./CommandCursorBackward";
 import { CommandCursorForward } from "./CommandCursorForward";
 import { CommandDelLastEncoding } from "./CommandDelLastEncoding";
 import { CommandGoBackCell } from "./CommandGoBackCell";
+import { CommandMakeSentence } from "./CommandMakeSentence";
 import { ContentEncoding } from "./ContentEncoding";
 import { PaletteStore } from "./PaletteStore";
 import { NavigationStack } from "./NavigationStack";
@@ -61,16 +64,16 @@ export const cellTypeRegistry = {
   "ActionPostModifierCell": ActionPostModifierCell,
   "ActionRemoveIndicatorCell": ActionRemoveIndicatorCell,
   "ActionRemoveModifierCell": ActionRemoveModifierCell,
-  "ActionTextCell": ActionTextCell,
   "CommandClearEncoding": CommandClearEncoding,
   "CommandCursorBackward": CommandCursorBackward,
   "CommandCursorForward": CommandCursorForward,
   "CommandDelLastEncoding": CommandDelLastEncoding,
   "CommandGoBackCell": CommandGoBackCell,
+  "CommandMakeSentence": CommandMakeSentence,
   "ContentEncoding": ContentEncoding,
 };
 
-export const SYSTEM_PROMPTS_KEY = "Telegraphic System Prompts";
+export const NO_MODELS_MESSAGE = "No models available. Start Ollama to enable AI features.";
 
 /**
  * Load the map between the BCI-AV IDs and the code consumed by the Bliss SVG
@@ -83,11 +86,6 @@ export const adaptivePaletteGlobals = {
   LLMs: [] as string[],
   config: { indicatorLabelLookup: { useModelQueryFallback: false, model: "" } } as AdaptivePaletteConfigType,
   indicatorLabels: {} as Record<string, string>,
-  systemPrompts: {
-    "What express": "What does this express? Give the top five answers.  Do not add a preamble like, 'Here are the top five answers.'",
-    "Single Sentence": "Convert the telegraphic speech to a single sentence. Give the top five best answers.  Answer with a single grammatically correct sentence.  Number the five answers clearly.  Do not add a preamble like, 'Here are the top five answers.'",
-    "Single Sentence Young": "Convert the telegraphic speech to a single sentence. Give the top five best answers.  Answer with a single grammatically correct sentence in the style of an elementary school aged child, using the first person singular.  Number the five answers clearly.  Do not add a preamble like, 'Here are the top five answers.'",
-  },
   // `id` attribute of the HTML element area where the main palette is
   // displayed, set by initAdaptivePaletteGlobals().  It defaults to the empty
   // string and that identifies the `<body>` elements as a default.
@@ -96,34 +94,76 @@ export const adaptivePaletteGlobals = {
 };
 
 /**
- * Fetch and validate `public/config.json`. Any failure -- missing file, missing
- * `indicatorLabelLookup` section, malformed JSON, failed fetch -- silently disables
- * the Ollama fallback tier; no user-facing error, per design.
+ * Validate the `indicatorLabelLookup` section of the config. Returns `undefined` when
+ * the section is missing or malformed, which disables the Ollama fallback tier.
+ * @param {unknown} section - The raw parsed section.
+ * @returns {IndicatorLabelLookupConfigType | undefined}
+ */
+function parseIndicatorLabelLookup (section: unknown): IndicatorLabelLookupConfigType | undefined {
+  const candidate = section as { useModelQueryFallback?: unknown, model?: unknown } | undefined;
+  if (!candidate || typeof candidate.useModelQueryFallback !== "boolean") {
+    return undefined;
+  }
+  return {
+    useModelQueryFallback: candidate.useModelQueryFallback,
+    model: typeof candidate.model === "string" ? candidate.model : ""
+  };
+}
+
+/**
+ * Validate the `telegraphicTranslation` section of the config. Every field is required:
+ * there are no hardcoded prompt defaults, so a partially valid section is treated as no
+ * section at all and the feature reports itself as unconfigured rather than running with
+ * prompts nobody wrote. `model` may be the empty string, meaning "use whatever Ollama has".
+ * @param {unknown} section - The raw parsed section.
+ * @returns {TelegraphicTranslationConfigType | undefined}
+ */
+function parseTelegraphicTranslation (section: unknown): TelegraphicTranslationConfigType | undefined {
+  const candidate = section as {
+    model?: unknown, numSentences?: unknown, maxStoredRecords?: unknown,
+    systemPrompt?: unknown, userPrompt?: unknown
+  } | undefined;
+  if (!candidate) {
+    return undefined;
+  }
+  const { model, numSentences, maxStoredRecords, systemPrompt, userPrompt } = candidate;
+  const isFilledString = (value: unknown): boolean => typeof value === "string" && value.trim().length > 0;
+  const isPositiveInteger = (value: unknown): boolean => Number.isInteger(value) && (value as number) > 0;
+
+  if (typeof model !== "string" || !isPositiveInteger(numSentences) ||
+      !isPositiveInteger(maxStoredRecords) || !isFilledString(systemPrompt) ||
+      !isFilledString(userPrompt)) {
+    return undefined;
+  }
+  return {
+    model,
+    numSentences: numSentences as number,
+    maxStoredRecords: maxStoredRecords as number,
+    systemPrompt: systemPrompt as string,
+    userPrompt: userPrompt as string
+  };
+}
+
+/**
+ * Fetch and validate `public/config.json`. Each section is validated independently, so a
+ * broken section never takes another one down with it. Any failure -- missing file,
+ * malformed JSON, failed fetch -- yields the fully disabled configuration.
  * @returns {Promise<AdaptivePaletteConfigType>}
  */
 async function loadConfig (): Promise<AdaptivePaletteConfigType> {
-  const disabled: AdaptivePaletteConfigType = {
-    indicatorLabelLookup: { useModelQueryFallback: false, model: "" }
-  };
+  const disabledIndicatorLookup = { useModelQueryFallback: false, model: "" };
   try {
     const response = await fetch("/config.json");
     if (!response.ok) {
-      return disabled;
+      return { indicatorLabelLookup: disabledIndicatorLookup };
     }
-    const parsed: unknown = await response.json();
-    const section = (parsed as { indicatorLabelLookup?: unknown })?.indicatorLabelLookup as
-      { useModelQueryFallback?: unknown; model?: unknown } | undefined;
-    if (!section || typeof section.useModelQueryFallback !== "boolean") {
-      return disabled;
-    }
+    const parsed = await response.json() as Record<string, unknown>;
     return {
-      indicatorLabelLookup: {
-        useModelQueryFallback: section.useModelQueryFallback,
-        model: typeof section.model === "string" ? section.model : ""
-      }
+      indicatorLabelLookup: parseIndicatorLabelLookup(parsed?.indicatorLabelLookup) ?? disabledIndicatorLookup,
+      telegraphicTranslation: parseTelegraphicTranslation(parsed?.telegraphicTranslation)
     };
   } catch {
-    return disabled;
+    return { indicatorLabelLookup: disabledIndicatorLookup };
   }
 }
 
@@ -147,11 +187,6 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
   ]);
   adaptivePaletteGlobals.LLMs = llms;
   adaptivePaletteGlobals.config = config;
-
-  // Set up the system prompts.
-  window.localStorage.setItem(
-    SYSTEM_PROMPTS_KEY, JSON.stringify(adaptivePaletteGlobals.systemPrompts)
-  );
 }
 
 /**
@@ -165,8 +200,20 @@ export const changeEncodingContents = signal<ContentSignalDataType>({
 });
 
 /**
- * Signal for updating the contents of the SentenceCompletion area.  The value
- * of the signal is the current array of sentences that are offered as possible
- * completions.
+ * Signal driving the sentence-translation area below the input palette. `idle` renders
+ * nothing; `working` and `error` render a single message; `ready` renders the choices,
+ * and carries the message and model that produced them so a log record can still be
+ * written after the input area has moved on.
  */
-export const sentenceCompletionsSignal = signal<string[]>([]);
+export const sentenceCompletionsSignal = signal<SentenceCompletionsStateType>({ status: "idle" });
+
+/**
+ * Discard the message in the input area together with any sentences made from it. The two
+ * always go together: choices left on screen after the message is gone are still tappable,
+ * and would speak and record a message the user has deliberately thrown away.
+ * @returns {void}
+ */
+export function clearMessageAndChoices (): void {
+  changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+  sentenceCompletionsSignal.value = { status: "idle" };
+}
