@@ -10,10 +10,8 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-.makeSentence {
+.btn-makeSentence {
   background-color: #ffe14d;
-  font-size: 1.25rem;
-  padding: 0.75rem;
   width: 100%;
 
   &[aria-disabled="true"] {
