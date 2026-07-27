@@ -81,7 +81,7 @@ describe("SentenceChoices component", (): void => {
     const { container } = render(html`<${SentenceChoices} />`);
     const liveRegion = container.querySelector("[role=\"status\"]");
 
-    sentenceCompletionsSignal.value = { status: "working" };
+    sentenceCompletionsSignal.value = { status: "working", telegraphicMessage: "me hungry" };
 
     expect(await screen.findByText(WORKING_MESSAGE)).toBeVisible();
 
@@ -91,10 +91,16 @@ describe("SentenceChoices component", (): void => {
     expect(screen.queryByPlaceholderText(TYPE_YOUR_OWN_HINT)).toBeNull();
   });
 
-  test("renders the error message", (): void => {
+  test("the error message lands in the live region that was already there", async (): Promise<void> => {
+    sentenceCompletionsSignal.value = { status: "idle" };
+    const { container } = render(html`<${SentenceChoices} />`);
+    const liveRegion = container.querySelector("[role=\"status\"]");
+
     sentenceCompletionsSignal.value = { status: "error" };
-    render(html`<${SentenceChoices} />`);
-    expect(screen.getByText(CANNOT_COMPLETE_MESSAGE)).toBeVisible();
+
+    expect(await screen.findByText(CANNOT_COMPLETE_MESSAGE)).toBeVisible();
+    expect(container.querySelector("[role=\"status\"]")).toBe(liveRegion);
+    expect(liveRegion?.textContent).toBe(CANNOT_COMPLETE_MESSAGE);
   });
 
   test("renders one button per sentence plus the text box", (): void => {
@@ -126,7 +132,7 @@ describe("SentenceChoices component", (): void => {
   });
 
   test("focus moves to the first choice when the sentences arrive", async (): Promise<void> => {
-    sentenceCompletionsSignal.value = { status: "working" };
+    sentenceCompletionsSignal.value = { status: "working", telegraphicMessage: "me hungry" };
     render(html`<${SentenceChoices} />`);
 
     sentenceCompletionsSignal.value = READY_STATE;

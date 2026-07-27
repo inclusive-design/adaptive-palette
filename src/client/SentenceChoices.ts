@@ -110,15 +110,12 @@ export function SentenceChoices (): VNode {
     </form>
   ` : null;
 
-  const statusText = state.status === "working" ? WORKING_MESSAGE : "";
-  const errorLine = state.status === "error"
-    ? html`<p class="sentenceError" role="alert">${CANNOT_COMPLETE_MESSAGE}</p>`
-    : null;
+  const statusText = state.status === "working" ? WORKING_MESSAGE
+    : state.status === "error" ? CANNOT_COMPLETE_MESSAGE : "";
 
   return html`
     <div class="sentenceChoices" ref=${choicesRef}>
-      <p class="sentenceStatus" role="status">${statusText}</p>
-      ${errorLine}
+      <p class=${state.status === "error" ? "sentenceStatus sentenceError" : "sentenceStatus"} role="status">${statusText}</p>
       ${choices}
     </div>
   `;

@@ -223,7 +223,8 @@ describe("CommandMakeSentence component", (): void => {
     });
   });
 
-  test("the published message is the one from when the query started", async (): Promise<void> => {
+  test("a reply for a message the user has since changed is discarded", async (): Promise<void> => {
+    setConfig(1);
     changeEncodingContents.value = INPUT_CONTENTS;
     let resolveQuery: (value: unknown) => void = () => undefined;
     mockedQueryChat.mockReturnValue(new Promise((resolve) => {
@@ -233,20 +234,45 @@ describe("CommandMakeSentence component", (): void => {
 
     await userEvent.click(screen.getByRole("button", { name: MAKE_SENTENCE_LABEL }));
 
-    // The user keeps editing while the model is thinking. The record must still name the
-    // message that was actually translated.
+    // The user edits the message while the model is thinking. The sentences coming back
+    // are for a message that is no longer on screen: they must not be shown, spoken, or
+    // logged.
     changeEncodingContents.value = {
       payloads: [{ label: "later", composition: [126], modifierInfo: [] }],
       caretPosition: 1
     };
-    resolveQuery({ message: { content: "1. I am hungry." } });
+    expect(sentenceCompletionsSignal.value.status).toBe("idle");
 
+    resolveQuery({ message: { content: "1. I am hungry." } });
     await waitFor(() => {
-      expect(sentenceCompletionsSignal.value).toMatchObject({
-        status: "ready",
-        telegraphicMessage: "me hungry"
-      });
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
     });
+
+    expect(sentenceCompletionsSignal.value.status).toBe("idle");
+    expect(mockedSpeak).not.toHaveBeenCalled();
+    expect(readSentenceLog()).toEqual([]);
+  });
+
+  test("choices for a message are discarded when that message is edited", async (): Promise<void> => {
+    changeEncodingContents.value = INPUT_CONTENTS;
+    mockedQueryChat.mockResolvedValue({
+      message: { content: "1. I am hungry.\n2. I want food." }
+    } as never);
+    renderCell();
+
+    await userEvent.click(screen.getByRole("button", { name: MAKE_SENTENCE_LABEL }));
+    await waitFor(() => {
+      expect(sentenceCompletionsSignal.value.status).toBe("ready");
+    });
+
+    // Deleting a single symbol, as `CommandDelLastEncoding` does, leaves a different
+    // message behind; sentences made from the old one are still tappable until dropped.
+    changeEncodingContents.value = {
+      payloads: [INPUT_CONTENTS.payloads[0]],
+      caretPosition: 0
+    };
+
+    expect(sentenceCompletionsSignal.value.status).toBe("idle");
   });
 
   test("with numSentences above 1 nothing is logged until the user picks", async (): Promise<void> => {

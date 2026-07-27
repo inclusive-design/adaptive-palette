@@ -13,7 +13,7 @@
 /**
  * Populate and export global data
  */
-import { signal } from "@preact/signals";
+import { effect, signal } from "@preact/signals";
 import { getModelNames } from "./ollamaApi";
 import { initIndicatorLabels } from "./IndicatorLabelsUtils";
 import { initSvgCompositeDefinitions } from "./SvgUtils";
@@ -130,9 +130,11 @@ function parseTelegraphicTranslation (section: unknown): TelegraphicTranslationC
   const isFilledString = (value: unknown): boolean => typeof value === "string" && value.trim().length > 0;
   const isPositiveInteger = (value: unknown): boolean => Number.isInteger(value) && (value as number) > 0;
 
+  // `maxStoredRecords: 0` is the way to keep the feature while logging nothing, so it is
+  // valid. `numSentences: 0` is invalid because a query cannot return nothing.
   if (typeof model !== "string" || !isPositiveInteger(numSentences) ||
-      !isPositiveInteger(maxStoredRecords) || !isFilledString(systemPrompt) ||
-      !isFilledString(userPrompt)) {
+      !(isPositiveInteger(maxStoredRecords) || maxStoredRecords === 0) ||
+      !isFilledString(systemPrompt) || !isFilledString(userPrompt)) {
     return undefined;
   }
   return {
@@ -217,3 +219,21 @@ export function clearMessageAndChoices (): void {
   changeEncodingContents.value = { payloads: [], caretPosition: -1 };
   sentenceCompletionsSignal.value = { status: "idle" };
 }
+
+/**
+ * The message currently in the input area: the labels of its symbols, space separated.
+ * @returns {string}
+ */
+export function currentTelegraphicMessage (): string {
+  return changeEncodingContents.value.payloads.map((payload) => payload.label).join(" ");
+}
+
+// If the user edits the message, sentences belong to that become stale. Discard them.
+effect((): void => {
+  const message = currentTelegraphicMessage();
+  const state = sentenceCompletionsSignal.peek();
+  if ((state.status === "working" || state.status === "ready") &&
+      state.telegraphicMessage !== message) {
+    sentenceCompletionsSignal.value = { status: "idle" };
+  }
+});

@@ -62,6 +62,16 @@ describe("loadConfig telegraphicTranslation section", (): void => {
     expect(adaptivePaletteGlobals.config.telegraphicTranslation).toBeUndefined();
   });
 
+  test("maxStoredRecords of zero is valid and keeps the feature configured", async (): Promise<void> => {
+    const section = { ...VALID_SECTION, maxStoredRecords: 0 };
+    stubConfigFetch({
+      indicatorLabelLookup: { useModelQueryFallback: false, model: "" },
+      telegraphicTranslation: section
+    });
+    await initAdaptivePaletteGlobals();
+    expect(adaptivePaletteGlobals.config.telegraphicTranslation).toEqual(section);
+  });
+
   test("an empty prompt leaves the feature unconfigured", async (): Promise<void> => {
     stubConfigFetch({
       indicatorLabelLookup: { useModelQueryFallback: false, model: "" },

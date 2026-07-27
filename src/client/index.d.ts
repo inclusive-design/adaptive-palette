@@ -127,12 +127,14 @@ export type MatchType = {
 
 /*
  * State of the sentence-translation area below the input palette.
- * `ready` carries the telegraphic message and model that produced the
- * sentences, so a record can be logged even after the input area changes.
+ * `working` and `ready` carry the telegraphic message they are for, so an edit
+ * to the input area can discard sentences that no longer match it. `ready` also
+ * carries the model that produced the sentences, so a record can be logged even
+ * after the input area changes.
  */
 export type SentenceCompletionsStateType =
   | { status: "idle" }
-  | { status: "working" }
+  | { status: "working", telegraphicMessage: string }
   | { status: "error" }
   | {
       status: "ready",

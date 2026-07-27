@@ -88,7 +88,6 @@ three categories by prefix.
 | `ActionPostModifierCell` | Appends a modifier to the last symbol | `label`, `composition` |
 | `ActionRemoveIndicatorCell` | Removes an indicator from the symbol at the caret | `label`, `composition` |
 | `ActionRemoveModifierCell` | Removes a modifier from the symbol at the caret | `label`, `composition` |
-| `ActionTextCell` | Text-only button (no Bliss symbol rendered) | `label` |
 
 #### `Command*` — palette navigation and editing
 
@@ -99,6 +98,7 @@ three categories by prefix.
 | `CommandCursorForward` | Moves the caret one position right in the encoding area | `label`, `composition`, `ariaControls` |
 | `CommandDelLastEncoding` | Deletes the last symbol in the encoding area | `label`, `composition`, `ariaControls` |
 | `CommandGoBackCell` | Pops the navigation stack and returns to the previous palette | `label`, `composition` |
+| `CommandMakeSentence` | Translates the telegraphic message into full sentences; renders nothing when the feature is unavailable | `label`, `composition`, `ariaControls` |
 
 #### `Content*` — display areas
 

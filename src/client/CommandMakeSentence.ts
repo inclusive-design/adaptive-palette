@@ -15,7 +15,7 @@ import { html } from "htm/preact";
 import { useState } from "preact/hooks";
 
 import {
-  adaptivePaletteGlobals, changeEncodingContents, sentenceCompletionsSignal
+  adaptivePaletteGlobals, currentTelegraphicMessage, sentenceCompletionsSignal
 } from "./GlobalData";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
@@ -46,9 +46,7 @@ export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode | n
   const { id, options } = props;
   const { label, composition, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
   const [isFetching, setIsFetching] = useState(false);
-  const telegraphicMessage = changeEncodingContents.value.payloads
-    .map((payload) => payload.label)
-    .join(" ");
+  const telegraphicMessage = currentTelegraphicMessage();
 
   if (adaptivePaletteGlobals.LLMs.length === 0 ||
       !adaptivePaletteGlobals.config.telegraphicTranslation) {
@@ -68,9 +66,14 @@ export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode | n
       return;
     }
     setIsFetching(true);
-    sentenceCompletionsSignal.value = { status: "working" };
+    sentenceCompletionsSignal.value = { status: "working", telegraphicMessage };
     try {
       const { sentences, model } = await requestSentences(telegraphicMessage);
+      // If user edits the input sentence while the model query is in progress, resets the signal
+      // to `idle`. The reply belongs to a message the user has changed, so it must not appear.
+      if (sentenceCompletionsSignal.peek().status !== "working") {
+        return;
+      }
       sentenceCompletionsSignal.value = { status: "ready", sentences, model, telegraphicMessage };
 
       // Single-sentence mode: speak without waiting for a tap, and log it as auto-spoken
@@ -87,7 +90,9 @@ export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode | n
       }
     } catch (error) {
       console.error(`Could not make sentences: ${String(error)}`);
-      sentenceCompletionsSignal.value = { status: "error" };
+      if (sentenceCompletionsSignal.peek().status === "working") {
+        sentenceCompletionsSignal.value = { status: "error" };
+      }
     } finally {
       setIsFetching(false);
     }

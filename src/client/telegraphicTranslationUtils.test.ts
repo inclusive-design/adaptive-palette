@@ -88,6 +88,11 @@ describe("telegraphicTranslation", (): void => {
       expect(parseSentences("I am hungry.")).toEqual(["I am hungry."]);
     });
 
+    test("drops a preamble line, which would otherwise be spoken as the sentence", (): void => {
+      const reply = "Sure, here is the sentence:\n1. I am hungry.";
+      expect(parseSentences(reply)).toEqual(["I am hungry."]);
+    });
+
     test("returns an empty array for an empty reply", (): void => {
       expect(parseSentences("\n  \n")).toEqual([]);
     });

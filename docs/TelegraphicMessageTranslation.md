@@ -20,7 +20,7 @@ prompts exist, so what you read there is always what is running.
 | --- | --- |
 | `model` | Preferred Ollama model name. |
 | `numSentences` | How many complete sentences to ask for. |
-| `maxStoredRecords` | Cap on records kept in local storage; oldest are dropped first. |
+| `maxStoredRecords` | Cap on records kept in local storage; oldest are dropped first. `0` keeps the feature but logs nothing. |
 | `systemPrompt` | System prompt template. |
 | `userPrompt` | User prompt template. |
 
@@ -135,6 +135,8 @@ There is no in-application export. The data is read from browser developer tools
 | Configured model not available | First available model is used; console warning. |
 | Empty message | Button marked `aria-disabled`; clicking it does nothing. |
 | Done, or Delete all, pressed while choices are showing | Choices and message are discarded together; the recorded preference is kept. |
+| Message edited while choices are showing | Choices are discarded: they belong to the message they were made from. |
+| Message edited or cleared while a query is in flight | The reply is discarded when it arrives -- not shown, not spoken, not logged. |
 | Query fails or times out | Error state; the message and the button remain, so the user can retry. |
 | Model returns fewer or more sentences than requested | Whatever came back is shown. |
 | Model returns nothing usable | Error state. |

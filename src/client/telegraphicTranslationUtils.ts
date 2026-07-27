@@ -54,8 +54,9 @@ export function renderTemplate (template: string, values: Record<string, string>
 
 /**
  * Split a model reply into candidate sentences: one per line, blank lines dropped, and a
- * leading list number ("1.", "2)") stripped. A count that differs from the requested one
- * is accepted -- usable sentences beat an error message.
+ * leading list number ("1.", "2)") stripped. Lines ending in a colon are dropped as preamble
+ * ("Sure, here are the sentences:"). A count that differs from the requested one is accepted
+ * because usable sentences beat an error message.
  * @param {string} content - The raw reply content.
  * @returns {string[]}
  */
@@ -63,7 +64,7 @@ export function parseSentences (content: string): string[] {
   return content
     .split("\n")
     .map((line) => line.trim().replace(/^\d+[.)]\s*/, "").trim())
-    .filter((line) => line.length > 0);
+    .filter((line) => line.length > 0 && !line.endsWith(":"));
 }
 
 /**
