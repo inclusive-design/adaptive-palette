@@ -64,7 +64,7 @@ If Ollama reports no models at all, the feature is unavailable.
 
 ## Interaction
 
-`Make a sentence` button is the initial trigger of this feature.
+`Sentence` button is the initial trigger of this feature.
 
 While the message is empty and while a query is in flight, the button is marked
 `aria-disabled` rather than carrying the `disabled` attribute, and the click handler
@@ -130,7 +130,7 @@ There is no in-application export. The data is read from browser developer tools
 
 | Situation | Behaviour |
 | --- | --- |
-| Ollama not running, or no models installed | Banner at the top of the page: "No models available. Start Ollama to enable AI features." The `Make a sentence` button is not rendered. |
+| Ollama not running, or no models installed | Banner at the top of the page: "No models available. Start Ollama to enable AI features." The `Sentence` button is not rendered. |
 | `telegraphicTranslation` section missing or malformed | Same treatment: banner with wording for this case, and no button. Nothing is silently substituted, so a broken config is visible rather than mysterious. |
 | Configured model not available | First available model is used; console warning. |
 | Empty message | Button marked `aria-disabled`; clicking it does nothing. |
