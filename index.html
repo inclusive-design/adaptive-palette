@@ -8,16 +8,10 @@
   </head>
   <body>
     <!--
-      Expandable form for the LLM prompts and interactions.
+      Status line for the AI features: shown only when telegraphic translation
+      cannot run (no Ollama models, or no valid config section).
     -->
-    <div id="llmInteraction">
-      <details>
-        <summary>Prompt Dialog</summary>
-        <div id="llmPrompt"></div>
-      </details>
-      <div id="askForLlmSuggestions"></div>
-      <div id="llmSuggestions"></div>
-    </div>
+    <div id="aiStatus" role="status"></div>
 
     <!--
       Entering symbols using SVG builder strings
@@ -44,6 +38,7 @@
     <div id="inputArea">
       <div id="input_palette"></div>
     </div>
+    <div id="sentenceChoices"></div>
     <div>
       <div id="indicators"></div>
     </div>
