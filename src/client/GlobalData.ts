@@ -110,11 +110,13 @@ function parseIndicatorLabelLookup (section: unknown): IndicatorLabelLookupConfi
   };
 }
 
-/**
- * Validate the `telegraphicTranslation` section of the config. Every field is required:
- * there are no hardcoded prompt defaults, so a partially valid section is treated as no
- * section at all and the feature reports itself as unconfigured rather than running with
- * prompts nobody wrote. `model` may be the empty string, meaning "use whatever Ollama has".
+/* 
+ * Validates the `telegraphicTranslation` configuration section:
+ * 1. Prompt fields are required because there are no hardcoded fallback prompts. 
+ * 2. A partially configured section is treated as completely missing, causing the feature 
+ * to report as unconfigured rather than executing with empty prompts. 
+ * 3.The `model` field may be an empty string, which indicates it should use Ollama's first
+ * available model.
  * @param {unknown} section - The raw parsed section.
  * @returns {TelegraphicTranslationConfigType | undefined}
  */
@@ -130,8 +132,8 @@ function parseTelegraphicTranslation (section: unknown): TelegraphicTranslationC
   const isFilledString = (value: unknown): boolean => typeof value === "string" && value.trim().length > 0;
   const isPositiveInteger = (value: unknown): boolean => Number.isInteger(value) && (value as number) > 0;
 
-  // `maxStoredRecords: 0` is the way to keep the feature while logging nothing, so it is
-  // valid. `numSentences: 0` is invalid because a query cannot return nothing.
+  // `maxStoredRecords: 0` is valid for keeping the feature while logging nothing
+  // `numSentences: 0` is invalid because a query cannot return nothing.
   if (typeof model !== "string" || !isPositiveInteger(numSentences) ||
       !(isPositiveInteger(maxStoredRecords) || maxStoredRecords === 0) ||
       !isFilledString(systemPrompt) || !isFilledString(userPrompt)) {
@@ -147,9 +149,7 @@ function parseTelegraphicTranslation (section: unknown): TelegraphicTranslationC
 }
 
 /**
- * Fetch and validate `public/config.json`. Each section is validated independently, so a
- * broken section never takes another one down with it. Any failure -- missing file,
- * malformed JSON, failed fetch -- yields the fully disabled configuration.
+ * Fetch and validate `public/config.json`, `indicatorLabelLookup` section.
  * @returns {Promise<AdaptivePaletteConfigType>}
  */
 async function loadConfig (): Promise<AdaptivePaletteConfigType> {
@@ -193,8 +193,8 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
 
 /**
  * Signal for updating the contents of the ContentEncoding area.  The value
- * of the signal is the current array of SymbolEncodingType objects to display
- * in the ContentEncoding area and the position of the caret
+ * of the signal is an array of SymbolEncodingType objects to display symbols
+ * in the ContentEncoding area. It also tracks the position of the caret.
  */
 export const changeEncodingContents = signal<ContentSignalDataType>({
   payloads: [],
@@ -210,9 +210,7 @@ export const changeEncodingContents = signal<ContentSignalDataType>({
 export const sentenceCompletionsSignal = signal<SentenceCompletionsStateType>({ status: "idle" });
 
 /**
- * Discard the message in the input area together with any sentences made from it. The two
- * always go together: choices left on screen after the message is gone are still tappable,
- * and would speak and record a message the user has deliberately thrown away.
+ * Discard the message in the input area together with any sentences made from it.
  * @returns {void}
  */
 export function clearMessageAndChoices (): void {

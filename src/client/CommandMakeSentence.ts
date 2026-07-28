@@ -35,10 +35,8 @@ type CommandMakeSentenceProps = {
 };
 
 /**
- * The trigger for telegraphic translation: a full-width cell below the message row of the
- * input area. It renders nothing at all when the feature is unavailable, so a device with
- * no Ollama models never shows a button that cannot work. It shows the Bliss symbol from
- * its `composition`, falling back to the text label alone when the palette gives none.
+ * This button is the entry point to trigger telegraphic translation. It renders nothing when
+ * the feature is unavailable for example when no mmodel is available.
  * @param {CommandMakeSentenceProps} props - The cell id and its palette options.
  * @returns {VNode | null}
  */
@@ -55,10 +53,10 @@ export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode | n
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
-  // Marked unavailable rather than `disabled`: a truly disabled button loses focus the
-  // instant it is disabled, which costs a switch or eye-gaze user their scan position in
+  // Marked unavailable rather than `disabled`: a disabled button loses focus when
+  // it is disabled, which costs a switch or eye-gaze user loses their scan position in
   // the middle of the interaction. `aria-disabled` says the same thing to assistive
-  // technology while keeping the element focusable; the guard below does the blocking.
+  // technology while keeping the element focusable.
   const cannotRun = isFetching || telegraphicMessage.trim().length === 0;
 
   const makeSentences = async (): Promise<void> => {
@@ -70,14 +68,13 @@ export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode | n
     try {
       const { sentences, model } = await requestSentences(telegraphicMessage);
       // If user edits the input sentence while the model query is in progress, resets the signal
-      // to `idle`. The reply belongs to a message the user has changed, so it must not appear.
+      // to `idle`. The reply belongs to a message the user has changed, so it should not appear.
       if (sentenceCompletionsSignal.peek().status !== "working") {
         return;
       }
       sentenceCompletionsSignal.value = { status: "ready", sentences, model, telegraphicMessage };
 
-      // Single-sentence mode: speak without waiting for a tap, and log it as auto-spoken
-      // rather than chosen -- nobody confirmed it.
+      // Single-sentence mode: speak right away when the setence is arrived.
       if (adaptivePaletteGlobals.config.telegraphicTranslation?.numSentences === 1) {
         speak(sentences[0]);
         saveSentenceRecord({

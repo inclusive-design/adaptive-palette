@@ -26,18 +26,17 @@ export const SPEAK_BUTTON_LABEL = "Speak";
 export const DONE_BUTTON_LABEL = "✓ Done";
 
 /**
- * The area below the input palette. Renders whichever of the four states
- * `sentenceCompletionsSignal` is in. In the `ready` state each candidate sentence is a
- * large button; tapping one speaks it and records it as the preferred sentence for the
- * message, and the list stays put so the sentence can be repeated for a listener who
- * missed it, or a different one picked. The text box is always present alongside the
- * choices rather than hidden behind a "none of these" step, so it never has to be
- * discovered, and it keeps its text after speaking so it can be reused or edited.
+ * The sentence choice area. Renders whichever of the four states `sentenceCompletionsSignal` is in:
+ * 1. `idle` means the user has not yet built a message, so there is nothing to do.
+ * 2. `working` means the system is making sentences from the telegraphic message, so a
+ *    status message is shown while the user waits.
+ * 3. `error` means the system could not make sentences, so a status message is shown and
+ *    the user can try again.
+ * 4. `ready` means the system has made sentences. Each sentence is shown as a button for the
+ *    user to choose from, along with a text box for typing their own sentence if none of
+ *    the choices are right.
  *
- * The live region is always in the document, empty when there is nothing to announce.
- * A `role="status"` element inserted with its text already in place is routinely missed
- * by screen readers; the announcement only lands reliably when the text arrives in a
- * region that was already there.
+ * The live region is always in the document to annouce the state.
  * @returns {VNode}
  */
 export function SentenceChoices (): VNode {
@@ -75,13 +74,11 @@ export function SentenceChoices (): VNode {
       return;
     }
     // The text stays in the box on purpose, so it can be spoken again or edited into a
-    // second attempt without retyping it -- typing is expensive for these users.
+    // second attempt without retyping it.
     logAndSpeak(sentence, "typed");
   };
 
-  // Done means done talking about this: the message and the sentences made from it go
-  // together. Shares the text box's row rather than taking one of its own, so the Bliss
-  // palette below keeps the vertical space.
+  // "Done" button clears up the input area and sentences.
   const finish = (): void => {
     speak("Done");
     clearMessageAndChoices();

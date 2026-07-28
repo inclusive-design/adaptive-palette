@@ -31,7 +31,7 @@ completes. The system attempts to resolve the label in the following order:
    | `description` | `Adjectival` |
 
 2. **Live Model Query (Ollama)**
-   Acts as a fallback for combinations missing from the table. It is disabled by default but can be enabled
+   Acts as a fallback for combinations missing from the table. It can be enabled or disabled
    in `public/config.json` via `indicatorLabelLookup.useModelQueryFallback`. This feature requires the user's
    device to be running Ollama.
 

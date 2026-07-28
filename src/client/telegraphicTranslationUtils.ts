@@ -23,8 +23,7 @@ export type TranslationResultType = {
 
 /**
  * Choose the model to query: the configured one when Ollama reports it as available,
- * otherwise the first available model. A stale or mistyped config name degrades to a
- * working query rather than a failure.
+ * otherwise the first available model.
  * @param {string} configuredModel - The model name from the config, possibly empty.
  * @returns {string}
  */
@@ -39,8 +38,7 @@ export function pickModel (configuredModel: string): string {
 
 /**
  * Substitute `{{name}}` placeholders in a prompt template. Placeholders with no matching
- * value are left in place, so a typo in the config shows up in the prompt instead of
- * silently vanishing.
+ * value are left in place.
  * @param {string} template - The template text.
  * @param {Record<string, string>} values - Placeholder values by name.
  * @returns {string}
@@ -68,9 +66,7 @@ export function parseSentences (content: string): string[] {
 }
 
 /**
- * Ask the model to turn a telegraphic message into complete sentences. Rejects when the
- * feature is unavailable, when the query fails, or when nothing usable comes back; the
- * caller turns any rejection into the single user-facing error state.
+ * Ask the model to turn a telegraphic message into complete sentences.
  * @param {string} telegraphicMessage - The labels from the input area, space separated.
  * @returns {Promise<TranslationResultType>}
  */

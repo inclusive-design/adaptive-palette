@@ -15,7 +15,6 @@ import { initAdaptivePaletteGlobals, adaptivePaletteGlobals, NO_MODELS_MESSAGE }
 import { loadPaletteFromJsonFile, speak } from "./GlobalUtils";
 import { goBackImpl } from "./CommandGoBackCell";
 import { INPUT_AREA_ID } from "./ContentEncoding";
-import { NOT_CONFIGURED_MESSAGE } from "./telegraphicTranslationUtils";
 import "./index.scss";
 
 // Initialize any globals used elsewhere in the code.
@@ -61,8 +60,6 @@ render(html`<${SentenceChoices} />`, getRequiredElement("sentenceChoices"));
 
 if (adaptivePaletteGlobals.LLMs.length === 0) {
   getRequiredElement("aiStatus").textContent = NO_MODELS_MESSAGE;
-} else if (!adaptivePaletteGlobals.config.telegraphicTranslation) {
-  getRequiredElement("aiStatus").textContent = NOT_CONFIGURED_MESSAGE;
 }
 
 // Forms for entering SVG strings and searching the AV
