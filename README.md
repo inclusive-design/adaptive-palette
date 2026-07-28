@@ -126,16 +126,26 @@ command" and "Build output directory" settings:
 
 ## Documentation
 
+### Feature Documentation
+
+- [Generating the lookup table for symbol+indicator pairs](./docs/IndicatorLabelLookup.md): three-stage
+pipeline that maps every symbol+indicator pair that the vocabulary supports to its grammatically correct label.
+  - [Corresponding script directory](scripts/new_labels_with_indicator/)
+- [Telegraphic Message Translation](./docs/TelegraphicMessageTranslation.md): use a local Ollama model to
+turn telegraphic messages into complete, speakable English sentences.
+
+### Utility Documentation
+
 - [Generate Bliss Symbol Explanations](./docs/GenerateBlissSymbolExplanations.md): how to generate
   `public/data/bliss_symbol_explanations.json`, which contains Bliss symbol vocabulary including glosses,
   part-of-speech labels, semantic explanations, and symbol compositions.
   - [Corresponding utility script](scripts/generate_bliss_symbol_explanations.js)
-- [Generating the lookup table for symbol+indicator pairs](./docs/IndicatorLabelLookup.md): three-stage
-pipeline that maps every symbol+indicator pair that the vocabulary supports to its grammatically correct label.
-  - [Corresponding script directory](scripts/new_labels_with_indicator/)
 - [Palette JSON Generator](./docs/PaletteJsonGenerator.md): how to use the web-based Palette Generator app to
   create custom Bliss symbol palettes from gloss words, BCI AV IDs, or SVG builder strings.
   - [Script directory](apps/palette-generator/)
+
+### Developer Documentation
+
 - [Developer Documentation](./docs/DeveloperDoc.md): technical guide for developers building the
   adaptive palette with Preact.
 

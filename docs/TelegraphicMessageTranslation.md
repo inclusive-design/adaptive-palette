@@ -1,30 +1,33 @@
 # Telegraphic Message Translation
 
-An AAC user builds a message in the input area one Bliss symbol at a time. The input may be
-telegraphic: content words only, usually without articles, tense markers, or prepositions —
-for example "brother birthday next Wednesday". This feature asks a local Ollama model to
-turn that message into complete, speakable English sentences, offers them to the user as
-large buttons, speaks the one the user picks, and records the choice for later fine-tuning.
+An AAC user builds a message in the input area one Bliss symbol at a time. The resulting text
+may be telegraphic: keywords only and omitting articles, tense markers, or prepositions.
+For example: "brother birthday next Wednesday".
 
-The user is always the one who decides what gets said. The model proposes; it never speaks
-on the user's behalf without a choice being made, except in the explicitly configured
-single-sentence mode described below.
+This feature sends that message to a local Ollama model, which generates complete, natural-sounding
+sentences. The generated sentences are presented as large, selectable buttons. When the user selects
+a sentence, it is spoken aloud and the selection is saved for future model tuning.
+
+The user always controls what is communicated. Generated sentences are suggestions only. Nothing is
+spoken automatically unless single-sentence mode has been explicitly enabled.
 
 ## Configuration
 
-All settings live in one `telegraphicTranslation` section of `public/config.json`. There
-are no hardcoded prompt defaults in the source: the config file is the only place the
-prompts exist, so what you read there is always what is running.
+All settings are defined in the `telegraphicTranslation` section of `public/config.json`.
+
+Prompts are configured through the configuration file. There are no hardcoded prompt defaults for
+this feature in the application, so the contents in this config section always reflect the prompts
+currently in use.
 
 | Field | Meaning |
 | --- | --- |
-| `model` | Preferred Ollama model name. |
-| `numSentences` | How many complete sentences to ask for. |
-| `maxStoredRecords` | Cap on records kept in local storage; oldest are dropped first. `0` keeps the feature but logs nothing. |
-| `systemPrompt` | System prompt template. |
-| `userPrompt` | User prompt template. |
+| `model` | Name of the Ollama model to use. |
+| `numSentences` | Number of sentence suggestions to generate. |
+| `maxStoredRecords` | Maximum number of selection records retained in local storage. When the limit is reached, the oldest records are removed first. Set to `0` to disable logging while keeping the feature enabled. |
+| `systemPrompt` | System prompt template sent to the model. |
+| `userPrompt` | User prompt template sent to the model. |
 
-### Suggested prompts
+### Prompts
 
 The system prompt:
 
@@ -56,89 +59,104 @@ Telegraphic message: {{telegraphicMessage}}
 
 ## Model selection
 
-The model named in `model` is used when Ollama reports it as available. If that name is not
-in the available list — a typo, an uninstalled model, a renamed tag — the first available
-model is used instead, and the mismatch is logged to the console.
+The model named in `model` setting is used when Ollama reports it as available. If that name is not
+in the available list, the first available model is used instead, and the mismatch is logged
+to the console.
 
 If Ollama reports no models at all, the feature is unavailable.
 
 ## Interaction
 
-`Sentence` button is the initial trigger of this feature.
+The `Sentence` button starts this feature. It becomes available when the input area has text.
 
-While the message is empty and while a query is in flight, the button is marked
-`aria-disabled` rather than carrying the `disabled` attribute, and the click handler
-refuses to act. A genuinely disabled element loses focus the moment it is disabled, and
-for someone driving the palette by switch scanning or eye gaze that means losing their
-place mid-interaction — the one moment they least want to start over. `aria-disabled` says
-the same thing to assistive technology while leaving the element focusable.
+When the input is empty or a request is in progress, the button is marked with `aria-disabled`
+instead of the native `disabled` attribute. This keeps the button focusable for keyboard, switch,
+and eye-gaze users, while still communicating that it is unavailable to assistive technologies.
+The click is inactive in these states.
 
-The states below the button are:
+The button can be in one of three states:
 
-1. **Working** — `⏳ Making sentences…` in a live region, with the trigger unavailable.
-2. **Choices** — one large button per returned sentence, most likely first, plus a text box
-   hinted `None of above — let me type it`.
-3. **Error** — `⚠ Could not make sentences. Try again.` The trigger becomes available again.
+1. **Working**
+   - Announces `⏳ Making sentences…` in a live region.
+   - The click is unavailable until the request completes.
 
-The live region is present in the document at all times, holding an empty string when
-there is nothing to announce. A `role="status"` element inserted with its text already in
-place is routinely missed by screen readers; the announcement only lands reliably when the
-text arrives in a region that was already being watched.
+2. **Choices**
+   - Displays one button for each generated sentence, ordered by likelihood.
+   - Includes a text field with the placeholder `None of the above — let me type it`.
 
-When the choices arrive, focus moves to the first of them. Clicking the trigger leaves
-focus on the trigger, and without this a switch user would have to scan the whole page
-again to reach the sentences they just asked for.
+3. **Error**
+   - Announces `⚠ Could not make sentences. Try again.`
+   - The click becomes available again.
 
-Tapping a sentence speaks it and records it as the preferred sentence for that message.
-The list stays on screen afterwards, so the user can repeat the sentence for a listener who
-missed it, or pick a different one.
+A live region is in the document at all times and contains an empty string when there is nothing to
+announce. Updates are written into the existing region so screen readers can announce status changes.
 
-A `✓ Done` button clears the choices and the message together.
+When sentence choices are returned, focus moves to the first sentence option. This lets users immediately
+review the generated choices without navigating back through the page.
 
-Submitting text in the box speaks that text and records it as the preferred sentence.
+When clicking a sentence:
+
+- Speaks the sentence.
+- Saves it as the preferred sentence for the current message.
+- Keeps the list visible so the sentence can be replayed or a different option can be selected.
+
+The **✓ Done** button clears both the generated choices and the current message.
+
+If the user enters text in the custom input field and submits it, that text is spoken and saved as the
+preferred sentence.
 
 ### Single-sentence mode
 
 When `numSentences` is `1`, the returned sentence is spoken as soon as it arrives, without
-waiting for a tap.
+waiting for a click.
 
-## Response parsing
+## Response Parsing
 
-The reply is split on newlines; blank lines are dropped, and a leading list number — `1.`,
-`2.`, and so on — is stripped from each line.A count that does not match `numSentences` is
-accepted as-is: usable sentences are worth more to the user than an error message.
+The model response is split into lines. Blank lines are ignored, and leading list markers such as
+`1.`, `2.`, and `3.` are removed from each line.
 
-If parsing yields no usable lines at all, the result is treated as an error.
+The number of parsed sentences does not need to match `numSentences`. Any usable sentences are shown
+to the user, even if fewer or more than requested are returned.
 
-## Saved data
+If no usable sentences can be extracted from the response, the request is treated as a failure and
+the feature enters the **Error** state.
 
-Browser local storage holds one record per distinct telegraphic message: a timestamp, the
-message, the model used, all candidates that were returned, the preferred sentence, and how
-it was arrived at (chosen from the list, auto-spoken in single-sentence mode, or typed by
-the user). The rejected candidates are kept deliberately: knowing which sentence was
-preferred over which alternatives is the signal that makes this data useful for
-fine-tuning.
+## Saved Data
 
-**The last sentence spoken for a message is the preference.** Saving again for the same
-message replaces the earlier record and moves it to the end of the log.
+The feature stores one record per telegraphic message in browser local storage. Each record contains:
 
-The log is capped at `maxStoredRecords` messages, dropping oldest first.
+- Timestamp
+- Original telegraphic message
+- Model name
+- All generated sentence candidates
+- Preferred sentence
+- Selection method:
+  - "chosen": Chosen from generated options
+  - "auto": Automatically spoken in single-sentence mode
+  - "typed": Entered manually by the user
 
-There is no in-application export. The data is read from browser developer tools for now.
+All generated candidates are retained, including those not selected. Comparing the preferred sentence
+with the alternatives provides useful training data for future model tuning.
 
-## Edge cases
+**The most recently spoken sentence becomes the preferred sentence for that message.**
+
+The log is limited to `maxStoredRecords` entries. When the limit is reached, the oldest records are removed first.
+
+Data can currently be inspected through browser developer tools. No in-application export is provided.
+
+## Edge Cases
 
 | Situation | Behaviour |
 | --- | --- |
-| Ollama not running, or no models installed | Banner at the top of the page: "No models available. Start Ollama to enable AI features." The `Sentence` button is not rendered. |
-| `telegraphicTranslation` section missing or malformed | Same treatment: banner with wording for this case, and no button. Nothing is silently substituted, so a broken config is visible rather than mysterious. |
-| Configured model not available | First available model is used; console warning. |
-| Empty message | Button marked `aria-disabled`; clicking it does nothing. |
-| Done, or Delete all, pressed while choices are showing | Choices and message are discarded together; the recorded preference is kept. |
-| Message edited while choices are showing | Choices are discarded: they belong to the message they were made from. |
-| Message edited or cleared while a query is in flight | The reply is discarded when it arrives -- not shown, not spoken, not logged. |
-| Query fails or times out | Error state; the message and the button remain, so the user can retry. |
-| Model returns fewer or more sentences than requested | Whatever came back is shown. |
-| Model returns nothing usable | Error state. |
-| Local storage write fails | Console error only; speech already happened and the UI is unaffected. |
-| Speech synthesis unavailable | Nothing is spoken; choices and saving still work. This is the existing `speak()` behaviour. |
+| Ollama is not running or no models are installed | A banner indicates that AI features are unavailable. The **Sentence** button is not shown. |
+| `telegraphicTranslation` is missing or invalid | A configuration error banner is displayed and the **Sentence** button is not shown. No fallback configuration is applied. |
+| Configured model is unavailable | The first available model is used and a warning is logged to the console. |
+| Empty message | The **Sentence** button is marked `aria-disabled` and cannot be activated. |
+| **Done** or **Delete all** pressed while choices are visible | The message and generated choices are cleared. Any saved preference remains. |
+| Message edited while choices are visible | Existing choices are discarded because they no longer match the current message. |
+| Message edited or cleared while a request is in progress | The response is ignored when it arrives. It is not displayed, spoken, or saved. |
+| Request fails or times out | The feature enters the **Error** state. The message remains available so the user can retry. |
+| Model returns fewer or more sentences than requested | All usable returned sentences are displayed. |
+| Model returns no usable sentences | The feature enters the **Error** state. |
+| Local storage write fails | An error is logged to the console. Speech and UI behaviour are unaffected. |
+| Speech synthesis is unavailable | No speech is produced, but sentence selection and data storage continue to work. |
