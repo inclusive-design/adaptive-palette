@@ -73,7 +73,7 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
       "composition": newComposition,
       "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
       "modifierInfo": symbolToEdit.modifierInfo,
-      "indicatorInfo": symbolToEdit.indicatorInfo,
+      "indicatorId": symbolToEdit.indicatorId,
       "baseLabel": symbolToEdit.baseLabel,
       "baseModifierCount": symbolToEdit.baseModifierCount
     };

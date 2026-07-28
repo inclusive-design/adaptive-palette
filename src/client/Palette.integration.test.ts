@@ -734,13 +734,13 @@ describe("Palette integration test", () => {
     expect(symbol.label).toBe("opposite of cells");
 
     // Remove the indicator -- the label restores to the pre-indicator, modifier-wrapped
-    // label ("opposite of Second Cell"), and baseLabel/baseModifierCount/indicatorInfo clear.
+    // label ("opposite of Second Cell"), and baseLabel/baseModifierCount/indicatorId clear.
     fireEvent.click(removeIndicatorButton);
     symbol = changeEncodingContents.value.payloads[0];
     expect(symbol.label).toBe("opposite of Second Cell");
     expect(symbol.baseLabel).toBeUndefined();
     expect(symbol.baseModifierCount).toBeUndefined();
-    expect(symbol.indicatorInfo).toBeUndefined();
+    expect(symbol.indicatorId).toBeUndefined();
 
     // Add one more modifier after the indicator is gone.
     fireEvent.click(addIntensityButton);

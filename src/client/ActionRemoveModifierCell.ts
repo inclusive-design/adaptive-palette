@@ -92,7 +92,7 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
       "composition": newComposition,
       "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
       "modifierInfo": symbolToEdit.modifierInfo,
-      "indicatorInfo": symbolToEdit.indicatorInfo,
+      "indicatorId": symbolToEdit.indicatorId,
       "baseLabel": newBaseLabel,
       "baseModifierCount": newBaseModifierCount
     };

@@ -160,7 +160,7 @@ describe("ActionIndicatorCell render tests", (): void => {
     });
 
     const updated = changeEncodingContents.value.payloads[0];
-    expect(updated.indicatorInfo).toBe(testCell.options.composition);
+    expect(updated.indicatorId).toBe(testCell.options.composition);
     expect(updated.baseLabel).toBe("help");
     expect(updated.userSelectedSymbolId).toBe(382);
     expect(mockedGetNewLabelViaModelQuery).not.toHaveBeenCalled();
@@ -175,7 +175,7 @@ describe("ActionIndicatorCell render tests", (): void => {
         label: "helper",
         baseLabel: "help",
         composition: [382, ";", 97],
-        indicatorInfo: 97,
+        indicatorId: 97,
         userSelectedSymbolId: 382
       }],
       caretPosition: 0
@@ -355,7 +355,7 @@ describe("ActionIndicatorCell render tests", (): void => {
     expect(changeEncodingContents.value.payloads[0].label).toBe("walk");
   });
 
-  test("Composition and indicatorInfo update synchronously before a pending label resolves", async (): Promise<void> => {
+  test("Composition and indicatorId update synchronously before a pending label resolves", async (): Promise<void> => {
     let resolveQuery: (value: string | undefined) => void;
     mockedGetNewLabelViaModelQuery.mockReturnValue({
       status: "pending",
@@ -380,10 +380,10 @@ describe("ActionIndicatorCell render tests", (): void => {
     const button = await screen.findByRole("button", {name: testCell.options.label});
     fireEvent.click(button);
 
-    // The glyph (composition/indicatorInfo) must update immediately -- before
+    // The glyph (composition/indicatorId) must update immediately -- before
     // the model query resolves. The label catches up once it does.
     await waitFor(() => {
-      expect(changeEncodingContents.value.payloads[0].indicatorInfo).toBe(testCell.options.composition);
+      expect(changeEncodingContents.value.payloads[0].indicatorId).toBe(testCell.options.composition);
     });
     expect(changeEncodingContents.value.payloads[0].composition).toStrictEqual([382, ";", testCell.options.composition]);
     expect(changeEncodingContents.value.payloads[0].label).toBe("help");
@@ -472,11 +472,11 @@ describe("ActionIndicatorCell render tests", (): void => {
     fireEvent.click(button);
 
     await waitFor(() => {
-      expect(changeEncodingContents.value.payloads[0].indicatorInfo).toBe(testCell.options.composition);
+      expect(changeEncodingContents.value.payloads[0].indicatorId).toBe(testCell.options.composition);
     });
 
     // A modifier is applied to the same slot before the indicator's label resolves.
-    // It rewrites `composition` and `label` but preserves `indicatorInfo`, since the
+    // It rewrites `composition` and `label` but preserves `indicatorId`, since the
     // indicator itself is still applied.
     const current = changeEncodingContents.value.payloads[0];
     changeEncodingContents.value = {
