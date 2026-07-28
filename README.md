@@ -128,8 +128,8 @@ command" and "Build output directory" settings:
 
 ### Feature Documentation
 
-- [Generating the lookup table for symbol+indicator pairs](./docs/IndicatorLabelLookup.md): three-stage
-pipeline that maps every symbol+indicator pair that the vocabulary supports to its grammatically correct label.
+- [Label Lookup When Indicator Applied](./docs/IndicatorLabelLookup.md): three-stage pipeline that maps
+every symbol+indicator pair that the vocabulary supports to its grammatically correct label.
   - [Corresponding script directory](scripts/new_labels_with_indicator/)
 - [Telegraphic Message Translation](./docs/TelegraphicMessageTranslation.md): use a local Ollama model to
 turn telegraphic messages into complete, speakable English sentences.
