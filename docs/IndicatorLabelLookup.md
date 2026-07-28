@@ -1,114 +1,100 @@
-# Indicator Label Lookup
+# Label Lookup When Indicator Applied
 
-Bliss indicators (plural, definite, action, past, adverb, etc.) mark a grammatical form
-on a symbol without changing its meaning. When an indicator is applied to a symbol in the
-input area, the palette resolves and displays the grammatically correct label for that
-symbol+indicator pair. For example, "walk" plus a past-tense indicator reads and speaks
-as "walked".
+Bliss indicators (e.g., plural, past tense, adverb) change a symbol's grammatical form without altering
+its core meaning. When a user applies an indicator to a symbol in the input area, the system resolves
+and displays the grammatically correct label. For example, "walk" + past-tense indicator becomes "walked".
 
-## Identity tracking
+## Identity Tracking
 
-Every symbol in the input area carries its dictionary identity through subsequent edits,
-not just its rendered Bliss composition:
+The system tracks a symbol's dictionary identity rather than relying on its rendered visual composition.
+State is managed using the following properties:
 
-- **`userSelectedSymbolId`** — the symbol's dictionary id, set at selection and carried
-  through modifier/indicator edits to that symbol.
-- **`indicatorInfo`** — the indicator, if any, currently applied.
-- **`baseLabel`** — the label before the currently-applied indicator, so it can be
-  restored if the indicator is removed or swapped.
+- **`userSelectedSymbolId`**: The symbol's core dictionary ID, retained through any modifier or indicator edits.
+- **`indicatorId`**: The currently applied indicator ID, if any.
+- **`baseLabel`**: The original text label, preserved so it can be restored if the indicator is removed or swapped.
 
-A symbol's dictionary id plus an applied indicator's id form a pair unique by
-construction, one row of pre-generated data per pair. This pair, not the rendered
-composition string, is the lookup key.
+The lookup key for resolving a new label is always `{userSelectedSymbolId}_{indicatorId}`.
 
-## Resolution order
+## Label Resolution Order
 
-1. **Pre-generated table** — offline lookup keyed by `{symbolId}_{indicatorId}`.
-   Instant, no network round-trip.
-2. **Optional live model query (Ollama)** — fallback for symbols missing from the table
-   (typically hand-built compositions with no dictionary id). Off by default, gated by
-   config, since it depends on the AAC user's device running Ollama.
-3. **Unchanged label** — neither tier resolves; the indicator still applies and draws,
-   only the label stays as it was.
+Indicator application never blocks the UI; the glyph renders immediately, and the label updates once resolution
+completes. The system attempts to resolve the label in the following order:
 
-Indicator application never blocks on the lookup: the glyph renders immediately, the
-label updates once resolution completes. Every failure mode (missing data file,
-malformed config, unreachable LLM, no dictionary id) degrades to "leave the label as is."
+1. **Pre-generated Table (Offline)**
+   Looks up the key in `public/data/new_labels_with_indicator.json`. To optimize file size, the table only
+   contains combinations mapped by Part of Speech (POS):
 
-**Label announcement order:**
+   | Symbol POS | Applicable Indicator Group(s) |
+   | :--- | :--- |
+   | `noun`, `person` | `Nominal`, `Not planned for Unicode` |
+   | `action` | `Verbal` |
+   | `description` | `Adjectival` |
 
-A click on an indicator always gets audio feedback immediately:
+2. **Live Model Query (Ollama)**
+   Acts as a fallback for combinations missing from the table. It is disabled by default but can be enabled
+   in `public/config.json` via `indicatorLabelLookup.useModelQueryFallback`. This feature requires the user's
+   device to be running Ollama.
 
-1. If the symbol and indicator combination exists in the pre-generated lookup table, announce the updated label immediately.
-2. If no match is found in the lookup table but the system needs time to query the backend
-model, announce: "{symbol label} {indicator label} — loading new label"
-No match or fallback available
-3. If neither a lookup nor a model fallback is available, announce: "{symbol label} {indicator label}".
-In this case, the label remains unchanged.
+3. **Unchanged Label**
+   If both tiers fail (e.g., missing data, unreachable LLM, or invalid POS combination), the system gracefully
+   degrades: the visual indicator is applied, but the text label remains unchanged.
 
-**Modifier/indicator interaction:** `baseModifierCount` records how many `modifierInfo`
-entries existed at the moment `baseLabel` was captured (i.e. when an indicator was first
-applied to a symbol that already had modifier(s)). `baseLabel`'s text already has those
-earlier modifiers baked in, so `ActionRemoveIndicatorCell.ts` only reapplies the
-modifiers added *after* that point (`modifierInfo.slice(baseModifierCount)`) when
-restoring the bare label. `ActionRemoveModifierCell.ts` keeps `baseLabel` and
-`baseModifierCount` in sync going the other direction: removing a modifier that predates
-the `baseLabel` snapshot strips it from `baseLabel` too and decrements
-`baseModifierCount`, so a later indicator removal doesn't resurrect text the user already
-removed. This is exercised for the orderings covered in `ActionIndicatorCell.test.ts`,
-`ActionRemoveIndicatorCell.test.ts`, and `ActionRemoveModifierCell.test.ts` (modifier
-then indicator, indicator then modifier, and removal in either order); orderings outside
-those tests are not verified.
+### Audio Announcement Order
 
-## File locations
+Audio feedback triggers immediately when an indicator is clicked:
+
+1. **Lookup Table Match:** Announces the new label immediately.
+2. **LLM Fallback:** Announces `"{symbol label} {indicator label} — loading new label"` once the indicator is
+selected. Once the LLM responds, it announces the new label.
+3. **No Match / Fallback Failed:** Announces `"{symbol label} {indicator label}"`. The text label remains unchanged.
+
+### Modifier Interaction
+
+Users can add modifiers before or after applying an indicator. The system tracks any modifiers applied *before* the
+indicator and automatically reapplies them to the newly resolved label.
+
+## Files Involved
 
 | File | Role |
-| --- | --- |
-| `src/client/IndicatorLabelsUtils.ts` | Client module: loads the table + indicator metadata, implements the resolution order |
-| `public/data/new_labels_with_indicator.json` | Pre-generated lookup table, `{symbolId}_{indicatorId} -> label` |
-| `public/data/indicators.json` | Indicator metadata (id, group, name, purpose) |
-| `public/data/bliss_symbol_explanations.json` | Bliss vocabulary (gloss, pos, explanation) used to build LLM prompts |
-| `public/config.json` | Runtime config — enables/disables the Ollama fallback tier, selects a model |
-| `src/client/ActionIndicatorCell.ts` | Applies an indicator, triggers label resolution |
-| `src/client/ActionRemoveIndicatorCell.ts` | Removes an indicator, restores `baseLabel` |
+| :--- | :--- |
+| `src/client/IndicatorLabelsUtils.ts` | Client module: loads the table, metadata, and implements the resolution logic. |
+| `public/data/new_labels_with_indicator.json` | Pre-generated lookup table (`{symbolId}_{indicatorId} -> label`). |
+| `public/data/indicators.json` | Indicator metadata (id, group, name, purpose). |
+| `public/data/bliss_symbol_explanations.json` | Bliss vocabulary (gloss, POS, explanation) used to build LLM prompts. |
+| `public/config.json` | Runtime config (enables/disables Ollama fallback, selects model). |
+| `src/client/ActionIndicatorCell.ts` | Applies an indicator and triggers label resolution. |
+| `src/client/ActionRemoveIndicatorCell.ts` | Removes an indicator and restores `baseLabel`. |
 
-## Indicator groups
+### Runtime Configuration (`public/config.json`)
 
-`public/data/indicators.json` splits its indicators into 4 groups:
+This config file controls the live LLM fallback behavior (Resolution Tier 2) via the `indicatorLabelLookup` object:
+
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| `useModelQueryFallback` | Boolean | Enables or disables the live Ollama fallback. If set to `false`, the system bypasses Tier 2 entirely. |
+| `model` | String | Specifies the name of the local Ollama model to query when the fallback is triggered (e.g., `gemma4:12b`). |
+
+### Indicator Groups (`public/data/indicators.json`)
+
+Indicators are split into four grammatical groups:
 
 | Group | Marks |
-| --- | --- |
-| `Nominal` | Noun forms — plural, definite, thing/abstract sense, and combinations thereof |
-| `Verbal` | Verb forms — tense, voice, mood (action, past, future, passive, imperative, etc.) |
-| `Adjectival` | Description forms — adjective/adverb, participles, before/after-the-fact |
-| `Not planned for Unicode` | Grammatical roles not slated for Unicode encoding — indefinite, direct/indirect object, gender, person, possessive, diminutive |
+| :--- | :--- |
+| `Nominal` | Noun forms (plural, definite, thing/abstract sense, combinations). |
+| `Verbal` | Verb forms (tense, voice, mood, action, past, future, passive, imperative). |
+| `Adjectival` | Description forms (adjective/adverb, participles, before/after-the-fact). |
+| `Not planned for Unicode` | Indefinite, direct/indirect object, gender, person, possessive, diminutive. |
 
-A symbol's `pos` (from `bliss_symbol_explanations.json`) determines which group(s) of
-indicators can apply to it:
+## Lookup Table Generation Pipeline
 
-| `pos` | Applicable indicator group(s) |
-| --- | --- |
-| `noun`, `person` | `Nominal`, `Not planned for Unicode` |
-| `action` | `Verbal` |
-| `description` | `Adjectival` |
+**Goal:** Generate `public/data/new_labels_with_indicator.json`.
 
-This mapping defines which pairs are expected to have pre-generated labels in
-`public/data/new_labels_with_indicator.json`. A symbol whose `pos` is none of the above
-(or an indicator whose group matches no `pos`) has no pre-generated row and falls through
-to the resolution order's later tiers.
+The generation pipeline uses three scripts located in `scripts/new_labels_with_indicator/`. Rebuilding after
+a vocabulary or indicator change requires running all three steps.
 
-## Generating the lookup table
+### Step 1: Generate Prompts
 
-**Goal:** produce `public/data/new_labels_with_indicator.json`, mapping every
-symbol+indicator pair the vocabulary supports to its grammatically correct label.
-
-Three-stage pipeline: build prompts → run an LLM over them → post-process into the flat
-lookup table. All scripts live in `scripts/new_labels_with_indicator/`.
-
-### Step 1 — Generate prompts
-
-For every word/indicator pair whose part of speech matches the indicator's group, emit
-one prompt row.
+Emits a prompt for every valid word/indicator pair based on the POS mapping.
 
 ```bash
 node scripts/new_labels_with_indicator/generate_indicator_label_prompts.js \
@@ -117,16 +103,13 @@ node scripts/new_labels_with_indicator/generate_indicator_label_prompts.js \
   scripts/new_labels_with_indicator/data/new_labels_with_indicator_prompts.jsonl
 ```
 
-Output: JSONL, one `_meta` row (shared system prompt) followed by one row per pair
-(`targetId`, `wordId`, `gloss`, `pos`, `indicatorId`, `indicatorName`, `prompt`).
+**Output:** A JSONL file starting with a `_meta` row (system prompt), followed by rows for each pair containing
+`targetId`, `wordId`, `gloss`, `pos`, `indicatorId`, `indicatorName`, and `prompt`.
 
-### Step 2 — Run the LLM
+### Step 2: Run the LLM
 
-Query a local HuggingFace model with each prompt. Each run overwrites `--output` from
-scratch and generates deterministically (greedy decoding), so re-running after a crash
-reproduces the same file. This step needs a GPU and typically runs as a batch job on
-the server provided by Alliance Canada. (see `job_run_new_labels_with_indicator.sh`
-for the Slurm job used in the server).
+Queries a local HuggingFace model via deterministic greedy decoding. This requires a GPU and is typically run as
+a batch job on an Alliance server (see `job_run_new_labels_with_indicator.sh`).
 
 ```bash
 python scripts/new_labels_with_indicator/run_new_labels_with_indicator.py \
@@ -135,27 +118,19 @@ python scripts/new_labels_with_indicator/run_new_labels_with_indicator.py \
   --output scripts/new_labels_with_indicator/data/new_labels_with_indicator.jsonl
 ```
 
-Output: JSONL, one row per pair with the resolved `newLabel` added.
+**Output:** A JSONL file appending the resolved `newLabel` to each row.
 
-### Step 3 — Build the lookup table
+> **Note on Model Selection:** This step intentionally uses a larger, more accurate model (e.g., `gemma-4-31B-it`)
+because it runs on GPU hardware. The live Ollama fallback (Resolution Tier 2) uses a smaller model (e.g., `gemma4:12b`)
+so it can run efficiently on local user devices.
 
-Flatten the JSONL into the id-keyed JSON map the client loads. `targetId`
-(`{wordId}_{indicatorId}`) is unique by construction; a duplicate is treated as corrupt
-input and fails the build rather than silently overwriting a row.
+### Step 3: Build the Lookup Table
+
+Flattens the JSONL output into the final key-value JSON map used by the client. The build will intentionally fail
+if it detects duplicate `targetId` keys.
 
 ```bash
 node scripts/new_labels_with_indicator/build_final_labels_with_indicator.js \
   scripts/new_labels_with_indicator/data/new_labels_with_indicator.jsonl \
   public/data/new_labels_with_indicator.json
 ```
-
-Rebuilding after a vocabulary or indicator-table change requires only Steps 1–3.
-Step 2 (the LLM pass) only needs to be re-run when word/indicator prompts themselves
-change.
-
-**Note on model choice:** the batch builder (Step 2) and the runtime Ollama fallback
-(tier 2 above) intentionally use different models — e.g. `gemma-4-31B-it` for the offline
-HPC batch job versus `gemma4:12b` in `public/config.json` for the runtime tier. The
-builder runs once, offline, with a GPU available, so it favors a larger, more accurate
-model; the runtime tier must run live on the AAC user's own device, so it favors a
-model small enough to be feasible there. This is not a mismatch to reconcile.

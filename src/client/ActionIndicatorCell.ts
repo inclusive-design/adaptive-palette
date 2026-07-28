@@ -77,7 +77,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       "composition": newComposition,
       "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
       "modifierInfo": symbolToEdit.modifierInfo,
-      "indicatorInfo": indicatorId,
+      "indicatorId": indicatorId,
       "baseLabel": baseLabel,
       "baseModifierCount": baseModifierCount
     };
@@ -86,14 +86,14 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       caretPosition: caretPosition
     };
 
-    // Compares `indicatorInfo`, not the full `composition`, because a modifier applied to the
+    // Compares `indicatorId`, not the full `composition`, because a modifier applied to the
     // same slot while this indicator's label is still resolving changes `composition` without
     // superseding the indicator itself -- the resolved label would otherwise be dropped even
     // though the indicator is still legitimately applied.
     const isStillCurrent = () => {
       const latest = changeEncodingContents.value;
       return latest.payloads[caretPosition] !== undefined &&
-        latest.payloads[caretPosition].indicatorInfo === indicatorId;
+        latest.payloads[caretPosition].indicatorId === indicatorId;
     };
 
     // Apply modifier labels so their text isn't lost (e.g. "big walk" + indicator -> "big walked", not "walked").
