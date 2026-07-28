@@ -44,7 +44,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     label: "helper",
     baseLabel: "help",
     composition: [ 382, ";", 97 ],
-    indicatorInfo: 97,
+    indicatorId: 97,
     userSelectedSymbolId: 382
   };
   const blissWordIndicatorThenModifier = {
@@ -52,7 +52,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     baseLabel: "walk",
     baseModifierCount: 0,
     composition: [ 368, "/", 382, ";", 97 ],
-    indicatorInfo: 97,
+    indicatorId: 97,
     modifierInfo: [{ modifierId: [368], modifierGloss: "big", isPrepended: true }],
     userSelectedSymbolId: 382
   };
@@ -61,7 +61,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     baseLabel: "big walk",
     baseModifierCount: 1,
     composition: [ 368, "/", 382, ";", 97 ],
-    indicatorInfo: 97,
+    indicatorId: 97,
     modifierInfo: [{ modifierId: [368], modifierGloss: "big", isPrepended: true }],
     userSelectedSymbolId: 382
   };
@@ -177,7 +177,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     expect(lastSymbol.composition).toStrictEqual(compositionAfterIndicatorRemoval);
   });
 
-  test("ActionRemoveIndicatorCell restores label from baseLabel and clears baseLabel/indicatorInfo", async (): Promise<void> => {
+  test("ActionRemoveIndicatorCell restores label from baseLabel and clears baseLabel/indicatorId", async (): Promise<void> => {
     changeEncodingContents.value = {
       payloads: [blissWordWithIndicatorAndBaseLabel],
       caretPosition: 0
@@ -196,7 +196,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     const restored = changeEncodingContents.value.payloads[0];
     expect(restored.label).toBe("help");
     expect(restored.baseLabel).toBeUndefined();
-    expect(restored.indicatorInfo).toBeUndefined();
+    expect(restored.indicatorId).toBeUndefined();
     expect(restored.userSelectedSymbolId).toBe(382);
   });
 
@@ -220,7 +220,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     expect(restored.label).toBe("big walk");
     expect(restored.baseLabel).toBeUndefined();
     expect(restored.baseModifierCount).toBeUndefined();
-    expect(restored.indicatorInfo).toBeUndefined();
+    expect(restored.indicatorId).toBeUndefined();
   });
 
   test("ActionRemoveIndicatorCell does not double-count a modifier applied before the indicator when restoring baseLabel", async (): Promise<void> => {
@@ -243,6 +243,6 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     expect(restored.label).toBe("big walk");
     expect(restored.baseLabel).toBeUndefined();
     expect(restored.baseModifierCount).toBeUndefined();
-    expect(restored.indicatorInfo).toBeUndefined();
+    expect(restored.indicatorId).toBeUndefined();
   });
 });

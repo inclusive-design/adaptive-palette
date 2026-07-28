@@ -85,7 +85,7 @@ export type SymbolEncodingType = BlissSymbolInfoType & {
   userSelectedSymbolId?: number,   
   modifierInfo?: ModifierInfoType[],
   // id of the indicator currently applied
-  indicatorInfo?: number,
+  indicatorId?: number,
   // label before any indicator swap; set when a swap occurs
   baseLabel?: string,
   // number of modifierInfo entries present when baseLabel was captured

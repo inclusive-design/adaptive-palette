@@ -1,6 +1,6 @@
 {
   "indicatorLabelLookup": {
-    "useModelQueryFallback": false,
+    "useModelQueryFallback": true,
     "model": "gemma4:12b"
   },
   "telegraphicTranslation": {

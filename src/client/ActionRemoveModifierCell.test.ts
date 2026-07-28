@@ -68,7 +68,7 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     baseLabel: "big walk",
     baseModifierCount: 1,
     composition: [ 368, "/", 382, ";", 97 ],
-    indicatorInfo: 97,
+    indicatorId: 97,
     modifierInfo: [{ modifierId: [368], modifierGloss: "big", isPrepended: true }],
     userSelectedSymbolId: 382
   };
@@ -77,7 +77,7 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     baseLabel: "walk",
     baseModifierCount: 0,
     composition: [ 368, "/", 382, ";", 97 ],
-    indicatorInfo: 97,
+    indicatorId: 97,
     modifierInfo: [{ modifierId: [368], modifierGloss: "big", isPrepended: true }],
     userSelectedSymbolId: 382
   };
