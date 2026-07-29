@@ -14,7 +14,7 @@
  * Populate and export global data
  */
 import { signal } from "@preact/signals";
-import { getModelNames } from "./ollamaApi";
+import { getModelNames } from "./OllamaApi";
 import { initIndicatorLabels } from "./IndicatorLabelsUtils";
 import { initSvgCompositeDefinitions } from "./SvgUtils";
 import type {

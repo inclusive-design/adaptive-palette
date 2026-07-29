@@ -16,7 +16,7 @@ import { useEffect, useRef, useState } from "preact/hooks";
 
 import { sentenceCompletionsSignal, clearMessageAndChoices } from "./TelegraphicTranslationState";
 import { speak } from "./GlobalUtils";
-import { saveSentenceRecord, SentenceSourceType } from "./sentenceLog";
+import { saveSentenceRecord, SentenceSourceType } from "./SentenceLog";
 import "./SentenceChoices.scss";
 
 export const WORKING_MESSAGE = "⏳ Making sentences…";

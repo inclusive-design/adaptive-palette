@@ -18,12 +18,12 @@ import {
   clearMessageAndChoices, currentTelegraphicMessage, makeSentences, sentenceCompletionsSignal,
   READY_DISCARD_PROMPT, WORKING_DISCARD_PROMPT
 } from "./TelegraphicTranslationState";
-import { SENTENCE_LOG_KEY, readSentenceLog } from "./sentenceLog";
-import { queryChat } from "./ollamaApi";
+import { SENTENCE_LOG_KEY, readSentenceLog } from "./SentenceLog";
+import { queryChat } from "./OllamaApi";
 import { speak } from "./GlobalUtils";
 
 vi.mock("./ollamaApi", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("./ollamaApi")>();
+  const actual = await importOriginal<typeof import("./OllamaApi")>();
   return { ...actual, queryChat: vi.fn() };
 });
 

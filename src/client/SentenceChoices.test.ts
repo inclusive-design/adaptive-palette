@@ -17,7 +17,7 @@ import { html } from "htm/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
 import { sentenceCompletionsSignal } from "./TelegraphicTranslationState";
-import { SENTENCE_LOG_KEY, readSentenceLog } from "./sentenceLog";
+import { SENTENCE_LOG_KEY, readSentenceLog } from "./SentenceLog";
 import { speak } from "./GlobalUtils";
 import {
   SentenceChoices, WORKING_MESSAGE, CANNOT_COMPLETE_MESSAGE, TYPE_YOUR_OWN_HINT,

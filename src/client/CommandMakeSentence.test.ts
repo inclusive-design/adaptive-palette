@@ -17,15 +17,15 @@ import { html } from "htm/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
 import { sentenceCompletionsSignal } from "./TelegraphicTranslationState";
-import { SENTENCE_LOG_KEY } from "./sentenceLog";
-import { queryChat } from "./ollamaApi";
+import { SENTENCE_LOG_KEY } from "./SentenceLog";
+import { queryChat } from "./OllamaApi";
 import { CommandMakeSentence, MAKE_SENTENCE_LABEL } from "./CommandMakeSentence";
 
 // The request flow itself is covered by `telegraphicTranslationState.test.ts`. What is left
 // here is the button tests: when it renders, when it is available, and that clicking it starts
 // a request.
 vi.mock("./ollamaApi", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("./ollamaApi")>();
+  const actual = await importOriginal<typeof import("./OllamaApi")>();
   return { ...actual, queryChat: vi.fn() };
 });
 

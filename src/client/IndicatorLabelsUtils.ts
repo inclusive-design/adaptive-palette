@@ -11,7 +11,7 @@
  */
 
 import { adaptivePaletteGlobals } from "./GlobalData";
-import { queryChat } from "./ollamaApi";
+import { queryChat } from "./OllamaApi";
 
 export type IndicatorInfoEntry = {
   id: number,

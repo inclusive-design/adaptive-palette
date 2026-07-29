@@ -11,7 +11,7 @@
  */
 
 import { vi } from "vitest";
-import { getModelNames, queryChat } from "./ollamaApi";
+import { getModelNames, queryChat } from "./OllamaApi";
 import ollama from "ollama/browser";
 
 // Mock the entire ollama/browser module.

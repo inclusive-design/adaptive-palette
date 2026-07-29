@@ -11,7 +11,7 @@
  */
 
 import { adaptivePaletteGlobals, NO_MODELS_MESSAGE } from "./GlobalData";
-import { queryChat } from "./ollamaApi";
+import { queryChat } from "./OllamaApi";
 
 export const NOT_CONFIGURED_MESSAGE = "Sentence translation is not configured. Check the telegraphicTranslation section of config.json.";
 export const NO_SENTENCES_MESSAGE = "The model returned no usable sentences.";

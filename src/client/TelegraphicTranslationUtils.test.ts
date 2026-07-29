@@ -12,14 +12,14 @@
 
 import { vi } from "vitest";
 import { adaptivePaletteGlobals } from "./GlobalData";
-import { queryChat } from "./ollamaApi";
+import { queryChat } from "./OllamaApi";
 import { NO_MODELS_MESSAGE } from "./GlobalData";
 import {
   pickModel, renderTemplate, parseSentences, requestSentences
 } from "./TelegraphicTranslationUtils";
 
 vi.mock("./ollamaApi", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("./ollamaApi")>();
+  const actual = await importOriginal<typeof import("./OllamaApi")>();
   return { ...actual, queryChat: vi.fn() };
 });
 

@@ -20,7 +20,7 @@
 import { effect, signal } from "@preact/signals";
 import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
 import { requestSentences } from "./TelegraphicTranslationUtils";
-import { saveSentenceRecord } from "./sentenceLog";
+import { saveSentenceRecord } from "./SentenceLog";
 import { speak } from "./GlobalUtils";
 import type { SentenceCompletionsStateType } from ".";
 

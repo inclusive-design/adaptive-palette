@@ -13,10 +13,10 @@
 import { vi } from "vitest";
 import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
 import { getStaticNewLabel, getNewLabelViaModelQuery, initIndicatorLabels, resetOllamaCacheForTests } from "./IndicatorLabelsUtils";
-import { queryChat } from "./ollamaApi";
+import { queryChat } from "./OllamaApi";
 
 vi.mock("./ollamaApi", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("./ollamaApi")>();
+  const actual = await importOriginal<typeof import("./OllamaApi")>();
   return { ...actual, queryChat: vi.fn() };
 });
 

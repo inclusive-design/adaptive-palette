@@ -13,7 +13,7 @@
 import { adaptivePaletteGlobals } from "./GlobalData";
 import {
   SENTENCE_LOG_KEY, readSentenceLog, saveSentenceRecord
-} from "./sentenceLog";
+} from "./SentenceLog";
 
 describe("sentenceLog", (): void => {
 
