@@ -15,14 +15,15 @@ import { render, screen, cleanup, waitFor } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
-import {
-  adaptivePaletteGlobals, changeEncodingContents, sentenceCompletionsSignal
-} from "./GlobalData";
-import { SENTENCE_LOG_KEY, readSentenceLog } from "./sentenceLog";
+import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
+import { sentenceCompletionsSignal } from "./telegraphicTranslationState";
+import { SENTENCE_LOG_KEY } from "./sentenceLog";
 import { queryChat } from "./ollamaApi";
-import { speak } from "./GlobalUtils";
 import { CommandMakeSentence, MAKE_SENTENCE_LABEL } from "./CommandMakeSentence";
 
+// The request flow itself is covered by `telegraphicTranslationState.test.ts`. What is left
+// here is the button tests: when it renders, when it is available, and that clicking it starts
+// a request.
 vi.mock("./ollamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("./ollamaApi")>();
   return { ...actual, queryChat: vi.fn() };
@@ -34,7 +35,6 @@ vi.mock("./GlobalUtils", async (importOriginal) => {
 });
 
 const mockedQueryChat = vi.mocked(queryChat);
-const mockedSpeak = vi.mocked(speak);
 
 describe("CommandMakeSentence component", (): void => {
 
@@ -75,7 +75,6 @@ describe("CommandMakeSentence component", (): void => {
 
   beforeEach((): void => {
     mockedQueryChat.mockReset();
-    mockedSpeak.mockReset();
     window.localStorage.removeItem(SENTENCE_LOG_KEY);
     adaptivePaletteGlobals.LLMs = ["phony-model:12b"];
     setConfig(3);
@@ -147,7 +146,7 @@ describe("CommandMakeSentence component", (): void => {
       .toHaveAttribute("aria-disabled", "true");
   });
 
-  test("a click queries with the joined labels and publishes the sentences", async (): Promise<void> => {
+  test("a click requests sentences for the joined labels", async (): Promise<void> => {
     changeEncodingContents.value = INPUT_CONTENTS;
     mockedQueryChat.mockResolvedValue({
       message: { content: "1. I am hungry.\n2. I want food." }
@@ -157,50 +156,15 @@ describe("CommandMakeSentence component", (): void => {
     await userEvent.click(screen.getByRole("button", { name: MAKE_SENTENCE_LABEL }));
 
     await waitFor(() => {
-      expect(sentenceCompletionsSignal.value).toEqual({
-        status: "ready",
-        sentences: ["I am hungry.", "I want food."],
-        model: "phony-model:12b",
-        telegraphicMessage: "me hungry"
-      });
+      expect(sentenceCompletionsSignal.value.status).toBe("ready");
     });
     expect(mockedQueryChat).toHaveBeenCalledWith(
-      "Telegraphic message: me hungry", "phony-model:12b", false, "Give 3 sentences."
+      "Telegraphic message: me hungry", "phony-model:12b", false, "Give 3 sentences.",
+      expect.any(AbortSignal)
     );
   });
 
-  test("a failed query publishes the error state", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
-    mockedQueryChat.mockRejectedValue(new Error("connection refused"));
-    renderCell();
-
-    await userEvent.click(screen.getByRole("button", { name: MAKE_SENTENCE_LABEL }));
-
-    await waitFor(() => {
-      expect(sentenceCompletionsSignal.value).toEqual({ status: "error" });
-    });
-  });
-
-  test("with numSentences 1 the sentence is logged immediately as auto", async (): Promise<void> => {
-    setConfig(1);
-    changeEncodingContents.value = INPUT_CONTENTS;
-    mockedQueryChat.mockResolvedValue({ message: { content: "1. I am hungry." } } as never);
-    renderCell();
-
-    await userEvent.click(screen.getByRole("button", { name: MAKE_SENTENCE_LABEL }));
-
-    await waitFor(() => {
-      expect(readSentenceLog()).toHaveLength(1);
-    });
-    expect(readSentenceLog()[0]).toMatchObject({
-      sentence: "I am hungry.",
-      source: "auto",
-      telegraphicMessage: "me hungry"
-    });
-    expect(mockedSpeak).toHaveBeenCalledWith("I am hungry.");
-  });
-
-  test("a second click while a query is in flight does not start another", async (): Promise<void> => {
+  test("goes unavailable while a query is in flight, and a second click does not start another", async (): Promise<void> => {
     changeEncodingContents.value = INPUT_CONTENTS;
     let resolveQuery: (value: unknown) => void = () => undefined;
     mockedQueryChat.mockReturnValue(new Promise((resolve) => {
@@ -223,8 +187,7 @@ describe("CommandMakeSentence component", (): void => {
     });
   });
 
-  test("a reply for a message the user has since changed is discarded", async (): Promise<void> => {
-    setConfig(1);
+  test("editing the message while a query is in flight re-enables the button", async (): Promise<void> => {
     changeEncodingContents.value = INPUT_CONTENTS;
     let resolveQuery: (value: unknown) => void = () => undefined;
     mockedQueryChat.mockReturnValue(new Promise((resolve) => {
@@ -232,61 +195,27 @@ describe("CommandMakeSentence component", (): void => {
     }) as never);
     renderCell();
 
-    await userEvent.click(screen.getByRole("button", { name: MAKE_SENTENCE_LABEL }));
+    const button = screen.getByRole("button", { name: MAKE_SENTENCE_LABEL });
+    await userEvent.click(button);
+    await waitFor(() => {
+      expect(button).toHaveAttribute("aria-disabled", "true");
+    });
 
-    // The user edits the message while the model is thinking. The sentences coming back
-    // are for a message that is no longer on screen: they must not be shown, spoken, or
-    // logged.
+    // The user swaps a symbol while the model is still thinking.
     changeEncodingContents.value = {
       payloads: [{ label: "later", composition: [126], modifierInfo: [] }],
       caretPosition: 1
     };
-    expect(sentenceCompletionsSignal.value.status).toBe("idle");
 
+    // The button must come back now, not when the abandoned query eventually settles.
+    // The loading indicator has already gone, so a disabled button here has nothing
+    // on screen explaining itself.
+    await waitFor(() => {
+      expect(button).toHaveAttribute("aria-disabled", "false");
+    });
+
+    // Resolved only to avoid leaving a dangling promise behind for the next test; the
+    // continuation early-returns because this reply is no longer the one being waited for.
     resolveQuery({ message: { content: "1. I am hungry." } });
-    await waitFor(() => {
-      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
-    });
-
-    expect(sentenceCompletionsSignal.value.status).toBe("idle");
-    expect(mockedSpeak).not.toHaveBeenCalled();
-    expect(readSentenceLog()).toEqual([]);
-  });
-
-  test("choices for a message are discarded when that message is edited", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
-    mockedQueryChat.mockResolvedValue({
-      message: { content: "1. I am hungry.\n2. I want food." }
-    } as never);
-    renderCell();
-
-    await userEvent.click(screen.getByRole("button", { name: MAKE_SENTENCE_LABEL }));
-    await waitFor(() => {
-      expect(sentenceCompletionsSignal.value.status).toBe("ready");
-    });
-
-    // Deleting a single symbol, as `CommandDelLastEncoding` does, leaves a different
-    // message behind; sentences made from the old one are still tappable until dropped.
-    changeEncodingContents.value = {
-      payloads: [INPUT_CONTENTS.payloads[0]],
-      caretPosition: 0
-    };
-
-    expect(sentenceCompletionsSignal.value.status).toBe("idle");
-  });
-
-  test("with numSentences above 1 nothing is logged until the user picks", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
-    mockedQueryChat.mockResolvedValue({
-      message: { content: "1. I am hungry.\n2. I want food." }
-    } as never);
-    renderCell();
-
-    await userEvent.click(screen.getByRole("button", { name: MAKE_SENTENCE_LABEL }));
-
-    await waitFor(() => {
-      expect(sentenceCompletionsSignal.value.status).toBe("ready");
-    });
-    expect(readSentenceLog()).toEqual([]);
   });
 });

@@ -15,9 +15,8 @@ import { render, screen, cleanup, waitFor } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
-import {
-  adaptivePaletteGlobals, sentenceCompletionsSignal, changeEncodingContents
-} from "./GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
+import { sentenceCompletionsSignal } from "./telegraphicTranslationState";
 import { SENTENCE_LOG_KEY, readSentenceLog } from "./sentenceLog";
 import { speak } from "./GlobalUtils";
 import {

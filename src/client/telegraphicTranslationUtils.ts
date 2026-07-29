@@ -68,10 +68,12 @@ export function parseSentences (content: string): string[] {
 /**
  * Ask the model to turn a telegraphic message into complete sentences.
  * @param {string} telegraphicMessage - The labels from the input area, space separated.
+ * @param {AbortSignal} abortSignal - Optional signal to cancel the request when the user
+ *                                edits the message the sentences were asked for.
  * @returns {Promise<TranslationResultType>}
  */
-export async function requestSentences (telegraphicMessage: string): Promise<TranslationResultType> {
-  const config= adaptivePaletteGlobals.config.telegraphicTranslation;
+export async function requestSentences (telegraphicMessage: string, abortSignal?: AbortSignal): Promise<TranslationResultType> {
+  const config = adaptivePaletteGlobals.config.telegraphicTranslation;
   if (!config) {
     throw new Error(NOT_CONFIGURED_MESSAGE);
   }
@@ -88,7 +90,8 @@ export async function requestSentences (telegraphicMessage: string): Promise<Tra
     renderTemplate(config.userPrompt, values),
     model,
     false,
-    renderTemplate(config.systemPrompt, values)
+    renderTemplate(config.systemPrompt, values),
+    abortSignal
   );
   const content = "message" in response ? (response.message?.content || "") : "";
   const sentences = parseSentences(content);

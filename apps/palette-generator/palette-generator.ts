@@ -17,8 +17,9 @@ import { BlissSymbol } from "../../src/client/BlissSymbol";
 import { processPaletteLabels, fetchBlissGlossJson } from "./paletteJsonGenerator";
 import "../../src/client/index.scss";
 import {
-  initAdaptivePaletteGlobals, adaptivePaletteGlobals, cellTypeRegistry
+  initAdaptivePaletteGlobals, adaptivePaletteGlobals
 } from "../../src/client/GlobalData";
+import { cellTypeRegistry } from "../../src/client/cellTypeRegistry";
 import { JsonPaletteType } from "../../src/client/index.d";
 
 type MatchInfo = {

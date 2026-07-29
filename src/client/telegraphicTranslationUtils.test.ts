@@ -115,8 +115,30 @@ describe("telegraphicTranslation", (): void => {
         "Telegraphic message: me hungry",
         "phony-model:12b",
         false,
-        "Give 3 sentences."
+        "Give 3 sentences.",
+        undefined
       );
+    });
+
+    test("forwards an abort signal to the query", async (): Promise<void> => {
+      mockedQueryChat.mockResolvedValue({
+        message: { content: "1. I am hungry." }
+      } as never);
+      const controller = new AbortController();
+
+      await requestSentences("me hungry", controller.signal);
+
+      expect(mockedQueryChat).toHaveBeenCalledWith(
+        "Telegraphic message: me hungry",
+        "phony-model:12b",
+        false,
+        "Give 3 sentences.",
+        controller.signal
+      );
+      // An `AbortSignal`'s state lives in prototype getters, so deep equality treats any two
+      // signals as alike. Only identity proves the caller's own signal was forwarded rather
+      // than a freshly made one.
+      expect(mockedQueryChat.mock.calls[0][4]).toBe(controller.signal);
     });
 
     test("rejects when the model returns nothing usable", async (): Promise<void> => {

@@ -12,16 +12,14 @@
 
 import { VNode } from "preact";
 import { html } from "htm/preact";
-import { useState } from "preact/hooks";
 
+import { adaptivePaletteGlobals } from "./GlobalData";
 import {
-  adaptivePaletteGlobals, currentTelegraphicMessage, sentenceCompletionsSignal
-} from "./GlobalData";
+  currentTelegraphicMessage, makeSentences, sentenceCompletionsSignal
+} from "./telegraphicTranslationState";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
-import { generateGridStyle, speak, normalizeComposition } from "./GlobalUtils";
-import { requestSentences } from "./telegraphicTranslationUtils";
-import { saveSentenceRecord } from "./sentenceLog";
+import { generateGridStyle, normalizeComposition } from "./GlobalUtils";
 import "./CommandMakeSentence.scss";
 
 export const MAKE_SENTENCE_LABEL = "Make a sentence";
@@ -36,14 +34,14 @@ type CommandMakeSentenceProps = {
 
 /**
  * This button is the entry point to trigger telegraphic translation. It renders nothing when
- * the feature is unavailable for example when no mmodel is available.
+ * the feature is unavailable for example when no model is available.
  * @param {CommandMakeSentenceProps} props - The cell id and its palette options.
  * @returns {VNode | null}
  */
 export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode | null {
   const { id, options } = props;
   const { label, composition, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
-  const [isFetching, setIsFetching] = useState(false);
+  const isFetching = sentenceCompletionsSignal.value.status === "working";
   const telegraphicMessage = currentTelegraphicMessage();
 
   if (adaptivePaletteGlobals.LLMs.length === 0 ||
@@ -59,42 +57,6 @@ export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode | n
   // technology while keeping the element focusable.
   const cannotRun = isFetching || telegraphicMessage.trim().length === 0;
 
-  const makeSentences = async (): Promise<void> => {
-    if (cannotRun) {
-      return;
-    }
-    setIsFetching(true);
-    sentenceCompletionsSignal.value = { status: "working", telegraphicMessage };
-    try {
-      const { sentences, model } = await requestSentences(telegraphicMessage);
-      // If user edits the input sentence while the model query is in progress, resets the signal
-      // to `idle`. The reply belongs to a message the user has changed, so it should not appear.
-      if (sentenceCompletionsSignal.peek().status !== "working") {
-        return;
-      }
-      sentenceCompletionsSignal.value = { status: "ready", sentences, model, telegraphicMessage };
-
-      // Single-sentence mode: speak right away when the setence is arrived.
-      if (adaptivePaletteGlobals.config.telegraphicTranslation?.numSentences === 1) {
-        speak(sentences[0]);
-        saveSentenceRecord({
-          telegraphicMessage,
-          model,
-          candidates: sentences,
-          sentence: sentences[0],
-          source: "auto"
-        });
-      }
-    } catch (error) {
-      console.error(`Could not make sentences: ${String(error)}`);
-      if (sentenceCompletionsSignal.peek().status === "working") {
-        sentenceCompletionsSignal.value = { status: "error" };
-      }
-    } finally {
-      setIsFetching(false);
-    }
-  };
-
   return html`
     <button
       id="${id}"
@@ -102,7 +64,7 @@ export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode | n
       style="${gridStyles}"
       aria-controls=${ariaControls}
       aria-disabled=${cannotRun}
-      onClick=${() => void makeSentences()}>
+      onClick=${() => void makeSentences(telegraphicMessage)}>
       ${composition
     ? html`<${BlissSymbol}
           composition=${normalizeComposition(composition)}

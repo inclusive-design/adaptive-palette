@@ -73,7 +73,8 @@ single BCI-AV numeric ID (e.g., `398`) or an array of IDs and separator strings
 
 ### Cell types
 
-All registered cell types live in `GlobalData.cellTypeRegistry`. They fall into
+All registered cell types live in `cellTypeRegistry` in
+[`src/client/cellTypeRegistry.ts`](../src/client/cellTypeRegistry.ts). They fall into
 three categories by prefix.
 
 #### `Action*` — user input actions
@@ -111,5 +112,32 @@ three categories by prefix.
 When a new `type` value is introduced, developers need to:
 
 1. Create a new component to render the new cell type;
-2. In `GlobalData.ts`, update `cellTypeRegistry` to add the entry that maps the
+2. In `cellTypeRegistry.ts`, update `cellTypeRegistry` to add the entry that maps the
 new type value to the actual component.
+
+## Telegraphic translation
+
+Turning a telegraphic message such as "me hungry" into full sentences is spread over four
+modules, each with one job:
+
+| Module | Responsibility |
+| ------ | -------------- |
+| `GlobalData.ts` | Parses and holds the `telegraphicTranslation` section of `public/config.json`; owns `changeEncodingContents`, the shared input-area signal the message is read from |
+| `telegraphicTranslationUtils.ts` | The side-effect-free half: `pickModel`, `renderTemplate`, `parseSentences`, and `requestSentences`, which builds the prompts and calls Ollama |
+| `telegraphicTranslationState.ts` | The runtime half: `sentenceCompletionsSignal` (`idle`, `working`, `ready`, `error`), the `makeSentences` flow, the abort handle for the request in flight, and the effect that cancels a request once the user edits the message it was made for |
+| `sentenceLog.ts` | Persists the sentence the user settled on to local storage |
+
+`CommandMakeSentence.ts` and `SentenceChoices.ts` only render. The button calls
+`makeSentences`; the choices area reads `sentenceCompletionsSignal`. Neither holds state of
+its own.
+
+Keeping the utils module free of module-scope side effects means a test can import
+`parseSentences` without creating a live signal subscription.
+
+### Import rule
+
+**`GlobalData.ts` must not import a cell component or a feature module.** Both import
+`GlobalData.ts` in turn, and the resulting cycle evaluates their module-scope state — the
+effect in `telegraphicTranslationState.ts`, for one — before the signals in `GlobalData.ts`
+exist, which throws at startup. This is why the cell type registry has its own file rather
+than living in `GlobalData.ts`.

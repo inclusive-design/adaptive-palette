@@ -13,7 +13,8 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { JsonPaletteType } from "./index.d";
-import { cellTypeRegistry, adaptivePaletteGlobals } from "./GlobalData";
+import { adaptivePaletteGlobals } from "./GlobalData";
+import { cellTypeRegistry } from "./cellTypeRegistry";
 import "./Palette.scss";
 
 type PalettePropsType = {
@@ -62,7 +63,7 @@ export function Palette (props: PalettePropsType): VNode {
     const cellOptions = aCell.options;
     const cellComponent = cellTypeRegistry[aCell.type as keyof typeof cellTypeRegistry];
     if (!cellComponent) {
-      console.error(`Error at rendering the cell type "${aCell.type}". Fix it by defining the render component for this cell type at GlobalData.ts -> cellTypeRegistry.`);
+      console.error(`Error at rendering the cell type "${aCell.type}". Fix it by defining the render component for this cell type at cellTypeRegistry.ts -> cellTypeRegistry.`);
     } else {
       const paletteCell = html`
         <${cellComponent} id="${id}" options=${cellOptions} />

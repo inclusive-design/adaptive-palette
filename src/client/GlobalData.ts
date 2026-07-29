@@ -13,13 +13,13 @@
 /**
  * Populate and export global data
  */
-import { effect, signal } from "@preact/signals";
+import { signal } from "@preact/signals";
 import { getModelNames } from "./ollamaApi";
 import { initIndicatorLabels } from "./IndicatorLabelsUtils";
 import { initSvgCompositeDefinitions } from "./SvgUtils";
 import type {
   ContentSignalDataType, BlissSymbolEntry, AdaptivePaletteConfigType,
-  IndicatorLabelLookupConfigType, TelegraphicTranslationConfigType, SentenceCompletionsStateType
+  IndicatorLabelLookupConfigType, TelegraphicTranslationConfigType
 } from "./index.d";
 
 // NOTE: this import causes a warning serving the application using the `vite`
@@ -34,44 +34,10 @@ import type {
 //  Instead of /public/data/bliss_symbol_explanations.json, use /data/bliss_symbol_explanations.json."
 import bliss_symbols from "../../public/data/bliss_symbol_explanations.json";
 
-/**
- * The map between cell types (string) and actual components that render corresponding cells
- */
-import { ActionCodeCell } from "./ActionCodeCell";
-import { ActionBranchToPaletteCell } from "./ActionBranchToPaletteCell";
-import { ActionGlossSearchCell } from "./ActionGlossSearchCell";
-import { ActionIndicatorCell } from "./ActionIndicatorCell";
-import { ActionPreModifierCell } from "./ActionPreModifierCell";
-import { ActionPostModifierCell } from "./ActionPostModifierCell";
-import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
-import { ActionRemoveModifierCell } from "./ActionRemoveModifierCell";
-import { CommandClearEncoding } from "./CommandClearEncoding";
-import { CommandCursorBackward } from "./CommandCursorBackward";
-import { CommandCursorForward } from "./CommandCursorForward";
-import { CommandDelLastEncoding } from "./CommandDelLastEncoding";
-import { CommandGoBackCell } from "./CommandGoBackCell";
-import { CommandMakeSentence } from "./CommandMakeSentence";
-import { ContentEncoding } from "./ContentEncoding";
+// NOTE: This file doesn't import cell components to prevent circular dependencies.
+// Those are imported in `cellTypeRegistry.ts`
 import { PaletteStore } from "./PaletteStore";
 import { NavigationStack } from "./NavigationStack";
-
-export const cellTypeRegistry = {
-  "ActionCodeCell": ActionCodeCell,
-  "ActionBranchToPaletteCell": ActionBranchToPaletteCell,
-  "ActionGlossSearchCell": ActionGlossSearchCell,
-  "ActionIndicatorCell": ActionIndicatorCell,
-  "ActionPreModifierCell": ActionPreModifierCell,
-  "ActionPostModifierCell": ActionPostModifierCell,
-  "ActionRemoveIndicatorCell": ActionRemoveIndicatorCell,
-  "ActionRemoveModifierCell": ActionRemoveModifierCell,
-  "CommandClearEncoding": CommandClearEncoding,
-  "CommandCursorBackward": CommandCursorBackward,
-  "CommandCursorForward": CommandCursorForward,
-  "CommandDelLastEncoding": CommandDelLastEncoding,
-  "CommandGoBackCell": CommandGoBackCell,
-  "CommandMakeSentence": CommandMakeSentence,
-  "ContentEncoding": ContentEncoding,
-};
 
 export const NO_MODELS_MESSAGE = "No models available. Start Ollama to enable AI features.";
 
@@ -199,39 +165,4 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
 export const changeEncodingContents = signal<ContentSignalDataType>({
   payloads: [],
   caretPosition: -1,
-});
-
-/**
- * Signal driving the sentence-translation area below the input palette. `idle` renders
- * nothing; `working` and `error` render a single message; `ready` renders the choices,
- * and carries the message and model that produced them so a log record can still be
- * written after the input area has moved on.
- */
-export const sentenceCompletionsSignal = signal<SentenceCompletionsStateType>({ status: "idle" });
-
-/**
- * Discard the message in the input area together with any sentences made from it.
- * @returns {void}
- */
-export function clearMessageAndChoices (): void {
-  changeEncodingContents.value = { payloads: [], caretPosition: -1 };
-  sentenceCompletionsSignal.value = { status: "idle" };
-}
-
-/**
- * The message currently in the input area: the labels of its symbols, space separated.
- * @returns {string}
- */
-export function currentTelegraphicMessage (): string {
-  return changeEncodingContents.value.payloads.map((payload) => payload.label).join(" ");
-}
-
-// If the user edits the message, sentences belong to that become stale. Discard them.
-effect((): void => {
-  const message = currentTelegraphicMessage();
-  const state = sentenceCompletionsSignal.peek();
-  if ((state.status === "working" || state.status === "ready") &&
-      state.telegraphicMessage !== message) {
-    sentenceCompletionsSignal.value = { status: "idle" };
-  }
 });

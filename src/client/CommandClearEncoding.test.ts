@@ -14,9 +14,8 @@ import { render, screen } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
-import {
-  initAdaptivePaletteGlobals, changeEncodingContents, sentenceCompletionsSignal
-} from "./GlobalData";
+import { initAdaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
+import { sentenceCompletionsSignal } from "./telegraphicTranslationState";
 import { CommandClearEncoding } from "./CommandClearEncoding";
 
 describe("CommandClearEncoding render tests", (): void => {

@@ -1,0 +1,381 @@
+/*
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
+ *
+ * Licensed under the New BSD license. You may not use this file except in
+ * compliance with this License.
+ *
+ * You may obtain a copy of the License at
+ * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
+ */
+
+import { vi } from "vitest";
+import { waitFor } from "@testing-library/preact";
+
+import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
+import {
+  clearMessageAndChoices, currentTelegraphicMessage, makeSentences, sentenceCompletionsSignal
+} from "./telegraphicTranslationState";
+import { SENTENCE_LOG_KEY, readSentenceLog } from "./sentenceLog";
+import { queryChat } from "./ollamaApi";
+import { speak } from "./GlobalUtils";
+
+vi.mock("./ollamaApi", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./ollamaApi")>();
+  return { ...actual, queryChat: vi.fn() };
+});
+
+vi.mock("./GlobalUtils", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./GlobalUtils")>();
+  return { ...actual, speak: vi.fn() };
+});
+
+const mockedQueryChat = vi.mocked(queryChat);
+const mockedSpeak = vi.mocked(speak);
+
+describe("telegraphicTranslationState", (): void => {
+
+  const INPUT_CONTENTS = {
+    payloads: [
+      { label: "me", composition: [124], modifierInfo: [] },
+      { label: "hungry", composition: [125], modifierInfo: [] }
+    ],
+    caretPosition: 2
+  };
+
+  const EDITED_CONTENTS = {
+    payloads: [{ label: "later", composition: [126], modifierInfo: [] }],
+    caretPosition: 1
+  };
+
+  const setConfig = (numSentences: number): void => {
+    adaptivePaletteGlobals.config = {
+      indicatorLabelLookup: { useModelQueryFallback: false, model: "" },
+      telegraphicTranslation: {
+        model: "phony-model:12b",
+        numSentences,
+        maxStoredRecords: 500,
+        systemPrompt: "Give {{numSentences}} sentences.",
+        userPrompt: "Telegraphic message: {{telegraphicMessage}}"
+      }
+    };
+  };
+
+  // Mirrors what the button does: translate whatever is in the input area right now.
+  const requestForCurrentMessage = (): Promise<void> => makeSentences(currentTelegraphicMessage());
+
+  beforeEach((): void => {
+    mockedQueryChat.mockReset();
+    mockedSpeak.mockReset();
+    window.localStorage.removeItem(SENTENCE_LOG_KEY);
+    adaptivePaletteGlobals.LLMs = ["phony-model:12b"];
+    setConfig(3);
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+    sentenceCompletionsSignal.value = { status: "idle" };
+  });
+
+  afterEach((): void => {
+    sentenceCompletionsSignal.value = { status: "idle" };
+    window.localStorage.removeItem(SENTENCE_LOG_KEY);
+  });
+
+  test("currentTelegraphicMessage joins the symbol labels with spaces", (): void => {
+    changeEncodingContents.value = INPUT_CONTENTS;
+    expect(currentTelegraphicMessage()).toBe("me hungry");
+  });
+
+  test("clearMessageAndChoices empties the input area and the sentences", (): void => {
+    changeEncodingContents.value = INPUT_CONTENTS;
+    sentenceCompletionsSignal.value = {
+      status: "ready", sentences: ["I am hungry."], model: "phony-model:12b",
+      telegraphicMessage: "me hungry"
+    };
+
+    clearMessageAndChoices();
+
+    expect(changeEncodingContents.value).toEqual({ payloads: [], caretPosition: -1 });
+    expect(sentenceCompletionsSignal.value).toEqual({ status: "idle" });
+  });
+
+  test("an empty message does not query", async (): Promise<void> => {
+    await requestForCurrentMessage();
+
+    expect(mockedQueryChat).not.toHaveBeenCalled();
+    expect(sentenceCompletionsSignal.value).toEqual({ status: "idle" });
+  });
+
+  test("a whitespace-only message is treated as empty", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [{ label: " ", composition: [124], modifierInfo: [] }],
+      caretPosition: 1
+    };
+
+    await requestForCurrentMessage();
+
+    expect(mockedQueryChat).not.toHaveBeenCalled();
+    expect(sentenceCompletionsSignal.value).toEqual({ status: "idle" });
+  });
+
+  test("a request queries with the joined labels and publishes the sentences", async (): Promise<void> => {
+    changeEncodingContents.value = INPUT_CONTENTS;
+    mockedQueryChat.mockResolvedValue({
+      message: { content: "1. I am hungry.\n2. I want food." }
+    } as never);
+
+    await requestForCurrentMessage();
+
+    expect(sentenceCompletionsSignal.value).toEqual({
+      status: "ready",
+      sentences: ["I am hungry.", "I want food."],
+      model: "phony-model:12b",
+      telegraphicMessage: "me hungry"
+    });
+    expect(mockedQueryChat).toHaveBeenCalledWith(
+      "Telegraphic message: me hungry", "phony-model:12b", false, "Give 3 sentences.",
+      expect.any(AbortSignal)
+    );
+  });
+
+  test("a failed query publishes the error state", async (): Promise<void> => {
+    changeEncodingContents.value = INPUT_CONTENTS;
+    mockedQueryChat.mockRejectedValue(new Error("connection refused"));
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    await requestForCurrentMessage();
+
+    expect(sentenceCompletionsSignal.value).toEqual({ status: "error" });
+    consoleErrorSpy.mockRestore();
+  });
+
+  test("with numSentences 1 the sentence is spoken and logged immediately as auto", async (): Promise<void> => {
+    setConfig(1);
+    changeEncodingContents.value = INPUT_CONTENTS;
+    mockedQueryChat.mockResolvedValue({ message: { content: "1. I am hungry." } } as never);
+
+    await requestForCurrentMessage();
+
+    expect(readSentenceLog()).toHaveLength(1);
+    expect(readSentenceLog()[0]).toMatchObject({
+      sentence: "I am hungry.",
+      source: "auto",
+      telegraphicMessage: "me hungry"
+    });
+    expect(mockedSpeak).toHaveBeenCalledWith("I am hungry.");
+  });
+
+  test("with numSentences above 1 nothing is logged until the user picks", async (): Promise<void> => {
+    changeEncodingContents.value = INPUT_CONTENTS;
+    mockedQueryChat.mockResolvedValue({
+      message: { content: "1. I am hungry.\n2. I want food." }
+    } as never);
+
+    await requestForCurrentMessage();
+
+    expect(sentenceCompletionsSignal.value.status).toBe("ready");
+    expect(readSentenceLog()).toEqual([]);
+  });
+
+  test("a second request while one is in flight does not start another", async (): Promise<void> => {
+    changeEncodingContents.value = INPUT_CONTENTS;
+    let resolveQuery: (value: unknown) => void = () => undefined;
+    mockedQueryChat.mockReturnValue(new Promise((resolve) => {
+      resolveQuery = resolve;
+    }) as never);
+
+    const firstRequest = requestForCurrentMessage();
+    await waitFor(() => {
+      expect(sentenceCompletionsSignal.value.status).toBe("working");
+    });
+    await requestForCurrentMessage();
+
+    expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+
+    resolveQuery({ message: { content: "1. I am hungry." } });
+    await firstRequest;
+    expect(sentenceCompletionsSignal.value.status).toBe("ready");
+  });
+
+  test("editing the message while a request is in flight returns to idle", async (): Promise<void> => {
+    changeEncodingContents.value = INPUT_CONTENTS;
+    let resolveQuery: (value: unknown) => void = () => undefined;
+    mockedQueryChat.mockReturnValue(new Promise((resolve) => {
+      resolveQuery = resolve;
+    }) as never);
+
+    const request = requestForCurrentMessage();
+    await waitFor(() => {
+      expect(sentenceCompletionsSignal.value.status).toBe("working");
+    });
+
+    // The user swaps a symbol while the model is still thinking. The state must clear now,
+    // not when the abandoned query eventually settles: the button reads this signal to decide
+    // whether it is available, and a stale `working` leaves it unavailable with nothing on
+    // screen explaining itself.
+    changeEncodingContents.value = EDITED_CONTENTS;
+
+    expect(sentenceCompletionsSignal.value.status).toBe("idle");
+
+    resolveQuery({ message: { content: "1. I am hungry." } });
+    await request;
+  });
+
+  test("a reply for a message the user has since changed is discarded", async (): Promise<void> => {
+    setConfig(1);
+    changeEncodingContents.value = INPUT_CONTENTS;
+    let resolveQuery: (value: unknown) => void = () => undefined;
+    mockedQueryChat.mockReturnValue(new Promise((resolve) => {
+      resolveQuery = resolve;
+    }) as never);
+
+    const request = requestForCurrentMessage();
+    await waitFor(() => {
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+    });
+
+    // The user edits the message while the model is thinking. The sentences coming back
+    // are for a message that is no longer on screen: they must not be shown, spoken, or
+    // logged.
+    changeEncodingContents.value = EDITED_CONTENTS;
+    expect(sentenceCompletionsSignal.value.status).toBe("idle");
+
+    resolveQuery({ message: { content: "1. I am hungry." } });
+    await request;
+
+    expect(sentenceCompletionsSignal.value.status).toBe("idle");
+    expect(mockedSpeak).not.toHaveBeenCalled();
+    expect(readSentenceLog()).toEqual([]);
+  });
+
+  test("a reply arriving after a newer request started does not hijack it", async (): Promise<void> => {
+    setConfig(1);
+    changeEncodingContents.value = INPUT_CONTENTS;
+    const resolvers: ((value: unknown) => void)[] = [];
+    mockedQueryChat.mockImplementation(
+      () => new Promise((resolve) => {
+        resolvers.push(resolve);
+      }) as never
+    );
+
+    const firstRequest = requestForCurrentMessage();
+    await waitFor(() => {
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+    });
+
+    // Editing abandons request 1 and returns to idle, which is what makes a second
+    // overlapping request reachable at all.
+    changeEncodingContents.value = EDITED_CONTENTS;
+    expect(sentenceCompletionsSignal.value.status).toBe("idle");
+
+    const secondRequest = requestForCurrentMessage();
+    await waitFor(() => {
+      expect(mockedQueryChat).toHaveBeenCalledTimes(2);
+    });
+
+    // Request 1 finally answers. Its message is long gone, and the status is `working` again
+    // for request 2, so a status-only guard would let it through and speak it.
+    resolvers[0]({ message: { content: "1. I am hungry." } });
+    await firstRequest;
+
+    expect(sentenceCompletionsSignal.value.status).toBe("working");
+    expect(mockedSpeak).not.toHaveBeenCalled();
+    expect(readSentenceLog()).toEqual([]);
+
+    resolvers[1]({ message: { content: "1. Later." } });
+    await secondRequest;
+  });
+
+  test("choices for a message are discarded when that message is edited", async (): Promise<void> => {
+    changeEncodingContents.value = INPUT_CONTENTS;
+    mockedQueryChat.mockResolvedValue({
+      message: { content: "1. I am hungry.\n2. I want food." }
+    } as never);
+
+    await requestForCurrentMessage();
+    expect(sentenceCompletionsSignal.value.status).toBe("ready");
+
+    // Deleting a single symbol, as `CommandDelLastEncoding` does, leaves a different
+    // message behind; sentences made from the old one are still tappable until dropped.
+    changeEncodingContents.value = {
+      payloads: [INPUT_CONTENTS.payloads[0]],
+      caretPosition: 0
+    };
+
+    expect(sentenceCompletionsSignal.value.status).toBe("idle");
+  });
+
+  test("editing the message aborts the request it was made for", async (): Promise<void> => {
+    changeEncodingContents.value = INPUT_CONTENTS;
+    // A query that never settles: the abort has to be what ends it.
+    mockedQueryChat.mockReturnValue(new Promise(() => undefined) as never);
+
+    void requestForCurrentMessage();
+    await waitFor(() => {
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+    });
+
+    const signal = mockedQueryChat.mock.calls[0][4] as AbortSignal;
+    expect(signal.aborted).toBe(false);
+
+    changeEncodingContents.value = EDITED_CONTENTS;
+
+    expect(signal.aborted).toBe(true);
+  });
+
+  test("an aborted request is not reported as an error", async (): Promise<void> => {
+    changeEncodingContents.value = INPUT_CONTENTS;
+    let rejectQuery: (reason: unknown) => void = () => undefined;
+    mockedQueryChat.mockReturnValue(new Promise((resolve, reject) => {
+      rejectQuery = reject;
+    }) as never);
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const request = requestForCurrentMessage();
+    await waitFor(() => {
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+    });
+
+    changeEncodingContents.value = EDITED_CONTENTS;
+    // The aborted fetch rejects. Editing the message is normal use, not a failure, so it
+    // must not reach the console or the error state.
+    rejectQuery(new DOMException("The operation was aborted.", "AbortError"));
+    await request;
+
+    expect(sentenceCompletionsSignal.value.status).toBe("idle");
+    expect(consoleErrorSpy).not.toHaveBeenCalledWith(
+      expect.stringContaining("Could not make sentences")
+    );
+    consoleErrorSpy.mockRestore();
+  });
+
+  test("a request settling after a newer one started leaves the newer one abortable", async (): Promise<void> => {
+    changeEncodingContents.value = INPUT_CONTENTS;
+    const resolvers: ((value: unknown) => void)[] = [];
+    mockedQueryChat.mockImplementation(
+      () => new Promise((resolve) => {
+        resolvers.push(resolve);
+      }) as never
+    );
+
+    const firstRequest = requestForCurrentMessage();
+    await waitFor(() => {
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+    });
+
+    changeEncodingContents.value = EDITED_CONTENTS;
+    expect(sentenceCompletionsSignal.value.status).toBe("idle");
+
+    void requestForCurrentMessage();
+    await waitFor(() => {
+      expect(mockedQueryChat).toHaveBeenCalledTimes(2);
+    });
+
+    // Request 1 settles late. Its cleanup must not unregister request 2's controller.
+    resolvers[0]({ message: { content: "1. I am hungry." } });
+    await firstRequest;
+
+    const secondSignal = mockedQueryChat.mock.calls[1][4] as AbortSignal;
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+    expect(secondSignal.aborted).toBe(true);
+  });
+});
