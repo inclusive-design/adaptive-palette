@@ -82,7 +82,7 @@ The button can be in one of three states:
 
 2. **Choices**
    - Displays one button for each generated sentence, ordered by likelihood.
-   - Includes a text field with the placeholder `None of the above — let me type it`.
+   - Includes a text field with the placeholder `None of above — let me type it`.
 
 3. **Error**
    - Announces `⚠ Could not make sentences. Try again.`

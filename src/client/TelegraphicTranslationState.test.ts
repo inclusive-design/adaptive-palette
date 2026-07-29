@@ -156,6 +156,24 @@ describe("telegraphicTranslationState", (): void => {
     consoleErrorSpy.mockRestore();
   });
 
+  test("editing the message clears the error state without asking", async (): Promise<void> => {
+    changeEncodingContents.value = INPUT_CONTENTS;
+    mockedQueryChat.mockRejectedValue(new Error("connection refused"));
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    await requestForCurrentMessage();
+    expect(sentenceCompletionsSignal.value).toEqual({ status: "error" });
+
+    changeEncodingContents.value = {
+      payloads: [{ label: "me", composition: [124], modifierInfo: [] }],
+      caretPosition: 1
+    };
+
+    expect(sentenceCompletionsSignal.value).toEqual({ status: "idle" });
+    expect(mockedConfirm).not.toHaveBeenCalled();
+    consoleErrorSpy.mockRestore();
+  });
+
   test("with numSentences 1 the sentence is spoken and logged immediately as auto", async (): Promise<void> => {
     setConfig(1);
     changeEncodingContents.value = INPUT_CONTENTS;
@@ -458,6 +476,35 @@ describe("telegraphicTranslationState", (): void => {
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
 
     expect(changeEncodingContents.value).toEqual(INPUT_CONTENTS);
+  });
+
+  test("refusing an edit made in place puts the message back and asks only once", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [{ label: "me", composition: [124], modifierInfo: [] }],
+      caretPosition: 0
+    };
+    mockedQueryChat.mockReturnValue(new Promise(() => undefined) as never);
+
+    void requestForCurrentMessage();
+    await waitFor(() => {
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+    });
+
+    // The editing cells change the payloads array and the payload's `modifierInfo` in place and
+    // then publish a fresh wrapper, so the revert cannot rely on the wrapper it captured earlier.
+    const { payloads, caretPosition } = changeEncodingContents.value;
+    payloads[0].modifierInfo?.push({ modifierId: [130], modifierGloss: "big", isPrepended: true });
+    payloads.push({ label: "hungry", composition: [125], modifierInfo: [] });
+    mockedConfirm.mockReturnValue(false);
+    changeEncodingContents.value = { payloads, caretPosition };
+
+    expect(mockedConfirm).toHaveBeenCalledTimes(1);
+    expect(currentTelegraphicMessage()).toBe("me");
+    expect(changeEncodingContents.value).toEqual({
+      payloads: [{ label: "me", composition: [124], modifierInfo: [] }],
+      caretPosition: 0
+    });
+    expect(sentenceCompletionsSignal.value.status).toBe("working");
   });
 
   test("moving the caret does not ask, since the message is unchanged", async (): Promise<void> => {

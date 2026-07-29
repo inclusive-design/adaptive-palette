@@ -22,7 +22,7 @@ import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
 import { requestSentences } from "./TelegraphicTranslationUtils";
 import { saveSentenceRecord } from "./SentenceLog";
 import { speak } from "./GlobalUtils";
-import type { SentenceCompletionsStateType } from ".";
+import type { ContentSignalDataType, SentenceCompletionsStateType } from ".";
 
 /**
  * Signal driving the sentence-translation area below the input palette:
@@ -126,8 +126,13 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
 /**
  * Keep track of the message in the input area. When the user doesn't want to discard a request
  * or its sentences, put the old message back.
+ * Make a deep copy of the previous contents as the editing could change `payloads` or `modifierInfo` arrays etc in it.
+ * @param {ContentSignalDataType} contents - The contents to snapshot.
+ * @returns {ContentSignalDataType} A copy that later in-place edits cannot reach.
  */
-let previousContents = changeEncodingContents.peek();
+const snapshot = (contents: ContentSignalDataType): ContentSignalDataType => structuredClone(contents);
+
+let previousContents = snapshot(changeEncodingContents.peek());
 
 // Warn the user if they edit a message while its sentences are currently 
 // generating or on screen, as this will discard the current progress.
@@ -147,6 +152,9 @@ effect((): void => {
     }
     activeSentenceAbort?.abort();
     sentenceCompletionsSignal.value = { status: "idle" };
+  } else if (state.status === "error") {
+    // Remove the error message on the screen.
+    sentenceCompletionsSignal.value = { status: "idle" };
   }
-  previousContents = contents;
+  previousContents = snapshot(contents);
 });
