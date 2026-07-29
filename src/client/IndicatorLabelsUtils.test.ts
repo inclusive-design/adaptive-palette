@@ -15,7 +15,7 @@ import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData
 import { getStaticNewLabel, getNewLabelViaModelQuery, initIndicatorLabels, resetOllamaCacheForTests } from "./IndicatorLabelsUtils";
 import { queryChat } from "./OllamaApi";
 
-vi.mock("./ollamaApi", async (importOriginal) => {
+vi.mock("./OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("./OllamaApi")>();
   return { ...actual, queryChat: vi.fn() };
 });

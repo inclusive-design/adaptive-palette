@@ -22,7 +22,7 @@ import { SENTENCE_LOG_KEY, readSentenceLog } from "./SentenceLog";
 import { queryChat } from "./OllamaApi";
 import { speak } from "./GlobalUtils";
 
-vi.mock("./ollamaApi", async (importOriginal) => {
+vi.mock("./OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("./OllamaApi")>();
   return { ...actual, queryChat: vi.fn() };
 });

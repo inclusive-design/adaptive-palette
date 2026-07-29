@@ -24,7 +24,7 @@ import { CommandMakeSentence, MAKE_SENTENCE_LABEL } from "./CommandMakeSentence"
 // The request flow itself is covered by `telegraphicTranslationState.test.ts`. What is left
 // here is the button tests: when it renders, when it is available, and that clicking it starts
 // a request.
-vi.mock("./ollamaApi", async (importOriginal) => {
+vi.mock("./OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("./OllamaApi")>();
   return { ...actual, queryChat: vi.fn() };
 });
