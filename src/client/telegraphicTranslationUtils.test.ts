@@ -16,7 +16,7 @@ import { queryChat } from "./ollamaApi";
 import { NO_MODELS_MESSAGE } from "./GlobalData";
 import {
   pickModel, renderTemplate, parseSentences, requestSentences
-} from "./telegraphicTranslationUtils";
+} from "./TelegraphicTranslationUtils";
 
 vi.mock("./ollamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("./ollamaApi")>();

@@ -15,7 +15,7 @@ import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
-import { sentenceCompletionsSignal } from "./telegraphicTranslationState";
+import { sentenceCompletionsSignal } from "./TelegraphicTranslationState";
 import { CommandClearEncoding } from "./CommandClearEncoding";
 
 describe("CommandClearEncoding render tests", (): void => {

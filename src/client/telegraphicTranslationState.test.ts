@@ -10,13 +10,14 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { vi } from "vitest";
+import { vi, type MockInstance } from "vitest";
 import { waitFor } from "@testing-library/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
 import {
-  clearMessageAndChoices, currentTelegraphicMessage, makeSentences, sentenceCompletionsSignal
-} from "./telegraphicTranslationState";
+  clearMessageAndChoices, currentTelegraphicMessage, makeSentences, sentenceCompletionsSignal,
+  READY_DISCARD_PROMPT, WORKING_DISCARD_PROMPT
+} from "./TelegraphicTranslationState";
 import { SENTENCE_LOG_KEY, readSentenceLog } from "./sentenceLog";
 import { queryChat } from "./ollamaApi";
 import { speak } from "./GlobalUtils";
@@ -65,7 +66,12 @@ describe("telegraphicTranslationState", (): void => {
   // Mirrors what the button does: translate whatever is in the input area right now.
   const requestForCurrentMessage = (): Promise<void> => makeSentences(currentTelegraphicMessage());
 
+  // Every the input message when a request is in flight asks the user to confirm the discard.
+  // Mock the case when the discard is accepted so the tests can focus on the button behavior.
+  let mockedConfirm: MockInstance<(message?: string) => boolean>;
+
   beforeEach((): void => {
+    mockedConfirm = vi.spyOn(window, "confirm").mockReturnValue(true);
     mockedQueryChat.mockReset();
     mockedSpeak.mockReset();
     window.localStorage.removeItem(SENTENCE_LOG_KEY);
@@ -78,6 +84,7 @@ describe("telegraphicTranslationState", (): void => {
   afterEach((): void => {
     sentenceCompletionsSignal.value = { status: "idle" };
     window.localStorage.removeItem(SENTENCE_LOG_KEY);
+    mockedConfirm.mockRestore();
   });
 
   test("currentTelegraphicMessage joins the symbol labels with spaces", (): void => {
@@ -96,6 +103,7 @@ describe("telegraphicTranslationState", (): void => {
 
     expect(changeEncodingContents.value).toEqual({ payloads: [], caretPosition: -1 });
     expect(sentenceCompletionsSignal.value).toEqual({ status: "idle" });
+    expect(mockedConfirm).not.toHaveBeenCalled();
   });
 
   test("an empty message does not query", async (): Promise<void> => {
@@ -377,5 +385,101 @@ describe("telegraphicTranslationState", (): void => {
     const secondSignal = mockedQueryChat.mock.calls[1][4] as AbortSignal;
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
     expect(secondSignal.aborted).toBe(true);
+  });
+
+  test("editing during a request asks before discarding it", async (): Promise<void> => {
+    changeEncodingContents.value = INPUT_CONTENTS;
+    mockedQueryChat.mockReturnValue(new Promise(() => undefined) as never);
+
+    void requestForCurrentMessage();
+    await waitFor(() => {
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+    });
+
+    changeEncodingContents.value = EDITED_CONTENTS;
+
+    expect(mockedConfirm).toHaveBeenCalledWith(WORKING_DISCARD_PROMPT);
+  });
+
+  test("refusing to discard an in-flight request puts the message back", async (): Promise<void> => {
+    changeEncodingContents.value = INPUT_CONTENTS;
+    mockedQueryChat.mockReturnValue(new Promise(() => undefined) as never);
+
+    void requestForCurrentMessage();
+    await waitFor(() => {
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+    });
+    const signal = mockedQueryChat.mock.calls[0][4] as AbortSignal;
+
+    // The user changes the message, is told it would stop the sentence being made, and
+    // decides against it. The symbols and the caret go back where they were, and the model
+    // keeps working on the message that is once again on screen.
+    mockedConfirm.mockReturnValue(false);
+    changeEncodingContents.value = EDITED_CONTENTS;
+
+    expect(changeEncodingContents.value).toEqual(INPUT_CONTENTS);
+    expect(signal.aborted).toBe(false);
+    expect(sentenceCompletionsSignal.value.status).toBe("working");
+  });
+
+  test("refusing to discard the sentences on screen puts the message back", async (): Promise<void> => {
+    changeEncodingContents.value = INPUT_CONTENTS;
+    mockedQueryChat.mockResolvedValue({
+      message: { content: "1. I am hungry.\n2. I want food." }
+    } as never);
+
+    await requestForCurrentMessage();
+    expect(sentenceCompletionsSignal.value.status).toBe("ready");
+
+    mockedConfirm.mockReturnValue(false);
+    changeEncodingContents.value = EDITED_CONTENTS;
+
+    expect(mockedConfirm).toHaveBeenCalledWith(READY_DISCARD_PROMPT);
+    expect(changeEncodingContents.value).toEqual(INPUT_CONTENTS);
+    expect(sentenceCompletionsSignal.value).toMatchObject({
+      status: "ready",
+      sentences: ["I am hungry.", "I want food."]
+    });
+  });
+
+  test("a second refused edit is still put back", async (): Promise<void> => {
+    changeEncodingContents.value = INPUT_CONTENTS;
+    mockedQueryChat.mockReturnValue(new Promise(() => undefined) as never);
+
+    void requestForCurrentMessage();
+    await waitFor(() => {
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+    });
+
+    // Restoring the contents runs the effect again. That pass must leave the snapshot
+    // pointing at the message being worked on, or the next refusal restores the wrong thing.
+    mockedConfirm.mockReturnValue(false);
+    changeEncodingContents.value = EDITED_CONTENTS;
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+
+    expect(changeEncodingContents.value).toEqual(INPUT_CONTENTS);
+  });
+
+  test("moving the caret does not ask, since the message is unchanged", async (): Promise<void> => {
+    changeEncodingContents.value = INPUT_CONTENTS;
+    mockedQueryChat.mockReturnValue(new Promise(() => undefined) as never);
+
+    void requestForCurrentMessage();
+    await waitFor(() => {
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+    });
+
+    changeEncodingContents.value = { payloads: INPUT_CONTENTS.payloads, caretPosition: 0 };
+
+    expect(mockedConfirm).not.toHaveBeenCalled();
+    expect(sentenceCompletionsSignal.value.status).toBe("working");
+  });
+
+  test("editing with nothing being made does not ask", (): void => {
+    changeEncodingContents.value = INPUT_CONTENTS;
+    changeEncodingContents.value = EDITED_CONTENTS;
+
+    expect(mockedConfirm).not.toHaveBeenCalled();
+    expect(changeEncodingContents.value).toEqual(EDITED_CONTENTS);
   });
 });

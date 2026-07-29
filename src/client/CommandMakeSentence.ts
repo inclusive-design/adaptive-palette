@@ -16,7 +16,7 @@ import { html } from "htm/preact";
 import { adaptivePaletteGlobals } from "./GlobalData";
 import {
   currentTelegraphicMessage, makeSentences, sentenceCompletionsSignal
-} from "./telegraphicTranslationState";
+} from "./TelegraphicTranslationState";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { generateGridStyle, normalizeComposition } from "./GlobalUtils";

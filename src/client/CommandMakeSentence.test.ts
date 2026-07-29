@@ -10,13 +10,13 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { vi } from "vitest";
+import { vi, type MockInstance } from "vitest";
 import { render, screen, cleanup, waitFor } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
-import { sentenceCompletionsSignal } from "./telegraphicTranslationState";
+import { sentenceCompletionsSignal } from "./TelegraphicTranslationState";
 import { SENTENCE_LOG_KEY } from "./sentenceLog";
 import { queryChat } from "./ollamaApi";
 import { CommandMakeSentence, MAKE_SENTENCE_LABEL } from "./CommandMakeSentence";
@@ -73,7 +73,12 @@ describe("CommandMakeSentence component", (): void => {
     html`<${CommandMakeSentence} id="command-make-sentence" options=${CELL_OPTIONS} />`
   );
 
+  // Editing the message while a request is in flight asks the user to confirm the discard.
+  // Mock the case when the discard is accepted so tests can focus on the button behavior.
+  let mockedConfirm: MockInstance<(message?: string) => boolean>;
+
   beforeEach((): void => {
+    mockedConfirm = vi.spyOn(window, "confirm").mockReturnValue(true);
     mockedQueryChat.mockReset();
     window.localStorage.removeItem(SENTENCE_LOG_KEY);
     adaptivePaletteGlobals.LLMs = ["phony-model:12b"];
@@ -86,6 +91,7 @@ describe("CommandMakeSentence component", (): void => {
     cleanup();
     sentenceCompletionsSignal.value = { status: "idle" };
     window.localStorage.removeItem(SENTENCE_LOG_KEY);
+    mockedConfirm.mockRestore();
   });
 
   test("renders nothing when no models are available", (): void => {

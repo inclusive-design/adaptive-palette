@@ -19,10 +19,10 @@
  */
 import { effect, signal } from "@preact/signals";
 import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
-import { requestSentences } from "./telegraphicTranslationUtils";
+import { requestSentences } from "./TelegraphicTranslationUtils";
 import { saveSentenceRecord } from "./sentenceLog";
 import { speak } from "./GlobalUtils";
-import type { SentenceCompletionsStateType } from "./index.d";
+import type { SentenceCompletionsStateType } from ".";
 
 /**
  * Signal driving the sentence-translation area below the input palette:
@@ -33,17 +33,30 @@ import type { SentenceCompletionsStateType } from "./index.d";
 export const sentenceCompletionsSignal = signal<SentenceCompletionsStateType>({ status: "idle" });
 
 /**
+ * Asked before an edit throws away a request that is still running.
+ */
+export const WORKING_DISCARD_PROMPT = "Still making a sentence. Changing your message will stop it. Change anyway?";
+
+/**
+ * Asked before an edit throws away sentences that are already on screen.
+ */
+export const READY_DISCARD_PROMPT = "Changing your message will remove the sentences below. Change anyway?";
+
+/**
  * The abort handle for the sentence request currently in flight, if any.
  */
 let activeSentenceAbort: AbortController | null = null;
 
 /**
  * Discard the message in the input area together with any sentences made from it.
+ * The sentence state is cleared first: emptying the input area while the state is still
+ * `working` or `ready` would look like an edit to the effect below and ask the user to
+ * confirm a discard they have just asked for.
  * @returns {void}
  */
 export function clearMessageAndChoices (): void {
-  changeEncodingContents.value = { payloads: [], caretPosition: -1 };
   sentenceCompletionsSignal.value = { status: "idle" };
+  changeEncodingContents.value = { payloads: [], caretPosition: -1 };
 }
 
 /**
@@ -110,14 +123,30 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
   }
 }
 
-// If the user edits the message when sentences are being generated, those sentences become stale.
-// Stop the request that is still working on the old message.
+/**
+ * Keep track of the message in the input area. When the user doesn't want to discard a request
+ * or its sentences, put the old message back.
+ */
+let previousContents = changeEncodingContents.peek();
+
+// Warn the user if they edit a message while its sentences are currently 
+// generating or on screen, as this will discard the current progress.
+// - If they cancel: Revert the edit and continue the original generation.
+// - If they confirm: Abort the current request as stale and apply the edit.
 effect((): void => {
+  const contents = changeEncodingContents.value;
   const message = currentTelegraphicMessage();
   const state = sentenceCompletionsSignal.peek();
   if ((state.status === "working" || state.status === "ready") &&
       state.telegraphicMessage !== message) {
+    const prompt = state.status === "working" ? WORKING_DISCARD_PROMPT : READY_DISCARD_PROMPT;
+    if (!window.confirm(prompt)) {
+      // cancelled scenario: Revert the edit
+      changeEncodingContents.value = previousContents;
+      return;
+    }
     activeSentenceAbort?.abort();
     sentenceCompletionsSignal.value = { status: "idle" };
   }
+  previousContents = contents;
 });

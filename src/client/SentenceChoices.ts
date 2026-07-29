@@ -14,7 +14,7 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { useEffect, useRef, useState } from "preact/hooks";
 
-import { sentenceCompletionsSignal, clearMessageAndChoices } from "./telegraphicTranslationState";
+import { sentenceCompletionsSignal, clearMessageAndChoices } from "./TelegraphicTranslationState";
 import { speak } from "./GlobalUtils";
 import { saveSentenceRecord, SentenceSourceType } from "./sentenceLog";
 import "./SentenceChoices.scss";

@@ -13,7 +13,7 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
-import { clearMessageAndChoices } from "./telegraphicTranslationState";
+import { clearMessageAndChoices } from "./TelegraphicTranslationState";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { generateGridStyle, speak } from "./GlobalUtils";
 
