@@ -19,7 +19,7 @@ import "../../src/client/index.scss";
 import {
   initAdaptivePaletteGlobals, adaptivePaletteGlobals
 } from "../../src/client/GlobalData";
-import { cellTypeRegistry } from "../../src/client/cellTypeRegistry";
+import { cellTypeRegistry } from "../../src/client/CellTypeRegistry";
 import { JsonPaletteType } from "../../src/client/index.d";
 
 type MatchInfo = {
@@ -39,7 +39,7 @@ let currentPaletteName = "";
 const MAX_MATCHES_OUTPUT = 7;
 
 /**
- * Populate the cell type <select> element using the `cellTypeRegistry` and
+ * Populate the cell type <select> element using the `CellTypeRegistry.ts` and
  * set up a handler to adjust the palette for changes in the cell type.
  */
 function initCellTypesSelect () {

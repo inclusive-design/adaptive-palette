@@ -74,7 +74,7 @@ single BCI-AV numeric ID (e.g., `398`) or an array of IDs and separator strings
 ### Cell types
 
 All registered cell types live in `cellTypeRegistry` in
-[`src/client/cellTypeRegistry.ts`](../src/client/cellTypeRegistry.ts). They fall into
+[`src/client/CellTypeRegistry.ts`](../src/client/CellTypeRegistry.ts). They fall into
 three categories by prefix.
 
 #### `Action*` — user input actions
@@ -112,10 +112,10 @@ three categories by prefix.
 When a new `type` value is introduced, developers need to:
 
 1. Create a new component to render the new cell type;
-2. In `cellTypeRegistry.ts`, update `cellTypeRegistry` to add the entry that maps the
+2. In `src/client/CellTypeRegistry.ts`, update `cellTypeRegistry` to add the entry that maps the
 new type value to the actual component.
 
 ### Import rule
 
-`GlobalData.ts` must not import a cell component or a feature module. Because those modules already
+`src/client/GlobalData.ts` must not import a cell component or a feature module. Because those modules already
 import `GlobalData.ts`, doing so creates a circular dependency.
