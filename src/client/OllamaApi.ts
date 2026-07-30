@@ -63,11 +63,6 @@ export async function queryChat (query: string, modelName: string, streamResp: b
   }
   messageArray.push({ role: "user", content: query });
 
-  // Workaround for TypeScript error TS2769:
-  // `ollama.chat()` has overloads that require a literal `true` or `false` for the `stream` property. 
-  // Passing a dynamic boolean variable fails type checking. 
-  // We use an if/else block to pass the literal values explicitly and satisfy the compiler.
-  // Ref: https://github.com/ollama/ollama-js/issues/78
   const request = {
     model: modelName,
     messages: messageArray,
@@ -81,6 +76,12 @@ export async function queryChat (query: string, modelName: string, streamResp: b
   const client = abortSignal
     ? new Ollama({ fetch: (input, init) => fetch(input, { ...init, signal: abortSignal }) })
     : ollama;
+
+  // Workaround for TypeScript error TS2769:
+  // `ollama.chat()` has overloads that require a literal `true` or `false` for the `stream` property.
+  // Passing a dynamic boolean variable fails type checking.
+  // We use an if/else block to pass the literal values explicitly and satisfy the compiler.
+  // Ref: https://github.com/ollama/ollama-js/issues/78
   if (streamResp) {
     return await client.chat({ ...request, stream: true });
   } else {

@@ -21,7 +21,7 @@ import "./SentenceChoices.scss";
 
 export const WORKING_MESSAGE = "⏳ Making sentences…";
 export const CANNOT_COMPLETE_MESSAGE = "⚠ Could not make sentences. Try again.";
-export const TYPE_YOUR_OWN_HINT = "None fit? Type yours to help the tool learn";
+export const TYPE_YOUR_OWN_HINT = "None fit? Type yours";
 export const SPEAK_BUTTON_LABEL = "Speak";
 export const DONE_BUTTON_LABEL = "✓ Done";
 

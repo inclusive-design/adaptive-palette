@@ -61,7 +61,7 @@ render(html`<${SentenceChoices} />`, getRequiredElement("sentenceChoices"));
 
 if (adaptivePaletteGlobals.LLMs.length === 0) {
   getRequiredElement("aiStatus").textContent = NO_MODELS_MESSAGE;
-} else if (adaptivePaletteGlobals.LLMs.length > 0 && !adaptivePaletteGlobals.config.telegraphicTranslation) {
+} else if (!adaptivePaletteGlobals.config.telegraphicTranslation) {
   getRequiredElement("aiStatus").textContent = NOT_CONFIGURED_MESSAGE;
 }
 

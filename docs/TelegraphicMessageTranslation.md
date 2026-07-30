@@ -84,7 +84,7 @@ The button can be in one of three states:
 
 2. **Choices**
    - Displays one button for each generated sentence, ordered by likelihood.
-   - Includes a text field with the placeholder `None fit? Type yours to help the tool learn`.
+   - Includes a text field with the placeholder `None fit? Type yours`.
 
 3. **Error**
    - Announces `⚠ Could not make sentences. Try again.`
