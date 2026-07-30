@@ -156,6 +156,9 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
   ]);
   adaptivePaletteGlobals.LLMs = llms;
   adaptivePaletteGlobals.config = config;
+
+  // Clean up the system prompts left in local storage by earlier builds.
+  window.localStorage.removeItem("Telegraphic System Prompts");
 }
 
 /**
