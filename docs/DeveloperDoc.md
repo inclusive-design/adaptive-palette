@@ -73,7 +73,8 @@ single BCI-AV numeric ID (e.g., `398`) or an array of IDs and separator strings
 
 ### Cell types
 
-All registered cell types live in `GlobalData.cellTypeRegistry`. They fall into
+All registered cell types live in `cellTypeRegistry` in
+[`src/client/CellTypeRegistry.ts`](../src/client/CellTypeRegistry.ts). They fall into
 three categories by prefix.
 
 #### `Action*` — user input actions
@@ -88,7 +89,6 @@ three categories by prefix.
 | `ActionPostModifierCell` | Appends a modifier to the last symbol | `label`, `composition` |
 | `ActionRemoveIndicatorCell` | Removes an indicator from the symbol at the caret | `label`, `composition` |
 | `ActionRemoveModifierCell` | Removes a modifier from the symbol at the caret | `label`, `composition` |
-| `ActionTextCell` | Text-only button (no Bliss symbol rendered) | `label` |
 
 #### `Command*` — palette navigation and editing
 
@@ -99,6 +99,7 @@ three categories by prefix.
 | `CommandCursorForward` | Moves the caret one position right in the encoding area | `label`, `composition`, `ariaControls` |
 | `CommandDelLastEncoding` | Deletes the last symbol in the encoding area | `label`, `composition`, `ariaControls` |
 | `CommandGoBackCell` | Pops the navigation stack and returns to the previous palette | `label`, `composition` |
+| `CommandMakeSentence` | Translates the telegraphic message into full sentences; renders nothing when the feature is unavailable | `label`, `composition`, `ariaControls` |
 
 #### `Content*` — display areas
 
@@ -111,5 +112,10 @@ three categories by prefix.
 When a new `type` value is introduced, developers need to:
 
 1. Create a new component to render the new cell type;
-2. In `GlobalData.ts`, update `cellTypeRegistry` to add the entry that maps the
+2. In `src/client/CellTypeRegistry.ts`, update `cellTypeRegistry` to add the entry that maps the
 new type value to the actual component.
+
+### Import rule
+
+`src/client/GlobalData.ts` must not import a cell component or a feature module. Because those modules already
+import `GlobalData.ts`, doing so creates a circular dependency.

@@ -11,9 +11,11 @@
  */
 
 import { render, screen } from "@testing-library/preact";
+import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
-import { initAdaptivePaletteGlobals } from "./GlobalData";
+import { initAdaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
+import { sentenceCompletionsSignal } from "./TelegraphicTranslationState";
 import { CommandClearEncoding } from "./CommandClearEncoding";
 
 describe("CommandClearEncoding render tests", (): void => {
@@ -64,6 +66,30 @@ describe("CommandClearEncoding render tests", (): void => {
 
     // Check disabled state (should be enabled)
     expect(button.getAttribute("disabled")).toBe(null);
+  });
+
+  test("clearing the message also discards any sentences made from it", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [{ label: "hungry", composition: [124], modifierInfo: [] }],
+      caretPosition: 1
+    };
+    sentenceCompletionsSignal.value = {
+      status: "ready",
+      sentences: ["I am hungry."],
+      model: "phony-model:12b",
+      telegraphicMessage: "hungry"
+    };
+
+    render(html`
+      <${CommandClearEncoding}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />`
+    );
+    await userEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
+
+    expect(changeEncodingContents.value.payloads).toEqual([]);
+    expect(sentenceCompletionsSignal.value).toEqual({ status: "idle" });
   });
 
 });

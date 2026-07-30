@@ -34,7 +34,7 @@ function buildGridProperty(property: string, start?: number, span?: number): str
  * @param {number} rowSpan - The number of rows that the item will span across.
  * @return {String} - The grid css.
  */
-function generateGridStyle(columnStart?: number, columnSpan?: number, rowStart?: number, rowSpan?: number): string {
+export function generateGridStyle(columnStart?: number, columnSpan?: number, rowStart?: number, rowSpan?: number): string {
   const colStyle = buildGridProperty("grid-column", columnStart, columnSpan);
   const rowStyle = buildGridProperty("grid-row", rowStart, rowSpan);
 
@@ -46,7 +46,7 @@ function generateGridStyle(columnStart?: number, columnSpan?: number, rowStart?:
  * on, cancel it.
  * @param {String} text - The text to be announced.
  */
-function speak(text: string): void {
+export function speak(text: string): void {
   // If the text-to-speech feature is unavailable, do nothing. This happens when running node tests.
   if (!window.speechSynthesis) {
     return;
@@ -71,7 +71,7 @@ function speak(text: string): void {
  * @return {JsonPaletteType}    - The palette itself, or `null` if it could not be
  *                                loaded.
  */
-async function loadPaletteFromJsonFile (jsonFilePath: string): Promise<JsonPaletteType | undefined> {
+export async function loadPaletteFromJsonFile (jsonFilePath: string): Promise<JsonPaletteType | undefined> {
   try {
     const response = await fetch(jsonFilePath);
     if (!response.ok) {
@@ -94,7 +94,7 @@ async function loadPaletteFromJsonFile (jsonFilePath: string): Promise<JsonPalet
  * @return {ContentSignalDataType} - the modified symbol set and new position of
  *                                   the insertion caret.
  */
-function insertWordAtCaret (wordToAdd: SymbolEncodingType, symbolSet: SymbolEncodingType[], caretPos: number ): ContentSignalDataType {
+export function insertWordAtCaret (wordToAdd: SymbolEncodingType, symbolSet: SymbolEncodingType[], caretPos: number ): ContentSignalDataType {
   let newSymbolSet;
   // If the `caretPos` is the last symbol in the `symbolSet`, append the new
   // `wordToAdd`.  If the `caretPos` is somwhere within the `symbolSet`, put the
@@ -129,7 +129,7 @@ function insertWordAtCaret (wordToAdd: SymbolEncodingType, symbolSet: SymbolEnco
  * @param {number} max - The maximum value to be returned
  * @returns {number} - The constrained value
  */
-function clamp (value: number, min: number, max: number) {
+export function clamp (value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
 
@@ -140,18 +140,19 @@ function clamp (value: number, min: number, max: number) {
  * @param {ModifierInfoType[]} [modifierInfo] - The modifiers to fold in, in application order.
  * @returns {string} - The base label wrapped in every tracked modifier.
  */
-function applyModifiersToLabel (baseLabel: string, modifierInfo?: ModifierInfoType[]): string {
+export function applyModifiersToLabel (baseLabel: string, modifierInfo?: ModifierInfoType[]): string {
   return (modifierInfo ?? []).reduce(
     (label, modifier) => modifier.isPrepended ? `${modifier.modifierGloss} ${label}` : `${label} ${modifier.modifierGloss}`,
     baseLabel
   );
 }
 
-export {
-  generateGridStyle,
-  speak,
-  loadPaletteFromJsonFile,
-  insertWordAtCaret,
-  clamp,
-  applyModifiersToLabel
-};
+/**
+ * Collapse a single-number composition array (e.g. `[1433]`) to the bare number `1433`.
+ * Multi-element and string-containing arrays pass through unchanged.
+ * @param {number|(number|string)[]} composition - The composition to normalize.
+ * @returns {number|(number|string)[]} - The normalized composition.
+ */
+export function normalizeComposition (composition: number | (number|string)[]): number | (number|string)[] {
+  return Array.isArray(composition) && composition.length === 1 && typeof composition[0] === "number" ? composition[0] : composition;
+}

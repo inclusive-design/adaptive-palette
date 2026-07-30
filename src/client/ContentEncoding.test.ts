@@ -48,3 +48,39 @@ test("The content encoding area is rendered correctly", async (): Promise<void> 
   // Nothing is rendered in the content area
   expect(encodingAreaByLabel.childNodes.length).toBe(0);
 });
+
+// `Sentence` button is not rendered when no model is available. The input area takes over its space.
+describe("The content encoding area covers the sentence button's column when it is absent", (): void => {
+
+  const cellOptions = {
+    columnStart: 1,
+    columnSpan: 10,
+    rowStart: 2,
+    rowSpan: 1
+  };
+
+  test("stretches to column 12 with no sentence button in the palette", async (): Promise<void> => {
+    render(html`
+      <div id="inputArea">
+        <div class="paletteContainer">
+          <${ContentEncoding} id="content-encoding-area" options=${cellOptions} />
+        </div>
+      </div>`
+    );
+    const encodingArea = await screen.findByLabelText("Input Area");
+    expect(getComputedStyle(encodingArea).gridColumnEnd).toBe("12");
+  });
+
+  test("keeps its own span when the sentence button is present", async (): Promise<void> => {
+    render(html`
+      <div id="inputArea">
+        <div class="paletteContainer">
+          <${ContentEncoding} id="content-encoding-area" options=${cellOptions} />
+          <button class="btn-makeSentence">Sentence</button>
+        </div>
+      </div>`
+    );
+    const encodingArea = await screen.findByLabelText("Input Area");
+    expect(getComputedStyle(encodingArea).gridColumnEnd).toBe("span 10");
+  });
+});

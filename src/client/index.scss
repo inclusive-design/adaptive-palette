@@ -60,23 +60,16 @@ svg.inter-word-padding {
   column-gap: 0.5rem;
 }
 
-#llmInteraction {
-  margin-left: 0.5rem;
-  display:inline-grid;
-
-  #llmPrompt {
-    display:inline-grid;
-  }
+#aiStatus:not(:empty) {
+  background-color: #ffecec;
+  border-radius: 1rem;
+  font-weight: bold;
+  margin: 0.5rem;
+  padding: 0.75rem 1rem;
 }
 
-#askForLlmSuggestions {
-  margin-left: 0.5rem;
-}
-
-#llmSuggestions {
-  color: white;
-  background-color: black;
-  margin-left: 0.5rem;
+#sentenceChoices {
+  margin: 0 0.5rem;
 }
 
 #SvgEntryDialog, #SearchGlossDialog, #searchGlossResults {

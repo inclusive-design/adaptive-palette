@@ -10,7 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import ollama, { ChatResponse } from "ollama/browser";
+import ollama, { ChatResponse, Ollama } from "ollama/browser";
 
 /**
  * Retrieve a list of LLMs available from the service
@@ -36,6 +36,13 @@ export async function getModelNames(): Promise<string[]> {
  *                                all at once.
  * @param {String} systemPrompt - Optional system prompt, defaults to the
  *                                empty string.
+ * @param {AbortSignal} abortSignal - Optional signal to cancel the request. `ollama-js`
+ *                                does not pass a signal on the non-streaming path, so inject
+ *                                AbortController.signal through a custom `fetch` on a
+ *                                per-request client instead.
+ *                                Rejects with a `DOMException` named `"AbortError"` when
+ *                                the signal fires; callers that cancel deliberately should
+ *                                not treat that as a failure.
  * @param Promise<ChatResponse | any>  - The response from the service. Note:
  *                                the value type <any> is technically
  *                                <<AbortableAsyncIterator<ChatResponse>>,
@@ -46,7 +53,7 @@ export async function getModelNames(): Promise<string[]> {
  *                                https://github.com/ollama/ollama-js/issues/135
  *                                https://github.com/ollama/ollama-js/issues/187
  */
-export async function queryChat (query: string, modelName: string, streamResp: boolean, systemPrompt?: string): Promise<ChatResponse | AsyncIterable<ChatResponse>> {
+export async function queryChat (query: string, modelName: string, streamResp: boolean, systemPrompt?: string, abortSignal?: AbortSignal): Promise<ChatResponse | AsyncIterable<ChatResponse>> {
   const messageArray = [];
   if (systemPrompt && systemPrompt.length !== 0) {
     messageArray.push({
@@ -56,41 +63,28 @@ export async function queryChat (query: string, modelName: string, streamResp: b
   }
   messageArray.push({ role: "user", content: query });
 
-  // `ollama.chat()` is overloaded to support streaming vs. non-streaming and
-  // disallows the following way of calling it when running tests
-  // ...
-  //   const response = await ollama.chat({
-  //    model: modelName,
-  //    messages: messageArray,
-  //    stream: streamResp,
-  //    keep_alive: 15
-  //   });
-  // ...
-  // The error does not occur when using `vite` to build the distribution.
-  // Also, the error occurs when no call to `ollama.chat()` is made.  This
-  // implies that a transpiler checker in the testing framework is reporting
-  // the error, not any actual execution of the code.  The error is:
-  // src/client/ollamaApi.ts:79:5 - error TS2769: No overload matches this call.
-  //    Overload 1 of 2, '(request: ChatRequest & { stream: true; }): Promise<AbortableAsyncIterator<ChatResponse>>', gave the following error.
-  //      Type 'boolean' is not assignable to type 'true'.
-  //    Overload 2 of 2, '(request: ChatRequest & { stream?: false; }): Promise<ChatResponse>', gave the following error.
-  //      Type 'boolean' is not assignable to type 'false'.
-  //
-  // 79     stream: streamResp,
-  //        ~~~~~~
-  // Related: https://github.com/ollama/ollama-js/issues/78
-  // What does work, instead, is an if/else construct to set the `stream`
-  // property explicitly to `true` or `false`.
-  //
   const request = {
     model: modelName,
     messages: messageArray,
     keep_alive: 15,
     think: false
   };
+
+  // Because Ollama API only provides abort function for streaming requests which we don't use,
+  // need to create a new Ollama client with a custom fetch function that includes the abort signal
+  // so the cancellations don't affect other in-flight queries.
+  const client = abortSignal
+    ? new Ollama({ fetch: (input, init) => fetch(input, { ...init, signal: abortSignal }) })
+    : ollama;
+
+  // Workaround for TypeScript error TS2769:
+  // `ollama.chat()` has overloads that require a literal `true` or `false` for the `stream` property.
+  // Passing a dynamic boolean variable fails type checking.
+  // We use an if/else block to pass the literal values explicitly and satisfy the compiler.
+  // Ref: https://github.com/ollama/ollama-js/issues/78
   if (streamResp) {
-    return await ollama.chat({ ...request, stream: true });
+    return await client.chat({ ...request, stream: true });
   } else {
-    return await ollama.chat({ ...request, stream: false });
+    return await client.chat({ ...request, stream: false });
   }
 }

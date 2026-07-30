@@ -13,7 +13,7 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
-import { changeEncodingContents } from "./GlobalData";
+import { clearMessageAndChoices } from "./TelegraphicTranslationState";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { generateGridStyle, speak } from "./GlobalUtils";
 
@@ -31,10 +31,7 @@ export function CommandClearEncoding (props: CommandClearEncodingProps): VNode {
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
-    changeEncodingContents.value = {
-      payloads: [],
-      caretPosition: -1
-    };
+    clearMessageAndChoices();
     speak(label);
   };
 
