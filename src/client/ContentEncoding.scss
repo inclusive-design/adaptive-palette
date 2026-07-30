@@ -10,6 +10,13 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+/*
+ * `Sentence` button is not rendered when no model is available. The input area takes over its space.
+ */
+.paletteContainer:not(:has(.btn-makeSentence)) .contentEncodingArea {
+  grid-column: 1 / 12 !important;
+}
+
 .contentEncodingArea {
   align-items: center;
   background-color: #fff;

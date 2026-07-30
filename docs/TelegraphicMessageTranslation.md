@@ -69,6 +69,8 @@ If Ollama reports no models at all, the feature is unavailable.
 
 The `Sentence` button starts this feature. It becomes available when the input area has text.
 
+When no model is available, the `Sentence` button is hidden. Its space is taken by the input area.
+
 When the input is empty or a request is in progress, the button is marked with `aria-disabled`
 instead of the native `disabled` attribute. This keeps the button focusable for keyboard, switch,
 and eye-gaze users, while still communicating that it is unavailable to assistive technologies.
@@ -104,6 +106,11 @@ The **✓ Done** button clears both the generated choices and the current messag
 
 If the user enters text in the custom input field and submits it, that text is spoken and saved as the
 preferred sentence.
+
+If the input area is modified while a query is in progress or while sentences are displayed on the screen,
+a warning dialog will appear. Because the new input invalidates the current results, the user will be asked
+if they want to proceed. Choosing to proceed will abort the active query and clear the existing sentences,
+while canceling will keep the current data intact.
 
 ### Single-sentence mode
 
@@ -149,7 +156,7 @@ Data can currently be inspected through browser developer tools. No in-applicati
 | Situation | Behaviour |
 | --- | --- |
 | Ollama is not running or no models are installed | A banner indicates that AI features are unavailable. The **Sentence** button is not shown. |
-| `telegraphicTranslation` is missing or invalid | A configuration error banner is displayed and the **Sentence** button is not shown. No fallback configuration is applied. |
+| `config.telegraphicTranslation` is missing or invalid | A configuration error banner is displayed and the **Sentence** button is not shown. No fallback configuration is applied. |
 | Configured model is unavailable | The first available model is used and a warning is logged to the console. |
 | Empty message | The **Sentence** button is marked `aria-disabled` and cannot be activated. |
 | **Done** or **Delete all** pressed while choices are visible | The message and generated choices are cleared. Any saved preference remains. |
