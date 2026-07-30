@@ -42,7 +42,7 @@ const mockedOllama = vi.mocked(ollama);
 type OllamaListResponse = Awaited<ReturnType<typeof mockedOllama.list>>;
 type OllamaChatResponse = Awaited<ReturnType<typeof mockedOllama.chat>>;
 
-describe("ollamaApi unit tests", (): void => {
+describe("OllamaApi unit tests", (): void => {
 
   // Clear mocks before each test so they don't interfere with one another
   beforeEach(() => {

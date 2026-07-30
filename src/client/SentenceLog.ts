@@ -39,7 +39,8 @@ export function readSentenceLog (): SentenceRecordType[] {
   try {
     const stored = window.localStorage.getItem(SENTENCE_LOG_KEY);
     const parsed: unknown = stored ? JSON.parse(stored) : [];
-    return Array.isArray(parsed) ? parsed as SentenceRecordType[] : [];
+    // non-object entries are dropped
+    return Array.isArray(parsed) ? parsed.filter((entry) => typeof entry === "object" && entry !== null) as SentenceRecordType[] : [];
   } catch (error) {
     console.error(`Could not read "${SENTENCE_LOG_KEY}": ${String(error)}`);
     return [];

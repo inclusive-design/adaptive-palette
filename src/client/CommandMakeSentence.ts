@@ -22,8 +22,6 @@ import { BlissSymbol } from "./BlissSymbol";
 import { generateGridStyle, normalizeComposition } from "./GlobalUtils";
 import "./CommandMakeSentence.scss";
 
-export const MAKE_SENTENCE_LABEL = "Make a sentence";
-
 type CommandMakeSentenceProps = {
   id: string,
   options: LayoutInfoType & Partial<BlissSymbolInfoType> & {

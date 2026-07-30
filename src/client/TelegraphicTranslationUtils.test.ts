@@ -57,6 +57,11 @@ describe("telegraphicTranslation", (): void => {
     test("falls back to the first available model when none is configured", (): void => {
       expect(pickModel("")).toBe("phony-model:12b");
     });
+
+    test("throws when no model is available", (): void => {
+      adaptivePaletteGlobals.LLMs = [];
+      expect((): string => pickModel("phony-model:12b")).toThrow(NO_MODELS_MESSAGE);
+    });
   });
 
   describe("renderTemplate", (): void => {

@@ -83,7 +83,7 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
   sentenceCompletionsSignal.value = { status: "working", telegraphicMessage };
   try {
     const { sentences, model } = await requestSentences(telegraphicMessage, controller.signal);
-    // Senteneces are only displayed if the user has not changed the message since the request was made.
+    // Sentences are only displayed if the user has not changed the message since the request was made.
     const pending = sentenceCompletionsSignal.peek();
     if (controller.signal.aborted || pending.status !== "working" ||
         pending.telegraphicMessage !== telegraphicMessage) {
@@ -134,7 +134,7 @@ const snapshot = (contents: ContentSignalDataType): ContentSignalDataType => str
 
 let previousContents = snapshot(changeEncodingContents.peek());
 
-// Warn the user if they edit a message while its sentences are currently 
+// Warn the user if they edit a message while its sentences are currently
 // generating or on screen, as this will discard the current progress.
 // - If they cancel: Revert the edit and continue the original generation.
 // - If they confirm: Abort the current request as stale and apply the edit.

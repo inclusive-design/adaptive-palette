@@ -76,12 +76,12 @@ function parseIndicatorLabelLookup (section: unknown): IndicatorLabelLookupConfi
   };
 }
 
-/* 
+/**
  * Validates the `telegraphicTranslation` configuration section:
- * 1. Prompt fields are required because there are no hardcoded fallback prompts. 
- * 2. A partially configured section is treated as completely missing, causing the feature 
- * to report as unconfigured rather than executing with empty prompts. 
- * 3.The `model` field may be an empty string, which indicates it should use Ollama's first
+ * 1. Prompt fields are required because there are no hardcoded fallback prompts.
+ * 2. A partially configured section is treated as completely missing, causing the feature
+ * to report as unconfigured rather than executing with empty prompts.
+ * 3. The `model` field may be an empty string, which indicates it should use Ollama's first
  * available model.
  * @param {unknown} section - The raw parsed section.
  * @returns {TelegraphicTranslationConfigType | undefined}
@@ -115,7 +115,8 @@ function parseTelegraphicTranslation (section: unknown): TelegraphicTranslationC
 }
 
 /**
- * Fetch and validate `public/config.json`, `indicatorLabelLookup` section.
+ * Fetch and validate `public/config.json`, its `indicatorLabelLookup` and
+ * `telegraphicTranslation` sections.
  * @returns {Promise<AdaptivePaletteConfigType>}
  */
 async function loadConfig (): Promise<AdaptivePaletteConfigType> {

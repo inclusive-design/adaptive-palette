@@ -10,6 +10,10 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+/*
+ * Note: `.btn-makeSentence` is also used in ContentEncoding.scss to detect the absence of this
+ * button so the input area can take over its column. Keep the class name consistent in both files.
+ */
 .btn-makeSentence {
   background-color: #ffe14d;
   width: 100%;

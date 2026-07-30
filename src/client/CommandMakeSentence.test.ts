@@ -19,7 +19,9 @@ import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
 import { sentenceCompletionsSignal } from "./TelegraphicTranslationState";
 import { SENTENCE_LOG_KEY } from "./SentenceLog";
 import { queryChat } from "./OllamaApi";
-import { CommandMakeSentence, MAKE_SENTENCE_LABEL } from "./CommandMakeSentence";
+import { CommandMakeSentence } from "./CommandMakeSentence";
+
+const make_setence_label = "Make a sentence";
 
 // The request flow itself is covered by `telegraphicTranslationState.test.ts`. What is left
 // here is the button tests: when it renders, when it is available, and that clicking it starts
@@ -39,7 +41,7 @@ const mockedQueryChat = vi.mocked(queryChat);
 describe("CommandMakeSentence component", (): void => {
 
   const CELL_OPTIONS = {
-    label: MAKE_SENTENCE_LABEL,
+    label: make_setence_label,
     composition: [840, ";", 81, ";", 368, "/", 502, "/", 414],
     rowStart: 3,
     rowSpan: 1,
@@ -110,13 +112,13 @@ describe("CommandMakeSentence component", (): void => {
 
   test("renders the Bliss symbol of its composition, keeping the label as the name", (): void => {
     renderCell();
-    const button = screen.getByRole("button", { name: MAKE_SENTENCE_LABEL });
+    const button = screen.getByRole("button", { name: make_setence_label });
     expect(button.querySelector("svg")).toBeInTheDocument();
   });
 
   test("is marked unavailable, but stays focusable, while the input area is empty", (): void => {
     renderCell();
-    const button = screen.getByRole("button", { name: MAKE_SENTENCE_LABEL });
+    const button = screen.getByRole("button", { name: make_setence_label });
     expect(button).toHaveAttribute("aria-disabled", "true");
 
     // Never the `disabled` attribute: that drops focus, costing a switch or eye-gaze
@@ -129,7 +131,7 @@ describe("CommandMakeSentence component", (): void => {
   test("clicking while the input area is empty does not query", async (): Promise<void> => {
     renderCell();
 
-    await userEvent.click(screen.getByRole("button", { name: MAKE_SENTENCE_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: make_setence_label }));
 
     expect(mockedQueryChat).not.toHaveBeenCalled();
     expect(sentenceCompletionsSignal.value).toEqual({ status: "idle" });
@@ -138,7 +140,7 @@ describe("CommandMakeSentence component", (): void => {
   test("is available once the input area has content", (): void => {
     changeEncodingContents.value = INPUT_CONTENTS;
     renderCell();
-    expect(screen.getByRole("button", { name: MAKE_SENTENCE_LABEL }))
+    expect(screen.getByRole("button", { name: make_setence_label }))
       .toHaveAttribute("aria-disabled", "false");
   });
 
@@ -148,7 +150,7 @@ describe("CommandMakeSentence component", (): void => {
       caretPosition: 1
     };
     renderCell();
-    expect(screen.getByRole("button", { name: MAKE_SENTENCE_LABEL }))
+    expect(screen.getByRole("button", { name: make_setence_label }))
       .toHaveAttribute("aria-disabled", "true");
   });
 
@@ -159,7 +161,7 @@ describe("CommandMakeSentence component", (): void => {
     } as never);
     renderCell();
 
-    await userEvent.click(screen.getByRole("button", { name: MAKE_SENTENCE_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: make_setence_label }));
 
     await waitFor(() => {
       expect(sentenceCompletionsSignal.value.status).toBe("ready");
@@ -178,7 +180,7 @@ describe("CommandMakeSentence component", (): void => {
     }) as never);
     renderCell();
 
-    const button = screen.getByRole("button", { name: MAKE_SENTENCE_LABEL });
+    const button = screen.getByRole("button", { name: make_setence_label });
     await userEvent.click(button);
     await waitFor(() => {
       expect(button).toHaveAttribute("aria-disabled", "true");
@@ -201,7 +203,7 @@ describe("CommandMakeSentence component", (): void => {
     }) as never);
     renderCell();
 
-    const button = screen.getByRole("button", { name: MAKE_SENTENCE_LABEL });
+    const button = screen.getByRole("button", { name: make_setence_label });
     await userEvent.click(button);
     await waitFor(() => {
       expect(button).toHaveAttribute("aria-disabled", "true");

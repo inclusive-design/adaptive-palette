@@ -21,7 +21,7 @@ import "./SentenceChoices.scss";
 
 export const WORKING_MESSAGE = "⏳ Making sentences…";
 export const CANNOT_COMPLETE_MESSAGE = "⚠ Could not make sentences. Try again.";
-export const TYPE_YOUR_OWN_HINT = "None of above — let me type it";
+export const TYPE_YOUR_OWN_HINT = "None fit? Type yours to help the tool learn";
 export const SPEAK_BUTTON_LABEL = "Speak";
 export const DONE_BUTTON_LABEL = "✓ Done";
 
@@ -36,7 +36,7 @@ export const DONE_BUTTON_LABEL = "✓ Done";
  *    user to choose from, along with a text box for typing their own sentence if none of
  *    the choices are right.
  *
- * The live region is always in the document to annouce the state.
+ * The live region is always in the document to announce the state.
  * @returns {VNode}
  */
 export function SentenceChoices (): VNode {

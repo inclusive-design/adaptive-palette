@@ -84,7 +84,7 @@ The button can be in one of three states:
 
 2. **Choices**
    - Displays one button for each generated sentence, ordered by likelihood.
-   - Includes a text field with the placeholder `None of above — let me type it`.
+   - Includes a text field with the placeholder `None fit? Type yours to help the tool learn`.
 
 3. **Error**
    - Announces `⚠ Could not make sentences. Try again.`
@@ -160,8 +160,8 @@ Data can currently be inspected through browser developer tools. No in-applicati
 | Configured model is unavailable | The first available model is used and a warning is logged to the console. |
 | Empty message | The **Sentence** button is marked `aria-disabled` and cannot be activated. |
 | **Done** or **Delete all** pressed while choices are visible | The message and generated choices are cleared. Any saved preference remains. |
-| Message edited while choices are visible | Existing choices are discarded because they no longer match the current message. |
-| Message edited or cleared while a request is in progress | The response is ignored when it arrives. It is not displayed, spoken, or saved. |
+| Message edited while sentences are visible | Warn user this action will discard existing sentences because they no longer match the current message. |
+| Message edited while a request is in progress | Warn user this action will abort the current query because responded sentences no longer match the current message. |
 | Request fails or times out | The feature enters the **Error** state. The message remains available so the user can retry. |
 | Model returns fewer or more sentences than requested | All usable returned sentences are displayed. |
 | Model returns no usable sentences | The feature enters the **Error** state. |

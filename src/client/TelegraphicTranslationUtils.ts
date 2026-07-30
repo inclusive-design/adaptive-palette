@@ -26,9 +26,13 @@ export type TranslationResultType = {
  * otherwise the first available model.
  * @param {string} configuredModel - The model name from the config, possibly empty.
  * @returns {string}
+ * @throws {Error} When no models are available.
  */
 export function pickModel (configuredModel: string): string {
   const { LLMs } = adaptivePaletteGlobals;
+  if (LLMs.length === 0) {
+    throw new Error(NO_MODELS_MESSAGE);
+  }
   if (LLMs.includes(configuredModel)) {
     return configuredModel;
   }
@@ -61,7 +65,7 @@ export function renderTemplate (template: string, values: Record<string, string>
 export function parseSentences (content: string): string[] {
   return content
     .split("\n")
-    .map((line) => line.trim().replace(/^\d+[.)]\s*/, "").trim())
+    .map((line) => line.trim().replace(/^(?:\d+[.)]|[-*•])\s*/, "").trim())
     .filter((line) => line.length > 0 && !line.endsWith(":"));
 }
 
@@ -76,9 +80,6 @@ export async function requestSentences (telegraphicMessage: string, abortSignal?
   const config = adaptivePaletteGlobals.config.telegraphicTranslation;
   if (!config) {
     throw new Error(NOT_CONFIGURED_MESSAGE);
-  }
-  if (adaptivePaletteGlobals.LLMs.length === 0) {
-    throw new Error(NO_MODELS_MESSAGE);
   }
   const model = pickModel(config.model);
   const values = {

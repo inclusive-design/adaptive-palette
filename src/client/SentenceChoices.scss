@@ -35,10 +35,17 @@
   background-color: #fffbe6;
 }
 
-/* The live region stays in the document at all times so announcements land in it;
-   it must not take up space while it has nothing to say. */
+/* The live region stays in the document at all times so announcements land in it.
+   Using `display: none` would drop it out of the accessibility tree. */
 .sentenceStatus:empty {
-  display: none;
+  clip-path: inset(50%);
+  height: 1px;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
 }
 
 .sentenceError {

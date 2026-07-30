@@ -66,7 +66,7 @@ describe("telegraphicTranslationState", (): void => {
   // Mirrors what the button does: translate whatever is in the input area right now.
   const requestForCurrentMessage = (): Promise<void> => makeSentences(currentTelegraphicMessage());
 
-  // Every the input message when a request is in flight asks the user to confirm the discard.
+  // Every edit to the input message when a request is in flight asks the user to confirm the discard.
   // Mock the case when the discard is accepted so the tests can focus on the button behavior.
   let mockedConfirm: MockInstance<(message?: string) => boolean>;
 

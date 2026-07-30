@@ -63,14 +63,20 @@ export async function queryChat (query: string, modelName: string, streamResp: b
   }
   messageArray.push({ role: "user", content: query });
 
+  // Workaround for TypeScript error TS2769:
+  // `ollama.chat()` has overloads that require a literal `true` or `false` for the `stream` property. 
+  // Passing a dynamic boolean variable fails type checking. 
+  // We use an if/else block to pass the literal values explicitly and satisfy the compiler.
+  // Ref: https://github.com/ollama/ollama-js/issues/78
   const request = {
     model: modelName,
     messages: messageArray,
     keep_alive: 15,
     think: false
   };
+
   // Because Ollama API only provides abort function for streaming requests which we don't use,
-  // we need to create a new Ollama client with a custom fetch function that includes the abort signal
+  // need to create a new Ollama client with a custom fetch function that includes the abort signal
   // so the cancellations don't affect other in-flight queries.
   const client = abortSignal
     ? new Ollama({ fetch: (input, init) => fetch(input, { ...init, signal: abortSignal }) })

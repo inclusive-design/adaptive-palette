@@ -61,8 +61,10 @@ describe("The content encoding area covers the sentence button's column when it 
 
   test("stretches to column 12 with no sentence button in the palette", async (): Promise<void> => {
     render(html`
-      <div class="paletteContainer">
-        <${ContentEncoding} id="content-encoding-area" options=${cellOptions} />
+      <div id="inputArea">
+        <div class="paletteContainer">
+          <${ContentEncoding} id="content-encoding-area" options=${cellOptions} />
+        </div>
       </div>`
     );
     const encodingArea = await screen.findByLabelText("Input Area");
@@ -71,9 +73,11 @@ describe("The content encoding area covers the sentence button's column when it 
 
   test("keeps its own span when the sentence button is present", async (): Promise<void> => {
     render(html`
-      <div class="paletteContainer">
-        <${ContentEncoding} id="content-encoding-area" options=${cellOptions} />
-        <button class="btn-makeSentence">Sentence</button>
+      <div id="inputArea">
+        <div class="paletteContainer">
+          <${ContentEncoding} id="content-encoding-area" options=${cellOptions} />
+          <button class="btn-makeSentence">Sentence</button>
+        </div>
       </div>`
     );
     const encodingArea = await screen.findByLabelText("Input Area");
