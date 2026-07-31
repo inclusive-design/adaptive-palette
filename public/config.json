@@ -11,5 +11,5 @@
     "userPrompt": "Telegraphic message: {{telegraphicMessage}}"
   },
   "symbolSearch": { "show": true },
-  "svgBuilderString": { "show": true }
+  "svgBuilderString": { "show": false }
 }

@@ -19,7 +19,7 @@ import { changeEncodingContents } from "./GlobalData";
 import { speak } from "./GlobalUtils";
 import {
   ActionSearchGloss, SEARCH_FIELD_LABEL, SUBMIT_LABEL, CLEAR_LABEL,
-  LABEL_FIELD_LABEL, ADD_LABEL, CLOSE_LABEL
+  LABEL_FIELD_LABEL, ADD_LABEL, CLOSE_LABEL, NO_SELECTION_STATUS, MAX_RESULTS
 } from "./ActionSearchGloss";
 
 vi.mock("./GlobalUtils", async (importOriginal) => {
@@ -80,6 +80,30 @@ describe("ActionSearchGloss component", () => {
 
     await searchFor(user, "zzzznotaword");
     expect(await screen.findByRole("status")).toHaveTextContent(/No symbols found for "zzzznotaword"/);
+  }, 20000);
+
+  // A term with a regular expression metacharacter used to throw inside the handler,
+  // leaving the previous results on screen and the status region silent.
+  test("a search term with regular expression characters is reported, not dropped", async () => {
+    const user = userEvent.setup();
+    render(html`<${ActionSearchGloss} onRequestClose=${() => {}} />`);
+
+    await searchFor(user, "zzzznotaword (");
+    expect(await screen.findByRole("status")).toHaveTextContent(/No symbols found for "zzzznotaword \("/);
+    expect(screen.queryAllByRole("button", { pressed: false })).toHaveLength(0);
+  }, 20000);
+
+  // Every result is a tab stop inside the dialog's focus trap.
+  test("a large result set is capped and the truncation announced", async () => {
+    const user = userEvent.setup();
+    render(html`<${ActionSearchGloss} onRequestClose=${() => {}} />`);
+
+    // "to" matches several hundred glosses in the shipped vocabulary.
+    await searchFor(user, "to");
+    expect(screen.getAllByRole("button", { pressed: false })).toHaveLength(MAX_RESULTS);
+    expect(await screen.findByRole("status")).toHaveTextContent(
+      new RegExp(`Showing the first ${MAX_RESULTS}`)
+    );
   }, 20000);
 
   test("selecting a result marks it and fills the label field", async () => {
@@ -185,7 +209,7 @@ describe("ActionSearchGloss component", () => {
     expect(changeEncodingContents.value.payloads).toHaveLength(2);
   }, 20000);
 
-  test("Add to message does nothing while unavailable", async () => {
+  test("Add to message says why while unavailable", async () => {
     const user = userEvent.setup();
     render(html`<${ActionSearchGloss} onRequestClose=${() => {}} />`);
 
@@ -193,6 +217,8 @@ describe("ActionSearchGloss component", () => {
 
     expect(changeEncodingContents.value.payloads).toHaveLength(0);
     expect(mockedSpeak).not.toHaveBeenCalled();
+    // The button keeps focus via `aria-disabled`, so pressing it must not be silent.
+    expect(await screen.findByRole("status")).toHaveTextContent(NO_SELECTION_STATUS);
   });
 
   test("Clear resets the search, results, and selection", async () => {

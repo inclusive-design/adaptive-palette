@@ -60,4 +60,13 @@ describe("BciUtils module", (): void => {
     expect(findSymbolByGloss(NO_SUCH_GLOSS)).toStrictEqual([]);
   });
 
+  // Regex metacharacters in the search term used to throw a SyntaxError.
+  test("Search with regular expression metacharacters", (): void => {
+    expect(findSymbolByGloss("bark (")).toStrictEqual([]);
+    expect(findSymbolByGloss("bark [")).toStrictEqual([]);
+    expect(findSymbolByGloss("bark \\")).toStrictEqual([]);
+    // "." is matched as a literal, not as "any character".
+    expect(findSymbolByGloss("bar.")).toStrictEqual([]);
+  });
+
 });

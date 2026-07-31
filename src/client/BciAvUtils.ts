@@ -33,8 +33,8 @@ export function findSymbolByGloss(label: string): MatchType[] {
   const matches: MatchType[] = [];
   // Search only if there is text to base the search on.
   if (label.trim().length !== 0) {
-    // Search for the label in the Bliss gloss
-    const wordMatch = new RegExp("\\b" + `${label}` + "\\b");
+    // Search for the label in the Bliss gloss. Escape special characters in the label.
+    const wordMatch = new RegExp("\\b" + label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b");
     for (const oneSymbolEntry of adaptivePaletteGlobals.symbols) {
       // Try an exact match or a word match
       if ((label === oneSymbolEntry.gloss) || wordMatch.test(oneSymbolEntry.gloss)) {

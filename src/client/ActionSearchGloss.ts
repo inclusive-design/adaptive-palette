@@ -30,10 +30,33 @@ export const SUBMIT_LABEL = "Search";
 export const CLEAR_LABEL = "Clear";
 export const ADD_LABEL = "Add to message";
 export const CLOSE_LABEL = "Close";
+export const NO_SELECTION_STATUS = "Select a symbol first";
+
+// Every result is a tab stop inside the dialog's focus trap, so an unbounded result set
+// puts the "Add to message" and "Close" buttons out of reach of a forward-only switch
+// scan. A common term such as "to" matches over 700 symbols.
+export const MAX_RESULTS = 50;
 
 type ActionSearchGlossProps = {
   onRequestClose: () => void
 };
+
+/**
+ * The wording announced by the status region after a search. Truncation is reported
+ * here because it is the only channel that tells the user results were left out.
+ * @param {number} total - How many symbols matched, before truncation.
+ * @param {string} text - The search term, quoted back to the user.
+ * @returns {string}
+ */
+function searchStatus (total: number, text: string): string {
+  if (total === 0) {
+    return `No symbols found for "${text}"`;
+  }
+  if (total > MAX_RESULTS) {
+    return `${total} symbols found for "${text}". Showing the first ${MAX_RESULTS}; refine your search.`;
+  }
+  return `${total} symbol${total === 1 ? "" : "s"} found for "${text}"`;
+}
 
 /**
  * The body of the "Add symbol to message" dialog: search the Bliss vocabulary, pick one
@@ -60,14 +83,10 @@ export function ActionSearchGloss (props: ActionSearchGlossProps): VNode {
     const text = searchTerm.trim();
     const found: MatchType[] = text.length > 0 ? findSymbolByGloss(text) : [];
 
-    setMatches(found);
+    setMatches(found.slice(0, MAX_RESULTS));
     setSelected(null);
     setLabelDraft("");
-    setStatus(
-      found.length === 0
-        ? `No symbols found for "${text}"`
-        : `${found.length} symbol${found.length === 1 ? "" : "s"} found for "${text}"`
-    );
+    setStatus(searchStatus(found.length, text));
   };
 
   const clearResults = () => {
@@ -85,8 +104,9 @@ export function ActionSearchGloss (props: ActionSearchGlossProps): VNode {
 
   const addToMessage = () => {
     // The button stays focusable via `aria-disabled`, so the unavailable case is
-    // rejected here rather than by the browser.
+    // rejected here rather than by the browser. Meanwhile, report the status.
     if (!selected) {
+      setStatus(NO_SELECTION_STATUS);
       return;
     }
 
