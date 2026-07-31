@@ -50,7 +50,7 @@ export function SymbolEntryToolbar (): VNode | null {
 
   // WebKit, unlike Chromium and Firefox, does not focus a <button> on mouse click, so
   // ModalDialog would capture the wrong opener to restore focus to on close. Focusing
-  // explicitly here makes the trigger of the opener on every engine.
+  // explicitly here makes the trigger the opener on every engine.
   const open = (which: Exclude<OpenDialogType, null>) => (event: Event) => {
     (event.currentTarget as HTMLElement).focus();
     setOpenDialog(which);

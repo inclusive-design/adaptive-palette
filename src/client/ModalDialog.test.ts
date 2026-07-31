@@ -78,7 +78,7 @@ describe("ModalDialog component", () => {
     await waitFor(() => expect(onClose).toHaveBeenCalled());
   });
 
-  // Task 7's footer Close button closes by flipping `isOpen`, which is a different
+  // A dialog body's footer Close button closes by flipping `isOpen`, which is a different
   // route than Escape or the dismiss button and exercises the effect's close branch.
   test("closes when the parent withdraws isOpen", async () => {
     const onClose = vi.fn();

@@ -17,7 +17,7 @@ import { html } from "htm/preact";
 import { MatchType, SymbolEncodingType } from "./index.d";
 import { findSymbolByGloss } from "./BciAvUtils";
 import { changeEncodingContents } from "./GlobalData";
-import { speak, insertWordAtCaret } from "./GlobalUtils";
+import { insertWordAtCaret } from "./GlobalUtils";
 import { GlossSearchResults } from "./GlossSearchResults";
 import { MessagePreview } from "./MessagePreview";
 import "./ActionSearchGloss.scss";
@@ -122,7 +122,8 @@ export function ActionSearchGloss (props: ActionSearchGlossProps): VNode {
       changeEncodingContents.value.caretPosition
     );
 
-    speak(labelDraft);
+    // The status region is the only confirmation channel here. Calling `speak()` as the
+    // palette cells do would put device speech and the screen reader over each other.
     setStatus(`${labelDraft} added to message`);
     // `selected` and `labelDraft` are a pair: every reset path clears both, or the label
     // field is left editable with no selection behind it.

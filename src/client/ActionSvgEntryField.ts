@@ -16,7 +16,7 @@ import { useRef, useState } from "preact/hooks";
 
 import { changeEncodingContents } from "./GlobalData";
 import { bstrToComposition } from "./SvgUtils";
-import { speak, insertWordAtCaret } from "./GlobalUtils";
+import { insertWordAtCaret } from "./GlobalUtils";
 import { MessagePreview } from "./MessagePreview";
 import "./ActionSvgEntryField.scss";
 
@@ -70,7 +70,6 @@ export function ActionSvgEntryField (props: ActionSvgEntryFieldProps): VNode {
     }
 
     const payload = {
-      id: composition.join(""),
       label: labelString,
       composition: composition,
       modifierInfo: []
@@ -82,7 +81,8 @@ export function ActionSvgEntryField (props: ActionSvgEntryFieldProps): VNode {
       changeEncodingContents.value.caretPosition
     );
 
-    speak(payload.label);
+    // The status region is the only confirmation channel here, for the same reason as in
+    // the search dialog: device speech and the screen reader would talk over each other.
     // The label is optional, so fall back to a generic noun for the announcement.
     setStatus(`${labelString.trim() || "Symbol"} added to message`);
     setMalformed(false);

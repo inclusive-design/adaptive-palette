@@ -139,7 +139,7 @@ describe("ActionSearchGloss component", () => {
     expect(results[1]).toHaveAttribute("aria-pressed", "true");
   }, 20000);
 
-  test("Add to message inserts the symbol and speaks it once", async () => {
+  test("Add to message inserts the symbol and announces it once", async () => {
     const user = userEvent.setup();
     render(html`<${ActionSearchGloss} onRequestClose=${() => {}} />`);
 
@@ -156,8 +156,10 @@ describe("ActionSearchGloss component", () => {
     // The payload carries the identity and rendering data too, not just the label.
     expect(changeEncodingContents.value.payloads[0].userSelectedSymbolId).toEqual(expect.any(Number));
     expect(changeEncodingContents.value.payloads[0].composition).toBeDefined();
-    expect(mockedSpeak).toHaveBeenCalledTimes(1);
-    expect(mockedSpeak).toHaveBeenCalledWith(expectedLabel);
+    expect(await screen.findByRole("status")).toHaveTextContent(`${expectedLabel} added to message`);
+    // The status region is the only channel: device speech would talk over the screen
+    // reader announcing the same add.
+    expect(mockedSpeak).not.toHaveBeenCalled();
   }, 20000);
 
   test("an edited label is what gets inserted", async () => {

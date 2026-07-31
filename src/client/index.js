@@ -58,10 +58,16 @@ render(html`<${Palette} json=${modifiersPalette} />`, getRequiredElement("modifi
 // itself when unavailable, so only the status line needs wiring here.
 render(html`<${SentenceChoices} />`, getRequiredElement("sentenceChoices"));
 
+const aiStatus = getRequiredElement("aiStatus");
 if (adaptivePaletteGlobals.LLMs.length === 0) {
-  getRequiredElement("aiStatus").textContent = NO_MODELS_MESSAGE;
+  aiStatus.textContent = NO_MODELS_MESSAGE;
 } else if (!adaptivePaletteGlobals.config.telegraphicTranslation) {
-  getRequiredElement("aiStatus").textContent = NOT_CONFIGURED_MESSAGE;
+  aiStatus.textContent = NOT_CONFIGURED_MESSAGE;
+} else {
+  // Nothing to report. The element is removed rather than hidden with CSS: an empty grid
+  // item still consumes a row-gap, and a live region that is `display: none` when its
+  // text arrives may not announce it.
+  aiStatus.remove();
 }
 
 // Triggers for adding symbols to the message; each dialog lives inside this component.

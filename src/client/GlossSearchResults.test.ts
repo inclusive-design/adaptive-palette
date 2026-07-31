@@ -70,8 +70,8 @@ describe("GlossSearchResults component", () => {
     expect(onSelect).toHaveBeenCalledWith(MATCHES[1]);
   });
 
-  // Task 5 clears the selection after each add, so clicking a result that is currently
-  // marked must still report. A short-circuit on `isSelected` would break that.
+  // The search dialog clears the selection after each add, so clicking a result that is
+  // currently marked must still report. A short-circuit on `isSelected` would break that.
   test("clicking an already-selected match still reports it", async () => {
     const onSelect = vi.fn();
     const user = userEvent.setup();

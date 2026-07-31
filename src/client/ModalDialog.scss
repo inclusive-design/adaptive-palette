@@ -62,7 +62,8 @@
     background-color: lightsalmon;
 
     &[aria-disabled="true"] {
-      background-color: silver;
+      background-color: white;
+      border-style: dashed;
     }
   }
 
