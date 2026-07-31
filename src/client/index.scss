@@ -24,7 +24,13 @@ button {
   color: black;
   font-weight: bold;
   padding-bottom: 0.5rem;
+}
 
+/* The submit and button inputs are listed so the dialogs' controls get the same
+   indicator; the rest of the rule above is left to `<button>` alone. */
+button,
+input[type="submit"],
+input[type="button"] {
   &:hover, &:focus {
     border-color: red;
   }
@@ -72,10 +78,20 @@ svg.inter-word-padding {
   margin: 0 0.5rem;
 }
 
-#SvgEntryDialog, #SearchGlossDialog, #searchGlossResults {
+#symbolEntryToolbar:not(:empty) {
   margin: 0.5rem;
 }
 
-#searchGloss {
-  display:inline-grid;
+/*
+ * These wrappers are always in the document but render nothing when their feature is off.
+ * In this case they are left as empty grid items that still consume a row-gap and opens
+ * a gap above the input area. Since they hold no content when hidden, using `display:none`
+ * is safe so nothing leaves the accessibility tree.
+ *
+ * Note: #aiStatus is a live region: if its text ever starts changing at runtime, it must stay
+ * in the tree before the change, and this rule has to go.
+ */
+#aiStatus:empty,
+#symbolEntryToolbar:empty {
+  display: none;
 }

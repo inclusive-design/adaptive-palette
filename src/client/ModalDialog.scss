@@ -1,0 +1,98 @@
+/*
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
+ *
+ * Licensed under the New BSD license. You may not use this file except in
+ * compliance with this License.
+ *
+ * You may obtain a copy of the License at
+ * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
+ */
+
+.modalDialog {
+  background-color: #1fcecb;  /* robin's egg-shell blue, same as the page */
+  border: 3px solid black;
+  border-radius: 1rem;
+  color: black;
+  max-height: 90vh;
+  max-width: 90vw;
+  /* The dialog itself never scrolls. Exactly one descendant does, so a small or
+     magnified viewport cannot produce two scrollbars competing for one gesture. */
+  overflow: hidden;
+  padding: 1rem;
+
+  /* The flex layout is scoped to [open] rather than applied unconditionally: the
+     browser hides a closed <dialog> via its UA stylesheet's `dialog:not([open])
+     { display: none }`, and an author-origin `display` declaration overrides that
+     regardless of selector specificity. An unconditional `display: flex` here would
+     make the dialog visible even while closed. */
+  &[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &::backdrop {
+    background-color: rgb(0 0 0 / 50%);
+  }
+
+  /* Base style for every control in a dialog. `input[type="submit"]` and
+     `input[type="button"]` are listed because the global `button` rule never matches
+     them, which left them with the browser's default grey, square look. The symmetric
+     padding overrides that rule's bottom-only padding, which sat labels low in the
+     button and left no room beside them. */
+  /* `:where()` keeps this at the specificity of `.modalDialog` alone, so the global
+     hover/focus rule and the variants below all still outrank it. */
+  :where(button, input[type="submit"], input[type="button"]) {
+    background-color: white;
+    border: 2px solid blue;  /* same as the palette cells */
+    border-radius: 1rem;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+  }
+
+  /*
+   * Marked unavailable rather than `disabled`: a disabled button loses focus, which costs
+   * a switch or eye-gaze user their scan position mid-interaction.
+   *
+   * Nested inside `.modalDialog` so the unavailable state outweighs the base rule above
+   * instead of tying with it and depending on stylesheet order.
+   */
+  .btn-addToMessage {
+    background-color: lightsalmon;
+
+    &[aria-disabled="true"] {
+      background-color: silver;
+    }
+  }
+
+  /* A single glyph, so equal padding keeps it round rather than stretching it wide.
+     Nested for the same specificity reason as the rule above. */
+  .modalDialogDismiss {
+    padding: 0.5rem;
+  }
+}
+
+.modalDialogHeader {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+
+  h2 {
+    font-size: 1.2rem;
+    margin: 0;
+  }
+}
+
+.dialogFooter {
+  align-items: center;
+  border-top: 2px solid rgb(0 0 0 / 25%);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+}

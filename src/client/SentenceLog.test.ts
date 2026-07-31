@@ -29,6 +29,8 @@ describe("sentenceLog", (): void => {
     window.localStorage.removeItem(SENTENCE_LOG_KEY);
     adaptivePaletteGlobals.config = {
       indicatorLabelLookup: { useModelQueryFallback: false, model: "" },
+      symbolSearch: { show: true },
+      svgBuilderString: { show: false },
       telegraphicTranslation: {
         model: "phony-model:12b",
         numSentences: 3,
@@ -97,7 +99,9 @@ describe("sentenceLog", (): void => {
 
   test("nothing is stored when the feature is unconfigured", (): void => {
     adaptivePaletteGlobals.config = {
-      indicatorLabelLookup: { useModelQueryFallback: false, model: "" }
+      indicatorLabelLookup: { useModelQueryFallback: false, model: "" },
+      symbolSearch: { show: true },
+      svgBuilderString: { show: false }
     };
     saveSentenceRecord(RECORD);
     expect(window.localStorage.getItem(SENTENCE_LOG_KEY)).toBeNull();

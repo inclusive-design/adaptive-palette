@@ -1,0 +1,53 @@
+/*
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
+ *
+ * Licensed under the New BSD license. You may not use this file except in
+ * compliance with this License.
+ *
+ * You may obtain a copy of the License at
+ * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
+ */
+
+.glossSearchResults {
+  display: grid;
+  flex: 1;
+  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0.25rem;
+}
+
+/*
+ * Scoped to its container so it outweighs the dialog's base button rule: a result is a
+ * symbol cell, not one of the dialog's controls, and keeps its own colour and padding.
+ */
+.glossSearchResults .glossSearchResult {
+  background-color: beige;
+  border: 2px solid blue;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  text-align: center;
+
+  &[aria-pressed="true"] {
+    background-color: #ffe14d;
+    border-width: 4px;
+    padding: calc(0.5rem - 2px);
+  }
+
+  /* Restated here because this rule outranks the global indicator. */
+  &:hover, &:focus {
+    border-color: red;
+  }
+
+  .glossSearchResultSelected {
+    display: block;
+    visibility: hidden;
+  }
+
+  &[aria-pressed="true"] .glossSearchResultSelected {
+    visibility: visible;
+  }
+}

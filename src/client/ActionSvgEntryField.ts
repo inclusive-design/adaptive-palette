@@ -12,28 +12,47 @@
 
 import { VNode } from "preact";
 import { html } from "htm/preact";
-import { useState } from "preact/hooks";
+import { useRef, useState } from "preact/hooks";
 
 import { changeEncodingContents } from "./GlobalData";
 import { bstrToComposition } from "./SvgUtils";
 import { speak, insertWordAtCaret } from "./GlobalUtils";
+import { MessagePreview } from "./MessagePreview";
 import "./ActionSvgEntryField.scss";
 
 export const SVG_ENTRY_FIELD_ID    = "svgEntryField";
 export const SYMBOL_LABEL_FIELD_ID = "symbolLabel";
-export const SUBMIT_VALUE          = "Add Symbol";
+export const SUBMIT_VALUE          = "Add to message";
+export const CLOSE_LABEL           = "Close";
 const MALFORMED                    = "Invalid builder string";
 
-export function ActionSvgEntryField(): VNode {
+type ActionSvgEntryFieldProps = {
+  onRequestClose: () => void
+};
+
+/**
+ * The body of the "Add symbol by svg-builder string" dialog. This is a developer tool,
+ * hidden unless `svgBuilderString.show` is set in config.json.
+ *
+ * Like the search dialog, it stays open after an add so several builder strings can be
+ * entered in a row, and it shows the message preview because the real input area is
+ * inert behind the modal.
+ * @param {ActionSvgEntryFieldProps} props - Callback asking the dialog to dismiss.
+ * @returns {VNode}
+ */
+export function ActionSvgEntryField (props: ActionSvgEntryFieldProps): VNode {
+  const { onRequestClose } = props;
   const [malformed, setMalformed] = useState(false);
+  const [status, setStatus] = useState("");
+  const builderInputRef = useRef<HTMLInputElement>(null);
 
   const svgToSymbol = (event: Event) => {
     event.preventDefault();
-    
+
     // Cast target to HTMLFormElement so we can reset it later
-    const form = event.currentTarget as HTMLFormElement; 
+    const form = event.currentTarget as HTMLFormElement;
     const formData = new FormData(form);
-    
+
     // Extract form string values (File entries are excluded)
     const rawSvgInput = formData.get(SVG_ENTRY_FIELD_ID);
     const svgInputString = typeof rawSvgInput === "string" ? rawSvgInput : "";
@@ -44,6 +63,9 @@ export function ActionSvgEntryField(): VNode {
 
     // Check invalid Builder String
     if (!Array.isArray(composition) || composition.length === 0) {
+      // Clear any previous success message, or the error is shown beside a stale
+      // "... added to message" from the last add.
+      setStatus("");
       return setMalformed(true);
     }
 
@@ -55,44 +77,58 @@ export function ActionSvgEntryField(): VNode {
     };
 
     changeEncodingContents.value = insertWordAtCaret(
-      payload, 
-      changeEncodingContents.value.payloads, 
+      payload,
+      changeEncodingContents.value.payloads,
       changeEncodingContents.value.caretPosition
     );
-    
+
     speak(payload.label);
+    // The label is optional, so fall back to a generic noun for the announcement.
+    setStatus(`${labelString.trim() || "Symbol"} added to message`);
     setMalformed(false);
     form.reset(); // Clear the form for the next entry
+    // Several builder strings are typically entered in a row; without this, focus is
+    // left on the Add button and every later entry needs manual navigation back.
+    builderInputRef.current?.focus();
   };
 
   return html`
-    <form onSubmit=${svgToSymbol} class="actionSvgEntryField">
-      <fieldset>
-        <legend>Enter symbol using SVG builder string</legend>
+    <div class="actionSvgEntryField">
+      <form onSubmit=${svgToSymbol}>
         <p>
           <label for=${SVG_ENTRY_FIELD_ID}>Builder string:</label><br />
-          <input 
-            id=${SVG_ENTRY_FIELD_ID} 
-            name=${SVG_ENTRY_FIELD_ID} 
-            type="text" 
-            size="40" 
+          <input
+            ref=${builderInputRef}
+            id=${SVG_ENTRY_FIELD_ID}
+            name=${SVG_ENTRY_FIELD_ID}
+            type="text"
+            size="40"
             required
             aria-invalid=${malformed}
+            autofocus
           /><br />
           <!-- conditional rendering -->
           ${malformed && html`<span role="alert" class="error-text">${MALFORMED}</span>`}
         </p>
         <p>
           <label for=${SYMBOL_LABEL_FIELD_ID}>Label:</label><br />
-          <input 
-            id=${SYMBOL_LABEL_FIELD_ID} 
-            name=${SYMBOL_LABEL_FIELD_ID} 
-            type="text" 
-            size="40" 
+          <input
+            id=${SYMBOL_LABEL_FIELD_ID}
+            name=${SYMBOL_LABEL_FIELD_ID}
+            type="text"
+            size="40"
           />
         </p>
-        <input type="submit" value=${SUBMIT_VALUE} />
-      </fieldset>
-   </form>
+
+        <p role="status" class="svgEntryStatus">${status}</p>
+
+        <${MessagePreview} />
+
+        <div class="dialogFooter">
+          <input type="submit" class="btn-addToMessage" value=${SUBMIT_VALUE} />
+          <button type="button" onClick=${onRequestClose}>${CLOSE_LABEL}</button>
+        </div>
+      </form>
+    </div>
   `;
 }

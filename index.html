@@ -13,22 +13,10 @@
     <div id="aiStatus" role="status"></div>
 
     <!--
-      Entering symbols using SVG builder strings
+      Triggers for adding a symbol to the message, and the dialogs they open.
+      Each trigger is shown only when its section in config.json enables it.
     -->
-    <div>
-      <details id="SvgEntryDialog">
-        <summary>SVG Builder String</summary>
-        <div id="svgBuilderStringEntry"></div>
-      </details>
-    </div>
-
-    <!--
-      Searching the BCI AV for symbols, displaying the search results as a palette
-    -->
-    <div id="SearchGlossDialog">
-      <div id="searchGloss"></div>
-      <div id="searchGlossResults"></div>
-    </div>
+    <div id="symbolEntryToolbar"></div>
 
     <!--
       User's main interaction area with the adaptive palette, including the input palette,

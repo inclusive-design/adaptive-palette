@@ -83,7 +83,6 @@ three categories by prefix.
 | ---- | ------- | ------------------------- |
 | `ActionCodeCell` | Appends a Bliss symbol to the encoding area when clicked | `label`, `composition` |
 | `ActionBranchToPaletteCell` | Navigates to another palette | `label`, `composition`, `branchTo` (palette file name without `.json`), `ariaControls` |
-| `ActionGlossSearchCell` | Searches for a Bliss symbol by gloss; `label` format is `"searchTerm: gloss"` | `label`, `composition`, `id`, `bciAvId` |
 | `ActionIndicatorCell` | Applies a Bliss indicator to the last symbol in the encoding area | `label`, `composition` |
 | `ActionPreModifierCell` | Prepends a modifier to the last symbol | `label`, `composition` |
 | `ActionPostModifierCell` | Appends a modifier to the last symbol | `label`, `composition` |

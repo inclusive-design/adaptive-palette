@@ -49,38 +49,3 @@ export function findSymbolByGloss(label: string): MatchType[] {
   }
   return matches;
 }
-
-/**
- * Find symbols where the given single BCI AV ID is part of the composition
- * of other symbols.
- * @param {number} bciAvId - The BCI AV ID to search symbols' compositions for matches.
- * @returns {Array} An array of objects whose `composition` contains the given
- *                  `bciAvId`: { id, label, composition }, or an empty
- *                  array if no matches are found.
- */
-export function findSymbolsContainingBciAvId (bciAvId: number): MatchType[] {
-  const matches: MatchType[] = [];
-  // Convert bciAvId to ID for searching composition arrays
-  const targetId = adaptivePaletteGlobals.symbols.find(s => s.bciAvId === bciAvId)?.id;
-  for (const symbol of adaptivePaletteGlobals.symbols) {
-    // Add the symbol itself as the first element
-    if (symbol.bciAvId === bciAvId) {
-      matches.unshift({
-        id: symbol.id,
-        bciAvId: symbol.bciAvId,
-        label: symbol.gloss,
-        composition: symbol.composition
-      });
-    }
-    else if (targetId !== undefined && Array.isArray(symbol.composition)
-             && symbol.composition.includes(targetId)) {
-      matches.push({
-        id: symbol.id,
-        bciAvId: symbol.bciAvId,
-        label: symbol.gloss,
-        composition: symbol.composition
-      });
-    }
-  }
-  return matches;
-}

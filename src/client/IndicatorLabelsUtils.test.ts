@@ -44,7 +44,11 @@ describe("IndicatorLabels", (): void => {
     }));
     await initIndicatorLabels();
     resetOllamaCacheForTests();
-    adaptivePaletteGlobals.config = { indicatorLabelLookup: { useModelQueryFallback: false, model: "" } };
+    adaptivePaletteGlobals.config = {
+      indicatorLabelLookup: { useModelQueryFallback: false, model: "" },
+      symbolSearch: { show: true },
+      svgBuilderString: { show: false }
+    };
   });
 
   afterEach((): void => {
@@ -76,21 +80,33 @@ describe("IndicatorLabels", (): void => {
     });
 
     test("not-viable when indicatorId is not in the loaded table", (): void => {
-      adaptivePaletteGlobals.config = { indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" } };
+      adaptivePaletteGlobals.config = {
+        indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" },
+        symbolSearch: { show: true },
+        svgBuilderString: { show: false }
+      };
       const result = getNewLabelViaModelQuery(undefined, "unknownIndicator", "unknownIndicator", 99999);
       expect(result).toStrictEqual({ status: "not-viable" });
       expect(mockedQueryChat).not.toHaveBeenCalled();
     });
 
     test("not-viable when userSelectedSymbolId is set but not found in symbols", (): void => {
-      adaptivePaletteGlobals.config = { indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" } };
+      adaptivePaletteGlobals.config = {
+        indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" },
+        symbolSearch: { show: true },
+        svgBuilderString: { show: false }
+      };
       const result = getNewLabelViaModelQuery(999999999, "ghost", undefined, 97);
       expect(result).toStrictEqual({ status: "not-viable" });
       expect(mockedQueryChat).not.toHaveBeenCalled();
     });
 
     test("pending: starts a query and resolves it to the parsed label", async (): Promise<void> => {
-      adaptivePaletteGlobals.config = { indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" } };
+      adaptivePaletteGlobals.config = {
+        indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" },
+        symbolSearch: { show: true },
+        svgBuilderString: { show: false }
+      };
       mockedQueryChat.mockResolvedValue(
         { message: { role: "assistant", content: " helper " } } as Awaited<ReturnType<typeof queryChat>>
       );
@@ -111,7 +127,11 @@ describe("IndicatorLabels", (): void => {
     });
 
     test("second call after the first settles is served from cache synchronously, no re-query", async (): Promise<void> => {
-      adaptivePaletteGlobals.config = { indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" } };
+      adaptivePaletteGlobals.config = {
+        indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" },
+        symbolSearch: { show: true },
+        svgBuilderString: { show: false }
+      };
       mockedQueryChat.mockResolvedValue(
         { message: { role: "assistant", content: "walked" } } as Awaited<ReturnType<typeof queryChat>>
       );
@@ -127,7 +147,11 @@ describe("IndicatorLabels", (): void => {
     });
 
     test("concurrent calls for the same key before settling share one in-flight query", async (): Promise<void> => {
-      adaptivePaletteGlobals.config = { indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" } };
+      adaptivePaletteGlobals.config = {
+        indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" },
+        symbolSearch: { show: true },
+        svgBuilderString: { show: false }
+      };
       let resolveQuery: (value: Awaited<ReturnType<typeof queryChat>>) => void;
       mockedQueryChat.mockImplementation(() => new Promise((resolve) => {
         resolveQuery = resolve;
@@ -149,7 +173,11 @@ describe("IndicatorLabels", (): void => {
     });
 
     test("thrown error resolves to undefined and is cached as a settled miss", async (): Promise<void> => {
-      adaptivePaletteGlobals.config = { indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" } };
+      adaptivePaletteGlobals.config = {
+        indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" },
+        symbolSearch: { show: true },
+        svgBuilderString: { show: false }
+      };
       mockedQueryChat.mockRejectedValue(new Error("connection refused"));
 
       const first = getNewLabelViaModelQuery(undefined, "jump", "jump", 97);

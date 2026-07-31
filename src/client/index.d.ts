@@ -105,9 +105,18 @@ export type TelegraphicTranslationConfigType = {
   userPrompt: string
 };
 
+/*
+ * Whether an optional symbol-entry feature is offered on the palette page.
+ */
+export type FeatureVisibilityConfigType = {
+  show: boolean
+};
+
 export type AdaptivePaletteConfigType = {
   indicatorLabelLookup: IndicatorLabelLookupConfigType,
-  telegraphicTranslation?: TelegraphicTranslationConfigType
+  telegraphicTranslation?: TelegraphicTranslationConfigType,
+  symbolSearch: FeatureVisibilityConfigType,
+  svgBuilderString: FeatureVisibilityConfigType
 };
 
 export type ContentSignalDataType = {

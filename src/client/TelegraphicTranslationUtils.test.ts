@@ -40,6 +40,8 @@ describe("telegraphicTranslation", (): void => {
     adaptivePaletteGlobals.LLMs = ["phony-model:12b", "other-model:7b"];
     adaptivePaletteGlobals.config = {
       indicatorLabelLookup: { useModelQueryFallback: false, model: "" },
+      symbolSearch: { show: true },
+      svgBuilderString: { show: false },
       telegraphicTranslation: { ...CONFIG }
     };
   });

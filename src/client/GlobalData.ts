@@ -19,7 +19,7 @@ import { initIndicatorLabels } from "./IndicatorLabelsUtils";
 import { initSvgCompositeDefinitions } from "./SvgUtils";
 import type {
   ContentSignalDataType, BlissSymbolEntry, AdaptivePaletteConfigType,
-  IndicatorLabelLookupConfigType, TelegraphicTranslationConfigType
+  IndicatorLabelLookupConfigType, TelegraphicTranslationConfigType, FeatureVisibilityConfigType
 } from "./index.d";
 
 // NOTE: this import causes a warning serving the application using the `vite`
@@ -50,7 +50,11 @@ export const adaptivePaletteGlobals = {
   paletteStore: new PaletteStore(),
   navigationStack: new NavigationStack(),
   LLMs: [] as string[],
-  config: { indicatorLabelLookup: { useModelQueryFallback: false, model: "" } } as AdaptivePaletteConfigType,
+  config: {
+    indicatorLabelLookup: { useModelQueryFallback: false, model: "" },
+    symbolSearch: { show: true },
+    svgBuilderString: { show: false }
+  } as AdaptivePaletteConfigType,
   indicatorLabels: {} as Record<string, string>,
   // `id` attribute of the HTML element area where the main palette is
   // displayed, set by initAdaptivePaletteGlobals().  It defaults to the empty
@@ -115,24 +119,47 @@ function parseTelegraphicTranslation (section: unknown): TelegraphicTranslationC
 }
 
 /**
- * Fetch and validate `public/config.json`, its `indicatorLabelLookup` and
- * `telegraphicTranslation` sections.
+ * Validate a feature-visibility section, one that carries only a `show` boolean.
+ * A missing or malformed section falls back to `fallback` so that a hand-edited
+ * config.json cannot leave a feature in an undefined state.
+ * @param {unknown} section - The raw parsed section.
+ * @param {boolean} fallback - The value to use when the section is unusable.
+ * @returns {FeatureVisibilityConfigType}
+ */
+function parseShowFlag (section: unknown, fallback: boolean): FeatureVisibilityConfigType {
+  const candidate = section as { show?: unknown } | undefined;
+  if (!candidate || typeof candidate.show !== "boolean") {
+    return { show: fallback };
+  }
+  return { show: candidate.show };
+}
+
+/**
+ * Fetch and validate `public/config.json`, its `indicatorLabelLookup`,
+ * `telegraphicTranslation`, `symbolSearch`, and `svgBuilderString` sections.
  * @returns {Promise<AdaptivePaletteConfigType>}
  */
 async function loadConfig (): Promise<AdaptivePaletteConfigType> {
   const disabledIndicatorLookup = { useModelQueryFallback: false, model: "" };
+  const fallbackConfig: AdaptivePaletteConfigType = {
+    indicatorLabelLookup: disabledIndicatorLookup,
+    symbolSearch: { show: true },
+    svgBuilderString: { show: false }
+  };
   try {
     const response = await fetch("/config.json");
     if (!response.ok) {
-      return { indicatorLabelLookup: disabledIndicatorLookup };
+      return fallbackConfig;
     }
     const parsed = await response.json() as Record<string, unknown>;
     return {
       indicatorLabelLookup: parseIndicatorLabelLookup(parsed?.indicatorLabelLookup) ?? disabledIndicatorLookup,
-      telegraphicTranslation: parseTelegraphicTranslation(parsed?.telegraphicTranslation)
+      telegraphicTranslation: parseTelegraphicTranslation(parsed?.telegraphicTranslation),
+      symbolSearch: parseShowFlag(parsed?.symbolSearch, true),
+      svgBuilderString: parseShowFlag(parsed?.svgBuilderString, false)
     };
   } catch {
-    return { indicatorLabelLookup: disabledIndicatorLookup };
+    return fallbackConfig;
   }
 }
 

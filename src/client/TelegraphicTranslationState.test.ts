@@ -53,6 +53,8 @@ describe("telegraphicTranslationState", (): void => {
   const setConfig = (numSentences: number): void => {
     adaptivePaletteGlobals.config = {
       indicatorLabelLookup: { useModelQueryFallback: false, model: "" },
+      symbolSearch: { show: true },
+      svgBuilderString: { show: false },
       telegraphicTranslation: {
         model: "phony-model:12b",
         numSentences,

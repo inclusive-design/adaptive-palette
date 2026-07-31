@@ -17,7 +17,6 @@
 
 import { ActionCodeCell } from "./ActionCodeCell";
 import { ActionBranchToPaletteCell } from "./ActionBranchToPaletteCell";
-import { ActionGlossSearchCell } from "./ActionGlossSearchCell";
 import { ActionIndicatorCell } from "./ActionIndicatorCell";
 import { ActionPreModifierCell } from "./ActionPreModifierCell";
 import { ActionPostModifierCell } from "./ActionPostModifierCell";
@@ -34,7 +33,6 @@ import { ContentEncoding } from "./ContentEncoding";
 export const cellTypeRegistry = {
   "ActionCodeCell": ActionCodeCell,
   "ActionBranchToPaletteCell": ActionBranchToPaletteCell,
-  "ActionGlossSearchCell": ActionGlossSearchCell,
   "ActionIndicatorCell": ActionIndicatorCell,
   "ActionPreModifierCell": ActionPreModifierCell,
   "ActionPostModifierCell": ActionPostModifierCell,

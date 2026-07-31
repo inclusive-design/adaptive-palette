@@ -11,7 +11,7 @@
  */
 
 import { initAdaptivePaletteGlobals } from "./GlobalData";
-import { findSymbolByGloss, findSymbolsContainingBciAvId } from "./BciAvUtils";
+import { findSymbolByGloss } from "./BciAvUtils";
 
 describe("BciUtils module", (): void => {
 
@@ -30,20 +30,6 @@ describe("BciUtils module", (): void => {
       composition: [457, ";", 81, "/", 124 ],
     }
   ];
-  const SPACE_ID = 17221;
-  const expectedSpaceIdResults = [
-    {
-      id: 611,
-      bciAvId: 17221,
-      label: "space, dimension",
-      composition: undefined,
-    }, {
-      id: 5402,
-      bciAvId: 25790,
-      label: "sculpture",
-      composition: [ 840, ";", 97, "/", "RK:-2", "/", 313, "/", 12, "/", 611 ],
-    }
-  ];
   // Search for the single symbol for male cousin.
   const MALE_COUSIN = "cousin (male)";
   const expectedCousionResults = [
@@ -55,7 +41,6 @@ describe("BciUtils module", (): void => {
     }
   ];
   const NO_SUCH_GLOSS = "noSuchGloss";
-  const NO_SUCH_ID = -1;
 
   // Github test runs suggested that more that 5000 msec was needed for these
   // tests, so increased timeout to 7000.
@@ -73,14 +58,6 @@ describe("BciUtils module", (): void => {
 
   test("Search when no matching gloss", (): void => {
     expect(findSymbolByGloss(NO_SUCH_GLOSS)).toStrictEqual([]);
-  });
-
-  test("Search based on a BCI AV ID", (): void => {
-    expect(findSymbolsContainingBciAvId(SPACE_ID)).toStrictEqual(expectedSpaceIdResults);
-  });
-
-  test("Search with invalid BCI AV ID", (): void => {
-    expect(findSymbolsContainingBciAvId(NO_SUCH_ID)).toStrictEqual([]);
   });
 
 });
