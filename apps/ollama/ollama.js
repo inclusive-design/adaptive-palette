@@ -18,7 +18,7 @@ const USE_ALL_MODELS = "useAllModels";
 const NO_AVAILABLE_MODELS = "No Available Models";
 
 /**
- * Retrieve a list of LLMs available from the service
+ * Retrieve a list of models available from the service
  * @return {Promise<string[]>} - Array of the names of the available models.
  */
 async function getModelNames() {
@@ -96,7 +96,7 @@ function setSelectedModel () {
 
 /**
  * Handle click on the "use all models" checkbox.  This will eneable or disbale
- * the models <select> element and reset `nameOfModelToUse` as appropriate.
+ * the model <select> element and reset `nameOfModelToUse` as appropriate.
  */
 function useAllModelsClicked () {
   const allModelsChecked = enableDisableModelSelect();
@@ -130,7 +130,7 @@ function askClicked(event) {
 /**
  * Function for passing the chat prompt to the ollama service.
  * @param {String} query      - The prompt string to query the service with.
- * @param {String} modelName  - The name of the LLM to query.
+ * @param {String} modelName  - The name of the model to query.
  * @return {Promise<Object>}  - The response from the service.
  */
 async function queryChat (query, modelName) {
@@ -204,7 +204,7 @@ async function outputResult(response, outputEl, defaultMsg) {
     document.body.scrollIntoView({behavior: "smooth", block: "end"});
   }
   if (outputEl.innerText === "") {
-    outputEl.innerText = ( defaultMsg === undefined ? "LLM gave no results" : defaultMsg);
+    outputEl.innerText = ( defaultMsg === undefined ? "Model gave no results" : defaultMsg);
     document.body.scrollIntoView({behavior: "smooth", block: "end"});
   }
 }
@@ -219,7 +219,7 @@ function isTextInputEmpty() {
 
 /**
  * Enable/diable "Ask" buttons depending on whether (1) the prompt input has any
- * text in it or (2) if there is an LLM to query.
+ * text in it or (2) if there is a model to query.
  */
 function setAskButtonsEnabledState() {
   if (isTextInputEmpty() || nameOfModelToUse === "No Available Models") {
@@ -236,7 +236,7 @@ function setAskButtonsEnabledState() {
  * Loop through the available models, passing the same prompt to each, and
  * add the response to the document.
  * @param {String} promptText - The prompt to query each model with.
- * @return {Number}           - The number of LLMs queried.
+ * @return {Number}           - The number of models queried.
  */
 async function queryEachModel (promptText) {
   const names = await getModelNames();
@@ -257,7 +257,7 @@ async function queryEachModel (promptText) {
 }
 
 /**
- * Create a section for outputting the results of querying one LLM.
+ * Create a section for outputting the results of querying one model.
  * @param {String} modelName  - The name of the model, used for a heading
  * @return {Element}          - The DOM element where the response for the
  *                              model will be output to.

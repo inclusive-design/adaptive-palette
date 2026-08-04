@@ -77,7 +77,7 @@ describe("telegraphicTranslationState", (): void => {
     mockedQueryChat.mockReset();
     mockedSpeak.mockReset();
     window.localStorage.removeItem(SENTENCE_LOG_KEY);
-    adaptivePaletteGlobals.LLMs = ["phony-model:12b"];
+    adaptivePaletteGlobals.models = ["phony-model:12b"];
     setConfig(3);
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
     sentenceCompletionsSignal.value = { status: "idle" };

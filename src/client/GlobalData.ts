@@ -49,7 +49,7 @@ export const adaptivePaletteGlobals = {
   symbols: bliss_symbols.data as BlissSymbolEntry[],
   paletteStore: new PaletteStore(),
   navigationStack: new NavigationStack(),
-  LLMs: [] as string[],
+  models: [] as string[],
   config: {
     indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
     symbolSearch: { show: true },
@@ -187,12 +187,12 @@ async function loadConfig (): Promise<AdaptivePaletteConfigType> {
 export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string): Promise<void> {
   initSvgCompositeDefinitions();
   adaptivePaletteGlobals.mainPaletteContainerId = mainPaletteContainerId || "";
-  const [ llms, config ] = await Promise.all([
+  const [ models, config ] = await Promise.all([
     getModelNames(),
     loadConfig(),
     initIndicatorLabels()
   ]);
-  adaptivePaletteGlobals.LLMs = llms;
+  adaptivePaletteGlobals.models = models;
   adaptivePaletteGlobals.config = config;
 
   // Clean up the system prompts left in local storage by earlier builds.

@@ -37,7 +37,7 @@ describe("telegraphicTranslation", (): void => {
 
   beforeEach((): void => {
     mockedQueryChat.mockReset();
-    adaptivePaletteGlobals.LLMs = ["phony-model:12b", "other-model:7b"];
+    adaptivePaletteGlobals.models = ["phony-model:12b", "other-model:7b"];
     adaptivePaletteGlobals.config = {
       indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
       symbolSearch: { show: true },
@@ -61,7 +61,7 @@ describe("telegraphicTranslation", (): void => {
     });
 
     test("throws when no model is available", (): void => {
-      adaptivePaletteGlobals.LLMs = [];
+      adaptivePaletteGlobals.models = [];
       expect((): string => pickModel("phony-model:12b")).toThrow(NO_MODELS_MESSAGE);
     });
   });
@@ -143,7 +143,7 @@ describe("telegraphicTranslation", (): void => {
     });
 
     test("rejects when the feature is unavailable", async (): Promise<void> => {
-      adaptivePaletteGlobals.LLMs = [];
+      adaptivePaletteGlobals.models = [];
       await expect(requestSentences("me hungry")).rejects.toThrow(NO_MODELS_MESSAGE);
     });
   });

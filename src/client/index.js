@@ -59,7 +59,7 @@ render(html`<${Palette} json=${modifiersPalette} />`, getRequiredElement("modifi
 render(html`<${SentenceChoices} />`, getRequiredElement("sentenceChoices"));
 
 const aiStatus = getRequiredElement("aiStatus");
-if (adaptivePaletteGlobals.LLMs.length === 0) {
+if (adaptivePaletteGlobals.models.length === 0) {
   aiStatus.textContent = NO_MODELS_MESSAGE;
 } else if (!adaptivePaletteGlobals.config.telegraphicTranslation) {
   aiStatus.textContent = NOT_CONFIGURED_MESSAGE;

@@ -42,7 +42,7 @@ export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode | n
   const isFetching = sentenceCompletionsSignal.value.status === "working";
   const telegraphicMessage = currentTelegraphicMessage();
 
-  if (adaptivePaletteGlobals.LLMs.length === 0 ||
+  if (adaptivePaletteGlobals.models.length === 0 ||
       !adaptivePaletteGlobals.config.telegraphicTranslation) {
     return null;
   }

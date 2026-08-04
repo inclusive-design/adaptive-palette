@@ -126,7 +126,7 @@ export function getStaticNewLabel (userSelectedSymbolId: number | undefined, ind
 
 /**
  * Resolve the new label for a symbol + indicator pair through tier 2 of the resolution
- * order described in docs/IndicatorLabelLookup.md: an model query, only when
+ * order described in docs/IndicatorLabelLookup.md: a model query, only when
  * `adaptivePaletteGlobals.config.indicatorLabelLookup.useModelQueryFallback` is true and
  * a prompt can be built. Results are cached in-memory for the session, keyed by
  * `"{userSelectedSymbolId}_{indicatorId}"` when the symbol id is known, otherwise by
@@ -149,7 +149,7 @@ export function getNewLabelViaModelQuery (userSelectedSymbolId: number | undefin
     return { status: "not-viable" };
   }
 
-  const modelName = adaptivePaletteGlobals.config.indicatorLabelLookup.model || adaptivePaletteGlobals.LLMs[0];
+  const modelName = adaptivePaletteGlobals.config.indicatorLabelLookup.model || adaptivePaletteGlobals.models[0];
   if (!modelName) {
     return { status: "not-viable" };
   }

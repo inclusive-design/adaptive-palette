@@ -7,7 +7,7 @@
  *   ./data/new_labels_with_indicator.jsonl \
  *   ../../public/data/new_labels_with_indicator.json
  *
- * Post-processes LLM-generated indicator labels into a flat, id-keyed lookup:
+ * Post-processes model-generated indicator labels into a flat, id-keyed lookup:
  * "{wordId}_{indicatorId}" -> newLabel. The key is the row's `targetId`, which is
  * already unique by construction (one row per word+indicator pair) -- a duplicate
  * targetId indicates corrupt input and is a hard error.

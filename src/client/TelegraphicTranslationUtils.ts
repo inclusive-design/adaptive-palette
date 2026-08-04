@@ -30,15 +30,15 @@ export type TranslationResultType = {
  * @throws {Error} When no models are available.
  */
 export function pickModel (configuredModel: string): string {
-  const { LLMs } = adaptivePaletteGlobals;
-  if (LLMs.length === 0) {
+  const { models } = adaptivePaletteGlobals;
+  if (models.length === 0) {
     throw new Error(NO_MODELS_MESSAGE);
   }
-  if (LLMs.includes(configuredModel)) {
+  if (models.includes(configuredModel)) {
     return configuredModel;
   }
-  console.warn(`Model "${configuredModel}" is not available; using "${LLMs[0]}" instead.`);
-  return LLMs[0];
+  console.warn(`Model "${configuredModel}" is not available; using "${models[0]}" instead.`);
+  return models[0];
 }
 
 /**

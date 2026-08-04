@@ -13,7 +13,7 @@
 import ollama, { ChatResponse, Ollama } from "ollama/browser";
 
 /**
- * Retrieve a list of LLMs available from the service
+ * Retrieve a list of models available from the service
  * @return {Promise<string[]>} - Array of the names of the available models.
  */
 export async function getModelNames(): Promise<string[]> {
@@ -31,7 +31,7 @@ export async function getModelNames(): Promise<string[]> {
  * ollama `chat()` service. The request can optionally ask that the response
  * be streamed or returned all at once.
  * @param {String} query        - The prompt string to query the service.
- * @param {String} modelName    - The name of the LLM to query.
+ * @param {String} modelName    - The name of the model to query.
  * @param {Boolean} streamResp  - Whether to stream the response or return it
  *                                all at once.
  * @param {String} systemPrompt - Optional system prompt, defaults to the

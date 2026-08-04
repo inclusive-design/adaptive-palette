@@ -22,7 +22,7 @@ every section falls back.
 
 | Field | Type | Description |
 | ----- | ---- | ----------- |
-| `useModelQueryFallback` | boolean | Required. Whether to ask an LLM when the local label lookup finds nothing. |
+| `useModelQueryFallback` | boolean | Required. Whether to ask a model when the local label lookup finds nothing. |
 | `model` | string | Ollama model name. Defaults to the empty string, which means Ollama's first available model. |
 | `systemPrompt` | string | Required, non-empty. Tells the model to answer with the resulting label alone. |
 | `userPrompt` | string | Required, non-empty. One field per line, using the placeholders below. |

@@ -101,7 +101,7 @@ built-out application examples.  See the respective READMEs and documentation
 for instructions on how to run the software.
 
 - [Ollama Chat Web-App](./apps/ollama/README.md): a chat application running on
-  `localhost` that provides access to multiple LLMs using the Ollama localhost
+  `localhost` that provides access to multiple models using the Ollama localhost
   web service.
 - [Palette Generator Web-App](./docs/PaletteJsonGenerator.md): an
   application for generating and saving a palette using the Bliss gloss.  By

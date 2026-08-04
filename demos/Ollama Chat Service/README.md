@@ -1,7 +1,7 @@
 # Ollama Chat Service Demo
 
 This folder contains a demonstration of a chat web-app that uses Ollama as an
-LLM chat service.  The following instructions describe how to set up a local
+model chat service.  The following instructions describe how to set up a local
 Ollama service with which the web-app demo can interact, send queries, and show
 the chat service's responses.
 
@@ -59,15 +59,15 @@ approach is that sending a query, or different types of queries, is more
 straightforward that involves passing an object that is essentially the body
 of the request.  The response from `chat()` in this case is an array of strings
 that can be concatenated to show the AI's text on the web page.  Alternatively,
-the library provides a streaming response such that as the LLM provides further
+the library provides a streaming response such that as the model provides further
 output, it can be taken and added incrementally to the display instead of
-waiting for the LLM to finish and displaying the response all at once.
+waiting for the model to finish and displaying the response all at once.
 
 The disadvantages are that Ollama's browser library must be
 installed, and the necessary objects and functions must be included using
 `import` statements in the app's JavaScript code.
 
-Using the library is exemplified by the "Using Ollama with LLMs Running Locally"
+Using the library is exemplified by the "Using Ollama with models Running Locally"
 web app in the [`apps/ollama`](../../apps/ollama) folder.  See its
 [README](../../apps/ollama/README.md) for further instructions.
 
@@ -88,7 +88,7 @@ That is, if the text box contains:
 Horse brown eat quickly oats dried
 ```
 
-then the full prompt sent to the LLM is:
+then the full prompt sent to the model is:
 
 ```text
 What does this express: "Horse brown eat quickly oats dried"?
@@ -99,7 +99,7 @@ will likely be somewhat wordy.  Ollama will offer an analysis of the chat query,
 how the query might be improved, and it will end with a response.
 
 If the "Answer with a single grammatically correct sentence" button is pressed,
-then the query sent to the LLM service is modified in an attempt to have the LLM
+then the query sent to the model service is modified in an attempt to have the model
 return a single sentence, like so:
 
 ```text

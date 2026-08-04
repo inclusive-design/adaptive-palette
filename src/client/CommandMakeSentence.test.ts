@@ -85,7 +85,7 @@ describe("CommandMakeSentence component", (): void => {
     mockedConfirm = vi.spyOn(window, "confirm").mockReturnValue(true);
     mockedQueryChat.mockReset();
     window.localStorage.removeItem(SENTENCE_LOG_KEY);
-    adaptivePaletteGlobals.LLMs = ["phony-model:12b"];
+    adaptivePaletteGlobals.models = ["phony-model:12b"];
     setConfig(3);
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
     sentenceCompletionsSignal.value = { status: "idle" };
@@ -99,7 +99,7 @@ describe("CommandMakeSentence component", (): void => {
   });
 
   test("renders nothing when no models are available", (): void => {
-    adaptivePaletteGlobals.LLMs = [];
+    adaptivePaletteGlobals.models = [];
     const { container } = renderCell();
     expect(container.textContent).toBe("");
   });
