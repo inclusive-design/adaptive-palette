@@ -110,8 +110,9 @@ export function ActionSearchGloss (props: ActionSearchGlossProps): VNode {
       return;
     }
 
+    const label = labelDraft.trim();
     const payload: SymbolEncodingType = {
-      label: labelDraft,
+      label: label,
       composition: selected.composition ?? selected.id,
       userSelectedSymbolId: selected.id,
       modifierInfo: []
@@ -124,7 +125,8 @@ export function ActionSearchGloss (props: ActionSearchGlossProps): VNode {
 
     // The status region is the only confirmation channel here. Calling `speak()` as the
     // palette cells do would put device speech and the screen reader over each other.
-    setStatus(`${labelDraft} added to message`);
+    // An emptied label falls back to a generic noun.
+    setStatus(`${label || "Symbol"} added to message`);
     // `selected` and `labelDraft` are a pair: every reset path clears both, or the label
     // field is left editable with no selection behind it.
     setSelected(null);

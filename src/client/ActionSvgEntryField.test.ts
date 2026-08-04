@@ -95,6 +95,18 @@ describe("ActionSvgEntryField component", () => {
     expect(changeEncodingContents.value.payloads).toHaveLength(2);
   });
 
+  // Surrounding spaces would flow straight into the telegraphic message sent to the model.
+  test("a label is trimmed before it is inserted", async () => {
+    const user = userEvent.setup();
+    render(html`<${ActionSvgEntryField} onRequestClose=${() => {}} />`);
+
+    await user.type(screen.getByLabelText(/Builder string:/i), VALID_BUILDER_STRING);
+    await user.type(screen.getByLabelText(/^Label:/i), "  dog  ");
+    await user.click(screen.getByRole("button", { name: SUBMIT_VALUE }));
+
+    expect(changeEncodingContents.value.payloads[0].label).toEqual("dog");
+  });
+
   // The label is optional, so the announcement falls back to a generic noun.
   test("announces generically when no label was given", async () => {
     const user = userEvent.setup();

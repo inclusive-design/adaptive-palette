@@ -94,6 +94,19 @@ describe("telegraphicTranslationState", (): void => {
     expect(currentTelegraphicMessage()).toBe("me hungry");
   });
 
+  test("currentTelegraphicMessage skips symbols with a blank label", (): void => {
+    changeEncodingContents.value = {
+      payloads: [
+        { label: "me", composition: [124], modifierInfo: [] },
+        { label: "", composition: [125], modifierInfo: [] },
+        { label: "  ", composition: [126], modifierInfo: [] },
+        { label: "hungry", composition: [127], modifierInfo: [] }
+      ],
+      caretPosition: 4
+    };
+    expect(currentTelegraphicMessage()).toBe("me hungry");
+  });
+
   test("clearMessageAndChoices empties the input area and the sentences", (): void => {
     changeEncodingContents.value = INPUT_CONTENTS;
     sentenceCompletionsSignal.value = {

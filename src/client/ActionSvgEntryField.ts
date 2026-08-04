@@ -57,7 +57,7 @@ export function ActionSvgEntryField (props: ActionSvgEntryFieldProps): VNode {
     const rawSvgInput = formData.get(SVG_ENTRY_FIELD_ID);
     const svgInputString = typeof rawSvgInput === "string" ? rawSvgInput : "";
     const rawLabelInput = formData.get(SYMBOL_LABEL_FIELD_ID);
-    const labelString = typeof rawLabelInput === "string" ? rawLabelInput : "";
+    const labelString = typeof rawLabelInput === "string" ? rawLabelInput.trim() : "";
 
     const composition = bstrToComposition(svgInputString.trim());
 
@@ -84,7 +84,7 @@ export function ActionSvgEntryField (props: ActionSvgEntryFieldProps): VNode {
     // The status region is the only confirmation channel here, for the same reason as in
     // the search dialog: device speech and the screen reader would talk over each other.
     // The label is optional, so fall back to a generic noun for the announcement.
-    setStatus(`${labelString.trim() || "Symbol"} added to message`);
+    setStatus(`${labelString || "Symbol"} added to message`);
     setMalformed(false);
     form.reset(); // Clear the form for the next entry
     // Several builder strings are typically entered in a row; without this, focus is

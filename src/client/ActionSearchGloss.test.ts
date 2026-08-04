@@ -177,6 +177,38 @@ describe("ActionSearchGloss component", () => {
     expect(changeEncodingContents.value.payloads[0].label).toEqual("my fish");
   }, 20000);
 
+  // Surrounding spaces would flow straight into the telegraphic message sent to the model.
+  test("a label is trimmed before it is inserted", async () => {
+    const user = userEvent.setup();
+    render(html`<${ActionSearchGloss} onRequestClose=${() => {}} />`);
+
+    await searchFor(user, "fish");
+    await user.click(screen.getAllByRole("button", { pressed: false })[0]);
+
+    const labelField = screen.getByRole("textbox", { name: LABEL_FIELD_LABEL });
+    await user.clear(labelField);
+    await user.type(labelField, "  my fish  ");
+    await user.click(screen.getByRole("button", { name: ADD_LABEL }));
+
+    expect(changeEncodingContents.value.payloads[0].label).toEqual("my fish");
+  }, 20000);
+
+  // The label field can be emptied on purpose, and "... added to message" with no subject
+  // reads to a screen reader as a sentence missing its noun.
+  test("announces the generic message when the label was cleared", async () => {
+    const user = userEvent.setup();
+    render(html`<${ActionSearchGloss} onRequestClose=${() => {}} />`);
+
+    await searchFor(user, "fish");
+    await user.click(screen.getAllByRole("button", { pressed: false })[0]);
+
+    await user.clear(screen.getByRole("textbox", { name: LABEL_FIELD_LABEL }));
+    await user.click(screen.getByRole("button", { name: ADD_LABEL }));
+
+    expect(changeEncodingContents.value.payloads[0].label).toEqual("");
+    expect(await screen.findByRole("status")).toHaveTextContent(/^Symbol added to message$/);
+  }, 20000);
+
   // The dialog deliberately survives an add so several symbols can be added in one visit.
   test("after an add the dialog stays usable and the selection resets", async () => {
     const user = userEvent.setup();

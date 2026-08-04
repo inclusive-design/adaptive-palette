@@ -61,10 +61,14 @@ export function clearMessageAndChoices (): void {
 
 /**
  * The message currently in the input area: the labels of its symbols, space separated.
+ * A symbol may carry no label. Trim the label before joining it into the message.
  * @returns {string}
  */
 export function currentTelegraphicMessage (): string {
-  return changeEncodingContents.value.payloads.map((payload) => payload.label).join(" ");
+  return changeEncodingContents.value.payloads
+    .map((payload) => payload.label.trim())
+    .filter((label) => label.length > 0)
+    .join(" ");
 }
 
 /**

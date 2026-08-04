@@ -15,6 +15,8 @@ import { userEvent } from "vitest/browser";
 import { html } from "htm/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
+import { DISMISS_LABEL } from "./ModalDialog";
+import { SEARCH_FIELD_LABEL } from "./ActionSearchGloss";
 import {
   SymbolEntryToolbar, SEARCH_TRIGGER_LABEL, SVG_TRIGGER_LABEL
 } from "./SymbolEntryToolbar";
@@ -104,6 +106,18 @@ describe("SymbolEntryToolbar component", () => {
     await waitFor(() => {
       expect(screen.getByRole("dialog", { name: SVG_TRIGGER_LABEL })).toBeVisible();
     });
+  });
+
+  test("opening the search dialog puts focus in the search field", async () => {
+    withVisibility(true, true);
+    render(html`<${SymbolEntryToolbar} />`);
+
+    await userEvent.click(screen.getByRole("button", { name: SEARCH_TRIGGER_LABEL }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("textbox", { name: SEARCH_FIELD_LABEL })).toHaveFocus();
+    });
+    expect(screen.getByRole("button", { name: DISMISS_LABEL })).not.toHaveFocus();
   });
 
   // Native `<dialog>` restores focus to the opener; this guards that the wiring keeps it.
