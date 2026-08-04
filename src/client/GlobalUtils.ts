@@ -172,10 +172,11 @@ export function renderTemplate (template: string, values: Record<string, string>
 }
 
 /**
- * Render a line-per-field prompt template, dropping every line that holds a placeholder
- * whose value is empty. This lets one template cover prompts where some fields are
- * unknown, instead of one template per combination. A placeholder with no matching value
- * at all is left in place, as in `renderTemplate()`, and its line is kept.
+ * Render a line-per-field prompt template, dropping every line whose placeholders are all
+ * empty. This lets one template cover prompts where some fields are unknown, instead of one
+ * template per combination. A line holding a mix of empty and non-empty placeholders is
+ * kept, so an empty field cannot take a filled one down with it. A placeholder with no
+ * matching value at all is left in place, as in `renderTemplate()`, and its line is kept.
  * @param {string} template - The template text, one field per line.
  * @param {Record<string, string>} values - Placeholder values by name.
  * @returns {string}
@@ -183,9 +184,12 @@ export function renderTemplate (template: string, values: Record<string, string>
 export function renderPromptLines (template: string, values: Record<string, string>): string {
   return template
     .split("\n")
-    .filter((line) => ![...line.matchAll(/\{\{(\w+)\}\}/g)].some(
-      ([, name]) => name in values && values[name].trim().length === 0
-    ))
+    .filter((line) => {
+      const placeholders = [...line.matchAll(/\{\{(\w+)\}\}/g)];
+      return placeholders.length === 0 || !placeholders.every(
+        ([, name]) => name in values && values[name].trim().length === 0
+      );
+    })
     .map((line) => renderTemplate(line, values))
     .join("\n");
 }

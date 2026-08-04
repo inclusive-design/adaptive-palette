@@ -140,8 +140,12 @@ describe("Test renderPromptLines()", (): void => {
       .toBe("Word: hammer\nUnknown: {{zzz}}");
   });
 
-  test("Drops a line holding one empty value among filled ones", (): void => {
-    expect(renderPromptLines("{{a}} and {{b}}\nEnd", { a: "one", b: "" })).toBe("End");
+  test("Keeps a line holding one empty value among filled ones", (): void => {
+    expect(renderPromptLines("{{a}} and {{b}}\nEnd", { a: "one", b: "" })).toBe("one and \nEnd");
+  });
+
+  test("Drops a line whose values are all empty", (): void => {
+    expect(renderPromptLines("{{a}} and {{b}}\nEnd", { a: "", b: "  " })).toBe("End");
   });
 
 });

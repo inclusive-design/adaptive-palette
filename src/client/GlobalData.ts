@@ -162,8 +162,9 @@ async function loadConfig (): Promise<AdaptivePaletteConfigType> {
       return fallbackConfig;
     }
     const parsed = await response.json() as Record<string, unknown>;
+    const indicatorLabelLookup = parseIndicatorLabelLookup(parsed?.indicatorLabelLookup);
     return {
-      indicatorLabelLookup: parseIndicatorLabelLookup(parsed?.indicatorLabelLookup) ?? disabledIndicatorLookup,
+      indicatorLabelLookup: indicatorLabelLookup ?? disabledIndicatorLookup,
       telegraphicTranslation: parseTelegraphicTranslation(parsed?.telegraphicTranslation),
       symbolSearch: parseShowFlag(parsed?.symbolSearch, true),
       svgBuilderString: parseShowFlag(parsed?.svgBuilderString, false)
