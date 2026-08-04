@@ -94,7 +94,9 @@ export type SymbolEncodingType = BlissSymbolInfoType & {
 
 export type IndicatorLabelLookupConfigType = {
   useModelQueryFallback: boolean,
-  model: string
+  model: string,
+  systemPrompt: string,
+  userPrompt: string
 };
 
 export type TelegraphicTranslationConfigType = {

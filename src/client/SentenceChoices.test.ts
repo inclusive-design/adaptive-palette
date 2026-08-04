@@ -46,7 +46,7 @@ describe("SentenceChoices component", (): void => {
     mockedSpeak.mockReset();
     window.localStorage.removeItem(SENTENCE_LOG_KEY);
     adaptivePaletteGlobals.config = {
-      indicatorLabelLookup: { useModelQueryFallback: false, model: "" },
+      indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
       symbolSearch: { show: true },
       svgBuilderString: { show: false },
       telegraphicTranslation: {

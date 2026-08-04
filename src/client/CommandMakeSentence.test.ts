@@ -60,7 +60,7 @@ describe("CommandMakeSentence component", (): void => {
 
   const setConfig = (numSentences: number): void => {
     adaptivePaletteGlobals.config = {
-      indicatorLabelLookup: { useModelQueryFallback: false, model: "" },
+      indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
       symbolSearch: { show: true },
       svgBuilderString: { show: false },
       telegraphicTranslation: {
@@ -106,7 +106,7 @@ describe("CommandMakeSentence component", (): void => {
 
   test("renders nothing when the feature is unconfigured", (): void => {
     adaptivePaletteGlobals.config = {
-      indicatorLabelLookup: { useModelQueryFallback: false, model: "" },
+      indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
       symbolSearch: { show: true },
       svgBuilderString: { show: false }
     };

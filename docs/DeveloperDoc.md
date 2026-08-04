@@ -24,9 +24,15 @@ every section falls back.
 | ----- | ---- | ----------- |
 | `useModelQueryFallback` | boolean | Required. Whether to ask an LLM when the local label lookup finds nothing. |
 | `model` | string | Ollama model name. Defaults to the empty string, which means Ollama's first available model. |
+| `systemPrompt` | string | Required, non-empty. Tells the model to answer with the resulting label alone. |
+| `userPrompt` | string | Required, non-empty. One field per line, using the placeholders below. |
 
-When `useModelQueryFallback` is missing or is not a boolean, the whole section is discarded and the fallback
-tier is disabled.
+`userPrompt` placeholders: `{{word}}`, `{{pos}}`, `{{explanation}}`, `{{indicator}}`, `{{purpose}}`. A line
+whose placeholder value is empty is dropped, so one template covers a symbol with an explanation, one without,
+and a hand-built symbol that has neither a part of speech nor an explanation.
+
+When `useModelQueryFallback` is missing or is not a boolean, or either prompt is missing or blank, the whole
+section is discarded and the fallback tier is disabled. The pregenerated lookup keeps working.
 
 ### `telegraphicTranslation`
 

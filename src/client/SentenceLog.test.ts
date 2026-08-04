@@ -28,7 +28,7 @@ describe("sentenceLog", (): void => {
   beforeEach((): void => {
     window.localStorage.removeItem(SENTENCE_LOG_KEY);
     adaptivePaletteGlobals.config = {
-      indicatorLabelLookup: { useModelQueryFallback: false, model: "" },
+      indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
       symbolSearch: { show: true },
       svgBuilderString: { show: false },
       telegraphicTranslation: {
@@ -99,7 +99,7 @@ describe("sentenceLog", (): void => {
 
   test("nothing is stored when the feature is unconfigured", (): void => {
     adaptivePaletteGlobals.config = {
-      indicatorLabelLookup: { useModelQueryFallback: false, model: "" },
+      indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
       symbolSearch: { show: true },
       svgBuilderString: { show: false }
     };

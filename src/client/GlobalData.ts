@@ -51,7 +51,7 @@ export const adaptivePaletteGlobals = {
   navigationStack: new NavigationStack(),
   LLMs: [] as string[],
   config: {
-    indicatorLabelLookup: { useModelQueryFallback: false, model: "" },
+    indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
     symbolSearch: { show: true },
     svgBuilderString: { show: false }
   } as AdaptivePaletteConfigType,
@@ -64,19 +64,29 @@ export const adaptivePaletteGlobals = {
 };
 
 /**
- * Validate the `indicatorLabelLookup` section of the config. Returns `undefined` when
- * the section is missing or malformed, which disables the Ollama fallback tier.
+ * Validate the `indicatorLabelLookup` section of the config. Both prompts are required
+ * because there are no hardcoded fallback prompts. Returns `undefined` when the section is
+ * missing or malformed, which disables the Ollama fallback tier.
  * @param {unknown} section - The raw parsed section.
  * @returns {IndicatorLabelLookupConfigType | undefined}
  */
 function parseIndicatorLabelLookup (section: unknown): IndicatorLabelLookupConfigType | undefined {
-  const candidate = section as { useModelQueryFallback?: unknown, model?: unknown } | undefined;
+  const candidate = section as {
+    useModelQueryFallback?: unknown, model?: unknown, systemPrompt?: unknown, userPrompt?: unknown
+  } | undefined;
   if (!candidate || typeof candidate.useModelQueryFallback !== "boolean") {
+    return undefined;
+  }
+  const { systemPrompt, userPrompt } = candidate;
+  const isFilledString = (value: unknown): boolean => typeof value === "string" && value.trim().length > 0;
+  if (!isFilledString(systemPrompt) || !isFilledString(userPrompt)) {
     return undefined;
   }
   return {
     useModelQueryFallback: candidate.useModelQueryFallback,
-    model: typeof candidate.model === "string" ? candidate.model : ""
+    model: typeof candidate.model === "string" ? candidate.model : "",
+    systemPrompt: systemPrompt as string,
+    userPrompt: userPrompt as string
   };
 }
 
@@ -140,7 +150,7 @@ function parseShowFlag (section: unknown, fallback: boolean): FeatureVisibilityC
  * @returns {Promise<AdaptivePaletteConfigType>}
  */
 async function loadConfig (): Promise<AdaptivePaletteConfigType> {
-  const disabledIndicatorLookup = { useModelQueryFallback: false, model: "" };
+  const disabledIndicatorLookup = { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" };
   const fallbackConfig: AdaptivePaletteConfigType = {
     indicatorLabelLookup: disabledIndicatorLookup,
     symbolSearch: { show: true },

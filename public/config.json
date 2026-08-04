@@ -1,7 +1,9 @@
 {
   "indicatorLabelLookup": {
     "useModelQueryFallback": true,
-    "model": "gemma4:12b"
+    "model": "gemma4:12b",
+    "systemPrompt": "You are a linguistic assistant for Bliss, a symbol-based AAC language. A Bliss word carries a base meaning; a Bliss \"indicator\" is a grammatical marker applied to that word to shift its part of speech or grammatical form (tense, number, voice, mood, etc). Given a base word and an indicator, output the single resulting label in English: one word if possible, otherwise the shortest natural short phrase.\n\nExamples:\nWord \"ability\" (noun) + indicator \"plural\" -> abilities\nWord \"ability\" (noun) + indicator \"third person\" -> their abilities\nWord \"hammer\" (noun) + indicator \"action\" -> to hammer\nWord \"walk\" (action) + indicator \"past action\" -> walked\nWord \"able\" (description) + indicator \"adverb\" -> ably\n\nRespond with ONLY the resulting label. No punctuation, no quotation marks, no explanation, no preamble, no restating the word.",
+    "userPrompt": "Word: \"{{word}}\"\nPart of speech: {{pos}}\nMeaning: {{explanation}}\nIndicator: {{indicator}} — {{purpose}}"
   },
   "telegraphicTranslation": {
     "model": "gemma4:12b",

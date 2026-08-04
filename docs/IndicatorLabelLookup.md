@@ -73,6 +73,22 @@ This config file controls the live LLM fallback behavior (Resolution Tier 2) via
 | :--- | :--- | :--- |
 | `useModelQueryFallback` | Boolean | Enables or disables the live Ollama fallback. If set to `false`, the system bypasses Tier 2 entirely. |
 | `model` | String | Specifies the name of the local Ollama model to query when the fallback is triggered (e.g., `gemma4:12b`). |
+| `systemPrompt` | String | Required, non-empty. Instructs the model to reply with the resulting label alone. |
+| `userPrompt` | String | Required, non-empty. The per-query prompt, one field per line. |
+
+`userPrompt` supports the placeholders `{{word}}`, `{{pos}}`, `{{explanation}}`, `{{indicator}}`, and
+`{{purpose}}`. A line whose placeholder value is empty is dropped, so the same template serves a symbol with an
+explanation, one without, and a hand-built symbol that has neither a part of speech nor an explanation:
+
+```text
+Word: "hammer"
+Part of speech: noun
+Meaning: a tool for driving nails
+Indicator: action — Marks the verb sense
+```
+
+If either prompt is missing or blank, the whole section is discarded and Tier 2 is disabled; Tier 1 is
+unaffected.
 
 ### Indicator Groups (`public/data/indicators.json`)
 
@@ -105,6 +121,9 @@ node scripts/new_labels_with_indicator/generate_indicator_label_prompts.js \
 
 **Output:** A JSONL file starting with a `_meta` row (system prompt), followed by rows for each pair containing
 `targetId`, `wordId`, `gloss`, `pos`, `indicatorId`, `indicatorName`, and `prompt`.
+
+This script keeps its own copy of the system prompt and builds its per-pair prompt as a single header line, so it
+can drift from the Tier 2 prompts in `public/config.json`. Edit both when the wording matters.
 
 ### Step 2: Run the LLM
 

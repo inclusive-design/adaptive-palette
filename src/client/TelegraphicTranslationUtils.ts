@@ -11,6 +11,7 @@
  */
 
 import { adaptivePaletteGlobals, NO_MODELS_MESSAGE } from "./GlobalData";
+import { renderTemplate } from "./GlobalUtils";
 import { queryChat } from "./OllamaApi";
 
 export const NOT_CONFIGURED_MESSAGE = "Sentence translation is not configured. Check the telegraphicTranslation section of config.json.";
@@ -38,20 +39,6 @@ export function pickModel (configuredModel: string): string {
   }
   console.warn(`Model "${configuredModel}" is not available; using "${LLMs[0]}" instead.`);
   return LLMs[0];
-}
-
-/**
- * Substitute `{{name}}` placeholders in a prompt template. Placeholders with no matching
- * value are left in place.
- * @param {string} template - The template text.
- * @param {Record<string, string>} values - Placeholder values by name.
- * @returns {string}
- */
-export function renderTemplate (template: string, values: Record<string, string>): string {
-  return template.replace(
-    /\{\{(\w+)\}\}/g,
-    (placeholder, name: string) => (name in values ? values[name] : placeholder)
-  );
 }
 
 /**

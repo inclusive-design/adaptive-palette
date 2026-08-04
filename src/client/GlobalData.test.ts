@@ -28,9 +28,17 @@ afterEach((): void => {
   vi.unstubAllGlobals();
 });
 
+// A valid `indicatorLabelLookup` section
+const INDICATOR_SECTION = {
+  useModelQueryFallback: false,
+  model: "",
+  systemPrompt: "You are a linguistic assistant.",
+  userPrompt: "Word: {{word}}"
+};
+
 describe("loadConfig telegraphicTranslation section", (): void => {
 
-  const VALID_SECTION = {
+  const TELEMSG_SECTION = {
     model: "phony-model:12b",
     numSentences: 3,
     maxStoredRecords: 500,
@@ -40,32 +48,32 @@ describe("loadConfig telegraphicTranslation section", (): void => {
 
   test("a valid section is loaded", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: { useModelQueryFallback: false, model: "" },
-      telegraphicTranslation: VALID_SECTION
+      indicatorLabelLookup: INDICATOR_SECTION,
+      telegraphicTranslation: TELEMSG_SECTION
     });
     await initAdaptivePaletteGlobals();
-    expect(adaptivePaletteGlobals.config.telegraphicTranslation).toEqual(VALID_SECTION);
+    expect(adaptivePaletteGlobals.config.telegraphicTranslation).toEqual(TELEMSG_SECTION);
   });
 
   test("a missing section leaves the feature unconfigured", async (): Promise<void> => {
-    stubConfigFetch({ indicatorLabelLookup: { useModelQueryFallback: false, model: "" } });
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
     await initAdaptivePaletteGlobals();
     expect(adaptivePaletteGlobals.config.telegraphicTranslation).toBeUndefined();
   });
 
   test("a malformed section leaves the feature unconfigured", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: { useModelQueryFallback: false, model: "" },
-      telegraphicTranslation: { ...VALID_SECTION, numSentences: "three" }
+      indicatorLabelLookup: INDICATOR_SECTION,
+      telegraphicTranslation: { ...TELEMSG_SECTION, numSentences: "three" }
     });
     await initAdaptivePaletteGlobals();
     expect(adaptivePaletteGlobals.config.telegraphicTranslation).toBeUndefined();
   });
 
   test("maxStoredRecords of zero is valid and keeps the feature configured", async (): Promise<void> => {
-    const section = { ...VALID_SECTION, maxStoredRecords: 0 };
+    const section = { ...TELEMSG_SECTION, maxStoredRecords: 0 };
     stubConfigFetch({
-      indicatorLabelLookup: { useModelQueryFallback: false, model: "" },
+      indicatorLabelLookup: INDICATOR_SECTION,
       telegraphicTranslation: section
     });
     await initAdaptivePaletteGlobals();
@@ -74,24 +82,56 @@ describe("loadConfig telegraphicTranslation section", (): void => {
 
   test("an empty prompt leaves the feature unconfigured", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: { useModelQueryFallback: false, model: "" },
-      telegraphicTranslation: { ...VALID_SECTION, systemPrompt: "   " }
+      indicatorLabelLookup: INDICATOR_SECTION,
+      telegraphicTranslation: { ...TELEMSG_SECTION, systemPrompt: "   " }
     });
     await initAdaptivePaletteGlobals();
     expect(adaptivePaletteGlobals.config.telegraphicTranslation).toBeUndefined();
   });
 
   test("a bad indicatorLabelLookup section does not discard telegraphicTranslation", async (): Promise<void> => {
-    stubConfigFetch({ telegraphicTranslation: VALID_SECTION });
+    stubConfigFetch({ telegraphicTranslation: TELEMSG_SECTION });
     await initAdaptivePaletteGlobals();
     expect(adaptivePaletteGlobals.config.indicatorLabelLookup.useModelQueryFallback).toBe(false);
-    expect(adaptivePaletteGlobals.config.telegraphicTranslation).toEqual(VALID_SECTION);
+    expect(adaptivePaletteGlobals.config.telegraphicTranslation).toEqual(TELEMSG_SECTION);
+  });
+});
+
+describe("loadConfig indicatorLabelLookup section", (): void => {
+
+  const DISABLED = { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" };
+
+  test("a valid section is loaded with both prompts", async (): Promise<void> => {
+    const section = { ...INDICATOR_SECTION, useModelQueryFallback: true, model: "phony-model:12b" };
+    stubConfigFetch({ indicatorLabelLookup: section });
+    await initAdaptivePaletteGlobals();
+    expect(adaptivePaletteGlobals.config.indicatorLabelLookup).toEqual(section);
+  });
+
+  test("a missing prompt disables the fallback tier", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: { useModelQueryFallback: true, model: "phony-model:12b", systemPrompt: "Only this one." }
+    });
+    await initAdaptivePaletteGlobals();
+    expect(adaptivePaletteGlobals.config.indicatorLabelLookup).toEqual(DISABLED);
+  });
+
+  test("an empty prompt disables the fallback tier", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: { ...INDICATOR_SECTION, useModelQueryFallback: true, userPrompt: "   " }
+    });
+    await initAdaptivePaletteGlobals();
+    expect(adaptivePaletteGlobals.config.indicatorLabelLookup).toEqual(DISABLED);
+  });
+
+  test("a missing section disables the fallback tier", async (): Promise<void> => {
+    stubConfigFetch({});
+    await initAdaptivePaletteGlobals();
+    expect(adaptivePaletteGlobals.config.indicatorLabelLookup).toEqual(DISABLED);
   });
 });
 
 describe("loadConfig feature visibility sections", (): void => {
-
-  const INDICATOR_SECTION = { useModelQueryFallback: false, model: "" };
 
   test("valid sections are loaded as given", async (): Promise<void> => {
     stubConfigFetch({
