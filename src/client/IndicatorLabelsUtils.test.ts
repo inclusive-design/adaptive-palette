@@ -108,6 +108,13 @@ describe("IndicatorLabels", (): void => {
       expect(mockedQueryChat).not.toHaveBeenCalled();
     });
 
+    test("not-viable when the symbol has no label and no dictionary id", (): void => {
+      enableModelQuery();
+      const result = getNewLabelViaModelQuery(undefined, "", "", 97);
+      expect(result).toStrictEqual({ status: "not-viable" });
+      expect(mockedQueryChat).not.toHaveBeenCalled();
+    });
+
     test("pending: starts a query and resolves it to the parsed label", async (): Promise<void> => {
       enableModelQuery();
       mockedQueryChat.mockResolvedValue(

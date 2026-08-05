@@ -9,7 +9,7 @@
   // Default name of model used (aka, none).  Set in setSelectedModel() handler.
   let nameOfModelToUse = "";
 
-  // Function to retrieve a list of model's available from the service
+  // Function to retrieve a list of available models
   async function getModelNames () {
     const modelListUrl = `${ollamaService}/api/tags`;
     let modelNames = [];
