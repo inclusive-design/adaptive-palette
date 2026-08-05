@@ -27,7 +27,7 @@ describe("CommandGoToRootCell render tests", (): void => {
       "rowSpan": 1,
       "columnStart": 2,
       "columnSpan": 1,
-      "composition": 1816
+      "composition": 392
     }
   };
 

@@ -11,7 +11,7 @@
  */
 import { render } from "preact";
 import { html } from "htm/preact";
-import { initAdaptivePaletteGlobals, adaptivePaletteGlobals, NO_MODELS_MESSAGE } from "./GlobalData";
+import { initAdaptivePaletteGlobals, adaptivePaletteGlobals, navigationDepth, NO_MODELS_MESSAGE } from "./GlobalData";
 import { loadPaletteFromJsonFile, speak } from "./GlobalUtils";
 import { goBackImpl } from "./CommandGoBackCell";
 import { INPUT_AREA_ID } from "./ContentEncoding";
@@ -72,6 +72,10 @@ window.addEventListener("keydown", (event) => {
     // which it otherwise would whenever focus sits on a non-text control such as a
     // search result button.
     if (document.querySelector("dialog[open]")) {
+      return;
+    }
+    // Depth zero means there is nowhere to go back to.
+    if (navigationDepth.value === 0) {
       return;
     }
     // If focus was not on a textual input element, go back up one layer in the
