@@ -67,7 +67,7 @@ The disadvantages are that Ollama's browser library must be
 installed, and the necessary objects and functions must be included using
 `import` statements in the app's JavaScript code.
 
-Using the library is exemplified by the "Using Ollama with models Running Locally"
+Using the library is exemplified by the "Using Ollama with Models Running Locally"
 web app in the [`apps/ollama`](../../apps/ollama) folder.  See its
 [README](../../apps/ollama/README.md) for further instructions.
 

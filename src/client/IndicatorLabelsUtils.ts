@@ -78,7 +78,8 @@ function toIndicatorName (name: string): string {
  * word falls back to `baseLabel` (or `label` if unset), with no part of speech. Template
  * lines whose value is empty are dropped, so a missing part of speech or explanation leaves
  * no empty line behind. Returns undefined if the indicator id is not in the loaded table,
- * or if `userSelectedSymbolId` is set but not found in `adaptivePaletteGlobals.symbols`.
+ * if `userSelectedSymbolId` is set but not found in `adaptivePaletteGlobals.symbols`, or if
+ * the word is blank (an unlabelled symbol).
  * @param {number | undefined} userSelectedSymbolId - Dictionary id of the originally selected symbol, if any.
  * @param {string} label - The symbol's current label.
  * @param {string | undefined} baseLabel - The label before any indicator swap; used as the prompt's word when `userSelectedSymbolId` is unset.
@@ -98,6 +99,11 @@ function buildOllamaPrompt ( userSelectedSymbolId: number | undefined, label: st
       return undefined;
     }
     word = { gloss: symbol.gloss, pos: symbol.pos ?? "", explanation: symbol.explanation ?? "" };
+  }
+
+  // No word means no question to ask.
+  if (word.gloss.trim().length === 0) {
+    return undefined;
   }
 
   return renderPromptLines(adaptivePaletteGlobals.config.indicatorLabelLookup.userPrompt, {
