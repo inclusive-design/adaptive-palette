@@ -40,9 +40,12 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
   );
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
-  const disabled = changeEncodingContents.value.caretPosition === -1;
+  // Marked unavailable rather than `disabled` so the button keeps its place in the tab
+  // order for switch and eye-gaze users.
+  const unavailable = changeEncodingContents.value.caretPosition === -1;
 
   const cellClicked = () => {
+    if (unavailable) { return; }
     // Get the symbol at the caret position in the editing area.
     const { caretPosition, payloads } = changeEncodingContents.value;
     const symbolToEdit = payloads[caretPosition];
@@ -85,7 +88,7 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
   };
 
   return html`
-    <button id="${props.id}" class="actionModifierCell" style="${gridStyles}" onClick=${cellClicked} disabled="${disabled}">
+    <button id="${props.id}" class="actionModifierCell" style="${gridStyles}" onClick=${cellClicked} aria-disabled=${unavailable}>
       <${BlissSymbol}
         composition=${modifierComposition}
         label=${label}

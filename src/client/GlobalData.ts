@@ -208,3 +208,8 @@ export const changeEncodingContents = signal<ContentSignalDataType>({
   payloads: [],
   caretPosition: -1,
 });
+
+// Re-exported so consumers import navigation state from the same place as the other
+// globals.  Declared in its own module to keep `NavigationStack` free of a cycle back
+// into this file -- see NavigationSignals.ts.
+export { navigationDepth } from "./NavigationSignals";

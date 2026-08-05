@@ -13,7 +13,7 @@
 import { render, screen } from "@testing-library/preact";
 import { html } from "htm/preact";
 
-import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
+import { initAdaptivePaletteGlobals, adaptivePaletteGlobals, navigationDepth } from "./GlobalData";
 import { CommandGoBackCell } from "./CommandGoBackCell";
 
 describe("CommandGoBackCell render tests", (): void => {
@@ -34,6 +34,16 @@ describe("CommandGoBackCell render tests", (): void => {
   const goBackCellAriaControls = {
     options: {
       "label": "Back Up non-empty aria-controls",
+      "rowStart": "3",
+      "rowSpan": "2",
+      "columnStart": "2",
+      "columnSpan": "1",
+      "composition": 1248
+    }
+  };
+  const goBackCellOnStack = {
+    options: {
+      "label": "Back Up with a stack",
       "rowStart": "3",
       "rowSpan": "2",
       "columnStart": "2",
@@ -74,8 +84,8 @@ describe("CommandGoBackCell render tests", (): void => {
     expect(button.style.getPropertyValue("grid-column")).toBe("2 / span 1");
     expect(button.style.getPropertyValue("grid-row")).toBe("3 / span 2");
 
-    // Check disabled state (should be enabled)
-    expect(button.getAttribute("disabled")).toBe(null);
+    // The navigation stack is empty at this point, so Back has nowhere to go.
+    expect(button).toHaveAttribute("aria-disabled", "true");
   });
 
   test("CommandGoBackCell rendering with non-empty aria-controls", async(): Promise<void> => {
@@ -91,5 +101,25 @@ describe("CommandGoBackCell render tests", (): void => {
     const button = await screen.findByRole("button", {name: goBackCellAriaControls.options.label});
     expect(button.id).toBe(TEST_CELL2_ID);
     expect(button.getAttribute("aria-controls")).toBe(TEST_CONTROL_ID);
+  });
+
+  test("CommandGoBackCell is available once a palette is on the stack", async (): Promise<void> => {
+    const displayArea = document.createElement("div");
+    document.body.appendChild(displayArea);
+    const somePalette = { "name": "somePalette", "cells": {} };
+    adaptivePaletteGlobals.navigationStack.push({ palette: somePalette, htmlElement: displayArea });
+    expect(navigationDepth.value).toBe(1);
+
+    render(html`
+      <${CommandGoBackCell}
+        id="uuid-of-a-third-kind"
+        options=${goBackCellOnStack.options}
+      />`
+    );
+
+    const button = await screen.findByRole("button", { name: goBackCellOnStack.options.label });
+    expect(button).toHaveAttribute("aria-disabled", "false");
+
+    adaptivePaletteGlobals.navigationStack.flushReset(null);
   });
 });

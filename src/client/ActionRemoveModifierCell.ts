@@ -34,14 +34,17 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   // Disabled state of the remove button depends on if the last symbol in the
   // input field (if any) has a modifier AND if there is more than one symbol in
   // the encoding.
-  let disabled = true;
+  // Marked unavailable rather than `disabled` so the button keeps its place in the tab
+  // order for switch and eye-gaze users.
+  let unavailable = true;
   const { payloads, caretPosition } = changeEncodingContents.value;
   if (payloads.length !== 0 && caretPosition !== -1) {
     const caretSymbol = payloads[caretPosition];
-    disabled = !caretSymbol.modifierInfo || caretSymbol.modifierInfo.length === 0;
+    unavailable = !caretSymbol.modifierInfo || caretSymbol.modifierInfo.length === 0;
   }
   // Handle the request to remove the last placed modifier.
   const cellClicked = () => {
+    if (unavailable) { return; }
     // Get the last symbol in the editing area, and create an initial
     // `newBciAvId` and `newLabel`.
     const { caretPosition, payloads } = changeEncodingContents.value;
@@ -104,7 +107,7 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   };
 
   return html`
-    <button id="${props.id}" class="actionIndicatorCell" style="${gridStyles}" onClick=${cellClicked} disabled="${disabled}">
+    <button id="${props.id}" class="actionIndicatorCell" style="${gridStyles}" onClick=${cellClicked} aria-disabled=${unavailable}>
       <${BlissSymbol}
         composition=${removeModifierComposition}
         label=${label}

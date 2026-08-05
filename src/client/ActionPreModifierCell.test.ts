@@ -59,8 +59,8 @@ describe("ActionPreModifierCell render tests", (): void => {
     expect(button.style.getPropertyValue("grid-row")).toBe("3 / span 2");
 
     // Check disabled state.  `changeEncodingContents` is initialized
-    // with an empty array, hence there should be a `disabled` attribute.
-    expect(button.getAttribute("disabled")).toBeDefined();
+    // with an empty array, hence there should be an `aria-disabled` attribute.
+    expect(button).toHaveAttribute("aria-disabled", "true");
   });
 
   test("Single ActionPreModifierCell rendering, enabled", async (): Promise<void> => {
@@ -99,14 +99,14 @@ describe("ActionPreModifierCell render tests", (): void => {
     expect(button.style.getPropertyValue("grid-row")).toBe("3 / span 2");
 
     // Check disabled state.  `changeEncodingContents` is initialized
-    // with a symbol, hence there should be a `disabled` attribute.
-    expect(button.getAttribute("disabled")).toBeNull();
+    // with a symbol, hence there should be an `aria-disabled` attribute.
+    expect(button).toHaveAttribute("aria-disabled", "false");
 
     // Move the caret to the beginning of th input.  The ActionPreModifierCell
     // should become disabled.
-    changeEncodingContents.value.caretPosition = -1;
+    changeEncodingContents.value = { ...changeEncodingContents.value, caretPosition: -1 };
     button = await screen.findByRole("button", {name: testCell.options.label});
-    expect(button.getAttribute("disabled")).toBeDefined();
+    expect(button).toHaveAttribute("aria-disabled", "true");
   });
 
   test("Applying a pre modifier prepends its text to the label", async (): Promise<void> => {

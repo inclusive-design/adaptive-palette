@@ -13,7 +13,7 @@
 import { render, VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
-import { adaptivePaletteGlobals } from "./GlobalData";
+import { adaptivePaletteGlobals, navigationDepth } from "./GlobalData";
 import { loadPaletteFromJsonFile, speak } from "./GlobalUtils";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
@@ -60,6 +60,9 @@ export async function goBackImpl (defaultContaineId?: string | null ): Promise<v
  * clicked, goes back one palette.
  */
 const goBackToPalette = async (event: Event): Promise<void> => {
+  if (navigationDepth.value === 0) {
+    return;
+  }
   const button = event.currentTarget as HTMLElement;
   speak(button.innerText);
   return goBackImpl(button.getAttribute("aria-controls"));
@@ -72,6 +75,11 @@ export function CommandGoBackCell (props: CommandGoBackCellPropsType): VNode {
   } = props.options;
   const ariaControlsId = adaptivePaletteGlobals.mainPaletteContainerId;
 
+  // Marked unavailable rather than `disabled`: a disabled button leaves the tab order,
+  // which costs a switch or eye-gaze user their scan position.  Depth zero means there
+  // is nowhere to go back to.
+  const unavailable = navigationDepth.value === 0;
+
   const gridStyles = `
     grid-column: ${columnStart} / span ${columnSpan};
     grid-row: ${rowStart} / span ${rowSpan};
@@ -80,7 +88,8 @@ export function CommandGoBackCell (props: CommandGoBackCellPropsType): VNode {
   return html`
     <button
       id="${props.id}" class="btn-command" style="${gridStyles}"
-      aria-controls="${ariaControlsId}" onClick=${goBackToPalette}>
+      aria-controls="${ariaControlsId}" aria-disabled=${unavailable}
+      onClick=${goBackToPalette}>
       <${BlissSymbol} composition=${composition} label=${label} />
     </button>
   `;

@@ -32,9 +32,12 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
   const indicatorId = props.options.composition as number;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
-  const disabled = changeEncodingContents.value.caretPosition === -1;
+  // Marked unavailable rather than `disabled` so the button keeps its place in the tab
+  // order for switch and eye-gaze users.
+  const unavailable = changeEncodingContents.value.caretPosition === -1;
 
   const cellClicked = async () => {
+    if (unavailable) { return; }
     // Get the symbol at the caret position in the editing area and find the
     // locations within it to replace any existing indicator.
     const { caretPosition, payloads } = changeEncodingContents.value;
@@ -151,7 +154,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
   };
 
   return html`
-    <button id="${props.id}" class="actionIndicatorCell" style="${gridStyles}" onClick=${cellClicked} disabled="${disabled}">
+    <button id="${props.id}" class="actionIndicatorCell" style="${gridStyles}" onClick=${cellClicked} aria-disabled=${unavailable}>
       <${BlissSymbol}
         composition=${indicatorId}
         label=${label}

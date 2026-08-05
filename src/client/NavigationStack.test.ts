@@ -14,6 +14,7 @@ import { render, screen } from "@testing-library/preact";
 import { html } from "htm/preact";
 
 import { NavigationStack } from "./NavigationStack";
+import { navigationDepth } from "./NavigationSignals";
 
 const RENDERING_TEST_ID = "renderingDiv";
 
@@ -166,5 +167,34 @@ describe("NavigationStack module - pushing and popping", (): void => {
     navigation.push(testStackItem1);
     navigation.push(testStackItem2);
     expect(navigation.peekLast()).toBe(testStackItem1);
+  });
+
+  test("navigationDepth tracks push, pop, and flushReset", (): void => {
+    const navStack = new NavigationStack();
+    const item1 = { palette: testPalette1, htmlElement: renderingElement };
+    const item2 = { palette: testPalette2, htmlElement: renderingElement };
+
+    navStack.flushReset(null);
+    expect(navigationDepth.value).toBe(0);
+
+    navStack.push(item1);
+    expect(navigationDepth.value).toBe(1);
+
+    navStack.push(item2);
+    expect(navigationDepth.value).toBe(2);
+
+    navStack.pop();
+    expect(navigationDepth.value).toBe(1);
+
+    navStack.flushReset(null);
+    expect(navigationDepth.value).toBe(0);
+  });
+
+  test("navigationDepth is unchanged when push is given nothing", (): void => {
+    const navStack = new NavigationStack();
+    navStack.flushReset(null);
+
+    navStack.push(null);
+    expect(navigationDepth.value).toBe(0);
   });
 });

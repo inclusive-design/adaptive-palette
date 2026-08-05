@@ -11,6 +11,7 @@
  */
 
 import { NavStackItemType } from "./index.d";
+import { navigationDepth } from "./NavigationSignals";
 
 export class NavigationStack {
 
@@ -31,6 +32,14 @@ export class NavigationStack {
   }
 
   /**
+   * Publish the current stack size so cells rendered outside the palette grid, such as
+   * the `Back` and `Home` buttons, re-render when navigation happens.
+   */
+  syncDepth (): void {
+    navigationDepth.value = this.navigateBackStack.length;
+  }
+
+  /**
    * Report if the navigation stack is empty.
    * @return: `true` if the stack is empty; `false` otherwise.
    */
@@ -45,11 +54,12 @@ export class NavigationStack {
    *                                     `undefined`, the navigation stack is
    *                                      left untouched.
    */
-  push (palette: NavStackItemType): void {
+  push (palette: NavStackItemType | null | undefined): void {
     if (!palette) {
       return;
     }
     this.navigateBackStack.push(palette);
+    this.syncDepth();
   }
 
   /**
@@ -59,7 +69,9 @@ export class NavigationStack {
    *                              stack is empty.
    */
   pop (): NavStackItemType | undefined {
-    return this.navigateBackStack.pop();
+    const palette = this.navigateBackStack.pop();
+    this.syncDepth();
+    return palette;
   }
 
   /**
@@ -113,6 +125,7 @@ export class NavigationStack {
   flushReset (currentPalette: NavStackItemType | null): void {
     this.currentPalette = currentPalette;
     this.navigateBackStack.length = 0;
+    this.syncDepth();
   }
 
   /**

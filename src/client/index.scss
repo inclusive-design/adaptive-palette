@@ -54,16 +54,22 @@ svg.inter-word-padding {
 }
 
 /*
- * A div that contains two divs that:
- * - are arranged in one row,
- * - the first div is in the first column but needs less horizontal space
- * - the second div is in the second column but needs the majority of the
- *   horizontal space
+ * Row 2 packs 16 controls across the page, so its symbols and labels are smaller than
+ * everywhere else.  Labels wrap rather than truncate -- the visible text is also the
+ * button's accessible name and what the speech output reads.
  */
-.oneRow {
-  display: grid;
-  grid-template-columns: 0.1fr 1fr;
-  column-gap: 0.5rem;
+#commandBar {
+  svg {
+    max-height: 2rem;
+  }
+
+  button {
+    border-radius: 0.5rem;
+    font-size: 0.55rem;
+    line-height: 1.05;
+    overflow-wrap: break-word;
+    padding-bottom: 0.25rem;
+  }
 }
 
 #aiStatus:not(:empty) {
