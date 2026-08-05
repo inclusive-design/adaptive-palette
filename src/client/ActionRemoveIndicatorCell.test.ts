@@ -87,7 +87,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     expect(removeIndicatorButton).toBeVisible();
     expect(removeIndicatorButton).toBeValid();
     expect(removeIndicatorButton.id).toBe(TEST_CELL_ID);
-    expect(removeIndicatorButton.getAttribute("class")).toBe("actionIndicatorCell");
+    expect(removeIndicatorButton.getAttribute("class")).toBe("btn-command");
     expect(removeIndicatorButton.textContent).toBe(testCell.options.label);
 
     // Check the grid cell styles.

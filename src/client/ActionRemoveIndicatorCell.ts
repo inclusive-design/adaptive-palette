@@ -17,7 +17,6 @@ import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { generateGridStyle, speak, applyModifiersToLabel } from "./GlobalUtils";
 import { findIndicators } from "./SvgUtils";
-import "./ActionIndicatorCell.scss";
 
 type ActionIndicatorCodeCellPropsType = {
   id: string,
@@ -99,7 +98,7 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
   };
 
   return html`
-    <button id="${props.id}" class="actionIndicatorCell" style="${gridStyles}" onClick=${cellClicked} aria-disabled=${unavailable}>
+    <button id="${props.id}" class="btn-command" style="${gridStyles}" onClick=${cellClicked} aria-disabled=${unavailable}>
       <${BlissSymbol}
         composition=${removeIndicatorComposition}
         label=${label}

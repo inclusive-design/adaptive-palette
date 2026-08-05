@@ -103,7 +103,7 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     expect(removeModifierButton).toBeVisible();
     expect(removeModifierButton).toBeValid();
     expect(removeModifierButton.id).toBe(TEST_CELL_ID);
-    expect(removeModifierButton.getAttribute("class")).toBe("actionIndicatorCell");
+    expect(removeModifierButton.getAttribute("class")).toBe("btn-command");
     expect(removeModifierButton.textContent).toBe(testCell.options.label);
 
     // Check the grid cell styles.

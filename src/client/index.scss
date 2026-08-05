@@ -38,6 +38,11 @@ input[type="button"] {
 
 .btn-command {
   background-color: lightsalmon;
+
+  /* Unavailable commands stay focusable, so the greying is the only visual cue. */
+  &[aria-disabled="true"] {
+    background-color: silver;
+  }
 }
 
 svg {
