@@ -35,10 +35,11 @@ type ContentEncodingProps = {
  * - if the caret position is -1, and there are symbols in the array, add a
  *   special caret markup to indicate insertion is possible before the first
  *   symbol.
+ * This is the shared rendering primitive behind both `ContentEncoding` and `MessagePreview`.
  * @param {ContentSignalDataType} symbols: Array of symbols and caret position.
  * @return {Array<VNode>} - Array of markup for the symbols
  */
-function generateMarkupArray (payloadArray: Array<BlissSymbolInfoType>, caretPos: number): Array<VNode> {
+export function generateMarkupArray (payloadArray: Array<BlissSymbolInfoType>, caretPos: number): Array<VNode> {
   // NOTE:  if there are no payloads in the `payloadArray`, the map() function
   // immediately returns an empty array.  That is, the function passed to map()
   // will execute only if `payloadArray.length` is non-zero -- there is no need

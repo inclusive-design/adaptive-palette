@@ -52,7 +52,9 @@ describe("telegraphicTranslationState", (): void => {
 
   const setConfig = (numSentences: number): void => {
     adaptivePaletteGlobals.config = {
-      indicatorLabelLookup: { useModelQueryFallback: false, model: "" },
+      indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
+      symbolSearch: { show: true },
+      svgBuilderString: { show: false },
       telegraphicTranslation: {
         model: "phony-model:12b",
         numSentences,
@@ -75,7 +77,7 @@ describe("telegraphicTranslationState", (): void => {
     mockedQueryChat.mockReset();
     mockedSpeak.mockReset();
     window.localStorage.removeItem(SENTENCE_LOG_KEY);
-    adaptivePaletteGlobals.LLMs = ["phony-model:12b"];
+    adaptivePaletteGlobals.models = ["phony-model:12b"];
     setConfig(3);
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
     sentenceCompletionsSignal.value = { status: "idle" };
@@ -89,6 +91,19 @@ describe("telegraphicTranslationState", (): void => {
 
   test("currentTelegraphicMessage joins the symbol labels with spaces", (): void => {
     changeEncodingContents.value = INPUT_CONTENTS;
+    expect(currentTelegraphicMessage()).toBe("me hungry");
+  });
+
+  test("currentTelegraphicMessage skips symbols with a blank label", (): void => {
+    changeEncodingContents.value = {
+      payloads: [
+        { label: "me", composition: [124], modifierInfo: [] },
+        { label: "", composition: [125], modifierInfo: [] },
+        { label: "  ", composition: [126], modifierInfo: [] },
+        { label: "hungry", composition: [127], modifierInfo: [] }
+      ],
+      caretPosition: 4
+    };
     expect(currentTelegraphicMessage()).toBe("me hungry");
   });
 

@@ -3,6 +3,59 @@
 This document provides technical instructions for developers who use Preact to
 build the adaptive palette client side.
 
+## Runtime configuration (`public/config.json`)
+
+`public/config.json` holds the settings that can change without a rebuild. `loadConfig()` in
+[`src/client/GlobalData.ts`](../src/client/GlobalData.ts) fetches and validates it at startup and stores the
+result in `adaptivePaletteGlobals.config`. Each section is validated on its own: a missing or malformed section
+falls back to its default and leaves the other sections intact. If the file itself is missing or unparsable,
+every section falls back.
+
+| Section | Controls |
+| ------- | -------- |
+| `indicatorLabelLookup` | The Ollama fallback tier for looking up indicator labels. See [IndicatorLabelLookup.md](IndicatorLabelLookup.md). |
+| `telegraphicTranslation` | Translating a telegraphic message into full sentences. See [TelegraphicMessageTranslation.md](TelegraphicMessageTranslation.md). |
+| `symbolSearch` | The "Add symbol to message" trigger and its gloss-search dialog. |
+| `svgBuilderString` | The "Add symbol by svg-builder string" trigger and its dialog. Off in production: it is for development. |
+
+### `indicatorLabelLookup`
+
+| Field | Type | Description |
+| ----- | ---- | ----------- |
+| `useModelQueryFallback` | boolean | Required. Whether to ask a model when the local label lookup finds nothing. |
+| `model` | string | Ollama model name. Defaults to the empty string, which means Ollama's first available model. |
+| `systemPrompt` | string | Required, non-empty. Tells the model to answer with the resulting label alone. |
+| `userPrompt` | string | Required, non-empty. One field per line, using the placeholders below. |
+
+`userPrompt` placeholders: `{{word}}`, `{{pos}}`, `{{explanation}}`, `{{indicator}}`, `{{purpose}}`. A line
+whose placeholder value is empty is dropped, so one template covers a symbol with an explanation, one without,
+and a hand-built symbol that has neither a part of speech nor an explanation.
+
+When `useModelQueryFallback` is missing or is not a boolean, or either prompt is missing or blank, the whole
+section is discarded and the fallback tier is disabled. The pregenerated lookup keeps working.
+
+### `telegraphicTranslation`
+
+There are no hardcoded prompts, so every field below is required. A partially configured section is treated as
+missing and the feature reports itself as unconfigured rather than running with empty prompts.
+
+| Field | Type | Description |
+| ----- | ---- | ----------- |
+| `model` | string | Ollama model name. The empty string means Ollama's first available model. |
+| `numSentences` | number | Positive integer. How many candidate sentences to request. |
+| `maxStoredRecords` | number | Non-negative integer. How many past translations to keep. `0` keeps the feature but logs nothing. |
+| `systemPrompt` | string | Non-empty. Supports the `{{numSentences}}` placeholder. |
+| `userPrompt` | string | Non-empty. Supports the `{{telegraphicMessage}}` placeholder. |
+
+Placeholders are `{{name}}` and are substituted at query time; one with no matching value is left as is.
+
+### `symbolSearch` and `svgBuilderString`
+
+Both are feature-visibility sections carrying a single `show` boolean. The matching toolbar trigger is rendered
+only when `show` is `true`. When the section is missing or `show` is not a boolean, `symbolSearch` defaults to
+`true` and `svgBuilderString` to `false`, so an older config.json neither loses symbol search nor turns on the
+developer tool.
+
 ## How to render a palette
 
 `Palette.ts` constructs a palette based on a JSON file that contains a list
@@ -83,7 +136,6 @@ three categories by prefix.
 | ---- | ------- | ------------------------- |
 | `ActionCodeCell` | Appends a Bliss symbol to the encoding area when clicked | `label`, `composition` |
 | `ActionBranchToPaletteCell` | Navigates to another palette | `label`, `composition`, `branchTo` (palette file name without `.json`), `ariaControls` |
-| `ActionGlossSearchCell` | Searches for a Bliss symbol by gloss; `label` format is `"searchTerm: gloss"` | `label`, `composition`, `id`, `bciAvId` |
 | `ActionIndicatorCell` | Applies a Bliss indicator to the last symbol in the encoding area | `label`, `composition` |
 | `ActionPreModifierCell` | Prepends a modifier to the last symbol | `label`, `composition` |
 | `ActionPostModifierCell` | Appends a modifier to the last symbol | `label`, `composition` |

@@ -11,6 +11,7 @@
  */
 
 import { adaptivePaletteGlobals } from "./GlobalData";
+import { renderPromptLines } from "./GlobalUtils";
 import { queryChat } from "./OllamaApi";
 
 export type IndicatorInfoEntry = {
@@ -22,18 +23,6 @@ export type IndicatorInfoEntry = {
 
 const LABELS_URL     = "/data/new_labels_with_indicator.json";
 const INDICATORS_URL = "/data/indicators.json";
-
-// System prompt for Ollama queries.
-const SYSTEM_PROMPT = `You are a linguistic assistant for Bliss, a symbol-based AAC language. A Bliss word carries a base meaning; a Bliss "indicator" is a grammatical marker applied to that word to shift its part of speech or grammatical form (tense, number, voice, mood, etc). Given a base word and an indicator, output the single resulting label in English: one word if possible, otherwise the shortest natural short phrase.
-
-Examples:
-Word "ability" (noun) + indicator "plural" -> abilities
-Word "ability" (noun) + indicator "third person" -> their abilities
-Word "hammer" (noun) + indicator "action" -> to hammer
-Word "walk" (action) + indicator "past action" -> walked
-Word "able" (description) + indicator "adverb" -> ably
-
-Respond with ONLY the resulting label. No punctuation, no quotation marks, no explanation, no preamble, no restating the word.`;
 
 let indicatorsById = new Map<number, IndicatorInfoEntry>();
 // An entry is a `Promise` while its query is in flight, and gets overwritten with the
@@ -83,14 +72,14 @@ function toIndicatorName (name: string): string {
 }
 
 /**
- * Build the Ollama user prompt for a symbol + indicator pair, mirroring `buildPrompt()`
- * in `scripts/new_labels_with_indicator/generate_indicator_label_prompts.js`. When
- * `userSelectedSymbolId` is known, gloss/pos/explanation come from
- * `adaptivePaletteGlobals.symbols` (this also covers pos-mismatched pairs the batch
- * pipeline skipped via `GROUP_TO_POS`); otherwise the prompt falls back to `baseLabel`
- * (or `label` if unset), with no part of speech. Returns undefined if the indicator id
- * is not in the loaded table, or if `userSelectedSymbolId` is set but not found in
- * `adaptivePaletteGlobals.symbols`.
+ * Build the Ollama user prompt for a symbol + indicator pair by rendering the
+ * `indicatorLabelLookup.userPrompt` template from config.json. When `userSelectedSymbolId`
+ * is known, gloss/pos/explanation come from `adaptivePaletteGlobals.symbols`; otherwise the
+ * word falls back to `baseLabel` (or `label` if unset), with no part of speech. Template
+ * lines whose value is empty are dropped, so a missing part of speech or explanation leaves
+ * no empty line behind. Returns undefined if the indicator id is not in the loaded table,
+ * if `userSelectedSymbolId` is set but not found in `adaptivePaletteGlobals.symbols`, or if
+ * the word is blank (an unlabelled symbol).
  * @param {number | undefined} userSelectedSymbolId - Dictionary id of the originally selected symbol, if any.
  * @param {string} label - The symbol's current label.
  * @param {string | undefined} baseLabel - The label before any indicator swap; used as the prompt's word when `userSelectedSymbolId` is unset.
@@ -103,20 +92,27 @@ function buildOllamaPrompt ( userSelectedSymbolId: number | undefined, label: st
     return undefined;
   }
 
-  let header;
+  let word = { gloss: baseLabel ?? label, pos: "", explanation: "" };
   if (userSelectedSymbolId !== undefined) {
-    const word = adaptivePaletteGlobals.symbols.find(symbol => symbol.id === userSelectedSymbolId);
-    if (!word) {
+    const symbol = adaptivePaletteGlobals.symbols.find(symbol => symbol.id === userSelectedSymbolId);
+    if (!symbol) {
       return undefined;
     }
-    header = word.explanation
-      ? `Word: "${word.gloss}" (${word.pos}). Meaning: ${word.explanation}`
-      : `Word: "${word.gloss}" (${word.pos}).`;
-  } else {
-    header = `Word: "${baseLabel ?? label}".`;
+    word = { gloss: symbol.gloss, pos: symbol.pos ?? "", explanation: symbol.explanation ?? "" };
   }
 
-  return `${header}\nIndicator: ${toIndicatorName(indicator.name)} — ${indicator.purpose}`;
+  // No word means no question to ask.
+  if (word.gloss.trim().length === 0) {
+    return undefined;
+  }
+
+  return renderPromptLines(adaptivePaletteGlobals.config.indicatorLabelLookup.userPrompt, {
+    word: word.gloss,
+    pos: word.pos,
+    explanation: word.explanation,
+    indicator: toIndicatorName(indicator.name),
+    purpose: indicator.purpose
+  });
 }
 
 /**
@@ -136,7 +132,7 @@ export function getStaticNewLabel (userSelectedSymbolId: number | undefined, ind
 
 /**
  * Resolve the new label for a symbol + indicator pair through tier 2 of the resolution
- * order described in docs/IndicatorLabelLookup.md: an model query, only when
+ * order described in docs/IndicatorLabelLookup.md: a model query, only when
  * `adaptivePaletteGlobals.config.indicatorLabelLookup.useModelQueryFallback` is true and
  * a prompt can be built. Results are cached in-memory for the session, keyed by
  * `"{userSelectedSymbolId}_{indicatorId}"` when the symbol id is known, otherwise by
@@ -159,7 +155,7 @@ export function getNewLabelViaModelQuery (userSelectedSymbolId: number | undefin
     return { status: "not-viable" };
   }
 
-  const modelName = adaptivePaletteGlobals.config.indicatorLabelLookup.model || adaptivePaletteGlobals.LLMs[0];
+  const modelName = adaptivePaletteGlobals.config.indicatorLabelLookup.model || adaptivePaletteGlobals.models[0];
   if (!modelName) {
     return { status: "not-viable" };
   }
@@ -181,7 +177,7 @@ export function getNewLabelViaModelQuery (userSelectedSymbolId: number | undefin
   // own query. Both an empty response and a thrown error resolve to `undefined`; once settled,
   // the cache entry is overwritten with the plain value (string or `undefined`) for the rest
   // of the session.
-  const resultPromise: Promise<string | undefined> = queryChat(prompt, modelName, false, SYSTEM_PROMPT)
+  const resultPromise: Promise<string | undefined> = queryChat(prompt, modelName, false, adaptivePaletteGlobals.config.indicatorLabelLookup.systemPrompt)
     .then((response) => {
       const content = "message" in response ? (response.message?.content || "") : "";
       return content.trim().length > 0 ? content.trim() : undefined;

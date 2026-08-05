@@ -58,9 +58,9 @@
 * The search text field is cleared when the user clicks the clear button, and dialogs can be shown or hidden as
   needed.
 
-#### Ollama LLM Integration (optional)
+#### Ollama Model Integration (optional)
 
-* The palette can connect to a locally running Ollama LLM instance to provide AI-assisted communication support.
+* The palette can connect to a locally running Ollama model instance to provide AI-assisted communication support.
 * A dynamic sentence completions palette presents AI-generated continuations based on the current encoding area
   content.
 * Users can configure the system prompt used for Ollama queries through an in-app dialog.

@@ -27,6 +27,21 @@ const FAKE_INDICATORS = [
   { id: 97, group: "Nominal", name: "INDICATOR THING", purpose: "Marks concrete sense" }
 ];
 
+const SYSTEM_PROMPT = "You are a linguistic assistant for Bliss.";
+const USER_PROMPT = "Word: \"{{word}}\"\nPart of speech: {{pos}}\nMeaning: {{explanation}}\nIndicator: {{indicator}} — {{purpose}}";
+
+/**
+ * Replace the config with one that enables the model-query tier and carries the test
+ * prompts.
+ */
+function enableModelQuery (): void {
+  adaptivePaletteGlobals.config = {
+    indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b", systemPrompt: SYSTEM_PROMPT, userPrompt: USER_PROMPT },
+    symbolSearch: { show: true },
+    svgBuilderString: { show: false }
+  };
+}
+
 describe("IndicatorLabels", (): void => {
 
   beforeAll(async (): Promise<void> => {
@@ -44,7 +59,11 @@ describe("IndicatorLabels", (): void => {
     }));
     await initIndicatorLabels();
     resetOllamaCacheForTests();
-    adaptivePaletteGlobals.config = { indicatorLabelLookup: { useModelQueryFallback: false, model: "" } };
+    adaptivePaletteGlobals.config = {
+      indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: SYSTEM_PROMPT, userPrompt: USER_PROMPT },
+      symbolSearch: { show: true },
+      svgBuilderString: { show: false }
+    };
   });
 
   afterEach((): void => {
@@ -76,21 +95,28 @@ describe("IndicatorLabels", (): void => {
     });
 
     test("not-viable when indicatorId is not in the loaded table", (): void => {
-      adaptivePaletteGlobals.config = { indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" } };
+      enableModelQuery();
       const result = getNewLabelViaModelQuery(undefined, "unknownIndicator", "unknownIndicator", 99999);
       expect(result).toStrictEqual({ status: "not-viable" });
       expect(mockedQueryChat).not.toHaveBeenCalled();
     });
 
     test("not-viable when userSelectedSymbolId is set but not found in symbols", (): void => {
-      adaptivePaletteGlobals.config = { indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" } };
+      enableModelQuery();
       const result = getNewLabelViaModelQuery(999999999, "ghost", undefined, 97);
       expect(result).toStrictEqual({ status: "not-viable" });
       expect(mockedQueryChat).not.toHaveBeenCalled();
     });
 
+    test("not-viable when the symbol has no label and no dictionary id", (): void => {
+      enableModelQuery();
+      const result = getNewLabelViaModelQuery(undefined, "", "", 97);
+      expect(result).toStrictEqual({ status: "not-viable" });
+      expect(mockedQueryChat).not.toHaveBeenCalled();
+    });
+
     test("pending: starts a query and resolves it to the parsed label", async (): Promise<void> => {
-      adaptivePaletteGlobals.config = { indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" } };
+      enableModelQuery();
       mockedQueryChat.mockResolvedValue(
         { message: { role: "assistant", content: " helper " } } as Awaited<ReturnType<typeof queryChat>>
       );
@@ -105,13 +131,46 @@ describe("IndicatorLabels", (): void => {
       const [userPrompt, modelName, streamResp, systemPrompt] = mockedQueryChat.mock.calls[0];
       expect(modelName).toBe("gemma4:12b");
       expect(streamResp).toBe(false);
-      expect(systemPrompt).toContain("linguistic assistant for Bliss");
-      expect(userPrompt).toContain(`Word: "${symbol.gloss}"`);
-      expect(userPrompt).toContain("Indicator: thing — Marks concrete sense");
+      expect(systemPrompt).toBe(SYSTEM_PROMPT);
+      expect(userPrompt).toBe(
+        `Word: "${symbol.gloss}"\nPart of speech: ${symbol.pos}\nMeaning: ${symbol.explanation}\nIndicator: thing — Marks concrete sense`
+      );
+    });
+
+    test("the prompt drops the meaning line for a symbol with no explanation", async (): Promise<void> => {
+      enableModelQuery();
+      mockedQueryChat.mockResolvedValue(
+        { message: { role: "assistant", content: "yapping" } } as Awaited<ReturnType<typeof queryChat>>
+      );
+
+      // Id 6330 ("to yap") carries a part of speech but an empty explanation.
+      const symbol = adaptivePaletteGlobals.symbols.find(s => s.id === 6330)!;
+      const result = getNewLabelViaModelQuery(symbol.id, symbol.gloss, undefined, 97);
+      if (result.status !== "pending") throw new Error("unreachable");
+      await result.promise;
+
+      expect(mockedQueryChat.mock.calls[0][0]).toBe(
+        `Word: "${symbol.gloss}"\nPart of speech: ${symbol.pos}\nIndicator: thing — Marks concrete sense`
+      );
+    });
+
+    test("the prompt keeps only the word and indicator lines when there is no symbol id", async (): Promise<void> => {
+      enableModelQuery();
+      mockedQueryChat.mockResolvedValue(
+        { message: { role: "assistant", content: "hand-builts" } } as Awaited<ReturnType<typeof queryChat>>
+      );
+
+      const result = getNewLabelViaModelQuery(undefined, "hand-built now", "hand-built", 97);
+      if (result.status !== "pending") throw new Error("unreachable");
+      await result.promise;
+
+      expect(mockedQueryChat.mock.calls[0][0]).toBe(
+        "Word: \"hand-built\"\nIndicator: thing — Marks concrete sense"
+      );
     });
 
     test("second call after the first settles is served from cache synchronously, no re-query", async (): Promise<void> => {
-      adaptivePaletteGlobals.config = { indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" } };
+      enableModelQuery();
       mockedQueryChat.mockResolvedValue(
         { message: { role: "assistant", content: "walked" } } as Awaited<ReturnType<typeof queryChat>>
       );
@@ -127,7 +186,7 @@ describe("IndicatorLabels", (): void => {
     });
 
     test("concurrent calls for the same key before settling share one in-flight query", async (): Promise<void> => {
-      adaptivePaletteGlobals.config = { indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" } };
+      enableModelQuery();
       let resolveQuery: (value: Awaited<ReturnType<typeof queryChat>>) => void;
       mockedQueryChat.mockImplementation(() => new Promise((resolve) => {
         resolveQuery = resolve;
@@ -149,7 +208,7 @@ describe("IndicatorLabels", (): void => {
     });
 
     test("thrown error resolves to undefined and is cached as a settled miss", async (): Promise<void> => {
-      adaptivePaletteGlobals.config = { indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b" } };
+      enableModelQuery();
       mockedQueryChat.mockRejectedValue(new Error("connection refused"));
 
       const first = getNewLabelViaModelQuery(undefined, "jump", "jump", 97);

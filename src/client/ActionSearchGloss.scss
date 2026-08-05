@@ -11,32 +11,31 @@
  */
 
 /*
- * The dialog shell sets `overflow: hidden` and expects exactly one scrolling descendant,
- * so this is it. Without it a short or magnified viewport clips the footer buttons with
- * no way to reach them. `min-height: 0` is required, or a flex child refuses to shrink
- * below its content size and never scrolls.
+ * A flex column so the results grid inside it can be the dialog's single scroll region.
+ * `min-height: 0` is required for that: without it a flex child refuses to shrink below
+ * its content size, the grid never scrolls, and the footer gets pushed out of reach.
  */
-.actionSvgEntryField {
+.actionSearchGloss {
+  display: flex;
   flex: 1;
-  max-width: 32rem;
+  flex-direction: column;
+  max-width: 60rem;
   min-height: 0;
-  overflow-y: auto;
+}
 
-  p {
-    margin: 0.5rem 0;
-  }
+.glossSearchForm {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 
   label {
     font-weight: bold;
   }
 }
 
-.svgEntryStatus {
+.glossSearchStatus {
   font-weight: bold;
+  margin: 0.5rem 0;
   min-height: 1.5rem;
-}
-
-.error-text {
-  color: darkred;
-  font-weight: bold;
 }

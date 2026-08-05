@@ -10,27 +10,17 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-.actionGlossSearchCell {
-  border: 2px solid blue;
-  background-color: beige;
-  text-align: center;
+.symbolEntryToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 
-  button {
-    margin: 0.5rem;
-    background-color: white;
+  > button {
+    padding: 0.5rem 1rem;
   }
+}
 
-  label, input {
-    text-align: left;
-  }
-
-  span {
-    display: block;
-    margin: 0 auto;
-  }
-
-  span {
-    padding-top: 0.5rem;
-    color: black;
-  }
+/* The developer entry point is deliberately quieter than the user-facing one. */
+.symbolEntryToolbarDevTrigger {
+  background-color: #ddd;
 }

@@ -9,7 +9,7 @@
   // Default name of model used (aka, none).  Set in setSelectedModel() handler.
   let nameOfModelToUse = "";
 
-  // Function to retrieve a list of LLM's available from the service
+  // Function to retrieve a list of available models
   async function getModelNames () {
     const modelListUrl = `${ollamaService}/api/tags`;
     let modelNames = [];
@@ -61,7 +61,7 @@
   }
 
   // Enable/disable "Ask" buttons depending on whether the prompt input has
-  // any text in it and if there are any LLMs to query.
+  // any text in it and if there are any models to query.
   function setAskButtonsEnabledState() {
     const askButton = document.getElementById("justAsk");
     const askSingleButton = document.getElementById("single");
@@ -97,7 +97,7 @@
     }
   };
 
-  // Function for passing the chat prompt to the LLM using ollama service.
+  // Function for passing the chat prompt to the model using ollama service.
   async function queryChat (query) {
     const chatUrl = `${ollamaService}/api/chat`;
     console.debug(`chatUrl is ${chatUrl}`);

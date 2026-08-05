@@ -2,10 +2,10 @@
 
 The following instructions describe how to set up a local Ollama service such
 that the locally hosted Ollama chat web-app can send queries, and show the
-ollama service's responses from querying one or more LLMs.
+ollama service's responses from querying one or more models.
 
 A reason for running the service and the applications on `localhost` is privacy.
-Since the user's prompts are handled by an LLM or LLMs running locally, no user
+Since the user's prompts are handled by a model or models running locally, no user
 information is sent to the cloud; it all remains on the user's local machine.
 
 ## Ollama Service Set Up
@@ -30,9 +30,9 @@ steps.
 The `ollama.html` web-app uses the [Ollama browser API](https://github.com/ollama/ollama-js/?tab=readme-ov-file#browser-usage)
 for communication with the Ollama service, using the library's `chat()`
 function. The response from `chat()`  is an array of JSON structures each
-containing a part of the textual response from the LLM.  These are streamed from
+containing a part of the textual response from the model.  These are streamed from
 ollama and added incrementally to the display area(s) on the web page as the
-LLM(s) provides them.
+model(s) provides them.
 
 In the adaptive palette main directory, execute this command line instruction to
 install the ollama JavaScript package:
@@ -55,14 +55,14 @@ browser:
 
 The following describes how to use the features of the web-app.
 
-There is a pull-down menu near the top of the "LLM Settings" that selects the
+There is a pull-down menu near the top of the "Model Settings" that selects the
 language model to use for the chat. If no action is taken, the language model
 shown will be the one that is used. If no language models are shown in the
 pull-down, follow Ollama's [Model Library](https://github.com/ollama/ollama?tab=readme-ov-file#model-library)
 instructions to install language models.
 
 Alternatively, check the checkbox labelled "Show results for all models".  Any
-prompts sent to the chatbot will send the same prompt to multiple LLMs so their
+prompts sent to the chatbot will send the same prompt to multiple models so their
 responses can be compared.
 
 Enter a system prompt in the text area just below the checkbox.  This prompt
@@ -71,7 +71,7 @@ the nature of the chat.  This prompt is optional, and the text area can be left
 blank.
 
 Individual prompts are entered into the text area labelled "What does this
-express: ?".  There are two ways to chat with an LLM.  All text added to the
+express: ?".  There are two ways to chat with a model.  All text added to the
 text area is prefixed with the question "What does this express:"
 That is, if the text box contains:
 
@@ -79,7 +79,7 @@ That is, if the text box contains:
 Horse brown eat quickly oats dried
 ```
 
-then the full prompt sent to the LLM is:
+then the full prompt sent to the model is:
 
 ```text
 What does this express: "Horse brown eat quickly oats dried"?
@@ -90,7 +90,7 @@ will likely be somewhat wordy.  The language model will offer an analysis of the
 chat query, how the query might be improved, and it will end with a response.
 
 If the "Answer with a single grammatically correct sentence" button is pressed,
-then the query sent to the LLM is modified in an attempt to have the LLM
+then the query sent to the model is modified in an attempt to have the model
 return a single sentence, like so:
 
 ```text

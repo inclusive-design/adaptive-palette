@@ -36,7 +36,7 @@ completes. The system attempts to resolve the label in the following order:
    device to be running Ollama.
 
 3. **Unchanged Label**
-   If both tiers fail (e.g., missing data, unreachable LLM, or invalid POS combination), the system gracefully
+   If both tiers fail (e.g., missing data, unreachable model, or invalid POS combination), the system gracefully
    degrades: the visual indicator is applied, but the text label remains unchanged.
 
 ### Audio Announcement Order
@@ -44,8 +44,8 @@ completes. The system attempts to resolve the label in the following order:
 Audio feedback triggers immediately when an indicator is clicked:
 
 1. **Lookup Table Match:** Announces the new label immediately.
-2. **LLM Fallback:** Announces `"{symbol label} {indicator label} — loading new label"` once the indicator is
-selected. Once the LLM responds, it announces the new label.
+2. **Model Fallback:** Announces `"{symbol label} {indicator label} — loading new label"` once the indicator is
+selected. Once the model responds, it announces the new label.
 3. **No Match / Fallback Failed:** Announces `"{symbol label} {indicator label}"`. The text label remains unchanged.
 
 ### Modifier Interaction
@@ -60,19 +60,35 @@ indicator and automatically reapplies them to the newly resolved label.
 | `src/client/IndicatorLabelsUtils.ts` | Client module: loads the table, metadata, and implements the resolution logic. |
 | `public/data/new_labels_with_indicator.json` | Pre-generated lookup table (`{symbolId}_{indicatorId} -> label`). |
 | `public/data/indicators.json` | Indicator metadata (id, group, name, purpose). |
-| `public/data/bliss_symbol_explanations.json` | Bliss vocabulary (gloss, POS, explanation) used to build LLM prompts. |
+| `public/data/bliss_symbol_explanations.json` | Bliss vocabulary (gloss, POS, explanation) used to build model prompts. |
 | `public/config.json` | Runtime config (enables/disables Ollama fallback, selects model). |
 | `src/client/ActionIndicatorCell.ts` | Applies an indicator and triggers label resolution. |
 | `src/client/ActionRemoveIndicatorCell.ts` | Removes an indicator and restores `baseLabel`. |
 
 ### Runtime Configuration (`public/config.json`)
 
-This config file controls the live LLM fallback behavior (Resolution Tier 2) via the `indicatorLabelLookup` object:
+This config file controls the live model fallback behavior (Resolution Tier 2) via the `indicatorLabelLookup` object:
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
 | `useModelQueryFallback` | Boolean | Enables or disables the live Ollama fallback. If set to `false`, the system bypasses Tier 2 entirely. |
 | `model` | String | Specifies the name of the local Ollama model to query when the fallback is triggered (e.g., `gemma4:12b`). |
+| `systemPrompt` | String | Required, non-empty. Instructs the model to reply with the resulting label alone. |
+| `userPrompt` | String | Required, non-empty. The per-query prompt, one field per line. |
+
+`userPrompt` supports the placeholders `{{word}}`, `{{pos}}`, `{{explanation}}`, `{{indicator}}`, and
+`{{purpose}}`. A line whose placeholder value is empty is dropped, so the same template serves a symbol with an
+explanation, one without, and a hand-built symbol that has neither a part of speech nor an explanation:
+
+```text
+Word: "hammer"
+Part of speech: noun
+Meaning: a tool for driving nails
+Indicator: action — Marks the verb sense
+```
+
+If either prompt is missing or blank, the whole section is discarded and Tier 2 is disabled; Tier 1 is
+unaffected.
 
 ### Indicator Groups (`public/data/indicators.json`)
 
@@ -106,7 +122,10 @@ node scripts/new_labels_with_indicator/generate_indicator_label_prompts.js \
 **Output:** A JSONL file starting with a `_meta` row (system prompt), followed by rows for each pair containing
 `targetId`, `wordId`, `gloss`, `pos`, `indicatorId`, `indicatorName`, and `prompt`.
 
-### Step 2: Run the LLM
+This script keeps its own copy of the system prompt and builds its per-pair prompt as a single header line, so it
+can drift from the Tier 2 prompts in `public/config.json`. Edit both when the wording matters.
+
+### Step 2: Run the Model
 
 Queries a local HuggingFace model via deterministic greedy decoding. This requires a GPU and is typically run as
 a batch job on an Alliance server (see `job_run_new_labels_with_indicator.sh`).

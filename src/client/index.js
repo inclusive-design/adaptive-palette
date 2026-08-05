@@ -24,8 +24,7 @@ await initAdaptivePaletteGlobals("mainPaletteDisplayArea");
 import { PaletteStore } from "./PaletteStore";
 import { Palette } from "./Palette";
 import { SentenceChoices } from "./SentenceChoices";
-import { ActionSearchGloss } from "./ActionSearchGloss";
-import { ActionSvgEntryField } from "./ActionSvgEntryField";
+import { SymbolEntryToolbar } from "./SymbolEntryToolbar";
 
 const paletteFileMap = await loadPaletteFromJsonFile("/palettes/palette_file_map.json");
 const firstLayer = await loadPaletteFromJsonFile("/palettes/palettes.json");
@@ -59,19 +58,30 @@ render(html`<${Palette} json=${modifiersPalette} />`, getRequiredElement("modifi
 // itself when unavailable, so only the status line needs wiring here.
 render(html`<${SentenceChoices} />`, getRequiredElement("sentenceChoices"));
 
-if (adaptivePaletteGlobals.LLMs.length === 0) {
-  getRequiredElement("aiStatus").textContent = NO_MODELS_MESSAGE;
+const aiStatus = getRequiredElement("aiStatus");
+if (adaptivePaletteGlobals.models.length === 0) {
+  aiStatus.textContent = NO_MODELS_MESSAGE;
 } else if (!adaptivePaletteGlobals.config.telegraphicTranslation) {
-  getRequiredElement("aiStatus").textContent = NOT_CONFIGURED_MESSAGE;
+  aiStatus.textContent = NOT_CONFIGURED_MESSAGE;
+} else {
+  // Nothing to report. The element is removed rather than hidden with CSS: an empty grid
+  // item still consumes a row-gap, and a live region that is `display: none` when its
+  // text arrives may not announce it.
+  aiStatus.remove();
 }
 
-// Forms for entering SVG strings and searching the AV
-render(html`<${ActionSvgEntryField} />`, getRequiredElement("svgBuilderStringEntry"));
-render(html`<${ActionSearchGloss} />`, getRequiredElement("searchGloss"));
+// Triggers for adding symbols to the message; each dialog lives inside this component.
+render(html`<${SymbolEntryToolbar} />`, getRequiredElement("symbolEntryToolbar"));
 
 // Window keydown listener for a global "go back" keystroke
 window.addEventListener("keydown", (event) => {
   if (event.code === "Backquote") {
+    // A modal dialog is on top. Backquote must not navigate the palette behind it,
+    // which it otherwise would whenever focus sits on a non-text control such as a
+    // search result button.
+    if (document.querySelector("dialog[open]")) {
+      return;
+    }
     // If focus was not on a textual input element, go back up one layer in the
     // palette navigation
     if (!elementAllowsTextEntry(event.target)) {

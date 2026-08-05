@@ -15,7 +15,7 @@ import { adaptivePaletteGlobals } from "./GlobalData";
 import { queryChat } from "./OllamaApi";
 import { NO_MODELS_MESSAGE } from "./GlobalData";
 import {
-  pickModel, renderTemplate, parseSentences, requestSentences
+  pickModel, parseSentences, requestSentences
 } from "./TelegraphicTranslationUtils";
 
 vi.mock("./OllamaApi", async (importOriginal) => {
@@ -37,9 +37,11 @@ describe("telegraphicTranslation", (): void => {
 
   beforeEach((): void => {
     mockedQueryChat.mockReset();
-    adaptivePaletteGlobals.LLMs = ["phony-model:12b", "other-model:7b"];
+    adaptivePaletteGlobals.models = ["phony-model:12b", "other-model:7b"];
     adaptivePaletteGlobals.config = {
-      indicatorLabelLookup: { useModelQueryFallback: false, model: "" },
+      indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
+      symbolSearch: { show: true },
+      svgBuilderString: { show: false },
       telegraphicTranslation: { ...CONFIG }
     };
   });
@@ -59,24 +61,8 @@ describe("telegraphicTranslation", (): void => {
     });
 
     test("throws when no model is available", (): void => {
-      adaptivePaletteGlobals.LLMs = [];
+      adaptivePaletteGlobals.models = [];
       expect((): string => pickModel("phony-model:12b")).toThrow(NO_MODELS_MESSAGE);
-    });
-  });
-
-  describe("renderTemplate", (): void => {
-
-    test("substitutes every known placeholder", (): void => {
-      expect(renderTemplate("{{a}} and {{b}} and {{a}}", { a: "one", b: "two" }))
-        .toBe("one and two and one");
-    });
-
-    test("leaves unknown placeholders untouched", (): void => {
-      expect(renderTemplate("{{a}} and {{zzz}}", { a: "one" })).toBe("one and {{zzz}}");
-    });
-
-    test("returns a template with no placeholders unchanged", (): void => {
-      expect(renderTemplate("nothing to do", { a: "one" })).toBe("nothing to do");
     });
   });
 
@@ -157,7 +143,7 @@ describe("telegraphicTranslation", (): void => {
     });
 
     test("rejects when the feature is unavailable", async (): Promise<void> => {
-      adaptivePaletteGlobals.LLMs = [];
+      adaptivePaletteGlobals.models = [];
       await expect(requestSentences("me hungry")).rejects.toThrow(NO_MODELS_MESSAGE);
     });
   });
