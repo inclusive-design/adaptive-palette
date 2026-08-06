@@ -141,6 +141,25 @@ describe("CommandMakeSentence component", (): void => {
     expect(sentenceCompletionsSignal.value).toEqual({ status: "idle" });
   });
 
+  test("clicking while the input area is empty is announced", async (): Promise<void> => {
+    // The button keeps `aria-disabled` rather than `disabled`, so it can be focused and
+    // activated. Speech is the main feedback channel and must not go silent.
+    const spoken: string[] = [];
+    vi.stubGlobal("speechSynthesis", {
+      speaking: false,
+      pending: false,
+      cancel: () => {},
+      speak: (utterance: SpeechSynthesisUtterance) => spoken.push(utterance.text)
+    });
+    vi.stubGlobal("SpeechSynthesisUtterance", class { constructor (public text: string) {} });
+
+    renderCell();
+    await userEvent.click(screen.getByRole("button", { name: make_setence_label }));
+
+    expect(spoken).toEqual([`${make_setence_label} unavailable`]);
+    vi.unstubAllGlobals();
+  });
+
   test("is available once the input area has content", (): void => {
     changeEncodingContents.value = INPUT_CONTENTS;
     renderCell();

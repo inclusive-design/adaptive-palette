@@ -10,6 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+import { vi } from "vitest";
 import { render, screen } from "@testing-library/preact";
 import { fireEvent } from "@testing-library/dom";
 import { html } from "htm/preact";
@@ -135,5 +136,26 @@ describe("CommandGoToRootCell render tests", (): void => {
 
     expect(navigationDepth.value).toBe(0);
     expect(adaptivePaletteGlobals.navigationStack.currentPalette).toBeNull();
+  });
+
+  test("Clicking Home while unavailable is announced", async (): Promise<void> => {
+    // The button keeps `aria-disabled` rather than `disabled`, so it can be focused and
+    // activated. Speech is the main feedback channel and must not go silent.
+    const spoken: string[] = [];
+    vi.stubGlobal("speechSynthesis", {
+      speaking: false,
+      pending: false,
+      cancel: () => {},
+      speak: (utterance: SpeechSynthesisUtterance) => spoken.push(utterance.text)
+    });
+    vi.stubGlobal("SpeechSynthesisUtterance", class { constructor (public text: string) {} });
+
+    render(html`
+      <${CommandGoToRootCell} id="${TEST_CELL_ID}" options=${homeCell.options} />
+    `);
+    fireEvent.click(await screen.findByRole("button", { name: homeCell.options.label }));
+
+    expect(spoken).toEqual(["Home unavailable"]);
+    vi.unstubAllGlobals();
   });
 });

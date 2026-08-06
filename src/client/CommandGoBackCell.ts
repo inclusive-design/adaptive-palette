@@ -14,7 +14,7 @@ import { render, VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { adaptivePaletteGlobals, navigationDepth } from "./GlobalData";
-import { loadPaletteFromJsonFile, speak } from "./GlobalUtils";
+import { loadPaletteFromJsonFile, speak, speakUnavailable } from "./GlobalUtils";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
 import "./ActionCodeCell.scss";
@@ -60,10 +60,11 @@ export async function goBackImpl (defaultContaineId?: string | null ): Promise<v
  * clicked, goes back one palette.
  */
 const goBackToPalette = async (event: Event): Promise<void> => {
+  const button = event.currentTarget as HTMLElement;
   if (navigationDepth.value === 0) {
+    speakUnavailable(button.innerText);
     return;
   }
-  const button = event.currentTarget as HTMLElement;
   speak(button.innerText);
   return goBackImpl(button.getAttribute("aria-controls"));
 };

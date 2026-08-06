@@ -15,7 +15,7 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle, speak, speakUnavailable } from "./GlobalUtils";
 
 type ActionRemoveModifierPropsType = {
   id: string,
@@ -43,7 +43,7 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   }
   // Handle the request to remove the last placed modifier.
   const cellClicked = () => {
-    if (unavailable) { return; }
+    if (unavailable) { speakUnavailable(label); return; }
     // Get the last symbol in the editing area, and create an initial
     // `newBciAvId` and `newLabel`.
     const { caretPosition, payloads } = changeEncodingContents.value;

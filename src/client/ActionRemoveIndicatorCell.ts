@@ -15,7 +15,7 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType, ContentSignalDataType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
-import { generateGridStyle, speak, applyModifiersToLabel } from "./GlobalUtils";
+import { generateGridStyle, speak, speakUnavailable, applyModifiersToLabel } from "./GlobalUtils";
 import { findIndicators } from "./SvgUtils";
 
 type ActionIndicatorCodeCellPropsType = {
@@ -56,7 +56,7 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
   const unavailable = indicatorPosition === -1;
 
   const cellClicked = () => {
-    if (unavailable) { return; }
+    if (unavailable) { speakUnavailable(label); return; }
     // Get the symbol at the caret position in the editing area and find the
     // locations within it to replace any existing indicator.
     const { caretPosition, payloads } = changeEncodingContents.value;
