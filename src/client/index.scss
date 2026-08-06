@@ -59,19 +59,16 @@ svg.inter-word-padding {
 }
 
 /*
- * Row 2 packs 16 controls across the page, so its symbols and labels are smaller than
- * everywhere else.  Labels wrap rather than truncate -- the visible text is also the
- * button's accessible name and what the speech output reads.
+ * Command bar buttons are smaller than other cells.
  */
 #commandBar {
   svg {
     max-height: 2rem;
+    max-width: 100%;
   }
 
   button {
     border-radius: 0.5rem;
-    font-size: 0.55rem;
-    line-height: 1.05;
     overflow-wrap: break-word;
     padding-bottom: 0.25rem;
   }

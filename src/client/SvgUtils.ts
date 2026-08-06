@@ -10,7 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { BlissSVGBuilder } from "bliss-svg-builder";
+import { BlissSVGBuilder, BlissOptions } from "bliss-svg-builder";
 import { SymbolCompositionType } from "./index.d";
 import { adaptivePaletteGlobals } from "./GlobalData";
 
@@ -244,6 +244,20 @@ export function findSymbolByBciAvId (bciAvId: number) {
 }
 
 /**
+ * The builder options for the given composition:
+ * 1. A lone indicator has no symbol beneath, crop its bottom.
+ * @param {SymbolCompositionType} composition - A ID (a number) or an array of IDs and
+ *                           separators.
+ * @return {BlissOptions} - The options, or `undefined` for the builder's defaults.
+ */
+function getSvgBuilderOptions (composition: SymbolCompositionType): BlissOptions | undefined {
+  if (typeof composition === "number" && isIndicator(composition)) {
+    return { "crop-bottom": 8 };
+  }
+  return undefined;
+}
+
+/**
  * Create and return the builder from a string based on the given
  * SymbolCompositionType. `BlissSVGBuilder` never throws for an unknown or
  * malformed code — it reports the problem via `builder.warnings` instead and
@@ -259,7 +273,7 @@ export function findSymbolByBciAvId (bciAvId: number) {
 function getSvgBuilder (composition: SymbolCompositionType): BlissSVGBuilder {
   let builder: BlissSVGBuilder;
   try {
-    builder = new BlissSVGBuilder(compositionToBstr(composition));
+    builder = new BlissSVGBuilder(compositionToBstr(composition), getSvgBuilderOptions(composition));
   } catch (err) {
     console.error(err);
     console.error(`Unknown composition = ${String(composition)}`);
