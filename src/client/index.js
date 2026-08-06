@@ -12,7 +12,7 @@
 import { render } from "preact";
 import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals, adaptivePaletteGlobals, navigationDepth, NO_MODELS_MESSAGE } from "./GlobalData";
-import { loadPaletteFromJsonFile, speak } from "./GlobalUtils";
+import { loadPaletteFromJsonFile, speak, speakUnavailable } from "./GlobalUtils";
 import { goBackImpl } from "./CommandGoBackCell";
 import { INPUT_AREA_ID } from "./ContentEncoding";
 import { NOT_CONFIGURED_MESSAGE } from "./TelegraphicTranslationUtils";
@@ -76,6 +76,7 @@ window.addEventListener("keydown", (event) => {
     }
     // Depth zero means there is nowhere to go back to.
     if (navigationDepth.value === 0) {
+      speakUnavailable("Back");
       return;
     }
     // If focus was not on a textual input element, go back up one layer in the
