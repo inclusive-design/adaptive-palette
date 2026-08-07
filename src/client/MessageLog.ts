@@ -108,7 +108,8 @@ function writeMessageLog (entries: MessageRecordType[]): void {
  * Record a message the user has said, stamped with the current time.
  *
  * A message that has been said before is stored again rather than replacing the earlier
- * copy: how often a word is used is what word prediction ranks by.
+ * copy: how often a word is used is what word prediction ranks by. If a message is just
+ * stored, both "Speak" and "Sentence" buttons will be save the same message again.
  * @param {SymbolEncodingType[]} payloads - The symbols in the message.
  * @returns {void}
  */
@@ -116,7 +117,12 @@ export function saveMessageRecord (payloads: SymbolEncodingType[]): void {
   if (!adaptivePaletteGlobals.config.maxStoredRecords || payloads.length === 0) {
     return;
   }
-  writeMessageLog([...readMessageLog(), { timestamp: new Date().toISOString(), payloads }]);
+  const entries = readMessageLog();
+  const lastRecord = entries[entries.length - 1];
+  if (lastRecord && recordMessageText(lastRecord) === messageText(payloads)) {
+    return;
+  }
+  writeMessageLog([...entries, { timestamp: new Date().toISOString(), payloads }]);
 }
 
 /**

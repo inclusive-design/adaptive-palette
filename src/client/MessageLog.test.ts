@@ -12,7 +12,7 @@
 
 import { adaptivePaletteGlobals } from "./GlobalData";
 import {
-  MESSAGE_LOG_KEY, messageText, readMessageLog, saveMessageRecord, saveTranslation
+  MESSAGE_LOG_KEY, messageText, readMessageLog, recordMessageText, saveMessageRecord, saveTranslation
 } from "./MessageLog";
 import { SymbolEncodingType } from "./index.d";
 
@@ -68,8 +68,15 @@ describe("messageLog", (): void => {
 
     test("a repeated message is saved again rather than replacing the earlier one", (): void => {
       saveMessageRecord(message("I", "want", "juice"));
+      saveMessageRecord(message("hello"));
       saveMessageRecord(message("I", "want", "juice"));
-      expect(readMessageLog()).toHaveLength(2);
+      expect(readMessageLog().map(recordMessageText)).toEqual(["I want juice", "hello", "I want juice"]);
+    });
+
+    test("saving the message that was just saved does not store it twice", (): void => {
+      saveMessageRecord(message("I", "want", "juice"));
+      saveMessageRecord(message("I", "want", "juice"));
+      expect(readMessageLog()).toHaveLength(1);
     });
 
     test("the log is capped at maxStoredRecords, dropping oldest first", (): void => {
@@ -128,12 +135,13 @@ describe("messageLog", (): void => {
 
     test("the most recent copy of a repeated message is the one translated", (): void => {
       saveMessageRecord(message("I", "want", "juice"));
+      saveMessageRecord(message("hello"));
       saveMessageRecord(message("I", "want", "juice"));
       saveTranslation("I want juice", TRANSLATION);
 
       const log = readMessageLog();
       expect(log[0].translation).toBeUndefined();
-      expect(log[1].translation).toEqual(TRANSLATION);
+      expect(log[2].translation).toEqual(TRANSLATION);
     });
 
     test("other messages are left alone", (): void => {

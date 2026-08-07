@@ -24,8 +24,7 @@ keeps working.
 
 ## Interaction
 
-The suggestion row sits between the input area and the sentence choices. It updates every time the
-message changes.
+The suggestion row updates every time the message changes.
 
 Each suggestion is a button showing a Bliss symbol and its label. Selecting one inserts that symbol
 at the caret and speaks its label, exactly as selecting the symbol from a palette does.

@@ -23,7 +23,7 @@ import { SymbolCompositionType, SymbolEncodingType } from ".";
 export const SEED_STARTERS: { label: string, composition: SymbolCompositionType }[] = [
   { label: "yes", composition: 2776 },
   { label: "don't know", composition: [412, ";", 81, "/", 449, "/", 401] },
-  { label: "help", composition: 1820 },
+  { label: "help", composition: 1802 },
   { label: "want", composition: 2705 },
   { label: "I", composition: 1840 },
   { label: "you", composition: 2785 },

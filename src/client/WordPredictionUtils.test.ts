@@ -49,8 +49,8 @@ describe("wordPrediction", (): void => {
   describe("with saved messages", (): void => {
     beforeEach((): void => {
       saveMessageRecord(message("I", "want", "juice"));
-      saveMessageRecord(message("I", "want", "juice"));
       saveMessageRecord(message("I", "want", "music"));
+      saveMessageRecord(message("I", "want", "juice"));
       saveMessageRecord(message("you", "help", "me"));
     });
 
@@ -68,8 +68,8 @@ describe("wordPrediction", (): void => {
 
     test("a two-word match beats a one-word match", (): void => {
       saveMessageRecord(message("please", "want", "music"));
-      saveMessageRecord(message("please", "want", "music"));
-      saveMessageRecord(message("please", "want", "music"));
+      saveMessageRecord(message("you", "want", "music"));
+      saveMessageRecord(message("we", "want", "music"));
       // "music" now follows "want" more often overall, but "juice" follows "I want".
       expect(predictedLabels(["I", "want"])[0]).toBe("juice");
     });

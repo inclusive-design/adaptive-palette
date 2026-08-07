@@ -62,10 +62,10 @@ Placeholders are `{{name}}` and are substituted at query time; one with no match
 | Field | Type | Description |
 | ----- | ---- | ----------- |
 | `show` | boolean | Required. Whether the suggestion row is rendered. |
-| `maxSuggestions` | number | Positive integer. How many suggestions to offer at once. Defaults to 4. |
+| `maxSuggestions` | number | Positive integer. How many suggestions to offer at once. Defaults to 10. |
 
 When the section is missing or `show` is not a boolean, the feature is off. A malformed `maxSuggestions`
-alone falls back to 4 and leaves the feature on.
+alone falls back to 10 and leaves the feature on.
 
 ### `symbolSearch` and `svgBuilderString`
 
