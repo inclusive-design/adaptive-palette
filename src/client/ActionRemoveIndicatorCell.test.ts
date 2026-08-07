@@ -87,7 +87,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     expect(removeIndicatorButton).toBeVisible();
     expect(removeIndicatorButton).toBeValid();
     expect(removeIndicatorButton.id).toBe(TEST_CELL_ID);
-    expect(removeIndicatorButton.getAttribute("class")).toBe("actionIndicatorCell");
+    expect(removeIndicatorButton.getAttribute("class")).toBe("btn-command");
     expect(removeIndicatorButton.textContent).toBe(testCell.options.label);
 
     // Check the grid cell styles.
@@ -95,8 +95,8 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     expect(removeIndicatorButton.style.getPropertyValue("grid-row")).toBe("3 / span 2");
 
     // Check disabled state.  `changeEncodingContents` is initialized
-    // with an empty array, hence there should be a `disabled` attribute.
-    expect(removeIndicatorButton.getAttribute("disabled")).toBeDefined();
+    // with an empty array, hence there should be an `aria-disabled` attribute.
+    expect(removeIndicatorButton).toHaveAttribute("aria-disabled", "true");
   });
 
   test("Single ActionIndicatorCell rendering, still disabled", async (): Promise<void> => {
@@ -118,7 +118,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     expect(removeIndicatorButton).toBeVisible();
     expect(removeIndicatorButton).toBeValid();
     expect(removeIndicatorButton.id).toBe(TEST_CELL_ID);
-    expect(removeIndicatorButton.getAttribute("disabled")).toBeDefined();
+    expect(removeIndicatorButton).toHaveAttribute("aria-disabled", "true");
   });
 
   test("ActionIndicatorCell rendering, enabled", async (): Promise<void> => {
@@ -142,7 +142,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     expect(removeIndicatorButton).toBeVisible();
     expect(removeIndicatorButton).toBeValid();
     expect(removeIndicatorButton.id).toBe(TEST_CELL_ID);
-    expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
+    expect(removeIndicatorButton).toHaveAttribute("aria-disabled", "false");
   });
 
   test("ActionIndicatorCell rendering, enabled then disabled after removing indicator", async (): Promise<void> => {
@@ -166,13 +166,13 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     // Check that the ActionIndicatorCell/button is now enabled since the last
     // symbol in the encoding array has an indicator.
     const removeIndicatorButton = await screen.findByRole("button", {name: testCell.options.label});
-    expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
+    expect(removeIndicatorButton).toHaveAttribute("aria-disabled", "false");
 
     // Remove the indicator from the last bliss-word and check that the
     // `ActionIndicatorCell` is now disabled, and that the last symbol no longer
     // has an indicator.
     fireEvent.click(removeIndicatorButton);
-    expect(removeIndicatorButton.getAttribute("disabled")).toBeDefined();
+    expect(removeIndicatorButton).toHaveAttribute("aria-disabled", "true");
     const lastSymbol = changeEncodingContents.value.payloads[changeEncodingContents.value.payloads.length-1];
     expect(lastSymbol.composition).toStrictEqual(compositionAfterIndicatorRemoval);
   });
@@ -189,7 +189,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
       />`
     );
     const removeIndicatorButton = await screen.findByRole("button", {name: testCell.options.label});
-    expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
+    expect(removeIndicatorButton).toHaveAttribute("aria-disabled", "false");
 
     fireEvent.click(removeIndicatorButton);
 
@@ -212,7 +212,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
       />`
     );
     const removeIndicatorButton = await screen.findByRole("button", {name: testCell.options.label});
-    expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
+    expect(removeIndicatorButton).toHaveAttribute("aria-disabled", "false");
 
     fireEvent.click(removeIndicatorButton);
 
@@ -235,7 +235,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
       />`
     );
     const removeIndicatorButton = await screen.findByRole("button", {name: testCell.options.label});
-    expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
+    expect(removeIndicatorButton).toHaveAttribute("aria-disabled", "false");
 
     fireEvent.click(removeIndicatorButton);
 

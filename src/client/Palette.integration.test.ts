@@ -480,23 +480,23 @@ describe("Palette integration test", () => {
     // indicator to it.  The remove-indicator button should be enabled.
     const firstCell = await screen.findByText("First Cell");
     const addPluralButton = await screen.findByText("plural");
-    const removeIndicatorButton = await screen.findByText("remove indicator");
+    const removeIndicatorButton = await screen.findByRole("button", { name: "remove indicator" });
     fireEvent.click(firstCell);
     fireEvent.click(addPluralButton);
     const firstSymbol = changeEncodingContents.value.payloads[0];
     expect((firstSymbol.composition as (string|number)[]).includes(PLURAL_INDICATOR_ID)).toBe(true);
-    expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
+    expect(removeIndicatorButton).toHaveAttribute("aria-disabled", "false");
 
     // Add a second symbol to the contents, one without an indicator.  The
     // remove-indicator button should change to disabled.
     fireEvent.click(firstCell);
-    expect(removeIndicatorButton.getAttribute("disabled")).toBeDefined();
+    expect(removeIndicatorButton).toHaveAttribute("aria-disabled", "true");
 
     // Delete the last symbol.  The remaining symbol will still an indicator,
     // and the remove-indicator button should change to enabled.
     const deleteButton = await screen.findByText("Delete");
     fireEvent.click(deleteButton);
-    expect(removeIndicatorButton.getAttribute("disabled")).toBeNull();
+    expect(removeIndicatorButton).toHaveAttribute("aria-disabled", "false");
   });
 
   test("Coordinating adding and remove modifiers", async() => {
@@ -516,12 +516,12 @@ describe("Palette integration test", () => {
     const firstCell = await screen.findByText("First Cell");
     const addIntensityButton = await screen.findByText("intensity");
     const addOppositeButton = await screen.findByText("opposite of");
-    const removeModifierButton = await screen.findByText("remove a modifier");
+    const removeModifierButton = await screen.findByRole("button", { name: "remove a modifier" });
     expect(firstCell).toBeInTheDocument();
     expect(addIntensityButton).toBeInTheDocument();
     expect(addOppositeButton).toBeInTheDocument();
     expect(removeModifierButton).toBeInTheDocument();
-    expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
+    expect(removeModifierButton).toHaveAttribute("aria-disabled", "true");
 
     // Add "First Cell" to the `changeEncodingContents`.  There should be no
     // modifiers on it at this point.
@@ -529,33 +529,33 @@ describe("Palette integration test", () => {
     let firstSymbol = changeEncodingContents.value.payloads[0];
     expect((firstSymbol.composition as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(false);
     expect((firstSymbol.composition as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
-    expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
+    expect(removeModifierButton).toHaveAttribute("aria-disabled", "true");
 
     // Add the intensity modifer.
     fireEvent.click(addIntensityButton);
     firstSymbol = changeEncodingContents.value.payloads[0];
     expect((firstSymbol.composition as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(true);
     expect((firstSymbol.composition as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
-    expect(removeModifierButton.getAttribute("disabled")).toBeNull();
+    expect(removeModifierButton).toHaveAttribute("aria-disabled", "false");
 
     // Remove the intensity modifer.
     fireEvent.click(removeModifierButton);
     firstSymbol = changeEncodingContents.value.payloads[0];
     expect((firstSymbol.composition as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(false);
     expect((firstSymbol.composition as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
-    expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
+    expect(removeModifierButton).toHaveAttribute("aria-disabled", "true");
 
     // Add the intensity, and then the oppposite modifiers.
     fireEvent.click(addIntensityButton);
     firstSymbol = changeEncodingContents.value.payloads[0];
     expect((firstSymbol.composition as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(true);
     expect((firstSymbol.composition as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
-    expect(removeModifierButton.getAttribute("disabled")).toBeNull();
+    expect(removeModifierButton).toHaveAttribute("aria-disabled", "false");
     fireEvent.click(addOppositeButton);
     firstSymbol = changeEncodingContents.value.payloads[0];
     expect((firstSymbol.composition as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(true);
     expect((firstSymbol.composition as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(true);
-    expect(removeModifierButton.getAttribute("disabled")).toBeNull();
+    expect(removeModifierButton).toHaveAttribute("aria-disabled", "false");
 
     // Remove a modifier -- should be the last one added, the "opposite of"
     // modifier.
@@ -563,7 +563,7 @@ describe("Palette integration test", () => {
     firstSymbol = changeEncodingContents.value.payloads[0];
     expect((firstSymbol.composition as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(true);
     expect((firstSymbol.composition as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
-    expect(removeModifierButton.getAttribute("disabled")).toBeNull();
+    expect(removeModifierButton).toHaveAttribute("aria-disabled", "false");
 
     // Remove another modifier -- should be the "intensity" modifier.  Also,
     // there should be no more modifiers on the symbol and the remove button
@@ -572,7 +572,7 @@ describe("Palette integration test", () => {
     firstSymbol = changeEncodingContents.value.payloads[0];
     expect((firstSymbol.composition as (string|number)[]).includes(INTENSITY_MODIFIER_ID)).toBe(false);
     expect((firstSymbol.composition as (string|number)[]).includes(OPPOSITE_MODIFIER_ID)).toBe(false);
-    expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
+    expect(removeModifierButton).toHaveAttribute("aria-disabled", "true");
   });
 
   test("Coordinating cursor movement and editing", async() => {

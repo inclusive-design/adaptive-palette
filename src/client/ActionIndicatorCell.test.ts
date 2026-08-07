@@ -83,8 +83,8 @@ describe("ActionIndicatorCell render tests", (): void => {
     expect(button.style.getPropertyValue("grid-row")).toBe("3 / span 2");
 
     // Check disabled state.  `changeEncodingContents` is initialized
-    // with an empty array, hence there should be a `disabled` attribute.
-    expect(button.getAttribute("disabled")).toBeDefined();
+    // with an empty array, hence there should be an `aria-disabled` attribute.
+    expect(button).toHaveAttribute("aria-disabled", "true");
   });
 
   test("Single ActionIndicatorCell rendering, enabled", async (): Promise<void> => {
@@ -124,14 +124,14 @@ describe("ActionIndicatorCell render tests", (): void => {
     expect(button.style.getPropertyValue("grid-row")).toBe("3 / span 2");
 
     // Check disabled state. `changeEncodingContents` is initialized
-    // with an empty array, hence there should be a `disabled` attribute.
-    expect(button.getAttribute("disabled")).toBeNull();
+    // with an empty array, hence there should be an `aria-disabled` attribute.
+    expect(button).toHaveAttribute("aria-disabled", "false");
 
     // Move the caret to the beginning of the input.  The ActionIndicatorCell
     // should become disabled.
-    changeEncodingContents.value.caretPosition = -1;
+    changeEncodingContents.value = { ...changeEncodingContents.value, caretPosition: -1 };
     button = await screen.findByRole("button", {name: testCell.options.label});
-    expect(button.getAttribute("disabled")).toBeDefined();
+    expect(button).toHaveAttribute("aria-disabled", "true");
   });
 
   test("Tier 1 (pregenerated) hit: applies and speaks the label immediately", async (): Promise<void> => {

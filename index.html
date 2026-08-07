@@ -19,26 +19,26 @@
     <div id="symbolEntryToolbar"></div>
 
     <!--
-      User's main interaction area with the adaptive palette, including the input palette,
-      indicators, modifiers, backup palette, and main palette display area.
+      Row 1: navigation out of the current palette, the message being composed, and the
+      trigger that turns it into a sentence.
     -->
     <div id="inputArea">
       <div id="input_palette"></div>
     </div>
     <div id="sentenceChoices"></div>
-    <div>
-      <div id="indicators"></div>
-    </div>
-    <div>
-      <div id="modifiers"></div>
-    </div>
-    <div class="oneRow">
-      <div id="backup_palette"></div>
-      <div id="mainPaletteDisplayArea">
-        <script type="module">
-          import "./src/client/index.js";
-        </script>
-      </div>
+
+    <!--
+      Row 2: message editing commands, indicators, and modifiers, in one short bar.
+    -->
+    <div id="commandBar"></div>
+
+    <!--
+      Row 3: the palette itself, at full page width.
+    -->
+    <div id="mainPaletteDisplayArea">
+      <script type="module">
+        import "./src/client/index.js";
+      </script>
     </div>
   </body>
 </html>

@@ -103,7 +103,7 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     expect(removeModifierButton).toBeVisible();
     expect(removeModifierButton).toBeValid();
     expect(removeModifierButton.id).toBe(TEST_CELL_ID);
-    expect(removeModifierButton.getAttribute("class")).toBe("actionIndicatorCell");
+    expect(removeModifierButton.getAttribute("class")).toBe("btn-command");
     expect(removeModifierButton.textContent).toBe(testCell.options.label);
 
     // Check the grid cell styles.
@@ -111,8 +111,8 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     expect(removeModifierButton.style.getPropertyValue("grid-row")).toBe("3 / span 2");
 
     // Check disabled state.  `changeEncodingContents` is initialized
-    // with an empty array, hence there should be a `disabled` attribute.
-    expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
+    // with an empty array, hence there should be an `aria-disabled` attribute.
+    expect(removeModifierButton).toHaveAttribute("aria-disabled", "true");
   });
 
   test("ActionRemoveModifierCell rendering, still disabled", async (): Promise<void> => {
@@ -134,7 +134,7 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     expect(removeModifierButton).toBeVisible();
     expect(removeModifierButton).toBeValid();
     expect(removeModifierButton.id).toBe(TEST_CELL_ID);
-    expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
+    expect(removeModifierButton).toHaveAttribute("aria-disabled", "true");
   });
 
   test("ActionRemoveModifierCell rendering, enabled (prepended modifier)", async (): Promise<void> => {
@@ -158,7 +158,7 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     expect(removeModifierButton).toBeVisible();
     expect(removeModifierButton).toBeValid();
     expect(removeModifierButton.id).toBe(TEST_CELL_ID);
-    expect(removeModifierButton.getAttribute("disabled")).toBeNull();
+    expect(removeModifierButton).toHaveAttribute("aria-disabled", "false");
   });
 
   test("ActionRemoveModifierCell rendering, enabled then disabled after removing prepended modifier", async (): Promise<void> => {
@@ -181,13 +181,13 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     // Check that the ActionRemoveModifierCell/button is now enabled since the last
     // symbol in the encoding array has a modifier.
     const removeModifierButton = await screen.findByRole("button", {name: testCell.options.label});
-    expect(removeModifierButton.getAttribute("disabled")).toBeNull();
+    expect(removeModifierButton).toHaveAttribute("aria-disabled", "false");
 
     // Remove the modifier from the last bliss-word and check that the
     // `ActionRemoveModifierCell` is now disabled, and that the last symbol no longer
     // has a modifier.
     fireEvent.click(removeModifierButton);
-    expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
+    expect(removeModifierButton).toHaveAttribute("aria-disabled", "true");
     const lastSymbol = changeEncodingContents.value.payloads[changeEncodingContents.value.payloads.length-1];
     expect(lastSymbol.composition).toStrictEqual(compositionAfterPreModifierRemoval);
   });
@@ -212,20 +212,20 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     // Check that the ActionRemoveModifierCell/button is now enabled since the last
     // symbol in the encoding array has a modifier.
     const removeModifierButton = await screen.findByRole("button", {name: testCell.options.label});
-    expect(removeModifierButton.getAttribute("disabled")).toBeNull();
+    expect(removeModifierButton).toHaveAttribute("aria-disabled", "false");
 
     // Remove one modifier from the last bliss-word and check that the
     // `ActionRemoveModifierCell` is still enabled since the symbol still has a
     // modifier.
     fireEvent.click(removeModifierButton);
-    expect(removeModifierButton.getAttribute("disabled")).toBeNull();
+    expect(removeModifierButton).toHaveAttribute("aria-disabled", "false");
     let lastSymbol = changeEncodingContents.value.payloads[changeEncodingContents.value.payloads.length-1];
     expect(lastSymbol.composition).toStrictEqual(compositionAfterOneModifierRemoved);
 
     // Remove the last modifier.  Now the `ActionRemoveModifierCell` should be
     // disabled.  Check that the symbol itself no longer has any modifiers.
     fireEvent.click(removeModifierButton);
-    expect(removeModifierButton.getAttribute("disabled")).toBeDefined();
+    expect(removeModifierButton).toHaveAttribute("aria-disabled", "true");
     lastSymbol = changeEncodingContents.value.payloads[changeEncodingContents.value.payloads.length-1];
     expect(lastSymbol.composition).toStrictEqual(compositionAfterBothModifiersRemoved);
   });
@@ -242,7 +242,7 @@ describe("ActionRemoveModifierCell render tests", (): void => {
       />`
     );
     const removeModifierButton = await screen.findByRole("button", {name: testCell.options.label});
-    expect(removeModifierButton.getAttribute("disabled")).toBeNull();
+    expect(removeModifierButton).toHaveAttribute("aria-disabled", "false");
 
     fireEvent.click(removeModifierButton);
 
@@ -264,7 +264,7 @@ describe("ActionRemoveModifierCell render tests", (): void => {
       />`
     );
     const removeModifierButton = await screen.findByRole("button", {name: testCell.options.label});
-    expect(removeModifierButton.getAttribute("disabled")).toBeNull();
+    expect(removeModifierButton).toHaveAttribute("aria-disabled", "false");
 
     fireEvent.click(removeModifierButton);
 

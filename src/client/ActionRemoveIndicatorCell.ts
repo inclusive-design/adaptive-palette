@@ -15,9 +15,8 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType, ContentSignalDataType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
-import { generateGridStyle, speak, applyModifiersToLabel } from "./GlobalUtils";
+import { generateGridStyle, speak, speakUnavailable, applyModifiersToLabel } from "./GlobalUtils";
 import { findIndicators } from "./SvgUtils";
-import "./ActionIndicatorCell.scss";
 
 type ActionIndicatorCodeCellPropsType = {
   id: string,
@@ -52,9 +51,12 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
   // Enable the remove-indicator button only if there is an indicator on the
   // last symbol in the encoding contents array.
   const indicatorPosition = caretSymbolIndicatorPosition(changeEncodingContents.value);
-  const disabled = indicatorPosition === -1;
+  // Marked unavailable rather than `disabled` so the button keeps its place in the tab
+  // order for switch and eye-gaze users.
+  const unavailable = indicatorPosition === -1;
 
   const cellClicked = () => {
+    if (unavailable) { speakUnavailable(label); return; }
     // Get the symbol at the caret position in the editing area and find the
     // locations within it to replace any existing indicator.
     const { caretPosition, payloads } = changeEncodingContents.value;
@@ -96,7 +98,7 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
   };
 
   return html`
-    <button id="${props.id}" class="actionIndicatorCell" style="${gridStyles}" onClick=${cellClicked} disabled="${disabled}">
+    <button id="${props.id}" class="btn-command" style="${gridStyles}" onClick=${cellClicked} aria-disabled=${unavailable}>
       <${BlissSymbol}
         composition=${removeIndicatorComposition}
         label=${label}

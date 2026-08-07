@@ -62,6 +62,15 @@ export function speak(text: string): void {
 }
 
 /**
+ * Announce that a cell marked `aria-disabled` was activated. Such a cell keeps its
+ * place in the tab order, so it can be focused and activated.
+ * @param {String} label - The label of the cell that was activated.
+ */
+export function speakUnavailable(label: string): void {
+  speak(`${label} unavailable`);
+}
+
+/**
  * Load a palette from the given JSON file using `fetch()`. The location of the
  * JSON file is provided as a variable. If the loading fails, a console error with
  * detailed error message is reported.

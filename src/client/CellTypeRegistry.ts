@@ -27,6 +27,7 @@ import { CommandCursorBackward } from "./CommandCursorBackward";
 import { CommandCursorForward } from "./CommandCursorForward";
 import { CommandDelLastEncoding } from "./CommandDelLastEncoding";
 import { CommandGoBackCell } from "./CommandGoBackCell";
+import { CommandGoToRootCell } from "./CommandGoToRootCell";
 import { CommandMakeSentence } from "./CommandMakeSentence";
 import { ContentEncoding } from "./ContentEncoding";
 
@@ -43,6 +44,7 @@ export const cellTypeRegistry = {
   "CommandCursorForward": CommandCursorForward,
   "CommandDelLastEncoding": CommandDelLastEncoding,
   "CommandGoBackCell": CommandGoBackCell,
+  "CommandGoToRootCell": CommandGoToRootCell,
   "CommandMakeSentence": CommandMakeSentence,
   "ContentEncoding": ContentEncoding,
 };

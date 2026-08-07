@@ -159,6 +159,12 @@ three categories by prefix.
 | ---- | ------- | ------------------------- |
 | `ContentEncoding` | Displays the current encoding (the input area showing selected symbols) | layout fields only |
 
+## Keyboard shortcuts
+
+The global "go back" keystroke is registered in [`src/client/index.js`](../src/client/index.js); the input
+area's caret keys are handled in [`src/client/ContentEncoding.ts`](../src/client/ContentEncoding.ts). See
+[ShortcutKeys.md](ShortcutKeys.md) for the full list.
+
 ## How to add a new cell type
 
 When a new `type` value is introduced, developers need to:

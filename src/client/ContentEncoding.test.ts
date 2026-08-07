@@ -59,7 +59,7 @@ describe("The content encoding area covers the sentence button's column when it 
     rowSpan: 1
   };
 
-  test("stretches to column 12 with no sentence button in the palette", async (): Promise<void> => {
+  test("stretches to column 15 with no sentence button in the palette", async (): Promise<void> => {
     render(html`
       <div id="inputArea">
         <div class="paletteContainer">
@@ -68,7 +68,7 @@ describe("The content encoding area covers the sentence button's column when it 
       </div>`
     );
     const encodingArea = await screen.findByLabelText("Input Area");
-    expect(getComputedStyle(encodingArea).gridColumnEnd).toBe("12");
+    expect(getComputedStyle(encodingArea).gridColumnEnd).toBe("15");
   });
 
   test("keeps its own span when the sentence button is present", async (): Promise<void> => {

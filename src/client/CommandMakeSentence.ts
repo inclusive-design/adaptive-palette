@@ -19,7 +19,7 @@ import {
 } from "./TelegraphicTranslationState";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
-import { generateGridStyle, normalizeComposition } from "./GlobalUtils";
+import { generateGridStyle, normalizeComposition, speakUnavailable } from "./GlobalUtils";
 import "./CommandMakeSentence.scss";
 
 type CommandMakeSentenceProps = {
@@ -62,7 +62,13 @@ export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode | n
       style="${gridStyles}"
       aria-controls=${ariaControls}
       aria-disabled=${cannotRun}
-      onClick=${() => void makeSentences(telegraphicMessage)}>
+      onClick=${() => {
+    if (cannotRun) {
+      speakUnavailable(label);
+      return;
+    }
+    void makeSentences(telegraphicMessage);
+  }}>
       ${composition
     ? html`<${BlissSymbol}
           composition=${normalizeComposition(composition)}

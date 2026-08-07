@@ -38,6 +38,11 @@ input[type="button"] {
 
 .btn-command {
   background-color: lightsalmon;
+
+  /* Unavailable commands stay focusable, so the greying is the only visual cue. */
+  &[aria-disabled="true"] {
+    background-color: silver;
+  }
 }
 
 svg {
@@ -54,16 +59,19 @@ svg.inter-word-padding {
 }
 
 /*
- * A div that contains two divs that:
- * - are arranged in one row,
- * - the first div is in the first column but needs less horizontal space
- * - the second div is in the second column but needs the majority of the
- *   horizontal space
+ * Command bar buttons are smaller than other cells.
  */
-.oneRow {
-  display: grid;
-  grid-template-columns: 0.1fr 1fr;
-  column-gap: 0.5rem;
+#commandBar {
+  svg {
+    max-height: 2rem;
+    max-width: 100%;
+  }
+
+  button {
+    border-radius: 0.5rem;
+    overflow-wrap: break-word;
+    padding-bottom: 0.25rem;
+  }
 }
 
 #aiStatus:not(:empty) {

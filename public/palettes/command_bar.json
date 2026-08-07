@@ -1,0 +1,185 @@
+{
+  "name": "Command Bar",
+  "cells": {
+    "command-move-caret-backwards": {
+      "type": "CommandCursorBackward",
+      "options": {
+        "label": "Backward",
+        "composition": [145, ";", 907],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1,
+        "ariaControls": "content-encoding-area"
+      }
+    },
+    "command-move-caret-forwards": {
+      "type": "CommandCursorForward",
+      "options": {
+        "label": "Forward",
+        "composition": [335, ";", 907],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1,
+        "ariaControls": "content-encoding-area"
+      }
+    },
+    "command-del-last-encoding": {
+      "type": "CommandDelLastEncoding",
+      "options": {
+        "label": "Delete",
+        "composition": [939, ";", 907],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 1,
+        "ariaControls": "content-encoding-area"
+      }
+    },
+    "command-clear-encoding": {
+      "type": "CommandClearEncoding",
+      "options": {
+        "label": "Delete all",
+        "composition": [939, ";", 907, "//", 117],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 4,
+        "columnSpan": 1,
+        "ariaControls": "content-encoding-area"
+      }
+    },
+    "indicator-action": {
+      "type": "ActionIndicatorCell",
+      "options": {
+        "label": "action",
+        "composition": 81,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 5,
+        "columnSpan": 1
+      }
+    },
+    "indicator-past": {
+      "type": "ActionIndicatorCell",
+      "options": {
+        "label": "past",
+        "composition": 92,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 6,
+        "columnSpan": 1
+      }
+    },
+    "indicator-present": {
+      "type": "ActionIndicatorCell",
+      "options": {
+        "label": "present",
+        "composition": 928,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 7,
+        "columnSpan": 1
+      }
+    },
+    "indicator-future": {
+      "type": "ActionIndicatorCell",
+      "options": {
+        "label": "future",
+        "composition": 87,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 8,
+        "columnSpan": 1
+      }
+    },
+    "indicator-plural": {
+      "type": "ActionIndicatorCell",
+      "options": {
+        "label": "plural",
+        "composition": 99,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 9,
+        "columnSpan": 1
+      }
+    },
+    "modifier-very": {
+      "type": "ActionPostModifierCell",
+      "options": {
+        "label": "very",
+        "composition": 401,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 10,
+        "columnSpan": 1
+      }
+    },
+    "modifier-without": {
+      "type": "ActionPreModifierCell",
+      "options": {
+        "label": "without",
+        "composition": 449,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 11,
+        "columnSpan": 1
+      }
+    },
+    "modifier-opposite-of": {
+      "type": "ActionPreModifierCell",
+      "options": {
+        "label": "opposite of",
+        "composition": 486,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 12,
+        "columnSpan": 1
+      }
+    },
+    "modifier-more": {
+      "type": "ActionPreModifierCell",
+      "options": {
+        "label": "more",
+        "composition": 937,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 13,
+        "columnSpan": 1
+      }
+    },
+    "modifier-most": {
+      "type": "ActionPreModifierCell",
+      "options": {
+        "label": "most",
+        "composition": 968,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 14,
+        "columnSpan": 1
+      }
+    },
+    "remove-indicator": {
+      "type": "ActionRemoveIndicatorCell",
+      "options": {
+        "label": "remove indicator",
+        "composition": [634, ";", 907, "//", 348, "/", 81, "/", 99],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 15,
+        "columnSpan": 1
+      }
+    },
+    "undo-modifier": {
+      "type": "ActionRemoveModifierCell",
+      "options": {
+        "label": "undo modifier",
+        "composition": [634, ";", 907, "/", 106, "/", 158],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 16,
+        "columnSpan": 1
+      }
+    }
+  }
+}
