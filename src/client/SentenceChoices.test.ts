@@ -17,7 +17,7 @@ import { html } from "htm/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
 import { sentenceCompletionsSignal } from "./TelegraphicTranslationState";
-import { SENTENCE_LOG_KEY, readSentenceLog } from "./SentenceLog";
+import { MESSAGE_LOG_KEY, readMessageLog } from "./MessageLog";
 import { speak } from "./GlobalUtils";
 import {
   SentenceChoices, WORKING_MESSAGE, CANNOT_COMPLETE_MESSAGE, TYPE_YOUR_OWN_HINT,
@@ -44,15 +44,16 @@ describe("SentenceChoices component", (): void => {
 
   beforeEach((): void => {
     mockedSpeak.mockReset();
-    window.localStorage.removeItem(SENTENCE_LOG_KEY);
+    window.localStorage.removeItem(MESSAGE_LOG_KEY);
     adaptivePaletteGlobals.config = {
+      maxStoredRecords: 500,
       indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
       symbolSearch: { show: true },
       svgBuilderString: { show: false },
+      wordPrediction: { show: false, maxSuggestions: 10 },
       telegraphicTranslation: {
         model: "phony-model:12b",
         numSentences: 3,
-        maxStoredRecords: 500,
         systemPrompt: "prompt",
         userPrompt: "prompt"
       }
@@ -62,7 +63,7 @@ describe("SentenceChoices component", (): void => {
   afterEach((): void => {
     cleanup();
     sentenceCompletionsSignal.value = { status: "idle" };
-    window.localStorage.removeItem(SENTENCE_LOG_KEY);
+    window.localStorage.removeItem(MESSAGE_LOG_KEY);
   });
 
   test("shows nothing but an empty live region when idle", (): void => {
@@ -119,10 +120,9 @@ describe("SentenceChoices component", (): void => {
 
     await userEvent.click(screen.getByRole("button", { name: SENTENCES[1] }));
 
-    const log = readSentenceLog();
+    const log = readMessageLog();
     expect(log).toHaveLength(1);
-    expect(log[0]).toMatchObject({
-      telegraphicMessage: "me hungry",
+    expect(log[0].translation).toMatchObject({
       model: "phony-model:12b",
       candidates: SENTENCES,
       sentence: SENTENCES[1],
@@ -152,9 +152,9 @@ describe("SentenceChoices component", (): void => {
     await userEvent.click(screen.getByRole("button", { name: SENTENCES[1] }));
 
     expect(mockedSpeak).toHaveBeenCalledTimes(2);
-    const log = readSentenceLog();
+    const log = readMessageLog();
     expect(log).toHaveLength(1);
-    expect(log[0]).toMatchObject({ sentence: SENTENCES[1], source: "chosen" });
+    expect(log[0].translation).toMatchObject({ sentence: SENTENCES[1], source: "chosen" });
   });
 
   test("a mis-tap is corrected by the next tap, which becomes the preference", async (): Promise<void> => {
@@ -164,9 +164,9 @@ describe("SentenceChoices component", (): void => {
     await userEvent.click(screen.getByRole("button", { name: SENTENCES[1] }));
     await userEvent.click(screen.getByRole("button", { name: SENTENCES[0] }));
 
-    const log = readSentenceLog();
+    const log = readMessageLog();
     expect(log).toHaveLength(1);
-    expect(log[0].sentence).toBe(SENTENCES[0]);
+    expect(log[0].translation?.sentence).toBe(SENTENCES[0]);
   });
 
   test("typed text overrides an earlier tap for the same message", async (): Promise<void> => {
@@ -179,9 +179,9 @@ describe("SentenceChoices component", (): void => {
     );
     await userEvent.click(screen.getByRole("button", { name: SPEAK_BUTTON_LABEL }));
 
-    const log = readSentenceLog();
+    const log = readMessageLog();
     expect(log).toHaveLength(1);
-    expect(log[0]).toMatchObject({ sentence: "I would like a snack.", source: "typed" });
+    expect(log[0].translation).toMatchObject({ sentence: "I would like a snack.", source: "typed" });
   });
 
   test("Done clears the choices, the message and the text box", async (): Promise<void> => {
@@ -207,9 +207,9 @@ describe("SentenceChoices component", (): void => {
     await userEvent.click(screen.getByRole("button", { name: SENTENCES[0] }));
     await userEvent.click(screen.getByRole("button", { name: DONE_BUTTON_LABEL }));
 
-    const log = readSentenceLog();
+    const log = readMessageLog();
     expect(log).toHaveLength(1);
-    expect(log[0].sentence).toBe(SENTENCES[0]);
+    expect(log[0].translation?.sentence).toBe(SENTENCES[0]);
   });
 
   test("a different message keeps its own preference", async (): Promise<void> => {
@@ -220,9 +220,9 @@ describe("SentenceChoices component", (): void => {
     sentenceCompletionsSignal.value = { ...READY_STATE, telegraphicMessage: "me thirsty" };
     await userEvent.click(await screen.findByRole("button", { name: SENTENCES[1] }));
 
-    const log = readSentenceLog();
+    const log = readMessageLog();
     expect(log).toHaveLength(2);
-    expect(log.map((entry) => entry.telegraphicMessage)).toEqual(["me hungry", "me thirsty"]);
+    expect(log.map((entry) => entry.translation?.sentence)).toEqual([SENTENCES[0], SENTENCES[1]]);
   });
 
   test("submitting typed text logs it as typed and keeps it in the box", async (): Promise<void> => {
@@ -233,9 +233,9 @@ describe("SentenceChoices component", (): void => {
     await userEvent.type(textBox, "I would like a snack.");
     await userEvent.click(screen.getByRole("button", { name: SPEAK_BUTTON_LABEL }));
 
-    const log = readSentenceLog();
+    const log = readMessageLog();
     expect(log).toHaveLength(1);
-    expect(log[0]).toMatchObject({ sentence: "I would like a snack.", source: "typed" });
+    expect(log[0].translation).toMatchObject({ sentence: "I would like a snack.", source: "typed" });
     expect(mockedSpeak).toHaveBeenCalledWith("I would like a snack.");
 
     // Kept, not cleared: typing is expensive for these users, so the text stays available
@@ -256,9 +256,9 @@ describe("SentenceChoices component", (): void => {
     await userEvent.click(speakButton);
 
     expect(textBox.value).toBe("I want a snack now");
-    const log = readSentenceLog();
+    const log = readMessageLog();
     expect(log).toHaveLength(1);
-    expect(log[0].sentence).toBe("I want a snack now");
+    expect(log[0].translation?.sentence).toBe("I want a snack now");
   });
 
   test("submitting an empty text box logs nothing", async (): Promise<void> => {
@@ -267,6 +267,6 @@ describe("SentenceChoices component", (): void => {
 
     await userEvent.click(screen.getByRole("button", { name: SPEAK_BUTTON_LABEL }));
 
-    expect(readSentenceLog()).toEqual([]);
+    expect(readMessageLog()).toEqual([]);
   });
 });

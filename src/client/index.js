@@ -24,6 +24,7 @@ await initAdaptivePaletteGlobals("mainPaletteDisplayArea");
 import { PaletteStore } from "./PaletteStore";
 import { Palette } from "./Palette";
 import { SentenceChoices } from "./SentenceChoices";
+import { PredictedWords } from "./PredictedWords";
 import { SymbolEntryToolbar } from "./SymbolEntryToolbar";
 
 const paletteFileMap = await loadPaletteFromJsonFile("/palettes/palette_file_map.json");
@@ -49,6 +50,9 @@ render(html`<${Palette} json=${firstLayer} />`, getRequiredElement("mainPaletteD
 // Sentence translation: the trigger button lives in the input area palette and hides
 // itself when unavailable, so only the status line needs wiring here.
 render(html`<${SentenceChoices} />`, getRequiredElement("sentenceChoices"));
+
+// Suggested next words, drawn from the messages the user has said before.
+render(html`<${PredictedWords} />`, getRequiredElement("predictedWords"));
 
 const aiStatus = getRequiredElement("aiStatus");
 if (adaptivePaletteGlobals.models.length === 0) {

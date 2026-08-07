@@ -34,7 +34,8 @@ const withVisibility = (searchShown: boolean, svgShown: boolean): void => {
   adaptivePaletteGlobals.config = {
     ...originalConfig,
     symbolSearch: { show: searchShown },
-    svgBuilderString: { show: svgShown }
+    svgBuilderString: { show: svgShown },
+    wordPrediction: { show: false, maxSuggestions: 4 }
   };
 };
 

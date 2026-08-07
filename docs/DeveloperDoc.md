@@ -13,10 +13,19 @@ every section falls back.
 
 | Section | Controls |
 | ------- | -------- |
+| `maxStoredRecords` | Top-level, not a section. How many messages the local-storage message log keeps. |
 | `indicatorLabelLookup` | The Ollama fallback tier for looking up indicator labels. See [IndicatorLabelLookup.md](IndicatorLabelLookup.md). |
 | `telegraphicTranslation` | Translating a telegraphic message into full sentences. See [TelegraphicMessageTranslation.md](TelegraphicMessageTranslation.md). |
 | `symbolSearch` | The "Add symbol to message" trigger and its gloss-search dialog. |
 | `svgBuilderString` | The "Add symbol by svg-builder string" trigger and its dialog. Off in production: it is for development. |
+| `wordPrediction` | Suggesting the next word from the user's past messages. See [WordPrediction.md](WordPrediction.md). |
+
+### `maxStoredRecords`
+
+An integer capping the message log, the single local-storage log holding the messages the
+user has said and the translations made from them. When it reaches the limit, its oldest records are
+dropped first. `0` keeps the features that log but stores nothing. A missing or malformed value falls
+back to 500.
 
 ### `indicatorLabelLookup`
 
@@ -43,11 +52,20 @@ missing and the feature reports itself as unconfigured rather than running with 
 | ----- | ---- | ----------- |
 | `model` | string | Ollama model name. The empty string means Ollama's first available model. |
 | `numSentences` | number | Positive integer. How many candidate sentences to request. |
-| `maxStoredRecords` | number | Non-negative integer. How many past translations to keep. `0` keeps the feature but logs nothing. |
 | `systemPrompt` | string | Non-empty. Supports the `{{numSentences}}` placeholder. |
 | `userPrompt` | string | Non-empty. Supports the `{{telegraphicMessage}}` placeholder. |
 
 Placeholders are `{{name}}` and are substituted at query time; one with no matching value is left as is.
+
+### `wordPrediction`
+
+| Field | Type | Description |
+| ----- | ---- | ----------- |
+| `show` | boolean | Required. Whether the suggestion row is rendered. |
+| `maxSuggestions` | number | Positive integer. How many suggestions to offer at once. Defaults to 4. |
+
+When the section is missing or `show` is not a boolean, the feature is off. A malformed `maxSuggestions`
+alone falls back to 4 and leaves the feature on.
 
 ### `symbolSearch` and `svgBuilderString`
 
