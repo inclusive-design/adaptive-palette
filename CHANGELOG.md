@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.2.0](https://github.com/inclusive-design/adaptive-palette/compare/v0.1.0...v0.2.0) (2026-08-08)
+
+
+### Features
+
+* disable thinking by default (resolves [#149](https://github.com/inclusive-design/adaptive-palette/issues/149)) ([#150](https://github.com/inclusive-design/adaptive-palette/issues/150)) ([90a0b73](https://github.com/inclusive-design/adaptive-palette/commit/90a0b7364bbdda20302b5ac80fbea294835b8f06))
+* layout change (resolves [#174](https://github.com/inclusive-design/adaptive-palette/issues/174)) ([#175](https://github.com/inclusive-design/adaptive-palette/issues/175)) ([0eef263](https://github.com/inclusive-design/adaptive-palette/commit/0eef2632747167a6ebc61ca362ba8c1cc220cdd0))
+* Move "SVG builder string" and "search by vocabulary" features into modal dialogs (resolves [#168](https://github.com/inclusive-design/adaptive-palette/issues/168)) ([#169](https://github.com/inclusive-design/adaptive-palette/issues/169)) ([54b2dd3](https://github.com/inclusive-design/adaptive-palette/commit/54b2dd3681da721b849dceb0c7b669da2a3fda1d))
+* Simplify the feature that translates a telegraphic message to a full sentence (Resolves [#162](https://github.com/inclusive-design/adaptive-palette/issues/162)) ([#163](https://github.com/inclusive-design/adaptive-palette/issues/163)) ([fc50a91](https://github.com/inclusive-design/adaptive-palette/commit/fc50a91a19461b6bccc9ecfeb65725e6ae53cb9f))
+* update bliss_symbol_explanations.json and implement the new ID system ([#126](https://github.com/inclusive-design/adaptive-palette/issues/126)) ([d973c57](https://github.com/inclusive-design/adaptive-palette/commit/d973c57d82020314b858e53a726a40b7e020302e))
+* Update the symbol label when an indicator is applied (resolves [#154](https://github.com/inclusive-design/adaptive-palette/issues/154)) ([#155](https://github.com/inclusive-design/adaptive-palette/issues/155)) ([98abe67](https://github.com/inclusive-design/adaptive-palette/commit/98abe678b72e7eb99fcb610b83a1c2c04ab11755))
+* word prediction using history (resolves [#176](https://github.com/inclusive-design/adaptive-palette/issues/176)) ([#177](https://github.com/inclusive-design/adaptive-palette/issues/177)) ([6fe0a1c](https://github.com/inclusive-design/adaptive-palette/commit/6fe0a1c90fb7d2825c15a81c3bb78fb906f2540d))
+
+
+### Bug Fixes
+
+* improve doc and adjust a variable name ([6bcddd9](https://github.com/inclusive-design/adaptive-palette/commit/6bcddd9f8715408efa9938833eb570b9e2186eb8))
+* improve the documentation for label lookup ([#165](https://github.com/inclusive-design/adaptive-palette/issues/165)) ([6bcddd9](https://github.com/inclusive-design/adaptive-palette/commit/6bcddd9f8715408efa9938833eb570b9e2186eb8))
+* remove BMW palette from the code base (resolves [#139](https://github.com/inclusive-design/adaptive-palette/issues/139)) ([#145](https://github.com/inclusive-design/adaptive-palette/issues/145)) ([2511528](https://github.com/inclusive-design/adaptive-palette/commit/2511528274c1e110f393dae5f2ae6ac5f37e6e49))
+
 ## 0.1.0 (2026-05-25)
 
 ### Features
