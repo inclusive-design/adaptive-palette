@@ -110,6 +110,17 @@ describe("messageLog", (): void => {
       expect(log).toHaveLength(1);
       expect(log[0].payloads[0].label).toBe("I");
     });
+
+    test("entries with an unlabelled symbol are dropped", (): void => {
+      window.localStorage.setItem(MESSAGE_LOG_KEY, JSON.stringify([
+        { timestamp: "2026-08-07T00:00:00.000Z", payloads: [{}] },
+        { timestamp: "2026-08-07T00:00:01.000Z", payloads: [{ label: 3, composition: 1840 }] },
+        { timestamp: "2026-08-07T00:00:02.000Z", payloads: [{ label: "I", composition: 1840 }] }
+      ]));
+      const log = readMessageLog();
+      expect(log).toHaveLength(1);
+      expect(log.map(recordMessageText)).toEqual(["I"]);
+    });
   });
 
   describe("recording translations", (): void => {

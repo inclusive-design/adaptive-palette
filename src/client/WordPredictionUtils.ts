@@ -43,6 +43,16 @@ const CONTEXT_LENGTHS = [2, 1];
 type LabelTally = { count: number, lastUsedAt: number };
 
 /**
+ * Whether a symbol has a label. A symbol may be saved without one, and a word with no label
+ * cannot be shown, announced or spoken, so it is no use either as a suggestion or as context.
+ * @param {string} label - The label to check.
+ * @returns {boolean}
+ */
+function hasLabel (label: string): boolean {
+  return label.trim().length > 0;
+}
+
+/**
  * Build the payload for a seeded word the same way a palette cell does. A composition that is
  * a single number is a dictionary id, so the entry's own composition is used when it has one.
  * A composition built from parts is used as it stands and belongs to no dictionary entry.
@@ -144,11 +154,12 @@ export function predictNext (currentLabels: string[], maxSuggestions: number): S
   // A record can hold a translation without the message it came from, which has no words to
   // predict from.
   const messages = readMessageLog()
-    .map((record) => record.payloads)
+    .map((record) => record.payloads.filter((payload) => hasLabel(payload.label)))
     .filter((payloads) => payloads.length > 0);
+  const contextLabels = currentLabels.filter(hasLabel);
 
   if (messages.length === 0) {
-    return currentLabels.length === 0
+    return contextLabels.length === 0
       ? SEED_STARTERS.slice(0, maxSuggestions).map(({ label, composition }) => seedPayload(composition, label))
       : [];
   }
@@ -159,17 +170,17 @@ export function predictNext (currentLabels: string[], maxSuggestions: number): S
   messages.forEach((payloads) => payloads.forEach((payload) => payloadByLabel.set(payload.label, payload)));
   const labelsPerMessage = messages.map((payloads) => payloads.map((payload) => payload.label));
 
-  const tiers = currentLabels.length === 0
+  const tiers = contextLabels.length === 0
     ? [tallyFollowers(labelsPerMessage, [])]
     : [
       ...CONTEXT_LENGTHS
-        .filter((length) => length <= currentLabels.length)
-        .map((length) => tallyFollowers(labelsPerMessage, currentLabels.slice(-length))),
+        .filter((length) => length <= contextLabels.length)
+        .map((length) => tallyFollowers(labelsPerMessage, contextLabels.slice(-length))),
       tallyAll(labelsPerMessage)
     ];
 
   // Suggesting the word that is already there wastes a slot the user cannot use.
-  const alreadySuggested = new Set<string>(currentLabels.slice(-1));
+  const alreadySuggested = new Set<string>(contextLabels.slice(-1));
   const suggestions: SymbolEncodingType[] = [];
   for (const tier of tiers) {
     for (const label of rankLabels(tier)) {

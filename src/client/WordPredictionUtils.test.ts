@@ -54,6 +54,12 @@ describe("wordPrediction", (): void => {
       saveMessageRecord(message("you", "help", "me"));
     });
 
+    test("an unlabelled symbol is never suggested and never used as context", (): void => {
+      saveMessageRecord([...message("I", "want"), { label: "  ", composition: 1840, modifierInfo: [] }]);
+      expect(predictedLabels([]).includes("  ")).toBe(false);
+      expect(predictedLabels(["I", "want"])).toEqual(predictedLabels(["I", "want", "  "]));
+    });
+
     test("first words are ranked by how often they start a message", (): void => {
       expect(predictedLabels([])).toEqual(["I", "you"]);
     });

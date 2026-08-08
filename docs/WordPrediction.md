@@ -76,8 +76,7 @@ inserted unchanged.
 A message is saved when the user presses **Speak** or **Sentence**: both mean the message is
 finished, so it counts towards prediction.
 
-Repeated messages are stored every time, not merged. Repetition is what tells the feature which
-words matter to this user.
+Repeated messages identical to the last stored message are skipped.
 
 The log is limited to `maxStoredRecords` entries. When the limit is reached, the oldest records are
 removed first. Setting it to `0` keeps the feature running but stores nothing, which also means no

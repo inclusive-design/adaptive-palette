@@ -81,9 +81,11 @@ export function readMessageLog (): MessageRecordType[] {
     if (!Array.isArray(parsed)) {
       return [];
     }
-    return parsed.filter(
-      (entry) => entry !== null && typeof entry === "object" && Array.isArray((entry as MessageRecordType).payloads)
-    ) as MessageRecordType[];
+    return parsed.filter((entry) => {
+      const payloads = (entry as MessageRecordType)?.payloads;
+      return entry !== null && typeof entry === "object" && Array.isArray(payloads) &&
+        payloads.every((payload) => payload !== null && typeof payload?.label === "string");
+    }) as MessageRecordType[];
   } catch (error) {
     console.error(`Could not read "${MESSAGE_LOG_KEY}": ${String(error)}`);
     return [];
