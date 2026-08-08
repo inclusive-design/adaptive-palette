@@ -133,11 +133,12 @@ every symbol+indicator pair that the vocabulary supports to its grammatically co
   - [Corresponding script directory](scripts/new_labels_with_indicator/)
 - [Telegraphic Message Translation](./docs/TelegraphicMessageTranslation.md): use a local Ollama model to
 turn telegraphic messages into complete, speakable English sentences.
-- [Shortcut Keys](./docs/ShortcutKeys.md): keyboard shortcuts for palette navigation, caret movement in the
-input area, and modal dialogs.
+- [Word Prediction](./docs/WordPrediction.md): suggest the words most likely to come next.
 
 ### Utility Documentation
 
+- [Shortcut Keys](./docs/ShortcutKeys.md): keyboard shortcuts for palette navigation, caret movement in the
+input area, and modal dialogs.
 - [Generate Bliss Symbol Explanations](./docs/GenerateBlissSymbolExplanations.md): how to generate
   `public/data/bliss_symbol_explanations.json`, which contains Bliss symbol vocabulary including glosses,
   part-of-speech labels, semantic explanations, and symbol compositions.

@@ -1,0 +1,50 @@
+/*
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
+ *
+ * Licensed under the New BSD license. You may not use this file except in
+ * compliance with this License.
+ *
+ * You may obtain a copy of the License at
+ * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
+ */
+
+/*
+ * Laid out like a palette row: full width, one column per suggestion slot. The columns come
+ * from the component, which knows how many slots the configuration asks for.
+ */
+.predictedWords {
+  column-gap: 0.5rem;
+  display: grid;
+  /* Holds the row open while there is nothing to suggest, so the page below does not shift. */
+  min-height: 3.5rem;
+  width: 100%;
+
+  /*
+   * Shorter than a palette symbol, but still big enough to recognise at a glance: this row
+   * sits between the message and the palette, and a full-height row would push the palette
+   * itself down the page.
+   */
+  svg {
+    max-height: 3.5rem;
+    max-width: 100%;
+  }
+}
+
+/* A palette cell in every way but colour, which marks it as a suggestion. */
+.predictedWord {
+  background-color: #d7f0d5;
+  border: 3px solid blue;
+  /* Matches the rule `<button>` gets in index.scss, so an empty cell is the same shape. */
+  border-radius: 0.5rem;
+  overflow-wrap: break-word;
+  padding-block: 0.15rem;
+  padding-inline: 0.5rem;
+  text-align: center;
+}
+
+/* A slot with no word for it: the cell is there, with nothing in it. */
+.predictedWordEmpty {
+  background-color: white;
+}

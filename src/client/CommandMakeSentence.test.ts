@@ -17,7 +17,7 @@ import { html } from "htm/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
 import { sentenceCompletionsSignal } from "./TelegraphicTranslationState";
-import { SENTENCE_LOG_KEY } from "./SentenceLog";
+import { MESSAGE_LOG_KEY } from "./MessageLog";
 import { queryChat } from "./OllamaApi";
 import { CommandMakeSentence } from "./CommandMakeSentence";
 
@@ -60,13 +60,14 @@ describe("CommandMakeSentence component", (): void => {
 
   const setConfig = (numSentences: number): void => {
     adaptivePaletteGlobals.config = {
+      maxStoredRecords: 500,
       indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
       symbolSearch: { show: true },
       svgBuilderString: { show: false },
+      wordPrediction: { show: false, maxSuggestions: 4 },
       telegraphicTranslation: {
         model: "phony-model:12b",
         numSentences,
-        maxStoredRecords: 500,
         systemPrompt: "Give {{numSentences}} sentences.",
         userPrompt: "Telegraphic message: {{telegraphicMessage}}"
       }
@@ -84,7 +85,7 @@ describe("CommandMakeSentence component", (): void => {
   beforeEach((): void => {
     mockedConfirm = vi.spyOn(window, "confirm").mockReturnValue(true);
     mockedQueryChat.mockReset();
-    window.localStorage.removeItem(SENTENCE_LOG_KEY);
+    window.localStorage.removeItem(MESSAGE_LOG_KEY);
     adaptivePaletteGlobals.models = ["phony-model:12b"];
     setConfig(3);
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
@@ -94,7 +95,7 @@ describe("CommandMakeSentence component", (): void => {
   afterEach((): void => {
     cleanup();
     sentenceCompletionsSignal.value = { status: "idle" };
-    window.localStorage.removeItem(SENTENCE_LOG_KEY);
+    window.localStorage.removeItem(MESSAGE_LOG_KEY);
     mockedConfirm.mockRestore();
   });
 
@@ -106,9 +107,11 @@ describe("CommandMakeSentence component", (): void => {
 
   test("renders nothing when the feature is unconfigured", (): void => {
     adaptivePaletteGlobals.config = {
+      maxStoredRecords: 500,
       indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
       symbolSearch: { show: true },
-      svgBuilderString: { show: false }
+      svgBuilderString: { show: false },
+      wordPrediction: { show: false, maxSuggestions: 4 }
     };
     const { container } = renderCell();
     expect(container.textContent).toBe("");

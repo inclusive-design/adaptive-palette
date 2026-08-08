@@ -18,7 +18,7 @@ import {
   clearMessageAndChoices, currentTelegraphicMessage, makeSentences, sentenceCompletionsSignal,
   READY_DISCARD_PROMPT, WORKING_DISCARD_PROMPT
 } from "./TelegraphicTranslationState";
-import { SENTENCE_LOG_KEY, readSentenceLog } from "./SentenceLog";
+import { MESSAGE_LOG_KEY, readMessageLog } from "./MessageLog";
 import { queryChat } from "./OllamaApi";
 import { speak } from "./GlobalUtils";
 
@@ -52,13 +52,14 @@ describe("telegraphicTranslationState", (): void => {
 
   const setConfig = (numSentences: number): void => {
     adaptivePaletteGlobals.config = {
+      maxStoredRecords: 500,
       indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
       symbolSearch: { show: true },
       svgBuilderString: { show: false },
+      wordPrediction: { show: false, maxSuggestions: 4 },
       telegraphicTranslation: {
         model: "phony-model:12b",
         numSentences,
-        maxStoredRecords: 500,
         systemPrompt: "Give {{numSentences}} sentences.",
         userPrompt: "Telegraphic message: {{telegraphicMessage}}"
       }
@@ -76,7 +77,7 @@ describe("telegraphicTranslationState", (): void => {
     mockedConfirm = vi.spyOn(window, "confirm").mockReturnValue(true);
     mockedQueryChat.mockReset();
     mockedSpeak.mockReset();
-    window.localStorage.removeItem(SENTENCE_LOG_KEY);
+    window.localStorage.removeItem(MESSAGE_LOG_KEY);
     adaptivePaletteGlobals.models = ["phony-model:12b"];
     setConfig(3);
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
@@ -85,7 +86,7 @@ describe("telegraphicTranslationState", (): void => {
 
   afterEach((): void => {
     sentenceCompletionsSignal.value = { status: "idle" };
-    window.localStorage.removeItem(SENTENCE_LOG_KEY);
+    window.localStorage.removeItem(MESSAGE_LOG_KEY);
     mockedConfirm.mockRestore();
   });
 
@@ -196,11 +197,10 @@ describe("telegraphicTranslationState", (): void => {
 
     await requestForCurrentMessage();
 
-    expect(readSentenceLog()).toHaveLength(1);
-    expect(readSentenceLog()[0]).toMatchObject({
+    expect(readMessageLog()).toHaveLength(1);
+    expect(readMessageLog()[0].translation).toMatchObject({
       sentence: "I am hungry.",
-      source: "auto",
-      telegraphicMessage: "me hungry"
+      source: "auto"
     });
     expect(mockedSpeak).toHaveBeenCalledWith("I am hungry.");
   });
@@ -214,7 +214,7 @@ describe("telegraphicTranslationState", (): void => {
     await requestForCurrentMessage();
 
     expect(sentenceCompletionsSignal.value.status).toBe("ready");
-    expect(readSentenceLog()).toEqual([]);
+    expect(readMessageLog()).toEqual([]);
   });
 
   test("a second request while one is in flight does not start another", async (): Promise<void> => {
@@ -285,7 +285,7 @@ describe("telegraphicTranslationState", (): void => {
 
     expect(sentenceCompletionsSignal.value.status).toBe("idle");
     expect(mockedSpeak).not.toHaveBeenCalled();
-    expect(readSentenceLog()).toEqual([]);
+    expect(readMessageLog()).toEqual([]);
   });
 
   test("a reply arriving after a newer request started does not hijack it", async (): Promise<void> => {
@@ -320,7 +320,7 @@ describe("telegraphicTranslationState", (): void => {
 
     expect(sentenceCompletionsSignal.value.status).toBe("working");
     expect(mockedSpeak).not.toHaveBeenCalled();
-    expect(readSentenceLog()).toEqual([]);
+    expect(readMessageLog()).toEqual([]);
 
     resolvers[1]({ message: { content: "1. Later." } });
     await secondRequest;

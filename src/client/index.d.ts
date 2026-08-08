@@ -102,9 +102,13 @@ export type IndicatorLabelLookupConfigType = {
 export type TelegraphicTranslationConfigType = {
   model: string,
   numSentences: number,
-  maxStoredRecords: number,
   systemPrompt: string,
   userPrompt: string
+};
+
+export type WordPredictionConfigType = {
+  show: boolean,
+  maxSuggestions: number
 };
 
 /*
@@ -115,10 +119,13 @@ export type FeatureVisibilityConfigType = {
 };
 
 export type AdaptivePaletteConfigType = {
+  // Caps every log kept in local storage. Zero keeps the features but stores nothing.
+  maxStoredRecords: number,
   indicatorLabelLookup: IndicatorLabelLookupConfigType,
   telegraphicTranslation?: TelegraphicTranslationConfigType,
   symbolSearch: FeatureVisibilityConfigType,
-  svgBuilderString: FeatureVisibilityConfigType
+  svgBuilderString: FeatureVisibilityConfigType,
+  wordPrediction: WordPredictionConfigType
 };
 
 export type ContentSignalDataType = {

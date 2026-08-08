@@ -13,7 +13,7 @@ body {
   margin: 0;
   font-family: 'Roboto', sans-serif;
   display: grid;
-  row-gap: 0.5rem;
+  row-gap: 0.25rem;
   margin-left: 1rem;
   margin-top: 1rem;
   margin-right: 1rem;
@@ -86,8 +86,11 @@ svg.inter-word-padding {
   margin: 0 0.5rem;
 }
 
-#symbolEntryToolbar:not(:empty) {
-  margin: 0.5rem;
+/*
+ * Without this "predictedWords" div would still consume a row-gap.
+ */
+#predictedWords:empty {
+  display: none;
 }
 
 /*

@@ -28,7 +28,6 @@ const mockedQueryChat = vi.mocked(queryChat);
 const CONFIG = {
   model: "phony-model:12b",
   numSentences: 3,
-  maxStoredRecords: 500,
   systemPrompt: "Give {{numSentences}} sentences.",
   userPrompt: "Telegraphic message: {{telegraphicMessage}}"
 };
@@ -39,9 +38,11 @@ describe("telegraphicTranslation", (): void => {
     mockedQueryChat.mockReset();
     adaptivePaletteGlobals.models = ["phony-model:12b", "other-model:7b"];
     adaptivePaletteGlobals.config = {
+      maxStoredRecords: 500,
       indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
       symbolSearch: { show: true },
       svgBuilderString: { show: false },
+      wordPrediction: { show: false, maxSuggestions: 10 },
       telegraphicTranslation: { ...CONFIG }
     };
   });

@@ -16,7 +16,7 @@ import { useEffect, useRef, useState } from "preact/hooks";
 
 import { sentenceCompletionsSignal, clearMessageAndChoices } from "./TelegraphicTranslationState";
 import { speak } from "./GlobalUtils";
-import { saveSentenceRecord, SentenceSourceType } from "./SentenceLog";
+import { saveTranslation, SentenceSourceType } from "./MessageLog";
 import "./SentenceChoices.scss";
 
 export const WORKING_MESSAGE = "⏳ Making sentences…";
@@ -58,8 +58,7 @@ export function SentenceChoices (): VNode {
       return;
     }
     speak(sentence);
-    saveSentenceRecord({
-      telegraphicMessage: state.telegraphicMessage,
+    saveTranslation(state.telegraphicMessage, {
       model: state.model,
       candidates: state.sentences,
       sentence,

@@ -13,7 +13,8 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 
-import { adaptivePaletteGlobals } from "./GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
+import { saveMessageRecord } from "./MessageLog";
 import {
   currentTelegraphicMessage, makeSentences, sentenceCompletionsSignal
 } from "./TelegraphicTranslationState";
@@ -67,6 +68,8 @@ export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode | n
       speakUnavailable(label);
       return;
     }
+    // Asking for a sentence means the message is finished, so save it.
+    saveMessageRecord(changeEncodingContents.value.payloads);
     void makeSentences(telegraphicMessage);
   }}>
       ${composition

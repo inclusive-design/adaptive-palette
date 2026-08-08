@@ -20,7 +20,7 @@
 import { effect, signal } from "@preact/signals";
 import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
 import { requestSentences } from "./TelegraphicTranslationUtils";
-import { saveSentenceRecord } from "./SentenceLog";
+import { messageText, saveTranslation } from "./MessageLog";
 import { speak } from "./GlobalUtils";
 import type { ContentSignalDataType, SentenceCompletionsStateType } from ".";
 
@@ -60,15 +60,11 @@ export function clearMessageAndChoices (): void {
 }
 
 /**
- * The message currently in the input area: the labels of its symbols, space separated.
- * A symbol may carry no label. Trim the label before joining it into the message.
+ * The message currently in the input area, as text.
  * @returns {string}
  */
 export function currentTelegraphicMessage (): string {
-  return changeEncodingContents.value.payloads
-    .map((payload) => payload.label.trim())
-    .filter((label) => label.length > 0)
-    .join(" ");
+  return messageText(changeEncodingContents.value.payloads);
 }
 
 /**
@@ -98,8 +94,7 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
     // Single-sentence mode: speak right away when the sentence arrives.
     if (adaptivePaletteGlobals.config.telegraphicTranslation?.numSentences === 1) {
       speak(sentences[0]);
-      saveSentenceRecord({
-        telegraphicMessage,
+      saveTranslation(telegraphicMessage, {
         model,
         candidates: sentences,
         sentence: sentences[0],

@@ -11,7 +11,10 @@
  */
 
 import { vi } from "vitest";
-import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
+import {
+  initAdaptivePaletteGlobals, adaptivePaletteGlobals,
+  DEFAULT_MAX_STORED_RECORDS, DEFAULT_MAX_SUGGESTIONS
+} from "./GlobalData";
 
 /**
  * Stub `fetch` so that "/config.json" resolves to `configBody` and every other
@@ -41,7 +44,6 @@ describe("loadConfig telegraphicTranslation section", (): void => {
   const TELEMSG_SECTION = {
     model: "phony-model:12b",
     numSentences: 3,
-    maxStoredRecords: 500,
     systemPrompt: "Make {{numSentences}} sentences.",
     userPrompt: "Telegraphic message: {{telegraphicMessage}}"
   };
@@ -68,16 +70,6 @@ describe("loadConfig telegraphicTranslation section", (): void => {
     });
     await initAdaptivePaletteGlobals();
     expect(adaptivePaletteGlobals.config.telegraphicTranslation).toBeUndefined();
-  });
-
-  test("maxStoredRecords of zero is valid and keeps the feature configured", async (): Promise<void> => {
-    const section = { ...TELEMSG_SECTION, maxStoredRecords: 0 };
-    stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
-      telegraphicTranslation: section
-    });
-    await initAdaptivePaletteGlobals();
-    expect(adaptivePaletteGlobals.config.telegraphicTranslation).toEqual(section);
   });
 
   test("an empty prompt leaves the feature unconfigured", async (): Promise<void> => {
@@ -128,6 +120,61 @@ describe("loadConfig indicatorLabelLookup section", (): void => {
     stubConfigFetch({});
     await initAdaptivePaletteGlobals();
     expect(adaptivePaletteGlobals.config.indicatorLabelLookup).toEqual(DISABLED);
+  });
+});
+
+describe("loadConfig maxStoredRecords", (): void => {
+
+  test("a positive integer is loaded as given", async (): Promise<void> => {
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, maxStoredRecords: 42 });
+    await initAdaptivePaletteGlobals();
+    expect(adaptivePaletteGlobals.config.maxStoredRecords).toBe(42);
+  });
+
+  // Zero is how logging is turned off while the features that log stay available.
+  test("zero is kept rather than treated as missing", async (): Promise<void> => {
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, maxStoredRecords: 0 });
+    await initAdaptivePaletteGlobals();
+    expect(adaptivePaletteGlobals.config.maxStoredRecords).toBe(0);
+  });
+
+  test("a missing or malformed value falls back to the default", async (): Promise<void> => {
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
+    await initAdaptivePaletteGlobals();
+    expect(adaptivePaletteGlobals.config.maxStoredRecords).toBe(DEFAULT_MAX_STORED_RECORDS);
+
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, maxStoredRecords: -5 });
+    await initAdaptivePaletteGlobals();
+    expect(adaptivePaletteGlobals.config.maxStoredRecords).toBe(DEFAULT_MAX_STORED_RECORDS);
+  });
+});
+
+describe("loadConfig wordPrediction section", (): void => {
+
+  test("a valid section is loaded as given", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      wordPrediction: { show: true, maxSuggestions: 6 }
+    });
+    await initAdaptivePaletteGlobals();
+    expect(adaptivePaletteGlobals.config.wordPrediction).toEqual({ show: true, maxSuggestions: 6 });
+  });
+
+  test("a missing section turns the feature off", async (): Promise<void> => {
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
+    await initAdaptivePaletteGlobals();
+    expect(adaptivePaletteGlobals.config.wordPrediction)
+      .toEqual({ show: false, maxSuggestions: DEFAULT_MAX_SUGGESTIONS });
+  });
+
+  test("a malformed maxSuggestions falls back while the feature stays on", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      wordPrediction: { show: true, maxSuggestions: 0 }
+    });
+    await initAdaptivePaletteGlobals();
+    expect(adaptivePaletteGlobals.config.wordPrediction)
+      .toEqual({ show: true, maxSuggestions: DEFAULT_MAX_SUGGESTIONS });
   });
 });
 

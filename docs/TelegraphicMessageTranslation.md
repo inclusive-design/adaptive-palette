@@ -23,7 +23,6 @@ currently in use.
 | --- | --- |
 | `model` | Name of the Ollama model to use. |
 | `numSentences` | Number of sentence suggestions to generate. |
-| `maxStoredRecords` | Maximum number of selection records retained in local storage. When the limit is reached, the oldest records are removed first. Set to `0` to disable logging while keeping the feature enabled. |
 | `systemPrompt` | System prompt template sent to the model. |
 | `userPrompt` | User prompt template sent to the model. |
 
@@ -90,6 +89,9 @@ The button can be in one of three states:
    - Announces `⚠ Could not make sentences. Try again.`
    - The click becomes available again.
 
+Requesting a sentence also records the message for [word prediction](WordPrediction.md), since asking for
+a sentence means the message is finished.
+
 A live region is in the document at all times and contains an empty string when there is nothing to
 announce. Updates are written into the existing region so screen readers can announce status changes.
 
@@ -130,10 +132,10 @@ the feature enters the **Error** state.
 
 ## Saved Data
 
-The feature stores one record per telegraphic message in browser local storage. Each record contains:
+Translations are stored in the shared **Message Log** in browser local storage, described in
+[WordPrediction.md](WordPrediction.md). Pressing **Sentence** records the message itself; choosing a
+sentence adds the translation to that record:
 
-- Timestamp
-- Original telegraphic message
 - Model name
 - All generated sentence candidates
 - Preferred sentence
@@ -145,9 +147,12 @@ The feature stores one record per telegraphic message in browser local storage. 
 All generated candidates are retained, including those not selected. Comparing the preferred sentence
 with the alternatives provides useful training data for future model tuning.
 
-**The most recently spoken sentence becomes the preferred sentence for that message.**
+**The most recently spoken sentence becomes the preferred sentence for that message.** A repeated
+message is recorded each time it is said, and the translation attaches to its most recent record.
 
-The log is limited to `maxStoredRecords` entries. When the limit is reached, the oldest records are removed first.
+The log is limited to the top-level `maxStoredRecords` setting in `public/config.json`, which caps every
+log the application keeps. When the limit is reached, the oldest records are removed first. Setting it to
+`0` keeps the feature but stores nothing.
 
 Data can currently be inspected through browser developer tools. No in-application export is provided.
 

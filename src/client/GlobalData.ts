@@ -19,7 +19,8 @@ import { initIndicatorLabels } from "./IndicatorLabelsUtils";
 import { initSvgCompositeDefinitions } from "./SvgUtils";
 import type {
   ContentSignalDataType, BlissSymbolEntry, AdaptivePaletteConfigType,
-  IndicatorLabelLookupConfigType, TelegraphicTranslationConfigType, FeatureVisibilityConfigType
+  IndicatorLabelLookupConfigType, TelegraphicTranslationConfigType, FeatureVisibilityConfigType,
+  WordPredictionConfigType
 } from "./index.d";
 
 // NOTE: this import causes a warning serving the application using the `vite`
@@ -41,6 +42,10 @@ import { NavigationStack } from "./NavigationStack";
 
 export const NO_MODELS_MESSAGE = "No models available. Start Ollama to enable AI features.";
 
+// Used when `maxStoredRecords` or `wordPrediction.maxSuggestions` is missing or malformed.
+export const DEFAULT_MAX_STORED_RECORDS = 500;
+export const DEFAULT_MAX_SUGGESTIONS = 10;
+
 /**
  * Load the map between the BCI-AV IDs and the code consumed by the Bliss SVG
  * and create the PaletterStore and NavigationStack objects.
@@ -51,9 +56,11 @@ export const adaptivePaletteGlobals = {
   navigationStack: new NavigationStack(),
   models: [] as string[],
   config: {
+    maxStoredRecords: DEFAULT_MAX_STORED_RECORDS,
     indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
     symbolSearch: { show: true },
-    svgBuilderString: { show: false }
+    svgBuilderString: { show: false },
+    wordPrediction: { show: false, maxSuggestions: DEFAULT_MAX_SUGGESTIONS }
   } as AdaptivePaletteConfigType,
   indicatorLabels: {} as Record<string, string>,
   // `id` attribute of the HTML element area where the main palette is
@@ -62,6 +69,8 @@ export const adaptivePaletteGlobals = {
   //
   mainPaletteContainerId: ""
 };
+
+const isPositiveInteger = (value: unknown): boolean => Number.isInteger(value) && (value as number) > 0;
 
 /**
  * Validate the `indicatorLabelLookup` section of the config. Both prompts are required
@@ -102,29 +111,55 @@ function parseIndicatorLabelLookup (section: unknown): IndicatorLabelLookupConfi
  */
 function parseTelegraphicTranslation (section: unknown): TelegraphicTranslationConfigType | undefined {
   const candidate = section as {
-    model?: unknown, numSentences?: unknown, maxStoredRecords?: unknown,
-    systemPrompt?: unknown, userPrompt?: unknown
+    model?: unknown, numSentences?: unknown, systemPrompt?: unknown, userPrompt?: unknown
   } | undefined;
   if (!candidate) {
     return undefined;
   }
-  const { model, numSentences, maxStoredRecords, systemPrompt, userPrompt } = candidate;
+  const { model, numSentences, systemPrompt, userPrompt } = candidate;
   const isFilledString = (value: unknown): boolean => typeof value === "string" && value.trim().length > 0;
-  const isPositiveInteger = (value: unknown): boolean => Number.isInteger(value) && (value as number) > 0;
-
-  // `maxStoredRecords: 0` is valid for keeping the feature while logging nothing
   // `numSentences: 0` is invalid because a query cannot return nothing.
   if (typeof model !== "string" || !isPositiveInteger(numSentences) ||
-      !(isPositiveInteger(maxStoredRecords) || maxStoredRecords === 0) ||
       !isFilledString(systemPrompt) || !isFilledString(userPrompt)) {
     return undefined;
   }
   return {
     model,
     numSentences: numSentences as number,
-    maxStoredRecords: maxStoredRecords as number,
     systemPrompt: systemPrompt as string,
     userPrompt: userPrompt as string
+  };
+}
+
+/**
+ * Validate the top-level `maxStoredRecords`, the cap shared by every log kept in local
+ * storage. Zero is valid and means keep the features but store nothing.
+ * @param {unknown} value - The raw parsed value.
+ * @returns {number}
+ */
+function parseMaxStoredRecords (value: unknown): number {
+  if (isPositiveInteger(value) || value === 0) {
+    return value as number;
+  }
+  return DEFAULT_MAX_STORED_RECORDS;
+}
+
+/**
+ * Validate the `wordPrediction` section. A missing or malformed section turns the feature
+ * off, rather than guessing at what was meant.
+ * @param {unknown} section - The raw parsed section.
+ * @returns {WordPredictionConfigType}
+ */
+function parseWordPrediction (section: unknown): WordPredictionConfigType {
+  const candidate = section as { show?: unknown, maxSuggestions?: unknown } | undefined;
+  if (!candidate || typeof candidate.show !== "boolean") {
+    return { show: false, maxSuggestions: DEFAULT_MAX_SUGGESTIONS };
+  }
+  return {
+    show: candidate.show,
+    maxSuggestions: isPositiveInteger(candidate.maxSuggestions)
+      ? candidate.maxSuggestions as number
+      : DEFAULT_MAX_SUGGESTIONS
   };
 }
 
@@ -145,16 +180,19 @@ function parseShowFlag (section: unknown, fallback: boolean): FeatureVisibilityC
 }
 
 /**
- * Fetch and validate `public/config.json`, its `indicatorLabelLookup`,
- * `telegraphicTranslation`, `symbolSearch`, and `svgBuilderString` sections.
+ * Fetch and validate `public/config.json`: the top-level `maxStoredRecords` and the
+ * `indicatorLabelLookup`, `telegraphicTranslation`, `symbolSearch`, `svgBuilderString`,
+ * and `wordPrediction` sections.
  * @returns {Promise<AdaptivePaletteConfigType>}
  */
 async function loadConfig (): Promise<AdaptivePaletteConfigType> {
   const disabledIndicatorLookup = { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" };
   const fallbackConfig: AdaptivePaletteConfigType = {
+    maxStoredRecords: DEFAULT_MAX_STORED_RECORDS,
     indicatorLabelLookup: disabledIndicatorLookup,
     symbolSearch: { show: true },
-    svgBuilderString: { show: false }
+    svgBuilderString: { show: false },
+    wordPrediction: { show: false, maxSuggestions: DEFAULT_MAX_SUGGESTIONS }
   };
   try {
     const response = await fetch("/config.json");
@@ -164,10 +202,12 @@ async function loadConfig (): Promise<AdaptivePaletteConfigType> {
     const parsed = await response.json() as Record<string, unknown>;
     const indicatorLabelLookup = parseIndicatorLabelLookup(parsed?.indicatorLabelLookup);
     return {
+      maxStoredRecords: parseMaxStoredRecords(parsed?.maxStoredRecords),
       indicatorLabelLookup: indicatorLabelLookup ?? disabledIndicatorLookup,
       telegraphicTranslation: parseTelegraphicTranslation(parsed?.telegraphicTranslation),
       symbolSearch: parseShowFlag(parsed?.symbolSearch, true),
-      svgBuilderString: parseShowFlag(parsed?.svgBuilderString, false)
+      svgBuilderString: parseShowFlag(parsed?.svgBuilderString, false),
+      wordPrediction: parseWordPrediction(parsed?.wordPrediction)
     };
   } catch {
     return fallbackConfig;

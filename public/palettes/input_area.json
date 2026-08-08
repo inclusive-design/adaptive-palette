@@ -43,6 +43,18 @@
         "columnSpan": 1,
         "ariaControls": "sentenceChoices"
       }
+    },
+    "action-speak": {
+      "type": "ActionSpeakCell",
+      "options": {
+        "label": "Speak",
+        "composition": 2325,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 15,
+        "columnSpan": 1,
+        "ariaControls": "content-encoding-area"
+      }
     }
   }
 }
