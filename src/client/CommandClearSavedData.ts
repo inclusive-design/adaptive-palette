@@ -23,7 +23,7 @@ import "./CommandClearSavedData.scss";
 export const CLEAR_SAVED_DATA_DIALOG_ID = "clearSavedDataDialog";
 export const CONFIRM_LABEL = "Clear";
 export const CANCEL_LABEL = "Cancel";
-export const CONFIRM_QUESTION = "This deletes every message you have saved. It cannot be undone.";
+export const CONFIRM_QUESTION = "This deletes every message you have saved, and the message you are writing now. It cannot be undone.";
 export const FAILURE_MESSAGE = "The saved data could not be cleared. This browser is not letting the app use its storage.";
 
 type CommandClearSavedDataProps = {

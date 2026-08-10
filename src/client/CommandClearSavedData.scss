@@ -18,8 +18,11 @@
 
 /*
  * The destructive choice is marked, so it is not taken for the way out of the dialog.
+ *
+ * Nested inside `.modalDialog` so the marking outweighs that file's base button rule
+ * instead of tying with it and depending on stylesheet order.
  */
-.clearSavedDataConfirm {
+.modalDialog .clearSavedDataConfirm {
   background-color: lightsalmon;
 }
 
