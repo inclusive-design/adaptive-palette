@@ -28,12 +28,12 @@ import { PredictedWords } from "./PredictedWords";
 import { SymbolEntryToolbar } from "./SymbolEntryToolbar";
 
 const paletteFileMap = await loadPaletteFromJsonFile("/palettes/palette_file_map.json");
-const firstLayer = await loadPaletteFromJsonFile("/palettes/palettes.json");
+const firstLayer = await loadPaletteFromJsonFile("/palettes/bliss_standard_chart.json");
 const inputArea = await loadPaletteFromJsonFile("/palettes/input_area.json");
 const commandBar = await loadPaletteFromJsonFile("/palettes/command_bar.json");
 
 if (!paletteFileMap) { throw new Error("Failed to load /palettes/palette_file_map.json"); }
-if (!firstLayer) { throw new Error("Failed to load /palettes/palettes.json"); }
+if (!firstLayer) { throw new Error("Failed to load /palettes/bliss_standard_chart.json"); }
 if (!inputArea) { throw new Error("Failed to load /palettes/input_area.json"); }
 if (!commandBar) { throw new Error("Failed to load /palettes/command_bar.json"); }
 

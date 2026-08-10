@@ -24,6 +24,7 @@ import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
 import { ActionRemoveModifierCell } from "./ActionRemoveModifierCell";
 import { ActionSpeakCell } from "./ActionSpeakCell";
 import { CommandClearEncoding } from "./CommandClearEncoding";
+import { CommandClearSavedData } from "./CommandClearSavedData";
 import { CommandCursorBackward } from "./CommandCursorBackward";
 import { CommandCursorForward } from "./CommandCursorForward";
 import { CommandDelLastEncoding } from "./CommandDelLastEncoding";
@@ -42,6 +43,7 @@ export const cellTypeRegistry = {
   "ActionRemoveModifierCell": ActionRemoveModifierCell,
   "ActionSpeakCell": ActionSpeakCell,
   "CommandClearEncoding": CommandClearEncoding,
+  "CommandClearSavedData": CommandClearSavedData,
   "CommandCursorBackward": CommandCursorBackward,
   "CommandCursorForward": CommandCursorForward,
   "CommandDelLastEncoding": CommandDelLastEncoding,

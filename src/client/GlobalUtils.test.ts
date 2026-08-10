@@ -10,7 +10,9 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { generateGridStyle, clamp, applyModifiersToLabel, normalizeComposition, renderTemplate, renderPromptLines } from "./GlobalUtils";
+import { vi } from "vitest";
+import { generateGridStyle, clamp, applyModifiersToLabel, normalizeComposition, renderTemplate, renderPromptLines, clearSavedData } from "./GlobalUtils";
+import { MESSAGE_LOG_KEY } from "./MessageLog";
 
 describe("Test global utility functions", (): void => {
 
@@ -146,6 +148,33 @@ describe("Test renderPromptLines()", (): void => {
 
   test("Drops a line whose values are all empty", (): void => {
     expect(renderPromptLines("{{a}} and {{b}}\nEnd", { a: "", b: "  " })).toBe("End");
+  });
+
+});
+
+describe("clearSavedData()", (): void => {
+
+  afterEach((): void => {
+    vi.restoreAllMocks();
+    window.localStorage.clear();
+  });
+
+  test("Removes everything the app has saved", (): void => {
+    window.localStorage.setItem(MESSAGE_LOG_KEY, JSON.stringify([{ timestamp: "now", payloads: [] }]));
+    window.localStorage.setItem("some other key", "value");
+
+    expect(clearSavedData()).toBe(true);
+    expect(window.localStorage.length).toBe(0);
+  });
+
+  test("Reports failure when storage cannot be written", (): void => {
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    vi.spyOn(Storage.prototype, "clear").mockImplementation((): void => {
+      throw new Error("storage is not available");
+    });
+
+    expect(clearSavedData()).toBe(false);
+    expect(consoleError).toHaveBeenCalled();
   });
 
 });
