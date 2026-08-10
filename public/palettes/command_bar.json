@@ -5,7 +5,11 @@
       "type": "CommandCursorBackward",
       "options": {
         "label": "Backward",
-        "composition": [145, ";", 907],
+        "composition": [
+          145,
+          ";",
+          907
+        ],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 1,
@@ -17,7 +21,11 @@
       "type": "CommandCursorForward",
       "options": {
         "label": "Forward",
-        "composition": [335, ";", 907],
+        "composition": [
+          335,
+          ";",
+          907
+        ],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 2,
@@ -29,7 +37,11 @@
       "type": "CommandDelLastEncoding",
       "options": {
         "label": "Delete",
-        "composition": [939, ";", 907],
+        "composition": [
+          939,
+          ";",
+          907
+        ],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 3,
@@ -41,7 +53,13 @@
       "type": "CommandClearEncoding",
       "options": {
         "label": "Delete all",
-        "composition": [939, ";", 907, "//", 117],
+        "composition": [
+          939,
+          ";",
+          907,
+          "//",
+          117
+        ],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 4,
@@ -163,7 +181,17 @@
       "type": "ActionRemoveIndicatorCell",
       "options": {
         "label": "remove indicator",
-        "composition": [634, ";", 907, "//", 348, "/", 81, "/", 99],
+        "composition": [
+          634,
+          ";",
+          907,
+          "//",
+          348,
+          "/",
+          81,
+          "/",
+          99
+        ],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 15,
@@ -174,10 +202,35 @@
       "type": "ActionRemoveModifierCell",
       "options": {
         "label": "undo modifier",
-        "composition": [634, ";", 907, "/", 106, "/", 158],
+        "composition": [
+          634,
+          ";",
+          907,
+          "/",
+          106,
+          "/",
+          158
+        ],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 16,
+        "columnSpan": 1
+      }
+    },
+    "command-clear-saved-data": {
+      "type": "CommandClearSavedData",
+      "options": {
+        "label": "clear all saved data",
+        "composition": [
+          939,
+          ";",
+          907,
+          "//",
+          841
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 17,
         "columnSpan": 1
       }
     }

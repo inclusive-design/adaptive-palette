@@ -159,16 +159,19 @@ three categories by prefix.
 | `ActionPostModifierCell` | Appends a modifier to the last symbol | `label`, `composition` |
 | `ActionRemoveIndicatorCell` | Removes an indicator from the symbol at the caret | `label`, `composition` |
 | `ActionRemoveModifierCell` | Removes a modifier from the symbol at the caret | `label`, `composition` |
+| `ActionSpeakCell` | Speaks the message aloud and records it, which feeds word prediction | `label`, `composition`, `ariaControls` |
 
 #### `Command*` — palette navigation and editing
 
 | Type | Purpose | Key options beyond layout |
 | ---- | ------- | ------------------------- |
 | `CommandClearEncoding` | Clears the entire encoding area | `label`, `composition`, `ariaControls` |
+| `CommandClearSavedData` | Deletes everything the app has saved in local storage, after a confirmation dialog, then reloads the page | `label`, `composition` |
 | `CommandCursorBackward` | Moves the caret one position left in the encoding area | `label`, `composition`, `ariaControls` |
 | `CommandCursorForward` | Moves the caret one position right in the encoding area | `label`, `composition`, `ariaControls` |
 | `CommandDelLastEncoding` | Deletes the last symbol in the encoding area | `label`, `composition`, `ariaControls` |
 | `CommandGoBackCell` | Pops the navigation stack and returns to the previous palette | `label`, `composition` |
+| `CommandGoToRootCell` | Empties the navigation stack and returns to the root palette | `label`, `composition` |
 | `CommandMakeSentence` | Translates the telegraphic message into full sentences; renders nothing when the feature is unavailable | `label`, `composition`, `ariaControls` |
 
 #### `Content*` — display areas

@@ -202,3 +202,22 @@ export function renderPromptLines (template: string, values: Record<string, stri
     .map((line) => renderTemplate(line, values))
     .join("\n");
 }
+
+/**
+ * Discard everything the app has saved in local storage.
+ *
+ * The whole of local storage goes, rather than a list of known keys: the app owns its
+ * origin, so nothing else stores anything here, and a key added by a later feature is
+ * covered without anyone remembering to extend the list.
+ * @returns {boolean} - `true` if storage was cleared; `false` if the browser denied
+ *                      access to it, in which case the saved data is still there.
+ */
+export function clearSavedData (): boolean {
+  try {
+    window.localStorage.clear();
+    return true;
+  } catch (error) {
+    console.error(`Could not clear the saved data: ${String(error)}`);
+    return false;
+  }
+}

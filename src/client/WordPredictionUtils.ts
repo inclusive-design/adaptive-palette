@@ -124,6 +124,10 @@ function tallyAll (messages: string[][]): Map<string, LabelTally> {
 
 /**
  * Order a tally, most used first and most recently used among equals.
+ * A tally contains { count, lastUsedAt }. Sort using two-step criteria:
+ * 1. Highest count first. Words that followed the context most often win.
+ * 2. If two words have the exact same count, it looks at lastUsedAt. The word that was
+ * used in the most recent message wins.
  * @param {Map<string, LabelTally>} tallies - The tallied labels.
  * @returns {string[]}
  */

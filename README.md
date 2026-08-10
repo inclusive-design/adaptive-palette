@@ -161,3 +161,9 @@ In accordance with the ShareAlike clause, this adapted file is also licensed und
 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/):
 
 - [`public/data/bliss_symbol_explanations.json`](./public/data/bliss_symbol_explanations.json)
+
+## Acknowledgments
+
+This project was developed using an AI-assisted workflow. Special thanks to [Claude Code](https://www.anthropic.com/)
+and [OpenAI Codex](https://openai.com/blog/openai-codex). All AI-generated code was reviewed, tested, and refined by
+human developers to ensure quality and security.
