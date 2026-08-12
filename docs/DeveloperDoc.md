@@ -36,9 +36,8 @@ caret each announce their label. When `false`, all of that goes quiet and the "S
 the whole composed message, becomes the only routine speech.
 
 Failures always speak, whatever the setting: activating a cell marked `aria-disabled` announces
-"`<label>` unavailable", and an indicator that could not be applied announces the unchanged message.
-Nothing else tells the user that a press did nothing, since the message preview is deliberately not a
-live region.
+"`<label>` unavailable". Nothing else tells the user that a press did nothing, since the message
+preview is deliberately not a live region.
 
 The two are separate functions in [`src/client/SpeechUtils.ts`](../src/client/SpeechUtils.ts):
 `announceIfEnabled()` consults this setting, `speak()` ignores it.

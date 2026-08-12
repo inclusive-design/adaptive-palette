@@ -25,16 +25,13 @@ vi.mock("./IndicatorLabelsUtils", () => ({
   getNewLabelViaModelQuery: vi.fn()
 }));
 
-// Applying a label goes through `announceIfEnabled()`, while the "unchanged" and
-// "loading" messages go through `speak()`, so the two are mocked and asserted apart.
 vi.mock("./SpeechUtils", async (importOriginal) => {
   const actual = await importOriginal<typeof import("./SpeechUtils")>();
-  return { ...actual, speak: vi.fn(), announceIfEnabled: vi.fn() };
+  return { ...actual, announceIfEnabled: vi.fn() };
 });
 
 const mockedGetStaticNewLabel = vi.mocked(IndicatorLabels.getStaticNewLabel);
 const mockedGetNewLabelViaModelQuery = vi.mocked(IndicatorLabels.getNewLabelViaModelQuery);
-const mockedSpeak = vi.mocked(SpeechUtils.speak);
 const mockedAnnounce = vi.mocked(SpeechUtils.announceIfEnabled);
 
 describe("ActionIndicatorCell render tests", (): void => {
@@ -58,7 +55,6 @@ describe("ActionIndicatorCell render tests", (): void => {
   beforeEach((): void => {
     mockedGetStaticNewLabel.mockReset().mockReturnValue(undefined);
     mockedGetNewLabelViaModelQuery.mockReset().mockReturnValue({ status: "not-viable" });
-    mockedSpeak.mockReset();
     mockedAnnounce.mockReset();
   });
 
@@ -227,7 +223,7 @@ describe("ActionIndicatorCell render tests", (): void => {
       expect(mockedGetNewLabelViaModelQuery).toHaveBeenCalledTimes(1);
     });
     expect(changeEncodingContents.value.payloads[0].label).toBe("hand-built");
-    expect(mockedSpeak).toHaveBeenCalledWith(`hand-built, ${testCell.options.label}`);
+    expect(mockedAnnounce).toHaveBeenCalledWith(`hand-built, ${testCell.options.label}`);
   });
 
   test("Cached model-query result with a label: speaks and applies it immediately, no loading message", async (): Promise<void> => {
@@ -254,9 +250,8 @@ describe("ActionIndicatorCell render tests", (): void => {
     await waitFor(() => {
       expect(changeEncodingContents.value.payloads[0].label).toBe("cells");
     });
-    expect(mockedAnnounce).toHaveBeenCalledTimes(1);
+    expect(mockedAnnounce).toHaveBeenCalledTimes(1);   // no loading message
     expect(mockedAnnounce).toHaveBeenCalledWith("cells");
-    expect(mockedSpeak).not.toHaveBeenCalled();   // no loading message
   });
 
   test("Cached model-query result with no label: speaks the unchanged message immediately, label stays", async (): Promise<void> => {
@@ -281,7 +276,7 @@ describe("ActionIndicatorCell render tests", (): void => {
     fireEvent.click(button);
 
     await waitFor(() => {
-      expect(mockedSpeak).toHaveBeenCalledWith(`cell, ${testCell.options.label}`);
+      expect(mockedAnnounce).toHaveBeenCalledWith(`cell, ${testCell.options.label}`);
     });
     expect(changeEncodingContents.value.payloads[0].label).toBe("cell");
   });
@@ -313,7 +308,7 @@ describe("ActionIndicatorCell render tests", (): void => {
 
     // The loading message is spoken immediately, before the query resolves.
     await waitFor(() => {
-      expect(mockedSpeak).toHaveBeenCalledWith(`walk, ${testCell.options.label} loading new label`);
+      expect(mockedAnnounce).toHaveBeenCalledWith(`walk, ${testCell.options.label} loading new label`);
     });
     expect(changeEncodingContents.value.payloads[0].label).toBe("walk");
 
@@ -350,12 +345,12 @@ describe("ActionIndicatorCell render tests", (): void => {
     fireEvent.click(button);
 
     await waitFor(() => {
-      expect(mockedSpeak).toHaveBeenCalledWith(`walk, ${testCell.options.label} loading new label`);
+      expect(mockedAnnounce).toHaveBeenCalledWith(`walk, ${testCell.options.label} loading new label`);
     });
 
     resolveQuery!(undefined);
     await waitFor(() => {
-      expect(mockedSpeak).toHaveBeenCalledWith(`walk, ${testCell.options.label}`);
+      expect(mockedAnnounce).toHaveBeenCalledWith(`walk, ${testCell.options.label}`);
     });
     expect(changeEncodingContents.value.payloads[0].label).toBe("walk");
   });
@@ -430,11 +425,11 @@ describe("ActionIndicatorCell render tests", (): void => {
     fireEvent.click(buttonA);   // click A: applies indicator 99
     await waitFor(() => expect(mockedGetNewLabelViaModelQuery).toHaveBeenCalledTimes(1));
     // Click A's own immediate ("loading") announcement fires before it can be superseded.
-    expect(mockedSpeak).toHaveBeenCalledWith(`help, ${testCell.options.label} loading new label`);
+    expect(mockedAnnounce).toHaveBeenCalledWith(`help, ${testCell.options.label} loading new label`);
 
     fireEvent.click(buttonB);   // click B: applies indicator 100 before A resolves
     await waitFor(() => expect(mockedGetNewLabelViaModelQuery).toHaveBeenCalledTimes(2));
-    expect(mockedSpeak).toHaveBeenCalledWith(`help, ${otherCell.options.label} loading new label`);
+    expect(mockedAnnounce).toHaveBeenCalledWith(`help, ${otherCell.options.label} loading new label`);
 
     const compositionAfterB = changeEncodingContents.value.payloads[0].composition;
 

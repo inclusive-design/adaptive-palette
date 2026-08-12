@@ -16,7 +16,7 @@ import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { generateGridStyle, applyModifiersToLabel } from "./GlobalUtils";
-import { announceIfEnabled, speak, speakUnavailable } from "./SpeechUtils";
+import { announceIfEnabled, speakUnavailable } from "./SpeechUtils";
 import { findIndicators, findClassifierFromLeft } from "./SvgUtils";
 import { getStaticNewLabel, getNewLabelViaModelQuery } from "./IndicatorLabelsUtils";
 import "./ActionIndicatorCell.scss";
@@ -138,11 +138,11 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       return;
     }
     if (modelResult.status !== "pending") {
-      speak(unchangedMessage);
+      announceIfEnabled(unchangedMessage);
       return;
     }
 
-    speak(`${unchangedMessage} loading new label`);
+    announceIfEnabled(`${unchangedMessage} loading new label`);
     const newLabel = await modelResult.promise;
     if (!isStillCurrent()) {
       return;
@@ -150,7 +150,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
     if (newLabel !== undefined) {
       applyLabel(newLabel);
     } else {
-      speak(unchangedMessage);
+      announceIfEnabled(unchangedMessage);
     }
   };
 
