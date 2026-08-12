@@ -31,8 +31,8 @@ vi.mock("./OllamaApi", async (importOriginal) => {
   return { ...actual, queryChat: vi.fn() };
 });
 
-vi.mock("./GlobalUtils", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("./GlobalUtils")>();
+vi.mock("./SpeechUtils", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./SpeechUtils")>();
   return { ...actual, speak: vi.fn() };
 });
 
@@ -61,6 +61,7 @@ describe("CommandMakeSentence component", (): void => {
   const setConfig = (numSentences: number): void => {
     adaptivePaletteGlobals.config = {
       maxStoredRecords: 500,
+      announceSymbolOnInput: true,
       indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
       symbolSearch: { show: true },
       svgBuilderString: { show: false },
@@ -108,6 +109,7 @@ describe("CommandMakeSentence component", (): void => {
   test("renders nothing when the feature is unconfigured", (): void => {
     adaptivePaletteGlobals.config = {
       maxStoredRecords: 500,
+      announceSymbolOnInput: true,
       indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
       symbolSearch: { show: true },
       svgBuilderString: { show: false },

@@ -60,6 +60,7 @@ export const adaptivePaletteGlobals = {
   models: [] as string[],
   config: {
     maxStoredRecords: DEFAULT_MAX_STORED_RECORDS,
+    announceSymbolOnInput: true,
     indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
     symbolSearch: { show: true },
     svgBuilderString: { show: false },
@@ -213,6 +214,7 @@ async function loadConfig (): Promise<AdaptivePaletteConfigType> {
   const disabledIndicatorLookup = { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" };
   const fallbackConfig: AdaptivePaletteConfigType = {
     maxStoredRecords: DEFAULT_MAX_STORED_RECORDS,
+    announceSymbolOnInput: true,
     indicatorLabelLookup: disabledIndicatorLookup,
     symbolSearch: { show: true },
     svgBuilderString: { show: false },
@@ -227,6 +229,9 @@ async function loadConfig (): Promise<AdaptivePaletteConfigType> {
     const indicatorLabelLookup = parseIndicatorLabelLookup(parsed?.indicatorLabelLookup);
     return {
       maxStoredRecords: parseMaxStoredRecords(parsed?.maxStoredRecords),
+      // Anything other than `false` leaves announcements on: a mistyped config must not
+      // silently mute the palette.
+      announceSymbolOnInput: typeof parsed?.announceSymbolOnInput === "boolean" ? parsed.announceSymbolOnInput : true,
       indicatorLabelLookup: indicatorLabelLookup ?? disabledIndicatorLookup,
       telegraphicTranslation: parseTelegraphicTranslation(parsed?.telegraphicTranslation),
       symbolSearch: parseShowFlag(parsed?.symbolSearch, true),

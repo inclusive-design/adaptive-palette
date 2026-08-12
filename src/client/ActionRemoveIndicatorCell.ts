@@ -15,7 +15,8 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType, ContentSignalDataType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
-import { generateGridStyle, speak, speakUnavailable, applyModifiersToLabel } from "./GlobalUtils";
+import { generateGridStyle, applyModifiersToLabel } from "./GlobalUtils";
+import { announceIfEnabled, speakUnavailable } from "./SpeechUtils";
 import { findIndicators } from "./SvgUtils";
 
 type ActionIndicatorCodeCellPropsType = {
@@ -94,7 +95,7 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
       payloads: payloads,
       caretPosition: caretPosition
     };
-    speak(`${restoredLabel}`);
+    announceIfEnabled(`${restoredLabel}`);
   };
 
   return html`

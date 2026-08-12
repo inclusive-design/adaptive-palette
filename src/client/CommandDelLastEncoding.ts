@@ -15,7 +15,8 @@ import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle } from "./GlobalUtils";
+import { announceIfEnabled } from "./SpeechUtils";
 
 type CommandDelLastEncodingProps = {
   id: string,
@@ -45,7 +46,7 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNo
         caretPosition: caretPosition - 1
       };
     }
-    speak(label);
+    announceIfEnabled(label);
   };
 
   return html`

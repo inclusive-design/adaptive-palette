@@ -17,7 +17,8 @@ import { useState } from "preact/hooks";
 import { BlissSymbol } from "./BlissSymbol";
 import { ModalDialog } from "./ModalDialog";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
-import { clearSavedData, generateGridStyle, speak } from "./GlobalUtils";
+import { clearSavedData, generateGridStyle } from "./GlobalUtils";
+import { announceIfEnabled } from "./SpeechUtils";
 import "./CommandClearSavedData.scss";
 
 export const CLEAR_SAVED_DATA_DIALOG_ID = "clearSavedDataDialog";
@@ -56,7 +57,7 @@ export function CommandClearSavedData (props: CommandClearSavedDataProps): VNode
   // capture the wrong opener to restore focus to when the dialog closes.
   const askToConfirm = (event: Event): void => {
     (event.currentTarget as HTMLElement).focus();
-    speak(label);
+    announceIfEnabled(label);
     setHasFailed(false);
     setIsConfirming(true);
   };

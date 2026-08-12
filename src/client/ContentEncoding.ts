@@ -15,7 +15,8 @@ import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { ContentEncodingType, BlissSymbolInfoType } from "./index.d";
-import { generateGridStyle, clamp, speak } from "./GlobalUtils";
+import { generateGridStyle, clamp } from "./GlobalUtils";
+import { announceIfEnabled } from "./SpeechUtils";
 import "./ContentEncoding.scss";
 
 export const INPUT_AREA_ID = "content-encoding-area";   // better way?
@@ -99,12 +100,12 @@ export function moveCursorToEnd () {
 function handleKeyDown(event: KeyboardEvent) {
   if ((!(isApplePlatform && event.metaKey) && event.key === "ArrowLeft") || event.key === "ArrowDown") {
     decrementCursor();
-    speak("backward");
+    announceIfEnabled("backward");
   }
 
   if ((!(isApplePlatform && event.metaKey) && event.key === "ArrowRight") || event.key === "ArrowUp") {
     incrementCursor();
-    speak("forward");
+    announceIfEnabled("forward");
   }
 
   if (
@@ -114,7 +115,7 @@ function handleKeyDown(event: KeyboardEvent) {
   ) {
     event.preventDefault();
     moveCursorToHome();
-    speak("move cursor to start");
+    announceIfEnabled("move cursor to start");
   }
 
   if (
@@ -124,7 +125,7 @@ function handleKeyDown(event: KeyboardEvent) {
   ) {
     event.preventDefault();
     moveCursorToEnd();
-    speak("move cursor to end");
+    announceIfEnabled("move cursor to end");
   }
 }
 

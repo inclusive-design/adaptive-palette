@@ -15,7 +15,7 @@ import { html } from "htm/preact";
 import { useEffect, useRef, useState } from "preact/hooks";
 
 import { sentenceCompletionsSignal, clearMessageAndChoices } from "./TelegraphicTranslationState";
-import { speak } from "./GlobalUtils";
+import { announceIfEnabled, speak } from "./SpeechUtils";
 import { saveTranslation, SentenceSourceType } from "./MessageLog";
 import "./SentenceChoices.scss";
 
@@ -79,7 +79,7 @@ export function SentenceChoices (): VNode {
 
   // "Done" button clears up the input area and sentences.
   const finish = (): void => {
-    speak("Done");
+    announceIfEnabled("Done");
     clearMessageAndChoices();
     setTypedSentence("");
   };

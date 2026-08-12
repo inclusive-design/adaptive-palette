@@ -15,7 +15,8 @@ import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { incrementCursor } from "./ContentEncoding";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle } from "./GlobalUtils";
+import { announceIfEnabled } from "./SpeechUtils";
 
 type CommandCursorForwardProps = {
   id: string,
@@ -35,7 +36,7 @@ export function CommandCursorForward (props: CommandCursorForwardProps): VNode {
 
   const cellClicked = (): void => {
     incrementCursor();
-    speak(label);
+    announceIfEnabled(label);
   };
 
   return html`

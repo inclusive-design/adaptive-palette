@@ -42,35 +42,6 @@ export function generateGridStyle(columnStart?: number, columnSpan?: number, row
 }
 
 /**
- * Use the text-to-speech to announce the given text. If the previous announcement is still going
- * on, cancel it.
- * @param {String} text - The text to be announced.
- */
-export function speak(text: string): void {
-  // If the text-to-speech feature is unavailable, do nothing. This happens when running node tests.
-  if (!window.speechSynthesis) {
-    return;
-  }
-
-  // Cancel the previous announcement
-  if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
-    window.speechSynthesis.cancel();
-  }
-  // Announce the current text
-  const utterThis = new SpeechSynthesisUtterance(text);
-  window.speechSynthesis.speak(utterThis);
-}
-
-/**
- * Announce that a cell marked `aria-disabled` was activated. Such a cell keeps its
- * place in the tab order, so it can be focused and activated.
- * @param {String} label - The label of the cell that was activated.
- */
-export function speakUnavailable(label: string): void {
-  speak(`${label} unavailable`);
-}
-
-/**
  * Load a palette from the given JSON file using `fetch()`. The location of the
  * JSON file is provided as a variable. If the loading fails, a console error with
  * detailed error message is reported.

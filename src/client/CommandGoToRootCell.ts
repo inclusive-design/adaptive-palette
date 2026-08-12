@@ -14,7 +14,8 @@ import { render, VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { adaptivePaletteGlobals, navigationDepth } from "./GlobalData";
-import { generateGridStyle, speak, speakUnavailable } from "./GlobalUtils";
+import { generateGridStyle } from "./GlobalUtils";
+import { announceIfEnabled, speakUnavailable } from "./SpeechUtils";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
 import "./ActionCodeCell.scss";
@@ -58,7 +59,7 @@ export function CommandGoToRootCell (props: CommandGoToRootCellPropsType): VNode
       speakUnavailable(label);
       return;
     }
-    speak(label);
+    announceIfEnabled(label);
     goToRootImpl();
   };
 

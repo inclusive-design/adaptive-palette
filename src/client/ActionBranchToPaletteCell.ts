@@ -17,7 +17,7 @@ import { adaptivePaletteGlobals } from "./GlobalData";
 import { loadPaletteFromJsonFile } from "./GlobalUtils";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
-import { speak } from "./GlobalUtils";
+import { announceIfEnabled } from "./SpeechUtils";
 import "./ActionBranchToPaletteCell.scss";
 
 type ActionBranchToPalettePropsType = {
@@ -32,7 +32,7 @@ type ActionBranchToPalettePropsType = {
 const navigateToPalette = async (event: Event): Promise<void> => {
   const { paletteStore, navigationStack } = adaptivePaletteGlobals;
   const button = event.currentTarget as HTMLElement;
-  speak(button.innerText);
+  announceIfEnabled(button.innerText);
 
   const buttonParent = button.parentElement;
   const displayElement = buttonParent?.parentElement as HTMLElement | undefined;

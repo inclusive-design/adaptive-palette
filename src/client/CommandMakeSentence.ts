@@ -21,7 +21,8 @@ import {
 import { dismissModelStatus } from "./WordPredictionState";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
-import { generateGridStyle, normalizeComposition, speakUnavailable } from "./GlobalUtils";
+import { generateGridStyle, normalizeComposition } from "./GlobalUtils";
+import { speakUnavailable } from "./SpeechUtils";
 import "./CommandMakeSentence.scss";
 
 type CommandMakeSentenceProps = {

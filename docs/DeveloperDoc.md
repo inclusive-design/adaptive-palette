@@ -14,6 +14,7 @@ every section falls back.
 | Section | Controls |
 | ------- | -------- |
 | `maxStoredRecords` | Top-level, not a section. How many messages the local-storage message log keeps. |
+| `announceSymbolOnInput` | Top-level, not a section. Whether labels are spoken as the user inputs. |
 | `indicatorLabelLookup` | The Ollama fallback tier for looking up indicator labels. See [IndicatorLabelLookup.md](IndicatorLabelLookup.md). |
 | `telegraphicTranslation` | Translating a telegraphic message into full sentences. See [TelegraphicMessageTranslation.md](TelegraphicMessageTranslation.md). |
 | `symbolSearch` | The "Add symbol to message" trigger and its gloss-search dialog. |
@@ -26,6 +27,20 @@ An integer capping the message log, the single local-storage log holding the mes
 user has said and the translations made from them. When it reaches the limit, its oldest records are
 dropped first. `0` keeps the features that log but stores nothing. A missing or malformed value falls
 back to 500.
+
+### `announceSymbolOnInput`
+
+A boolean deciding whether the palette speaks a label when the user selects a symbol. When `true`, adding a symbol,
+applying an indicator or modifier, choosing a predicted word, navigating to a palette, and moving the
+caret each announce their label. When `false`, all of that goes quiet and the "Speak" button, which reads
+the whole composed message, becomes the only routine speech.
+
+Failures always speak, whatever the setting: activating a cell marked `aria-disabled` announces
+"`<label>` unavailable". Nothing else tells the user that a press did nothing, since the message
+preview is deliberately not a live region.
+
+The two are separate functions in [`src/client/SpeechUtils.ts`](../src/client/SpeechUtils.ts):
+`announceIfEnabled()` consults this setting, `speak()` ignores it.
 
 ### `indicatorLabelLookup`
 

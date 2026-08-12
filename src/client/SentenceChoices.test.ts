@@ -18,14 +18,14 @@ import { html } from "htm/preact";
 import { adaptivePaletteGlobals, changeEncodingContents, DISABLED_MODEL_QUERY } from "./GlobalData";
 import { sentenceCompletionsSignal } from "./TelegraphicTranslationState";
 import { MESSAGE_LOG_KEY, readMessageLog } from "./MessageLog";
-import { speak } from "./GlobalUtils";
+import { speak } from "./SpeechUtils";
 import {
   SentenceChoices, WORKING_MESSAGE, CANNOT_COMPLETE_MESSAGE, TYPE_YOUR_OWN_HINT,
   SPEAK_BUTTON_LABEL, DONE_BUTTON_LABEL
 } from "./SentenceChoices";
 
-vi.mock("./GlobalUtils", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("./GlobalUtils")>();
+vi.mock("./SpeechUtils", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./SpeechUtils")>();
   return { ...actual, speak: vi.fn() };
 });
 
@@ -47,6 +47,7 @@ describe("SentenceChoices component", (): void => {
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
     adaptivePaletteGlobals.config = {
       maxStoredRecords: 500,
+      announceSymbolOnInput: true,
       indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
       symbolSearch: { show: true },
       svgBuilderString: { show: false },

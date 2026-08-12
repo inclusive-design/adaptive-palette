@@ -21,7 +21,7 @@ import { effect, signal } from "@preact/signals";
 import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
 import { requestSentences } from "./TelegraphicTranslationUtils";
 import { messageText, saveTranslation } from "./MessageLog";
-import { speak } from "./GlobalUtils";
+import { speak } from "./SpeechUtils";
 import type { ContentSignalDataType, SentenceCompletionsStateType } from ".";
 
 /**

@@ -268,3 +268,48 @@ describe("loadConfig feature visibility sections", (): void => {
     expect(adaptivePaletteGlobals.config.svgBuilderString).toEqual({ show: false });
   });
 });
+
+describe("loadConfig announceSymbolOnInput", (): void => {
+
+  test("`false` turns input announcements off", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      announceSymbolOnInput: false
+    });
+    await initAdaptivePaletteGlobals();
+    expect(adaptivePaletteGlobals.config.announceSymbolOnInput).toBe(false);
+  });
+
+  test("`true` keeps them on", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      announceSymbolOnInput: true
+    });
+    await initAdaptivePaletteGlobals();
+    expect(adaptivePaletteGlobals.config.announceSymbolOnInput).toBe(true);
+  });
+
+  test("a missing key leaves them on", async (): Promise<void> => {
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
+    await initAdaptivePaletteGlobals();
+    expect(adaptivePaletteGlobals.config.announceSymbolOnInput).toBe(true);
+  });
+
+  test("a non-boolean value leaves them on", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      announceSymbolOnInput: "no"
+    });
+    await initAdaptivePaletteGlobals();
+    expect(adaptivePaletteGlobals.config.announceSymbolOnInput).toBe(true);
+  });
+
+  test("an unreadable config file leaves them on", async (): Promise<void> => {
+    vi.stubGlobal("fetch", vi.fn(() => Promise.resolve({
+      ok: false,
+      json: () => Promise.resolve({})
+    })));
+    await initAdaptivePaletteGlobals();
+    expect(adaptivePaletteGlobals.config.announceSymbolOnInput).toBe(true);
+  });
+});

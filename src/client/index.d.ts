@@ -141,6 +141,9 @@ export type FeatureVisibilityConfigType = {
 export type AdaptivePaletteConfigType = {
   // Caps every log kept in local storage. Zero keeps the features but stores nothing.
   maxStoredRecords: number,
+  // Whether each symbol and command label is spoken as the user inputs. When off, the Speak
+  // button is the only routine speech; failures still announce.
+  announceSymbolOnInput: boolean,
   indicatorLabelLookup: IndicatorLabelLookupConfigType,
   telegraphicTranslation?: TelegraphicTranslationConfigType,
   symbolSearch: FeatureVisibilityConfigType,
