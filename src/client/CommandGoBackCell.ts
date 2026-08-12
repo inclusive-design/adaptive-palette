@@ -14,7 +14,8 @@ import { render, VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { adaptivePaletteGlobals, navigationDepth } from "./GlobalData";
-import { loadPaletteFromJsonFile, speak, speakUnavailable } from "./GlobalUtils";
+import { loadPaletteFromJsonFile } from "./GlobalUtils";
+import { announceIfEnabled, speakUnavailable } from "./SpeechUtils";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
 import "./ActionCodeCell.scss";
@@ -65,7 +66,7 @@ const goBackToPalette = async (event: Event): Promise<void> => {
     speakUnavailable(button.innerText);
     return;
   }
-  speak(button.innerText);
+  announceIfEnabled(button.innerText);
   return goBackImpl(button.getAttribute("aria-controls"));
 };
 

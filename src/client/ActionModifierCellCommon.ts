@@ -15,7 +15,8 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
-import { generateGridStyle, speak, speakUnavailable } from "./GlobalUtils";
+import { generateGridStyle } from "./GlobalUtils";
+import { announceIfEnabled, speakUnavailable } from "./SpeechUtils";
 import "./ActionModifierCell.scss";
 
 export type ActionModifierCodeCellPropsType = {
@@ -84,7 +85,7 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
       payloads: payloads,
       caretPosition: caretPosition
     };
-    speak(newLabel);
+    announceIfEnabled(newLabel);
   };
 
   return html`

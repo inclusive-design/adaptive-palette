@@ -1,5 +1,6 @@
 {
   "maxStoredRecords": 500,
+  "announceSymbolOnInput": true,
   "indicatorLabelLookup": {
     "useModelQueryFallback": true,
     "model": "gemma4:12b",

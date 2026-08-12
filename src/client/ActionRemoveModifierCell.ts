@@ -15,7 +15,8 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
-import { generateGridStyle, speak, speakUnavailable } from "./GlobalUtils";
+import { generateGridStyle } from "./GlobalUtils";
+import { announceIfEnabled, speakUnavailable } from "./SpeechUtils";
 
 type ActionRemoveModifierPropsType = {
   id: string,
@@ -102,7 +103,7 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
       payloads: payloads,
       caretPosition: caretPosition
     };
-    speak(newLabel);
+    announceIfEnabled(newLabel);
   };
 
   return html`

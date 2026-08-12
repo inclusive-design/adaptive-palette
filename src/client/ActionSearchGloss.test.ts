@@ -16,18 +16,19 @@ import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
 import { changeEncodingContents } from "./GlobalData";
-import { speak } from "./GlobalUtils";
+import { announceIfEnabled, speak } from "./SpeechUtils";
 import {
   ActionSearchGloss, SEARCH_FIELD_LABEL, SUBMIT_LABEL, CLEAR_LABEL,
   LABEL_FIELD_LABEL, ADD_LABEL, CLOSE_LABEL, NO_SELECTION_STATUS, MAX_RESULTS
 } from "./ActionSearchGloss";
 
-vi.mock("./GlobalUtils", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("./GlobalUtils")>();
-  return { ...actual, speak: vi.fn() };
+vi.mock("./SpeechUtils", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./SpeechUtils")>();
+  return { ...actual, speak: vi.fn(), announceIfEnabled: vi.fn() };
 });
 
 const mockedSpeak = vi.mocked(speak);
+const mockedAnnounce = vi.mocked(announceIfEnabled);
 
 /**
  * Render the dialog body and run a search for `term`, returning the search input.
@@ -48,6 +49,7 @@ describe("ActionSearchGloss component", () => {
     cleanup();
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
     mockedSpeak.mockClear();
+    mockedAnnounce.mockClear();
   });
 
   test("renders the search form and footer controls", () => {
@@ -160,6 +162,7 @@ describe("ActionSearchGloss component", () => {
     // The status region is the only channel: device speech would talk over the screen
     // reader announcing the same add.
     expect(mockedSpeak).not.toHaveBeenCalled();
+    expect(mockedAnnounce).not.toHaveBeenCalled();
   }, 20000);
 
   test("an edited label is what gets inserted", async () => {
@@ -251,6 +254,7 @@ describe("ActionSearchGloss component", () => {
 
     expect(changeEncodingContents.value.payloads).toHaveLength(0);
     expect(mockedSpeak).not.toHaveBeenCalled();
+    expect(mockedAnnounce).not.toHaveBeenCalled();
     // The button keeps focus via `aria-disabled`, so pressing it must not be silent.
     expect(await screen.findByRole("status")).toHaveTextContent(NO_SELECTION_STATUS);
   });

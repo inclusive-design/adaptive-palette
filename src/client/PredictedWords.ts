@@ -15,7 +15,8 @@ import { html } from "htm/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
 import { BlissSymbol } from "./BlissSymbol";
-import { insertWordAtCaret, speak } from "./GlobalUtils";
+import { insertWordAtCaret } from "./GlobalUtils";
+import { announceIfEnabled } from "./SpeechUtils";
 import { predictNext } from "./WordPredictionUtils";
 import { contextKeyOf, modelWordsSignal, showModelStatusSignal } from "./WordPredictionState";
 import { SymbolEncodingType } from "./index.d";
@@ -77,7 +78,7 @@ export function PredictedWords (): VNode | null {
     const { payloads: currentPayloads, caretPosition: currentCaret } = changeEncodingContents.value;
     // A fresh copy each time.
     changeEncodingContents.value = insertWordAtCaret(structuredClone(suggestion), currentPayloads, currentCaret);
-    speak(suggestion.label);
+    announceIfEnabled(suggestion.label);
   };
 
   // Every slot is drawn, whether or not there is a word for it, so the row keeps one shape and

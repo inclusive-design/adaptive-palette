@@ -39,6 +39,7 @@ describe("telegraphicTranslation", (): void => {
     adaptivePaletteGlobals.models = ["phony-model:12b", "other-model:7b"];
     adaptivePaletteGlobals.config = {
       maxStoredRecords: 500,
+      announceSymbolOnInput: true,
       indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
       symbolSearch: { show: true },
       svgBuilderString: { show: false },

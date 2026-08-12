@@ -15,7 +15,8 @@ import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { clearMessageAndChoices } from "./TelegraphicTranslationState";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle } from "./GlobalUtils";
+import { announceIfEnabled } from "./SpeechUtils";
 
 type CommandClearEncodingProps = {
   id: string,
@@ -32,7 +33,7 @@ export function CommandClearEncoding (props: CommandClearEncodingProps): VNode {
 
   const cellClicked = (): void => {
     clearMessageAndChoices();
-    speak(label);
+    announceIfEnabled(label);
   };
 
   return html`

@@ -15,7 +15,8 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from ".";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents, adaptivePaletteGlobals } from "./GlobalData";
-import { generateGridStyle, speak, insertWordAtCaret, normalizeComposition } from "./GlobalUtils";
+import { generateGridStyle, insertWordAtCaret, normalizeComposition } from "./GlobalUtils";
+import { announceIfEnabled } from "./SpeechUtils";
 import "./ActionCodeCell.scss";
 
 type ActionCodeCellPropsType = {
@@ -45,7 +46,7 @@ export function ActionCodeCell (props: ActionCodeCellPropsType): VNode {
     };
     const{ caretPosition, payloads } = changeEncodingContents.value;
     changeEncodingContents.value = insertWordAtCaret(payload, payloads, caretPosition);
-    speak(props.options.label);
+    announceIfEnabled(props.options.label);
   };
 
   return html`

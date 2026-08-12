@@ -12,7 +12,8 @@
 import { render } from "preact";
 import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals, adaptivePaletteGlobals, navigationDepth, NO_MODELS_MESSAGE } from "./GlobalData";
-import { loadPaletteFromJsonFile, speak, speakUnavailable } from "./GlobalUtils";
+import { loadPaletteFromJsonFile } from "./GlobalUtils";
+import { announceIfEnabled, speakUnavailable } from "./SpeechUtils";
 import { goBackImpl } from "./CommandGoBackCell";
 import { INPUT_AREA_ID } from "./ContentEncoding";
 import { NOT_CONFIGURED_MESSAGE } from "./TelegraphicTranslationUtils";
@@ -86,7 +87,7 @@ window.addEventListener("keydown", (event) => {
     // If focus was not on a textual input element, go back up one layer in the
     // palette navigation
     if (!elementAllowsTextEntry(event.target)) {
-      speak("Back");
+      announceIfEnabled("Back");
       void goBackImpl();
     }
   }

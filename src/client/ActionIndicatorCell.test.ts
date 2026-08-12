@@ -17,7 +17,7 @@ import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
 import { ActionIndicatorCell } from "./ActionIndicatorCell";
 import * as IndicatorLabels from "./IndicatorLabelsUtils";
-import * as GlobalUtils from "./GlobalUtils";
+import * as SpeechUtils from "./SpeechUtils";
 
 vi.mock("./IndicatorLabelsUtils", () => ({
   initIndicatorLabels: vi.fn().mockResolvedValue(undefined),
@@ -25,14 +25,17 @@ vi.mock("./IndicatorLabelsUtils", () => ({
   getNewLabelViaModelQuery: vi.fn()
 }));
 
-vi.mock("./GlobalUtils", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("./GlobalUtils")>();
-  return { ...actual, speak: vi.fn() };
+// Applying a label goes through `announceIfEnabled()`, while the "unchanged" and
+// "loading" messages go through `speak()`, so the two are mocked and asserted apart.
+vi.mock("./SpeechUtils", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./SpeechUtils")>();
+  return { ...actual, speak: vi.fn(), announceIfEnabled: vi.fn() };
 });
 
 const mockedGetStaticNewLabel = vi.mocked(IndicatorLabels.getStaticNewLabel);
 const mockedGetNewLabelViaModelQuery = vi.mocked(IndicatorLabels.getNewLabelViaModelQuery);
-const mockedSpeak = vi.mocked(GlobalUtils.speak);
+const mockedSpeak = vi.mocked(SpeechUtils.speak);
+const mockedAnnounce = vi.mocked(SpeechUtils.announceIfEnabled);
 
 describe("ActionIndicatorCell render tests", (): void => {
 
@@ -56,6 +59,7 @@ describe("ActionIndicatorCell render tests", (): void => {
     mockedGetStaticNewLabel.mockReset().mockReturnValue(undefined);
     mockedGetNewLabelViaModelQuery.mockReset().mockReturnValue({ status: "not-viable" });
     mockedSpeak.mockReset();
+    mockedAnnounce.mockReset();
   });
 
   test("Single ActionIndicatorCell rendering, disabled", async (): Promise<void> => {
@@ -164,7 +168,7 @@ describe("ActionIndicatorCell render tests", (): void => {
     expect(updated.baseLabel).toBe("help");
     expect(updated.userSelectedSymbolId).toBe(382);
     expect(mockedGetNewLabelViaModelQuery).not.toHaveBeenCalled();
-    expect(mockedSpeak).toHaveBeenCalledWith("helper");
+    expect(mockedAnnounce).toHaveBeenCalledWith("helper");
   });
 
   test("Replacing an indicator derives the prompt from baseLabel, not the swapped label", async (): Promise<void> => {
@@ -250,8 +254,9 @@ describe("ActionIndicatorCell render tests", (): void => {
     await waitFor(() => {
       expect(changeEncodingContents.value.payloads[0].label).toBe("cells");
     });
-    expect(mockedSpeak).toHaveBeenCalledTimes(1);
-    expect(mockedSpeak).toHaveBeenCalledWith("cells");
+    expect(mockedAnnounce).toHaveBeenCalledTimes(1);
+    expect(mockedAnnounce).toHaveBeenCalledWith("cells");
+    expect(mockedSpeak).not.toHaveBeenCalled();   // no loading message
   });
 
   test("Cached model-query result with no label: speaks the unchanged message immediately, label stays", async (): Promise<void> => {
@@ -316,7 +321,7 @@ describe("ActionIndicatorCell render tests", (): void => {
     await waitFor(() => {
       expect(changeEncodingContents.value.payloads[0].label).toBe("walked");
     });
-    expect(mockedSpeak).toHaveBeenCalledWith("walked");
+    expect(mockedAnnounce).toHaveBeenCalledWith("walked");
   });
 
   test("Pending model query that fails: speaks the loading message, then the unchanged message as closure", async (): Promise<void> => {
@@ -438,7 +443,7 @@ describe("ActionIndicatorCell render tests", (): void => {
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(changeEncodingContents.value.payloads[0].label).toBe("help");   // A's result dropped
     expect(changeEncodingContents.value.payloads[0].composition).toStrictEqual(compositionAfterB);
-    expect(mockedSpeak).not.toHaveBeenCalledWith("A-result");
+    expect(mockedAnnounce).not.toHaveBeenCalledWith("A-result");
 
     resolveSecond!("B-result");
     await waitFor(() => {

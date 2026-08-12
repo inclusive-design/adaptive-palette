@@ -15,7 +15,8 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
-import { generateGridStyle, speak, speakUnavailable, applyModifiersToLabel } from "./GlobalUtils";
+import { generateGridStyle, applyModifiersToLabel } from "./GlobalUtils";
+import { announceIfEnabled, speak, speakUnavailable } from "./SpeechUtils";
 import { findIndicators, findClassifierFromLeft } from "./SvgUtils";
 import { getStaticNewLabel, getNewLabelViaModelQuery } from "./IndicatorLabelsUtils";
 import "./ActionIndicatorCell.scss";
@@ -115,7 +116,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
         payloads: latest.payloads,
         caretPosition: latest.caretPosition
       };
-      speak(finalLabel);
+      announceIfEnabled(finalLabel);
     };
 
     const unchangedMessage = `${symbolToEdit.label}, ${props.options.label}`;

@@ -15,7 +15,8 @@ import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { decrementCursor } from "./ContentEncoding";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
-import { generateGridStyle, speak } from "./GlobalUtils";
+import { generateGridStyle } from "./GlobalUtils";
+import { announceIfEnabled } from "./SpeechUtils";
 
 type CommandCursorBackwardProps = {
   id: string,
@@ -35,7 +36,7 @@ export function CommandCursorBackward (props: CommandCursorBackwardProps): VNode
 
   const cellClicked = (): void => {
     decrementCursor();
-    speak(label);
+    announceIfEnabled(label);
   };
 
   return html`

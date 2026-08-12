@@ -37,6 +37,7 @@ const USER_PROMPT = "Word: \"{{word}}\"\nPart of speech: {{pos}}\nMeaning: {{exp
 function enableModelQuery (): void {
   adaptivePaletteGlobals.config = {
     maxStoredRecords: 500,
+    announceSymbolOnInput: true,
     indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b", systemPrompt: SYSTEM_PROMPT, userPrompt: USER_PROMPT },
     symbolSearch: { show: true },
     svgBuilderString: { show: false },
@@ -63,6 +64,7 @@ describe("IndicatorLabels", (): void => {
     resetOllamaCacheForTests();
     adaptivePaletteGlobals.config = {
       maxStoredRecords: 500,
+      announceSymbolOnInput: true,
       indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: SYSTEM_PROMPT, userPrompt: USER_PROMPT },
       symbolSearch: { show: true },
       svgBuilderString: { show: false },

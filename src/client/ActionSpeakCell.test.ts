@@ -17,11 +17,11 @@ import { html } from "htm/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents, initAdaptivePaletteGlobals } from "./GlobalData";
 import { MESSAGE_LOG_KEY, readMessageLog } from "./MessageLog";
-import { speak } from "./GlobalUtils";
+import { speak } from "./SpeechUtils";
 import { ActionSpeakCell } from "./ActionSpeakCell";
 
-vi.mock("./GlobalUtils", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("./GlobalUtils")>();
+vi.mock("./SpeechUtils", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./SpeechUtils")>();
   return { ...actual, speak: vi.fn() };
 });
 

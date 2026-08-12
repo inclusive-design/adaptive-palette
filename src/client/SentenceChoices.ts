@@ -15,7 +15,7 @@ import { html } from "htm/preact";
 import { useEffect, useRef, useState } from "preact/hooks";
 
 import { sentenceCompletionsSignal, clearMessageAndChoices } from "./TelegraphicTranslationState";
-import { speak } from "./GlobalUtils";
+import { speak } from "./SpeechUtils";
 import { saveTranslation, SentenceSourceType } from "./MessageLog";
 import "./SentenceChoices.scss";
 
