@@ -92,6 +92,7 @@ export function cancelModelQuery (): void {
  */
 async function queryModelWords (contextKey: string, labels: string[]): Promise<void> {
   const { maxSuggestions } = adaptivePaletteGlobals.config.wordPrediction;
+  const contextLabels = labels.filter((label) => label.trim().length > 0);
   const historySuggestions = predictNext(labels, maxSuggestions);
   const emptySlots = maxSuggestions - historySuggestions.length;
   if (emptySlots <= 0) {
@@ -109,7 +110,9 @@ async function queryModelWords (contextKey: string, labels: string[]): Promise<v
     if (controller.signal.aborted || pending.status !== "working" || pending.contextKey !== contextKey) {
       return;
     }
-    const payloads = rankModelWords(words, historySuggestions.map((suggestion) => suggestion.label), emptySlots);
+    // Neither a word already in the row nor the word at the caret is suggested again.
+    const excluded = [...historySuggestions.map((suggestion) => suggestion.label), ...contextLabels.slice(-1)];
+    const payloads = rankModelWords(words, excluded, emptySlots);
     modelWordsSignal.value = payloads.length === 0
       ? { status: "idle" }
       : { status: "ready", contextKey, payloads };

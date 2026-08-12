@@ -364,11 +364,12 @@ function reportResolution (candidates: string[], rungs: Record<ResolutionRungTyp
  * the model's reply it came and by how much the user uses that word in history, so a word the
  * user uses often outranks one the model merely liked better. Words with no symbol drop out.
  * @param {string[]} words - The words from the reply, most likely first.
- * @param {string[]} displayedLabels - The labels already in the suggestion row.
+ * @param {string[]} excludedLabels - The labels not to suggest: those already in the suggestion
+ *                                   row, and the last word at the caret.
  * @param {number} limit - The most payloads to return.
  * @returns {SymbolEncodingType[]} - The payloads, best first. May be empty.
  */
-export function rankModelWords (words: string[], displayedLabels: string[], limit: number): SymbolEncodingType[] {
+export function rankModelWords (words: string[], excludedLabels: string[], limit: number): SymbolEncodingType[] {
   const messages = loggedMessages();
   const payloadByLabel = new Map<string, SymbolEncodingType>();
   const counts = new Map<string, number>();
@@ -378,8 +379,8 @@ export function rankModelWords (words: string[], displayedLabels: string[], limi
     counts.set(label, (counts.get(label) ?? 0) + 1);
   }));
 
-  const displayed = new Set(displayedLabels.map((label) => label.toLowerCase()));
-  const candidates = words.filter((word) => !displayed.has(word));
+  const excluded = new Set(excludedLabels.map((label) => label.toLowerCase()));
+  const candidates = words.filter((word) => !excluded.has(word));
   // Normalizing over the candidates alone is what makes `P_history` comparable with the
   // model's rank score.
   const historyTotal = candidates.reduce((total, word) => total + (counts.get(word) ?? 0), 0);
@@ -397,7 +398,14 @@ export function rankModelWords (words: string[], displayedLabels: string[], limi
   const rungs: Record<ResolutionRungType, number> = { history: 0, exactGloss: 0, wordInGloss: 0, dropped: 0 };
   const dropped: string[] = [];
   const payloads: SymbolEncodingType[] = [];
-  scored.forEach(({ word }) => {
+  // Resolving a word scans the whole Bliss vocabulary, so the words past the last slot are
+  // thrown away.
+  const attempted: string[] = [];
+  for (const { word } of scored) {
+    if (payloads.length === limit) {
+      break;
+    }
+    attempted.push(word);
     const { payload, rung } = resolveWordPayload(word, payloadByLabel);
     rungs[rung] += 1;
     if (payload) {
@@ -405,9 +413,9 @@ export function rankModelWords (words: string[], displayedLabels: string[], limi
     } else {
       dropped.push(word);
     }
-  });
-  reportResolution(candidates, rungs, dropped);
-  return payloads.slice(0, limit);
+  }
+  reportResolution(attempted, rungs, dropped);
+  return payloads;
 }
 
 /**

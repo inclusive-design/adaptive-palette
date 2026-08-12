@@ -22,11 +22,11 @@ import { MESSAGE_LOG_KEY, saveMessageRecord } from "./MessageLog";
 import {
   moreSuggestionsMessage, PredictedWords, PREDICTED_WORDS_LABEL, QUERYING_MESSAGE
 } from "./PredictedWords";
-import { modelWordsSignal } from "./WordPredictionState";
+import { cancelModelQuery, modelWordsSignal } from "./WordPredictionState";
 import { SymbolEncodingType } from "./index.d";
 
 // The row is driven from `modelWordsSignal` directly here, so a query left waiting is all
-// that is wanted of Ollama: one that never answers cannot overwrite what a test has set.
+// that is wanted of Ollama.
 vi.mock("./OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("./OllamaApi")>();
   return { ...actual, queryChat: vi.fn(() => new Promise(() => undefined)) };
@@ -36,6 +36,14 @@ describe("PredictedWords component", (): void => {
 
   const message = (...labels: string[]): SymbolEncodingType[] =>
     labels.map((label) => ({ label, composition: 1840, modifierInfo: [] }));
+
+  /*
+   * Updating the message triggers a debounced model query, so cancel it immediately
+   */
+  const setMessage = (...labels: string[]): void => {
+    changeEncodingContents.value = { payloads: message(...labels), caretPosition: labels.length - 1 };
+    cancelModelQuery();
+  };
 
   beforeAll(async (): Promise<void> => {
     await initAdaptivePaletteGlobals();
@@ -72,14 +80,14 @@ describe("PredictedWords component", (): void => {
   });
 
   test("suggests what usually follows the message so far", (): void => {
-    changeEncodingContents.value = { payloads: message("I", "want"), caretPosition: 1 };
+    setMessage("I", "want");
     render(html`<${PredictedWords} />`);
     expect(screen.getByRole("group").querySelector("button")?.textContent).toContain("juice");
   });
 
   test("choosing a suggestion adds it to the message", async (): Promise<void> => {
     const user = userEvent.setup();
-    changeEncodingContents.value = { payloads: message("I", "want"), caretPosition: 1 };
+    setMessage("I", "want");
     render(html`<${PredictedWords} />`);
 
     await user.click(screen.getByRole("group").querySelectorAll("button")[0]);
@@ -97,7 +105,7 @@ describe("PredictedWords component", (): void => {
   // The row holds its place so that the rest of the page does not shift as words are added.
   test("keeps a row of empty slots when there is nothing to suggest", (): void => {
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
-    changeEncodingContents.value = { payloads: message("unknown"), caretPosition: 0 };
+    setMessage("unknown");
     render(html`<${PredictedWords} />`);
 
     const suggestions = screen.getByRole("group", { name: PREDICTED_WORDS_LABEL });
@@ -135,7 +143,7 @@ describe("PredictedWords component", (): void => {
     });
 
     test("model words fill the slots the history left empty", (): void => {
-      changeEncodingContents.value = { payloads: message("I", "want"), caretPosition: 1 };
+      setMessage("I", "want");
       showModelWords("I want", "food", "tea");
       render(html`<${PredictedWords} />`);
 
@@ -150,7 +158,7 @@ describe("PredictedWords component", (): void => {
 
     // Moving a button out from under someone reaching for it is worse than suggesting less.
     test("a word from the history keeps its place when the model answers", async (): Promise<void> => {
-      changeEncodingContents.value = { payloads: message("I", "want"), caretPosition: 1 };
+      setMessage("I", "want");
       const { container } = render(html`<${PredictedWords} />`);
       const beforeModel = container.querySelector("button")?.textContent;
 
@@ -160,7 +168,7 @@ describe("PredictedWords component", (): void => {
     });
 
     test("words answering a message the user has moved past are not drawn", (): void => {
-      changeEncodingContents.value = { payloads: message("I", "want"), caretPosition: 1 };
+      setMessage("I", "want");
       showModelWords("you help", "food", "tea");
       render(html`<${PredictedWords} />`);
 
@@ -170,7 +178,7 @@ describe("PredictedWords component", (): void => {
     });
 
     test("the wait and the arrival are both reported", async (): Promise<void> => {
-      changeEncodingContents.value = { payloads: message("I", "want"), caretPosition: 1 };
+      setMessage("I", "want");
       render(html`<${PredictedWords} />`);
       expect(screen.getByRole("status").textContent?.trim()).toBe("");
 
@@ -184,7 +192,7 @@ describe("PredictedWords component", (): void => {
 
     // The wait belongs to the message it was started for, as its answer does.
     test("a query for a message the user has moved past is not reported", (): void => {
-      changeEncodingContents.value = { payloads: message("I", "want"), caretPosition: 1 };
+      setMessage("I", "want");
       modelWordsSignal.value = { status: "working", contextKey: "you help" };
       render(html`<${PredictedWords} />`);
 
@@ -194,7 +202,7 @@ describe("PredictedWords component", (): void => {
     // Above the row, so that a status arriving does not move a word out from under the
     // user; and taking no space while empty, which is most of the time.
     test("the status line sits above the row of words", (): void => {
-      changeEncodingContents.value = { payloads: message("I", "want"), caretPosition: 1 };
+      setMessage("I", "want");
       const { container } = render(html`<${PredictedWords} />`);
 
       const status = screen.getByRole("status");

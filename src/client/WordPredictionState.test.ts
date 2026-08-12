@@ -94,6 +94,16 @@ describe("wordPrediction model query", (): void => {
       .toEqual(["food", "tea", "coffee"]);
   });
 
+  // "want" is in the history, so it would otherwise resolve to a symbol and be offered again.
+  test("the word at the caret is not suggested back", async (): Promise<void> => {
+    replyWith("want\nfood\ntea");
+    compose("I", "want");
+    await waitForQuery();
+    const state = modelWordsSignal.peek();
+    expect(state.status === "ready" && state.payloads.map((payload) => payload.label))
+      .toEqual(["food", "tea"]);
+  });
+
   // A user placing symbols quickly must not be sending a query per symbol.
   test("a run of changes inside the wait costs one query", async (): Promise<void> => {
     compose("I");

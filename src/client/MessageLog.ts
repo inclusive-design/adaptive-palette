@@ -70,6 +70,10 @@ export function recordMessageText (record: MessageRecordType): string {
   return record.payloads.length > 0 ? messageText(record.payloads) : (record.telegraphicMessage ?? "");
 }
 
+// Store the last parse of the log because word prediction reads it several times for one suggestion.
+let cachedText: string | null = null;
+let cachedLog: MessageRecordType[] = [];
+
 /**
  * Read the stored messages. Anything unreadable reads as an empty log.
  * @returns {MessageRecordType[]}
@@ -77,15 +81,17 @@ export function recordMessageText (record: MessageRecordType): string {
 export function readMessageLog (): MessageRecordType[] {
   try {
     const stored = window.localStorage.getItem(MESSAGE_LOG_KEY);
-    const parsed: unknown = stored ? JSON.parse(stored) : [];
-    if (!Array.isArray(parsed)) {
-      return [];
+    if (stored !== cachedText) {
+      const parsed: unknown = stored ? JSON.parse(stored) : [];
+      cachedText = stored;
+      cachedLog = !Array.isArray(parsed) ? [] : parsed.filter((entry) => {
+        const payloads = (entry as MessageRecordType)?.payloads;
+        return entry !== null && typeof entry === "object" && Array.isArray(payloads) &&
+          payloads.every((payload) => payload !== null && typeof payload?.label === "string");
+      }) as MessageRecordType[];
     }
-    return parsed.filter((entry) => {
-      const payloads = (entry as MessageRecordType)?.payloads;
-      return entry !== null && typeof entry === "object" && Array.isArray(payloads) &&
-        payloads.every((payload) => payload !== null && typeof payload?.label === "string");
-    }) as MessageRecordType[];
+    // A copy, so that a caller rewriting the log cannot alter what is cached.
+    return [...cachedLog];
   } catch (error) {
     console.error(`Could not read "${MESSAGE_LOG_KEY}": ${String(error)}`);
     return [];
