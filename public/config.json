@@ -20,6 +20,10 @@
   },
   "wordPrediction": {
     "show": true,
-    "maxSuggestions": 10
+    "maxSuggestions": 10,
+    "enableModelQuery": true,
+    "model": "gemma4:12b",
+    "systemPrompt": "You predict the next word for an AAC user composing a message one symbol at a time on a Bliss AAC device. Given the message so far, list the {{numWords}} words most likely to come next.\n\nRules:\n- Reply with single common English words, one per line.\n- No phrases, no punctuation, no numbering, no explanation, no preamble.\n- Lowercase.\n- Most likely first.\n- Prefer everyday concrete words that a picture vocabulary would contain.",
+    "userPrompt": "Message so far: {{message}}"
   }
 }

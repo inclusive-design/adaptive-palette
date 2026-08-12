@@ -108,8 +108,28 @@ export type TelegraphicTranslationConfigType = {
 
 export type WordPredictionConfigType = {
   show: boolean,
-  maxSuggestions: number
+  maxSuggestions: number,
+  // Whether a model is asked for suggestions on top of the ones found in the message history.
+  enableModelQuery: boolean,
+  model: string,
+  systemPrompt: string,
+  userPrompt: string
 };
+
+/*
+ * Which step of the word-to-symbol ladder found a symbol for a word the model suggested, or
+ * "dropped" when no step did. Counted to report how often model words go unused.
+ */
+export type ResolutionRungType = "history" | "exactGloss" | "wordInGloss" | "dropped";
+
+/*
+ * The model's contribution to the suggestion row. `contextKey` is the message the words were
+ * asked for: a reply is only shown while it still matches the message on screen.
+ */
+export type ModelWordsStateType =
+  | { status: "idle" }
+  | { status: "working", contextKey: string }
+  | { status: "ready", contextKey: string, payloads: SymbolEncodingType[] };
 
 /*
  * Whether an optional symbol-entry feature is offered on the palette page.

@@ -11,6 +11,21 @@
  */
 
 /*
+ * The status line's space is held whether or not it has text: words arriving from the model
+ * must not push the row down while the user is aiming at it. The first track is one line of
+ * `.statusMessage`: 1.5rem of padding, a 1.5rem line and 0.5rem of margin. Text long enough
+ * to wrap grows the track rather than overflowing it.
+ */
+.predictedWordsArea {
+  display: grid;
+  grid-template-rows: minmax(3.5rem, auto) auto;
+
+  .statusMessage {
+    line-height: 1.5rem;
+  }
+}
+
+/*
  * Laid out like a palette row: full width, one column per suggestion slot. The columns come
  * from the component, which knows how many slots the configuration asks for.
  */

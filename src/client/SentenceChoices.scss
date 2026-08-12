@@ -23,31 +23,7 @@
   text-align: left;
 }
 
-.sentenceStatus,
-.sentenceError {
-  border-radius: 1rem;
-  font-weight: bold;
-  margin: 0;
-  padding: 0.75rem 1rem;
-}
-
-.sentenceStatus {
-  background-color: #fffbe6;
-}
-
-/* The live region stays in the document at all times so announcements land in it.
-   Using `display: none` would drop it out of the accessibility tree. */
-.sentenceStatus:empty {
-  clip-path: inset(50%);
-  height: 1px;
-  margin: 0;
-  overflow: hidden;
-  padding: 0;
-  position: absolute;
-  white-space: nowrap;
-  width: 1px;
-}
-
+/* The look, and the clip that hides it when empty, come from `.statusMessage`. */
 .sentenceError {
   background-color: #ffecec;
 }

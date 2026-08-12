@@ -35,8 +35,8 @@
     "command-make-sentence": {
       "type": "CommandMakeSentence",
       "options": {
-        "label": "Sentence",
-        "composition": 2351,
+        "label": "Make Sentences",
+        "composition": [1968, "//", 2351, ";;", 99],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 14,

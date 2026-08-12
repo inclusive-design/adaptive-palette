@@ -11,7 +11,7 @@
  */
 
 import { vi } from "vitest";
-import { initAdaptivePaletteGlobals, adaptivePaletteGlobals } from "./GlobalData";
+import { initAdaptivePaletteGlobals, adaptivePaletteGlobals, DISABLED_MODEL_QUERY } from "./GlobalData";
 import { getStaticNewLabel, getNewLabelViaModelQuery, initIndicatorLabels, resetOllamaCacheForTests } from "./IndicatorLabelsUtils";
 import { queryChat } from "./OllamaApi";
 
@@ -40,7 +40,7 @@ function enableModelQuery (): void {
     indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b", systemPrompt: SYSTEM_PROMPT, userPrompt: USER_PROMPT },
     symbolSearch: { show: true },
     svgBuilderString: { show: false },
-    wordPrediction: { show: false, maxSuggestions: 4 }
+    wordPrediction: { show: false, maxSuggestions: 4, ...DISABLED_MODEL_QUERY }
   };
 }
 
@@ -66,7 +66,7 @@ describe("IndicatorLabels", (): void => {
       indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: SYSTEM_PROMPT, userPrompt: USER_PROMPT },
       symbolSearch: { show: true },
       svgBuilderString: { show: false },
-      wordPrediction: { show: false, maxSuggestions: 4 }
+      wordPrediction: { show: false, maxSuggestions: 4, ...DISABLED_MODEL_QUERY }
     };
   });
 

@@ -111,7 +111,7 @@ export function SentenceChoices (): VNode {
 
   return html`
     <div class="sentenceChoices" ref=${choicesRef}>
-      <p class=${state.status === "error" ? "sentenceStatus sentenceError" : "sentenceStatus"} role="status">${statusText}</p>
+      <p class=${state.status === "error" ? "statusMessage sentenceError" : "statusMessage"} role="status">${statusText}</p>
       ${choices}
     </div>
   `;
