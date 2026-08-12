@@ -22,7 +22,7 @@ import { MESSAGE_LOG_KEY, saveMessageRecord } from "./MessageLog";
 import {
   moreSuggestionsMessage, PredictedWords, PREDICTED_WORDS_LABEL, QUERYING_MESSAGE
 } from "./PredictedWords";
-import { cancelModelQuery, modelWordsSignal } from "./WordPredictionState";
+import { cancelModelQuery, dismissModelStatus, modelWordsSignal, showModelStatusSignal } from "./WordPredictionState";
 import { SymbolEncodingType } from "./index.d";
 
 // The row is driven from `modelWordsSignal` directly here, so a query left waiting is all
@@ -139,6 +139,7 @@ describe("PredictedWords component", (): void => {
 
     afterEach((): void => {
       modelWordsSignal.value = { status: "idle" };
+      showModelStatusSignal.value = true;
       adaptivePaletteGlobals.models = [];
     });
 
@@ -188,6 +189,20 @@ describe("PredictedWords component", (): void => {
       showModelWords("I want", "food", "tea");
       await waitFor(() => expect(screen.getByRole("status").textContent?.trim())
         .toBe(moreSuggestionsMessage(2)));
+    });
+
+    // Pressing Speak or Sentence finishes the message: nothing more to report about it, but
+    // its words are still there to press.
+    test("dismissing the status keeps the words on the row", async (): Promise<void> => {
+      setMessage("I", "want");
+      showModelWords("I want", "food", "tea");
+      const { container } = render(html`<${PredictedWords} />`);
+      await waitFor(() => expect(screen.getByRole("status").textContent?.trim())
+        .toBe(moreSuggestionsMessage(2)));
+
+      dismissModelStatus();
+      await waitFor(() => expect(screen.getByRole("status").textContent?.trim()).toBe(""));
+      expect(container.querySelectorAll("button")).toHaveLength(3);
     });
 
     // The wait belongs to the message it was started for, as its answer does.

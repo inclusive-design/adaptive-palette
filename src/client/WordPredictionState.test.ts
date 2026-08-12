@@ -14,7 +14,9 @@ import { vi } from "vitest";
 import { adaptivePaletteGlobals, changeEncodingContents, DISABLED_MODEL_QUERY } from "./GlobalData";
 import { MESSAGE_LOG_KEY, saveMessageRecord } from "./MessageLog";
 import { queryChat } from "./OllamaApi";
-import { DEBOUNCE_MS, contextKeyOf, modelWordsSignal } from "./WordPredictionState";
+import {
+  DEBOUNCE_MS, contextKeyOf, dismissModelStatus, modelWordsSignal, showModelStatusSignal
+} from "./WordPredictionState";
 import { SymbolEncodingType } from "./index.d";
 
 vi.mock("./OllamaApi", async (importOriginal) => {
@@ -190,6 +192,35 @@ describe("wordPrediction model query", (): void => {
       compose("I");
       await waitForQuery();
       expect(mockedQueryChat).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("finishing the message", (): void => {
+
+    test("stops the status report and keeps the words already suggested", async (): Promise<void> => {
+      compose("I");
+      await waitForQuery();
+      expect(modelWordsSignal.value.status).toBe("ready");
+
+      dismissModelStatus();
+      expect(showModelStatusSignal.value).toBe(false);
+      expect(modelWordsSignal.value.status).toBe("ready");
+    });
+
+    test("stops a query that has not been sent yet", async (): Promise<void> => {
+      compose("I");
+      dismissModelStatus();
+      await waitForQuery();
+      expect(mockedQueryChat).not.toHaveBeenCalled();
+    });
+
+    test("the next change to the message reports again", async (): Promise<void> => {
+      compose("I");
+      dismissModelStatus();
+      compose("I", "want");
+      expect(showModelStatusSignal.value).toBe(true);
+      await waitForQuery();
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
     });
   });
 

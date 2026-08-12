@@ -93,6 +93,8 @@ queries and results.
 pushes the suggestion row and palette downward.
 * **Context-aware:** Like the model replies, status messages are tied to the specific input they belong to
 and disappear if the user continues typing.
+* **Finished messages:** Pressing **Speak** or **Sentence** clears the status line and stops any query still
+running. The words already suggested stay on the row.
 * **Silent failures:** Failed queries fail silently to prevent UI clutter, leaving the user with their existing
 history suggestions.
 
@@ -185,6 +187,7 @@ new predictions are learned.
 | A model query fails or returns nothing usable | An error is logged to the console and the status line clears. The row keeps the suggestions the history gave it. |
 | The model's words all lack Bliss symbols | The slots stay empty. The console line reports the drop. |
 | The user changes the message mid-query | The request is cancelled without asking, and its words and status are never shown. Suggestions are recomputed at once, so nothing is lost. |
+| **Speak** or **Sentence** is pressed mid-query | The request is cancelled and the status line clears. The words already on the row stay there. |
 | Local storage read fails or holds unreadable data | An error is logged to the console and the history reads as empty. Composing a message is unaffected. |
 | Local storage write fails | An error is logged to the console. Speech and the message itself are unaffected. |
 | Speech synthesis is unavailable | No speech is produced. Suggestions, selection, and saving continue to work. |

@@ -42,6 +42,13 @@ export const MIN_WORDS_REQUESTED = 5;
 export const modelWordsSignal = signal<ModelWordsStateType>({ status: "idle" });
 
 /**
+ * Whether the suggestion row reports what the model is doing. When "sentence" or "speak"
+ * button is pressed meaning the message is finished, it turns the model status report off,
+ * but the words already on the row stay where they are.
+ */
+export const showModelStatusSignal = signal<boolean>(true);
+
+/**
  * The abort handle for the request currently in flight, if any.
  */
 let activeAbort: AbortController | null = null;
@@ -81,6 +88,17 @@ export function cancelModelQuery (): void {
   activeAbort = null;
   window.clearTimeout(pendingTimer);
   pendingTimer = undefined;
+}
+
+/**
+ * Stop reporting the model's progress for the message on screen, and stop any query still
+ * working on it. The words already on the row stay where they are: the user is finished with
+ * the message, so nothing more needs to be asked or said about it.
+ * @returns {void}
+ */
+export function dismissModelStatus (): void {
+  cancelModelQuery();
+  showModelStatusSignal.value = false;
 }
 
 /**
@@ -146,6 +164,7 @@ effect((): void => {
   previousContextKey = contextKey;
   cancelModelQuery();
   modelWordsSignal.value = { status: "idle" };
+  showModelStatusSignal.value = true;
 
   const { show } = adaptivePaletteGlobals.config.wordPrediction;
   // An empty message gives the model nothing to go on, and a hidden row nowhere to put the

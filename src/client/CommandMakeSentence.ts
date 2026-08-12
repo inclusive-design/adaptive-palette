@@ -18,6 +18,7 @@ import { saveMessageRecord } from "./MessageLog";
 import {
   currentTelegraphicMessage, makeSentences, sentenceCompletionsSignal
 } from "./TelegraphicTranslationState";
+import { dismissModelStatus } from "./WordPredictionState";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { generateGridStyle, normalizeComposition, speakUnavailable } from "./GlobalUtils";
@@ -70,6 +71,8 @@ export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode | n
     }
     // Asking for a sentence means the message is finished, so save it.
     saveMessageRecord(changeEncodingContents.value.payloads);
+    // The message is finished, so the row stops reporting on it. Its words stay usable.
+    dismissModelStatus();
     void makeSentences(telegraphicMessage);
   }}>
       ${composition

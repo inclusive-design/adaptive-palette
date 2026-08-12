@@ -17,7 +17,7 @@ import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
 import { BlissSymbol } from "./BlissSymbol";
 import { insertWordAtCaret, speak } from "./GlobalUtils";
 import { predictNext } from "./WordPredictionUtils";
-import { contextKeyOf, modelWordsSignal } from "./WordPredictionState";
+import { contextKeyOf, modelWordsSignal, showModelStatusSignal } from "./WordPredictionState";
 import { SymbolEncodingType } from "./index.d";
 import "./PredictedWords.scss";
 
@@ -102,9 +102,11 @@ export function PredictedWords (): VNode | null {
       : html`<div key=${index} class="predictedWord predictedWordEmpty" aria-hidden="true"></div>`;
   });
 
-  // The wait and the arrival are both reported. A failed query says nothing.
-  const statusText = isQuerying ? QUERYING_MESSAGE
-    : modelSuggestions.length > 0 ? moreSuggestionsMessage(modelSuggestions.length) : "";
+  // The wait and the arrival are both reported. A failed query says nothing, and neither does
+  // a message the user has finished with.
+  const statusText = !showModelStatusSignal.value ? ""
+    : isQuerying ? QUERYING_MESSAGE
+      : modelSuggestions.length > 0 ? moreSuggestionsMessage(modelSuggestions.length) : "";
 
   return html`
     <div class="predictedWordsArea">
