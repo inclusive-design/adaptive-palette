@@ -214,8 +214,6 @@ describe("PredictedWords component", (): void => {
       expect(screen.getByRole("status").textContent?.trim()).toBe("");
     });
 
-    // Above the row, so that a status arriving does not move a word out from under the
-    // user; and taking no space while empty, which is most of the time.
     test("the status line sits above the row of words", (): void => {
       setMessage("I", "want");
       const { container } = render(html`<${PredictedWords} />`);
@@ -224,6 +222,19 @@ describe("PredictedWords component", (): void => {
       const row = container.querySelector(".predictedWords");
       expect(status.compareDocumentPosition(row!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
       expect(status.textContent).toBe("");
+    });
+
+    // The status line's space is held whether or not it has text: a status arriving must not
+    // move a word out from under a user already reaching for it.
+    test("the row does not move when the status line fills", async (): Promise<void> => {
+      setMessage("I", "want");
+      const { container } = render(html`<${PredictedWords} />`);
+      const row = container.querySelector(".predictedWords") as HTMLElement;
+      const topWhileEmpty = row.getBoundingClientRect().top;
+
+      modelWordsSignal.value = { status: "working", contextKey: "I want" };
+      await waitFor(() => expect(screen.getByRole("status").textContent?.trim()).toBe(QUERYING_MESSAGE));
+      expect(row.getBoundingClientRect().top).toBe(topWhileEmpty);
     });
 
     test("one word is announced as one suggestion", (): void => {

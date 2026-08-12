@@ -16,7 +16,7 @@ import { findSymbolByGloss } from "./BciAvUtils";
 import { normalizeComposition, renderTemplate } from "./GlobalUtils";
 import { pickModel } from "./TelegraphicTranslationUtils";
 import { queryChat } from "./OllamaApi";
-import { ResolutionRungType, SymbolCompositionType, SymbolEncodingType } from ".";
+import { BlissSymbolEntry, ResolutionRungType, SymbolCompositionType, SymbolEncodingType } from ".";
 
 /*
  * Common sentence starters, offered for the first word until the user has saved a message of
@@ -301,7 +301,9 @@ function glossPayload (symbolId: number, composition: SymbolCompositionType | un
  * The steps, first hit winning:
  * 1. the user's own history, whose payload carries the indicators, modifiers and symbol they
  *    chose for that word themselves;
- * 2. a Bliss entry whose whole gloss is the word;
+ * 2. a Bliss entry the word is one of the glosses, since a gloss is often a comma
+ *    separated list of synonyms ("water, fluid, liquid"). The entry the word is the earliest
+ *    in glosses wins, so "water" is the fluid rather than "urine, piss, pee, ..., water";
  * 3. a Bliss entry with the word inside a longer gloss, the shortest gloss first. A common
  *    word such as "to" appears in hundreds of glosses, so the shortest one keeps this from
  *    picking an arbitrary symbol, and the lowest id settles a tie.
@@ -316,9 +318,16 @@ export function resolveWordPayload (word: string, payloadByLabel: Map<string, Sy
   if (fromHistory) {
     return { payload: { ...fromHistory }, rung: "history" };
   }
-  const exactEntry = adaptivePaletteGlobals.symbols.find((entry) => entry.gloss.toLowerCase() === word);
-  if (exactEntry) {
-    return { payload: glossPayload(exactEntry.id, exactEntry.composition, word), rung: "exactGloss" };
+  let senseMatch: { entry: BlissSymbolEntry, position: number } | undefined;
+  for (const entry of adaptivePaletteGlobals.symbols) {
+    // `symbols` is ordered by id, so the first entry at a given position is the lowest id.
+    const position = entry.gloss.toLowerCase().split(",").map((sense) => sense.trim()).indexOf(word);
+    if (position !== -1 && (senseMatch === undefined || position < senseMatch.position)) {
+      senseMatch = { entry, position };
+    }
+  }
+  if (senseMatch) {
+    return { payload: glossPayload(senseMatch.entry.id, senseMatch.entry.composition, word), rung: "exactGloss" };
   }
   const matches = findSymbolByGloss(word);
   if (matches.length > 0) {

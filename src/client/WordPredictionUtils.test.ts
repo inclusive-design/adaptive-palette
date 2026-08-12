@@ -72,6 +72,18 @@ describe("wordPrediction", (): void => {
       expect(predictedLabels(["I", "want"])).toEqual(predictedLabels(["I", "want", "  "]));
     });
 
+    // A suggestion is handed to the caller, which edits it in place when the user applies a
+    // modifier or an indicator: that must not reach back into the logged message.
+    test("editing a suggestion leaves the logged message alone", (): void => {
+      const suggestion = predictNext(["I", "want"], 4)[0];
+      suggestion.modifierInfo?.push({ modifierId: 1291, modifierGloss: "big", isPrepended: true });
+      suggestion.indicatorId = 99;
+
+      const afterwards = predictNext(["I", "want"], 4)[0];
+      expect(afterwards.modifierInfo).toEqual([]);
+      expect(afterwards.indicatorId).toBeUndefined();
+    });
+
     test("first words are ranked by how often they start a message", (): void => {
       expect(predictedLabels([])).toEqual(["I", "you"]);
     });
@@ -242,12 +254,25 @@ describe("wordPrediction with a model answering as well", (): void => {
       expect(payload?.label).toBe("food");
     });
 
-    // "drink" is inside several glosses; "to drink" is the shortest of them.
-    test("a word inside a longer gloss takes the shortest such gloss", (): void => {
+    // "drink" is one sense of "drink, beverage", not the verb "to drink".
+    test("a word listed as one sense of a gloss takes that symbol", (): void => {
       const { payload, rung } = resolveWordPayload("drink", payloadByLabel);
-      expect(rung).toBe("wordInGloss");
-      expect(payload?.userSelectedSymbolId).toBe(1571);
+      expect(rung).toBe("exactGloss");
+      expect(payload?.userSelectedSymbolId).toBe(275);
       expect(payload?.label).toBe("drink");
+    });
+
+    // "water" is the first sense of "water, fluid, liquid" and the last of a coarser gloss.
+    test("the gloss the word is the earliest sense of wins", (): void => {
+      expect(resolveWordPayload("water", payloadByLabel).payload?.userSelectedSymbolId).toBe(695);
+    });
+
+    // "eat" is no gloss's own sense; "to eat" is the shortest gloss holding it.
+    test("a word inside a longer gloss takes the shortest such gloss", (): void => {
+      const { payload, rung } = resolveWordPayload("eat", payloadByLabel);
+      expect(rung).toBe("wordInGloss");
+      expect(payload?.userSelectedSymbolId).toBe(1588);
+      expect(payload?.label).toBe("eat");
     });
 
     test("a word with no symbol at all is dropped", (): void => {
@@ -289,7 +314,7 @@ describe("wordPrediction with a model answering as well", (): void => {
 
     // The drop rate is the evidence for whether a cleverer way of matching is worth building.
     test("the session totals count every word and how it was resolved", (): void => {
-      rankModelWords(["music", "food", "drink", "zzzq"], [], 4);
+      rankModelWords(["music", "food", "eat", "zzzq"], [], 4);
       expect(wordPredictionStats.returned).toBe(4);
       expect(wordPredictionStats.resolved).toBe(3);
       expect(wordPredictionStats.byRung)

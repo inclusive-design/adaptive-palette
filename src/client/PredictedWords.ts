@@ -75,9 +75,8 @@ export function PredictedWords (): VNode | null {
 
   const chooseWord = (suggestion: SymbolEncodingType): void => {
     const { payloads: currentPayloads, caretPosition: currentCaret } = changeEncodingContents.value;
-    // A fresh copy each time: the stored payload is shared with the log and with any later
-    // suggestion of the same word, and adding a modifier to it must not reach back into them.
-    changeEncodingContents.value = insertWordAtCaret({ ...suggestion }, currentPayloads, currentCaret);
+    // A fresh copy each time.
+    changeEncodingContents.value = insertWordAtCaret(structuredClone(suggestion), currentPayloads, currentCaret);
     speak(suggestion.label);
   };
 

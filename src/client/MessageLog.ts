@@ -90,8 +90,8 @@ export function readMessageLog (): MessageRecordType[] {
           payloads.every((payload) => payload !== null && typeof payload?.label === "string");
       }) as MessageRecordType[];
     }
-    // A copy, so that a caller rewriting the log cannot alter what is cached.
-    return [...cachedLog];
+    // A deep copy so a caller cannot alter what is cached.
+    return structuredClone(cachedLog);
   } catch (error) {
     console.error(`Could not read "${MESSAGE_LOG_KEY}": ${String(error)}`);
     return [];
