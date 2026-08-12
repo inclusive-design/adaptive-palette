@@ -14,7 +14,7 @@ import { render, screen, cleanup, waitFor } from "@testing-library/preact";
 import { userEvent } from "vitest/browser";
 import { html } from "htm/preact";
 
-import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents, DISABLED_MODEL_QUERY } from "./GlobalData";
 import { DISMISS_LABEL } from "./ModalDialog";
 import { SEARCH_FIELD_LABEL } from "./ActionSearchGloss";
 import {
@@ -35,7 +35,7 @@ const withVisibility = (searchShown: boolean, svgShown: boolean): void => {
     ...originalConfig,
     symbolSearch: { show: searchShown },
     svgBuilderString: { show: svgShown },
-    wordPrediction: { show: false, maxSuggestions: 4 }
+    wordPrediction: { show: false, maxSuggestions: 4, ...DISABLED_MODEL_QUERY }
   };
 };
 

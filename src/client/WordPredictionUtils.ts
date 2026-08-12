@@ -12,8 +12,11 @@
 
 import { adaptivePaletteGlobals } from "./GlobalData";
 import { readMessageLog } from "./MessageLog";
-import { normalizeComposition } from "./GlobalUtils";
-import { SymbolCompositionType, SymbolEncodingType } from ".";
+import { findSymbolByGloss } from "./BciAvUtils";
+import { normalizeComposition, renderTemplate } from "./GlobalUtils";
+import { pickModel } from "./TelegraphicTranslationUtils";
+import { queryChat } from "./OllamaApi";
+import { ResolutionRungType, SymbolCompositionType, SymbolEncodingType } from ".";
 
 /*
  * Common sentence starters, offered for the first word until the user has saved a message of
@@ -35,6 +38,18 @@ export const SEED_STARTERS: { label: string, composition: SymbolCompositionType 
 
 // How much of the message before the caret is matched against history, widest context first.
 const CONTEXT_LENGTHS = [2, 1];
+
+// How much a word's overall use in the user's history counts against the model's own ranking
+// of it. The two weights sum to 1.
+export const W_HISTORY = 0.4;
+export const W_MODEL = 1 - W_HISTORY;
+
+// How fast a model word's score falls with its position in the reply: 1st = 1.0, 2nd = 0.9,
+// and so on to a floor of 0. A plain chat reply carries no probabilities, so rank stands in
+// for them.
+const MODEL_RANK_DECAY = 0.1;
+
+export const NOT_CONFIGURED_MESSAGE = "Model-backed word prediction is not configured. Check the wordPrediction section of config.json.";
 
 /*
  * How often a label was used, and the position of its most recent use. Recency breaks ties
@@ -138,6 +153,29 @@ function rankLabels (tallies: Map<string, LabelTally>): string[] {
 }
 
 /**
+ * The past messages worth predicting from: those with at least one labelled symbol, oldest
+ * first. A record can hold a translation without the message it came from, which has no words
+ * to predict from.
+ * @returns {SymbolEncodingType[][]}
+ */
+function loggedMessages (): SymbolEncodingType[][] {
+  return readMessageLog()
+    .map((record) => record.payloads.filter((payload) => hasLabel(payload.label)))
+    .filter((payloads) => payloads.length > 0);
+}
+
+/**
+ * Whether query model for word suggestions. Return true when both of these are true:
+ * 1. `enableModelQuery` is enabled.
+ * 2. There is at least one model available.
+ * @returns {boolean}
+ */
+export function isModelTierActive (): boolean {
+  return adaptivePaletteGlobals.config.wordPrediction.enableModelQuery &&
+    adaptivePaletteGlobals.models.length > 0;
+}
+
+/**
  * Predict the words most likely to come next in the message being composed.
  *
  * The ranking widens until it has enough suggestions: labels that followed the last two
@@ -155,11 +193,7 @@ export function predictNext (currentLabels: string[], maxSuggestions: number): S
   if (maxSuggestions <= 0) {
     return [];
   }
-  // A record can hold a translation without the message it came from, which has no words to
-  // predict from.
-  const messages = readMessageLog()
-    .map((record) => record.payloads.filter((payload) => hasLabel(payload.label)))
-    .filter((payloads) => payloads.length > 0);
+  const messages = loggedMessages();
   const contextLabels = currentLabels.filter(hasLabel);
 
   if (messages.length === 0) {
@@ -174,16 +208,18 @@ export function predictNext (currentLabels: string[], maxSuggestions: number): S
   messages.forEach((payloads) => payloads.forEach((payload) => payloadByLabel.set(payload.label, payload)));
   const labelsPerMessage = messages.map((payloads) => payloads.map((payload) => payload.label));
 
+  // With a model suggestions count, the tier 3 (the words used most often) stops filling slots.
+  const frequencyTier = isModelTierActive() ? [] : [tallyAll(labelsPerMessage)];
   const tiers = contextLabels.length === 0
     ? [tallyFollowers(labelsPerMessage, [])]
     : [
       ...CONTEXT_LENGTHS
         .filter((length) => length <= contextLabels.length)
         .map((length) => tallyFollowers(labelsPerMessage, contextLabels.slice(-length))),
-      tallyAll(labelsPerMessage)
+      ...frequencyTier
     ];
 
-  // Suggesting the word that is already there wastes a slot the user cannot use.
+  // Don't suggest the word that is already there.
   const alreadySuggested = new Set<string>(contextLabels.slice(-1));
   const suggestions: SymbolEncodingType[] = [];
   for (const tier of tiers) {
@@ -199,4 +235,203 @@ export function predictNext (currentLabels: string[], maxSuggestions: number): S
     }
   }
   return suggestions;
+}
+
+/**
+ * How often words suggested by the model found a matched symbol and how often they are dropped over
+ * a session. A high drop rate is the evidence for adding a cleverer way of matching a word to a symbol.
+ */
+export const wordPredictionStats = {
+  returned: 0,
+  resolved: 0,
+  byRung: { history: 0, exactGloss: 0, wordInGloss: 0, dropped: 0 } as Record<ResolutionRungType, number>,
+  reset (): void {
+    wordPredictionStats.returned = 0;
+    wordPredictionStats.resolved = 0;
+    wordPredictionStats.byRung = { history: 0, exactGloss: 0, wordInGloss: 0, dropped: 0 };
+  }
+};
+
+/**
+ * Read the words out of a model reply: one per line, list markers and surrounding punctuation
+ * stripped, lowercased, and duplicates dropped. A line ending in a colon is preamble ("Here
+ * are the words:"), and a line of more than two words is not a word.
+ * @param {string} content - The raw reply content.
+ * @returns {string[]}
+ */
+export function parseModelWords (content: string): string[] {
+  const words: string[] = [];
+  const seen = new Set<string>();
+  content.split("\n").forEach((line) => {
+    const withoutMarker = line.trim().replace(/^(?:\d+[.)]|[-*•])\s*/, "").trim();
+    if (withoutMarker.endsWith(":")) {
+      return;
+    }
+    const word = withoutMarker.replace(/^["'`]+|["'`.,!?;]+$/g, "").trim().toLowerCase();
+    if (word.length === 0 || word.split(/\s+/).length > 2 || seen.has(word)) {
+      return;
+    }
+    seen.add(word);
+    words.push(word);
+  });
+  return words;
+}
+
+/**
+ * Build a payload for a symbol found in the Bliss vocabulary, labelled with the word that was
+ * looked up rather than the whole gloss: "drink" is what the user asked for, where the gloss
+ * may read "drink,beverage".
+ * @param {number} symbolId - The id of the matching entry.
+ * @param {SymbolCompositionType | undefined} composition - The entry's composition, if it has one.
+ * @param {string} word - The word to label the symbol with.
+ * @returns {SymbolEncodingType}
+ */
+function glossPayload (symbolId: number, composition: SymbolCompositionType | undefined, word: string): SymbolEncodingType {
+  return {
+    label: word,
+    composition: composition ?? symbolId,
+    userSelectedSymbolId: symbolId,
+    modifierInfo: []
+  };
+}
+
+/**
+ * Find a symbol to show a model-suggested word with, and report which step found it.
+ *
+ * The steps, first hit winning:
+ * 1. the user's own history, whose payload carries the indicators, modifiers and symbol they
+ *    chose for that word themselves;
+ * 2. a Bliss entry whose whole gloss is the word;
+ * 3. a Bliss entry with the word inside a longer gloss, the shortest gloss first. A common
+ *    word such as "to" appears in hundreds of glosses, so the shortest one keeps this from
+ *    picking an arbitrary symbol, and the lowest id settles a tie.
+ *
+ * A word none of them matches is dropped: a suggestion with no symbol cannot be shown.
+ * @param {string} word - The word, lowercased.
+ * @param {Map<string, SymbolEncodingType>} payloadByLabel - Past payloads by lowercased label.
+ * @returns {{ payload?: SymbolEncodingType, rung: ResolutionRungType }}
+ */
+export function resolveWordPayload (word: string, payloadByLabel: Map<string, SymbolEncodingType>): { payload?: SymbolEncodingType, rung: ResolutionRungType } {
+  const fromHistory = payloadByLabel.get(word);
+  if (fromHistory) {
+    return { payload: { ...fromHistory }, rung: "history" };
+  }
+  const exactEntry = adaptivePaletteGlobals.symbols.find((entry) => entry.gloss.toLowerCase() === word);
+  if (exactEntry) {
+    return { payload: glossPayload(exactEntry.id, exactEntry.composition, word), rung: "exactGloss" };
+  }
+  const matches = findSymbolByGloss(word);
+  if (matches.length > 0) {
+    const best = matches.reduce((shortest, match) =>
+      match.label.length < shortest.label.length ||
+      (match.label.length === shortest.label.length && match.id < shortest.id)
+        ? match
+        : shortest
+    );
+    return { payload: glossPayload(best.id, best.composition, word), rung: "wordInGloss" };
+  }
+  return { rung: "dropped" };
+}
+
+/**
+ * Report how the words from one reply were resolved, and how they add up over the session.
+ * @param {string[]} candidates - The words the ladder was run over.
+ * @param {Record<ResolutionRungType, number>} rungs - How many words each step accounted for.
+ * @param {string[]} dropped - The words no step matched.
+ * @returns {void}
+ */
+function reportResolution (candidates: string[], rungs: Record<ResolutionRungType, number>, dropped: string[]): void {
+  const resolved = candidates.length - dropped.length;
+  wordPredictionStats.returned += candidates.length;
+  wordPredictionStats.resolved += resolved;
+  (Object.keys(rungs) as ResolutionRungType[]).forEach((rung) => {
+    wordPredictionStats.byRung[rung] += rungs[rung];
+  });
+  const { returned: sessionReturned, resolved: sessionResolved } = wordPredictionStats;
+  const sessionRate = sessionReturned === 0 ? 0 : Math.round((sessionResolved / sessionReturned) * 100);
+  console.info(
+    `word prediction: ${candidates.length} returned, ${resolved} resolved\n` +
+    `  history ${rungs.history} | exact gloss ${rungs.exactGloss} | word in gloss ${rungs.wordInGloss}\n` +
+    `  dropped: ${dropped.length === 0 ? "none" : dropped.join(", ")}\n` +
+    `  session: ${sessionReturned} returned, ${sessionResolved} resolved (${sessionRate}%)`
+  );
+}
+
+/**
+ * Order the model's words and turn them into symbols to append to the suggestion row.
+ *
+ * A word already on screen is dropped rather than scored. What is left is scored by how far up
+ * the model's reply it came and by how much the user uses that word in history, so a word the
+ * user uses often outranks one the model merely liked better. Words with no symbol drop out.
+ * @param {string[]} words - The words from the reply, most likely first.
+ * @param {string[]} displayedLabels - The labels already in the suggestion row.
+ * @param {number} limit - The most payloads to return.
+ * @returns {SymbolEncodingType[]} - The payloads, best first. May be empty.
+ */
+export function rankModelWords (words: string[], displayedLabels: string[], limit: number): SymbolEncodingType[] {
+  const messages = loggedMessages();
+  const payloadByLabel = new Map<string, SymbolEncodingType>();
+  const counts = new Map<string, number>();
+  messages.forEach((payloads) => payloads.forEach((payload) => {
+    const label = payload.label.toLowerCase();
+    payloadByLabel.set(label, payload);
+    counts.set(label, (counts.get(label) ?? 0) + 1);
+  }));
+
+  const displayed = new Set(displayedLabels.map((label) => label.toLowerCase()));
+  const candidates = words.filter((word) => !displayed.has(word));
+  // Normalizing over the candidates alone is what makes `P_history` comparable with the
+  // model's rank score.
+  const historyTotal = candidates.reduce((total, word) => total + (counts.get(word) ?? 0), 0);
+
+  const scored = candidates.map((word, index) => ({
+    word,
+    index,
+    score: W_HISTORY * (historyTotal === 0 ? 0 : (counts.get(word) ?? 0) / historyTotal) +
+      W_MODEL * Math.max(0, 1 - MODEL_RANK_DECAY * index)
+  }));
+  // Words far enough down the reply all score 0 from the model, so the reply's own order
+  // settles the ties between them.
+  scored.sort((first, second) => second.score - first.score || first.index - second.index);
+
+  const rungs: Record<ResolutionRungType, number> = { history: 0, exactGloss: 0, wordInGloss: 0, dropped: 0 };
+  const dropped: string[] = [];
+  const payloads: SymbolEncodingType[] = [];
+  scored.forEach(({ word }) => {
+    const { payload, rung } = resolveWordPayload(word, payloadByLabel);
+    rungs[rung] += 1;
+    if (payload) {
+      payloads.push(payload);
+    } else {
+      dropped.push(word);
+    }
+  });
+  reportResolution(candidates, rungs, dropped);
+  return payloads.slice(0, limit);
+}
+
+/**
+ * Ask the model which words are most likely to come next.
+ * @param {string} message - The message so far, as shown in the input area.
+ * @param {number} numWords - How many words to ask for.
+ * @param {AbortSignal} abortSignal - Optional signal to cancel the request when the user
+ *                                changes the message the words were asked for.
+ * @returns {Promise<string[]>} - The parsed words, most likely first. May be empty.
+ */
+export async function requestModelWords (message: string, numWords: number, abortSignal?: AbortSignal): Promise<string[]> {
+  const config = adaptivePaletteGlobals.config.wordPrediction;
+  if (!config.enableModelQuery) {
+    throw new Error(NOT_CONFIGURED_MESSAGE);
+  }
+  const model = pickModel(config.model);
+  const values = { message, numWords: String(numWords) };
+  const response = await queryChat(
+    renderTemplate(config.userPrompt, values),
+    model,
+    false,
+    renderTemplate(config.systemPrompt, values),
+    abortSignal
+  );
+  const content = "message" in response ? (response.message?.content || "") : "";
+  return parseModelWords(content);
 }

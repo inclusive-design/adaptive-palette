@@ -13,7 +13,7 @@
 import { vi, type MockInstance } from "vitest";
 import { waitFor } from "@testing-library/preact";
 
-import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents, DISABLED_MODEL_QUERY } from "./GlobalData";
 import {
   clearMessageAndChoices, currentTelegraphicMessage, makeSentences, sentenceCompletionsSignal,
   READY_DISCARD_PROMPT, WORKING_DISCARD_PROMPT
@@ -56,7 +56,7 @@ describe("telegraphicTranslationState", (): void => {
       indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
       symbolSearch: { show: true },
       svgBuilderString: { show: false },
-      wordPrediction: { show: false, maxSuggestions: 4 },
+      wordPrediction: { show: false, maxSuggestions: 4, ...DISABLED_MODEL_QUERY },
       telegraphicTranslation: {
         model: "phony-model:12b",
         numSentences,

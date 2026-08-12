@@ -81,6 +81,32 @@ svg.inter-word-padding {
   padding: 0.75rem 1rem;
 }
 
+/*
+ * A line reporting what a model-backed feature is doing. Shared so the sentence area and the
+ * suggestion row report in the same voice.
+ *
+ * An empty line is clipped rather than removed: it takes no space, but stays in the document
+ * so that it is still a live region when its text arrives.
+ */
+.statusMessage {
+  background-color: #fffbe6;
+  border-radius: 1rem;
+  font-weight: bold;
+  margin: 0 0 0.5rem 0;
+  padding: 0.75rem 1rem;
+
+  &:empty {
+    clip-path: inset(50%);
+    height: 1px;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+}
+
 #sentenceChoices {
   margin: 0 0.5rem;
 }

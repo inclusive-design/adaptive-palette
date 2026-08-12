@@ -18,7 +18,7 @@ every section falls back.
 | `telegraphicTranslation` | Translating a telegraphic message into full sentences. See [TelegraphicMessageTranslation.md](TelegraphicMessageTranslation.md). |
 | `symbolSearch` | The "Add symbol to message" trigger and its gloss-search dialog. |
 | `svgBuilderString` | The "Add symbol by svg-builder string" trigger and its dialog. Off in production: it is for development. |
-| `wordPrediction` | Suggesting the next word from the user's past messages. See [WordPrediction.md](WordPrediction.md). |
+| `wordPrediction` | Suggesting the next word from the user's past messages, and optionally from a model. See [WordPrediction.md](WordPrediction.md). |
 
 ### `maxStoredRecords`
 
@@ -63,9 +63,20 @@ Placeholders are `{{name}}` and are substituted at query time; one with no match
 | ----- | ---- | ----------- |
 | `show` | boolean | Required. Whether the suggestion row is rendered. |
 | `maxSuggestions` | number | Positive integer. How many suggestions to offer at once. Defaults to 10. |
+| `enableModelQuery` | boolean | Whether a model is asked for words as well as the message history. Defaults to `false`. |
+| `model` | string | Ollama model name. The empty string means Ollama's first available model. |
+| `systemPrompt` | string | Non-empty when the query is enabled. Supports the `{{numWords}}` placeholder. |
+| `userPrompt` | string | Non-empty when the query is enabled. Supports the `{{message}}` placeholder. |
+
+`{{numWords}}` is how many words to ask for, and `{{message}}` the labels of the message up to the caret.
 
 When the section is missing or `show` is not a boolean, the feature is off. A malformed `maxSuggestions`
 alone falls back to 10 and leaves the feature on.
+
+The model query is a separate decision from the feature itself. It runs only when `enableModelQuery` is
+`true` and both prompts are filled in: there are no hardcoded prompts to query with, so a half-configured
+model section is treated as `enableModelQuery: false` and the history-based suggestions carry on alone.
+Ollama having no model available turns the query off too, silently.
 
 ### `symbolSearch` and `svgBuilderString`
 

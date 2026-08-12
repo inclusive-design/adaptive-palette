@@ -46,6 +46,9 @@ export const NO_MODELS_MESSAGE = "No models available. Start Ollama to enable AI
 export const DEFAULT_MAX_STORED_RECORDS = 500;
 export const DEFAULT_MAX_SUGGESTIONS = 10;
 
+// The model half of `wordPrediction`, switched off. Used wherever the section is unusable.
+export const DISABLED_MODEL_QUERY = { enableModelQuery: false, model: "", systemPrompt: "", userPrompt: "" };
+
 /**
  * Load the map between the BCI-AV IDs and the code consumed by the Bliss SVG
  * and create the PaletterStore and NavigationStack objects.
@@ -60,7 +63,7 @@ export const adaptivePaletteGlobals = {
     indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
     symbolSearch: { show: true },
     svgBuilderString: { show: false },
-    wordPrediction: { show: false, maxSuggestions: DEFAULT_MAX_SUGGESTIONS }
+    wordPrediction: { show: false, maxSuggestions: DEFAULT_MAX_SUGGESTIONS, ...DISABLED_MODEL_QUERY }
   } as AdaptivePaletteConfigType,
   indicatorLabels: {} as Record<string, string>,
   // `id` attribute of the HTML element area where the main palette is
@@ -147,19 +150,40 @@ function parseMaxStoredRecords (value: unknown): number {
 /**
  * Validate the `wordPrediction` section. A missing or malformed section turns the feature
  * off, rather than guessing at what was meant.
+ *
+ * The model query is a separate decision from the feature itself: it is enabled only when
+ * `enableModelQuery` is true and both prompts are filled in, since there are no hardcoded
+ * fallback prompts to query with. A half-filled model configuration leaves the history-based
+ * suggestions working on their own.
  * @param {unknown} section - The raw parsed section.
  * @returns {WordPredictionConfigType}
  */
 function parseWordPrediction (section: unknown): WordPredictionConfigType {
-  const candidate = section as { show?: unknown, maxSuggestions?: unknown } | undefined;
+  const candidate = section as {
+    show?: unknown, maxSuggestions?: unknown, enableModelQuery?: unknown,
+    model?: unknown, systemPrompt?: unknown, userPrompt?: unknown
+  } | undefined;
   if (!candidate || typeof candidate.show !== "boolean") {
-    return { show: false, maxSuggestions: DEFAULT_MAX_SUGGESTIONS };
+    return { show: false, maxSuggestions: DEFAULT_MAX_SUGGESTIONS, ...DISABLED_MODEL_QUERY };
   }
+  const { model, systemPrompt, userPrompt } = candidate;
+  const isFilledString = (value: unknown): boolean => typeof value === "string" && value.trim().length > 0;
+  // An empty `model` is valid and means the first model Ollama reports.
+  const modelQuery = candidate.enableModelQuery === true && typeof model === "string" &&
+    isFilledString(systemPrompt) && isFilledString(userPrompt)
+    ? {
+      enableModelQuery: true,
+      model,
+      systemPrompt: systemPrompt as string,
+      userPrompt: userPrompt as string
+    }
+    : DISABLED_MODEL_QUERY;
   return {
     show: candidate.show,
     maxSuggestions: isPositiveInteger(candidate.maxSuggestions)
       ? candidate.maxSuggestions as number
-      : DEFAULT_MAX_SUGGESTIONS
+      : DEFAULT_MAX_SUGGESTIONS,
+    ...modelQuery
   };
 }
 
@@ -192,7 +216,7 @@ async function loadConfig (): Promise<AdaptivePaletteConfigType> {
     indicatorLabelLookup: disabledIndicatorLookup,
     symbolSearch: { show: true },
     svgBuilderString: { show: false },
-    wordPrediction: { show: false, maxSuggestions: DEFAULT_MAX_SUGGESTIONS }
+    wordPrediction: { show: false, maxSuggestions: DEFAULT_MAX_SUGGESTIONS, ...DISABLED_MODEL_QUERY }
   };
   try {
     const response = await fetch("/config.json");

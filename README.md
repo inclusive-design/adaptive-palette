@@ -133,7 +133,8 @@ every symbol+indicator pair that the vocabulary supports to its grammatically co
   - [Corresponding script directory](scripts/new_labels_with_indicator/)
 - [Telegraphic Message Translation](./docs/TelegraphicMessageTranslation.md): use a local Ollama model to
 turn telegraphic messages into complete, speakable English sentences.
-- [Word Prediction](./docs/WordPrediction.md): suggest the words most likely to come next.
+- [Word Prediction](./docs/WordPrediction.md): suggest the words most likely to come next, from the user's
+past messages and optionally from a local Ollama model.
 
 ### Utility Documentation
 

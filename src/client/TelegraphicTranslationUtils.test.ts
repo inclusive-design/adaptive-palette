@@ -11,7 +11,7 @@
  */
 
 import { vi } from "vitest";
-import { adaptivePaletteGlobals } from "./GlobalData";
+import { adaptivePaletteGlobals, DISABLED_MODEL_QUERY } from "./GlobalData";
 import { queryChat } from "./OllamaApi";
 import { NO_MODELS_MESSAGE } from "./GlobalData";
 import {
@@ -42,7 +42,7 @@ describe("telegraphicTranslation", (): void => {
       indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
       symbolSearch: { show: true },
       svgBuilderString: { show: false },
-      wordPrediction: { show: false, maxSuggestions: 10 },
+      wordPrediction: { show: false, maxSuggestions: 10, ...DISABLED_MODEL_QUERY },
       telegraphicTranslation: { ...CONFIG }
     };
   });

@@ -15,7 +15,7 @@ import { render, screen, cleanup, waitFor } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
-import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents, DISABLED_MODEL_QUERY } from "./GlobalData";
 import { sentenceCompletionsSignal } from "./TelegraphicTranslationState";
 import { MESSAGE_LOG_KEY, readMessageLog } from "./MessageLog";
 import { speak } from "./GlobalUtils";
@@ -50,7 +50,7 @@ describe("SentenceChoices component", (): void => {
       indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
       symbolSearch: { show: true },
       svgBuilderString: { show: false },
-      wordPrediction: { show: false, maxSuggestions: 10 },
+      wordPrediction: { show: false, maxSuggestions: 10, ...DISABLED_MODEL_QUERY },
       telegraphicTranslation: {
         model: "phony-model:12b",
         numSentences: 3,

@@ -12,7 +12,7 @@
 
 import { vi } from "vitest";
 import {
-  initAdaptivePaletteGlobals, adaptivePaletteGlobals,
+  initAdaptivePaletteGlobals, adaptivePaletteGlobals, DISABLED_MODEL_QUERY,
   DEFAULT_MAX_STORED_RECORDS, DEFAULT_MAX_SUGGESTIONS
 } from "./GlobalData";
 
@@ -157,14 +157,15 @@ describe("loadConfig wordPrediction section", (): void => {
       wordPrediction: { show: true, maxSuggestions: 6 }
     });
     await initAdaptivePaletteGlobals();
-    expect(adaptivePaletteGlobals.config.wordPrediction).toEqual({ show: true, maxSuggestions: 6 });
+    expect(adaptivePaletteGlobals.config.wordPrediction)
+      .toEqual({ show: true, maxSuggestions: 6, ...DISABLED_MODEL_QUERY });
   });
 
   test("a missing section turns the feature off", async (): Promise<void> => {
     stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
     await initAdaptivePaletteGlobals();
     expect(adaptivePaletteGlobals.config.wordPrediction)
-      .toEqual({ show: false, maxSuggestions: DEFAULT_MAX_SUGGESTIONS });
+      .toEqual({ show: false, maxSuggestions: DEFAULT_MAX_SUGGESTIONS, ...DISABLED_MODEL_QUERY });
   });
 
   test("a malformed maxSuggestions falls back while the feature stays on", async (): Promise<void> => {
@@ -174,7 +175,53 @@ describe("loadConfig wordPrediction section", (): void => {
     });
     await initAdaptivePaletteGlobals();
     expect(adaptivePaletteGlobals.config.wordPrediction)
-      .toEqual({ show: true, maxSuggestions: DEFAULT_MAX_SUGGESTIONS });
+      .toEqual({ show: true, maxSuggestions: DEFAULT_MAX_SUGGESTIONS, ...DISABLED_MODEL_QUERY });
+  });
+
+  test("a fully configured model query is loaded as given", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      wordPrediction: {
+        show: true, maxSuggestions: 6, enableModelQuery: true, model: "phony-model:12b",
+        systemPrompt: "List {{numWords}} words.", userPrompt: "Message so far: {{message}}"
+      }
+    });
+    await initAdaptivePaletteGlobals();
+    expect(adaptivePaletteGlobals.config.wordPrediction).toEqual({
+      show: true, maxSuggestions: 6, enableModelQuery: true, model: "phony-model:12b",
+      systemPrompt: "List {{numWords}} words.", userPrompt: "Message so far: {{message}}"
+    });
+  });
+
+  // An empty model name means "whichever model Ollama has", as in the other sections.
+  test("an empty model name leaves the query enabled", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      wordPrediction: {
+        show: true, maxSuggestions: 6, enableModelQuery: true, model: "",
+        systemPrompt: "List {{numWords}} words.", userPrompt: "Message so far: {{message}}"
+      }
+    });
+    await initAdaptivePaletteGlobals();
+    expect(adaptivePaletteGlobals.config.wordPrediction.enableModelQuery).toBe(true);
+    expect(adaptivePaletteGlobals.config.wordPrediction.model).toBe("");
+  });
+
+  // There are no fallback prompts to query with, so anything short of a complete model
+  // section leaves the history-based suggestions working on their own.
+  test("an incomplete model query is turned off while the feature stays on", async (): Promise<void> => {
+    const incompleteSections = [
+      { show: true, maxSuggestions: 6, model: "m", systemPrompt: "s", userPrompt: "u" },
+      { show: true, maxSuggestions: 6, enableModelQuery: true, model: "m", userPrompt: "u" },
+      { show: true, maxSuggestions: 6, enableModelQuery: true, model: "m", systemPrompt: "  ", userPrompt: "u" },
+      { show: true, maxSuggestions: 6, enableModelQuery: "yes", model: "m", systemPrompt: "s", userPrompt: "u" }
+    ];
+    for (const wordPrediction of incompleteSections) {
+      stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, wordPrediction });
+      await initAdaptivePaletteGlobals();
+      expect(adaptivePaletteGlobals.config.wordPrediction)
+        .toEqual({ show: true, maxSuggestions: 6, ...DISABLED_MODEL_QUERY });
+    }
   });
 });
 
