@@ -16,7 +16,7 @@ import { useRef, useState } from "preact/hooks";
 
 import { changeEncodingContents } from "./GlobalData";
 import { bstrToComposition } from "./SvgUtils";
-import { insertWordAtCaret } from "./GlobalUtils";
+import { insertWordAtCaret } from "./SymbolEncodingUtils";
 import { MessagePreview } from "./MessagePreview";
 import "./ActionSvgEntryField.scss";
 

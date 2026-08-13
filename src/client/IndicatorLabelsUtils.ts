@@ -11,7 +11,7 @@
  */
 
 import { adaptivePaletteGlobals } from "./GlobalData";
-import { renderPromptLines } from "./GlobalUtils";
+import { renderPromptLines } from "./PromptUtils";
 import { queryChat } from "./OllamaApi";
 
 export type IndicatorInfoEntry = {

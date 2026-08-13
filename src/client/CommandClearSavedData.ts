@@ -17,7 +17,7 @@ import { useState } from "preact/hooks";
 import { BlissSymbol } from "./BlissSymbol";
 import { ModalDialog } from "./ModalDialog";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
-import { clearSavedData, generateGridStyle } from "./GlobalUtils";
+import { generateGridStyle } from "./GridUtils";
 import { announceIfEnabled } from "./SpeechUtils";
 import "./CommandClearSavedData.scss";
 
@@ -26,6 +26,25 @@ export const CONFIRM_LABEL = "Clear";
 export const CANCEL_LABEL = "Cancel";
 export const CONFIRM_QUESTION = "This deletes every message you have saved, and the message you are writing now. It cannot be undone.";
 export const FAILURE_MESSAGE = "The saved data could not be cleared. This browser is not letting the app use its storage.";
+
+/**
+ * Discard everything the app has saved in local storage.
+ *
+ * The whole of local storage goes, rather than a list of known keys: the app owns its
+ * origin, so nothing else stores anything here, and a key added by a later feature is
+ * covered without anyone remembering to extend the list.
+ * @returns {boolean} - `true` if storage was cleared; `false` if the browser denied
+ *                      access to it, in which case the saved data is still there.
+ */
+export function clearSavedData (): boolean {
+  try {
+    window.localStorage.clear();
+    return true;
+  } catch (error) {
+    console.error(`Could not clear the saved data: ${String(error)}`);
+    return false;
+  }
+}
 
 type CommandClearSavedDataProps = {
   id: string,

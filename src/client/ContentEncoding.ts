@@ -15,13 +15,29 @@ import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents } from "./GlobalData";
 import { ContentEncodingType, BlissSymbolInfoType } from "./index.d";
-import { generateGridStyle, clamp } from "./GlobalUtils";
+import { generateGridStyle } from "./GridUtils";
 import { announceIfEnabled } from "./SpeechUtils";
 import "./ContentEncoding.scss";
 
 export const INPUT_AREA_ID = "content-encoding-area";   // better way?
 
 const isApplePlatform = navigator.platform.startsWith("Mac") || navigator.platform.startsWith("iPhone") || navigator.platform.startsWith("iPad");
+
+/**
+ * Returns the inputted value constrained to the `min` and `max` values.
+ * The returned value will:
+ *  - `min` if `value` was less than `min`
+ *  - `max` if the `value` was greater than `max`
+ *  - `value` if it fell within the `min` `max` range.
+ *
+ * @param {number} value - The value to evaluate
+ * @param {number} min - The minimum value to be returned
+ * @param {number} max - The maximum value to be returned
+ * @returns {number} - The constrained value
+ */
+export function clamp (value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
+}
 
 type ContentEncodingProps = {
   id: string,

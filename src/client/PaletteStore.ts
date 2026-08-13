@@ -12,6 +12,28 @@
 
 import { JsonPaletteType, PaletteFileMapType } from "./index.d";
 
+/**
+ * Load a palette from the given JSON file using `fetch()`. The location of the
+ * JSON file is provided as a variable. If the loading fails, a console error with
+ * detailed error message is reported.
+ *
+ * @param {String} jsonFilePath - Path of the JSON file to load, including the
+ *                                ".json" extension.
+ * @return {JsonPaletteType}    - The palette itself, or `null` if it could not be
+ *                                loaded.
+ */
+export async function loadPaletteFromJsonFile (jsonFilePath: string): Promise<JsonPaletteType | undefined> {
+  try {
+    const response = await fetch(jsonFilePath);
+    if (!response.ok) {
+      console.error(`Error loading ${jsonFilePath}: ${response.status}`);
+    }
+    return await response.json() as JsonPaletteType;
+  } catch (error) {
+    console.error(`Error loading ${jsonFilePath}:, ${String(error)}`);
+  }
+}
+
 export class PaletteStore {
 
   // Singleton storage for all palettes
@@ -90,23 +112,27 @@ export class PaletteStore {
   }
 
   /**
-   * Accessor for a retrieving the named palette.
-   * @param: {String} paletteName     - The palette to retrieve.
-   * @param; {Function} loadFunction  - Optional async function to call to load
-   *                                    the palette using the store's
-   *                                    PaletteFileMap if the palette is not in
-   *                                    the store.
-   * @return {JsonPaletteType} reference to the named palette, or undefined if
-   *                           no such palette.
+   * Accessor for retrieving the named palette.
+   * @param {String} paletteName    - The palette to retrieve.
+   * @param {boolean} loadIfMissing - Optional. When `true` and the palette is not in the
+   *                                  store, load it from the file the store's
+   *                                  `paletteFileMap` names for it, and add it to the
+   *                                  store.
+   * @return {JsonPaletteType} reference to the named palette, or undefined if there is no
+   *                           such palette.
    */
-  async getNamedPalette(paletteName: string, loadFunction?: (filePath:string) => Promise<JsonPaletteType | undefined>): Promise<JsonPaletteType | undefined> {
-    let palette: JsonPaletteType | undefined = PaletteStore.paletteMap[paletteName];
-    if (!palette && loadFunction) {
-      palette = await loadFunction(
-        PaletteStore.paletteFileMap[paletteName]
-      );
-      this.addPalette(palette);
+  async getNamedPalette (paletteName: string, loadIfMissing = false): Promise<JsonPaletteType | undefined> {
+    const palette: JsonPaletteType | undefined = PaletteStore.paletteMap[paletteName];
+    if (palette || !loadIfMissing) {
+      return palette;
     }
-    return palette;
+    // A name the file map does not know is not loadable, so there is nothing to fetch.
+    const filePath = PaletteStore.paletteFileMap[paletteName];
+    if (!filePath) {
+      return undefined;
+    }
+    const loadedPalette = await loadPaletteFromJsonFile(filePath);
+    this.addPalette(loadedPalette);
+    return loadedPalette;
   }
 }

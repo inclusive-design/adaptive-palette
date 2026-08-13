@@ -15,7 +15,7 @@ import { html } from "htm/preact";
 import { BlissSymbol } from "./BlissSymbol";
 import { clearMessageAndChoices } from "./TelegraphicTranslationState";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
-import { generateGridStyle } from "./GlobalUtils";
+import { generateGridStyle } from "./GridUtils";
 import { announceIfEnabled } from "./SpeechUtils";
 
 type CommandClearEncodingProps = {

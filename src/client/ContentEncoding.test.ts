@@ -12,7 +12,7 @@
 
 import { render, screen } from "@testing-library/preact";
 import { html } from "htm/preact";
-import { ContentEncoding} from "./ContentEncoding";
+import { ContentEncoding, clamp } from "./ContentEncoding";
 import { initAdaptivePaletteGlobals } from "./InitGlobals";
 
 test("The content encoding area is rendered correctly", async (): Promise<void> => {
@@ -82,5 +82,20 @@ describe("The content encoding area covers the sentence button's column when it 
     );
     const encodingArea = await screen.findByLabelText("Input Area");
     expect(getComputedStyle(encodingArea).gridColumnEnd).toBe("span 10");
+  });
+});
+
+describe("clamp()", (): void => {
+
+  test("Test clamp function where value is below min", (): void => {
+    expect(clamp(-1, 0, 1)).toBe(0);
+  });
+
+  test("Test clamp function where value is above max", (): void => {
+    expect(clamp(2, 0, 1)).toBe(1);
+  });
+
+  test("Test clamp function where value is in range", (): void => {
+    expect(clamp(1, 0, 2)).toBe(1);
   });
 });

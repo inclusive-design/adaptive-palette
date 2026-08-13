@@ -12,8 +12,9 @@
 
 import { adaptivePaletteGlobals } from "./GlobalData";
 import { readMessageLog } from "./MessageLog";
-import { findSymbolByGloss } from "./BciAvUtils";
-import { normalizeComposition, renderTemplate } from "./GlobalUtils";
+import { findSymbolByGloss } from "./SvgUtils";
+import { normalizeComposition } from "./SymbolEncodingUtils";
+import { renderTemplate } from "./PromptUtils";
 import { pickModel } from "./TelegraphicTranslationUtils";
 import { queryChat } from "./OllamaApi";
 import { BlissSymbolEntry, ResolutionRungType, SymbolCompositionType, SymbolEncodingType } from ".";

@@ -15,9 +15,9 @@ import { useState, useRef } from "preact/hooks";
 import { html } from "htm/preact";
 
 import { MatchType, SymbolEncodingType } from "./index.d";
-import { findSymbolByGloss } from "./BciAvUtils";
+import { findSymbolByGloss } from "./SvgUtils";
 import { changeEncodingContents } from "./GlobalData";
-import { insertWordAtCaret } from "./GlobalUtils";
+import { insertWordAtCaret } from "./SymbolEncodingUtils";
 import { GlossSearchResults } from "./GlossSearchResults";
 import { MessagePreview } from "./MessagePreview";
 import "./ActionSearchGloss.scss";

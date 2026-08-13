@@ -10,6 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+import { vi } from "vitest";
 import { JsonPaletteType } from "./index.d";
 import { PaletteStore } from "./PaletteStore";
 
@@ -78,22 +79,31 @@ describe("PaletteStore module", (): void => {
     }
   };
 
-  // Mock-ups of the store's palette file name map and a mock load function.
+  // Mock-up of the store's palette file name map.
   const PALETTE_FILE_MAP = {
-    "dummyPalette1": "./path/to/dummy_palette1",
-    "DummyPalette2": "./path/to/dummy_palette2",
-    "mockPalette": "./path/to/mock_palette"
+    "dummyPalette1": "./path/to/dummy_palette1.json",
+    "DummyPalette2": "./path/to/dummy_palette2.json",
+    "mockPalette": "./path/to/mock_palette.json"
   };
 
-  const FILE_PALETTE_MAP = {
+  // The store fetches palettes itself now, so the file contents are served by a stubbed
+  // `fetch` rather than by a loader passed in at the call site.
+  const FILE_PALETTE_MAP: Record<string, JsonPaletteType> = {
     "./path/to/dummy_palette1.json": dummyPalette1,
     "./path/to/dummy_palette2.json": dummyPalette2,
     "./path/to/mock_palette.json": mockPalette
   };
 
-  const loadPalette = (filePath: string): Promise<JsonPaletteType | undefined> => {
-    return Promise.resolve((FILE_PALETTE_MAP as Record<string, JsonPaletteType>)[`${filePath}.json`]);
-  };
+  beforeAll((): void => {
+    vi.stubGlobal("fetch", (filePath: string): Promise<Response> => Promise.resolve({
+      ok: filePath in FILE_PALETTE_MAP,
+      json: (): Promise<JsonPaletteType> => Promise.resolve(FILE_PALETTE_MAP[filePath])
+    } as Response));
+  });
+
+  afterAll((): void => {
+    vi.unstubAllGlobals();
+  });
 
   const paletteStore = new PaletteStore();
   // PaletteStore.paletteFileMap = PALETTE_FILE_MAP;
@@ -117,22 +127,21 @@ describe("PaletteStore module", (): void => {
     expect(paletteStore.paletteList).toEqual(["dummyPalette1", dummyPalette2Name]);
   });
 
-  test("Retrieve a palette, with and without a load function", async (): Promise<void> => {
+  test("Retrieve a palette, with and without loading", async (): Promise<void> => {
     let retrievedPalette = await paletteStore.getNamedPalette(dummyPalette2Name);
     expect(retrievedPalette).toBe(dummyPalette2);
 
-    // `mockPalette` should not be in the store. Ask for it and provide a
-    // a loader for it.  It should be added to the store and returned.
-    retrievedPalette = await paletteStore.getNamedPalette(mockPalette.name, loadPalette);
+    // `mockPalette` should not be in the store. Ask for it with loading turned on.
+    // It should be added to the store and returned.
+    retrievedPalette = await paletteStore.getNamedPalette(mockPalette.name, true);
     expect(retrievedPalette).toBe(mockPalette);
     expect(paletteStore.numPalettes).toBe(3);
     expect(paletteStore.paletteList).toEqual(["dummyPalette1", dummyPalette2Name, "mockPalette"]);
 
-    // `nonExistentPalette` should not be in the store, and should not be
-    // referenced by the store's file name map. Asking for it to be loaded
-    // should give a "no such palette" result (undefined).  The store should be
+    // `nonExistentPalette` is not in the store and the file name map does not name a file
+    // for it, so there is nothing to load. The result is undefined and the store is
     // unchanged.
-    retrievedPalette = await paletteStore.getNamedPalette("nonExistentPalette", loadPalette);
+    retrievedPalette = await paletteStore.getNamedPalette("nonExistentPalette", true);
     expect(retrievedPalette).toBe(undefined);
     expect(paletteStore.numPalettes).toBe(3);
     expect(paletteStore.paletteList).toEqual(["dummyPalette1", dummyPalette2Name, "mockPalette"]);

@@ -15,7 +15,8 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from ".";
 import { BlissSymbol } from "./BlissSymbol";
 import { changeEncodingContents, adaptivePaletteGlobals } from "./GlobalData";
-import { generateGridStyle, insertWordAtCaret, normalizeComposition } from "./GlobalUtils";
+import { generateGridStyle } from "./GridUtils";
+import { insertWordAtCaret, normalizeComposition } from "./SymbolEncodingUtils";
 import { announceIfEnabled } from "./SpeechUtils";
 import "./ActionCodeCell.scss";
 

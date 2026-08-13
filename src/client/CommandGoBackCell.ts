@@ -14,7 +14,6 @@ import { render, VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { adaptivePaletteGlobals, navigationDepth } from "./GlobalData";
-import { loadPaletteFromJsonFile } from "./GlobalUtils";
 import { announceIfEnabled, speakUnavailable } from "./SpeechUtils";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
@@ -44,7 +43,7 @@ export async function goBackImpl (defaultContaineId?: string | null ): Promise<v
 
   const paletteToGoBackTo = navigationStack.peek();
   if (paletteToGoBackTo && paletteToGoBackTo.palette) {
-    const paletteDefinition = await paletteStore.getNamedPalette(paletteToGoBackTo.palette.name, loadPaletteFromJsonFile);
+    const paletteDefinition = await paletteStore.getNamedPalette(paletteToGoBackTo.palette.name, true);
     if (paletteDefinition) {
       const paletteContainer = paletteToGoBackTo.htmlElement || document.getElementById(defaultContaineId ?? "") || document.body;
       navigationStack.popAndSetCurrent(paletteToGoBackTo);

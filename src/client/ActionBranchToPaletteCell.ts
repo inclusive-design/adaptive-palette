@@ -14,7 +14,6 @@ import { render, VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolCellType } from "./index.d";
 import { adaptivePaletteGlobals } from "./GlobalData";
-import { loadPaletteFromJsonFile } from "./GlobalUtils";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";
 import { announceIfEnabled } from "./SpeechUtils";
@@ -48,7 +47,7 @@ const navigateToPalette = async (event: Event): Promise<void> => {
     return;
   }
 
-  const paletteDefinition = await paletteStore.getNamedPalette(branchToPaletteName, loadPaletteFromJsonFile);
+  const paletteDefinition = await paletteStore.getNamedPalette(branchToPaletteName, true);
   if (!paletteDefinition) {
     console.error(`navigateToPalette(): Unable to locate palette definition for ${branchToPaletteName}`);
     return;

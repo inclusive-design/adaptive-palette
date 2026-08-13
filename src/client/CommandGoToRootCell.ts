@@ -14,7 +14,7 @@ import { render, VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "./index.d";
 import { adaptivePaletteGlobals, navigationDepth } from "./GlobalData";
-import { generateGridStyle } from "./GlobalUtils";
+import { generateGridStyle } from "./GridUtils";
 import { announceIfEnabled, speakUnavailable } from "./SpeechUtils";
 import { Palette } from "./Palette";
 import { BlissSymbol } from "./BlissSymbol";

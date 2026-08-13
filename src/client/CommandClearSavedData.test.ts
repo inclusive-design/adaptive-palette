@@ -10,24 +10,16 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { vi } from "vitest";
+import { vi, type MockInstance } from "vitest";
 import { render, screen, cleanup, waitFor } from "@testing-library/preact";
 import { userEvent } from "vitest/browser";
 import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals } from "./InitGlobals";
 import {
-  CommandClearSavedData, CANCEL_LABEL, CONFIRM_LABEL
+  CommandClearSavedData, CANCEL_LABEL, CONFIRM_LABEL, clearSavedData
 } from "./CommandClearSavedData";
-
-// A successful clear reloads the page, which would restart the test runner's own page.
-// Only `clearSavedData` is replaced, since the cell draws its grid position and speech
-// from the same module; whether the cell asked for the clear is what these tests are about.
-const { mockClearSavedData } = vi.hoisted(() => ({ mockClearSavedData: vi.fn() }));
-vi.mock("./GlobalUtils", async (importOriginal) => ({
-  ...await importOriginal<typeof import("./GlobalUtils")>(),
-  clearSavedData: mockClearSavedData
-}));
+import { MESSAGE_LOG_KEY } from "./MessageLog";
 
 // `userEvent` is the provider-backed instance from `vitest/browser`, not the one from
 // `@testing-library/user-event`: these tests drive a native `<dialog>`, whose default
@@ -45,13 +37,25 @@ describe("CommandClearSavedData component", () => {
     "columnSpan": 1
   };
 
+  // A successful clear reloads the page, which would restart the test runner's own page.
+  // Making `Storage.clear` throw keeps every test on the failure path, where the dialog
+  // stays put. Whether the cell asked for the clear is what these tests are about.
+  let clearSpy: MockInstance;
+
+  beforeEach((): void => {
+    clearSpy = vi.spyOn(Storage.prototype, "clear").mockImplementation((): void => {
+      throw new Error("storage is not available");
+    });
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+  });
+
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
   });
 
   afterEach(() => {
     cleanup();
-    mockClearSavedData.mockReset();
+    vi.restoreAllMocks();
   });
 
   const renderCell = () => render(html`
@@ -77,7 +81,7 @@ describe("CommandClearSavedData component", () => {
 
     await userEvent.click(trigger());
 
-    expect(mockClearSavedData).not.toHaveBeenCalled();
+    expect(clearSpy).not.toHaveBeenCalled();
     await waitFor(() => {
       expect(screen.getByRole("dialog", { name: testOptions.label })).toBeVisible();
     });
@@ -95,13 +99,10 @@ describe("CommandClearSavedData component", () => {
     await waitFor(() => {
       expect(screen.queryByRole("dialog", { name: testOptions.label })).not.toBeInTheDocument();
     });
-    expect(mockClearSavedData).not.toHaveBeenCalled();
+    expect(clearSpy).not.toHaveBeenCalled();
   });
 
   test("clears the saved data once the confirmation is accepted", async () => {
-    // A clear that reports failure leaves the dialog in place, and keeps this test from
-    // reaching the page reload that a successful clear triggers.
-    mockClearSavedData.mockReturnValue(false);
     renderCell();
     await userEvent.click(trigger());
     await waitFor(() => {
@@ -110,6 +111,33 @@ describe("CommandClearSavedData component", () => {
 
     await userEvent.click(screen.getByRole("button", { name: CONFIRM_LABEL }));
 
-    expect(mockClearSavedData).toHaveBeenCalledTimes(1);
+    expect(clearSpy).toHaveBeenCalledTimes(1);
   });
+});
+
+describe("clearSavedData()", (): void => {
+
+  afterEach((): void => {
+    vi.restoreAllMocks();
+    window.localStorage.clear();
+  });
+
+  test("Removes everything the app has saved", (): void => {
+    window.localStorage.setItem(MESSAGE_LOG_KEY, JSON.stringify([{ timestamp: "now", payloads: [] }]));
+    window.localStorage.setItem("some other key", "value");
+
+    expect(clearSavedData()).toBe(true);
+    expect(window.localStorage.length).toBe(0);
+  });
+
+  test("Reports failure when storage cannot be written", (): void => {
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    vi.spyOn(Storage.prototype, "clear").mockImplementation((): void => {
+      throw new Error("storage is not available");
+    });
+
+    expect(clearSavedData()).toBe(false);
+    expect(consoleError).toHaveBeenCalled();
+  });
+
 });

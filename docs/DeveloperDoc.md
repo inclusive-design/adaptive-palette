@@ -6,7 +6,7 @@ build the adaptive palette client side.
 ## Runtime configuration (`public/config.json`)
 
 `public/config.json` holds the settings that can change without a rebuild. `loadConfig()` in
-[`src/client/GlobalData.ts`](../src/client/GlobalData.ts) fetches and validates it at startup and stores the
+[`src/client/Config.ts`](../src/client/Config.ts) fetches and validates it at startup and stores the
 result in `adaptivePaletteGlobals.config`. Each section is validated on its own: a missing or malformed section
 falls back to its default and leaves the other sections intact. If the file itself is missing or unparsable,
 every section falls back.
@@ -122,8 +122,9 @@ component.
 ```
 
 At startup, `src/client/index.js` loads this file and stores it in `PaletteStore.paletteFileMap`. When
-`PaletteStore.getNamedPalette()` is called with a name that is not yet in the cache, it looks up the file path in
-`paletteFileMap` and lazily loads the palette on demand.
+`PaletteStore.getNamedPalette()` is called with `loadIfMissing` and the palette is not yet in the cache, it looks
+up the file path in `paletteFileMap` and lazily loads the palette on demand. Called without it, the lookup is
+cache-only and an uncached name returns `undefined`.
 
 To register a new palette JSON file, add an entry here. The key becomes the name used in `branchTo` options of
 `ActionBranchToPaletteCell` cells.

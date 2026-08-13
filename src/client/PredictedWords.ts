@@ -15,7 +15,7 @@ import { html } from "htm/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
 import { BlissSymbol } from "./BlissSymbol";
-import { insertWordAtCaret } from "./GlobalUtils";
+import { insertWordAtCaret } from "./SymbolEncodingUtils";
 import { announceIfEnabled } from "./SpeechUtils";
 import { predictNext } from "./WordPredictionUtils";
 import { contextKeyOf, modelWordsSignal, showModelStatusSignal } from "./WordPredictionState";
