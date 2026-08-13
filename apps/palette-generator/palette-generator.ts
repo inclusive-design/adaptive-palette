@@ -12,13 +12,13 @@
 
 import { render } from "preact";
 import { html } from "htm/preact";
-import { Palette } from "../../src/client/Palette";
-import { BlissSymbol } from "../../src/client/BlissSymbol";
+import { Palette } from "../../src/client/components/Palette";
+import { BlissSymbol } from "../../src/client/components/BlissSymbol";
 import { processPaletteLabels, fetchBlissGlossJson } from "./paletteJsonGenerator";
 import "../../src/client/index.scss";
-import { adaptivePaletteGlobals } from "../../src/client/GlobalData";
-import { initAdaptivePaletteGlobals } from "../../src/client/InitGlobals";
-import { cellTypeRegistry } from "../../src/client/CellTypeRegistry";
+import { adaptivePaletteGlobals } from "../../src/client/state/GlobalData";
+import { initAdaptivePaletteGlobals } from "../../src/client/core/InitGlobals";
+import { cellTypeRegistry } from "../../src/client/core/CellTypeRegistry";
 import { JsonPaletteType } from "../../src/client/index.d";
 
 type MatchInfo = {

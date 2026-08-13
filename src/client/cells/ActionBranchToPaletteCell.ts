@@ -1,0 +1,85 @@
+/*
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
+ *
+ * Licensed under the New BSD license. You may not use this file except in
+ * compliance with this License.
+ *
+ * You may obtain a copy of the License at
+ * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
+ */
+
+import { render, VNode } from "preact";
+import { html } from "htm/preact";
+import { BlissSymbolCellType } from "../index.d";
+import { adaptivePaletteGlobals } from "../state/GlobalData";
+import { Palette } from "../components/Palette";
+import { BlissSymbol } from "../components/BlissSymbol";
+import { announceIfEnabled } from "../utils/SpeechUtils";
+import "./ActionBranchToPaletteCell.scss";
+
+type ActionBranchToPalettePropsType = {
+  id: string,
+  options: BlissSymbolCellType
+};
+
+/*
+ * Event handler for an ActionBranchToPaletteCell button/cell that, when clicked,
+ * finds and renders the palette referenced by this cell.
+ */
+const navigateToPalette = async (event: Event): Promise<void> => {
+  const { paletteStore, navigationStack } = adaptivePaletteGlobals;
+  const button = event.currentTarget as HTMLElement;
+  announceIfEnabled(button.innerText);
+
+  const buttonParent = button.parentElement;
+  const displayElement = buttonParent?.parentElement as HTMLElement | undefined;
+  if (!buttonParent || !displayElement) {
+    console.error(`navigateToPalette(): Missing parent or display element for button ${button.id}`);
+    return;
+  }
+
+  const buttonsPaletteName = buttonParent?.getAttribute("data-palettename");
+  const branchToPaletteName = button.getAttribute("data-branchto");
+  if (!buttonsPaletteName || !branchToPaletteName) {
+    console.error(`navigateToPalette(): Missing routing attributes (data-palettename/branchto) for ${button.id}`);
+    return;
+  }
+
+  const paletteDefinition = await paletteStore.getNamedPalette(branchToPaletteName, true);
+  if (!paletteDefinition) {
+    console.error(`navigateToPalette(): Unable to locate palette definition for ${branchToPaletteName}`);
+    return;
+  }
+
+  const goBackPalette = await paletteStore.getNamedPalette(buttonsPaletteName);
+  if (!goBackPalette) {
+    console.error(`navigateToPalette(): Unable to locate go-back palette definition for ${buttonsPaletteName}`);
+    return;
+  }
+
+  // Update UI and State
+  navigationStack.push({ palette: goBackPalette, htmlElement: displayElement });
+  render(html`<${Palette} json=${paletteDefinition}/>`, displayElement);
+  navigationStack.currentPalette = { palette: paletteDefinition, htmlElement: displayElement };
+};
+
+export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType): VNode {
+  const {
+    columnStart, columnSpan, rowStart, rowSpan, branchTo, composition, label
+  } = props.options;
+
+  const gridStyles = `
+    grid-column: ${columnStart} / span ${columnSpan};
+    grid-row: ${rowStart} / span ${rowSpan};
+  `;
+
+  return html`
+    <button
+      id="${props.id}" class="actionBranchToPaletteCell foldedCorner" style="${gridStyles}"
+      data-branchto="${branchTo}" onClick=${navigateToPalette}>
+      <${BlissSymbol} composition=${composition} label=${label} />
+    </button>
+  `;
+}

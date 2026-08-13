@@ -6,7 +6,7 @@ build the adaptive palette client side.
 ## Runtime configuration (`public/config.json`)
 
 `public/config.json` holds the settings that can change without a rebuild. `loadConfig()` in
-[`src/client/Config.ts`](../src/client/Config.ts) fetches and validates it at startup and stores the
+[`src/client/core/Config.ts`](../src/client/core/Config.ts) fetches and validates it at startup and stores the
 result in `adaptivePaletteGlobals.config`. Each section is validated on its own: a missing or malformed section
 falls back to its default and leaves the other sections intact. If the file itself is missing or unparsable,
 every section falls back.
@@ -39,7 +39,7 @@ Failures always speak, whatever the setting: activating a cell marked `aria-disa
 "`<label>` unavailable". Nothing else tells the user that a press did nothing, since the message
 preview is deliberately not a live region.
 
-The two are separate functions in [`src/client/SpeechUtils.ts`](../src/client/SpeechUtils.ts):
+The two are separate functions in [`src/client/utils/SpeechUtils.ts`](../src/client/utils/SpeechUtils.ts):
 `announceIfEnabled()` consults this setting, `speak()` ignores it.
 
 ### `indicatorLabelLookup`
@@ -172,7 +172,7 @@ single BCI-AV numeric ID (e.g., `398`) or an array of IDs and separator strings
 ### Cell types
 
 All registered cell types live in `cellTypeRegistry` in
-[`src/client/CellTypeRegistry.ts`](../src/client/CellTypeRegistry.ts). They fall into
+[`src/client/core/CellTypeRegistry.ts`](../src/client/core/CellTypeRegistry.ts). They fall into
 three categories by prefix.
 
 #### `Action*` — user input actions
@@ -210,7 +210,7 @@ three categories by prefix.
 ## Keyboard shortcuts
 
 The global "go back" keystroke is registered in [`src/client/index.js`](../src/client/index.js); the input
-area's caret keys are handled in [`src/client/ContentEncoding.ts`](../src/client/ContentEncoding.ts). See
+area's caret keys are handled in [`src/client/cells/ContentEncoding.ts`](../src/client/cells/ContentEncoding.ts). See
 [ShortcutKeys.md](ShortcutKeys.md) for the full list.
 
 ## How to add a new cell type
@@ -218,5 +218,5 @@ area's caret keys are handled in [`src/client/ContentEncoding.ts`](../src/client
 When a new `type` value is introduced, developers need to:
 
 1. Create a new component to render the new cell type;
-2. In `src/client/CellTypeRegistry.ts`, update `cellTypeRegistry` to add the entry that maps the
+2. In `src/client/core/CellTypeRegistry.ts`, update `cellTypeRegistry` to add the entry that maps the
 new type value to the actual component.

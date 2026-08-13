@@ -11,24 +11,24 @@
  */
 import { render } from "preact";
 import { html } from "htm/preact";
-import { adaptivePaletteGlobals, navigationDepth } from "./GlobalData";
-import { initAdaptivePaletteGlobals } from "./InitGlobals";
-import { NO_MODELS_MESSAGE } from "./OllamaApi";
-import { loadPaletteFromJsonFile } from "./PaletteStore";
-import { announceIfEnabled, speakUnavailable } from "./SpeechUtils";
-import { goBackImpl } from "./CommandGoBackCell";
-import { INPUT_AREA_ID } from "./ContentEncoding";
-import { NOT_CONFIGURED_MESSAGE } from "./TelegraphicTranslationUtils";
+import { adaptivePaletteGlobals, navigationDepth } from "./state/GlobalData";
+import { initAdaptivePaletteGlobals } from "./core/InitGlobals";
+import { NO_MODELS_MESSAGE } from "./core/OllamaApi";
+import { loadPaletteFromJsonFile } from "./core/PaletteStore";
+import { announceIfEnabled, speakUnavailable } from "./utils/SpeechUtils";
+import { goBackImpl } from "./cells/CommandGoBackCell";
+import { INPUT_AREA_ID } from "./cells/ContentEncoding";
+import { NOT_CONFIGURED_MESSAGE } from "./features/telegraphic-translation/TelegraphicTranslationUtils";
 import "./index.scss";
 
 // Initialize any globals used elsewhere in the code.
 await initAdaptivePaletteGlobals("mainPaletteDisplayArea");
 
-import { PaletteStore } from "./PaletteStore";
-import { Palette } from "./Palette";
-import { SentenceChoices } from "./SentenceChoices";
-import { PredictedWords } from "./PredictedWords";
-import { SymbolEntryToolbar } from "./SymbolEntryToolbar";
+import { PaletteStore } from "./core/PaletteStore";
+import { Palette } from "./components/Palette";
+import { SentenceChoices } from "./features/telegraphic-translation/SentenceChoices";
+import { PredictedWords } from "./features/word-prediction/PredictedWords";
+import { SymbolEntryToolbar } from "./components/SymbolEntryToolbar";
 
 const paletteFileMap = await loadPaletteFromJsonFile("/palettes/palette_file_map.json");
 const firstLayer = await loadPaletteFromJsonFile("/palettes/bliss_standard_chart.json");
