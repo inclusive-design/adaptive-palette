@@ -12,7 +12,7 @@ Ignored when: a modal dialog is open, the navigation stack is empty, or focus is
 control (`<input>` of a textual type, `<textarea>`, `<select>`, or any element with
 `role="textbox"` other than the input area).
 
-Implemented in [index.js:69](../src/client/index.js#L69).
+Implemented in [index.js:78](../src/client/index.js#L78).
 
 ## Input Area
 
@@ -36,7 +36,7 @@ On macOS, iOS, and iPadOS:
 The caret can sit before the first symbol, so moving back from the first position is a valid stop
 rather than a no-op.
 
-Implemented in [ContentEncoding.ts:99](../src/client/cells/ContentEncoding.ts#L99).
+Implemented in [ContentEncoding.ts:116](../src/client/cells/ContentEncoding.ts#L116).
 
 ## Modal Dialogs
 

@@ -9,7 +9,7 @@ three categories by prefix.
 | Type | Purpose | Key options beyond layout |
 | ---- | ------- | ------------------------- |
 | `ActionCodeCell` | Appends a Bliss symbol to the encoding area when clicked | `label`, `composition` |
-| `ActionBranchToPaletteCell` | Navigates to another palette | `label`, `composition`, `branchTo` (palette file name without `.json`), `ariaControls` |
+| `ActionBranchToPaletteCell` | Navigates to another palette | `label`, `composition`, `branchTo` (the palette's key in [`palette_file_map.json`](../../public/palettes/palette_file_map.json)) |
 | `ActionIndicatorCell` | Applies a Bliss indicator to the last symbol in the encoding area | `label`, `composition` |
 | `ActionPreModifierCell` | Prepends a modifier to the last symbol | `label`, `composition` |
 | `ActionPostModifierCell` | Appends a modifier to the last symbol | `label`, `composition` |

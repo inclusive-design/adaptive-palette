@@ -37,13 +37,11 @@ function buildGraph () {
     const addDep = (specifier) => {
       deps.add(moduleId(path.resolve(path.dirname(file), specifier)));
     };
-    // Value imports and re-exports only.  `import type` erases at compile time and cannot
-    // create a runtime cycle.
-    for (const match of source.matchAll(/import\s+(type\s+)?[\s\S]*?from\s+"(\.[^"]*)"/g)) {
-      if (!match[1]) { addDep(match[2]); }
-    }
-    for (const match of source.matchAll(/export\s+\{[^}]*\}\s+from\s+"(\.[^"]*)"/g)) {
-      addDep(match[1]);
+    // Value imports and re-exports only.  `import type`/`export type` erases at compile time and
+    // cannot create a runtime cycle.  The clause cannot contain `;` or `"`, so a statement whose
+    // specifier is a package name fails to match instead of reaching into the next statement.
+    for (const match of source.matchAll(/\b(?:import|export)\s+([^;"]*?)from\s+"(\.[^"]*)"/g)) {
+      if (!/^type\s/.test(match[1])) { addDep(match[2]); }
     }
     graph.set(moduleId(file), [...deps]);
   }
