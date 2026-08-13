@@ -11,9 +11,9 @@
  */
 
 import { vi } from "vitest";
-import { adaptivePaletteGlobals, NO_MODELS_MESSAGE } from "./GlobalData";
+import { adaptivePaletteGlobals } from "./GlobalData";
 import { MESSAGE_LOG_KEY, saveMessageRecord } from "./MessageLog";
-import { queryChat } from "./OllamaApi";
+import { queryChat, NO_MODELS_MESSAGE } from "./OllamaApi";
 import {
   isModelTierActive, NOT_CONFIGURED_MESSAGE, parseModelWords, predictNext, rankModelWords,
   requestModelWords, resolveWordPayload, SEED_STARTERS, wordPredictionStats

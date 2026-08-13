@@ -14,7 +14,8 @@ import { render, screen, cleanup, waitFor } from "@testing-library/preact";
 import { userEvent } from "vitest/browser";
 import { html } from "htm/preact";
 
-import { adaptivePaletteGlobals, changeEncodingContents, DISABLED_MODEL_QUERY } from "./GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
+import { DISABLED_MODEL_QUERY } from "./Config";
 import { DISMISS_LABEL } from "./ModalDialog";
 import { SEARCH_FIELD_LABEL } from "./ActionSearchGloss";
 import {

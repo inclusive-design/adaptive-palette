@@ -219,8 +219,3 @@ When a new `type` value is introduced, developers need to:
 1. Create a new component to render the new cell type;
 2. In `src/client/CellTypeRegistry.ts`, update `cellTypeRegistry` to add the entry that maps the
 new type value to the actual component.
-
-### Import rule
-
-`src/client/GlobalData.ts` must not import a cell component or a feature module. Because those modules already
-import `GlobalData.ts`, doing so creates a circular dependency.

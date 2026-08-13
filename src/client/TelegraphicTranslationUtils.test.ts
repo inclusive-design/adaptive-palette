@@ -11,9 +11,9 @@
  */
 
 import { vi } from "vitest";
-import { adaptivePaletteGlobals, DISABLED_MODEL_QUERY } from "./GlobalData";
-import { queryChat } from "./OllamaApi";
-import { NO_MODELS_MESSAGE } from "./GlobalData";
+import { adaptivePaletteGlobals } from "./GlobalData";
+import { queryChat, NO_MODELS_MESSAGE } from "./OllamaApi";
+import { DISABLED_MODEL_QUERY } from "./Config";
 import {
   pickModel, parseSentences, requestSentences
 } from "./TelegraphicTranslationUtils";

@@ -13,7 +13,8 @@
 import { vi, type MockInstance } from "vitest";
 import { waitFor } from "@testing-library/preact";
 
-import { adaptivePaletteGlobals, changeEncodingContents, DISABLED_MODEL_QUERY } from "./GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
+import { DISABLED_MODEL_QUERY } from "./Config";
 import {
   clearMessageAndChoices, currentTelegraphicMessage, makeSentences, sentenceCompletionsSignal,
   READY_DISCARD_PROMPT, WORKING_DISCARD_PROMPT

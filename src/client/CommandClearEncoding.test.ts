@@ -14,7 +14,8 @@ import { render, screen } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
-import { initAdaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
+import { changeEncodingContents } from "./GlobalData";
+import { initAdaptivePaletteGlobals } from "./InitGlobals";
 import { sentenceCompletionsSignal } from "./TelegraphicTranslationState";
 import { CommandClearEncoding } from "./CommandClearEncoding";
 

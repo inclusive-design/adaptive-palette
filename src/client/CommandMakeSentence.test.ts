@@ -15,7 +15,8 @@ import { render, screen, cleanup, waitFor } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
-import { adaptivePaletteGlobals, changeEncodingContents, DISABLED_MODEL_QUERY } from "./GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
+import { DISABLED_MODEL_QUERY } from "./Config";
 import { sentenceCompletionsSignal } from "./TelegraphicTranslationState";
 import { MESSAGE_LOG_KEY } from "./MessageLog";
 import { queryChat } from "./OllamaApi";

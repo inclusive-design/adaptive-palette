@@ -15,7 +15,8 @@ import { render, screen } from "@testing-library/preact";
 import { fireEvent } from "@testing-library/dom";
 import { html } from "htm/preact";
 
-import { initAdaptivePaletteGlobals, adaptivePaletteGlobals, navigationDepth } from "./GlobalData";
+import { adaptivePaletteGlobals, navigationDepth } from "./GlobalData";
+import { initAdaptivePaletteGlobals } from "./InitGlobals";
 import { CommandGoToRootCell } from "./CommandGoToRootCell";
 
 describe("CommandGoToRootCell render tests", (): void => {

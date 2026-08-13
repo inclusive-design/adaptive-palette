@@ -13,7 +13,7 @@
 import { render, screen } from "@testing-library/preact";
 import { html } from "htm/preact";
 
-import { initAdaptivePaletteGlobals } from "./GlobalData";
+import { initAdaptivePaletteGlobals } from "./InitGlobals";
 import { CommandCursorForward } from "./CommandCursorForward";
 
 describe("CommandCursorForward render tests", (): void => {

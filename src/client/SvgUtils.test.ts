@@ -11,7 +11,7 @@
  */
 import { vi } from "vitest";
 import { BlissSVGBuilder } from "bliss-svg-builder";
-import { initAdaptivePaletteGlobals } from "./GlobalData";
+import { initAdaptivePaletteGlobals } from "./InitGlobals";
 import {
   compositionToBstr, bstrToComposition, isIndicator,
   findIndicators, isModifier, findClassifierFromLeft, findSymbolByBciAvId,

@@ -11,7 +11,8 @@
  */
 
 import { vi } from "vitest";
-import { adaptivePaletteGlobals, changeEncodingContents, DISABLED_MODEL_QUERY } from "./GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
+import { DISABLED_MODEL_QUERY } from "./Config";
 import { MESSAGE_LOG_KEY, saveMessageRecord } from "./MessageLog";
 import { queryChat } from "./OllamaApi";
 import {

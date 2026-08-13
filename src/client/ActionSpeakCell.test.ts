@@ -15,7 +15,8 @@ import { render, screen, cleanup } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
-import { adaptivePaletteGlobals, changeEncodingContents, initAdaptivePaletteGlobals } from "./GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
+import { initAdaptivePaletteGlobals } from "./InitGlobals";
 import { MESSAGE_LOG_KEY, readMessageLog } from "./MessageLog";
 import { speak } from "./SpeechUtils";
 import { ActionSpeakCell } from "./ActionSpeakCell";

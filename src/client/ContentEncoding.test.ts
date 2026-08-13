@@ -13,7 +13,7 @@
 import { render, screen } from "@testing-library/preact";
 import { html } from "htm/preact";
 import { ContentEncoding} from "./ContentEncoding";
-import { initAdaptivePaletteGlobals } from "./GlobalData";
+import { initAdaptivePaletteGlobals } from "./InitGlobals";
 
 test("The content encoding area is rendered correctly", async (): Promise<void> => {
   await initAdaptivePaletteGlobals();

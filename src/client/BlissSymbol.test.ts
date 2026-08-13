@@ -13,7 +13,7 @@
 import { render, screen } from "@testing-library/preact";
 import { html } from "htm/preact";
 
-import { initAdaptivePaletteGlobals } from "./GlobalData";
+import { initAdaptivePaletteGlobals } from "./InitGlobals";
 import { BlissSymbol, GRAPHIC_ROLE } from "./BlissSymbol";
 
 describe("BlissSymbol render tests", (): void => {

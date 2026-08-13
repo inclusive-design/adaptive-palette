@@ -15,9 +15,9 @@ import { render, screen, cleanup, waitFor } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
-import {
-  adaptivePaletteGlobals, changeEncodingContents, DISABLED_MODEL_QUERY, initAdaptivePaletteGlobals
-} from "./GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
+import { initAdaptivePaletteGlobals } from "./InitGlobals";
+import { DISABLED_MODEL_QUERY } from "./Config";
 import { MESSAGE_LOG_KEY, saveMessageRecord } from "./MessageLog";
 import {
   moreSuggestionsMessage, PredictedWords, PREDICTED_WORDS_LABEL, QUERYING_MESSAGE

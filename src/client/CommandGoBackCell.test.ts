@@ -13,7 +13,8 @@
 import { render, screen } from "@testing-library/preact";
 import { html } from "htm/preact";
 
-import { initAdaptivePaletteGlobals, adaptivePaletteGlobals, navigationDepth } from "./GlobalData";
+import { adaptivePaletteGlobals, navigationDepth } from "./GlobalData";
+import { initAdaptivePaletteGlobals } from "./InitGlobals";
 import { CommandGoBackCell } from "./CommandGoBackCell";
 
 describe("CommandGoBackCell render tests", (): void => {

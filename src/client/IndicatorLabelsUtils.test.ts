@@ -11,7 +11,9 @@
  */
 
 import { vi } from "vitest";
-import { initAdaptivePaletteGlobals, adaptivePaletteGlobals, DISABLED_MODEL_QUERY } from "./GlobalData";
+import { adaptivePaletteGlobals } from "./GlobalData";
+import { initAdaptivePaletteGlobals } from "./InitGlobals";
+import { DISABLED_MODEL_QUERY } from "./Config";
 import { getStaticNewLabel, getNewLabelViaModelQuery, initIndicatorLabels, resetOllamaCacheForTests } from "./IndicatorLabelsUtils";
 import { queryChat } from "./OllamaApi";
 

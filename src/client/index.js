@@ -11,7 +11,9 @@
  */
 import { render } from "preact";
 import { html } from "htm/preact";
-import { initAdaptivePaletteGlobals, adaptivePaletteGlobals, navigationDepth, NO_MODELS_MESSAGE } from "./GlobalData";
+import { adaptivePaletteGlobals, navigationDepth } from "./GlobalData";
+import { initAdaptivePaletteGlobals } from "./InitGlobals";
+import { NO_MODELS_MESSAGE } from "./OllamaApi";
 import { loadPaletteFromJsonFile } from "./GlobalUtils";
 import { announceIfEnabled, speakUnavailable } from "./SpeechUtils";
 import { goBackImpl } from "./CommandGoBackCell";

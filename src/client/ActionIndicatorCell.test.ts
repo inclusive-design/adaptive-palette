@@ -14,7 +14,8 @@ import { vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/preact";
 import { html } from "htm/preact";
 
-import { initAdaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
+import { changeEncodingContents } from "./GlobalData";
+import { initAdaptivePaletteGlobals } from "./InitGlobals";
 import { ActionIndicatorCell } from "./ActionIndicatorCell";
 import * as IndicatorLabels from "./IndicatorLabelsUtils";
 import * as SpeechUtils from "./SpeechUtils";

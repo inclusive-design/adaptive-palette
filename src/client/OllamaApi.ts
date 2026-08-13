@@ -12,6 +12,8 @@
 
 import ollama, { ChatResponse, Ollama } from "ollama/browser";
 
+export const NO_MODELS_MESSAGE = "No models available. Start Ollama to enable AI features.";
+
 /**
  * Retrieve a list of models available from the service
  * @return {Promise<string[]>} - Array of the names of the available models.

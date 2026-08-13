@@ -10,9 +10,9 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { adaptivePaletteGlobals, NO_MODELS_MESSAGE } from "./GlobalData";
+import { adaptivePaletteGlobals } from "./GlobalData";
 import { renderTemplate } from "./GlobalUtils";
-import { queryChat } from "./OllamaApi";
+import { queryChat, NO_MODELS_MESSAGE } from "./OllamaApi";
 
 export const NOT_CONFIGURED_MESSAGE = "Sentence translation is not configured. Check the telegraphicTranslation section of config.json.";
 export const NO_SENTENCES_MESSAGE = "The model returned no usable sentences.";

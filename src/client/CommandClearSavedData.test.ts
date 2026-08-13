@@ -15,7 +15,7 @@ import { render, screen, cleanup, waitFor } from "@testing-library/preact";
 import { userEvent } from "vitest/browser";
 import { html } from "htm/preact";
 
-import { initAdaptivePaletteGlobals } from "./GlobalData";
+import { initAdaptivePaletteGlobals } from "./InitGlobals";
 import {
   CommandClearSavedData, CANCEL_LABEL, CONFIRM_LABEL
 } from "./CommandClearSavedData";

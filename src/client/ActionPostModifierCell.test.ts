@@ -13,7 +13,8 @@
 import { render, screen, fireEvent } from "@testing-library/preact";
 import { html } from "htm/preact";
 
-import { initAdaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
+import { changeEncodingContents } from "./GlobalData";
+import { initAdaptivePaletteGlobals } from "./InitGlobals";
 import { ActionPostModifierCell } from "./ActionPostModifierCell";
 
 describe("ActionPostModifierCell render tests", (): void => {

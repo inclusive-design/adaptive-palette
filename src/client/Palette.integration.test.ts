@@ -14,7 +14,8 @@ import { vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/preact";
 import { html } from "htm/preact";
 
-import { initAdaptivePaletteGlobals, adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents } from "./GlobalData";
+import { initAdaptivePaletteGlobals } from "./InitGlobals";
 import { Palette } from "./Palette";
 import { goBackImpl } from "./CommandGoBackCell";
 import * as IndicatorLabels from "./IndicatorLabelsUtils";
