@@ -10,13 +10,12 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render, VNode } from "preact";
+import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
-import { adaptivePaletteGlobals, navigationDepth } from "../state/GlobalData";
+import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
-import { Palette } from "../components/Palette";
 import { BlissSymbol } from "../components/BlissSymbol";
 import "./ActionCodeCell.scss";
 
@@ -26,9 +25,9 @@ type CommandGoToRootCellPropsType = {
 };
 
 /*
- * Render the palette at the bottom of the navigation stack -- the one seeded at
- * startup -- and empty the stack.  Reading the stack instead of naming a palette keeps
- * this correct if the root palette is ever changed.
+ * Make the palette at the bottom of the navigation stack -- the one seeded at startup --
+ * the current one, and empty the stack.  Reading the stack instead of naming a palette
+ * keeps this correct if the root palette is ever changed.
  */
 export function goToRootImpl (): void {
   const { navigationStack } = adaptivePaletteGlobals;
@@ -36,8 +35,7 @@ export function goToRootImpl (): void {
   if (!root) {
     return;
   }
-  render(html`<${Palette} json=${root.palette}/>`, root.htmlElement);
-  navigationStack.flushReset({ palette: root.palette, htmlElement: root.htmlElement });
+  navigationStack.flushReset(root);
 }
 
 export function CommandGoToRootCell (props: CommandGoToRootCellPropsType): VNode {
@@ -52,7 +50,7 @@ export function CommandGoToRootCell (props: CommandGoToRootCellPropsType): VNode
   // Marked unavailable rather than `disabled`: a disabled button leaves the tab order,
   // which costs a switch or eye-gaze user their scan position.  Depth zero means the
   // root palette is already displayed.
-  const unavailable = navigationDepth.value === 0;
+  const unavailable = adaptivePaletteGlobals.navigationStack.depth === 0;
 
   const cellClicked = (): void => {
     if (unavailable) {

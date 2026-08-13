@@ -61,12 +61,3 @@ export const changeEncodingContents = signal<ContentSignalDataType>({
   payloads: [],
   caretPosition: -1,
 });
-
-// Re-exported so consumers import navigation state from the same place as the other
-// globals.  Declared in its own module to keep `NavigationStack` free of a cycle back
-// into this file -- see NavigationSignals.ts.
-//
-// Note this is safe only because `NavigationSignals` imports nothing.  Do NOT add a matching
-// re-export of `initAdaptivePaletteGlobals` from `InitGlobals`: that module imports this one,
-// so the re-export would recreate the cycle this split removed.
-export { navigationDepth } from "./NavigationSignals";

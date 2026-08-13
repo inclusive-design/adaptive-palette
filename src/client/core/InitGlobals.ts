@@ -18,8 +18,7 @@
  * so holding this function in `GlobalData` made that module part of a cycle with all three.
  *
  * For the same reason, `GlobalData` must NOT re-export `initAdaptivePaletteGlobals`.  A value
- * re-export is a real import and would rebuild the cycle.  `GlobalData` does re-export
- * `navigationDepth`, but that is safe because `NavigationSignals` imports nothing.
+ * re-export is a real import and would rebuild the cycle.
  */
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { loadConfig } from "./Config";

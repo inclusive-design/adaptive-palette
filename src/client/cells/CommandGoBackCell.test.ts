@@ -13,7 +13,7 @@
 import { render, screen } from "@testing-library/preact";
 import { html } from "htm/preact";
 
-import { adaptivePaletteGlobals, navigationDepth } from "../state/GlobalData";
+import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { CommandGoBackCell } from "./CommandGoBackCell";
 
@@ -105,11 +105,9 @@ describe("CommandGoBackCell render tests", (): void => {
   });
 
   test("CommandGoBackCell is available once a palette is on the stack", async (): Promise<void> => {
-    const displayArea = document.createElement("div");
-    document.body.appendChild(displayArea);
     const somePalette = { "name": "somePalette", "cells": {} };
-    adaptivePaletteGlobals.navigationStack.push({ palette: somePalette, htmlElement: displayArea });
-    expect(navigationDepth.value).toBe(1);
+    adaptivePaletteGlobals.navigationStack.push(somePalette);
+    expect(adaptivePaletteGlobals.navigationStack.depth).toBe(1);
 
     render(html`
       <${CommandGoBackCell}

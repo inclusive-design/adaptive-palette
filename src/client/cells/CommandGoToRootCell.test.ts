@@ -15,7 +15,7 @@ import { render, screen } from "@testing-library/preact";
 import { fireEvent } from "@testing-library/dom";
 import { html } from "htm/preact";
 
-import { adaptivePaletteGlobals, navigationDepth } from "../state/GlobalData";
+import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { CommandGoToRootCell } from "./CommandGoToRootCell";
 
@@ -93,10 +93,7 @@ describe("CommandGoToRootCell render tests", (): void => {
   });
 
   test("Home becomes available once a palette is pushed", async (): Promise<void> => {
-    const displayArea = document.createElement("div");
-    document.body.appendChild(displayArea);
-
-    adaptivePaletteGlobals.navigationStack.push({ palette: rootPalette, htmlElement: displayArea });
+    adaptivePaletteGlobals.navigationStack.push(rootPalette);
 
     render(html`
       <${CommandGoToRootCell} id="${TEST_CELL_ID}" options=${homeCell.options} />
@@ -106,14 +103,11 @@ describe("CommandGoToRootCell render tests", (): void => {
     expect(button).toHaveAttribute("aria-disabled", "false");
   });
 
-  test("Clicking Home renders the root palette and empties the stack", async (): Promise<void> => {
-    const displayArea = document.createElement("div");
-    document.body.appendChild(displayArea);
-
+  test("Clicking Home makes the root palette current and empties the stack", async (): Promise<void> => {
     // Two levels deep: the root was pushed first, then the second palette.
-    adaptivePaletteGlobals.navigationStack.push({ palette: rootPalette, htmlElement: displayArea });
-    adaptivePaletteGlobals.navigationStack.push({ palette: secondPalette, htmlElement: displayArea });
-    expect(navigationDepth.value).toBe(2);
+    adaptivePaletteGlobals.navigationStack.push(rootPalette);
+    adaptivePaletteGlobals.navigationStack.push(secondPalette);
+    expect(adaptivePaletteGlobals.navigationStack.depth).toBe(2);
 
     render(html`
       <${CommandGoToRootCell} id="${TEST_CELL_ID}" options=${homeCell.options} />
@@ -122,9 +116,8 @@ describe("CommandGoToRootCell render tests", (): void => {
     const button = await screen.findByRole("button", { name: homeCell.options.label });
     fireEvent.click(button);
 
-    expect(navigationDepth.value).toBe(0);
-    expect(adaptivePaletteGlobals.navigationStack.currentPalette?.palette.name).toBe("rootPalette");
-    expect(displayArea.querySelector("[data-palettename='rootPalette']")).not.toBeNull();
+    expect(adaptivePaletteGlobals.navigationStack.depth).toBe(0);
+    expect(adaptivePaletteGlobals.navigationStack.currentPalette?.name).toBe("rootPalette");
   });
 
   test("Clicking Home while unavailable does nothing", async (): Promise<void> => {
@@ -135,7 +128,7 @@ describe("CommandGoToRootCell render tests", (): void => {
     const button = await screen.findByRole("button", { name: homeCell.options.label });
     fireEvent.click(button);
 
-    expect(navigationDepth.value).toBe(0);
+    expect(adaptivePaletteGlobals.navigationStack.depth).toBe(0);
     expect(adaptivePaletteGlobals.navigationStack.currentPalette).toBeNull();
   });
 

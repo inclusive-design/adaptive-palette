@@ -10,25 +10,29 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { NavStackItemType } from "../index.d";
-import { navigationDepth } from "../state/NavigationSignals";
+import { signal } from "@preact/signals";
+import { JsonPaletteType } from "../index.d";
 
 export class NavigationStack {
 
   // The actual stack keeping track of where the user was.  The top-most palette
   // is the most recent one the user was at before navigating to a new
   // layer/palette.
-  navigateBackStack: Array<NavStackItemType>;
+  navigateBackStack: Array<JsonPaletteType>;
 
-  // The current palette in the palette display area
-  currPalette: NavStackItemType | null;
+  // The current palette in the palette display area.  A signal so the component that
+  // draws it re-renders when navigation happens.
+  currPalette = signal<JsonPaletteType | null>(null);
+
+  // How many palettes are on the stack.  Zero means the root palette is displayed, which
+  // is when `Back` and `Home` are unavailable.  A signal so those cells re-render.
+  depthSignal = signal<number>(0);
 
   /**
    * Initialize the navigation stack to have zero entries.
    */
   constructor() {
     this.navigateBackStack = [];
-    this.currPalette = null;
   }
 
   /**
@@ -36,7 +40,7 @@ export class NavigationStack {
    * the `Back` and `Home` buttons, re-render when navigation happens.
    */
   syncDepth (): void {
-    navigationDepth.value = this.navigateBackStack.length;
+    this.depthSignal.value = this.navigateBackStack.length;
   }
 
   /**
@@ -50,11 +54,11 @@ export class NavigationStack {
   /**
    * Puah a palette onto the top of the navigation stack and also remember where
    * it was rendered.
-   * @param: {NavStackItemType} palette - The palette to push.  If `null` or
+   * @param: {JsonPaletteType} palette - The palette to push.  If `null` or
    *                                     `undefined`, the navigation stack is
    *                                      left untouched.
    */
-  push (palette: NavStackItemType | null | undefined): void {
+  push (palette: JsonPaletteType | null | undefined): void {
     if (!palette) {
       return;
     }
@@ -65,10 +69,10 @@ export class NavigationStack {
   /**
    * Pop and return the most recently pushed palette from the top of the
    * navigation stack.
-   * @return {NavStackItemType} - reference to the popped palette; undefined if the
+   * @return {JsonPaletteType} - reference to the popped palette; undefined if the
    *                              stack is empty.
    */
-  pop (): NavStackItemType | undefined {
+  pop (): JsonPaletteType | undefined {
     const palette = this.navigateBackStack.pop();
     this.syncDepth();
     return palette;
@@ -81,12 +85,12 @@ export class NavigationStack {
    * @param {integer} stackIndex - Optional: How far down the stack to peek,
    *                               where zero is the top of the stack (default).
    *                               If out of range, `undefined` is returned.
-   * @return {NavStackItemType} - Reference to the palette at the top of the
+   * @return {JsonPaletteType} - Reference to the palette at the top of the
    *                              stack or at the given index; `undefined` if
    *                              the given stack index is invalid -- negative
    *                              or greater than the size of the stack.
    */
-  peek (stackIndex:number = 0): NavStackItemType | undefined {
+  peek (stackIndex:number = 0): JsonPaletteType | undefined {
     // Flip the index value since Array.push() puts the item at the end
     // of the array.
     let palette = undefined;
@@ -99,30 +103,30 @@ export class NavigationStack {
 
   /**
    * Return the stack item at the bottom of the stack without changing the stack.
-   * @return {NavStackItemType} - Reference to the palette at the bottom of the
+   * @return {JsonPaletteType} - Reference to the palette at the bottom of the
    *                              stack, or `undefined` if the stack is empty.
    */
-  peekLast (): NavStackItemType | undefined {
+  peekLast (): JsonPaletteType | undefined {
     return this.navigateBackStack[0];
   }
 
   /**
    * Pop/return the most recently pushed palette and set the currently displayed
    * palette to the given one.
-   * @param {NavStackItemType} - The palette that is currently displayed, or
+   * @param {JsonPaletteType} - The palette that is currently displayed, or
    *                             is about to be displayed.
-   * @return {NavStackItemType} - The most recently visited palette.
+   * @return {JsonPaletteType} - The most recently visited palette.
    */
-  popAndSetCurrent (currentPalette: NavStackItemType): NavStackItemType | undefined {
+  popAndSetCurrent (currentPalette: JsonPaletteType): JsonPaletteType | undefined {
     this.currentPalette = currentPalette;
     return this.pop();
   }
 
   /**
    * Empty the navigation stack and reset the current palette displayed.
-   * @param {NavStackItemType | null} - The palette that is currently displayed.
+   * @param {JsonPaletteType | null} - The palette that is currently displayed.
    */
-  flushReset (currentPalette: NavStackItemType | null): void {
+  flushReset (currentPalette: JsonPaletteType | null): void {
     this.currentPalette = currentPalette;
     this.navigateBackStack.length = 0;
     this.syncDepth();
@@ -130,17 +134,25 @@ export class NavigationStack {
 
   /**
    * Accessor for setting the currently displayed palette.
-   * @param: {NavStackItemType | null} - the intended current palette.
+   * @param: {JsonPaletteType | null} - the intended current palette.
    */
-  set currentPalette (palette: NavStackItemType | null) {
-    this.currPalette = palette;
+  set currentPalette (palette: JsonPaletteType | null) {
+    this.currPalette.value = palette;
   }
 
   /**
    * Accessor for getting the currently displayed palette.
-   * @return: {NavStackItemType} - The current palette.
+   * @return: {JsonPaletteType} - The current palette.
    */
-  get currentPalette(): NavStackItemType | null {
-    return this.currPalette;
+  get currentPalette(): JsonPaletteType | null {
+    return this.currPalette.value;
+  }
+
+  /**
+   * Accessor for the number of palettes on the stack.
+   * @return: {number} - The stack depth; zero when the root palette is displayed.
+   */
+  get depth (): number {
+    return this.depthSignal.value;
   }
 }

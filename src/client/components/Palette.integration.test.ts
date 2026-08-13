@@ -17,6 +17,7 @@ import { html } from "htm/preact";
 import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { Palette } from "./Palette";
+import { CurrentPalette } from "./CurrentPalette";
 import { goBackImpl } from "../cells/CommandGoBackCell";
 import * as IndicatorLabels from "../utils/IndicatorLabelsUtils";
 
@@ -282,7 +283,7 @@ describe("Palette integration test", () => {
     // insure that the entire palette is in the DOM.
     render(html`<${Palette} json=${testPalette}/>`);
     const navStack = adaptivePaletteGlobals.navigationStack;
-    navStack.currentPalette = { palette: testPalette, htmlElement: document.body };
+    navStack.currentPalette = testPalette;
 
     const firstCell = await screen.findByText("First Cell");
     expect(firstCell).toBeInTheDocument();
@@ -324,8 +325,10 @@ describe("Palette integration test", () => {
   });
 
   test("Navigation to other layers, and going back", async() => {
-    render(html`<${Palette} json=${testPalette}/>`);
+    // The navigation cells set the current palette; `CurrentPalette` is what draws it.
     const navStack = adaptivePaletteGlobals.navigationStack;
+    navStack.currentPalette = testPalette;
+    render(html`<${CurrentPalette}/>`);
     const firstCell = await screen.findByText("First Cell");
 
     // Trigger forward navigation.
@@ -338,7 +341,7 @@ describe("Palette integration test", () => {
     }
 
     fireEvent.click(goForwardButton);
-    let goBackButton = (await waitFor(() => screen.findByText("Back Up"))).parentElement;
+    const goBackButton = (await waitFor(() => screen.findByText("Back Up"))).parentElement;
     if (!goBackButton) {
       throw new Error("Go Back button not found after forward navigation");
     }
@@ -347,12 +350,12 @@ describe("Palette integration test", () => {
     if (!currentPalette) {
       throw new Error("Current palette on navStack is null after forward navigation");
     }
-    expect(currentPalette.palette).toBe(testLayerOnePalette);
+    expect(currentPalette).toBe(testLayerOnePalette);
     const peekedPalette = navStack.peek();
     if (!peekedPalette) {
       throw new Error("Peeked palette on navStack is null after forward navigation");
     }
-    expect(peekedPalette.palette).toBe(testPalette);
+    expect(peekedPalette).toBe(testPalette);
 
     // Trigger go-back navigation by clicking the `goBackButon`
     fireEvent.click(goBackButton);
@@ -361,7 +364,7 @@ describe("Palette integration test", () => {
     if (!currentPaletteAfterGoBack) {
       throw new Error("Current palette on navStack is null after go-back navigation");
     }
-    expect(currentPaletteAfterGoBack.palette).toBe(testPalette);
+    expect(currentPaletteAfterGoBack).toBe(testPalette);
     expect(navStack.isEmpty()).toBe(true);
 
     // Go forward again, then trigger go-back navigation by calling the go-back
@@ -378,50 +381,21 @@ describe("Palette integration test", () => {
     if (!currentPaletteAfterSecondGoForward) {
       throw new Error("Current palette on navStack is null after second forward navigation");
     }
-    expect(currentPaletteAfterSecondGoForward.palette).toBe(testLayerOnePalette);
+    expect(currentPaletteAfterSecondGoForward).toBe(testLayerOnePalette);
     const peekedPaletteAfterSecondGoForward = navStack.peek();
     if (!peekedPaletteAfterSecondGoForward) {
       throw new Error("Peeked palette on navStack is null after second forward navigation");
     }
-    expect(peekedPaletteAfterSecondGoForward.palette).toBe(testPalette);
+    expect(peekedPaletteAfterSecondGoForward).toBe(testPalette);
     await goBackImpl();
     await waitFor(() => expect(firstCell).toBeInTheDocument());
     const currentPaletteAfterSecondGoBack = navStack.currentPalette;
     if (!currentPaletteAfterSecondGoBack) {
       throw new Error("Current palette on navStack is null after go-back navigation");
     }
-    expect(currentPaletteAfterSecondGoBack.palette).toBe(testPalette);
+    expect(currentPaletteAfterSecondGoBack).toBe(testPalette);
     expect(navStack.isEmpty()).toBe(true);
 
-    // Go forward once again, then trigger go-back navigation by calling the
-    // go-back function, this time passing a container element id.
-    goForwardButton = (await screen.findByText("Go To")).parentElement;
-    if (!goForwardButton) {
-      throw new Error("Go Forward button not found on third forward navigation");
-    }
-    expect(goForwardButton).toBeInTheDocument();
-    fireEvent.click(goForwardButton);
-    goBackButton = (await waitFor(() => screen.findByText("Back Up"))).parentElement;
-    if (!goBackButton) {
-      throw new Error("Go Back button not found on third forward navigation");
-    }
-    const currentPaletteAfterThirdGoForward = navStack.currentPalette;
-    if (!currentPaletteAfterThirdGoForward) {
-      throw new Error("Current palette on navStack is null after third forward navigation");
-    }
-    expect(currentPaletteAfterThirdGoForward.palette).toBe(testLayerOnePalette);
-    const peekedPaletteAfterThirdGoForward = navStack.peek();
-    if (!peekedPaletteAfterThirdGoForward) {
-      throw new Error("Peeked palette on navStack is null after third forward navigation");
-    }
-    expect(peekedPaletteAfterThirdGoForward.palette).toBe(testPalette);
-    await goBackImpl(goBackButton.getAttribute("aria-controls") ?? undefined);
-    const currentPaletteAfterThirdGoBack = navStack.currentPalette;
-    if (!currentPaletteAfterThirdGoBack) {
-      throw new Error("Current palette on navStack is null after third go-back navigation");
-    }
-    expect(currentPaletteAfterThirdGoBack.palette).toBe(testPalette);
-    expect(navStack.isEmpty()).toBe(true);
   });
 
   test("Coordination among adding, replacing, and removing indicators", async() => {

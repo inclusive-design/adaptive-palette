@@ -10,11 +10,10 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render, VNode } from "preact";
+import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolCellType } from "../index.d";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
-import { Palette } from "../components/Palette";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { announceIfEnabled } from "../utils/SpeechUtils";
 import "./ActionBranchToPaletteCell.scss";
@@ -26,7 +25,7 @@ type ActionBranchToPalettePropsType = {
 
 /*
  * Event handler for an ActionBranchToPaletteCell button/cell that, when clicked,
- * finds and renders the palette referenced by this cell.
+ * makes the palette referenced by this cell the current one.
  */
 const navigateToPalette = async (event: Event): Promise<void> => {
   const { paletteStore, navigationStack } = adaptivePaletteGlobals;
@@ -34,9 +33,8 @@ const navigateToPalette = async (event: Event): Promise<void> => {
   announceIfEnabled(button.innerText);
 
   const buttonParent = button.parentElement;
-  const displayElement = buttonParent?.parentElement as HTMLElement | undefined;
-  if (!buttonParent || !displayElement) {
-    console.error(`navigateToPalette(): Missing parent or display element for button ${button.id}`);
+  if (!buttonParent) {
+    console.error(`navigateToPalette(): Missing parent element for button ${button.id}`);
     return;
   }
 
@@ -59,10 +57,9 @@ const navigateToPalette = async (event: Event): Promise<void> => {
     return;
   }
 
-  // Update UI and State
-  navigationStack.push({ palette: goBackPalette, htmlElement: displayElement });
-  render(html`<${Palette} json=${paletteDefinition}/>`, displayElement);
-  navigationStack.currentPalette = { palette: paletteDefinition, htmlElement: displayElement };
+  // Update state; the component watching the navigation stack redraws.
+  navigationStack.push(goBackPalette);
+  navigationStack.currentPalette = paletteDefinition;
 };
 
 export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType): VNode {

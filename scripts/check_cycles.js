@@ -1,17 +1,13 @@
 /*
  * Fail the build when an import cycle appears in `src/client`.
  *
- * Cycles listed in ALLOWED are known and tolerated; every other cycle is an error.
+ * No cycle is tolerated.  A cycle that works today because a bundler or a framework defers a
+ * lookup is still a cycle, and the next one may not be so lucky.
  */
 import fs from "node:fs";
 import path from "node:path";
 
 const SRC = "src/client";
-
-// Known, tolerated cycles.  `Palette` and the cell components it renders refer to each other
-// through `CellTypeRegistry`; that works because Preact resolves components lazily at render.
-// Removing this entry is tracked as separate work.
-const ALLOWED = [/CellTypeRegistry/];
 
 // Every `.ts`/`.js` file under `src/client`, at any depth.  Type declarations are not modules.
 function sourceFiles (dir) {
@@ -76,12 +72,11 @@ function findCycles (graph) {
 
 const graph = buildGraph();
 const cycles = findCycles(graph);
-const offending = cycles.filter((cycle) => !ALLOWED.some((allowed) => allowed.test(cycle)));
 
-if (offending.length > 0) {
-  console.error(`Found ${offending.length} disallowed import cycle(s) in ${SRC}:`);
-  for (const cycle of offending) { console.error(`  ${cycle}`); }
+if (cycles.length > 0) {
+  console.error(`Found ${cycles.length} import cycle(s) in ${SRC}:`);
+  for (const cycle of cycles) { console.error(`  ${cycle}`); }
   process.exit(1);
 }
 // The module count makes a vacuous pass visible: a checker that graphs nothing finds nothing.
-console.log(`No disallowed import cycles in ${SRC}. (${graph.size} modules, ${cycles.length - offending.length} allowed)`);
+console.log(`No import cycles in ${SRC}. (${graph.size} modules)`);
