@@ -57,13 +57,13 @@ indicator and automatically reapplies them to the newly resolved label.
 
 | File | Role |
 | :--- | :--- |
-| `src/client/IndicatorLabelsUtils.ts` | Client module: loads the table, metadata, and implements the resolution logic. |
+| `src/client/utils/IndicatorLabelsUtils.ts` | Client module: loads the table, metadata, and implements the resolution logic. |
 | `public/data/new_labels_with_indicator.json` | Pre-generated lookup table (`{symbolId}_{indicatorId} -> label`). |
 | `public/data/indicators.json` | Indicator metadata (id, group, name, purpose). |
 | `public/data/bliss_symbol_explanations.json` | Bliss vocabulary (gloss, POS, explanation) used to build model prompts. |
 | `public/config.json` | Runtime config (enables/disables Ollama fallback, selects model). |
-| `src/client/ActionIndicatorCell.ts` | Applies an indicator and triggers label resolution. |
-| `src/client/ActionRemoveIndicatorCell.ts` | Removes an indicator and restores `baseLabel`. |
+| `src/client/cells/ActionIndicatorCell.ts` | Applies an indicator and triggers label resolution. |
+| `src/client/cells/ActionRemoveIndicatorCell.ts` | Removes an indicator and restores `baseLabel`. |
 
 ### Runtime Configuration (`public/config.json`)
 

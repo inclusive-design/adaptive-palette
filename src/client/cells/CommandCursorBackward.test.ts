@@ -1,0 +1,73 @@
+/*
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
+ *
+ * Licensed under the New BSD license. You may not use this file except in
+ * compliance with this License.
+ *
+ * You may obtain a copy of the License at
+ * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
+ */
+
+import { render, screen } from "@testing-library/preact";
+import { html } from "htm/preact";
+
+import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
+import { CommandCursorBackward } from "./CommandCursorBackward";
+
+describe("CommandCursorBackward render tests", (): void => {
+
+  const TEST_CELL_ID = "command-cursor-backwards";
+  const testCell = {
+    options: {
+      "label": "Backward",
+      "composition": [ 145, ";", 907 ],   // IDsfor bciAvIds 12613, 24670
+      "rowStart": 2,
+      "rowSpan": 1,
+      "columnStart": 11,
+      "columnSpan": 1,
+      "ariaControls": "content-encoding-area"
+    }
+  };
+
+  beforeAll(async () => {
+    await initAdaptivePaletteGlobals();
+  });
+
+  test("CommandCursorBackward rendering", async (): Promise<void> => {
+
+    render(html`
+      <${CommandCursorBackward}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />`
+    );
+
+    // Check the rendered cell
+    const button = await screen.findByRole("button", {name: testCell.options.label});
+
+    // Check that the CommandCursorBackward button is rendered and has the
+    // correct attributes and text.
+    expect(button).toBeVisible();
+    expect(button).toBeValid();
+    expect(button.id).toBe(TEST_CELL_ID);
+    expect(button.getAttribute("class")).toBe("btn-command");
+    expect(button.textContent).toBe(testCell.options.label);
+
+    // Check the grid cell styles.
+    expect(button.style.getPropertyValue("grid-column")).toBe(
+      `${testCell.options.columnStart} / span ${testCell.options.columnSpan}`
+    );
+    expect(button.style.getPropertyValue("grid-row")).toBe(
+      `${testCell.options.rowStart} / span ${testCell.options.rowSpan}`
+    );
+
+    // Check aria-controls
+    expect(button.getAttribute("aria-controls")).toBe(testCell.options.ariaControls);
+
+    // Check disabled state (should be enabled)
+    expect(button.getAttribute("disabled")).toBe(null);
+  });
+
+});

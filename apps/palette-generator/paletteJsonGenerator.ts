@@ -10,7 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 import { v4 as uuidv4 } from "uuid";
-import { findSymbolByBciAvId } from "../../src/client/SvgUtils";
+import { findSymbolByBciAvId } from "../../src/client/utils/SvgUtils";
 import { SymbolCompositionType, BlissSymbolEntry, JsonPaletteType } from "../../src/client/index.d";
 
 const BLANK_CELL = "BLANK";

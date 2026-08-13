@@ -11,22 +11,25 @@
  */
 import { render } from "preact";
 import { html } from "htm/preact";
-import { initAdaptivePaletteGlobals, adaptivePaletteGlobals, navigationDepth, NO_MODELS_MESSAGE } from "./GlobalData";
-import { loadPaletteFromJsonFile } from "./GlobalUtils";
-import { announceIfEnabled, speakUnavailable } from "./SpeechUtils";
-import { goBackImpl } from "./CommandGoBackCell";
-import { INPUT_AREA_ID } from "./ContentEncoding";
-import { NOT_CONFIGURED_MESSAGE } from "./TelegraphicTranslationUtils";
+import { adaptivePaletteGlobals } from "./state/GlobalData";
+import { initAdaptivePaletteGlobals } from "./core/InitGlobals";
+import { NO_MODELS_MESSAGE } from "./core/OllamaApi";
+import { loadPaletteFromJsonFile } from "./core/PaletteStore";
+import { announceIfEnabled, speakUnavailable } from "./utils/SpeechUtils";
+import { goBackImpl } from "./cells/CommandGoBackCell";
+import { INPUT_AREA_ID } from "./cells/ContentEncoding";
+import { NOT_CONFIGURED_MESSAGE } from "./features/telegraphic-translation/TelegraphicTranslationUtils";
 import "./index.scss";
 
 // Initialize any globals used elsewhere in the code.
 await initAdaptivePaletteGlobals("mainPaletteDisplayArea");
 
-import { PaletteStore } from "./PaletteStore";
-import { Palette } from "./Palette";
-import { SentenceChoices } from "./SentenceChoices";
-import { PredictedWords } from "./PredictedWords";
-import { SymbolEntryToolbar } from "./SymbolEntryToolbar";
+import { PaletteStore } from "./core/PaletteStore";
+import { Palette } from "./components/Palette";
+import { CurrentPalette } from "./components/CurrentPalette";
+import { SentenceChoices } from "./features/telegraphic-translation/SentenceChoices";
+import { PredictedWords } from "./features/word-prediction/PredictedWords";
+import { SymbolEntryToolbar } from "./components/SymbolEntryToolbar";
 
 const paletteFileMap = await loadPaletteFromJsonFile("/palettes/palette_file_map.json");
 const firstLayer = await loadPaletteFromJsonFile("/palettes/bliss_standard_chart.json");
@@ -43,10 +46,12 @@ adaptivePaletteGlobals.paletteStore.addPalette(firstLayer);
 adaptivePaletteGlobals.paletteStore.addPalette(inputArea);
 adaptivePaletteGlobals.paletteStore.addPalette(commandBar);
 
-adaptivePaletteGlobals.navigationStack.currentPalette = { palette: firstLayer, htmlElement: getRequiredElement("mainPaletteDisplayArea") };
+// The input area and command bar are fixed mounts.  The main display area is mounted
+// once with the component that draws whatever palette navigation has made current.
+adaptivePaletteGlobals.navigationStack.currentPalette = firstLayer;
 render(html`<${Palette} json=${inputArea} />`, getRequiredElement("input_palette"));
 render(html`<${Palette} json=${commandBar} />`, getRequiredElement("commandBar"));
-render(html`<${Palette} json=${firstLayer} />`, getRequiredElement("mainPaletteDisplayArea"));
+render(html`<${CurrentPalette} />`, getRequiredElement("mainPaletteDisplayArea"));
 
 // Sentence translation: the trigger button lives in the input area palette and hides
 // itself when unavailable, so only the status line needs wiring here.
@@ -80,7 +85,7 @@ window.addEventListener("keydown", (event) => {
       return;
     }
     // Depth zero means there is nowhere to go back to.
-    if (navigationDepth.value === 0) {
+    if (adaptivePaletteGlobals.navigationStack.depth === 0) {
       speakUnavailable("Back");
       return;
     }

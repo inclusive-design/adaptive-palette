@@ -9,6 +9,7 @@
     "lint": "run-p lint:*",
     "lint:js": "eslint .",
     "lint:markdown": "markdownlint-cli2",
+    "lint:cycles": "node scripts/check_cycles.js",
     "test": "vitest run"
   },
   "dependencies": {
