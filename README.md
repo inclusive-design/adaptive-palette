@@ -86,12 +86,9 @@ For a complete list CLI flags that can be passed to the tests see Vitest's
 [Command Line Interface](https://vitest.dev/guide/cli.html) docs.
 
 _**NOTE:** The browser tests make use of Playwright to test real browsers. If you haven't already, you
-may need to run `npx playwright install` to install browsers. (see: [Browsers](https://playwright.dev/docs/browsers))_
+may need to run `npx playwright install` to install browsers._
 
-_**NOTE:** Browser tests are run in headless mode; however audio may still be played._
-
-_**NOTE:** Tests are run with watch mode disabled. If you prefer to enable watch mode you can use `-- --watch` flag.
-(e.g. `npm test -- --watch`)_
+See [Testing](./docs/devDoc/Testing.md) for the test setup, watch mode and running a single file.
 
 ## Demonstrations
 
@@ -150,8 +147,9 @@ input area, and modal dialogs.
 
 ### Developer Documentation
 
-- [Developer Documentation](./docs/DeveloperDoc.md): technical guide for developers building the
-  adaptive palette with Preact.
+- [Developer Documentation](./docs/devDoc/README.md): technical guide for developers building the
+  adaptive palette. Covers the source structure, application state, runtime configuration, palettes,
+  cell types and testing.
 
 ## Attribution
 

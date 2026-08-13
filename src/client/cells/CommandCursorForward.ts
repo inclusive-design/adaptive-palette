@@ -25,9 +25,6 @@ type CommandCursorForwardProps = {
   }
 }
 
-// BCI-AV-ID "backward": 12613: "move backward": 12613;24670
-// BCI-AV-ID "forward": 14390; "move forward": 14390;24670
-
 export function CommandCursorForward (props: CommandCursorForwardProps): VNode {
   const { id, options } = props;
   const { label, composition, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
