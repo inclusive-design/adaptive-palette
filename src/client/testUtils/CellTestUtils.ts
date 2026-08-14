@@ -54,6 +54,7 @@ export async function expectCellRendered (
   expect(button).toBeVisible();
   expect(button.id).toBe(id);
   expect(button.getAttribute("class")).toBe(className);
+  expect(button.textContent).toBe(options.label);
   expect(button.style.getPropertyValue("grid-column"))
     .toBe(`${options.columnStart} / span ${options.columnSpan}`);
   expect(button.style.getPropertyValue("grid-row"))

@@ -20,7 +20,8 @@ import { setTestConfig } from "../../testUtils/TestConfig";
 import { sentenceCompletionsSignal } from "./TelegraphicTranslationState";
 import { MESSAGE_LOG_KEY } from "../../core/MessageLog";
 import { queryChat } from "../../core/OllamaApi";
-import { CommandMakeSentence } from "./CommandMakeSentence";import { mockedSpeakUnavailable } from "../../testUtils/SpeechUtilsMock";
+import { CommandMakeSentence } from "./CommandMakeSentence";
+import { mockedSpeakUnavailable } from "../../testUtils/SpeechUtilsMock";
 
 const make_setence_label = "Make a sentence";
 

@@ -20,7 +20,8 @@ import {
   READY_DISCARD_PROMPT, WORKING_DISCARD_PROMPT
 } from "./TelegraphicTranslationState";
 import { MESSAGE_LOG_KEY, readMessageLog } from "../../core/MessageLog";
-import { queryChat } from "../../core/OllamaApi";import { mockedSpeak } from "../../testUtils/SpeechUtilsMock";
+import { queryChat } from "../../core/OllamaApi";
+import { mockedSpeak } from "../../testUtils/SpeechUtilsMock";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../core/OllamaApi")>();

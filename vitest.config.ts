@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [preact()],
   test: {
     globals: true,
+    clearMocks: true,
     projects: [
       {
         extends: true,

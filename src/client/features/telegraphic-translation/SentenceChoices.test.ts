@@ -22,7 +22,8 @@ import { MESSAGE_LOG_KEY, readMessageLog } from "../../core/MessageLog";
 import {
   SentenceChoices, WORKING_MESSAGE, CANNOT_COMPLETE_MESSAGE, TYPE_YOUR_OWN_HINT,
   SPEAK_BUTTON_LABEL, DONE_BUTTON_LABEL
-} from "./SentenceChoices";import { mockedSpeak } from "../../testUtils/SpeechUtilsMock";
+} from "./SentenceChoices";
+import { mockedSpeak } from "../../testUtils/SpeechUtilsMock";
 
 vi.mock("../../utils/SpeechUtils");
 
