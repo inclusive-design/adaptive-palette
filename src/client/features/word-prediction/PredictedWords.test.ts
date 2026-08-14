@@ -32,7 +32,7 @@ vi.mock("../../core/OllamaApi", async (importOriginal) => {
   return { ...actual, queryChat: vi.fn(() => new Promise(() => undefined)) };
 });
 
-describe("PredictedWords component", (): void => {
+describe("PredictedWords", (): void => {
 
   const message = (...labels: string[]): SymbolEncodingType[] =>
     labels.map((label) => ({ label, composition: 1840, modifierInfo: [] }));

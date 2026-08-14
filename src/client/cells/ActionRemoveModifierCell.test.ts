@@ -9,23 +9,25 @@
  * You may obtain a copy of the License at
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
+import { vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/preact";
 import { html } from "htm/preact";
 
 import { changeEncodingContents } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
+import { expectCellRendered } from "../testUtils/CellAssertions";
 import { ActionRemoveModifierCell } from "./ActionRemoveModifierCell";
 
-describe("ActionRemoveModifierCell render tests", (): void => {
+describe("ActionRemoveModifierCell", (): void => {
 
   const TEST_CELL_ID = "uuid-remove-modifier-cell";
   const testCell = {
     options: {
       "label": "remove a modifier",
-      "rowStart": "3",
-      "rowSpan": "2",
-      "columnStart": "2",
-      "columnSpan": "1",
+      "rowStart": 3,
+      "rowSpan": 2,
+      "columnStart": 2,
+      "columnSpan": 1,
       "composition": 2505
     }
   };
@@ -87,7 +89,7 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     await initAdaptivePaletteGlobals();
   });
 
-  test("ActionRemoveModifierCell rendering, disabled", async (): Promise<void> => {
+  test("is unavailable while the input area is empty", async (): Promise<void> => {
 
     render(html`
       <${ActionRemoveModifierCell}
@@ -96,27 +98,14 @@ describe("ActionRemoveModifierCell render tests", (): void => {
       />`
     );
 
-    // Check the rendered cell
-    const removeModifierButton = await screen.findByRole("button", {name: testCell.options.label});
-
-    // Check that the ActionRemoveModifierCell/button is rendered and has the correct
-    // attributes and text.
-    expect(removeModifierButton).toBeVisible();
-    expect(removeModifierButton).toBeValid();
-    expect(removeModifierButton.id).toBe(TEST_CELL_ID);
-    expect(removeModifierButton.getAttribute("class")).toBe("btn-command");
-    expect(removeModifierButton.textContent).toBe(testCell.options.label);
-
-    // Check the grid cell styles.
-    expect(removeModifierButton.style.getPropertyValue("grid-column")).toBe("2 / span 1");
-    expect(removeModifierButton.style.getPropertyValue("grid-row")).toBe("3 / span 2");
+    const removeModifierButton = await expectCellRendered(TEST_CELL_ID, testCell.options, "btn-command");
 
     // Check disabled state.  `changeEncodingContents` is initialized
     // with an empty array, hence there should be an `aria-disabled` attribute.
     expect(removeModifierButton).toHaveAttribute("aria-disabled", "true");
   });
 
-  test("ActionRemoveModifierCell rendering, still disabled", async (): Promise<void> => {
+  test("stays unavailable when the symbol has no modifier", async (): Promise<void> => {
 
     // Put a symbol into the `changeEncodingContents` that has no
     // modifier.  The rendered `ActionRemoveModifierCell` should remain
@@ -138,7 +127,7 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     expect(removeModifierButton).toHaveAttribute("aria-disabled", "true");
   });
 
-  test("ActionRemoveModifierCell rendering, enabled (prepended modifier)", async (): Promise<void> => {
+  test("becomes available once the symbol has a prepended modifier", async (): Promise<void> => {
 
     // Add a symbol *with* a prepended modifier and render the ActionRemoveModifierCell.
     const newContents = changeEncodingContents.value.payloads;
@@ -162,7 +151,7 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     expect(removeModifierButton).toHaveAttribute("aria-disabled", "false");
   });
 
-  test("ActionRemoveModifierCell rendering, enabled then disabled after removing prepended modifier", async (): Promise<void> => {
+  test("goes back to unavailable once the prepended modifier is removed", async (): Promise<void> => {
 
     // Add two symbols, the last one with a modifier and render the
     // ActionRemoveModifierCell.
@@ -193,7 +182,7 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     expect(lastSymbol.composition).toStrictEqual(compositionAfterPreModifierRemoval);
   });
 
-  test("ActionRemoveModifierCell rendering, enabled then disabled after removing prepended and appended modifiers", async (): Promise<void> => {
+  test("goes back to unavailable once both modifiers are removed", async (): Promise<void> => {
 
     // Add two symbols, the last one with a modifier and render the
     // ActionRemoveModifierCell.
@@ -231,7 +220,7 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     expect(lastSymbol.composition).toStrictEqual(compositionAfterBothModifiersRemoved);
   });
 
-  test("ActionRemoveModifierCell keeps baseLabel/baseModifierCount in sync when removing a modifier that predates an applied indicator", async (): Promise<void> => {
+  test("keeps baseLabel and baseModifierCount in sync when removing a modifier that predates an indicator", async (): Promise<void> => {
     changeEncodingContents.value = {
       payloads: [blissWordModifierThenIndicator],
       caretPosition: 0
@@ -253,7 +242,7 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     expect(updated.baseModifierCount).toBe(0);
   });
 
-  test("ActionRemoveModifierCell leaves baseLabel/baseModifierCount untouched when removing a modifier that postdates an applied indicator", async (): Promise<void> => {
+  test("leaves baseLabel and baseModifierCount untouched when removing a modifier that postdates an indicator", async (): Promise<void> => {
     changeEncodingContents.value = {
       payloads: [blissWordIndicatorThenModifier],
       caretPosition: 0
@@ -273,5 +262,53 @@ describe("ActionRemoveModifierCell render tests", (): void => {
     expect(updated.label).toBe("walked");
     expect(updated.baseLabel).toBe("walk");
     expect(updated.baseModifierCount).toBe(0);
+  });
+
+  test("clicking while unavailable does nothing", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [{ label: "building", composition: 392 }],
+      caretPosition: 0
+    };
+    const before = JSON.stringify(changeEncodingContents.value);
+
+    render(html`
+      <${ActionRemoveModifierCell}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />`
+    );
+
+    const button = await screen.findByRole("button", { name: testCell.options.label });
+    expect(button).toHaveAttribute("aria-disabled", "true");
+    fireEvent.click(button);
+
+    expect(JSON.stringify(changeEncodingContents.value)).toBe(before);
+  });
+
+  test("clicking while unavailable is announced", async (): Promise<void> => {
+    const spoken: string[] = [];
+    vi.stubGlobal("speechSynthesis", {
+      speaking: false,
+      pending: false,
+      cancel: () => {},
+      speak: (utterance: SpeechSynthesisUtterance) => spoken.push(utterance.text)
+    });
+    vi.stubGlobal("SpeechSynthesisUtterance", class { constructor (public text: string) {} });
+
+    changeEncodingContents.value = {
+      payloads: [{ label: "building", composition: 392 }],
+      caretPosition: 0
+    };
+
+    render(html`
+      <${ActionRemoveModifierCell}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />`
+    );
+    fireEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
+
+    expect(spoken).toEqual([`${testCell.options.label} unavailable`]);
+    vi.unstubAllGlobals();
   });
 });

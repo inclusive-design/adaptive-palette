@@ -10,13 +10,14 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render, screen } from "@testing-library/preact";
+import { render } from "@testing-library/preact";
 import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
+import { expectCellRendered } from "../testUtils/CellAssertions";
 import { CommandDelLastEncoding } from "./CommandDelLastEncoding";
 
-describe("CommandDelLastEncoding render tests", (): void => {
+describe("CommandDelLastEncoding", (): void => {
 
   const TEST_CELL_ID = "command-del-last-encoding";
   const testCell = {
@@ -35,7 +36,7 @@ describe("CommandDelLastEncoding render tests", (): void => {
     await initAdaptivePaletteGlobals();
   });
 
-  test("CommandDelLastEncoding rendering", async (): Promise<void> => {
+  test("renders at its grid position", async (): Promise<void> => {
 
     render(html`
       <${CommandDelLastEncoding}
@@ -44,20 +45,7 @@ describe("CommandDelLastEncoding render tests", (): void => {
       />`
     );
 
-    // Check the rendered cell
-    const button = await screen.findByRole("button", {name: testCell.options.label});
-
-    // Check that the CommandDelLastEncoding/button is rendered and has the correct
-    // attributes and text.
-    expect(button).toBeVisible();
-    expect(button).toBeValid();
-    expect(button.id).toBe(TEST_CELL_ID);
-    expect(button.getAttribute("class")).toBe("btn-command");
-    expect(button.textContent).toBe(testCell.options.label);
-
-    // Check the grid cell styles.
-    expect(button.style.getPropertyValue("grid-column")).toBe("13 / span 1");
-    expect(button.style.getPropertyValue("grid-row")).toBe("2 / span 1");
+    const button = await expectCellRendered(TEST_CELL_ID, testCell.options, "btn-command");
 
     // Check aria-controls
     expect(button.getAttribute("aria-controls")).toBe(testCell.options.ariaControls);

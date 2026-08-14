@@ -16,17 +16,18 @@ import { html } from "htm/preact";
 import { changeEncodingContents } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { ActionCodeCell } from "./ActionCodeCell";
+import { expectCellRendered } from "../testUtils/CellAssertions";
 
-describe("ActionCodeCell render tests", (): void => {
+describe("ActionCodeCell", (): void => {
 
   const TEST_CELL_ID = "uuid-of-some-kind";
   const testCell = {
     options: {
       "label": "Bliss Language",
-      "rowStart": "3",
-      "rowSpan": "2",
-      "columnStart": "2",
-      "columnSpan": "1",
+      "rowStart": 3,
+      "rowSpan": 2,
+      "columnStart": 2,
+      "columnSpan": 1,
       "composition": [ 106, "/", 12 ]   // VERB+EN (IDs for bciAvIds 12335, 8499)
     }
   };
@@ -35,7 +36,7 @@ describe("ActionCodeCell render tests", (): void => {
     await initAdaptivePaletteGlobals();
   });
 
-  test("Single ActionCodeCell rendering", async (): Promise<void> => {
+  test("renders at its grid position", async (): Promise<void> => {
 
     render(html`
       <${ActionCodeCell}
@@ -44,20 +45,7 @@ describe("ActionCodeCell render tests", (): void => {
       />`
     );
 
-    // Check the rendered cell
-    const button = await screen.findByRole("button", {name: testCell.options.label});
-
-    // Check that the ActionCodeCell/button is rendered and has the correct
-    // attributes and text.
-    expect(button).toBeVisible();
-    expect(button).toBeValid();
-    expect(button.id).toBe(TEST_CELL_ID);
-    expect(button.getAttribute("class")).toBe("ActionCodeCell");
-    expect(button.textContent).toBe(testCell.options.label);
-
-    // Check the grid cell styles.
-    expect(button.style.getPropertyValue("grid-column")).toBe("2 / span 1");
-    expect(button.style.getPropertyValue("grid-row")).toBe("3 / span 2");
+    const button = await expectCellRendered(TEST_CELL_ID, testCell.options, "ActionCodeCell");
 
     // Check disabled state (should be enabled)
     expect(button.getAttribute("disabled")).toBe(null);
@@ -67,7 +55,7 @@ describe("ActionCodeCell render tests", (): void => {
     expect(svgElement).not.toBe(null);
   });
 
-  test("Clicking an ActionCodeCell with a numeric composition sets userSelectedSymbolId", async (): Promise<void> => {
+  test("a numeric composition sets userSelectedSymbolId on click", async (): Promise<void> => {
     const numericTestCell = {
       options: {
         "label": "percent",
@@ -88,7 +76,7 @@ describe("ActionCodeCell render tests", (): void => {
     expect(changeEncodingContents.value.payloads[0].userSelectedSymbolId).toBe(2);
   });
 
-  test("Clicking an ActionCodeCell with an array composition leaves userSelectedSymbolId undefined", async (): Promise<void> => {
+  test("an array composition leaves userSelectedSymbolId undefined on click", async (): Promise<void> => {
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
 
     render(html`
@@ -103,7 +91,7 @@ describe("ActionCodeCell render tests", (): void => {
     expect(changeEncodingContents.value.payloads[0].userSelectedSymbolId).toBeUndefined();
   });
 
-  test("Clicking an ActionCodeCell with a single-number array composition sets userSelectedSymbolId", async (): Promise<void> => {
+  test("a single-number array composition sets userSelectedSymbolId on click", async (): Promise<void> => {
     const singleElementArrayTestCell = {
       options: {
         "label": "percent",

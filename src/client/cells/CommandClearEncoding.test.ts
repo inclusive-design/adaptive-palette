@@ -17,9 +17,10 @@ import { html } from "htm/preact";
 import { changeEncodingContents } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { sentenceCompletionsSignal } from "../features/telegraphic-translation/TelegraphicTranslationState";
+import { expectCellRendered } from "../testUtils/CellAssertions";
 import { CommandClearEncoding } from "./CommandClearEncoding";
 
-describe("CommandClearEncoding render tests", (): void => {
+describe("CommandClearEncoding", (): void => {
 
   const TEST_CELL_ID = "command-del-last-encoding";
   const testCell = {
@@ -38,7 +39,7 @@ describe("CommandClearEncoding render tests", (): void => {
     await initAdaptivePaletteGlobals();
   });
 
-  test("CommandClearEncoding rendering", async (): Promise<void> => {
+  test("renders at its grid position", async (): Promise<void> => {
 
     render(html`
       <${CommandClearEncoding}
@@ -47,20 +48,7 @@ describe("CommandClearEncoding render tests", (): void => {
       />`
     );
 
-    // Check the rendered cell
-    const button = await screen.findByRole("button", {name: testCell.options.label});
-
-    // Check that the CommandClearEncoding/button is rendered and has the correct
-    // attributes and text.
-    expect(button).toBeVisible();
-    expect(button).toBeValid();
-    expect(button.id).toBe(TEST_CELL_ID);
-    expect(button.getAttribute("class")).toBe("btn-command");
-    expect(button.textContent).toBe(testCell.options.label);
-
-    // Check the grid cell styles.
-    expect(button.style.getPropertyValue("grid-column")).toBe("14 / span 1");
-    expect(button.style.getPropertyValue("grid-row")).toBe("2 / span 1");
+    const button = await expectCellRendered(TEST_CELL_ID, testCell.options, "btn-command");
 
     // Check aria-controls
     expect(button.getAttribute("aria-controls")).toBe(testCell.options.ariaControls);

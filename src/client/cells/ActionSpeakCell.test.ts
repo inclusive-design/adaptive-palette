@@ -28,7 +28,7 @@ vi.mock("../utils/SpeechUtils", async (importOriginal) => {
 
 const mockedSpeak = vi.mocked(speak);
 
-describe("ActionSpeakCell component", (): void => {
+describe("ActionSpeakCell", (): void => {
 
   const CELL_OPTIONS = {
     label: "Speak",

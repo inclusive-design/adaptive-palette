@@ -16,7 +16,7 @@ import { html } from "htm/preact";
 import { changeEncodingContents } from "../state/GlobalData";
 import { MessagePreview, MESSAGE_PREVIEW_LABEL } from "./MessagePreview";
 
-describe("MessagePreview component", () => {
+describe("MessagePreview", () => {
 
   afterEach(() => {
     cleanup();

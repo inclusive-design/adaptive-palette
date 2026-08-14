@@ -12,7 +12,7 @@
 
 import { applyModifiersToLabel, normalizeComposition } from "./SymbolEncodingUtils";
 
-describe("Test applyModifiersToLabel()", (): void => {
+describe("applyModifiersToLabel()", (): void => {
 
   test("No modifierInfo returns the base label unchanged", (): void => {
     expect(applyModifiersToLabel("walk")).toBe("walk");
@@ -40,7 +40,7 @@ describe("Test applyModifiersToLabel()", (): void => {
 
 });
 
-describe("Test normalizeComposition()", (): void => {
+describe("normalizeComposition()", (): void => {
 
   test("Single-number array collapses to bare number", (): void => {
     expect(normalizeComposition([1433])).toBe(1433);

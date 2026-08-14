@@ -22,7 +22,7 @@ import { ModalDialog, DISMISS_LABEL } from "./ModalDialog";
 
 const TITLE = "Add symbol to message";
 
-describe("ModalDialog component", () => {
+describe("ModalDialog", () => {
 
   afterEach(() => {
     cleanup();

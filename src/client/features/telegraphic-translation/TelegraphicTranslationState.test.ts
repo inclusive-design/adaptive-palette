@@ -131,7 +131,7 @@ describe("telegraphicTranslationState", (): void => {
     expect(sentenceCompletionsSignal.value).toEqual({ status: "idle" });
   });
 
-  test("a whitespace-only message is treated as empty", async (): Promise<void> => {
+  test("a whitespace-only message does not query", async (): Promise<void> => {
     changeEncodingContents.value = {
       payloads: [{ label: " ", composition: [124], modifierInfo: [] }],
       caretPosition: 1

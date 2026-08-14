@@ -16,7 +16,7 @@ import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { Palette } from "./Palette";
 
-describe("Palette component", (): void => {
+describe("Palette", (): void => {
 
   // The test palette defines three cells, but they collectively define a
   // palette of four rows and six columns.

@@ -27,7 +27,7 @@ const MATCHES: MatchType[] = [
   { id: 3177, bciAvId: 21874, label: "dog sled", composition: [598, "/", 124] }
 ];
 
-describe("GlossSearchResults component", () => {
+describe("GlossSearchResults", () => {
 
   afterEach(() => {
     cleanup();

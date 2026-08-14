@@ -14,7 +14,7 @@ import { vi } from "vitest";
 import { JsonPaletteType } from "../index.d";
 import { PaletteStore } from "./PaletteStore";
 
-describe("PaletteStore module", (): void => {
+describe("PaletteStore", (): void => {
 
   const dummyPalette1 = {
     "name": "dummyPalette1",

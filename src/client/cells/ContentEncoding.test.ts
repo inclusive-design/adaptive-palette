@@ -87,15 +87,15 @@ describe("The content encoding area covers the sentence button's column when it 
 
 describe("clamp()", (): void => {
 
-  test("Test clamp function where value is below min", (): void => {
+  test("returns min when the value is below it", (): void => {
     expect(clamp(-1, 0, 1)).toBe(0);
   });
 
-  test("Test clamp function where value is above max", (): void => {
+  test("returns max when the value is above it", (): void => {
     expect(clamp(2, 0, 1)).toBe(1);
   });
 
-  test("Test clamp function where value is in range", (): void => {
+  test("returns the value unchanged when it is in range", (): void => {
     expect(clamp(1, 0, 2)).toBe(1);
   });
 });

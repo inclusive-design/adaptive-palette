@@ -24,7 +24,7 @@ import {
 // `[124]`, so the success path is genuinely exercised.
 const VALID_BUILDER_STRING = "B124";
 
-describe("ActionSvgEntryField component", () => {
+describe("ActionSvgEntryField", () => {
 
   afterEach(() => {
     cleanup();
@@ -81,7 +81,7 @@ describe("ActionSvgEntryField component", () => {
   });
 
   // Staying open is only useful if successive adds accumulate.
-  test("a second add appends rather than replacing", async () => {
+  test("a second builder string appends rather than replacing", async () => {
     const user = userEvent.setup();
     render(html`<${ActionSvgEntryField} onRequestClose=${() => {}} />`);
 
@@ -96,7 +96,7 @@ describe("ActionSvgEntryField component", () => {
   });
 
   // Surrounding spaces would flow straight into the telegraphic message sent to the model.
-  test("a label is trimmed before it is inserted", async () => {
+  test("a typed label is trimmed before it is inserted", async () => {
     const user = userEvent.setup();
     render(html`<${ActionSvgEntryField} onRequestClose=${() => {}} />`);
 

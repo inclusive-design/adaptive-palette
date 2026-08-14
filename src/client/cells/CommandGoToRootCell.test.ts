@@ -17,9 +17,10 @@ import { html } from "htm/preact";
 
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
+import { expectCellRendered } from "../testUtils/CellAssertions";
 import { CommandGoToRootCell } from "./CommandGoToRootCell";
 
-describe("CommandGoToRootCell render tests", (): void => {
+describe("CommandGoToRootCell", (): void => {
 
   const TEST_CELL_ID = "uuid-home-cell";
   const homeCell = {
@@ -82,13 +83,7 @@ describe("CommandGoToRootCell render tests", (): void => {
       <${CommandGoToRootCell} id="${TEST_CELL_ID}" options=${homeCell.options} />
     `);
 
-    const button = await screen.findByRole("button", { name: homeCell.options.label });
-
-    expect(button).toBeVisible();
-    expect(button.id).toBe(TEST_CELL_ID);
-    expect(button.getAttribute("class")).toBe("btn-command");
-    expect(button.style.getPropertyValue("grid-column")).toBe("2 / span 1");
-    expect(button.style.getPropertyValue("grid-row")).toBe("1 / span 1");
+    const button = await expectCellRendered(TEST_CELL_ID, homeCell.options, "btn-command");
     expect(button).toHaveAttribute("aria-disabled", "true");
   });
 

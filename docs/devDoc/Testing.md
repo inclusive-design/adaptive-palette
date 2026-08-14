@@ -46,3 +46,25 @@ Tests use the real globals rather than a mocked singleton: a suite that touches
 whatever configuration or palette it needs. What does get mocked with `vi.mock` is the layer that
 would reach outside the browser, `core/OllamaApi.ts` above all. See [State.md](State.md) for what
 start-up puts in place.
+
+### Naming
+
+A `describe` names the unit under test and nothing else. For example, `ActionCodeCell`, `normalizeComposition()`.
+
+Nested `describe` blocks group behaviors, as `core/MessageLog.test.ts` does with `recording messages` and
+`recording translations`.
+
+A test name states one observable behavior, subject first:
+
+```ts
+test("renders at its grid position", ...)
+test("stays unavailable when the symbol has no modifier", ...)
+```
+
+No `should`, no `Test`/`Check` prefix, and no repeating the component name the `describe` already
+carries. Capitalize only when the subject is a proper name or a UI label — `Close asks the dialog to
+dismiss` and `Home is unavailable when the stack is empty` are correct as written.
+
+### Shared assertions
+
+`src/client/testUtils/CellAssertions.ts` holds shared utility functions for tests.

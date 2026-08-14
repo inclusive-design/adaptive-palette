@@ -43,7 +43,7 @@ const searchFor = async (user: ReturnType<typeof userEvent.setup>, term: string)
   return searchInput;
 };
 
-describe("ActionSearchGloss component", () => {
+describe("ActionSearchGloss", () => {
 
   afterEach(() => {
     cleanup();
@@ -181,7 +181,7 @@ describe("ActionSearchGloss component", () => {
   }, 20000);
 
   // Surrounding spaces would flow straight into the telegraphic message sent to the model.
-  test("a label is trimmed before it is inserted", async () => {
+  test("a searched label is trimmed before it is inserted", async () => {
     const user = userEvent.setup();
     render(html`<${ActionSearchGloss} onRequestClose=${() => {}} />`);
 
@@ -233,7 +233,7 @@ describe("ActionSearchGloss component", () => {
     expect(await screen.findByRole("status")).toHaveTextContent(/added to message/);
   }, 20000);
 
-  test("a second add appends rather than replacing", async () => {
+  test("a second search result appends rather than replacing", async () => {
     const user = userEvent.setup();
     render(html`<${ActionSearchGloss} onRequestClose=${() => {}} />`);
 

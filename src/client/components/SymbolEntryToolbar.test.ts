@@ -40,7 +40,7 @@ const withVisibility = (searchShown: boolean, svgShown: boolean): void => {
   };
 };
 
-describe("SymbolEntryToolbar component", () => {
+describe("SymbolEntryToolbar", () => {
 
   afterEach(() => {
     cleanup();

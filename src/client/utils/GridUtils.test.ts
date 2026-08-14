@@ -12,9 +12,9 @@
 
 import { generateGridStyle } from "./GridUtils";
 
-describe("GridUtils module", (): void => {
+describe("GridUtils", (): void => {
 
-  test("Test generateGridStyle()", (): void => {
+  test("builds only the grid properties it was given values for", (): void => {
     // All values provided
     expect(generateGridStyle(2, 1, 3, 2)).toBe("grid-column: 2 / span 1;grid-row: 3 / span 2;");
 

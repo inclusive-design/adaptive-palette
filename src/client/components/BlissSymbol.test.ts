@@ -16,7 +16,7 @@ import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { BlissSymbol, GRAPHIC_ROLE } from "./BlissSymbol";
 
-describe("BlissSymbol render tests", (): void => {
+describe("BlissSymbol", (): void => {
   const singleSymbol = {
     composition: 106,     // ID for bciAvId 12335 (VERB)
     label: "VERB"
@@ -56,7 +56,7 @@ describe("BlissSymbol render tests", (): void => {
     expect(parentChildren[0].nodeName).toBe("svg");
   });
 
-  test("BlissSymbol when the SVG is unknown", async (): Promise<void> => {
+  test("renders an empty svg for an unknown composition", async (): Promise<void> => {
     render(html`
       <${BlissSymbol}
         composition=${UNKNOWN_COMPOSITION}
@@ -100,7 +100,7 @@ describe("BlissSymbol render tests", (): void => {
     expect(parentChildren[0].nodeName).toBe("svg");
   });
 
-  test("BlissSymbol aria: when svg has no role)", async (): Promise<void> => {
+  test("hides the svg from assistive technology when it is presentational", async (): Promise<void> => {
     render(html`
       <${BlissSymbol}
         composition=${arraySymbol.composition}
@@ -119,7 +119,7 @@ describe("BlissSymbol render tests", (): void => {
     expect(svgElement.getAttribute("aria-labelledby")).toBe(null);
   });
 
-  test("BlissSymbol aria: when svg has a graphic role)", async (): Promise<void> => {
+  test("gives the svg a graphic role and label when it is not presentational", async (): Promise<void> => {
     render(html`
       <${BlissSymbol}
         composition=${arraySymbol.composition}

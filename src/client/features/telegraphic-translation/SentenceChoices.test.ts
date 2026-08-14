@@ -32,7 +32,7 @@ vi.mock("../../utils/SpeechUtils", async (importOriginal) => {
 
 const mockedSpeak = vi.mocked(speak);
 
-describe("SentenceChoices component", (): void => {
+describe("SentenceChoices", (): void => {
 
   const SENTENCES = ["I am hungry.", "I want food.", "Can I eat now?"];
 

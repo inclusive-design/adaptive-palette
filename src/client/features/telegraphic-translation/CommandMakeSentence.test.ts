@@ -39,7 +39,7 @@ vi.mock("../../utils/SpeechUtils", async (importOriginal) => {
 
 const mockedQueryChat = vi.mocked(queryChat);
 
-describe("CommandMakeSentence component", (): void => {
+describe("CommandMakeSentence", (): void => {
 
   const CELL_OPTIONS = {
     label: make_setence_label,
@@ -173,7 +173,7 @@ describe("CommandMakeSentence component", (): void => {
       .toHaveAttribute("aria-disabled", "false");
   });
 
-  test("a whitespace-only message is treated as empty", (): void => {
+  test("the button goes unavailable on a whitespace-only message", (): void => {
     changeEncodingContents.value = {
       payloads: [{ label: " ", composition: [124], modifierInfo: [] }],
       caretPosition: 1

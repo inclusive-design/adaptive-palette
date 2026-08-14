@@ -12,7 +12,7 @@
 
 import { renderTemplate, renderPromptLines } from "./PromptUtils";
 
-describe("Test renderTemplate()", (): void => {
+describe("renderTemplate()", (): void => {
 
   test("substitutes every known placeholder", (): void => {
     expect(renderTemplate("{{a}} and {{b}} and {{a}}", { a: "one", b: "two" }))
@@ -29,7 +29,7 @@ describe("Test renderTemplate()", (): void => {
 
 });
 
-describe("Test renderPromptLines()", (): void => {
+describe("renderPromptLines()", (): void => {
 
   const TEMPLATE = "Word: {{word}}\nPart of speech: {{pos}}\nMeaning: {{explanation}}\nEnd";
 

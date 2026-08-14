@@ -9,23 +9,25 @@
  * You may obtain a copy of the License at
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
+import { vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/preact";
 import { html } from "htm/preact";
 
 import { changeEncodingContents } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
+import { expectCellRendered } from "../testUtils/CellAssertions";
 import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
 
-describe("ActionRemoveIndicatorCell render tests", (): void => {
+describe("ActionRemoveIndicatorCell", (): void => {
 
   const TEST_CELL_ID = "uuid-remove-indicator-cell";
   const testCell = {
     options: {
       "label": "remove indicator",
-      "rowStart": "3",
-      "rowSpan": "2",
-      "columnStart": "2",
-      "columnSpan": "1",
+      "rowStart": 3,
+      "rowSpan": 2,
+      "columnStart": 2,
+      "columnSpan": 1,
       "composition": [ 2505, "//", 348, "/", 81,  "/", 86 ]
     }
   };
@@ -71,7 +73,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     await initAdaptivePaletteGlobals();
   });
 
-  test("ActionRemoveIndicatorCell rendering, disabled", async (): Promise<void> => {
+  test("is unavailable while the input area is empty", async (): Promise<void> => {
 
     render(html`
       <${ActionRemoveIndicatorCell}
@@ -80,27 +82,14 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
       />`
     );
 
-    // Check the rendered cell
-    const removeIndicatorButton = await screen.findByRole("button", {name: testCell.options.label});
-
-    // Check that the ActionRemoveIndicatorCell/button is rendered and has the correct
-    // attributes and text.
-    expect(removeIndicatorButton).toBeVisible();
-    expect(removeIndicatorButton).toBeValid();
-    expect(removeIndicatorButton.id).toBe(TEST_CELL_ID);
-    expect(removeIndicatorButton.getAttribute("class")).toBe("btn-command");
-    expect(removeIndicatorButton.textContent).toBe(testCell.options.label);
-
-    // Check the grid cell styles.
-    expect(removeIndicatorButton.style.getPropertyValue("grid-column")).toBe("2 / span 1");
-    expect(removeIndicatorButton.style.getPropertyValue("grid-row")).toBe("3 / span 2");
+    const removeIndicatorButton = await expectCellRendered(TEST_CELL_ID, testCell.options, "btn-command");
 
     // Check disabled state.  `changeEncodingContents` is initialized
     // with an empty array, hence there should be an `aria-disabled` attribute.
     expect(removeIndicatorButton).toHaveAttribute("aria-disabled", "true");
   });
 
-  test("Single ActionIndicatorCell rendering, still disabled", async (): Promise<void> => {
+  test("stays unavailable when the symbol has no indicator", async (): Promise<void> => {
 
     // Put a symbol into the `changeEncodingContents` that has no
     // indicator.  The rendered `ActionRemoveIndicatorCell` should remain
@@ -122,7 +111,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     expect(removeIndicatorButton).toHaveAttribute("aria-disabled", "true");
   });
 
-  test("ActionIndicatorCell rendering, enabled", async (): Promise<void> => {
+  test("becomes available once the symbol has an indicator", async (): Promise<void> => {
 
     // Add a symbol *with* an indicator and render the ActionIndicatorCell.
     const contentsToModify = changeEncodingContents.value.payloads;
@@ -146,7 +135,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     expect(removeIndicatorButton).toHaveAttribute("aria-disabled", "false");
   });
 
-  test("ActionIndicatorCell rendering, enabled then disabled after removing indicator", async (): Promise<void> => {
+  test("goes back to unavailable once the indicator is removed", async (): Promise<void> => {
 
     // Add two symbols, the last one with an indicator and render the
     // ActionIndicatorCell.
@@ -178,7 +167,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     expect(lastSymbol.composition).toStrictEqual(compositionAfterIndicatorRemoval);
   });
 
-  test("ActionRemoveIndicatorCell restores label from baseLabel and clears baseLabel/indicatorId", async (): Promise<void> => {
+  test("restores the label from baseLabel and clears baseLabel and indicatorId", async (): Promise<void> => {
     changeEncodingContents.value = {
       payloads: [blissWordWithIndicatorAndBaseLabel],
       caretPosition: 0
@@ -201,7 +190,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     expect(restored.userSelectedSymbolId).toBe(382);
   });
 
-  test("ActionRemoveIndicatorCell keeps a modifier applied after the indicator when restoring baseLabel", async (): Promise<void> => {
+  test("keeps a modifier applied after the indicator when restoring baseLabel", async (): Promise<void> => {
     changeEncodingContents.value = {
       payloads: [blissWordIndicatorThenModifier],
       caretPosition: 0
@@ -224,7 +213,7 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     expect(restored.indicatorId).toBeUndefined();
   });
 
-  test("ActionRemoveIndicatorCell does not double-count a modifier applied before the indicator when restoring baseLabel", async (): Promise<void> => {
+  test("does not double-count a modifier applied before the indicator when restoring baseLabel", async (): Promise<void> => {
     changeEncodingContents.value = {
       payloads: [blissWordModifierThenIndicator],
       caretPosition: 0
@@ -245,5 +234,53 @@ describe("ActionRemoveIndicatorCell render tests", (): void => {
     expect(restored.baseLabel).toBeUndefined();
     expect(restored.baseModifierCount).toBeUndefined();
     expect(restored.indicatorId).toBeUndefined();
+  });
+
+  test("clicking while unavailable does nothing", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [{ label: "building", composition: 392 }],
+      caretPosition: 0
+    };
+    const before = JSON.stringify(changeEncodingContents.value);
+
+    render(html`
+      <${ActionRemoveIndicatorCell}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />`
+    );
+
+    const button = await screen.findByRole("button", { name: testCell.options.label });
+    expect(button).toHaveAttribute("aria-disabled", "true");
+    fireEvent.click(button);
+
+    expect(JSON.stringify(changeEncodingContents.value)).toBe(before);
+  });
+
+  test("clicking while unavailable is announced", async (): Promise<void> => {
+    const spoken: string[] = [];
+    vi.stubGlobal("speechSynthesis", {
+      speaking: false,
+      pending: false,
+      cancel: () => {},
+      speak: (utterance: SpeechSynthesisUtterance) => spoken.push(utterance.text)
+    });
+    vi.stubGlobal("SpeechSynthesisUtterance", class { constructor (public text: string) {} });
+
+    changeEncodingContents.value = {
+      payloads: [{ label: "building", composition: 392 }],
+      caretPosition: 0
+    };
+
+    render(html`
+      <${ActionRemoveIndicatorCell}
+        id="${TEST_CELL_ID}"
+        options=${testCell.options}
+      />`
+    );
+    fireEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
+
+    expect(spoken).toEqual([`${testCell.options.label} unavailable`]);
+    vi.unstubAllGlobals();
   });
 });
