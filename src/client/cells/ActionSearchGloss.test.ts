@@ -42,8 +42,6 @@ describe("ActionSearchGloss", () => {
   afterEach(() => {
     cleanup();
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
-    mockedSpeak.mockClear();
-    mockedAnnounceIfEnabled.mockClear();
   });
 
   test("renders the search form and footer controls", () => {

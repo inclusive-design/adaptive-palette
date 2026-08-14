@@ -53,8 +53,6 @@ describe("ActionIndicatorCell", (): void => {
   beforeEach((): void => {
     mockedGetStaticNewLabel.mockReset().mockReturnValue(undefined);
     mockedGetNewLabelViaModelQuery.mockReset().mockReturnValue({ status: "not-viable" });
-    mockedAnnounceIfEnabled.mockReset();
-    mockedSpeakUnavailable.mockReset();
   });
 
   test("is unavailable while the input area is empty", async (): Promise<void> => {

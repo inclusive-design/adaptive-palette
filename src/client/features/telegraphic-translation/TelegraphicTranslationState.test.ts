@@ -68,7 +68,6 @@ describe("telegraphicTranslationState", (): void => {
   beforeEach((): void => {
     mockedConfirm = vi.spyOn(window, "confirm").mockReturnValue(true);
     mockedQueryChat.mockReset();
-    mockedSpeak.mockReset();
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
     adaptivePaletteGlobals.models = ["phony-model:12b"];
     setConfig(3);

@@ -44,7 +44,6 @@ describe("ActionSpeakCell", (): void => {
   });
 
   beforeEach((): void => {
-    mockedSpeak.mockReset();
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
     adaptivePaletteGlobals.config.maxStoredRecords = 100;
     changeEncodingContents.value = {

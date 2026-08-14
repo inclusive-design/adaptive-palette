@@ -39,7 +39,6 @@ describe("SentenceChoices", (): void => {
   };
 
   beforeEach((): void => {
-    mockedSpeak.mockReset();
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
     setTestConfig({
       telegraphicTranslation: {
