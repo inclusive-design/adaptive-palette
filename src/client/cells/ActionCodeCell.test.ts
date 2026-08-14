@@ -10,13 +10,12 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render, screen, fireEvent } from "@testing-library/preact";
-import { html } from "htm/preact";
+import { screen, fireEvent } from "@testing-library/preact";
 
 import { changeEncodingContents } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { ActionCodeCell } from "./ActionCodeCell";
-import { expectCellRendered } from "../testUtils/CellAssertions";
+import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 
 describe("ActionCodeCell", (): void => {
 
@@ -38,12 +37,7 @@ describe("ActionCodeCell", (): void => {
 
   test("renders at its grid position", async (): Promise<void> => {
 
-    render(html`
-      <${ActionCodeCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionCodeCell, TEST_CELL_ID, testCell.options);
 
     const button = await expectCellRendered(TEST_CELL_ID, testCell.options, "ActionCodeCell");
 
@@ -59,17 +53,13 @@ describe("ActionCodeCell", (): void => {
     const numericTestCell = {
       options: {
         "label": "percent",
-        "composition": 2
+        "composition": 2,
+        "rowStart": 1, "rowSpan": 1, "columnStart": 1, "columnSpan": 1
       }
     };
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
 
-    render(html`
-      <${ActionCodeCell}
-        id="numeric-cell-uuid"
-        options=${numericTestCell.options}
-      />`
-    );
+    renderCell(ActionCodeCell, "numeric-cell-uuid", numericTestCell.options);
     const button = await screen.findByRole("button", {name: numericTestCell.options.label});
     fireEvent.click(button);
 
@@ -79,12 +69,7 @@ describe("ActionCodeCell", (): void => {
   test("an array composition leaves userSelectedSymbolId undefined on click", async (): Promise<void> => {
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
 
-    render(html`
-      <${ActionCodeCell}
-        id="array-cell-uuid"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionCodeCell, "array-cell-uuid", testCell.options);
     const button = await screen.findByRole("button", {name: testCell.options.label});
     fireEvent.click(button);
 
@@ -95,17 +80,13 @@ describe("ActionCodeCell", (): void => {
     const singleElementArrayTestCell = {
       options: {
         "label": "percent",
-        "composition": [ 2 ]
+        "composition": [ 2 ],
+        "rowStart": 1, "rowSpan": 1, "columnStart": 1, "columnSpan": 1
       }
     };
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
 
-    render(html`
-      <${ActionCodeCell}
-        id="single-element-array-cell-uuid"
-        options=${singleElementArrayTestCell.options}
-      />`
-    );
+    renderCell(ActionCodeCell, "single-element-array-cell-uuid", singleElementArrayTestCell.options);
     const button = await screen.findByRole("button", {name: singleElementArrayTestCell.options.label});
     fireEvent.click(button);
 

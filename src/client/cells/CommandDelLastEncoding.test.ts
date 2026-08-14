@@ -10,11 +10,9 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render } from "@testing-library/preact";
-import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
-import { expectCellRendered } from "../testUtils/CellAssertions";
+import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { CommandDelLastEncoding } from "./CommandDelLastEncoding";
 
 describe("CommandDelLastEncoding", (): void => {
@@ -38,12 +36,7 @@ describe("CommandDelLastEncoding", (): void => {
 
   test("renders at its grid position", async (): Promise<void> => {
 
-    render(html`
-      <${CommandDelLastEncoding}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(CommandDelLastEncoding, TEST_CELL_ID, testCell.options);
 
     const button = await expectCellRendered(TEST_CELL_ID, testCell.options, "btn-command");
 

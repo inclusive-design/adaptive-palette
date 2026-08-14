@@ -16,11 +16,11 @@ import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
-import { DISABLED_MODEL_QUERY } from "../../core/Config";
+import { setTestConfig } from "../../testUtils/TestConfig";
 import { sentenceCompletionsSignal } from "./TelegraphicTranslationState";
 import { MESSAGE_LOG_KEY } from "../../core/MessageLog";
 import { queryChat } from "../../core/OllamaApi";
-import { CommandMakeSentence } from "./CommandMakeSentence";
+import { CommandMakeSentence } from "./CommandMakeSentence";import { mockedSpeakUnavailable } from "../../testUtils/SpeechUtilsMock";
 
 const make_setence_label = "Make a sentence";
 
@@ -32,10 +32,7 @@ vi.mock("../../core/OllamaApi", async (importOriginal) => {
   return { ...actual, queryChat: vi.fn() };
 });
 
-vi.mock("../../utils/SpeechUtils", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../../utils/SpeechUtils")>();
-  return { ...actual, speak: vi.fn() };
-});
+vi.mock("../../utils/SpeechUtils");
 
 const mockedQueryChat = vi.mocked(queryChat);
 
@@ -60,20 +57,14 @@ describe("CommandMakeSentence", (): void => {
   };
 
   const setConfig = (numSentences: number): void => {
-    adaptivePaletteGlobals.config = {
-      maxStoredRecords: 500,
-      announceSymbolOnInput: true,
-      indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
-      symbolSearch: { show: true },
-      svgBuilderString: { show: false },
-      wordPrediction: { show: false, maxSuggestions: 4, ...DISABLED_MODEL_QUERY },
+    setTestConfig({
       telegraphicTranslation: {
         model: "phony-model:12b",
         numSentences,
         systemPrompt: "Give {{numSentences}} sentences.",
         userPrompt: "Telegraphic message: {{telegraphicMessage}}"
       }
-    };
+    });
   };
 
   const renderCell = () => render(
@@ -108,14 +99,7 @@ describe("CommandMakeSentence", (): void => {
   });
 
   test("renders nothing when the feature is unconfigured", (): void => {
-    adaptivePaletteGlobals.config = {
-      maxStoredRecords: 500,
-      announceSymbolOnInput: true,
-      indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
-      symbolSearch: { show: true },
-      svgBuilderString: { show: false },
-      wordPrediction: { show: false, maxSuggestions: 4, ...DISABLED_MODEL_QUERY }
-    };
+    setTestConfig();
     const { container } = renderCell();
     expect(container.textContent).toBe("");
   });
@@ -150,20 +134,10 @@ describe("CommandMakeSentence", (): void => {
   test("clicking while the input area is empty is announced", async (): Promise<void> => {
     // The button keeps `aria-disabled` rather than `disabled`, so it can be focused and
     // activated. Speech is the main feedback channel and must not go silent.
-    const spoken: string[] = [];
-    vi.stubGlobal("speechSynthesis", {
-      speaking: false,
-      pending: false,
-      cancel: () => {},
-      speak: (utterance: SpeechSynthesisUtterance) => spoken.push(utterance.text)
-    });
-    vi.stubGlobal("SpeechSynthesisUtterance", class { constructor (public text: string) {} });
-
     renderCell();
     await userEvent.click(screen.getByRole("button", { name: make_setence_label }));
 
-    expect(spoken).toEqual([`${make_setence_label} unavailable`]);
-    vi.unstubAllGlobals();
+    expect(mockedSpeakUnavailable).toHaveBeenCalledWith(make_setence_label);
   });
 
   test("is available once the input area has content", (): void => {

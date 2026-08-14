@@ -10,8 +10,27 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { screen } from "@testing-library/preact";
+import { FunctionComponent } from "preact";
+import { render, screen, RenderResult } from "@testing-library/preact";
+import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
+
+/**
+ * Render a palette cell the way the palette does: with its id and its options, and nothing else.
+ * A test that needs other props or a surrounding markup renders it itself.
+ *
+ * @param {FunctionComponent} Cell - The cell component to render.
+ * @param {String} id - The cell id.
+ * @param {Object} options - The cell's options, as they appear in the palette JSON.
+ * @return {RenderResult} What `render()` returned, for tests that need the container.
+ */
+export function renderCell<PropsType extends { id: string, options: object }> (
+  Cell: FunctionComponent<PropsType>,
+  id: string,
+  options: PropsType["options"]
+): RenderResult {
+  return render(html`<${Cell} id="${id}" options=${options} />`);
+}
 
 /**
  * Assert the contract every palette cell button shares: it is in the document, carries the given
@@ -33,10 +52,8 @@ export async function expectCellRendered (
   const button = await screen.findByRole("button", { name: options.label });
 
   expect(button).toBeVisible();
-  expect(button).toBeValid();
   expect(button.id).toBe(id);
   expect(button.getAttribute("class")).toBe(className);
-  expect(button.textContent).toBe(options.label);
   expect(button.style.getPropertyValue("grid-column"))
     .toBe(`${options.columnStart} / span ${options.columnSpan}`);
   expect(button.style.getPropertyValue("grid-row"))

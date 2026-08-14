@@ -18,15 +18,10 @@ import { html } from "htm/preact";
 import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { MESSAGE_LOG_KEY, readMessageLog } from "../core/MessageLog";
-import { speak } from "../utils/SpeechUtils";
 import { ActionSpeakCell } from "./ActionSpeakCell";
+import { mockedSpeak } from "../testUtils/SpeechUtilsMock";
 
-vi.mock("../utils/SpeechUtils", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../utils/SpeechUtils")>();
-  return { ...actual, speak: vi.fn() };
-});
-
-const mockedSpeak = vi.mocked(speak);
+vi.mock("../utils/SpeechUtils");
 
 describe("ActionSpeakCell", (): void => {
 

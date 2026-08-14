@@ -14,27 +14,22 @@ import { vi, type MockInstance } from "vitest";
 import { waitFor } from "@testing-library/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
-import { DISABLED_MODEL_QUERY } from "../../core/Config";
+import { setTestConfig } from "../../testUtils/TestConfig";
 import {
   clearMessageAndChoices, currentTelegraphicMessage, makeSentences, sentenceCompletionsSignal,
   READY_DISCARD_PROMPT, WORKING_DISCARD_PROMPT
 } from "./TelegraphicTranslationState";
 import { MESSAGE_LOG_KEY, readMessageLog } from "../../core/MessageLog";
-import { queryChat } from "../../core/OllamaApi";
-import { speak } from "../../utils/SpeechUtils";
+import { queryChat } from "../../core/OllamaApi";import { mockedSpeak } from "../../testUtils/SpeechUtilsMock";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../core/OllamaApi")>();
   return { ...actual, queryChat: vi.fn() };
 });
 
-vi.mock("../../utils/SpeechUtils", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../../utils/SpeechUtils")>();
-  return { ...actual, speak: vi.fn() };
-});
+vi.mock("../../utils/SpeechUtils");
 
 const mockedQueryChat = vi.mocked(queryChat);
-const mockedSpeak = vi.mocked(speak);
 
 describe("telegraphicTranslationState", (): void => {
 
@@ -52,20 +47,14 @@ describe("telegraphicTranslationState", (): void => {
   };
 
   const setConfig = (numSentences: number): void => {
-    adaptivePaletteGlobals.config = {
-      maxStoredRecords: 500,
-      announceSymbolOnInput: true,
-      indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
-      symbolSearch: { show: true },
-      svgBuilderString: { show: false },
-      wordPrediction: { show: false, maxSuggestions: 4, ...DISABLED_MODEL_QUERY },
+    setTestConfig({
       telegraphicTranslation: {
         model: "phony-model:12b",
         numSentences,
         systemPrompt: "Give {{numSentences}} sentences.",
         userPrompt: "Telegraphic message: {{telegraphicMessage}}"
       }
-    };
+    });
   };
 
   // Mirrors what the button does: translate whatever is in the input area right now.

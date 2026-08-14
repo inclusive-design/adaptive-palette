@@ -16,10 +16,10 @@ import { html } from "htm/preact";
 
 import { changeEncodingContents } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
-import { expectCellRendered } from "../testUtils/CellAssertions";
+import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { ActionIndicatorCell } from "./ActionIndicatorCell";
 import * as IndicatorLabels from "../utils/IndicatorLabelsUtils";
-import * as SpeechUtils from "../utils/SpeechUtils";
+import { mockedAnnounceIfEnabled, mockedSpeakUnavailable } from "../testUtils/SpeechUtilsMock";
 
 vi.mock("../utils/IndicatorLabelsUtils", () => ({
   initIndicatorLabels: vi.fn().mockResolvedValue(undefined),
@@ -27,14 +27,10 @@ vi.mock("../utils/IndicatorLabelsUtils", () => ({
   getNewLabelViaModelQuery: vi.fn()
 }));
 
-vi.mock("../utils/SpeechUtils", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../utils/SpeechUtils")>();
-  return { ...actual, announceIfEnabled: vi.fn() };
-});
+vi.mock("../utils/SpeechUtils");
 
 const mockedGetStaticNewLabel = vi.mocked(IndicatorLabels.getStaticNewLabel);
 const mockedGetNewLabelViaModelQuery = vi.mocked(IndicatorLabels.getNewLabelViaModelQuery);
-const mockedAnnounce = vi.mocked(SpeechUtils.announceIfEnabled);
 
 describe("ActionIndicatorCell", (): void => {
 
@@ -57,17 +53,13 @@ describe("ActionIndicatorCell", (): void => {
   beforeEach((): void => {
     mockedGetStaticNewLabel.mockReset().mockReturnValue(undefined);
     mockedGetNewLabelViaModelQuery.mockReset().mockReturnValue({ status: "not-viable" });
-    mockedAnnounce.mockReset();
+    mockedAnnounceIfEnabled.mockReset();
+    mockedSpeakUnavailable.mockReset();
   });
 
   test("is unavailable while the input area is empty", async (): Promise<void> => {
 
-    render(html`
-      <${ActionIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
 
     const button = await expectCellRendered(TEST_CELL_ID, testCell.options, "actionIndicatorCell");
 
@@ -90,12 +82,7 @@ describe("ActionIndicatorCell", (): void => {
       caretPosition: 0  // put the caret on the symbol above
     };
 
-    render(html`
-      <${ActionIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
 
     let button = await expectCellRendered(TEST_CELL_ID, testCell.options, "actionIndicatorCell");
 
@@ -122,12 +109,7 @@ describe("ActionIndicatorCell", (): void => {
       caretPosition: 0
     };
 
-    render(html`
-      <${ActionIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
     const button = await screen.findByRole("button", {name: testCell.options.label});
     fireEvent.click(button);
 
@@ -140,7 +122,7 @@ describe("ActionIndicatorCell", (): void => {
     expect(updated.baseLabel).toBe("help");
     expect(updated.userSelectedSymbolId).toBe(382);
     expect(mockedGetNewLabelViaModelQuery).not.toHaveBeenCalled();
-    expect(mockedAnnounce).toHaveBeenCalledWith("helper");
+    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith("helper");
   });
 
   test("Replacing an indicator derives the prompt from baseLabel, not the swapped label", async (): Promise<void> => {
@@ -157,12 +139,7 @@ describe("ActionIndicatorCell", (): void => {
       caretPosition: 0
     };
 
-    render(html`
-      <${ActionIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
     const button = await screen.findByRole("button", {name: testCell.options.label});
     fireEvent.click(button);
 
@@ -186,12 +163,7 @@ describe("ActionIndicatorCell", (): void => {
       caretPosition: 0
     };
 
-    render(html`
-      <${ActionIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
     const button = await screen.findByRole("button", {name: testCell.options.label});
     fireEvent.click(button);
 
@@ -199,7 +171,7 @@ describe("ActionIndicatorCell", (): void => {
       expect(mockedGetNewLabelViaModelQuery).toHaveBeenCalledTimes(1);
     });
     expect(changeEncodingContents.value.payloads[0].label).toBe("hand-built");
-    expect(mockedAnnounce).toHaveBeenCalledWith(`hand-built, ${testCell.options.label}`);
+    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(`hand-built, ${testCell.options.label}`);
   });
 
   test("Cached model-query result with a label: speaks and applies it immediately, no loading message", async (): Promise<void> => {
@@ -214,20 +186,15 @@ describe("ActionIndicatorCell", (): void => {
       caretPosition: 0
     };
 
-    render(html`
-      <${ActionIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
     const button = await screen.findByRole("button", {name: testCell.options.label});
     fireEvent.click(button);
 
     await waitFor(() => {
       expect(changeEncodingContents.value.payloads[0].label).toBe("cells");
     });
-    expect(mockedAnnounce).toHaveBeenCalledTimes(1);   // no loading message
-    expect(mockedAnnounce).toHaveBeenCalledWith("cells");
+    expect(mockedAnnounceIfEnabled).toHaveBeenCalledTimes(1);   // no loading message
+    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith("cells");
   });
 
   test("Cached model-query result with no label: speaks the unchanged message immediately, label stays", async (): Promise<void> => {
@@ -242,17 +209,12 @@ describe("ActionIndicatorCell", (): void => {
       caretPosition: 0
     };
 
-    render(html`
-      <${ActionIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
     const button = await screen.findByRole("button", {name: testCell.options.label});
     fireEvent.click(button);
 
     await waitFor(() => {
-      expect(mockedAnnounce).toHaveBeenCalledWith(`cell, ${testCell.options.label}`);
+      expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(`cell, ${testCell.options.label}`);
     });
     expect(changeEncodingContents.value.payloads[0].label).toBe("cell");
   });
@@ -273,18 +235,13 @@ describe("ActionIndicatorCell", (): void => {
       caretPosition: 0
     };
 
-    render(html`
-      <${ActionIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
     const button = await screen.findByRole("button", {name: testCell.options.label});
     fireEvent.click(button);
 
     // The loading message is spoken immediately, before the query resolves.
     await waitFor(() => {
-      expect(mockedAnnounce).toHaveBeenCalledWith(`walk, ${testCell.options.label} loading new label`);
+      expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(`walk, ${testCell.options.label} loading new label`);
     });
     expect(changeEncodingContents.value.payloads[0].label).toBe("walk");
 
@@ -292,7 +249,7 @@ describe("ActionIndicatorCell", (): void => {
     await waitFor(() => {
       expect(changeEncodingContents.value.payloads[0].label).toBe("walked");
     });
-    expect(mockedAnnounce).toHaveBeenCalledWith("walked");
+    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith("walked");
   });
 
   test("Pending model query that fails: speaks the loading message, then the unchanged message as closure", async (): Promise<void> => {
@@ -311,22 +268,17 @@ describe("ActionIndicatorCell", (): void => {
       caretPosition: 0
     };
 
-    render(html`
-      <${ActionIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
     const button = await screen.findByRole("button", {name: testCell.options.label});
     fireEvent.click(button);
 
     await waitFor(() => {
-      expect(mockedAnnounce).toHaveBeenCalledWith(`walk, ${testCell.options.label} loading new label`);
+      expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(`walk, ${testCell.options.label} loading new label`);
     });
 
     resolveQuery!(undefined);
     await waitFor(() => {
-      expect(mockedAnnounce).toHaveBeenCalledWith(`walk, ${testCell.options.label}`);
+      expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(`walk, ${testCell.options.label}`);
     });
     expect(changeEncodingContents.value.payloads[0].label).toBe("walk");
   });
@@ -347,12 +299,7 @@ describe("ActionIndicatorCell", (): void => {
       caretPosition: 0
     };
 
-    render(html`
-      <${ActionIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
     const button = await screen.findByRole("button", {name: testCell.options.label});
     fireEvent.click(button);
 
@@ -401,11 +348,11 @@ describe("ActionIndicatorCell", (): void => {
     fireEvent.click(buttonA);   // click A: applies indicator 99
     await waitFor(() => expect(mockedGetNewLabelViaModelQuery).toHaveBeenCalledTimes(1));
     // Click A's own immediate ("loading") announcement fires before it can be superseded.
-    expect(mockedAnnounce).toHaveBeenCalledWith(`help, ${testCell.options.label} loading new label`);
+    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(`help, ${testCell.options.label} loading new label`);
 
     fireEvent.click(buttonB);   // click B: applies indicator 100 before A resolves
     await waitFor(() => expect(mockedGetNewLabelViaModelQuery).toHaveBeenCalledTimes(2));
-    expect(mockedAnnounce).toHaveBeenCalledWith(`help, ${otherCell.options.label} loading new label`);
+    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(`help, ${otherCell.options.label} loading new label`);
 
     const compositionAfterB = changeEncodingContents.value.payloads[0].composition;
 
@@ -414,7 +361,7 @@ describe("ActionIndicatorCell", (): void => {
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(changeEncodingContents.value.payloads[0].label).toBe("help");   // A's result dropped
     expect(changeEncodingContents.value.payloads[0].composition).toStrictEqual(compositionAfterB);
-    expect(mockedAnnounce).not.toHaveBeenCalledWith("A-result");
+    expect(mockedAnnounceIfEnabled).not.toHaveBeenCalledWith("A-result");
 
     resolveSecond!("B-result");
     await waitFor(() => {
@@ -438,12 +385,7 @@ describe("ActionIndicatorCell", (): void => {
       caretPosition: 0
     };
 
-    render(html`
-      <${ActionIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
     const button = await screen.findByRole("button", {name: testCell.options.label});
     fireEvent.click(button);
 
@@ -487,12 +429,7 @@ describe("ActionIndicatorCell", (): void => {
       caretPosition: 0
     };
 
-    render(html`
-      <${ActionIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
     const button = await screen.findByRole("button", {name: testCell.options.label});
     fireEvent.click(button);
 
@@ -505,45 +442,23 @@ describe("ActionIndicatorCell", (): void => {
     );
   });
 
-  test("clicking while unavailable does nothing", async (): Promise<void> => {
-    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+  test("clicking while unavailable leaves the input untouched and is announced", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [{ label: "building", composition: 392 }],
+      caretPosition: -1
+    };
+    const before = JSON.stringify(changeEncodingContents.value);
 
-    render(html`
-      <${ActionIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
 
     const button = await screen.findByRole("button", { name: testCell.options.label });
     expect(button).toHaveAttribute("aria-disabled", "true");
     fireEvent.click(button);
 
-    expect(changeEncodingContents.value.payloads).toEqual([]);
-  });
-
-  test("clicking while unavailable is announced", async (): Promise<void> => {
-    const spoken: string[] = [];
-    vi.stubGlobal("speechSynthesis", {
-      speaking: false,
-      pending: false,
-      cancel: () => {},
-      speak: (utterance: SpeechSynthesisUtterance) => spoken.push(utterance.text)
-    });
-    vi.stubGlobal("SpeechSynthesisUtterance", class { constructor (public text: string) {} });
-
-    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
-
-    render(html`
-      <${ActionIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
-    fireEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
-
-    expect(spoken).toEqual([`${testCell.options.label} unavailable`]);
-    vi.unstubAllGlobals();
+    expect(JSON.stringify(changeEncodingContents.value)).toBe(before);
+    // The button keeps `aria-disabled` rather than `disabled`, so it can be focused and
+    // activated. Speech is the main feedback channel and must not go silent.
+    expect(mockedSpeakUnavailable).toHaveBeenCalledWith(testCell.options.label);
   });
 
 });

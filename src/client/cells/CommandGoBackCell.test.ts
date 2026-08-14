@@ -11,13 +11,15 @@
  */
 
 import { vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/preact";
-import { html } from "htm/preact";
+import { screen, fireEvent } from "@testing-library/preact";
 
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
-import { expectCellRendered } from "../testUtils/CellAssertions";
+import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { CommandGoBackCell } from "./CommandGoBackCell";
+import { mockedSpeakUnavailable } from "../testUtils/SpeechUtilsMock";
+
+vi.mock("../utils/SpeechUtils");
 
 describe("CommandGoBackCell", (): void => {
 
@@ -64,12 +66,7 @@ describe("CommandGoBackCell", (): void => {
 
   test("renders with an empty aria-controls when no container id is set", async (): Promise<void> => {
 
-    render(html`
-      <${CommandGoBackCell}
-        id="${TEST_CELL1_ID}"
-        options=${goBackCellNoAriaControls.options}
-      />`
-    );
+    renderCell(CommandGoBackCell, TEST_CELL1_ID, goBackCellNoAriaControls.options);
 
     const button = await expectCellRendered(
       TEST_CELL1_ID, goBackCellNoAriaControls.options, "btn-command"
@@ -83,12 +80,7 @@ describe("CommandGoBackCell", (): void => {
   test("points aria-controls at the main palette container", async(): Promise<void> => {
     // Give the main palette rendering area a non-empty id.
     adaptivePaletteGlobals.mainPaletteContainerId = TEST_CONTROL_ID;
-    render(html`
-      <${CommandGoBackCell}
-        id="${TEST_CELL2_ID}"
-        options=${goBackCellAriaControls.options}
-      />`
-    );
+    renderCell(CommandGoBackCell, TEST_CELL2_ID, goBackCellAriaControls.options);
 
     const button = await screen.findByRole("button", {name: goBackCellAriaControls.options.label});
     expect(button.id).toBe(TEST_CELL2_ID);
@@ -100,12 +92,7 @@ describe("CommandGoBackCell", (): void => {
     adaptivePaletteGlobals.navigationStack.push(somePalette);
     expect(adaptivePaletteGlobals.navigationStack.depth).toBe(1);
 
-    render(html`
-      <${CommandGoBackCell}
-        id="uuid-of-a-third-kind"
-        options=${goBackCellOnStack.options}
-      />`
-    );
+    renderCell(CommandGoBackCell, "uuid-of-a-third-kind", goBackCellOnStack.options);
 
     const button = await screen.findByRole("button", { name: goBackCellOnStack.options.label });
     expect(button).toHaveAttribute("aria-disabled", "false");
@@ -113,15 +100,10 @@ describe("CommandGoBackCell", (): void => {
     adaptivePaletteGlobals.navigationStack.flushReset(null);
   });
 
-  test("clicking Back while unavailable does nothing", async (): Promise<void> => {
+  test("clicking Back while unavailable leaves the stack alone and is announced", async (): Promise<void> => {
     adaptivePaletteGlobals.navigationStack.flushReset(null);
 
-    render(html`
-      <${CommandGoBackCell}
-        id="${TEST_CELL1_ID}"
-        options=${goBackCellNoAriaControls.options}
-      />`
-    );
+    renderCell(CommandGoBackCell, TEST_CELL1_ID, goBackCellNoAriaControls.options);
 
     const button = await screen.findByRole(
       "button", { name: goBackCellNoAriaControls.options.label }
@@ -131,33 +113,8 @@ describe("CommandGoBackCell", (): void => {
 
     expect(adaptivePaletteGlobals.navigationStack.depth).toBe(0);
     expect(adaptivePaletteGlobals.navigationStack.currentPalette).toBeNull();
-  });
-
-  test("clicking Back while unavailable is announced", async (): Promise<void> => {
     // The button keeps `aria-disabled` rather than `disabled`, so it can be focused and
     // activated. Speech is the main feedback channel and must not go silent.
-    const spoken: string[] = [];
-    vi.stubGlobal("speechSynthesis", {
-      speaking: false,
-      pending: false,
-      cancel: () => {},
-      speak: (utterance: SpeechSynthesisUtterance) => spoken.push(utterance.text)
-    });
-    vi.stubGlobal("SpeechSynthesisUtterance", class { constructor (public text: string) {} });
-
-    adaptivePaletteGlobals.navigationStack.flushReset(null);
-
-    render(html`
-      <${CommandGoBackCell}
-        id="${TEST_CELL1_ID}"
-        options=${goBackCellNoAriaControls.options}
-      />`
-    );
-    fireEvent.click(await screen.findByRole(
-      "button", { name: goBackCellNoAriaControls.options.label }
-    ));
-
-    expect(spoken).toEqual([`${goBackCellNoAriaControls.options.label} unavailable`]);
-    vi.unstubAllGlobals();
+    expect(mockedSpeakUnavailable).toHaveBeenCalledWith(goBackCellNoAriaControls.options.label);
   });
 });

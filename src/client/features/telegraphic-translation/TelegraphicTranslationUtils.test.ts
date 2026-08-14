@@ -13,7 +13,7 @@
 import { vi } from "vitest";
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { queryChat, NO_MODELS_MESSAGE } from "../../core/OllamaApi";
-import { DISABLED_MODEL_QUERY } from "../../core/Config";
+import { setTestConfig } from "../../testUtils/TestConfig";
 import {
   pickModel, parseSentences, requestSentences
 } from "./TelegraphicTranslationUtils";
@@ -37,15 +37,7 @@ describe("telegraphicTranslation", (): void => {
   beforeEach((): void => {
     mockedQueryChat.mockReset();
     adaptivePaletteGlobals.models = ["phony-model:12b", "other-model:7b"];
-    adaptivePaletteGlobals.config = {
-      maxStoredRecords: 500,
-      announceSymbolOnInput: true,
-      indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
-      symbolSearch: { show: true },
-      svgBuilderString: { show: false },
-      wordPrediction: { show: false, maxSuggestions: 10, ...DISABLED_MODEL_QUERY },
-      telegraphicTranslation: { ...CONFIG }
-    };
+    setTestConfig({ telegraphicTranslation: { ...CONFIG } });
   });
 
   describe("pickModel", (): void => {

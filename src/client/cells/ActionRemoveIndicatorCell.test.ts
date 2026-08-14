@@ -10,13 +10,15 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 import { vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/preact";
-import { html } from "htm/preact";
+import { screen, fireEvent } from "@testing-library/preact";
 
 import { changeEncodingContents } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
-import { expectCellRendered } from "../testUtils/CellAssertions";
+import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
+import { mockedSpeakUnavailable } from "../testUtils/SpeechUtilsMock";
+
+vi.mock("../utils/SpeechUtils");
 
 describe("ActionRemoveIndicatorCell", (): void => {
 
@@ -75,12 +77,7 @@ describe("ActionRemoveIndicatorCell", (): void => {
 
   test("is unavailable while the input area is empty", async (): Promise<void> => {
 
-    render(html`
-      <${ActionRemoveIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionRemoveIndicatorCell, TEST_CELL_ID, testCell.options);
 
     const removeIndicatorButton = await expectCellRendered(TEST_CELL_ID, testCell.options, "btn-command");
 
@@ -98,12 +95,7 @@ describe("ActionRemoveIndicatorCell", (): void => {
       payloads: [blissWordNoIndicator],
       caretPosition: 0
     };
-    render(html`
-      <${ActionRemoveIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionRemoveIndicatorCell, TEST_CELL_ID, testCell.options);
     const removeIndicatorButton = await screen.findByRole("button", {name: testCell.options.label});
     expect(removeIndicatorButton).toBeVisible();
     expect(removeIndicatorButton).toBeValid();
@@ -120,12 +112,7 @@ describe("ActionRemoveIndicatorCell", (): void => {
       payloads: contentsToModify,
       caretPosition: changeEncodingContents.value.caretPosition+1
     };
-    render(html`
-      <${ActionRemoveIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionRemoveIndicatorCell, TEST_CELL_ID, testCell.options);
     // Check that the ActionIndicatorCell/button is now enabled
     // since the last symbol in the encoding array has an indicator.
     const removeIndicatorButton = await screen.findByRole("button", {name: testCell.options.label});
@@ -146,12 +133,7 @@ describe("ActionRemoveIndicatorCell", (): void => {
       payloads: contentsToModify,
       caretPosition: contentsToModify.length - 1
     };
-    render(html`
-      <${ActionRemoveIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionRemoveIndicatorCell, TEST_CELL_ID, testCell.options);
 
     // Check that the ActionIndicatorCell/button is now enabled since the last
     // symbol in the encoding array has an indicator.
@@ -172,12 +154,7 @@ describe("ActionRemoveIndicatorCell", (): void => {
       payloads: [blissWordWithIndicatorAndBaseLabel],
       caretPosition: 0
     };
-    render(html`
-      <${ActionRemoveIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionRemoveIndicatorCell, TEST_CELL_ID, testCell.options);
     const removeIndicatorButton = await screen.findByRole("button", {name: testCell.options.label});
     expect(removeIndicatorButton).toHaveAttribute("aria-disabled", "false");
 
@@ -195,12 +172,7 @@ describe("ActionRemoveIndicatorCell", (): void => {
       payloads: [blissWordIndicatorThenModifier],
       caretPosition: 0
     };
-    render(html`
-      <${ActionRemoveIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionRemoveIndicatorCell, TEST_CELL_ID, testCell.options);
     const removeIndicatorButton = await screen.findByRole("button", {name: testCell.options.label});
     expect(removeIndicatorButton).toHaveAttribute("aria-disabled", "false");
 
@@ -218,12 +190,7 @@ describe("ActionRemoveIndicatorCell", (): void => {
       payloads: [blissWordModifierThenIndicator],
       caretPosition: 0
     };
-    render(html`
-      <${ActionRemoveIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionRemoveIndicatorCell, TEST_CELL_ID, testCell.options);
     const removeIndicatorButton = await screen.findByRole("button", {name: testCell.options.label});
     expect(removeIndicatorButton).toHaveAttribute("aria-disabled", "false");
 
@@ -236,51 +203,22 @@ describe("ActionRemoveIndicatorCell", (): void => {
     expect(restored.indicatorId).toBeUndefined();
   });
 
-  test("clicking while unavailable does nothing", async (): Promise<void> => {
+  test("clicking while unavailable leaves the input untouched and is announced", async (): Promise<void> => {
     changeEncodingContents.value = {
       payloads: [{ label: "building", composition: 392 }],
       caretPosition: 0
     };
     const before = JSON.stringify(changeEncodingContents.value);
 
-    render(html`
-      <${ActionRemoveIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionRemoveIndicatorCell, TEST_CELL_ID, testCell.options);
 
     const button = await screen.findByRole("button", { name: testCell.options.label });
     expect(button).toHaveAttribute("aria-disabled", "true");
     fireEvent.click(button);
 
     expect(JSON.stringify(changeEncodingContents.value)).toBe(before);
-  });
-
-  test("clicking while unavailable is announced", async (): Promise<void> => {
-    const spoken: string[] = [];
-    vi.stubGlobal("speechSynthesis", {
-      speaking: false,
-      pending: false,
-      cancel: () => {},
-      speak: (utterance: SpeechSynthesisUtterance) => spoken.push(utterance.text)
-    });
-    vi.stubGlobal("SpeechSynthesisUtterance", class { constructor (public text: string) {} });
-
-    changeEncodingContents.value = {
-      payloads: [{ label: "building", composition: 392 }],
-      caretPosition: 0
-    };
-
-    render(html`
-      <${ActionRemoveIndicatorCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
-    fireEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
-
-    expect(spoken).toEqual([`${testCell.options.label} unavailable`]);
-    vi.unstubAllGlobals();
+    // The button keeps `aria-disabled` rather than `disabled`, so it can be focused and
+    // activated. Speech is the main feedback channel and must not go silent.
+    expect(mockedSpeakUnavailable).toHaveBeenCalledWith(testCell.options.label);
   });
 });

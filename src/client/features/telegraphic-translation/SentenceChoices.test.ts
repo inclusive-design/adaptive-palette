@@ -15,22 +15,16 @@ import { render, screen, cleanup, waitFor } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
-import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
-import { DISABLED_MODEL_QUERY } from "../../core/Config";
+import { changeEncodingContents } from "../../state/GlobalData";
+import { setTestConfig } from "../../testUtils/TestConfig";
 import { sentenceCompletionsSignal } from "./TelegraphicTranslationState";
 import { MESSAGE_LOG_KEY, readMessageLog } from "../../core/MessageLog";
-import { speak } from "../../utils/SpeechUtils";
 import {
   SentenceChoices, WORKING_MESSAGE, CANNOT_COMPLETE_MESSAGE, TYPE_YOUR_OWN_HINT,
   SPEAK_BUTTON_LABEL, DONE_BUTTON_LABEL
-} from "./SentenceChoices";
+} from "./SentenceChoices";import { mockedSpeak } from "../../testUtils/SpeechUtilsMock";
 
-vi.mock("../../utils/SpeechUtils", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../../utils/SpeechUtils")>();
-  return { ...actual, speak: vi.fn() };
-});
-
-const mockedSpeak = vi.mocked(speak);
+vi.mock("../../utils/SpeechUtils");
 
 describe("SentenceChoices", (): void => {
 
@@ -46,20 +40,14 @@ describe("SentenceChoices", (): void => {
   beforeEach((): void => {
     mockedSpeak.mockReset();
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
-    adaptivePaletteGlobals.config = {
-      maxStoredRecords: 500,
-      announceSymbolOnInput: true,
-      indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
-      symbolSearch: { show: true },
-      svgBuilderString: { show: false },
-      wordPrediction: { show: false, maxSuggestions: 10, ...DISABLED_MODEL_QUERY },
+    setTestConfig({
       telegraphicTranslation: {
         model: "phony-model:12b",
         numSentences: 3,
         systemPrompt: "prompt",
         userPrompt: "prompt"
       }
-    };
+    });
   });
 
   afterEach((): void => {

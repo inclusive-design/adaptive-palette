@@ -10,13 +10,15 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 import { vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/preact";
-import { html } from "htm/preact";
+import { screen, fireEvent } from "@testing-library/preact";
 
 import { changeEncodingContents } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
-import { expectCellRendered } from "../testUtils/CellAssertions";
+import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { ActionRemoveModifierCell } from "./ActionRemoveModifierCell";
+import { mockedSpeakUnavailable } from "../testUtils/SpeechUtilsMock";
+
+vi.mock("../utils/SpeechUtils");
 
 describe("ActionRemoveModifierCell", (): void => {
 
@@ -91,12 +93,7 @@ describe("ActionRemoveModifierCell", (): void => {
 
   test("is unavailable while the input area is empty", async (): Promise<void> => {
 
-    render(html`
-      <${ActionRemoveModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionRemoveModifierCell, TEST_CELL_ID, testCell.options);
 
     const removeModifierButton = await expectCellRendered(TEST_CELL_ID, testCell.options, "btn-command");
 
@@ -114,12 +111,7 @@ describe("ActionRemoveModifierCell", (): void => {
       payloads: [blissWordNoModifier],
       caretPosition: 0
     };
-    render(html`
-      <${ActionRemoveModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionRemoveModifierCell, TEST_CELL_ID, testCell.options);
     const removeModifierButton = await screen.findByRole("button", {name: testCell.options.label});
     expect(removeModifierButton).toBeVisible();
     expect(removeModifierButton).toBeValid();
@@ -136,12 +128,7 @@ describe("ActionRemoveModifierCell", (): void => {
       payloads: newContents,
       caretPosition: newContents.length - 1
     };
-    render(html`
-      <${ActionRemoveModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionRemoveModifierCell, TEST_CELL_ID, testCell.options);
     // Check that the ActionRemoveModifierCell/button is now enabled
     // since the last symbol in the encoding array has a modifier.
     const removeModifierButton = await screen.findByRole("button", {name: testCell.options.label});
@@ -162,12 +149,7 @@ describe("ActionRemoveModifierCell", (): void => {
       payloads: newContents,
       caretPosition: newContents.length - 1
     };
-    render(html`
-      <${ActionRemoveModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionRemoveModifierCell, TEST_CELL_ID, testCell.options);
     // Check that the ActionRemoveModifierCell/button is now enabled since the last
     // symbol in the encoding array has a modifier.
     const removeModifierButton = await screen.findByRole("button", {name: testCell.options.label});
@@ -193,12 +175,7 @@ describe("ActionRemoveModifierCell", (): void => {
       payloads: newContents,
       caretPosition: newContents.length - 1
     };
-    render(html`
-      <${ActionRemoveModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionRemoveModifierCell, TEST_CELL_ID, testCell.options);
     // Check that the ActionRemoveModifierCell/button is now enabled since the last
     // symbol in the encoding array has a modifier.
     const removeModifierButton = await screen.findByRole("button", {name: testCell.options.label});
@@ -225,12 +202,7 @@ describe("ActionRemoveModifierCell", (): void => {
       payloads: [blissWordModifierThenIndicator],
       caretPosition: 0
     };
-    render(html`
-      <${ActionRemoveModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionRemoveModifierCell, TEST_CELL_ID, testCell.options);
     const removeModifierButton = await screen.findByRole("button", {name: testCell.options.label});
     expect(removeModifierButton).toHaveAttribute("aria-disabled", "false");
 
@@ -247,12 +219,7 @@ describe("ActionRemoveModifierCell", (): void => {
       payloads: [blissWordIndicatorThenModifier],
       caretPosition: 0
     };
-    render(html`
-      <${ActionRemoveModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionRemoveModifierCell, TEST_CELL_ID, testCell.options);
     const removeModifierButton = await screen.findByRole("button", {name: testCell.options.label});
     expect(removeModifierButton).toHaveAttribute("aria-disabled", "false");
 
@@ -264,51 +231,22 @@ describe("ActionRemoveModifierCell", (): void => {
     expect(updated.baseModifierCount).toBe(0);
   });
 
-  test("clicking while unavailable does nothing", async (): Promise<void> => {
+  test("clicking while unavailable leaves the input untouched and is announced", async (): Promise<void> => {
     changeEncodingContents.value = {
       payloads: [{ label: "building", composition: 392 }],
       caretPosition: 0
     };
     const before = JSON.stringify(changeEncodingContents.value);
 
-    render(html`
-      <${ActionRemoveModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionRemoveModifierCell, TEST_CELL_ID, testCell.options);
 
     const button = await screen.findByRole("button", { name: testCell.options.label });
     expect(button).toHaveAttribute("aria-disabled", "true");
     fireEvent.click(button);
 
     expect(JSON.stringify(changeEncodingContents.value)).toBe(before);
-  });
-
-  test("clicking while unavailable is announced", async (): Promise<void> => {
-    const spoken: string[] = [];
-    vi.stubGlobal("speechSynthesis", {
-      speaking: false,
-      pending: false,
-      cancel: () => {},
-      speak: (utterance: SpeechSynthesisUtterance) => spoken.push(utterance.text)
-    });
-    vi.stubGlobal("SpeechSynthesisUtterance", class { constructor (public text: string) {} });
-
-    changeEncodingContents.value = {
-      payloads: [{ label: "building", composition: 392 }],
-      caretPosition: 0
-    };
-
-    render(html`
-      <${ActionRemoveModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
-    fireEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
-
-    expect(spoken).toEqual([`${testCell.options.label} unavailable`]);
-    vi.unstubAllGlobals();
+    // The button keeps `aria-disabled` rather than `disabled`, so it can be focused and
+    // activated. Speech is the main feedback channel and must not go silent.
+    expect(mockedSpeakUnavailable).toHaveBeenCalledWith(testCell.options.label);
   });
 });

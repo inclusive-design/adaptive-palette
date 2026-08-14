@@ -16,7 +16,7 @@ import { userEvent } from "vitest/browser";
 import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
-import { expectCellRendered } from "../testUtils/CellAssertions";
+import { expectCellRendered } from "../testUtils/CellTestUtils";
 import {
   CommandClearSavedData, CANCEL_LABEL, CONFIRM_LABEL, clearSavedData
 } from "./CommandClearSavedData";

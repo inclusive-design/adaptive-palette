@@ -10,14 +10,13 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render, screen } from "@testing-library/preact";
+import { screen } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
-import { html } from "htm/preact";
 
 import { changeEncodingContents } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { sentenceCompletionsSignal } from "../features/telegraphic-translation/TelegraphicTranslationState";
-import { expectCellRendered } from "../testUtils/CellAssertions";
+import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { CommandClearEncoding } from "./CommandClearEncoding";
 
 describe("CommandClearEncoding", (): void => {
@@ -41,12 +40,7 @@ describe("CommandClearEncoding", (): void => {
 
   test("renders at its grid position", async (): Promise<void> => {
 
-    render(html`
-      <${CommandClearEncoding}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(CommandClearEncoding, TEST_CELL_ID, testCell.options);
 
     const button = await expectCellRendered(TEST_CELL_ID, testCell.options, "btn-command");
 
@@ -69,12 +63,7 @@ describe("CommandClearEncoding", (): void => {
       telegraphicMessage: "hungry"
     };
 
-    render(html`
-      <${CommandClearEncoding}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(CommandClearEncoding, TEST_CELL_ID, testCell.options);
     await userEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
 
     expect(changeEncodingContents.value.payloads).toEqual([]);

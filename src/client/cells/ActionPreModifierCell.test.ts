@@ -11,13 +11,15 @@
  */
 
 import { vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/preact";
-import { html } from "htm/preact";
+import { screen, fireEvent } from "@testing-library/preact";
 
 import { changeEncodingContents } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
-import { expectCellRendered } from "../testUtils/CellAssertions";
+import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { ActionPreModifierCell } from "./ActionPreModifierCell";
+import { mockedSpeakUnavailable } from "../testUtils/SpeechUtilsMock";
+
+vi.mock("../utils/SpeechUtils");
 
 describe("ActionPreModifierCell", (): void => {
 
@@ -39,12 +41,7 @@ describe("ActionPreModifierCell", (): void => {
 
   test("is unavailable while the input area is empty", async (): Promise<void> => {
 
-    render(html`
-      <${ActionPreModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionPreModifierCell, TEST_CELL_ID, testCell.options);
 
     const button = await expectCellRendered(TEST_CELL_ID, testCell.options, "actionModifierCell");
 
@@ -67,12 +64,7 @@ describe("ActionPreModifierCell", (): void => {
       caretPosition: 0
     };
 
-    render(html`
-      <${ActionPreModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionPreModifierCell, TEST_CELL_ID, testCell.options);
     let button = await expectCellRendered(TEST_CELL_ID, testCell.options, "actionModifierCell");
 
     // Check disabled state.  `changeEncodingContents` is initialized
@@ -86,7 +78,7 @@ describe("ActionPreModifierCell", (): void => {
     expect(button).toHaveAttribute("aria-disabled", "true");
   });
 
-  test("Applying a pre modifier prepends its text to the label", async (): Promise<void> => {
+  test("applying a pre modifier prepends its text to the label", async (): Promise<void> => {
     changeEncodingContents.value = {
       payloads: [{
         label: "building",
@@ -94,57 +86,31 @@ describe("ActionPreModifierCell", (): void => {
       }],
       caretPosition: 0
     };
-    render(html`
-      <${ActionPreModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionPreModifierCell, TEST_CELL_ID, testCell.options);
     const button = await screen.findByRole("button", {name: testCell.options.label});
     fireEvent.click(button);
 
     expect(changeEncodingContents.value.payloads[0].label).toBe("oppposite of building");
   });
 
-  test("clicking while unavailable does nothing", async (): Promise<void> => {
-    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+  // The unavailable guard lives in `ActionModifierCellCommon`, shared with
+  // `ActionPostModifierCell`, so it is exercised here only.
+  test("clicking while unavailable leaves the input untouched and is announced", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [{ label: "building", composition: 392 }],
+      caretPosition: -1
+    };
+    const before = JSON.stringify(changeEncodingContents.value);
 
-    render(html`
-      <${ActionPreModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionPreModifierCell, TEST_CELL_ID, testCell.options);
 
     const button = await screen.findByRole("button", { name: testCell.options.label });
     expect(button).toHaveAttribute("aria-disabled", "true");
     fireEvent.click(button);
 
-    expect(changeEncodingContents.value.payloads).toEqual([]);
+    expect(JSON.stringify(changeEncodingContents.value)).toBe(before);
+    // The button keeps `aria-disabled` rather than `disabled`, so it can be focused and
+    // activated. Speech is the main feedback channel and must not go silent.
+    expect(mockedSpeakUnavailable).toHaveBeenCalledWith(testCell.options.label);
   });
-
-  test("clicking while unavailable is announced", async (): Promise<void> => {
-    const spoken: string[] = [];
-    vi.stubGlobal("speechSynthesis", {
-      speaking: false,
-      pending: false,
-      cancel: () => {},
-      speak: (utterance: SpeechSynthesisUtterance) => spoken.push(utterance.text)
-    });
-    vi.stubGlobal("SpeechSynthesisUtterance", class { constructor (public text: string) {} });
-
-    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
-
-    render(html`
-      <${ActionPreModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
-    fireEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
-
-    expect(spoken).toEqual([`${testCell.options.label} unavailable`]);
-    vi.unstubAllGlobals();
-  });
-
 });

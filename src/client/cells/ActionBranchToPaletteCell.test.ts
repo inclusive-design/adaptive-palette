@@ -10,11 +10,9 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render } from "@testing-library/preact";
-import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
-import { expectCellRendered } from "../testUtils/CellAssertions";
+import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { ActionBranchToPaletteCell } from "./ActionBranchToPaletteCell";
 
 describe("ActionBranchToPaletteCell", (): void => {
@@ -38,12 +36,7 @@ describe("ActionBranchToPaletteCell", (): void => {
 
   test("renders at its grid position", async (): Promise<void> => {
 
-    render(html`
-      <${ActionBranchToPaletteCell}
-        id="${TEST_CELL_ID}"
-        options=${goToPaletteCell.options}
-      />`
-    );
+    renderCell(ActionBranchToPaletteCell, TEST_CELL_ID, goToPaletteCell.options);
 
     const button = await expectCellRendered(
       TEST_CELL_ID, goToPaletteCell.options, "actionBranchToPaletteCell foldedCorner"

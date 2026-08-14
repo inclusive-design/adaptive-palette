@@ -10,13 +10,11 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/preact";
-import { html } from "htm/preact";
+import { screen, fireEvent } from "@testing-library/preact";
 
 import { changeEncodingContents } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
-import { expectCellRendered } from "../testUtils/CellAssertions";
+import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { ActionPostModifierCell } from "./ActionPostModifierCell";
 
 describe("ActionPostModifierCell", (): void => {
@@ -39,12 +37,7 @@ describe("ActionPostModifierCell", (): void => {
 
   test("is unavailable while the input area is empty", async (): Promise<void> => {
 
-    render(html`
-      <${ActionPostModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionPostModifierCell, TEST_CELL_ID, testCell.options);
 
     const button = await expectCellRendered(TEST_CELL_ID, testCell.options, "actionModifierCell");
 
@@ -66,12 +59,7 @@ describe("ActionPostModifierCell", (): void => {
       }],
       caretPosition: 0
     };
-    render(html`
-      <${ActionPostModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionPostModifierCell, TEST_CELL_ID, testCell.options);
 
     let button = await expectCellRendered(TEST_CELL_ID, testCell.options, "actionModifierCell");
 
@@ -86,7 +74,7 @@ describe("ActionPostModifierCell", (): void => {
     expect(button).toHaveAttribute("aria-disabled", "true");
   });
 
-  test("Applying a post modifier appends its text to the label, not prepends", async (): Promise<void> => {
+  test("applying a post modifier appends its text to the label, not prepends", async (): Promise<void> => {
     changeEncodingContents.value = {
       payloads: [{
         label: "speak",
@@ -94,57 +82,13 @@ describe("ActionPostModifierCell", (): void => {
       }],
       caretPosition: 0
     };
-    render(html`
-      <${ActionPostModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionPostModifierCell, TEST_CELL_ID, testCell.options);
     const button = await screen.findByRole("button", {name: testCell.options.label});
     fireEvent.click(button);
 
     expect(changeEncodingContents.value.payloads[0].label).toBe("speak intensity");
   });
 
-  test("clicking while unavailable does nothing", async (): Promise<void> => {
-    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
-
-    render(html`
-      <${ActionPostModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
-
-    const button = await screen.findByRole("button", { name: testCell.options.label });
-    expect(button).toHaveAttribute("aria-disabled", "true");
-    fireEvent.click(button);
-
-    expect(changeEncodingContents.value.payloads).toEqual([]);
-  });
-
-  test("clicking while unavailable is announced", async (): Promise<void> => {
-    const spoken: string[] = [];
-    vi.stubGlobal("speechSynthesis", {
-      speaking: false,
-      pending: false,
-      cancel: () => {},
-      speak: (utterance: SpeechSynthesisUtterance) => spoken.push(utterance.text)
-    });
-    vi.stubGlobal("SpeechSynthesisUtterance", class { constructor (public text: string) {} });
-
-    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
-
-    render(html`
-      <${ActionPostModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
-    fireEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
-
-    expect(spoken).toEqual([`${testCell.options.label} unavailable`]);
-    vi.unstubAllGlobals();
-  });
-
+  // Clicking while unavailable is covered in `ActionPreModifierCell.test.ts`: both cells
+  // route through the same guard in `ActionModifierCellCommon`.
 });

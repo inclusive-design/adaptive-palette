@@ -65,6 +65,6 @@ No `should`, no `Test`/`Check` prefix, and no repeating the component name the `
 carries. Capitalize only when the subject is a proper name or a UI label — `Close asks the dialog to
 dismiss` and `Home is unavailable when the stack is empty` are correct as written.
 
-### Shared assertions
+### Shared Utilities
 
-`src/client/testUtils/CellAssertions.ts` holds shared utility functions for tests.
+`src/client/testUtils/` holds shared utility functions for tests.
