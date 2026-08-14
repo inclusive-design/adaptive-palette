@@ -10,13 +10,12 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render, screen } from "@testing-library/preact";
-import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
+import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { CommandCursorBackward } from "./CommandCursorBackward";
 
-describe("CommandCursorBackward render tests", (): void => {
+describe("CommandCursorBackward", (): void => {
 
   const TEST_CELL_ID = "command-cursor-backwards";
   const testCell = {
@@ -35,33 +34,11 @@ describe("CommandCursorBackward render tests", (): void => {
     await initAdaptivePaletteGlobals();
   });
 
-  test("CommandCursorBackward rendering", async (): Promise<void> => {
+  test("renders at its grid position", async (): Promise<void> => {
 
-    render(html`
-      <${CommandCursorBackward}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(CommandCursorBackward, TEST_CELL_ID, testCell.options);
 
-    // Check the rendered cell
-    const button = await screen.findByRole("button", {name: testCell.options.label});
-
-    // Check that the CommandCursorBackward button is rendered and has the
-    // correct attributes and text.
-    expect(button).toBeVisible();
-    expect(button).toBeValid();
-    expect(button.id).toBe(TEST_CELL_ID);
-    expect(button.getAttribute("class")).toBe("btn-command");
-    expect(button.textContent).toBe(testCell.options.label);
-
-    // Check the grid cell styles.
-    expect(button.style.getPropertyValue("grid-column")).toBe(
-      `${testCell.options.columnStart} / span ${testCell.options.columnSpan}`
-    );
-    expect(button.style.getPropertyValue("grid-row")).toBe(
-      `${testCell.options.rowStart} / span ${testCell.options.rowSpan}`
-    );
+    const button = await expectCellRendered(TEST_CELL_ID, testCell.options, "btn-command");
 
     // Check aria-controls
     expect(button.getAttribute("aria-controls")).toBe(testCell.options.ariaControls);

@@ -13,6 +13,7 @@ src/client/
   components/       Preact components that are not registry cells
   core/             Services and start-up wiring
   state/            Signals and the globals singleton
+  testUtils/        Helpers shared between test files
   utils/            Stateless helper functions
   features/         Feature slices
     word-prediction/
@@ -25,6 +26,7 @@ src/client/
 | `components/` | Preact components a palette JSON never names | `Palette.ts`, `ModalDialog.ts`, `BlissSymbol.ts` |
 | `core/` | Services with their own state or I/O, and start-up | `Config.ts`, `PaletteStore.ts`, `OllamaApi.ts`, `InitGlobals.ts` |
 | `state/` | The globals singleton and the signals shared across features | `GlobalData.ts` |
+| `testUtils/` | Helpers shared between test files. Test-only, never imported by production code. Files here carry no `.test.ts` suffix, so Vitest does not collect them as suites | `CellTestUtils.ts` |
 | `utils/` | Functions with no state of their own | `SpeechUtils.ts`, `GridUtils.ts`, `SvgUtils.ts` |
 | `features/<slice>/` | Everything belonging to one feature and nothing else | `word-prediction/`, `telegraphic-translation/` |
 

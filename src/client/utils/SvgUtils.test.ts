@@ -18,7 +18,7 @@ import {
   getSvgElement, getSvgMarkupString, findSymbolByGloss,
 } from "./SvgUtils";
 
-describe("SvgUtils module", (): void => {
+describe("SvgUtils", (): void => {
   const singleId = 823;                             // CONJ.
   const expectedString = "B823";
 
@@ -108,12 +108,12 @@ describe("SvgUtils module", (): void => {
     expect(bstrToComposition(hasAkKerningBStr)).toEqual(hasAkKerningComposition);
   });
 
-  test("Check bstrToComposition() when passing an invalid input", (): void => {
+  test("bstrToComposition() returns an empty array for unparsable input", (): void => {
     expect(bstrToComposition("asdffr;B1214343")).toEqual([]);
     expect(bstrToComposition("")).toEqual([]);
   });
 
-  test("Check for indicator or modifier ID", (): void => {
+  test("isIndicator() and isModifier() each recognise only their own ids", (): void => {
     expect(isIndicator(indicatorId)).toEqual(true);
     expect(isIndicator(nonIndicatorId)).toEqual(false);
     expect(isModifier(modifierId)).toEqual(true);
@@ -151,7 +151,7 @@ describe("SvgUtils module", (): void => {
     expect(findClassifierFromLeft(noHasNoModifiers)).toEqual(0);
   });
 
-  test("Check finding full symbol information", (): void => {
+  test("findSymbolByBciAvId() returns the entry, or undefined for an unknown id", (): void => {
     let actual = findSymbolByBciAvId(23409);   // CONJ. bciAvId
     expect(actual?.bciAvId).toBe(23409);
 

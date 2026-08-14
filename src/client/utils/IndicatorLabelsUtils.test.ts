@@ -13,7 +13,7 @@
 import { vi } from "vitest";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
-import { DISABLED_MODEL_QUERY } from "../core/Config";
+import { setTestConfig } from "../testUtils/TestConfig";
 import { getStaticNewLabel, getNewLabelViaModelQuery, initIndicatorLabels, resetOllamaCacheForTests } from "./IndicatorLabelsUtils";
 import { queryChat } from "../core/OllamaApi";
 
@@ -37,14 +37,11 @@ const USER_PROMPT = "Word: \"{{word}}\"\nPart of speech: {{pos}}\nMeaning: {{exp
  * prompts.
  */
 function enableModelQuery (): void {
-  adaptivePaletteGlobals.config = {
-    maxStoredRecords: 500,
-    announceSymbolOnInput: true,
-    indicatorLabelLookup: { useModelQueryFallback: true, model: "gemma4:12b", systemPrompt: SYSTEM_PROMPT, userPrompt: USER_PROMPT },
-    symbolSearch: { show: true },
-    svgBuilderString: { show: false },
-    wordPrediction: { show: false, maxSuggestions: 4, ...DISABLED_MODEL_QUERY }
-  };
+  setTestConfig({
+    indicatorLabelLookup: {
+      useModelQueryFallback: true, model: "gemma4:12b", systemPrompt: SYSTEM_PROMPT, userPrompt: USER_PROMPT
+    }
+  });
 }
 
 describe("IndicatorLabels", (): void => {
@@ -64,14 +61,11 @@ describe("IndicatorLabels", (): void => {
     }));
     await initIndicatorLabels();
     resetOllamaCacheForTests();
-    adaptivePaletteGlobals.config = {
-      maxStoredRecords: 500,
-      announceSymbolOnInput: true,
-      indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: SYSTEM_PROMPT, userPrompt: USER_PROMPT },
-      symbolSearch: { show: true },
-      svgBuilderString: { show: false },
-      wordPrediction: { show: false, maxSuggestions: 4, ...DISABLED_MODEL_QUERY }
-    };
+    setTestConfig({
+      indicatorLabelLookup: {
+        useModelQueryFallback: false, model: "", systemPrompt: SYSTEM_PROMPT, userPrompt: USER_PROMPT
+      }
+    });
   });
 
   afterEach((): void => {

@@ -16,19 +16,13 @@ import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
 import { changeEncodingContents } from "../state/GlobalData";
-import { announceIfEnabled, speak } from "../utils/SpeechUtils";
 import {
   ActionSearchGloss, SEARCH_FIELD_LABEL, SUBMIT_LABEL, CLEAR_LABEL,
   LABEL_FIELD_LABEL, ADD_LABEL, CLOSE_LABEL, NO_SELECTION_STATUS, MAX_RESULTS
 } from "./ActionSearchGloss";
+import { mockedAnnounceIfEnabled, mockedSpeak } from "../testUtils/SpeechUtilsMock";
 
-vi.mock("../utils/SpeechUtils", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../utils/SpeechUtils")>();
-  return { ...actual, speak: vi.fn(), announceIfEnabled: vi.fn() };
-});
-
-const mockedSpeak = vi.mocked(speak);
-const mockedAnnounce = vi.mocked(announceIfEnabled);
+vi.mock("../utils/SpeechUtils");
 
 /**
  * Render the dialog body and run a search for `term`, returning the search input.
@@ -43,13 +37,11 @@ const searchFor = async (user: ReturnType<typeof userEvent.setup>, term: string)
   return searchInput;
 };
 
-describe("ActionSearchGloss component", () => {
+describe("ActionSearchGloss", () => {
 
   afterEach(() => {
     cleanup();
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
-    mockedSpeak.mockClear();
-    mockedAnnounce.mockClear();
   });
 
   test("renders the search form and footer controls", () => {
@@ -162,7 +154,7 @@ describe("ActionSearchGloss component", () => {
     // The status region is the only channel: device speech would talk over the screen
     // reader announcing the same add.
     expect(mockedSpeak).not.toHaveBeenCalled();
-    expect(mockedAnnounce).not.toHaveBeenCalled();
+    expect(mockedAnnounceIfEnabled).not.toHaveBeenCalled();
   }, 20000);
 
   test("an edited label is what gets inserted", async () => {
@@ -181,7 +173,7 @@ describe("ActionSearchGloss component", () => {
   }, 20000);
 
   // Surrounding spaces would flow straight into the telegraphic message sent to the model.
-  test("a label is trimmed before it is inserted", async () => {
+  test("a searched label is trimmed before it is inserted", async () => {
     const user = userEvent.setup();
     render(html`<${ActionSearchGloss} onRequestClose=${() => {}} />`);
 
@@ -233,7 +225,7 @@ describe("ActionSearchGloss component", () => {
     expect(await screen.findByRole("status")).toHaveTextContent(/added to message/);
   }, 20000);
 
-  test("a second add appends rather than replacing", async () => {
+  test("a second search result appends rather than replacing", async () => {
     const user = userEvent.setup();
     render(html`<${ActionSearchGloss} onRequestClose=${() => {}} />`);
 
@@ -254,7 +246,7 @@ describe("ActionSearchGloss component", () => {
 
     expect(changeEncodingContents.value.payloads).toHaveLength(0);
     expect(mockedSpeak).not.toHaveBeenCalled();
-    expect(mockedAnnounce).not.toHaveBeenCalled();
+    expect(mockedAnnounceIfEnabled).not.toHaveBeenCalled();
     // The button keeps focus via `aria-disabled`, so pressing it must not be silent.
     expect(await screen.findByRole("status")).toHaveTextContent(NO_SELECTION_STATUS);
   });

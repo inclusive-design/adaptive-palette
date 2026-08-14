@@ -33,7 +33,7 @@ vi.mock("../utils/IndicatorLabelsUtils", () => ({
 
 const mockedGetStaticNewLabel = vi.mocked(IndicatorLabels.getStaticNewLabel);
 
-describe("Palette integration test", () => {
+describe("Palette integration", () => {
 
   // The test palettes defines all cell types that need to coordinate with each other.
   const testPalette = {

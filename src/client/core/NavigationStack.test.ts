@@ -58,7 +58,7 @@ const testPalette2 = {
 };
 
 
-describe("NavigationStack module - basics", (): void => {
+describe("NavigationStack basics", (): void => {
 
   const navigation = new NavigationStack();
 
@@ -81,7 +81,7 @@ describe("NavigationStack module - basics", (): void => {
   });
 });
 
-describe("NavigationStack module - pushing and popping", (): void => {
+describe("NavigationStack pushing and popping", (): void => {
 
   const navigation = new NavigationStack();
 
@@ -112,7 +112,7 @@ describe("NavigationStack module - pushing and popping", (): void => {
     expect(navigation.currentPalette).toBe(testPalette1);
   });
 
-  test("Check invalid peek()", (): void => {
+  test("peek() returns undefined for an out-of-range index", (): void => {
     navigation.push(testPalette1);
     navigation.push(testPalette2);
     expect(navigation.isEmpty()).toBe(false);
@@ -120,7 +120,7 @@ describe("NavigationStack module - pushing and popping", (): void => {
     expect(navigation.peek(1024)).toBe(undefined);
   });
 
-  test("Check pop and set current utility function", (): void => {
+  test("popAndSetCurrent() pops the top and makes the given palette current", (): void => {
     navigation.currentPalette = testPalette1;
     navigation.push(testPalette1);
     navigation.push(testPalette2);
@@ -130,7 +130,7 @@ describe("NavigationStack module - pushing and popping", (): void => {
     expect(navigation.currentPalette).toBe(testPalette2);
   });
 
-  test("Check peeking at the bottom of the stack", (): void => {
+  test("peekLast() returns the bottom of the stack, or undefined when empty", (): void => {
     navigation.flushReset(null);
     expect(navigation.isEmpty()).toBe(true);
     expect(navigation.peekLast()).toBe(undefined);

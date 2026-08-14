@@ -18,7 +18,7 @@ import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { CurrentPalette } from "./CurrentPalette";
 import { CommandGoBackCell } from "../cells/CommandGoBackCell";
 
-describe("CurrentPalette component", (): void => {
+describe("CurrentPalette", (): void => {
 
   const firstPalette = {
     "name": "First Palette",

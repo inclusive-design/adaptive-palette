@@ -17,9 +17,13 @@ import { html } from "htm/preact";
 
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
+import { expectCellRendered } from "../testUtils/CellTestUtils";
 import { CommandGoToRootCell } from "./CommandGoToRootCell";
+import { mockedSpeakUnavailable } from "../testUtils/SpeechUtilsMock";
 
-describe("CommandGoToRootCell render tests", (): void => {
+vi.mock("../utils/SpeechUtils");
+
+describe("CommandGoToRootCell", (): void => {
 
   const TEST_CELL_ID = "uuid-home-cell";
   const homeCell = {
@@ -82,13 +86,7 @@ describe("CommandGoToRootCell render tests", (): void => {
       <${CommandGoToRootCell} id="${TEST_CELL_ID}" options=${homeCell.options} />
     `);
 
-    const button = await screen.findByRole("button", { name: homeCell.options.label });
-
-    expect(button).toBeVisible();
-    expect(button.id).toBe(TEST_CELL_ID);
-    expect(button.getAttribute("class")).toBe("btn-command");
-    expect(button.style.getPropertyValue("grid-column")).toBe("2 / span 1");
-    expect(button.style.getPropertyValue("grid-row")).toBe("1 / span 1");
+    const button = await expectCellRendered(TEST_CELL_ID, homeCell.options, "btn-command");
     expect(button).toHaveAttribute("aria-disabled", "true");
   });
 
@@ -103,7 +101,7 @@ describe("CommandGoToRootCell render tests", (): void => {
     expect(button).toHaveAttribute("aria-disabled", "false");
   });
 
-  test("Clicking Home makes the root palette current and empties the stack", async (): Promise<void> => {
+  test("clicking Home makes the root palette current and empties the stack", async (): Promise<void> => {
     // Two levels deep: the root was pushed first, then the second palette.
     adaptivePaletteGlobals.navigationStack.push(rootPalette);
     adaptivePaletteGlobals.navigationStack.push(secondPalette);
@@ -120,36 +118,19 @@ describe("CommandGoToRootCell render tests", (): void => {
     expect(adaptivePaletteGlobals.navigationStack.currentPalette?.name).toBe("rootPalette");
   });
 
-  test("Clicking Home while unavailable does nothing", async (): Promise<void> => {
+  test("clicking Home while unavailable leaves the stack alone and is announced", async (): Promise<void> => {
     render(html`
       <${CommandGoToRootCell} id="${TEST_CELL_ID}" options=${homeCell.options} />
     `);
 
     const button = await screen.findByRole("button", { name: homeCell.options.label });
+    expect(button).toHaveAttribute("aria-disabled", "true");
     fireEvent.click(button);
 
     expect(adaptivePaletteGlobals.navigationStack.depth).toBe(0);
     expect(adaptivePaletteGlobals.navigationStack.currentPalette).toBeNull();
-  });
-
-  test("Clicking Home while unavailable is announced", async (): Promise<void> => {
     // The button keeps `aria-disabled` rather than `disabled`, so it can be focused and
     // activated. Speech is the main feedback channel and must not go silent.
-    const spoken: string[] = [];
-    vi.stubGlobal("speechSynthesis", {
-      speaking: false,
-      pending: false,
-      cancel: () => {},
-      speak: (utterance: SpeechSynthesisUtterance) => spoken.push(utterance.text)
-    });
-    vi.stubGlobal("SpeechSynthesisUtterance", class { constructor (public text: string) {} });
-
-    render(html`
-      <${CommandGoToRootCell} id="${TEST_CELL_ID}" options=${homeCell.options} />
-    `);
-    fireEvent.click(await screen.findByRole("button", { name: homeCell.options.label }));
-
-    expect(spoken).toEqual(["Home unavailable"]);
-    vi.unstubAllGlobals();
+    expect(mockedSpeakUnavailable).toHaveBeenCalledWith(homeCell.options.label);
   });
 });

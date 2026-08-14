@@ -16,6 +16,7 @@ import { userEvent } from "vitest/browser";
 import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
+import { expectCellRendered } from "../testUtils/CellTestUtils";
 import {
   CommandClearSavedData, CANCEL_LABEL, CONFIRM_LABEL, clearSavedData
 } from "./CommandClearSavedData";
@@ -25,7 +26,7 @@ import { MESSAGE_LOG_KEY } from "../core/MessageLog";
 // `@testing-library/user-event`: these tests drive a native `<dialog>`, whose default
 // actions only run for trusted events.
 
-describe("CommandClearSavedData component", () => {
+describe("CommandClearSavedData", () => {
 
   const TEST_CELL_ID = "command-clear-saved-data";
   const testOptions = {
@@ -64,14 +65,10 @@ describe("CommandClearSavedData component", () => {
 
   const trigger = () => screen.getByRole("button", { name: testOptions.label });
 
-  test("renders as a command cell at its grid position", () => {
+  test("renders as a command cell at its grid position", async () => {
     renderCell();
 
-    const button = trigger();
-    expect(button.id).toBe(TEST_CELL_ID);
-    expect(button.getAttribute("class")).toBe("btn-command");
-    expect(button.style.getPropertyValue("grid-column")).toBe("17 / span 1");
-    expect(button.style.getPropertyValue("grid-row")).toBe("1 / span 1");
+    const button = await expectCellRendered(TEST_CELL_ID, testOptions, "btn-command");
     expect(button).toHaveAttribute("aria-haspopup", "dialog");
   });
 

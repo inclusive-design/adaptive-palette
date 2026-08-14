@@ -10,23 +10,23 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render, screen, fireEvent } from "@testing-library/preact";
-import { html } from "htm/preact";
+import { screen, fireEvent } from "@testing-library/preact";
 
 import { changeEncodingContents } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
+import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { ActionPostModifierCell } from "./ActionPostModifierCell";
 
-describe("ActionPostModifierCell render tests", (): void => {
+describe("ActionPostModifierCell", (): void => {
 
-  const TEST_CELL_ID = "uuid-for-premodifier-cell";
+  const TEST_CELL_ID = "uuid-for-postmodifier-cell";
   const testCell = {
     options: {
       "label": "intensity",
-      "rowStart": "3",
-      "rowSpan": "2",
-      "columnStart": "2",
-      "columnSpan": "1",
+      "rowStart": 3,
+      "rowSpan": 2,
+      "columnStart": 2,
+      "columnSpan": 1,
       "composition": 401
     }
   };
@@ -35,36 +35,18 @@ describe("ActionPostModifierCell render tests", (): void => {
     await initAdaptivePaletteGlobals();
   });
 
-  test("Single ActionPostModifierCell rendering, disabled", async (): Promise<void> => {
+  test("is unavailable while the input area is empty", async (): Promise<void> => {
 
-    render(html`
-      <${ActionPostModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionPostModifierCell, TEST_CELL_ID, testCell.options);
 
-    // Check the rendered cell
-    const button = await screen.findByRole("button", {name: testCell.options.label});
-
-    // Check that the ActionPostModifierCell/button is rendered and has the correct
-    // attributes and text.
-    expect(button).toBeVisible();
-    expect(button).toBeValid();
-    expect(button.id).toBe(TEST_CELL_ID);
-    expect(button.getAttribute("class")).toBe("actionModifierCell");
-    expect(button.textContent).toBe(testCell.options.label);
-
-    // Check the grid cell styles.
-    expect(button.style.getPropertyValue("grid-column")).toBe("2 / span 1");
-    expect(button.style.getPropertyValue("grid-row")).toBe("3 / span 2");
+    const button = await expectCellRendered(TEST_CELL_ID, testCell.options, "actionModifierCell");
 
     // Check disabled state. `changeEncodingContents` is initialized
     // with an empty array, hence there should be an `aria-disabled` attribute.
     expect(button).toHaveAttribute("aria-disabled", "true");
   });
 
-  test("Single ActionPostModifierCell rendering, enabled", async (): Promise<void> => {
+  test("is available with a symbol at the caret, and unavailable once the caret moves off it", async (): Promise<void> => {
 
     // Put a symbol into the `changeEncodingContents` (the value of the symbol
     // entry area in the palette display) so the modifier cells will not be
@@ -77,27 +59,9 @@ describe("ActionPostModifierCell render tests", (): void => {
       }],
       caretPosition: 0
     };
-    render(html`
-      <${ActionPostModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionPostModifierCell, TEST_CELL_ID, testCell.options);
 
-    // Check the rendered cell
-    let button = await screen.findByRole("button", {name: testCell.options.label});
-
-    // Check that the ActionPostModifierCell/button is rendered and has the correct
-    // attributes and text.
-    expect(button).toBeVisible();
-    expect(button).toBeValid();
-    expect(button.id).toBe(TEST_CELL_ID);
-    expect(button.getAttribute("class")).toBe("actionModifierCell");
-    expect(button.textContent).toBe(testCell.options.label);
-
-    // Check the grid cell styles.
-    expect(button.style.getPropertyValue("grid-column")).toBe("2 / span 1");
-    expect(button.style.getPropertyValue("grid-row")).toBe("3 / span 2");
+    let button = await expectCellRendered(TEST_CELL_ID, testCell.options, "actionModifierCell");
 
     // Check disabled state.  `changeEncodingContents` is initialized
     // with a symbol, hence there should be an `aria-disabled` attribute.
@@ -110,7 +74,7 @@ describe("ActionPostModifierCell render tests", (): void => {
     expect(button).toHaveAttribute("aria-disabled", "true");
   });
 
-  test("Applying a post modifier appends its text to the label, not prepends", async (): Promise<void> => {
+  test("applying a post modifier appends its text to the label, not prepends", async (): Promise<void> => {
     changeEncodingContents.value = {
       payloads: [{
         label: "speak",
@@ -118,16 +82,13 @@ describe("ActionPostModifierCell render tests", (): void => {
       }],
       caretPosition: 0
     };
-    render(html`
-      <${ActionPostModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionPostModifierCell, TEST_CELL_ID, testCell.options);
     const button = await screen.findByRole("button", {name: testCell.options.label});
     fireEvent.click(button);
 
     expect(changeEncodingContents.value.payloads[0].label).toBe("speak intensity");
   });
 
+  // Clicking while unavailable is covered in `ActionPreModifierCell.test.ts`: both cells
+  // route through the same guard in `ActionModifierCellCommon`.
 });

@@ -10,23 +10,27 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render, screen, fireEvent } from "@testing-library/preact";
-import { html } from "htm/preact";
+import { vi } from "vitest";
+import { screen, fireEvent } from "@testing-library/preact";
 
 import { changeEncodingContents } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
+import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { ActionPreModifierCell } from "./ActionPreModifierCell";
+import { mockedSpeakUnavailable } from "../testUtils/SpeechUtilsMock";
 
-describe("ActionPreModifierCell render tests", (): void => {
+vi.mock("../utils/SpeechUtils");
+
+describe("ActionPreModifierCell", (): void => {
 
   const TEST_CELL_ID = "uuid-for-premodifier-cell";
   const testCell = {
     options: {
       "label": "oppposite of",
-      "rowStart": "3",
-      "rowSpan": "2",
-      "columnStart": "2",
-      "columnSpan": "1",
+      "rowStart": 3,
+      "rowSpan": 2,
+      "columnStart": 2,
+      "columnSpan": 1,
       "composition": 486
     }
   };
@@ -35,36 +39,18 @@ describe("ActionPreModifierCell render tests", (): void => {
     await initAdaptivePaletteGlobals();
   });
 
-  test("Single ActionPreModifierCell rendering, disabled", async (): Promise<void> => {
+  test("is unavailable while the input area is empty", async (): Promise<void> => {
 
-    render(html`
-      <${ActionPreModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionPreModifierCell, TEST_CELL_ID, testCell.options);
 
-    // Check the rendered cell
-    const button = await screen.findByRole("button", {name: testCell.options.label});
-
-    // Check that the ActionPreModifierCell/button is rendered and has the correct
-    // attributes and text.
-    expect(button).toBeVisible();
-    expect(button).toBeValid();
-    expect(button.id).toBe(TEST_CELL_ID);
-    expect(button.getAttribute("class")).toBe("actionModifierCell");
-    expect(button.textContent).toBe(testCell.options.label);
-
-    // Check the grid cell styles.
-    expect(button.style.getPropertyValue("grid-column")).toBe("2 / span 1");
-    expect(button.style.getPropertyValue("grid-row")).toBe("3 / span 2");
+    const button = await expectCellRendered(TEST_CELL_ID, testCell.options, "actionModifierCell");
 
     // Check disabled state.  `changeEncodingContents` is initialized
     // with an empty array, hence there should be an `aria-disabled` attribute.
     expect(button).toHaveAttribute("aria-disabled", "true");
   });
 
-  test("Single ActionPreModifierCell rendering, enabled", async (): Promise<void> => {
+  test("is available with a symbol at the caret, and unavailable once the caret moves off it", async (): Promise<void> => {
 
     // Put a symbol into the `changeEncodingContents` (the value of the symbol
     // entry area in the palette display) so the modifier cells will not be
@@ -78,26 +64,8 @@ describe("ActionPreModifierCell render tests", (): void => {
       caretPosition: 0
     };
 
-    render(html`
-      <${ActionPreModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
-    // Check the rendered cell
-    let button = await screen.findByRole("button", {name: testCell.options.label});
-
-    // Check that the ActionPreModifierCell/button is rendered and has the correct
-    // attributes and text.
-    expect(button).toBeVisible();
-    expect(button).toBeValid();
-    expect(button.id).toBe(TEST_CELL_ID);
-    expect(button.getAttribute("class")).toBe("actionModifierCell");
-    expect(button.textContent).toBe(testCell.options.label);
-
-    // Check the grid cell styles.
-    expect(button.style.getPropertyValue("grid-column")).toBe("2 / span 1");
-    expect(button.style.getPropertyValue("grid-row")).toBe("3 / span 2");
+    renderCell(ActionPreModifierCell, TEST_CELL_ID, testCell.options);
+    let button = await expectCellRendered(TEST_CELL_ID, testCell.options, "actionModifierCell");
 
     // Check disabled state.  `changeEncodingContents` is initialized
     // with a symbol, hence there should be an `aria-disabled` attribute.
@@ -110,7 +78,7 @@ describe("ActionPreModifierCell render tests", (): void => {
     expect(button).toHaveAttribute("aria-disabled", "true");
   });
 
-  test("Applying a pre modifier prepends its text to the label", async (): Promise<void> => {
+  test("applying a pre modifier prepends its text to the label", async (): Promise<void> => {
     changeEncodingContents.value = {
       payloads: [{
         label: "building",
@@ -118,16 +86,31 @@ describe("ActionPreModifierCell render tests", (): void => {
       }],
       caretPosition: 0
     };
-    render(html`
-      <${ActionPreModifierCell}
-        id="${TEST_CELL_ID}"
-        options=${testCell.options}
-      />`
-    );
+    renderCell(ActionPreModifierCell, TEST_CELL_ID, testCell.options);
     const button = await screen.findByRole("button", {name: testCell.options.label});
     fireEvent.click(button);
 
     expect(changeEncodingContents.value.payloads[0].label).toBe("oppposite of building");
   });
 
+  // The unavailable guard lives in `ActionModifierCellCommon`, shared with
+  // `ActionPostModifierCell`, so it is exercised here only.
+  test("clicking while unavailable leaves the input untouched and is announced", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [{ label: "building", composition: 392 }],
+      caretPosition: -1
+    };
+    const before = JSON.stringify(changeEncodingContents.value);
+
+    renderCell(ActionPreModifierCell, TEST_CELL_ID, testCell.options);
+
+    const button = await screen.findByRole("button", { name: testCell.options.label });
+    expect(button).toHaveAttribute("aria-disabled", "true");
+    fireEvent.click(button);
+
+    expect(JSON.stringify(changeEncodingContents.value)).toBe(before);
+    // The button keeps `aria-disabled` rather than `disabled`, so it can be focused and
+    // activated. Speech is the main feedback channel and must not go silent.
+    expect(mockedSpeakUnavailable).toHaveBeenCalledWith(testCell.options.label);
+  });
 });

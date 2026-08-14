@@ -42,7 +42,7 @@ const mockedOllama = vi.mocked(ollama);
 type OllamaListResponse = Awaited<ReturnType<typeof mockedOllama.list>>;
 type OllamaChatResponse = Awaited<ReturnType<typeof mockedOllama.chat>>;
 
-describe("OllamaApi unit tests", (): void => {
+describe("OllamaApi", (): void => {
 
   // Clear mocks before each test so they don't interfere with one another
   beforeEach(() => {
@@ -50,7 +50,7 @@ describe("OllamaApi unit tests", (): void => {
   });
 
   describe("getModelNames", () => {
-    test("should return an array of model names on success", async (): Promise<void> => {
+    test("returns the model names", async (): Promise<void> => {
       const mockResponse = {
         models: [
           { name: "llama3" },
@@ -68,7 +68,7 @@ describe("OllamaApi unit tests", (): void => {
       expect(modelNames).toEqual(["llama3", "mistral"]);
     });
 
-    test("should handle errors and return an empty array", async (): Promise<void> => {
+    test("returns an empty array when the request fails", async (): Promise<void> => {
       // Intentionally mock an error response to test error handling. Also spy on
       // console.error to suppress expected error logs during testing.
       const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
@@ -87,7 +87,7 @@ describe("OllamaApi unit tests", (): void => {
     const mockModel = "llama3";
     const mockResponse = { message: { role: "assistant", content: "Paris" } };
 
-    test("should call ollama.chat without a system prompt (stream: false)", async () => {
+    test("queries without a system prompt when none is given", async () => {
       mockedOllama.chat.mockResolvedValue(mockResponse as unknown as OllamaChatResponse);
 
       const response = await queryChat(mockQuery, mockModel, false);
@@ -104,7 +104,7 @@ describe("OllamaApi unit tests", (): void => {
       expect(response).toEqual(mockResponse);
     });
 
-    test("should include the system prompt when provided", async () => {
+    test("includes the system prompt when one is given", async () => {
       mockedOllama.chat.mockResolvedValue(mockResponse as unknown as OllamaChatResponse);
       const systemPrompt = "You are a helpful geography teacher.";
 
@@ -121,7 +121,7 @@ describe("OllamaApi unit tests", (): void => {
       });
     });
 
-    test("should ignore the system prompt if it is an empty string", async () => {
+    test("ignores an empty system prompt", async () => {
       mockedOllama.chat.mockResolvedValue(mockResponse as unknown as OllamaChatResponse);
 
       await queryChat(mockQuery, mockModel, false, "");
@@ -135,7 +135,7 @@ describe("OllamaApi unit tests", (): void => {
       );
     });
 
-    test("should call ollama.chat with stream: true when streamResp is true", async () => {
+    test("streams the reply when streamResp is true", async () => {
       // For a stream, Ollama returns an AsyncIterable. Mock it using an async generator.
       async function* mockStream() {
         // Add a mock `await` to satisfies the linter. Otherwise, the linter complains an async

@@ -14,6 +14,7 @@ import { render, screen } from "@testing-library/preact";
 import { html } from "htm/preact";
 import { ContentEncoding, clamp } from "./ContentEncoding";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
+import { renderCell } from "../testUtils/CellTestUtils";
 
 test("The content encoding area is rendered correctly", async (): Promise<void> => {
   await initAdaptivePaletteGlobals();
@@ -26,12 +27,7 @@ test("The content encoding area is rendered correctly", async (): Promise<void> 
     rowSpan: 3
   };
 
-  render(html`
-    <${ContentEncoding}
-      id="${cellId}"
-      options=${cellOptions}
-    />`
-  );
+  renderCell(ContentEncoding, cellId, cellOptions);
 
   // Test the content area is rendered properly
   const encodingAreaByLabel = await screen.findByLabelText("Input Area");
@@ -50,7 +46,7 @@ test("The content encoding area is rendered correctly", async (): Promise<void> 
 });
 
 // `Sentence` button is not rendered when no model is available. The input area takes over its space.
-describe("The content encoding area covers the sentence button's column when it is absent", (): void => {
+describe("covering the sentence button's column", (): void => {
 
   const cellOptions = {
     columnStart: 1,
@@ -87,15 +83,15 @@ describe("The content encoding area covers the sentence button's column when it 
 
 describe("clamp()", (): void => {
 
-  test("Test clamp function where value is below min", (): void => {
+  test("returns min when the value is below it", (): void => {
     expect(clamp(-1, 0, 1)).toBe(0);
   });
 
-  test("Test clamp function where value is above max", (): void => {
+  test("returns max when the value is above it", (): void => {
     expect(clamp(2, 0, 1)).toBe(1);
   });
 
-  test("Test clamp function where value is in range", (): void => {
+  test("returns the value unchanged when it is in range", (): void => {
     expect(clamp(1, 0, 2)).toBe(1);
   });
 });
