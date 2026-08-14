@@ -20,6 +20,11 @@
   }
 }
 
+/* Pushed the button to the far end of the row. */
+.settingsTrigger {
+  margin-left: auto;
+}
+
 /* The developer entry point is deliberately quieter than the user-facing one. */
 .symbolEntryToolbarDevTrigger {
   background-color: #ddd;

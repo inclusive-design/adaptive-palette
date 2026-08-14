@@ -132,6 +132,8 @@ every symbol+indicator pair that the vocabulary supports to its grammatically co
 turn telegraphic messages into complete, speakable English sentences.
 - [Word Prediction](./docs/WordPrediction.md): suggest the words most likely to come next, from the user's
 past messages and optionally from a local Ollama model.
+- [Adjust Settings](./docs/Settings.md): change the runtime settings from within the app, saved in the
+browser and applied at the next page load.
 
 ### Utility Documentation
 
@@ -163,6 +165,6 @@ In accordance with the ShareAlike clause, this adapted file is also licensed und
 
 ## Acknowledgments
 
-This project was developed using an AI-assisted workflow. Special thanks to [Claude Code](https://www.anthropic.com/)
-and [OpenAI Codex](https://openai.com/blog/openai-codex). All AI-generated code was reviewed, tested, and refined by
+This project was developed using an AI-assisted workflow. Special thanks to [Claude Code](https://code.claude.com/docs/en/overview)
+and [OpenAI Codex](https://openai.com/codex/). All AI-generated code was reviewed, tested, and refined by
 human developers to ensure quality and security.

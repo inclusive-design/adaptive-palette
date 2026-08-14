@@ -6,14 +6,20 @@ result in `adaptivePaletteGlobals.config`. Each section is validated on its own:
 falls back to its default and leaves the other sections intact. If the file itself is missing or unparsable,
 every section falls back.
 
+Some of these fields can also be changed from within the app, through the **Adjust Settings**
+dialog: everything except `model`, `systemPrompt`, and `userPrompt`. Those choices are kept in
+local storage and applied over the file at start-up by `applyStoredSettings()` in
+[`src/client/features/settings/SettingsSchema.ts`](../../src/client/features/settings/SettingsSchema.ts),
+which re-validates every value it reads back. See [Settings.md](../Settings.md).
+
 | Section | Controls |
 | ------- | -------- |
 | `maxStoredRecords` | Top-level, not a section. How many messages the local-storage message log keeps. |
 | `announceSymbolOnInput` | Top-level, not a section. Whether labels are spoken as the user inputs. |
 | `indicatorLabelLookup` | The Ollama fallback tier for looking up indicator labels. See [IndicatorLabelLookup.md](../IndicatorLabelLookup.md). |
 | `telegraphicTranslation` | Translating a telegraphic message into full sentences. See [TelegraphicMessageTranslation.md](../TelegraphicMessageTranslation.md). |
-| `symbolSearch` | The "Add symbol to message" trigger and its gloss-search dialog. |
-| `svgBuilderString` | The "Add symbol by svg-builder string" trigger and its dialog. Off in production: it is for development. |
+| `symbolSearch` | The "Add Symbol to Message" trigger and its gloss-search dialog. |
+| `svgBuilderString` | The "Add Symbol by SVG-Builder String" trigger and its dialog. Off in production: it is for development. |
 | `wordPrediction` | Suggesting the next word from the user's past messages, and optionally from a model. See [WordPrediction.md](../WordPrediction.md). |
 
 ## `maxStoredRecords`

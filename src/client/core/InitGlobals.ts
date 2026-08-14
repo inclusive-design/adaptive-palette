@@ -25,6 +25,7 @@ import { loadConfig } from "./Config";
 import { getModelNames } from "./OllamaApi";
 import { initIndicatorLabels } from "../utils/IndicatorLabelsUtils";
 import { initSvgCompositeDefinitions } from "../utils/SvgUtils";
+import { applyStoredSettings } from "../features/settings/SettingsSchema";
 
 /**
  * Initialize the `adaptivePaletteGlobals` structure.
@@ -45,7 +46,9 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
     initIndicatorLabels()
   ]);
   adaptivePaletteGlobals.models = models;
-  adaptivePaletteGlobals.config = config;
+  adaptivePaletteGlobals.fileConfig = config;
+  // The user's saved settings are applied.
+  adaptivePaletteGlobals.config = applyStoredSettings(config);
 
   // Clean up the system prompts left in local storage by earlier builds.
   window.localStorage.removeItem("Telegraphic System Prompts");

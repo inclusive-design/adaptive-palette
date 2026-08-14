@@ -128,6 +128,9 @@ function parseMaxStoredRecords (value: unknown): number {
  * `enableModelQuery` is true and both prompts are filled in, since there are no hardcoded
  * fallback prompts to query with. A half-filled model configuration leaves the history-based
  * suggestions working on their own.
+ *
+ * The prompts are kept whether or not the query is enabled, so that a user turning it on from
+ * the settings dialog has something to query with.
  * @param {unknown} section - The raw parsed section.
  * @returns {WordPredictionConfigType}
  */
@@ -141,10 +144,10 @@ function parseWordPrediction (section: unknown): WordPredictionConfigType {
   }
   const { model, systemPrompt, userPrompt } = candidate;
   // An empty `model` is valid and means the first model Ollama reports.
-  const modelQuery = candidate.enableModelQuery === true && typeof model === "string" &&
+  const modelQuery = typeof model === "string" &&
     isFilledString(systemPrompt) && isFilledString(userPrompt)
     ? {
-      enableModelQuery: true,
+      enableModelQuery: candidate.enableModelQuery === true,
       model,
       systemPrompt: systemPrompt as string,
       userPrompt: userPrompt as string

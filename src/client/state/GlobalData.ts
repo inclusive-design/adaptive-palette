@@ -44,6 +44,9 @@ export const adaptivePaletteGlobals = {
   navigationStack: new NavigationStack(),
   models: [] as string[],
   config: makeDefaultConfig(),
+  // `config.json` as it was read, before the user's saved settings were applied. The settings
+  // dialog compares against it to work out which of its values are overrides.
+  fileConfig: makeDefaultConfig(),
   indicatorLabels: {} as Record<string, string>,
   // `id` attribute of the HTML element area where the main palette is
   // displayed, set by initAdaptivePaletteGlobals().  It defaults to the empty

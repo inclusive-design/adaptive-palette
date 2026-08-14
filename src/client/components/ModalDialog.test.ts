@@ -20,7 +20,7 @@ import { ModalDialog, DISMISS_LABEL } from "./ModalDialog";
 // The header dismiss control is named "Close dialog", not "Close", so that it does not
 // collide with the footer "Close" button each dialog body renders.
 
-const TITLE = "Add symbol to message";
+const TITLE = "Add Symbol to Message";
 
 describe("ModalDialog", () => {
 
