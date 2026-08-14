@@ -18,33 +18,32 @@ import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { ModalDialog } from "./ModalDialog";
 import { ActionSearchGloss } from "../cells/ActionSearchGloss";
 import { ActionSvgEntryField } from "../cells/ActionSvgEntryField";
+import { SettingsDialog } from "../features/settings/SettingsDialog";
 import "./SymbolEntryToolbar.scss";
 
-export const SEARCH_TRIGGER_LABEL = "Add symbol to message";
-export const SVG_TRIGGER_LABEL = "Add symbol by svg-builder string";
+export const SEARCH_TRIGGER_LABEL = "Add Symbol to Message";
+export const SVG_TRIGGER_LABEL = "Add Symbol by SVG-Builder String";
 export const SEARCH_DIALOG_ID = "searchSymbolDialog";
 export const SVG_DIALOG_ID = "svgBuilderStringDialog";
+export const SETTINGS_TRIGGER_LABEL = "Adjust Settings";
+export const SETTINGS_DIALOG_ID = "adjustSettingsDialog";
 
-type OpenDialogType = "search" | "svg" | null;
+type OpenDialogType = "search" | "svg" | "settings" | null;
 
 /**
- * The row of symbol-entry triggers above the input area, and the dialogs they open.
+ * The row of triggers above the input area, and the dialogs they open: adding a symbol to
+ * the message, and adjusting the settings.
  *
  * The triggers live outside the palette grid because no palette row has a spare column:
  * a trigger cell would have to shrink a neighbour.
  *
  * Each dialog body is mounted only while its dialog is open, so reopening starts from a
  * clean form without any explicit reset code.
- * @returns {VNode | null}
+ * @returns {VNode}
  */
-export function SymbolEntryToolbar (): VNode | null {
+export function SymbolEntryToolbar (): VNode {
   const [openDialog, setOpenDialog] = useState<OpenDialogType>(null);
   const { symbolSearch, svgBuilderString } = adaptivePaletteGlobals.config;
-
-  // Render nothing at all rather than an empty row that would leave a gap.
-  if (!symbolSearch.show && !svgBuilderString.show) {
-    return null;
-  }
 
   const close = () => setOpenDialog(null);
 
@@ -72,6 +71,11 @@ export function SymbolEntryToolbar (): VNode | null {
           aria-haspopup="dialog"
           onClick=${open("svg")}>${SVG_TRIGGER_LABEL}</button>
       `}
+      <button
+        type="button"
+        class="btn-command settingsTrigger"
+        aria-haspopup="dialog"
+        onClick=${open("settings")}>${SETTINGS_TRIGGER_LABEL}</button>
 
       ${symbolSearch.show && html`
         <${ModalDialog}
@@ -91,6 +95,13 @@ export function SymbolEntryToolbar (): VNode | null {
           ${openDialog === "svg" && html`<${ActionSvgEntryField} onRequestClose=${close} />`}
         <//>
       `}
+      <${ModalDialog}
+        id=${SETTINGS_DIALOG_ID}
+        title=${SETTINGS_TRIGGER_LABEL}
+        isOpen=${openDialog === "settings"}
+        onClose=${close}>
+        ${openDialog === "settings" && html`<${SettingsDialog} onRequestClose=${close} />`}
+      <//>
     </div>
   `;
 }

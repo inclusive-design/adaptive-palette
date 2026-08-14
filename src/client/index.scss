@@ -117,12 +117,3 @@ svg.inter-word-padding {
 #predictedWords:empty {
   display: none;
 }
-
-/*
- * The toolbar wrapper is always in the document but renders nothing when both of its
- * features are off, leaving an empty grid item that still consumes a row-gap above the
- * input area. It holds no content when hidden, so nothing leaves the accessibility tree.
- */
-#symbolEntryToolbar:empty {
-  display: none;
-}

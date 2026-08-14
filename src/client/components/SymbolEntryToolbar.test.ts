@@ -19,7 +19,7 @@ import { DISABLED_MODEL_QUERY } from "../core/Config";
 import { DISMISS_LABEL } from "./ModalDialog";
 import { SEARCH_FIELD_LABEL } from "../cells/ActionSearchGloss";
 import {
-  SymbolEntryToolbar, SEARCH_TRIGGER_LABEL, SVG_TRIGGER_LABEL
+  SymbolEntryToolbar, SEARCH_TRIGGER_LABEL, SVG_TRIGGER_LABEL, SETTINGS_TRIGGER_LABEL
 } from "./SymbolEntryToolbar";
 
 // `userEvent` is the provider-backed instance from `vitest/browser`, not the one from
@@ -72,12 +72,26 @@ describe("SymbolEntryToolbar", () => {
     expect(screen.getByRole("button", { name: SVG_TRIGGER_LABEL })).toBeInTheDocument();
   });
 
-  // Rendering nothing keeps the row from leaving an empty gap above the input area.
-  test("renders nothing when both features are disabled", () => {
+  // The settings are how a user turns the other two back on, so this trigger has no
+  // visibility flag of its own.
+  test("shows the settings trigger even when both symbol-entry features are disabled", () => {
     withVisibility(false, false);
-    const { container } = render(html`<${SymbolEntryToolbar} />`);
+    render(html`<${SymbolEntryToolbar} />`);
 
-    expect(container).toBeEmptyDOMElement();
+    expect(screen.queryByRole("button", { name: SEARCH_TRIGGER_LABEL })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: SVG_TRIGGER_LABEL })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: SETTINGS_TRIGGER_LABEL })).toBeInTheDocument();
+  });
+
+  test("clicking the settings trigger opens its dialog", async () => {
+    withVisibility(true, true);
+    render(html`<${SymbolEntryToolbar} />`);
+
+    await userEvent.click(screen.getByRole("button", { name: SETTINGS_TRIGGER_LABEL }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("dialog", { name: SETTINGS_TRIGGER_LABEL })).toBeVisible();
+    });
   });
 
   test("the search trigger declares that it opens a dialog", () => {

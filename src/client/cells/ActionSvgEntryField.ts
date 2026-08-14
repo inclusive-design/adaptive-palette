@@ -31,7 +31,7 @@ type ActionSvgEntryFieldProps = {
 };
 
 /**
- * The body of the "Add symbol by svg-builder string" dialog. This is a developer tool,
+ * The body of the "Add Symbol by SVG-Builder String" dialog. This is a developer tool,
  * hidden unless `svgBuilderString.show` is set in config.json.
  *
  * Like the search dialog, it stays open after an add so several builder strings can be
