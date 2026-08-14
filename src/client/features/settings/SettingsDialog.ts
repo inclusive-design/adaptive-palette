@@ -15,10 +15,9 @@ import { html } from "htm/preact";
 import { useState } from "preact/hooks";
 
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
-import { loadConfig } from "../../core/Config";
 import {
   SETTING_DESCRIPTORS, SettingDescriptorType, SettingValueType,
-  currentValue, saveSettings, settingKey
+  currentValue, isOffered, saveSettings, settingKey
 } from "./SettingsSchema";
 import "./SettingsDialog.scss";
 
@@ -57,13 +56,9 @@ type SettingsDialogProps = {
  * @returns {VNode}
  */
 export function SettingsDialog (props: SettingsDialogProps): VNode {
-  const { config, models } = adaptivePaletteGlobals;
+  const { config, fileConfig, models } = adaptivePaletteGlobals;
 
-  // A setting the configuration carries no value for is left out: the user cannot supply
-  // the rest of an unconfigured section from here.
-  const shown = SETTING_DESCRIPTORS.filter(
-    (descriptor) => currentValue(config, descriptor) !== undefined
-  );
+  const shown = SETTING_DESCRIPTORS.filter((descriptor) => isOffered(config, descriptor));
 
   const [values, setValues] = useState<Record<string, FormValueType>>(() => {
     const initial: Record<string, FormValueType> = {};
@@ -105,20 +100,19 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
   };
 
   /**
-   * Save the choices and reload. `config.json` is fetched again for the comparison: by now
-   * the globals hold the merged configuration, which is no use as a baseline. The file is
-   * browser-cached and the page is about to reload anyway.
+   * Save the choices and reload. The comparison is against `fileConfig`, `config.json` as it
+   * was read at start-up: the globals' `config` is the merged one, which is no use as a
+   * baseline.
    */
-  const confirm = async (): Promise<void> => {
+  const confirm = (): void => {
     const toSave: Record<string, SettingValueType> = {};
     shown.forEach((descriptor) => {
       const key = settingKey(descriptor);
       toSave[key] = descriptor.kind === "number" ? Number(values[key]) : values[key] as boolean;
     });
-    const baseline = await loadConfig();
     // A failed write leaves the dialog open with its reason shown. Reloading anyway would
     // look like the settings had taken.
-    if (saveSettings(toSave, baseline)) {
+    if (saveSettings(toSave, fileConfig)) {
       window.location.reload();
     } else {
       setHasFailed(true);
@@ -132,7 +126,7 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
    */
   const renderSetting = (descriptor: SettingDescriptorType): VNode => {
     const key = settingKey(descriptor);
-    const controlId = `setting-${key.replace(".", "-")}`;
+    const controlId = `setting-${key.replaceAll(".", "-")}`;
     const noteId = `${controlId}-note`;
     const note = noteFor(descriptor);
     const unavailable = note !== undefined;
@@ -212,7 +206,9 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
     ? html`
       <div class="dialogFooter">
         <button type="button" class="settingsSave" onClick=${confirm}>${CONFIRM_LABEL}</button>
-        <button type="button" onClick=${() => setIsConfirming(false)}>${DECLINE_LABEL}</button>
+        <button
+          type="button"
+          onClick=${() => { setIsConfirming(false); setHasFailed(false); }}>${DECLINE_LABEL}</button>
       </div>
     `
     : html`

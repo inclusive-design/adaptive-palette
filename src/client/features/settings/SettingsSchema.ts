@@ -30,7 +30,8 @@ export type SettingDescriptorType = {
   label: string,           // plain language, shown in the dialog
   group: string,           // the heading it sits under
   min?: number,            // numbers only
-  requiresModel?: boolean, // useless without a model Ollama can serve
+  // Useless without a model Ollama can serve, and without prompts in its own section.
+  requiresModel?: boolean,
   enabledBy?: string       // the key of the switch that turns this setting off with it
 };
 
@@ -122,6 +123,33 @@ export function currentValue (
   return typeof value === descriptor.kind ? value as SettingValueType : undefined;
 }
 
+const isFilledPrompt = (value: unknown): boolean => typeof value === "string" && value.trim().length > 0;
+
+/**
+ * Whether a setting is one to offer in the dialog, and one a stored override may set.
+ *
+ * A setting the config carries no value for is left out: the user cannot supply the rest of
+ * an unconfigured section from the dialog.  A model-backed setting is left out as well when
+ * its section has no prompts, whether because `config.json` never configured it or because
+ * the section was malformed and fell back to a default: switching it on would only buy an
+ * empty query.
+ * @param {AdaptivePaletteConfigType} config - The configuration to read.
+ * @param {SettingDescriptorType} descriptor - The setting.
+ * @returns {boolean}
+ */
+export function isOffered (
+  config: AdaptivePaletteConfigType, descriptor: SettingDescriptorType
+): boolean {
+  if (currentValue(config, descriptor) === undefined) {
+    return false;
+  }
+  if (descriptor.requiresModel !== true) {
+    return true;
+  }
+  const section = parentOf(config, descriptor.path);
+  return isFilledPrompt(section?.systemPrompt) && isFilledPrompt(section?.userPrompt);
+}
+
 /**
  * Whether a stored value is one this setting can take.  Local storage is hand-editable, so
  * this runs on every value read back from it.
@@ -172,9 +200,9 @@ export function applyStoredSettings (config: AdaptivePaletteConfigType): Adaptiv
     if (!(key in overrides) || !isValidValue(descriptor, overrides[key])) {
       return;
     }
-    // An absent section is left absent: writing one field into the hole would produce a
-    // section missing the prompts the rest of the app expects.
-    if (currentValue(config, descriptor) === undefined) {
+    // A setting the dialog does not offer is not one an override may set: an absent section
+    // stays absent, and a model-backed setting stays off when its section has no prompts.
+    if (!isOffered(config, descriptor)) {
       return;
     }
     const parent = parentOf(merged, descriptor.path) as Record<string, unknown>;
@@ -201,9 +229,10 @@ export function saveSettings (
     const key = settingKey(descriptor);
     const value = values[key];
     const fileValue = currentValue(baseline, descriptor);
-    // A setting the file has no value for is not one the dialog offers, so it has nothing
-    // to override.
-    if (value === undefined || fileValue === undefined || value === fileValue) {
+    // A setting the dialog does not offer has nothing to override.  A value the setting
+    // cannot take is dropped rather than stored.
+    if (value === undefined || !isOffered(baseline, descriptor) ||
+        !isValidValue(descriptor, value) || value === fileValue) {
       return;
     }
     overrides[key] = value;

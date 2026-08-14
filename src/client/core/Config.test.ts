@@ -205,20 +205,37 @@ describe("loadConfig wordPrediction section", (): void => {
     expect(config.wordPrediction.model).toBe("");
   });
 
-  // There are no fallback prompts to query with, so anything short of a complete model
-  // section leaves the history-based suggestions working on their own.
+  // There are no fallback prompts to query with, so a model section short of both prompts
+  // leaves the history-based suggestions working on their own.
   test("an incomplete model query is turned off while the feature stays on", async (): Promise<void> => {
     const incompleteSections = [
-      { show: true, maxSuggestions: 6, model: "m", systemPrompt: "s", userPrompt: "u" },
       { show: true, maxSuggestions: 6, enableModelQuery: true, model: "m", userPrompt: "u" },
       { show: true, maxSuggestions: 6, enableModelQuery: true, model: "m", systemPrompt: "  ", userPrompt: "u" },
-      { show: true, maxSuggestions: 6, enableModelQuery: "yes", model: "m", systemPrompt: "s", userPrompt: "u" }
+      { show: true, maxSuggestions: 6, enableModelQuery: true, model: 7, systemPrompt: "s", userPrompt: "u" }
     ];
     for (const wordPrediction of incompleteSections) {
       stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, wordPrediction });
       const config = await loadConfig();
       expect(config.wordPrediction)
         .toEqual({ show: true, maxSuggestions: 6, ...DISABLED_MODEL_QUERY });
+    }
+  });
+
+  // The prompts are what a query needs; `enableModelQuery` only says whether to make one.
+  // Keeping them is what lets the settings dialog switch the query on and have it work.
+  test("a complete model section keeps its prompts while the query is off", async (): Promise<void> => {
+    const offSections = [
+      { show: true, maxSuggestions: 6, model: "m", systemPrompt: "s", userPrompt: "u" },
+      { show: true, maxSuggestions: 6, enableModelQuery: false, model: "m", systemPrompt: "s", userPrompt: "u" },
+      { show: true, maxSuggestions: 6, enableModelQuery: "yes", model: "m", systemPrompt: "s", userPrompt: "u" }
+    ];
+    for (const wordPrediction of offSections) {
+      stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, wordPrediction });
+      const config = await loadConfig();
+      expect(config.wordPrediction).toEqual({
+        show: true, maxSuggestions: 6, enableModelQuery: false,
+        model: "m", systemPrompt: "s", userPrompt: "u"
+      });
     }
   });
 });

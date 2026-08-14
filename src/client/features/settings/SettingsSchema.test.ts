@@ -106,6 +106,29 @@ describe("SettingsSchema", () => {
       expect(applyStoredSettings(configWithSentences()).telegraphicTranslation?.numSentences).toBe(5);
     });
 
+    // Switching the query on would only buy an empty query: there are no prompts to send.
+    test("skips a model-backed value whose section has no prompts", () => {
+      store({
+        "indicatorLabelLookup.useModelQueryFallback": true,
+        "wordPrediction.enableModelQuery": true
+      });
+
+      const config = applyStoredSettings(makeDefaultConfig());
+
+      expect(config.indicatorLabelLookup.useModelQueryFallback).toBe(false);
+      expect(config.wordPrediction.enableModelQuery).toBe(false);
+    });
+
+    test("applies a model-backed value once its section has prompts", () => {
+      store({ "wordPrediction.enableModelQuery": true });
+      const configured = makeDefaultConfig();
+      configured.wordPrediction = {
+        ...configured.wordPrediction, systemPrompt: "system", userPrompt: "user"
+      };
+
+      expect(applyStoredSettings(configured).wordPrediction.enableModelQuery).toBe(true);
+    });
+
     test("falls back to the configuration when what is stored is not JSON", () => {
       vi.spyOn(console, "error").mockImplementation(() => undefined);
       window.localStorage.setItem(SETTINGS_KEY, "{ not json");
@@ -143,6 +166,28 @@ describe("SettingsSchema", () => {
       store({ "announceSymbolOnInput": false });
 
       const saved = saveSettings({ "announceSymbolOnInput": true }, baseline);
+
+      expect(saved).toBe(true);
+      expect(window.localStorage.getItem(SETTINGS_KEY)).toBeNull();
+    });
+
+    // A stored value the setting cannot take would be rejected on every load, leaving the
+    // dialog showing a number that never takes effect.
+    test("drops a value the setting cannot take", () => {
+      const baseline = makeDefaultConfig();
+
+      const saved = saveSettings(
+        { "wordPrediction.maxSuggestions": 0, "announceSymbolOnInput": false }, baseline
+      );
+
+      expect(saved).toBe(true);
+      expect(JSON.parse(window.localStorage.getItem(SETTINGS_KEY) as string))
+        .toEqual({ "announceSymbolOnInput": false });
+    });
+
+    // The dialog does not offer it, so a value arriving for it is not one to store.
+    test("drops a model-backed value whose section has no prompts", () => {
+      const saved = saveSettings({ "wordPrediction.enableModelQuery": true }, makeDefaultConfig());
 
       expect(saved).toBe(true);
       expect(window.localStorage.getItem(SETTINGS_KEY)).toBeNull();

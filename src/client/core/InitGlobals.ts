@@ -46,6 +46,7 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
     initIndicatorLabels()
   ]);
   adaptivePaletteGlobals.models = models;
+  adaptivePaletteGlobals.fileConfig = config;
   // The user's saved settings are applied.
   adaptivePaletteGlobals.config = applyStoredSettings(config);
 

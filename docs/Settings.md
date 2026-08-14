@@ -30,8 +30,11 @@ turned back on.
 ## Settings that need a model
 
 The three marked above do nothing without a model Ollama can serve. When Ollama is not up and running,
-they are still shown but in diabled state, and carry the note "Start Ollama to use this."
+they are still shown but in a disabled state, and carry the note "Start Ollama to use this."
 Their saved values are kept, so starting Ollama later brings them back as they were.
+
+They are left out of the dialog altogether when their section of `public/config.json` carries no
+prompts, since there would be nothing to ask the model with.
 
 ## Saving
 
