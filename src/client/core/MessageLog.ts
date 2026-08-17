@@ -160,3 +160,22 @@ export function saveTranslation (telegraphicMessage: string, translation: Transl
   }
   writeMessageLog(entries);
 }
+
+/**
+ * Find the most recent translation for a message, if there is one.
+ * @param {string} telegraphicMessage - The message to look up.
+ * @returns {TranslationInfoType | undefined}
+ */
+export function findLatestTranslation (telegraphicMessage: string): TranslationInfoType | undefined {
+  if (!adaptivePaletteGlobals.config.maxStoredRecords) {
+    return undefined;
+  }
+  const entries = readMessageLog();
+  for (let index = entries.length - 1; index >= 0; index--) {
+    const entry = entries[index];
+    if (entry.translation && recordMessageText(entry) === telegraphicMessage) {
+      return entry.translation;
+    }
+  }
+  return undefined;
+}

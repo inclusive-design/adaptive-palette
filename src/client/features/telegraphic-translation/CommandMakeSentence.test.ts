@@ -17,7 +17,7 @@ import { html } from "htm/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
 import { setTestConfig } from "../../testUtils/TestConfig";
-import { sentenceCompletionsSignal } from "./TelegraphicTranslationState";
+import { IDLE_SENTENCE_STATE, sentenceCompletionsSignal } from "./TelegraphicTranslationState";
 import { MESSAGE_LOG_KEY } from "../../core/MessageLog";
 import { queryChat } from "../../core/OllamaApi";
 import { CommandMakeSentence } from "./CommandMakeSentence";
@@ -83,12 +83,12 @@ describe("CommandMakeSentence", (): void => {
     adaptivePaletteGlobals.models = ["phony-model:12b"];
     setConfig(3);
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
-    sentenceCompletionsSignal.value = { status: "idle" };
+    sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
   });
 
   afterEach((): void => {
     cleanup();
-    sentenceCompletionsSignal.value = { status: "idle" };
+    sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
     mockedConfirm.mockRestore();
   });
@@ -129,7 +129,7 @@ describe("CommandMakeSentence", (): void => {
     await userEvent.click(screen.getByRole("button", { name: make_setence_label }));
 
     expect(mockedQueryChat).not.toHaveBeenCalled();
-    expect(sentenceCompletionsSignal.value).toEqual({ status: "idle" });
+    expect(sentenceCompletionsSignal.value).toEqual(IDLE_SENTENCE_STATE);
   });
 
   test("clicking while the input area is empty is announced", async (): Promise<void> => {

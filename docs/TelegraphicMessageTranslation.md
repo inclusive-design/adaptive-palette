@@ -75,19 +75,39 @@ instead of the native `disabled` attribute. This keeps the button focusable for 
 and eye-gaze users, while still communicating that it is unavailable to assistive technologies.
 The click is inactive in these states.
 
-The button can be in one of three states:
+The **Speak** button next to the typing area's text field is marked `aria-disabled` for the same reason,
+while the field is empty or holds only spaces. Pressing it then announces that it is unavailable instead
+of speaking.
 
-1. **Working**
-   - Announces `⏳ Making sentences…` in a live region.
-   - The click is unavailable until the request completes.
+Pressing **Sentence** first looks the message up in the message log (see [Saved Data](#saved-data)). If
+the message has been translated before, its most recently recorded sentence appears immediately, with no
+model query. With `numSentences` at `1` that is the whole interaction: the sentence is spoken right away
+and recorded with source `auto`, the same as a freshly generated one — see
+[Single-sentence mode](#single-sentence-mode). With `numSentences` above `1`, the model is asked for the
+rest, which are appended below the recalled sentence. A returned sentence identical to the recalled one
+is dropped, so the list can end up shorter than `numSentences`.
 
-2. **Choices**
-   - Displays one button for each generated sentence, ordered by likelihood.
-   - Includes a text field with the placeholder `None fit? Type yours`.
+The sentence area can be in one of four states:
 
-3. **Error**
+1. **Idle**
+   - Nothing is shown. This is the state before any message has been sent for translation, and after
+     **✓ Done** or **Delete all** clears everything.
+
+2. **Working**
+   - Announces `⏳ Making sentences…` in a live region, or `⏳ Making more sentences…` when a recalled
+     sentence is already showing.
+   - Includes the typing area (text field, **Speak**, **✓ Done**) and any recalled sentence.
+
+3. **Choices**
+   - Displays one button per sentence: a recalled one first if there is one, followed by the model's
+     suggestions in order.
+   - Includes the typing area (text field, **Speak**, **✓ Done**).
+
+4. **Error**
    - Announces `⚠ Could not make sentences. Try again.`
-   - The click becomes available again.
+   - The typing area stays on screen, together with any recalled sentence.
+
+The typing area is present in every state except **Idle**, and typing does not wait for the model.
 
 Requesting a sentence also records the message for [word prediction](WordPrediction.md), since asking for
 a sentence means the message is finished.
@@ -95,8 +115,12 @@ a sentence means the message is finished.
 A live region is in the document at all times and contains an empty string when there is nothing to
 announce. Updates are written into the existing region so screen readers can announce status changes.
 
-When sentence choices are returned, focus moves to the first sentence option. This lets users immediately
-review the generated choices without navigating back through the page.
+Focus moves to the first sentence option once per message, not on every update, so a second wave of
+sentences filled in after a recall does not drag the user back to the top of the list. Focus never moves
+away from the text field while it holds focus.
+
+Tapping a sentence, speaking typed text, and **✓ Done** each stop a fill request still running — the
+user has said what they wanted, so a query for more suggestions is no longer needed.
 
 When clicking a sentence:
 
@@ -112,12 +136,17 @@ preferred sentence.
 If the input area is modified while a query is in progress or while sentences are displayed on the screen,
 a warning dialog will appear. Because the new input invalidates the current results, the user will be asked
 if they want to proceed. Choosing to proceed will abort the active query and clear the existing sentences,
-while canceling will keep the current data intact.
+while canceling will keep the current data intact. If a recalled sentence is shown on the screen with an
+error message from a failed request, it counts as a displayed sentence. But when there is no sentence on
+screen, for example, when an error occurred, or the user chose "speak" or moved on before the sentence appeared,
+the state is cleared without asking the user anything because there is nothing to discard.
 
 ### Single-sentence mode
 
 When `numSentences` is `1`, the returned sentence is spoken as soon as it arrives, without
-waiting for a click.
+waiting for a click. If the message has a recalled sentence (see [Interaction](#interaction)), it is
+spoken immediately with no model query at all, and recorded with source `auto`, the same as a freshly
+generated sentence.
 
 ## Response Parsing
 
@@ -125,7 +154,9 @@ The model response is split into lines. Blank lines are ignored, and leading lis
 `1.`, `2.`, and `3.` are removed from each line.
 
 The number of parsed sentences does not need to match `numSentences`. Any usable sentences are shown
-to the user, even if fewer or more than requested are returned.
+to the user, even if fewer or more than requested are returned. When a sentence has already been recalled
+for the message, only enough of the parsed sentences to reach `numSentences` are kept, and one identical
+to the recalled sentence is dropped — see [Interaction](#interaction).
 
 If no usable sentences can be extracted from the response, the request is treated as a failure and
 the feature enters the **Error** state.
@@ -163,12 +194,15 @@ Data can currently be inspected through browser developer tools. No in-applicati
 | Ollama is not running or no models are installed | A banner indicates that AI features are unavailable. The **Sentence** button is not shown. |
 | `config.telegraphicTranslation` is missing or invalid | A configuration error banner is displayed and the **Sentence** button is not shown. No fallback configuration is applied. |
 | Configured model is unavailable | The first available model is used and a warning is logged to the console. |
+| Message has a past translation | Its most recently spoken sentence is shown first, with no query. Remaining sentences are requested only when `numSentences` is above `1`. |
+| Model repeats the recalled sentence | The repeat is dropped; the list can end up shorter than `numSentences`. |
 | Empty message | The **Sentence** button is marked `aria-disabled` and cannot be activated. |
+| Text field empty | The **Speak** button is marked `aria-disabled` and announces it is unavailable when pressed. |
 | **Done** or **Delete all** pressed while choices are visible | The message and generated choices are cleared. Any saved preference remains. |
-| Message edited while sentences are visible | Warn user this action will discard existing sentences because they no longer match the current message. |
+| Message edited while sentences are visible | Warn user this action will discard existing sentences because they no longer match the current message. This includes a recalled sentence still on screen under a failed request's error report. |
 | Message edited while a request is in progress | Warn user this action will abort the current query because responded sentences no longer match the current message. |
-| Request fails or times out | The feature enters the **Error** state. The message remains available so the user can retry. |
-| Model returns fewer or more sentences than requested | All usable returned sentences are displayed. |
+| Request fails or times out | The feature enters the **Error** state: the error line replaces the progress line and the typing area stays on screen, along with any recalled sentence. The message remains available so the user can retry. |
+| Model returns fewer or more sentences than requested | All usable returned sentences are displayed, unless a sentence was recalled for the message — see above. |
 | Model returns no usable sentences | The feature enters the **Error** state. |
 | Local storage write fails | An error is logged to the console. Speech and UI behaviour are unaffected. |
 | Speech synthesis is unavailable | No speech is produced, but sentence selection and data storage continue to work. |

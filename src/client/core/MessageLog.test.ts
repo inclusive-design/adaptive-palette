@@ -12,7 +12,8 @@
 
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import {
-  MESSAGE_LOG_KEY, messageText, readMessageLog, recordMessageText, saveMessageRecord, saveTranslation
+  MESSAGE_LOG_KEY, TranslationInfoType, findLatestTranslation, messageText, readMessageLog, recordMessageText,
+  saveMessageRecord, saveTranslation
 } from "./MessageLog";
 import { SymbolEncodingType } from "../index.d";
 
@@ -183,6 +184,53 @@ describe("messageLog", (): void => {
       const log = readMessageLog();
       expect(log).toHaveLength(1);
       expect(log[0].translation).toMatchObject({ sentence: "I want food.", source: "typed" });
+    });
+  });
+
+  describe("finding a past translation", (): void => {
+    const translationFor = (sentence: string): TranslationInfoType => ({
+      model: "phony-model:12b",
+      candidates: [sentence],
+      sentence,
+      source: "chosen"
+    });
+
+    test("a message that was never said has no translation", (): void => {
+      expect(findLatestTranslation("me hungry")).toBeUndefined();
+    });
+
+    test("a message said but never translated has no translation", (): void => {
+      saveMessageRecord(message("me"));
+      expect(findLatestTranslation("me")).toBeUndefined();
+    });
+
+    test("the most recent translation of a message is the one found", (): void => {
+      saveMessageRecord(message("me"));
+      saveTranslation("me", translationFor("It is me."));
+      saveMessageRecord(message("you"));
+      saveMessageRecord(message("me"));
+      saveTranslation("me", translationFor("That is me again."));
+
+      expect(findLatestTranslation("me")?.sentence).toBe("That is me again.");
+    });
+
+    test("a newer untranslated record does not hide an older translation", (): void => {
+      saveMessageRecord(message("me"));
+      saveTranslation("me", translationFor("It is me."));
+      saveMessageRecord(message("you"));
+
+      // `CommandMakeSentence` saves the message before asking for sentences, so the
+      // untranslated record for the message being translated is normally the last one.
+      saveMessageRecord(message("me"));
+
+      expect(findLatestTranslation("me")?.sentence).toBe("It is me.");
+    });
+
+    test("another message's translation is not returned", (): void => {
+      saveMessageRecord(message("you"));
+      saveTranslation("you", translationFor("It is you."));
+
+      expect(findLatestTranslation("me")).toBeUndefined();
     });
   });
 });

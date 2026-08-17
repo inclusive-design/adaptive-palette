@@ -159,16 +159,20 @@ export type MatchType = {
   composition?: SymbolCompositionType
 }
 
-/*
- * State of the sentence-translation area below the input palette.
+/**
+ * The sentence-translation area below the input palette. One shape rather than a union,
+ * because a sentence recalled from the message log can be on screen while the query for the
+ * rest is still running, and a sentence typed in any state has to be recorded against the
+ * message and the model.
+ * - `idle` renders nothing.
+ * - `working` renders the progress line; `sentences` holds the recalled sentence when there
+ *   is one, in which case the line says more sentences are coming.
+ * - `error` renders the failure line, keeping any sentence already on screen.
+ * - `ready` renders the sentences with nothing pending.
  */
-export type SentenceCompletionsStateType =
-  | { status: "idle" }
-  | { status: "working", telegraphicMessage: string }
-  | { status: "error" }
-  | {
-      status: "ready",
-      sentences: string[],
-      model: string,
-      telegraphicMessage: string
-    };
+export type SentenceCompletionsStateType = {
+  status: "idle" | "working" | "ready" | "error",
+  sentences: string[],
+  model: string,
+  telegraphicMessage: string
+};
