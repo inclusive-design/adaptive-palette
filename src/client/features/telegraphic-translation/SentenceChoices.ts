@@ -14,27 +14,28 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { useEffect, useRef, useState } from "preact/hooks";
 
-import { sentenceCompletionsSignal, clearMessageAndChoices } from "./TelegraphicTranslationState";
-import { announceIfEnabled, speak } from "../../utils/SpeechUtils";
+import {
+  sentenceCompletionsSignal, clearMessageAndChoices, abortActiveSentenceRequest
+} from "./TelegraphicTranslationState";
+import { announceIfEnabled, speak, speakUnavailable } from "../../utils/SpeechUtils";
 import { saveTranslation, SentenceSourceType } from "../../core/MessageLog";
 import "./SentenceChoices.scss";
 
 export const WORKING_MESSAGE = "⏳ Making sentences…";
+export const MAKING_MORE_MESSAGE = "⏳ Making more sentences…";
 export const CANNOT_COMPLETE_MESSAGE = "⚠ Could not make sentences. Try again.";
 export const TYPE_YOUR_OWN_HINT = "None fit? Type yours";
 export const SPEAK_BUTTON_LABEL = "Speak";
 export const DONE_BUTTON_LABEL = "✓ Done";
 
 /**
- * The sentence choice area. Renders whichever of the four states `sentenceCompletionsSignal` is in:
- * 1. `idle` means the user has not yet built a message, so there is nothing to do.
- * 2. `working` means the system is making sentences from the telegraphic message, so a
- *    status message is shown while the user waits.
- * 3. `error` means the system could not make sentences, so a status message is shown and
- *    the user can try again.
- * 4. `ready` means the system has made sentences. Each sentence is shown as a button for the
- *    user to choose from, along with a text box for typing their own sentence if none of
- *    the choices are right.
+ * The sentence choice area. Renders whichever state `sentenceCompletionsSignal` is in:
+ * 1. `idle` means the user has not yet built a message, so there is nothing to show.
+ * 2. Every other state shows the typing area -- a text box, Speak and Done -- together with
+ *    whatever sentences are on screen, each one a button to tap. Typing need not wait for
+ *    the model.
+ * 3. `working` also says sentences are being made, or that more are when one is already there.
+ * 4. `error` also says sentences could not be made, keeping any sentence on screen.
  *
  * The live region is always in the document to announce the state.
  * @returns {VNode}
@@ -43,20 +44,30 @@ export function SentenceChoices (): VNode {
   const state = sentenceCompletionsSignal.value;
   const [typedSentence, setTypedSentence] = useState("");
   const choicesRef = useRef<HTMLDivElement>(null);
+  const focusedMessageRef = useRef<string | null>(null);
 
   // Clicking the trigger leaves focus on it (it goes `aria-disabled`, not `disabled`).
   // Move focus onto the first choice when it arrives, so reaching the sentences does not
-  // mean re-scanning the page.
+  // mean re-scanning the page. Once per message: a recalled sentence arrives before the
+  // rest, and pulling focus back when the rest land would undo the user's scanning, or
+  // interrupt them mid-sentence in the text box.
   useEffect((): void => {
-    if (state.status === "ready") {
-      choicesRef.current?.querySelector<HTMLButtonElement>(".sentenceChoice")?.focus();
+    if (state.status === "idle") {
+      focusedMessageRef.current = null;
+      return;
     }
+    const textBox = choicesRef.current?.querySelector(".sentenceTypeYourOwn input");
+    if (state.sentences.length === 0 ||
+        focusedMessageRef.current === state.telegraphicMessage ||
+        document.activeElement === textBox) {
+      return;
+    }
+    focusedMessageRef.current = state.telegraphicMessage;
+    choicesRef.current?.querySelector<HTMLButtonElement>(".sentenceChoice")?.focus();
   }, [state]);
 
   const logAndSpeak = (sentence: string, source: SentenceSourceType): void => {
-    if (state.status !== "ready") {
-      return;
-    }
+    abortActiveSentenceRequest();
     speak(sentence);
     saveTranslation(state.telegraphicMessage, {
       model: state.model,
@@ -70,6 +81,7 @@ export function SentenceChoices (): VNode {
     event.preventDefault();
     const sentence = typedSentence.trim();
     if (sentence.length === 0) {
+      speakUnavailable(SPEAK_BUTTON_LABEL);
       return;
     }
     // The text stays in the box on purpose, so it can be spoken again or edited into a
@@ -84,7 +96,10 @@ export function SentenceChoices (): VNode {
     setTypedSentence("");
   };
 
-  const choices = state.status === "ready" ? html`
+  // Marked unavailable rather than `disabled` because a disabled control loses focus.
+  const nothingTyped = typedSentence.trim().length === 0;
+
+  const choices = state.status === "idle" ? null : html`
     ${state.sentences.map((sentence, index) => html`
       <button
         key=${index}
@@ -101,12 +116,13 @@ export function SentenceChoices (): VNode {
         value=${typedSentence}
         onInput=${(event: Event) => setTypedSentence((event.target as HTMLInputElement).value)}
       />
-      <button type="submit">${SPEAK_BUTTON_LABEL}</button>
+      <button type="submit" aria-disabled=${nothingTyped}>${SPEAK_BUTTON_LABEL}</button>
       <button type="button" class="sentenceDone" onClick=${finish}>${DONE_BUTTON_LABEL}</button>
     </form>
-  ` : null;
+  `;
 
-  const statusText = state.status === "working" ? WORKING_MESSAGE
+  const statusText = state.status === "working"
+    ? (state.sentences.length > 0 ? MAKING_MORE_MESSAGE : WORKING_MESSAGE)
     : state.status === "error" ? CANNOT_COMPLETE_MESSAGE : "";
 
   return html`
