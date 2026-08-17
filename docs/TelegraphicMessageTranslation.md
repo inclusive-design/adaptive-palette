@@ -105,7 +105,7 @@ The sentence area can be in one of four states:
 
 4. **Error**
    - Announces `⚠ Could not make sentences. Try again.`
-   - Any recalled sentence and the typing area stay on screen; without one, only the error line is shown.
+   - The typing area stays on screen, together with any recalled sentence.
 
 The typing area is present in every state except **Idle**, and typing does not wait for the model.
 
@@ -137,8 +137,9 @@ If the input area is modified while a query is in progress or while sentences ar
 a warning dialog will appear. Because the new input invalidates the current results, the user will be asked
 if they want to proceed. Choosing to proceed will abort the active query and clear the existing sentences,
 while canceling will keep the current data intact. If a recalled sentence is shown on the screen with an
-error message from a failed request, it counts as a displayed sentence. But if the error message has no
-recalled sentence, it disappears without showing a prompt.
+error message from a failed request, it counts as a displayed sentence. But when there is no sentence on
+screen, for example, when an error occurred, or the user chose "speak" or moved on before the sentence appeared,
+the state is cleared without asking the user anything because there is nothing to discard.
 
 ### Single-sentence mode
 
@@ -200,7 +201,7 @@ Data can currently be inspected through browser developer tools. No in-applicati
 | **Done** or **Delete all** pressed while choices are visible | The message and generated choices are cleared. Any saved preference remains. |
 | Message edited while sentences are visible | Warn user this action will discard existing sentences because they no longer match the current message. This includes a recalled sentence still on screen under a failed request's error report. |
 | Message edited while a request is in progress | Warn user this action will abort the current query because responded sentences no longer match the current message. |
-| Request fails or times out | The feature enters the **Error** state. The message remains available so the user can retry. If a sentence had been recalled first, it and the typing area stay on screen and the error line replaces the progress line. |
+| Request fails or times out | The feature enters the **Error** state: the error line replaces the progress line and the typing area stays on screen, along with any recalled sentence. The message remains available so the user can retry. |
 | Model returns fewer or more sentences than requested | All usable returned sentences are displayed, unless a sentence was recalled for the message — see above. |
 | Model returns no usable sentences | The feature enters the **Error** state. |
 | Local storage write fails | An error is logged to the console. Speech and UI behaviour are unaffected. |

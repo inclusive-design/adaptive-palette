@@ -118,12 +118,8 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
       status: "ready", sentences: [recalled.sentence], model: recalled.model, telegraphicMessage
     };
     speak(recalled.sentence);
-    saveTranslation(telegraphicMessage, {
-      model: recalled.model,
-      candidates: [recalled.sentence],
-      sentence: recalled.sentence,
-      source: "auto"
-    });
+    // Re-saved with the candidates it was first chosen from.
+    saveTranslation(telegraphicMessage, { ...recalled, source: "auto" });
     return;
   }
 
@@ -178,6 +174,12 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
       // Keeps a recalled sentence and the model query: the user can still speak, and what they
       // type is still recorded against the message.
       sentenceCompletionsSignal.value = { ...pending, status: "error" };
+    } else if (pending.status === "idle") {
+      // Picking the model failed, before the state ever went `working`. Without this the user
+      // is left with no error line at all.
+      sentenceCompletionsSignal.value = {
+        status: "error", sentences: recalledSentences, model: "", telegraphicMessage
+      };
     }
   } finally {
     // Forget a finished request, but only if it is still the one on record. A request that
@@ -211,8 +213,10 @@ effect((): void => {
   const state = sentenceCompletionsSignal.peek();
   // A failed fill can leave a recalled sentence on screen. It is as tappable as any other,
   // so losing it to an edit is worth a question, exactly like a full set of sentences.
-  const showsSentences = state.status === "ready" ||
-    (state.status === "error" && state.sentences.length > 0);
+  // A finished state can also hold no sentences at all -- a failed request, or one the user
+  // moved past by speaking before it landed -- and there is nothing there to discard.
+  const finished = state.status === "ready" || state.status === "error";
+  const showsSentences = finished && state.sentences.length > 0;
   if ((state.status === "working" || showsSentences) &&
       state.telegraphicMessage !== message) {
     const prompt = state.status === "working" ? WORKING_DISCARD_PROMPT : READY_DISCARD_PROMPT;
@@ -223,8 +227,9 @@ effect((): void => {
     }
     activeSentenceAbort?.abort();
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
-  } else if (state.status === "error" && state.sentences.length === 0) {
-    // Remove the error message on the screen.
+  } else if (finished && state.sentences.length === 0) {
+    // Nothing left of the old message but the error line or an empty typing area: it goes
+    // without asking the user.
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
   }
   previousContents = snapshot(contents);

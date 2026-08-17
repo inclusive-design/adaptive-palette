@@ -556,6 +556,37 @@ describe("telegraphicTranslationState", (): void => {
     });
   });
 
+  test("editing after an abandoned request with nothing on screen does not ask", async (): Promise<void> => {
+    changeEncodingContents.value = INPUT_CONTENTS;
+    mockedQueryChat.mockReturnValue(new Promise(() => undefined) as never);
+
+    void requestForCurrentMessage();
+    await waitFor(() => {
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+    });
+    // Speaking typed text drops `working` to `ready` with no sentences: there is nothing on
+    // screen for an edit to discard.
+    abortActiveSentenceRequest();
+
+    changeEncodingContents.value = EDITED_CONTENTS;
+
+    expect(mockedConfirm).not.toHaveBeenCalled();
+    expect(changeEncodingContents.value).toEqual(EDITED_CONTENTS);
+    expect(sentenceCompletionsSignal.value).toEqual(IDLE_SENTENCE_STATE);
+  });
+
+  test("no model to ask shows the error line", async (): Promise<void> => {
+    adaptivePaletteGlobals.models = [];
+    changeEncodingContents.value = INPUT_CONTENTS;
+
+    await requestForCurrentMessage();
+
+    expect(mockedQueryChat).not.toHaveBeenCalled();
+    expect(sentenceCompletionsSignal.value).toEqual({
+      status: "error", sentences: [], model: "", telegraphicMessage: "me hungry"
+    });
+  });
+
   test("aborting with nothing in flight does nothing", (): void => {
     abortActiveSentenceRequest();
     expect(sentenceCompletionsSignal.value).toEqual(IDLE_SENTENCE_STATE);
@@ -590,6 +621,30 @@ describe("telegraphicTranslationState", (): void => {
     const log = readMessageLog();
     expect(log[log.length - 1].translation).toMatchObject({
       model: "old-model:12b", sentence: "I am hungry.", source: "auto"
+    });
+  });
+
+  test("re-saving a recalled sentence keeps the candidates it came from", async (): Promise<void> => {
+    setConfig(1);
+    saveMessageRecord(INPUT_CONTENTS.payloads);
+    saveTranslation("me hungry", {
+      model: "old-model:12b",
+      candidates: ["I am hungry.", "I want food."],
+      sentence: "I am hungry.",
+      source: "chosen"
+    });
+    changeEncodingContents.value = INPUT_CONTENTS;
+
+    await requestForCurrentMessage();
+
+    // The record is reused rather than added to, so a recall that dropped the alternatives
+    // would lose them for good.
+    const log = readMessageLog();
+    expect(log[log.length - 1].translation).toEqual({
+      model: "old-model:12b",
+      candidates: ["I am hungry.", "I want food."],
+      sentence: "I am hungry.",
+      source: "auto"
     });
   });
 

@@ -167,6 +167,9 @@ export function saveTranslation (telegraphicMessage: string, translation: Transl
  * @returns {TranslationInfoType | undefined}
  */
 export function findLatestTranslation (telegraphicMessage: string): TranslationInfoType | undefined {
+  if (!adaptivePaletteGlobals.config.maxStoredRecords) {
+    return undefined;
+  }
   const entries = readMessageLog();
   for (let index = entries.length - 1; index >= 0; index--) {
     const entry = entries[index];
