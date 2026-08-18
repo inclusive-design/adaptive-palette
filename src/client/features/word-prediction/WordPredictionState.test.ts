@@ -260,18 +260,22 @@ describe("wordPrediction model query", (): void => {
       expect(mockedQueryChat).not.toHaveBeenCalled();
     });
 
-    test("keeping the sentences leaves prediction settled on the unchanged message", async (): Promise<void> => {
+    test("keeping the sentences asks again for the message that stayed", async (): Promise<void> => {
       compose("I");
       await waitForQuery();
       dismissModelStatus();
       mockedQueryChat.mockClear();
 
       editThenRevert();
-      discardEditPromptSignal.value = null;
-
-      await waitForQuery();
-      expect(mockedQueryChat).not.toHaveBeenCalled();
+      // The words for the message were dropped when the question went up, so keeping it
+      // has to ask for them again.
       expect(modelWordsSignal.value.status).toBe("idle");
+
+      discardEditPromptSignal.value = null;
+      expect(showModelStatusSignal.value).toBe(true);
+      await waitForQuery();
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+      expect(modelWordsSignal.value.status).toBe("ready");
     });
 
     test("changing anyway starts prediction for the edit that was applied", async (): Promise<void> => {

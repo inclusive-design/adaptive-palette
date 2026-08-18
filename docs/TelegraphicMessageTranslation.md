@@ -9,7 +9,7 @@ sentences. The generated sentences are presented as large, selectable buttons. W
 a sentence, it is spoken aloud and the selection is saved for future model tuning.
 
 The user always controls what is communicated. Generated sentences are suggestions only. Nothing is
-spoken automatically unless single-sentence mode has been explicitly enabled.
+spoken until the user picks a sentence or submits their own text.
 
 ## Configuration
 
@@ -81,11 +81,10 @@ of speaking.
 
 Pressing **Sentence** first looks the message up in the message log (see [Saved Data](#saved-data)). If
 the message has been translated before, its most recently recorded sentence appears immediately, with no
-model query. With `numSentences` at `1` that is the whole interaction: the sentence is spoken right away
-and recorded with source `auto`, the same as a freshly generated one — see
-[Single-sentence mode](#single-sentence-mode). With `numSentences` above `1`, the model is asked for the
-rest, which are appended below the recalled sentence. A returned sentence identical to the recalled one
-is dropped, so the list can end up shorter than `numSentences`.
+model query. It waits to be tapped like any other sentence, and nothing is recorded until it is. With
+`numSentences` at `1` that is the whole interaction. With `numSentences` above `1`, the model is asked
+for the rest, which are appended below the recalled sentence. A returned sentence identical to the
+recalled one is dropped, so the list can end up shorter than `numSentences`.
 
 The sentence area can be in one of four states:
 
@@ -147,13 +146,6 @@ displayed sentence. But when there is no sentence on screen, for example, when a
 chose "speak" or moved on before the sentence appeared, the state is cleared without asking the user anything
 because there is nothing to discard.
 
-### Single-sentence mode
-
-When `numSentences` is `1`, the returned sentence is spoken as soon as it arrives, without
-waiting for a click. If the message has a recalled sentence (see [Interaction](#interaction)), it is
-spoken immediately with no model query at all, and recorded with source `auto`, the same as a freshly
-generated sentence.
-
 ## Response Parsing
 
 The model response is split into lines. Blank lines are ignored, and leading list markers such as
@@ -178,7 +170,6 @@ sentence adds the translation to that record:
 - Preferred sentence
 - Selection method:
   - "chosen": Chosen from generated options
-  - "auto": Automatically spoken in single-sentence mode
   - "typed": Entered manually by the user
 
 All generated candidates are retained, including those not selected. Comparing the preferred sentence

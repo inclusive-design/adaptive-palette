@@ -20,8 +20,7 @@
 import { batch, effect, signal } from "@preact/signals";
 import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
 import { requestSentences, pickModel } from "./TelegraphicTranslationUtils";
-import { findLatestTranslation, messageText, saveTranslation } from "../../core/MessageLog";
-import { speak } from "../../utils/SpeechUtils";
+import { findLatestTranslation, messageText } from "../../core/MessageLog";
 import type { ContentSignalDataType, SentenceCompletionsStateType } from "../../index.d";
 
 /**
@@ -108,7 +107,8 @@ export function currentTelegraphicMessage (): string {
  *
  * A sentence already approved for this message is recalled from the message log and shown
  * first. With one sentence asked for in the setting, that is the whole answer and the model
- * is not queried; otherwise the model fills the rest of the list below it.
+ * is not queried; otherwise the model fills the rest of the list below it. Nothing is spoken
+ * or logged here: that waits for the user to pick a sentence.
  * @param {string} telegraphicMessage - The message to translate, as shown in the input area.
  * @returns {Promise<void>}
  */
@@ -121,15 +121,12 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
   const numSentences = config?.numSentences ?? 1;
   const recalled = findLatestTranslation(telegraphicMessage);
 
-  // One sentence asked for and one already approved for this message: say it, and ask the
+  // One sentence asked for and one already approved for this message: show it, and ask the
   // model nothing.
   if (recalled && numSentences === 1) {
     sentenceCompletionsSignal.value = {
       status: "ready", sentences: [recalled.sentence], model: recalled.model, telegraphicMessage
     };
-    speak(recalled.sentence);
-    // Re-saved with the candidates it was first chosen from.
-    saveTranslation(telegraphicMessage, { ...recalled, source: "auto" });
     return;
   }
 
@@ -161,17 +158,6 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
     sentenceCompletionsSignal.value = {
       status: "ready", sentences, model: result.model, telegraphicMessage
     };
-
-    // Single-sentence mode: speak right away when the sentence arrives.
-    if (numSentences === 1) {
-      speak(sentences[0]);
-      saveTranslation(telegraphicMessage, {
-        model: result.model,
-        candidates: sentences,
-        sentence: sentences[0],
-        source: "auto"
-      });
-    }
   } catch (error) {
     // The user editing the message aborts the request. That is normal use, not a failure,
     // so it must not reach the console or turn the display red.
@@ -247,8 +233,8 @@ export function confirmDiscardEdit (): void {
 /**
  * The user chose to keep the sentence work: drop the held-back edit and leave the request
  * and the sentences alone. The message is already as it was, so nothing is restored here.
- * Word prediction, which also watches `discardEditPromptSignal`, settles itself back to this
- * message once the signal clears.
+ * Word prediction, which also watches `discardEditPromptSignal`, asks again for this message
+ * once the signal clears.
  *
  * Guarded so it can be called twice. Both dialog buttons close the dialog, and the
  * `close` event then reports the cancel a second time.

@@ -201,19 +201,18 @@ describe("telegraphicTranslationState", (): void => {
     consoleErrorSpy.mockRestore();
   });
 
-  test("with numSentences 1 the sentence is spoken and logged immediately as auto", async (): Promise<void> => {
+  test("with numSentences 1 the sentence waits to be picked, like any other count", async (): Promise<void> => {
     setConfig(1);
     changeEncodingContents.value = INPUT_CONTENTS;
     mockedQueryChat.mockResolvedValue({ message: { content: "1. I am hungry." } } as never);
 
     await requestForCurrentMessage();
 
-    expect(readMessageLog()).toHaveLength(1);
-    expect(readMessageLog()[0].translation).toMatchObject({
-      sentence: "I am hungry.",
-      source: "auto"
+    expect(sentenceCompletionsSignal.value).toMatchObject({
+      status: "ready", sentences: ["I am hungry."]
     });
-    expect(mockedSpeak).toHaveBeenCalledWith("I am hungry.");
+    expect(mockedSpeak).not.toHaveBeenCalled();
+    expect(readMessageLog()).toEqual([]);
   });
 
   test("with numSentences above 1 nothing is logged until the user picks", async (): Promise<void> => {
@@ -466,6 +465,49 @@ describe("telegraphicTranslationState", (): void => {
     expect(sentenceCompletionsSignal.value.status).toBe("working");
   });
 
+  // The dialog no longer blocks the page the way `window.confirm` did, so a single-sentence
+  // request can finish while the question is still up. Nothing is spoken or logged for it
+  // either way: the sentence waits to be picked, exactly as it does with no question up.
+  test("a single sentence arriving while the question is up is not spoken", async (): Promise<void> => {
+    setConfig(1);
+    let settle: (reply: unknown) => void = () => undefined;
+    mockedQueryChat.mockReturnValue(new Promise((resolve) => {
+      settle = resolve;
+    }) as never);
+    changeEncodingContents.value = INPUT_CONTENTS;
+    void requestForCurrentMessage();
+    await waitFor(() => {
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+    });
+
+    // The stand-in that answers every question at once has to stand down: this one stays
+    // open across the reply.
+    stopAnswering();
+    changeEncodingContents.value = EDITED_CONTENTS;
+    expect(discardEditPromptSignal.value).toBe(WORKING_DISCARD_PROMPT);
+
+    settle({ message: { content: "1. I am hungry." } });
+    await waitFor(() => {
+      expect(sentenceCompletionsSignal.value.status).toBe("ready");
+    });
+    expect(mockedSpeak).not.toHaveBeenCalled();
+    expect(readMessageLog()).toEqual([]);
+
+    // Keeping the sentences leaves them on screen, still unspoken.
+    cancelDiscardEdit();
+    expect(mockedSpeak).not.toHaveBeenCalled();
+    expect(readMessageLog()).toEqual([]);
+
+    // Editing again asks about the sentences now on screen; changing anyway applies the edit.
+    changeEncodingContents.value = EDITED_CONTENTS;
+    expect(discardEditPromptSignal.value).toBe(READY_DISCARD_PROMPT);
+    confirmDiscardEdit();
+
+    expect(mockedSpeak).not.toHaveBeenCalled();
+    expect(readMessageLog()).toEqual([]);
+    expect(changeEncodingContents.value).toEqual(EDITED_CONTENTS);
+  });
+
   test("refusing to discard the sentences on screen puts the message back", async (): Promise<void> => {
     changeEncodingContents.value = INPUT_CONTENTS;
     mockedQueryChat.mockResolvedValue({
@@ -623,49 +665,24 @@ describe("telegraphicTranslationState", (): void => {
     });
   };
 
-  test("with numSentences 1 a recalled sentence is spoken without any query", async (): Promise<void> => {
+  test("with numSentences 1 a recalled sentence is shown without any query", async (): Promise<void> => {
     setConfig(1);
     recordPastTranslation("I am hungry.");
+    const loggedBefore = readMessageLog();
     changeEncodingContents.value = INPUT_CONTENTS;
 
     await requestForCurrentMessage();
 
     expect(mockedQueryChat).not.toHaveBeenCalled();
-    expect(mockedSpeak).toHaveBeenCalledWith("I am hungry.");
+    expect(mockedSpeak).not.toHaveBeenCalled();
     expect(sentenceCompletionsSignal.value).toEqual({
       status: "ready",
       sentences: ["I am hungry."],
       model: "old-model:12b",
       telegraphicMessage: "me hungry"
     });
-    const log = readMessageLog();
-    expect(log[log.length - 1].translation).toMatchObject({
-      model: "old-model:12b", sentence: "I am hungry.", source: "auto"
-    });
-  });
-
-  test("re-saving a recalled sentence keeps the candidates it came from", async (): Promise<void> => {
-    setConfig(1);
-    saveMessageRecord(INPUT_CONTENTS.payloads);
-    saveTranslation("me hungry", {
-      model: "old-model:12b",
-      candidates: ["I am hungry.", "I want food."],
-      sentence: "I am hungry.",
-      source: "chosen"
-    });
-    changeEncodingContents.value = INPUT_CONTENTS;
-
-    await requestForCurrentMessage();
-
-    // The record is reused rather than added to, so a recall that dropped the alternatives
-    // would lose them for good.
-    const log = readMessageLog();
-    expect(log[log.length - 1].translation).toEqual({
-      model: "old-model:12b",
-      candidates: ["I am hungry.", "I want food."],
-      sentence: "I am hungry.",
-      source: "auto"
-    });
+    // Recall reads the log; it writes nothing until the user picks the sentence.
+    expect(readMessageLog()).toEqual(loggedBefore);
   });
 
   test("a recalled sentence shows while the rest are still being made", async (): Promise<void> => {

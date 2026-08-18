@@ -539,6 +539,24 @@ describe("SentenceChoices", (): void => {
       expect(sentenceCompletionsSignal.value).toMatchObject({ status: "ready", sentences: SENTENCES });
     });
 
+    // The dialog no longer blocks the page the way `window.confirm` did, so sentences can
+    // land behind the question. Keeping them is a decision to use them, so they must be
+    // reachable without re-scanning the page.
+    test("sentences arriving behind the question get focus when they are kept", async (): Promise<void> => {
+      changeEncodingContents.value = MESSAGE_CONTENTS;
+      sentenceCompletionsSignal.value = WORKING_STATE;
+      renderWithInputArea();
+      changeEncodingContents.value = EDITED_CONTENTS;
+      await screen.findByRole("dialog", { name: DISCARD_DIALOG_TITLE });
+
+      sentenceCompletionsSignal.value = READY_STATE;
+      await userEvent.click(screen.getByRole("button", { name: KEEP_SENTENCES_LABEL }));
+
+      await waitFor(() => {
+        expect(screen.getByRole("button", { name: SENTENCES[0] })).toHaveFocus();
+      });
+    });
+
     test("closing the dialog puts focus on the input area", async (): Promise<void> => {
       await editTheMessage();
 

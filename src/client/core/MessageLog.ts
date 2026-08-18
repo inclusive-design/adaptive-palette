@@ -18,10 +18,9 @@ export const MESSAGE_LOG_KEY = "Message Log";
 /*
  * How the preferred sentence was arrived at:
  * - "chosen" means the user picked it from the list
- * - "auto" means it was spoken automatically, when there was only one choice
  * - "typed" means it was typed by the user
  */
-export type SentenceSourceType = "chosen" | "auto" | "typed";
+export type SentenceSourceType = "chosen" | "typed";
 
 /*
  * What a message turned into, present only on messages the user asked to translate.

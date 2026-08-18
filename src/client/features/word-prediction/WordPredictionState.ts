@@ -61,9 +61,10 @@ let pendingTimer: number | undefined;
 
 /**
  * The message the word suggestions on screen were asked for. Used to keep track of the
- * user message change that will stop a in-flight request.
+ * user message change that will stop a in-flight request. `null` while the discard dialog
+ * is up, so whatever message stands once it is answered counts as a change.
  */
-let previousContextKey = "";
+let previousContextKey: string | null = "";
 
 /**
  * The user message extracted from symbol labels. The model reply arrives after the change of the
@@ -162,10 +163,11 @@ effect((): void => {
   // The telegraphic-translation discard dialog is asking whether an edit may stand. Nothing
   // written to `changeEncodingContents` while that question is open is a message the user has
   // agreed to -- it is either the edit that may still be sent back, or the module's own revert
-  // of it -- so no query starts for it. `previousContextKey` still tracks it, so nothing here
-  // is mistaken for a further change once the question is answered.
+  // of it -- so no query starts for it. `previousContextKey` is cleared instead of tracking
+  // the message: either answer leaves a message to predict for -- the edit, or the revert
+  // whose words were just dropped -- so the query has to start again once the question goes.
   if (discardEditPromptSignal.value !== null) {
-    previousContextKey = contextKey;
+    previousContextKey = null;
     cancelModelQuery();
     modelWordsSignal.value = { status: "idle" };
     showModelStatusSignal.value = false;

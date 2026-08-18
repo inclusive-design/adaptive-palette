@@ -53,9 +53,14 @@ export const KEEP_SENTENCES_LABEL = "Keep sentences";
  */
 export function SentenceChoices (): VNode {
   const state = sentenceCompletionsSignal.value;
+  const discardPrompt = discardEditPromptSignal.value;
   const [typedSentence, setTypedSentence] = useState("");
   const choicesRef = useRef<HTMLDivElement>(null);
   const focusedMessageRef = useRef<string | null>(null);
+  const wasAskingRef = useRef(false);
+
+  const firstChoice = (): HTMLButtonElement | null =>
+    choicesRef.current?.querySelector<HTMLButtonElement>(".sentenceChoice") ?? null;
 
   // Clicking the trigger leaves focus on it (it goes `aria-disabled`, not `disabled`).
   // Move focus onto the first choice when it arrives, so reaching the sentences does not
@@ -63,8 +68,17 @@ export function SentenceChoices (): VNode {
   // rest, and pulling focus back when the rest land would undo the user's scanning, or
   // interrupt them mid-sentence in the text box.
   useEffect((): void => {
+    const wasAsking = wasAskingRef.current;
+    wasAskingRef.current = discardPrompt !== null;
     if (state.status === "idle") {
       focusedMessageRef.current = null;
+      return;
+    }
+    // The discard dialog holds the page `inert`, so focusing a sentence behind it does
+    // nothing; and on the pass that closes the dialog, `restoreDialogFocus` below is what
+    // decides where focus goes. Standing aside on both leaves the one-shot move unspent
+    // for whichever of them can land it.
+    if (discardPrompt !== null || wasAsking) {
       return;
     }
     const textBox = choicesRef.current?.querySelector(".sentenceTypeYourOwn input");
@@ -74,8 +88,26 @@ export function SentenceChoices (): VNode {
       return;
     }
     focusedMessageRef.current = state.telegraphicMessage;
-    choicesRef.current?.querySelector<HTMLButtonElement>(".sentenceChoice")?.focus();
-  }, [state]);
+    firstChoice()?.focus();
+  }, [state, discardPrompt]);
+
+  // Where focus goes when the discard dialog closes. Normally the input area, where the
+  // edit was made. The exception is sentences that arrived behind the question and have
+  // not been reached yet: keeping them is a decision to use them, so they get the focus
+  // move they would have had if the question had never been up.
+  //
+  // The dialog's `close` event is queued as a task, so this runs after the effect above --
+  // which is why that effect leaves this pass alone rather than racing it.
+  const restoreDialogFocus = (): HTMLElement | null => {
+    if (state.sentences.length > 0 && focusedMessageRef.current !== state.telegraphicMessage) {
+      focusedMessageRef.current = state.telegraphicMessage;
+      const choice = firstChoice();
+      if (choice) {
+        return choice;
+      }
+    }
+    return document.getElementById(INPUT_AREA_ID);
+  };
 
   const logAndSpeak = (sentence: string, source: SentenceSourceType): void => {
     abortActiveSentenceRequest();
@@ -143,10 +175,10 @@ export function SentenceChoices (): VNode {
       <${ModalDialog}
         id=${DISCARD_EDIT_DIALOG_ID}
         title=${DISCARD_DIALOG_TITLE}
-        isOpen=${discardEditPromptSignal.value !== null}
+        isOpen=${discardPrompt !== null}
         onClose=${cancelDiscardEdit}
-        restoreFocusTo=${() => document.getElementById(INPUT_AREA_ID)}>
-        <p>${discardEditPromptSignal.value}</p>
+        restoreFocusTo=${restoreDialogFocus}>
+        <p>${discardPrompt}</p>
         <div class="dialogFooter">
           <button type="button" onClick=${confirmDiscardEdit}>${CHANGE_ANYWAY_LABEL}</button>
           <button type="button" onClick=${cancelDiscardEdit}>${KEEP_SENTENCES_LABEL}</button>
