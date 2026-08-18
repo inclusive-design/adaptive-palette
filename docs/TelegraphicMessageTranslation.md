@@ -134,12 +134,18 @@ If the user enters text in the custom input field and submits it, that text is s
 preferred sentence.
 
 If the input area is modified while a query is in progress or while sentences are displayed on the screen,
-a warning dialog will appear. Because the new input invalidates the current results, the user will be asked
-if they want to proceed. Choosing to proceed will abort the active query and clear the existing sentences,
-while canceling will keep the current data intact. If a recalled sentence is shown on the screen with an
-error message from a failed request, it counts as a displayed sentence. But when there is no sentence on
-screen, for example, when an error occurred, or the user chose "speak" or moved on before the sentence appeared,
-the state is cleared without asking the user anything because there is nothing to discard.
+a modal dialog titled "Change your message?" will appear. Because the new input invalidates the current translation
+results, the user will be asked if they want to proceed. The edit is held back while the question is on screen, so
+the message stays as it was: applying it would start word prediction on a message the user has not agreed to, and
+leave that query running beside the sentence query. "Change anyway" aborts the active query, clears the existing
+sentences and applies the edit. "Keep sentences", Escape and the dialog's ✕ all drop the edit and leave
+the query and the sentences as is. Word prediction reports nothing and runs no query of its own
+while the question is on screen.
+
+If a recalled sentence is shown on the screen with an error message from a failed request, it counts as a
+displayed sentence. But when there is no sentence on screen, for example, when an error occurred, or the user
+chose "speak" or moved on before the sentence appeared, the state is cleared without asking the user anything
+because there is nothing to discard.
 
 ### Single-sentence mode
 

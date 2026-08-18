@@ -10,14 +10,16 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { vi, type MockInstance } from "vitest";
+import { vi } from "vitest";
 import { render, screen, cleanup, waitFor } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
 import { setTestConfig } from "../../testUtils/TestConfig";
-import { IDLE_SENTENCE_STATE, sentenceCompletionsSignal } from "./TelegraphicTranslationState";
+import {
+  confirmDiscardEdit, discardEditPromptSignal, IDLE_SENTENCE_STATE, sentenceCompletionsSignal
+} from "./TelegraphicTranslationState";
 import { MESSAGE_LOG_KEY } from "../../core/MessageLog";
 import { queryChat } from "../../core/OllamaApi";
 import { CommandMakeSentence } from "./CommandMakeSentence";
@@ -72,12 +74,7 @@ describe("CommandMakeSentence", (): void => {
     html`<${CommandMakeSentence} id="command-make-sentence" options=${CELL_OPTIONS} />`
   );
 
-  // Editing the message while a request is in flight asks the user to confirm the discard.
-  // Mock the case when the discard is accepted so tests can focus on the button behavior.
-  let mockedConfirm: MockInstance<(message?: string) => boolean>;
-
   beforeEach((): void => {
-    mockedConfirm = vi.spyOn(window, "confirm").mockReturnValue(true);
     mockedQueryChat.mockReset();
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
     adaptivePaletteGlobals.models = ["phony-model:12b"];
@@ -89,8 +86,8 @@ describe("CommandMakeSentence", (): void => {
   afterEach((): void => {
     cleanup();
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
+    discardEditPromptSignal.value = null;
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
-    mockedConfirm.mockRestore();
   });
 
   test("renders nothing when no models are available", (): void => {
@@ -213,11 +210,13 @@ describe("CommandMakeSentence", (): void => {
       expect(button).toHaveAttribute("aria-disabled", "true");
     });
 
-    // The user swaps a symbol while the model is still thinking.
+    // The user swaps a symbol while the model is still thinking, and says the sentence
+    // being made can go.
     changeEncodingContents.value = {
       payloads: [{ label: "later", composition: [126], modifierInfo: [] }],
       caretPosition: 1
     };
+    confirmDiscardEdit();
 
     // The button must come back now, not when the abandoned query eventually settles.
     // The loading indicator has already gone, so a disabled button here has nothing

@@ -17,7 +17,7 @@
  * 3. the cancellation of a request the user has moved on from
  * `telegraphicTranslationUtils.ts` holds the side-effect-free utility functions.
  */
-import { effect, signal } from "@preact/signals";
+import { batch, effect, signal } from "@preact/signals";
 import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
 import { requestSentences, pickModel } from "./TelegraphicTranslationUtils";
 import { findLatestTranslation, messageText, saveTranslation } from "../../core/MessageLog";
@@ -46,7 +46,17 @@ export const WORKING_DISCARD_PROMPT = "Still making a sentence. Changing your me
 /**
  * Asked before an edit throws away sentences that are already on screen.
  */
-export const READY_DISCARD_PROMPT = "Changing your message will remove the sentences below. Change anyway?";
+export const READY_DISCARD_PROMPT = "Changing your message will remove the sentences. Change anyway?";
+
+/**
+ * The question the discard dialog is showing, or `null` when nothing is being asked.
+ * `SentenceChoices` renders the dialog from this; the answer arrives through
+ * `confirmDiscardEdit` or `cancelDiscardEdit`.
+ *
+ * Also read by `WordPredictionState`'s effect, so a query does not start for a message
+ * when the discard dialog is waiting for user response.
+ */
+export const discardEditPromptSignal = signal<string | null>(null);
 
 /**
  * The abort handle for the sentence request currently in flight, if any.
@@ -202,12 +212,67 @@ const snapshot = (contents: ContentSignalDataType): ContentSignalDataType => str
 
 let previousContents = snapshot(changeEncodingContents.peek());
 
+/**
+ * The edit the user is being asked about, held back until they answer. Applying it while
+ * the question is on screen would start word prediction on a message the user may be about
+ * to abandon, and leave two model queries running against different messages.
+ */
+let pendingContents: ContentSignalDataType | null = null;
+
+/**
+ * The user chose to lose the sentence work: stop the request, clear the sentence area, and
+ * apply the edit that was held back. The edit becomes the new baseline, so a later edit is
+ * not measured against a message the user has already abandoned.
+ * @returns {void}
+ */
+export function confirmDiscardEdit (): void {
+  if (!discardEditPromptSignal.peek()) {
+    return;
+  }
+  activeSentenceAbort?.abort();
+  const edit = pendingContents;
+  pendingContents = null;
+  // Batched so the effect below sees every write at once. Clearing the question on its own
+  // would let the effect run while the edited message and the old sentence state still
+  // disagree, and ask the same question again.
+  batch((): void => {
+    discardEditPromptSignal.value = null;
+    sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
+    if (edit) {
+      changeEncodingContents.value = edit;
+    }
+  });
+}
+
+/**
+ * The user chose to keep the sentence work: drop the held-back edit and leave the request
+ * and the sentences alone. The message is already as it was, so nothing is restored here.
+ * Word prediction, which also watches `discardEditPromptSignal`, settles itself back to this
+ * message once the signal clears.
+ *
+ * Guarded so it can be called twice. Both dialog buttons close the dialog, and the
+ * `close` event then reports the cancel a second time.
+ * @returns {void}
+ */
+export function cancelDiscardEdit (): void {
+  if (!discardEditPromptSignal.peek()) {
+    return;
+  }
+  pendingContents = null;
+  discardEditPromptSignal.value = null;
+}
+
 // Warn the user if they edit a message while its sentences are currently
 // generating or on screen, as this will discard the current progress. A failed fill can
 // leave a recalled sentence on screen under the error line; that counts as "on screen" too.
-// - If they cancel: Revert the edit and continue the original generation.
-// - If they confirm: Abort the current request as stale and apply the edit.
+// The question is asked by publishing it to `discardEditPromptSignal` and returning: a
+// dialog cannot answer on the spot the way `window.confirm` did.
 effect((): void => {
+  // A question already on screen. The page is `inert` behind the dialog, so the only writes
+  // reaching here are the ones the answer itself makes.
+  if (discardEditPromptSignal.value !== null) {
+    return;
+  }
   const contents = changeEncodingContents.value;
   const message = currentTelegraphicMessage();
   const state = sentenceCompletionsSignal.peek();
@@ -219,14 +284,18 @@ effect((): void => {
   const showsSentences = finished && state.sentences.length > 0;
   if ((state.status === "working" || showsSentences) &&
       state.telegraphicMessage !== message) {
-    const prompt = state.status === "working" ? WORKING_DISCARD_PROMPT : READY_DISCARD_PROMPT;
-    if (!window.confirm(prompt)) {
-      // cancelled scenario: Revert the edit
+    // The edit is taken back for as long as the question is up, and put back only if the
+    // user confirms. Leaving it in place would show a message the user has not agreed to,
+    // and start word prediction on it.
+    // Returning before the snapshot below is what leaves `previousContents` holding the
+    // message from before the edit.
+    pendingContents = contents;
+    batch((): void => {
+      discardEditPromptSignal.value =
+        state.status === "working" ? WORKING_DISCARD_PROMPT : READY_DISCARD_PROMPT;
       changeEncodingContents.value = previousContents;
-      return;
-    }
-    activeSentenceAbort?.abort();
-    sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
+    });
+    return;
   } else if (finished && state.sentences.length === 0) {
     // Nothing left of the old message but the error line or an empty typing area: it goes
     // without asking the user.

@@ -130,4 +130,32 @@ describe("ModalDialog", () => {
 
     await waitFor(() => expect(opener).toHaveFocus());
   });
+
+  // A dialog opened from something other than a click on its opener -- a signal effect, say
+  // -- has no useful opener to go back to, so it names the target itself.
+  test("restoreFocusTo outranks the opener", async () => {
+    const onClose = vi.fn();
+    const dialog = (isOpen: boolean) => html`
+      <div>
+        <button type="button">opener</button>
+        <button type="button">elsewhere</button>
+        <${ModalDialog}
+          id="testDialog" title=${TITLE} isOpen=${isOpen} onClose=${onClose}
+          restoreFocusTo=${() => screen.getByRole("button", { name: "elsewhere" })}>
+          <p>body</p>
+        <//>
+      </div>
+    `;
+    const { rerender } = render(dialog(false));
+
+    screen.getByRole("button", { name: "opener" }).focus();
+    rerender(dialog(true));
+    await waitFor(() => expect(screen.getByText("body")).toBeVisible());
+
+    await userEvent.keyboard("{Escape}");
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "elsewhere" })).toHaveFocus();
+    });
+  });
 });

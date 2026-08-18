@@ -10,13 +10,15 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { vi, type MockInstance } from "vitest";
+import { vi } from "vitest";
 import { waitFor } from "@testing-library/preact";
+import { effect } from "@preact/signals";
 
 import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
 import { setTestConfig } from "../../testUtils/TestConfig";
 import {
-  abortActiveSentenceRequest, clearMessageAndChoices, currentTelegraphicMessage, IDLE_SENTENCE_STATE, makeSentences,
+  abortActiveSentenceRequest, cancelDiscardEdit, clearMessageAndChoices, confirmDiscardEdit,
+  currentTelegraphicMessage, discardEditPromptSignal, IDLE_SENTENCE_STATE, makeSentences,
   sentenceCompletionsSignal, READY_DISCARD_PROMPT, WORKING_DISCARD_PROMPT
 } from "./TelegraphicTranslationState";
 import { MESSAGE_LOG_KEY, readMessageLog, saveMessageRecord, saveTranslation } from "../../core/MessageLog";
@@ -61,12 +63,29 @@ describe("telegraphicTranslationState", (): void => {
   // Mirrors what the button does: translate whatever is in the input area right now.
   const requestForCurrentMessage = (): Promise<void> => makeSentences(currentTelegraphicMessage());
 
-  // Every edit to the input message when a request is in flight asks the user to confirm the discard.
-  // Mock the case when the discard is accepted so the tests can focus on the button behavior.
-  let mockedConfirm: MockInstance<(message?: string) => boolean>;
+  // Every edit to the input message when a request is in flight asks the user to confirm the
+  // discard. The question is published to `discardEditPromptSignal` and waits for an answer,
+  // so the dialog the user sees is stood in for here: each question is recorded and answered
+  // at once, letting the tests focus on the outcome. `answerDiscard` is what the user taps.
+  let prompts: string[];
+  let answerDiscard: boolean;
+  let stopAnswering: () => void;
 
   beforeEach((): void => {
-    mockedConfirm = vi.spyOn(window, "confirm").mockReturnValue(true);
+    prompts = [];
+    answerDiscard = true;
+    stopAnswering = effect((): void => {
+      const prompt = discardEditPromptSignal.value;
+      if (prompt === null) {
+        return;
+      }
+      prompts.push(prompt);
+      if (answerDiscard) {
+        confirmDiscardEdit();
+      } else {
+        cancelDiscardEdit();
+      }
+    });
     mockedQueryChat.mockReset();
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
     adaptivePaletteGlobals.models = ["phony-model:12b"];
@@ -76,9 +95,10 @@ describe("telegraphicTranslationState", (): void => {
   });
 
   afterEach((): void => {
+    stopAnswering();
+    discardEditPromptSignal.value = null;
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
-    mockedConfirm.mockRestore();
   });
 
   test("currentTelegraphicMessage joins the symbol labels with spaces", (): void => {
@@ -110,7 +130,7 @@ describe("telegraphicTranslationState", (): void => {
 
     expect(changeEncodingContents.value).toEqual({ payloads: [], caretPosition: -1 });
     expect(sentenceCompletionsSignal.value).toEqual(IDLE_SENTENCE_STATE);
-    expect(mockedConfirm).not.toHaveBeenCalled();
+    expect(prompts).toEqual([]);
   });
 
   test("an empty message does not query", async (): Promise<void> => {
@@ -177,7 +197,7 @@ describe("telegraphicTranslationState", (): void => {
     };
 
     expect(sentenceCompletionsSignal.value).toEqual(IDLE_SENTENCE_STATE);
-    expect(mockedConfirm).not.toHaveBeenCalled();
+    expect(prompts).toEqual([]);
     consoleErrorSpy.mockRestore();
   });
 
@@ -422,7 +442,7 @@ describe("telegraphicTranslationState", (): void => {
 
     changeEncodingContents.value = EDITED_CONTENTS;
 
-    expect(mockedConfirm).toHaveBeenCalledWith(WORKING_DISCARD_PROMPT);
+    expect(prompts).toEqual([WORKING_DISCARD_PROMPT]);
   });
 
   test("refusing to discard an in-flight request puts the message back", async (): Promise<void> => {
@@ -438,7 +458,7 @@ describe("telegraphicTranslationState", (): void => {
     // The user changes the message, is told it would stop the sentence being made, and
     // decides against it. The symbols and the caret go back where they were, and the model
     // keeps working on the message that is once again on screen.
-    mockedConfirm.mockReturnValue(false);
+    answerDiscard = false;
     changeEncodingContents.value = EDITED_CONTENTS;
 
     expect(changeEncodingContents.value).toEqual(INPUT_CONTENTS);
@@ -455,10 +475,10 @@ describe("telegraphicTranslationState", (): void => {
     await requestForCurrentMessage();
     expect(sentenceCompletionsSignal.value.status).toBe("ready");
 
-    mockedConfirm.mockReturnValue(false);
+    answerDiscard = false;
     changeEncodingContents.value = EDITED_CONTENTS;
 
-    expect(mockedConfirm).toHaveBeenCalledWith(READY_DISCARD_PROMPT);
+    expect(prompts).toEqual([READY_DISCARD_PROMPT]);
     expect(changeEncodingContents.value).toEqual(INPUT_CONTENTS);
     expect(sentenceCompletionsSignal.value).toMatchObject({
       status: "ready",
@@ -477,7 +497,7 @@ describe("telegraphicTranslationState", (): void => {
 
     // Restoring the contents runs the effect again. That pass must leave the snapshot
     // pointing at the message being worked on, or the next refusal restores the wrong thing.
-    mockedConfirm.mockReturnValue(false);
+    answerDiscard = false;
     changeEncodingContents.value = EDITED_CONTENTS;
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
 
@@ -501,10 +521,10 @@ describe("telegraphicTranslationState", (): void => {
     const { payloads, caretPosition } = changeEncodingContents.value;
     payloads[0].modifierInfo?.push({ modifierId: [130], modifierGloss: "big", isPrepended: true });
     payloads.push({ label: "hungry", composition: [125], modifierInfo: [] });
-    mockedConfirm.mockReturnValue(false);
+    answerDiscard = false;
     changeEncodingContents.value = { payloads, caretPosition };
 
-    expect(mockedConfirm).toHaveBeenCalledTimes(1);
+    expect(prompts).toHaveLength(1);
     expect(currentTelegraphicMessage()).toBe("me");
     expect(changeEncodingContents.value).toEqual({
       payloads: [{ label: "me", composition: [124], modifierInfo: [] }],
@@ -524,7 +544,7 @@ describe("telegraphicTranslationState", (): void => {
 
     changeEncodingContents.value = { payloads: INPUT_CONTENTS.payloads, caretPosition: 0 };
 
-    expect(mockedConfirm).not.toHaveBeenCalled();
+    expect(prompts).toEqual([]);
     expect(sentenceCompletionsSignal.value.status).toBe("working");
   });
 
@@ -532,7 +552,7 @@ describe("telegraphicTranslationState", (): void => {
     changeEncodingContents.value = INPUT_CONTENTS;
     changeEncodingContents.value = EDITED_CONTENTS;
 
-    expect(mockedConfirm).not.toHaveBeenCalled();
+    expect(prompts).toEqual([]);
     expect(changeEncodingContents.value).toEqual(EDITED_CONTENTS);
   });
 
@@ -570,7 +590,7 @@ describe("telegraphicTranslationState", (): void => {
 
     changeEncodingContents.value = EDITED_CONTENTS;
 
-    expect(mockedConfirm).not.toHaveBeenCalled();
+    expect(prompts).toEqual([]);
     expect(changeEncodingContents.value).toEqual(EDITED_CONTENTS);
     expect(sentenceCompletionsSignal.value).toEqual(IDLE_SENTENCE_STATE);
   });
@@ -724,10 +744,10 @@ describe("telegraphicTranslationState", (): void => {
     expect(sentenceCompletionsSignal.value.status).toBe("error");
 
     // A sentence the user can still see and tap must not vanish silently.
-    mockedConfirm.mockReturnValue(false);
+    answerDiscard = false;
     changeEncodingContents.value = EDITED_CONTENTS;
 
-    expect(mockedConfirm).toHaveBeenCalledWith(READY_DISCARD_PROMPT);
+    expect(prompts).toEqual([READY_DISCARD_PROMPT]);
     expect(changeEncodingContents.value).toEqual(INPUT_CONTENTS);
     expect(sentenceCompletionsSignal.value).toMatchObject({
       status: "error", sentences: ["I am hungry."]
@@ -744,7 +764,7 @@ describe("telegraphicTranslationState", (): void => {
     await requestForCurrentMessage();
     changeEncodingContents.value = { payloads: INPUT_CONTENTS.payloads, caretPosition: 0 };
 
-    expect(mockedConfirm).not.toHaveBeenCalled();
+    expect(prompts).toEqual([]);
     expect(sentenceCompletionsSignal.value).toMatchObject({
       status: "error", sentences: ["I am hungry."]
     });
@@ -778,6 +798,6 @@ describe("telegraphicTranslationState", (): void => {
 
     expect(signal.aborted).toBe(true);
     expect(sentenceCompletionsSignal.value).toEqual(IDLE_SENTENCE_STATE);
-    expect(mockedConfirm).not.toHaveBeenCalled();
+    expect(prompts).toEqual([]);
   });
 });

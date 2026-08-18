@@ -15,8 +15,11 @@ import { html } from "htm/preact";
 import { useEffect, useRef, useState } from "preact/hooks";
 
 import {
-  sentenceCompletionsSignal, clearMessageAndChoices, abortActiveSentenceRequest
+  sentenceCompletionsSignal, clearMessageAndChoices, abortActiveSentenceRequest,
+  discardEditPromptSignal, confirmDiscardEdit, cancelDiscardEdit
 } from "./TelegraphicTranslationState";
+import { ModalDialog } from "../../components/ModalDialog";
+import { INPUT_AREA_ID } from "../../cells/ContentEncoding";
 import { announceIfEnabled, speak, speakUnavailable } from "../../utils/SpeechUtils";
 import { saveTranslation, SentenceSourceType } from "../../core/MessageLog";
 import "./SentenceChoices.scss";
@@ -27,6 +30,10 @@ export const CANNOT_COMPLETE_MESSAGE = "⚠ Could not make sentences. Try again.
 export const TYPE_YOUR_OWN_HINT = "None fit? Type yours";
 export const SPEAK_BUTTON_LABEL = "Speak";
 export const DONE_BUTTON_LABEL = "✓ Done";
+export const DISCARD_EDIT_DIALOG_ID = "discardEditDialog";
+export const DISCARD_DIALOG_TITLE = "Change your message?";
+export const CHANGE_ANYWAY_LABEL = "Change anyway";
+export const KEEP_SENTENCES_LABEL = "Keep sentences";
 
 /**
  * The sentence choice area. Renders whichever state `sentenceCompletionsSignal` is in:
@@ -36,6 +43,10 @@ export const DONE_BUTTON_LABEL = "✓ Done";
  *    the model.
  * 3. `working` also says sentences are being made, or that more are when one is already there.
  * 4. `error` also says sentences could not be made, keeping any sentence on screen.
+ *
+ * The dialog asking whether an edit may discard the sentence work is rendered here because
+ * this component is mounted for the life of the page and always renders its outer element,
+ * so the dialog survives the change to `idle`.
  *
  * The live region is always in the document to announce the state.
  * @returns {VNode}
@@ -129,6 +140,18 @@ export function SentenceChoices (): VNode {
     <div class="sentenceChoices" ref=${choicesRef}>
       <p class=${state.status === "error" ? "statusMessage sentenceError" : "statusMessage"} role="status">${statusText}</p>
       ${choices}
+      <${ModalDialog}
+        id=${DISCARD_EDIT_DIALOG_ID}
+        title=${DISCARD_DIALOG_TITLE}
+        isOpen=${discardEditPromptSignal.value !== null}
+        onClose=${cancelDiscardEdit}
+        restoreFocusTo=${() => document.getElementById(INPUT_AREA_ID)}>
+        <p>${discardEditPromptSignal.value}</p>
+        <div class="dialogFooter">
+          <button type="button" onClick=${confirmDiscardEdit}>${CHANGE_ANYWAY_LABEL}</button>
+          <button type="button" onClick=${cancelDiscardEdit}>${KEEP_SENTENCES_LABEL}</button>
+        </div>
+      <//>
     </div>
   `;
 }

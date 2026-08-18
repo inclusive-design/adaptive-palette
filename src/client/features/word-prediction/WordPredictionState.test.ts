@@ -11,6 +11,7 @@
  */
 
 import { vi } from "vitest";
+import { batch } from "@preact/signals";
 import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
 import { DISABLED_MODEL_QUERY } from "../../core/Config";
 import { MESSAGE_LOG_KEY, saveMessageRecord } from "../../core/MessageLog";
@@ -18,6 +19,7 @@ import { queryChat } from "../../core/OllamaApi";
 import {
   DEBOUNCE_MS, contextKeyOf, dismissModelStatus, modelWordsSignal, showModelStatusSignal
 } from "./WordPredictionState";
+import { discardEditPromptSignal } from "../telegraphic-translation/TelegraphicTranslationState";
 import { SymbolEncodingType } from "../../index.d";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
@@ -73,6 +75,7 @@ describe("wordPrediction model query", (): void => {
   });
 
   afterEach((): void => {
+    discardEditPromptSignal.value = null;
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
     vi.useRealTimers();
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
@@ -219,6 +222,70 @@ describe("wordPrediction model query", (): void => {
       compose("I");
       dismissModelStatus();
       compose("I", "want");
+      expect(showModelStatusSignal.value).toBe(true);
+      await waitForQuery();
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  // The telegraphic-translation discard dialog holds an edit back: the edit reaches
+  // `changeEncodingContents` first, then the module's own effect reverts it, batched with
+  // raising the question -- see `TelegraphicTranslationState.ts`. Word prediction must
+  // treat neither write as a message the user has agreed to.
+  describe("while the discard dialog is asking", (): void => {
+
+    /**
+     * Reproduce the two writes the real effect makes: the edit landing on the signal on its
+     * own, then the module's batched revert alongside raising the question.
+     */
+    const editThenRevert = (): void => {
+      compose("I", "want");
+      batch((): void => {
+        discardEditPromptSignal.value = "Change your message?";
+        compose("I");
+      });
+    };
+
+    test("no status and no query, for the edit or for the module's own revert of it", async (): Promise<void> => {
+      compose("I");
+      await waitForQuery();
+      dismissModelStatus();
+      mockedQueryChat.mockClear();
+
+      editThenRevert();
+
+      expect(showModelStatusSignal.value).toBe(false);
+      expect(modelWordsSignal.value.status).toBe("idle");
+      await waitForQuery();
+      expect(mockedQueryChat).not.toHaveBeenCalled();
+    });
+
+    test("keeping the sentences leaves prediction settled on the unchanged message", async (): Promise<void> => {
+      compose("I");
+      await waitForQuery();
+      dismissModelStatus();
+      mockedQueryChat.mockClear();
+
+      editThenRevert();
+      discardEditPromptSignal.value = null;
+
+      await waitForQuery();
+      expect(mockedQueryChat).not.toHaveBeenCalled();
+      expect(modelWordsSignal.value.status).toBe("idle");
+    });
+
+    test("changing anyway starts prediction for the edit that was applied", async (): Promise<void> => {
+      compose("I");
+      await waitForQuery();
+      dismissModelStatus();
+      mockedQueryChat.mockClear();
+
+      editThenRevert();
+      batch((): void => {
+        discardEditPromptSignal.value = null;
+        compose("I", "want");
+      });
+
       expect(showModelStatusSignal.value).toBe(true);
       await waitForQuery();
       expect(mockedQueryChat).toHaveBeenCalledTimes(1);

@@ -20,6 +20,7 @@
 import { effect, signal } from "@preact/signals";
 import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
 import { isModelTierActive, predictNext, rankModelWords, requestModelWords } from "./WordPredictionUtils";
+import { discardEditPromptSignal } from "../telegraphic-translation/TelegraphicTranslationState";
 import type { ModelWordsStateType, SymbolEncodingType } from "../../index.d";
 
 /**
@@ -158,6 +159,18 @@ async function queryModelWords (contextKey: string, labels: string[]): Promise<v
 effect((): void => {
   const { payloads, caretPosition } = changeEncodingContents.value;
   const contextKey = contextKeyOf(payloads, caretPosition);
+  // The telegraphic-translation discard dialog is asking whether an edit may stand. Nothing
+  // written to `changeEncodingContents` while that question is open is a message the user has
+  // agreed to -- it is either the edit that may still be sent back, or the module's own revert
+  // of it -- so no query starts for it. `previousContextKey` still tracks it, so nothing here
+  // is mistaken for a further change once the question is answered.
+  if (discardEditPromptSignal.value !== null) {
+    previousContextKey = contextKey;
+    cancelModelQuery();
+    modelWordsSignal.value = { status: "idle" };
+    showModelStatusSignal.value = false;
+    return;
+  }
   if (contextKey === previousContextKey) {
     return;
   }
