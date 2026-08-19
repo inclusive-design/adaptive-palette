@@ -15,7 +15,7 @@ import { render, screen, cleanup } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
-import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { MESSAGE_LOG_KEY, readMessageLog } from "../core/MessageLog";
 import { ActionSpeakCell } from "./ActionSpeakCell";
@@ -46,6 +46,7 @@ describe("ActionSpeakCell", (): void => {
   beforeEach((): void => {
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
     adaptivePaletteGlobals.config.maxStoredRecords = 100;
+    finishedMessageSignal.value = "";
     changeEncodingContents.value = {
       payloads: [
         { label: "I", composition: 1840, modifierInfo: [] },
@@ -71,6 +72,14 @@ describe("ActionSpeakCell", (): void => {
     const log = readMessageLog();
     expect(log).toHaveLength(1);
     expect(log[0].payloads.map((payload) => payload.label)).toEqual(["I", "want"]);
+  });
+
+  test("marks the spoken message as finished", async (): Promise<void> => {
+    const user = userEvent.setup();
+    renderCell();
+
+    await user.click(screen.getByRole("button"));
+    expect(finishedMessageSignal.value).toBe("I want");
   });
 
   test("leaves the message in place after speaking", async (): Promise<void> => {

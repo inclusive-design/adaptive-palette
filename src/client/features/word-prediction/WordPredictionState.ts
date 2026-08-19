@@ -18,8 +18,14 @@
  * Note: `WordPredictionUtils.ts` holds the side-effect-free utility functions.
  */
 import { effect, signal } from "@preact/signals";
-import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal } from "../../state/GlobalData";
+import { messageText } from "../../core/MessageLog";
 import { isModelTierActive, predictNext, rankModelWords, requestModelWords } from "./WordPredictionUtils";
+// Imported for `discardEditPromptSignal`, and load-bearing beyond the name: it makes
+// `TelegraphicTranslationState` evaluate first, so its effect registers first and therefore runs
+// first. Effects run in registration order, so by the time the effect below sees an edit that
+// module objects to, it has already taken the edit back and raised its question.
+import { discardEditPromptSignal } from "../telegraphic-translation/TelegraphicTranslationState";
 import type { ModelWordsStateType, SymbolEncodingType } from "../../index.d";
 
 /**
@@ -42,13 +48,6 @@ export const MIN_WORDS_REQUESTED = 5;
 export const modelWordsSignal = signal<ModelWordsStateType>({ status: "idle" });
 
 /**
- * Whether the suggestion row reports what the model is doing. When "sentence" or "speak"
- * button is pressed meaning the message is finished, it turns the model status report off,
- * but the words already on the row stay where they are.
- */
-export const showModelStatusSignal = signal<boolean>(true);
-
-/**
  * The abort handle for the request currently in flight, if any.
  */
 let activeAbort: AbortController | null = null;
@@ -59,8 +58,10 @@ let activeAbort: AbortController | null = null;
 let pendingTimer: number | undefined;
 
 /**
- * The message the word suggestions on screen were asked for. Used to keep track of the
- * user message change that will stop a in-flight request.
+ * The message the word suggestions on screen were asked for, so an unchanged message is not
+ * asked about twice. Every branch of the effect keeps it in step with what is on screen, the
+ * ones that ask for nothing included: a message the effect declined to act on is still the
+ * message the row is showing.
  */
 let previousContextKey = "";
 
@@ -88,17 +89,6 @@ export function cancelModelQuery (): void {
   activeAbort = null;
   window.clearTimeout(pendingTimer);
   pendingTimer = undefined;
-}
-
-/**
- * Stop reporting the model's progress for the message on screen, and stop any query still
- * working on it. The words already on the row stay where they are: the user is finished with
- * the message, so nothing more needs to be asked or said about it.
- * @returns {void}
- */
-export function dismissModelStatus (): void {
-  cancelModelQuery();
-  showModelStatusSignal.value = false;
 }
 
 /**
@@ -153,18 +143,36 @@ async function queryModelWords (contextKey: string, labels: string[]): Promise<v
   }
 }
 
-// Follow the message being composed. Every change drops the model's words for the message
-// that is gone and starts the wait again.
+// Follow the message being composed. A message the user has agreed to and not yet finished
+// starts the wait for a query; anything else is left alone.
 effect((): void => {
   const { payloads, caretPosition } = changeEncodingContents.value;
   const contextKey = contextKeyOf(payloads, caretPosition);
+  // The discard dialog is asking whether an edit may stand. Neither the edit nor the module's
+  // own revert of it is a message the user has agreed to: nothing is asked for either, and the
+  // finished message stays as it was.
+  if (discardEditPromptSignal.value !== null) {
+    previousContextKey = contextKey;
+    cancelModelQuery();
+    return;
+  }
+  // The user has finished this message. Stop any query still working on it; the words already
+  // on the row stay usable.
+  if (messageText(payloads) === finishedMessageSignal.value) {
+    previousContextKey = contextKey;
+    cancelModelQuery();
+    return;
+  }
   if (contextKey === previousContextKey) {
     return;
   }
   previousContextKey = contextKey;
   cancelModelQuery();
+  // The words on the row answered the message that is gone.
   modelWordsSignal.value = { status: "idle" };
-  showModelStatusSignal.value = true;
+  // An agreed change: the message is being composed again, so a message finished earlier is no
+  // longer finished.
+  finishedMessageSignal.value = "";
 
   const { show } = adaptivePaletteGlobals.config.wordPrediction;
   // An empty message gives the model nothing to go on, and a hidden row nowhere to put the

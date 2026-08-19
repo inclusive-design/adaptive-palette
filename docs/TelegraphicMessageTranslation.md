@@ -9,7 +9,7 @@ sentences. The generated sentences are presented as large, selectable buttons. W
 a sentence, it is spoken aloud and the selection is saved for future model tuning.
 
 The user always controls what is communicated. Generated sentences are suggestions only. Nothing is
-spoken automatically unless single-sentence mode has been explicitly enabled.
+spoken until the user picks a sentence or submits their own text.
 
 ## Configuration
 
@@ -81,11 +81,10 @@ of speaking.
 
 Pressing **Sentence** first looks the message up in the message log (see [Saved Data](#saved-data)). If
 the message has been translated before, its most recently recorded sentence appears immediately, with no
-model query. With `numSentences` at `1` that is the whole interaction: the sentence is spoken right away
-and recorded with source `auto`, the same as a freshly generated one — see
-[Single-sentence mode](#single-sentence-mode). With `numSentences` above `1`, the model is asked for the
-rest, which are appended below the recalled sentence. A returned sentence identical to the recalled one
-is dropped, so the list can end up shorter than `numSentences`.
+model query. It waits to be tapped like any other sentence, and nothing is recorded until it is. With
+`numSentences` at `1` that is the whole interaction. With `numSentences` above `1`, the model is asked
+for the rest, which are appended below the recalled sentence. A returned sentence identical to the
+recalled one is dropped, so the list can end up shorter than `numSentences`.
 
 The sentence area can be in one of four states:
 
@@ -134,19 +133,19 @@ If the user enters text in the custom input field and submits it, that text is s
 preferred sentence.
 
 If the input area is modified while a query is in progress or while sentences are displayed on the screen,
-a warning dialog will appear. Because the new input invalidates the current results, the user will be asked
-if they want to proceed. Choosing to proceed will abort the active query and clear the existing sentences,
-while canceling will keep the current data intact. If a recalled sentence is shown on the screen with an
-error message from a failed request, it counts as a displayed sentence. But when there is no sentence on
-screen, for example, when an error occurred, or the user chose "speak" or moved on before the sentence appeared,
-the state is cleared without asking the user anything because there is nothing to discard.
+a modal dialog titled "Change your message?" will appear. Because the new input invalidates the current translation
+results, the user will be asked if they want to proceed. The edit is held back while the question is on screen, so
+the message stays as it was: applying it would start word prediction on a message the user has not agreed to, and
+leave that query running beside the sentence query. "Change anyway" aborts the active query, clears the existing
+sentences and applies the edit. "Keep sentences", Escape and the dialog's ✕ all drop the edit and leave
+the query and the sentences as is. Word prediction reports nothing and runs no query of its own
+while the question is on screen. Keeping the sentences leaves the suggestion row exactly as it
+was -- the same words, no status line, and no new query -- because the message never changed.
 
-### Single-sentence mode
-
-When `numSentences` is `1`, the returned sentence is spoken as soon as it arrives, without
-waiting for a click. If the message has a recalled sentence (see [Interaction](#interaction)), it is
-spoken immediately with no model query at all, and recorded with source `auto`, the same as a freshly
-generated sentence.
+If a recalled sentence is shown on the screen with an error message from a failed request, it counts as a
+displayed sentence. But when there is no sentence on screen, for example, when an error occurred, or the user
+chose "speak" or moved on before the sentence appeared, the state is cleared without asking the user anything
+because there is nothing to discard.
 
 ## Response Parsing
 
@@ -172,11 +171,11 @@ sentence adds the translation to that record:
 - Preferred sentence
 - Selection method:
   - "chosen": Chosen from generated options
-  - "auto": Automatically spoken in single-sentence mode
   - "typed": Entered manually by the user
 
 All generated candidates are retained, including those not selected. Comparing the preferred sentence
-with the alternatives provides useful training data for future model tuning.
+with the alternatives provides useful training data for future model tuning. Saving a sentence for a
+message that already has candidates on record adds to them rather than replacing them.
 
 **The most recently spoken sentence becomes the preferred sentence for that message.** A repeated
 message is recorded each time it is said, and the translation attaches to its most recent record.

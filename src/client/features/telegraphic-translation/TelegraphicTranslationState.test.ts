@@ -10,13 +10,15 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { vi, type MockInstance } from "vitest";
+import { vi } from "vitest";
 import { waitFor } from "@testing-library/preact";
+import { effect } from "@preact/signals";
 
 import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
 import { setTestConfig } from "../../testUtils/TestConfig";
 import {
-  abortActiveSentenceRequest, clearMessageAndChoices, currentTelegraphicMessage, IDLE_SENTENCE_STATE, makeSentences,
+  abortActiveSentenceRequest, cancelDiscardEdit, clearMessageAndChoices, confirmDiscardEdit,
+  currentTelegraphicMessage, discardEditPromptSignal, IDLE_SENTENCE_STATE, makeSentences,
   sentenceCompletionsSignal, READY_DISCARD_PROMPT, WORKING_DISCARD_PROMPT
 } from "./TelegraphicTranslationState";
 import { MESSAGE_LOG_KEY, readMessageLog, saveMessageRecord, saveTranslation } from "../../core/MessageLog";
@@ -61,12 +63,29 @@ describe("telegraphicTranslationState", (): void => {
   // Mirrors what the button does: translate whatever is in the input area right now.
   const requestForCurrentMessage = (): Promise<void> => makeSentences(currentTelegraphicMessage());
 
-  // Every edit to the input message when a request is in flight asks the user to confirm the discard.
-  // Mock the case when the discard is accepted so the tests can focus on the button behavior.
-  let mockedConfirm: MockInstance<(message?: string) => boolean>;
+  // Every edit to the input message when a request is in flight asks the user to confirm the
+  // discard. The question is published to `discardEditPromptSignal` and waits for an answer,
+  // so the dialog the user sees is stood in for here: each question is recorded and answered
+  // at once, letting the tests focus on the outcome. `answerDiscard` is what the user taps.
+  let prompts: string[];
+  let answerDiscard: boolean;
+  let stopAnswering: () => void;
 
   beforeEach((): void => {
-    mockedConfirm = vi.spyOn(window, "confirm").mockReturnValue(true);
+    prompts = [];
+    answerDiscard = true;
+    stopAnswering = effect((): void => {
+      const prompt = discardEditPromptSignal.value;
+      if (prompt === null) {
+        return;
+      }
+      prompts.push(prompt);
+      if (answerDiscard) {
+        confirmDiscardEdit();
+      } else {
+        cancelDiscardEdit();
+      }
+    });
     mockedQueryChat.mockReset();
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
     adaptivePaletteGlobals.models = ["phony-model:12b"];
@@ -76,9 +95,10 @@ describe("telegraphicTranslationState", (): void => {
   });
 
   afterEach((): void => {
+    stopAnswering();
+    discardEditPromptSignal.value = null;
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
-    mockedConfirm.mockRestore();
   });
 
   test("currentTelegraphicMessage joins the symbol labels with spaces", (): void => {
@@ -110,7 +130,7 @@ describe("telegraphicTranslationState", (): void => {
 
     expect(changeEncodingContents.value).toEqual({ payloads: [], caretPosition: -1 });
     expect(sentenceCompletionsSignal.value).toEqual(IDLE_SENTENCE_STATE);
-    expect(mockedConfirm).not.toHaveBeenCalled();
+    expect(prompts).toEqual([]);
   });
 
   test("an empty message does not query", async (): Promise<void> => {
@@ -177,23 +197,22 @@ describe("telegraphicTranslationState", (): void => {
     };
 
     expect(sentenceCompletionsSignal.value).toEqual(IDLE_SENTENCE_STATE);
-    expect(mockedConfirm).not.toHaveBeenCalled();
+    expect(prompts).toEqual([]);
     consoleErrorSpy.mockRestore();
   });
 
-  test("with numSentences 1 the sentence is spoken and logged immediately as auto", async (): Promise<void> => {
+  test("with numSentences 1 the sentence waits to be picked, like any other count", async (): Promise<void> => {
     setConfig(1);
     changeEncodingContents.value = INPUT_CONTENTS;
     mockedQueryChat.mockResolvedValue({ message: { content: "1. I am hungry." } } as never);
 
     await requestForCurrentMessage();
 
-    expect(readMessageLog()).toHaveLength(1);
-    expect(readMessageLog()[0].translation).toMatchObject({
-      sentence: "I am hungry.",
-      source: "auto"
+    expect(sentenceCompletionsSignal.value).toMatchObject({
+      status: "ready", sentences: ["I am hungry."]
     });
-    expect(mockedSpeak).toHaveBeenCalledWith("I am hungry.");
+    expect(mockedSpeak).not.toHaveBeenCalled();
+    expect(readMessageLog()).toEqual([]);
   });
 
   test("with numSentences above 1 nothing is logged until the user picks", async (): Promise<void> => {
@@ -422,7 +441,7 @@ describe("telegraphicTranslationState", (): void => {
 
     changeEncodingContents.value = EDITED_CONTENTS;
 
-    expect(mockedConfirm).toHaveBeenCalledWith(WORKING_DISCARD_PROMPT);
+    expect(prompts).toEqual([WORKING_DISCARD_PROMPT]);
   });
 
   test("refusing to discard an in-flight request puts the message back", async (): Promise<void> => {
@@ -438,12 +457,55 @@ describe("telegraphicTranslationState", (): void => {
     // The user changes the message, is told it would stop the sentence being made, and
     // decides against it. The symbols and the caret go back where they were, and the model
     // keeps working on the message that is once again on screen.
-    mockedConfirm.mockReturnValue(false);
+    answerDiscard = false;
     changeEncodingContents.value = EDITED_CONTENTS;
 
     expect(changeEncodingContents.value).toEqual(INPUT_CONTENTS);
     expect(signal.aborted).toBe(false);
     expect(sentenceCompletionsSignal.value.status).toBe("working");
+  });
+
+  // The dialog no longer blocks the page the way `window.confirm` did, so a single-sentence
+  // request can finish while the question is still up. Nothing is spoken or logged for it
+  // either way: the sentence waits to be picked, exactly as it does with no question up.
+  test("a single sentence arriving while the question is up is not spoken", async (): Promise<void> => {
+    setConfig(1);
+    let settle: (reply: unknown) => void = () => undefined;
+    mockedQueryChat.mockReturnValue(new Promise((resolve) => {
+      settle = resolve;
+    }) as never);
+    changeEncodingContents.value = INPUT_CONTENTS;
+    void requestForCurrentMessage();
+    await waitFor(() => {
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+    });
+
+    // The stand-in that answers every question at once has to stand down: this one stays
+    // open across the reply.
+    stopAnswering();
+    changeEncodingContents.value = EDITED_CONTENTS;
+    expect(discardEditPromptSignal.value).toBe(WORKING_DISCARD_PROMPT);
+
+    settle({ message: { content: "1. I am hungry." } });
+    await waitFor(() => {
+      expect(sentenceCompletionsSignal.value.status).toBe("ready");
+    });
+    expect(mockedSpeak).not.toHaveBeenCalled();
+    expect(readMessageLog()).toEqual([]);
+
+    // Keeping the sentences leaves them on screen, still unspoken.
+    cancelDiscardEdit();
+    expect(mockedSpeak).not.toHaveBeenCalled();
+    expect(readMessageLog()).toEqual([]);
+
+    // Editing again asks about the sentences now on screen; changing anyway applies the edit.
+    changeEncodingContents.value = EDITED_CONTENTS;
+    expect(discardEditPromptSignal.value).toBe(READY_DISCARD_PROMPT);
+    confirmDiscardEdit();
+
+    expect(mockedSpeak).not.toHaveBeenCalled();
+    expect(readMessageLog()).toEqual([]);
+    expect(changeEncodingContents.value).toEqual(EDITED_CONTENTS);
   });
 
   test("refusing to discard the sentences on screen puts the message back", async (): Promise<void> => {
@@ -455,10 +517,10 @@ describe("telegraphicTranslationState", (): void => {
     await requestForCurrentMessage();
     expect(sentenceCompletionsSignal.value.status).toBe("ready");
 
-    mockedConfirm.mockReturnValue(false);
+    answerDiscard = false;
     changeEncodingContents.value = EDITED_CONTENTS;
 
-    expect(mockedConfirm).toHaveBeenCalledWith(READY_DISCARD_PROMPT);
+    expect(prompts).toEqual([READY_DISCARD_PROMPT]);
     expect(changeEncodingContents.value).toEqual(INPUT_CONTENTS);
     expect(sentenceCompletionsSignal.value).toMatchObject({
       status: "ready",
@@ -477,7 +539,7 @@ describe("telegraphicTranslationState", (): void => {
 
     // Restoring the contents runs the effect again. That pass must leave the snapshot
     // pointing at the message being worked on, or the next refusal restores the wrong thing.
-    mockedConfirm.mockReturnValue(false);
+    answerDiscard = false;
     changeEncodingContents.value = EDITED_CONTENTS;
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
 
@@ -501,10 +563,10 @@ describe("telegraphicTranslationState", (): void => {
     const { payloads, caretPosition } = changeEncodingContents.value;
     payloads[0].modifierInfo?.push({ modifierId: [130], modifierGloss: "big", isPrepended: true });
     payloads.push({ label: "hungry", composition: [125], modifierInfo: [] });
-    mockedConfirm.mockReturnValue(false);
+    answerDiscard = false;
     changeEncodingContents.value = { payloads, caretPosition };
 
-    expect(mockedConfirm).toHaveBeenCalledTimes(1);
+    expect(prompts).toHaveLength(1);
     expect(currentTelegraphicMessage()).toBe("me");
     expect(changeEncodingContents.value).toEqual({
       payloads: [{ label: "me", composition: [124], modifierInfo: [] }],
@@ -524,7 +586,7 @@ describe("telegraphicTranslationState", (): void => {
 
     changeEncodingContents.value = { payloads: INPUT_CONTENTS.payloads, caretPosition: 0 };
 
-    expect(mockedConfirm).not.toHaveBeenCalled();
+    expect(prompts).toEqual([]);
     expect(sentenceCompletionsSignal.value.status).toBe("working");
   });
 
@@ -532,7 +594,7 @@ describe("telegraphicTranslationState", (): void => {
     changeEncodingContents.value = INPUT_CONTENTS;
     changeEncodingContents.value = EDITED_CONTENTS;
 
-    expect(mockedConfirm).not.toHaveBeenCalled();
+    expect(prompts).toEqual([]);
     expect(changeEncodingContents.value).toEqual(EDITED_CONTENTS);
   });
 
@@ -570,7 +632,7 @@ describe("telegraphicTranslationState", (): void => {
 
     changeEncodingContents.value = EDITED_CONTENTS;
 
-    expect(mockedConfirm).not.toHaveBeenCalled();
+    expect(prompts).toEqual([]);
     expect(changeEncodingContents.value).toEqual(EDITED_CONTENTS);
     expect(sentenceCompletionsSignal.value).toEqual(IDLE_SENTENCE_STATE);
   });
@@ -603,49 +665,24 @@ describe("telegraphicTranslationState", (): void => {
     });
   };
 
-  test("with numSentences 1 a recalled sentence is spoken without any query", async (): Promise<void> => {
+  test("with numSentences 1 a recalled sentence is shown without any query", async (): Promise<void> => {
     setConfig(1);
     recordPastTranslation("I am hungry.");
+    const loggedBefore = readMessageLog();
     changeEncodingContents.value = INPUT_CONTENTS;
 
     await requestForCurrentMessage();
 
     expect(mockedQueryChat).not.toHaveBeenCalled();
-    expect(mockedSpeak).toHaveBeenCalledWith("I am hungry.");
+    expect(mockedSpeak).not.toHaveBeenCalled();
     expect(sentenceCompletionsSignal.value).toEqual({
       status: "ready",
       sentences: ["I am hungry."],
       model: "old-model:12b",
       telegraphicMessage: "me hungry"
     });
-    const log = readMessageLog();
-    expect(log[log.length - 1].translation).toMatchObject({
-      model: "old-model:12b", sentence: "I am hungry.", source: "auto"
-    });
-  });
-
-  test("re-saving a recalled sentence keeps the candidates it came from", async (): Promise<void> => {
-    setConfig(1);
-    saveMessageRecord(INPUT_CONTENTS.payloads);
-    saveTranslation("me hungry", {
-      model: "old-model:12b",
-      candidates: ["I am hungry.", "I want food."],
-      sentence: "I am hungry.",
-      source: "chosen"
-    });
-    changeEncodingContents.value = INPUT_CONTENTS;
-
-    await requestForCurrentMessage();
-
-    // The record is reused rather than added to, so a recall that dropped the alternatives
-    // would lose them for good.
-    const log = readMessageLog();
-    expect(log[log.length - 1].translation).toEqual({
-      model: "old-model:12b",
-      candidates: ["I am hungry.", "I want food."],
-      sentence: "I am hungry.",
-      source: "auto"
-    });
+    // Recall reads the log; it writes nothing until the user picks the sentence.
+    expect(readMessageLog()).toEqual(loggedBefore);
   });
 
   test("a recalled sentence shows while the rest are still being made", async (): Promise<void> => {
@@ -724,10 +761,10 @@ describe("telegraphicTranslationState", (): void => {
     expect(sentenceCompletionsSignal.value.status).toBe("error");
 
     // A sentence the user can still see and tap must not vanish silently.
-    mockedConfirm.mockReturnValue(false);
+    answerDiscard = false;
     changeEncodingContents.value = EDITED_CONTENTS;
 
-    expect(mockedConfirm).toHaveBeenCalledWith(READY_DISCARD_PROMPT);
+    expect(prompts).toEqual([READY_DISCARD_PROMPT]);
     expect(changeEncodingContents.value).toEqual(INPUT_CONTENTS);
     expect(sentenceCompletionsSignal.value).toMatchObject({
       status: "error", sentences: ["I am hungry."]
@@ -744,7 +781,7 @@ describe("telegraphicTranslationState", (): void => {
     await requestForCurrentMessage();
     changeEncodingContents.value = { payloads: INPUT_CONTENTS.payloads, caretPosition: 0 };
 
-    expect(mockedConfirm).not.toHaveBeenCalled();
+    expect(prompts).toEqual([]);
     expect(sentenceCompletionsSignal.value).toMatchObject({
       status: "error", sentences: ["I am hungry."]
     });
@@ -778,6 +815,6 @@ describe("telegraphicTranslationState", (): void => {
 
     expect(signal.aborted).toBe(true);
     expect(sentenceCompletionsSignal.value).toEqual(IDLE_SENTENCE_STATE);
-    expect(mockedConfirm).not.toHaveBeenCalled();
+    expect(prompts).toEqual([]);
   });
 });

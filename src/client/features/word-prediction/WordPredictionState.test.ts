@@ -11,13 +11,16 @@
  */
 
 import { vi } from "vitest";
-import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
+import { batch } from "@preact/signals";
+import { adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal } from "../../state/GlobalData";
 import { DISABLED_MODEL_QUERY } from "../../core/Config";
 import { MESSAGE_LOG_KEY, saveMessageRecord } from "../../core/MessageLog";
 import { queryChat } from "../../core/OllamaApi";
+import { DEBOUNCE_MS, contextKeyOf, modelWordsSignal } from "./WordPredictionState";
 import {
-  DEBOUNCE_MS, contextKeyOf, dismissModelStatus, modelWordsSignal, showModelStatusSignal
-} from "./WordPredictionState";
+  cancelDiscardEdit, discardEditPromptSignal, IDLE_SENTENCE_STATE, READY_DISCARD_PROMPT,
+  sentenceCompletionsSignal
+} from "../telegraphic-translation/TelegraphicTranslationState";
 import { SymbolEncodingType } from "../../index.d";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
@@ -69,10 +72,16 @@ describe("wordPrediction model query", (): void => {
     adaptivePaletteGlobals.models = ["phony-model:12b"];
     // One saved message, so "I" has a follower and the row still has empty slots.
     saveMessageRecord(message("I", "want", "music"));
+    finishedMessageSignal.value = "";
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
   });
 
   afterEach((): void => {
+    finishedMessageSignal.value = "";
+    // Cleared before the input area below, so emptying that is not read as an edit that
+    // would discard sentences and raise a question in the next test.
+    sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
+    discardEditPromptSignal.value = null;
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
     vi.useRealTimers();
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
@@ -198,30 +207,161 @@ describe("wordPrediction model query", (): void => {
 
   describe("finishing the message", (): void => {
 
-    test("stops the status report and keeps the words already suggested", async (): Promise<void> => {
+    test("stops reporting and keeps the words already suggested", async (): Promise<void> => {
       compose("I");
       await waitForQuery();
       expect(modelWordsSignal.value.status).toBe("ready");
 
-      dismissModelStatus();
-      expect(showModelStatusSignal.value).toBe(false);
+      finishedMessageSignal.value = "I";
       expect(modelWordsSignal.value.status).toBe("ready");
     });
 
     test("stops a query that has not been sent yet", async (): Promise<void> => {
       compose("I");
-      dismissModelStatus();
+      finishedMessageSignal.value = "I";
       await waitForQuery();
       expect(mockedQueryChat).not.toHaveBeenCalled();
     });
 
-    test("the next change to the message reports again", async (): Promise<void> => {
-      compose("I");
-      dismissModelStatus();
+    // The caret is not part of the message, so moving it does not un-finish one.
+    test("moving the caret in a finished message asks for nothing", async (): Promise<void> => {
       compose("I", "want");
-      expect(showModelStatusSignal.value).toBe(true);
+      await waitForQuery();
+      finishedMessageSignal.value = "I want";
+      mockedQueryChat.mockClear();
+
+      const { payloads } = changeEncodingContents.value;
+      changeEncodingContents.value = { payloads, caretPosition: 0 };
+
+      await waitForQuery();
+      expect(mockedQueryChat).not.toHaveBeenCalled();
+    });
+
+    test("the next change to the message asks again", async (): Promise<void> => {
+      compose("I");
+      finishedMessageSignal.value = "I";
+      compose("I", "want");
+      expect(finishedMessageSignal.value).toBe("");
       await waitForQuery();
       expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+    });
+
+    // A message said once is often said again. Building it back up must predict as normal
+    // rather than stay silent because an identical message was finished earlier.
+    test("a message said before predicts again when it is rebuilt", async (): Promise<void> => {
+      compose("I", "want");
+      finishedMessageSignal.value = "I want";
+      mockedQueryChat.mockClear();
+
+      changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+      compose("I");
+      compose("I", "want");
+
+      await waitForQuery();
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  // The telegraphic-translation discard dialog holds an edit back. Its effect is registered
+  // before this one -- word prediction imports that module, so it evaluates first, and effects
+  // run in registration order -- so it takes the edit back and raises the question in one batch
+  // before word prediction ever reads the message. See `TelegraphicTranslationState.ts`.
+  describe("while the discard dialog is asking", (): void => {
+
+    /**
+     * Reproduce what word prediction sees when the question goes up: the question raised and
+     * the edit already taken back, in one batch. The revert writes a fresh copy of the message
+     * that was there before, so the signal changes even though its contents do not.
+     */
+    const raiseQuestion = (): void => {
+      batch((): void => {
+        discardEditPromptSignal.value = "Change your message?";
+        changeEncodingContents.value = structuredClone(changeEncodingContents.peek());
+      });
+    };
+
+    test("nothing is asked for while the question is on screen", async (): Promise<void> => {
+      compose("I");
+      await waitForQuery();
+      finishedMessageSignal.value = "I";
+      mockedQueryChat.mockClear();
+
+      raiseQuestion();
+
+      await waitForQuery();
+      expect(mockedQueryChat).not.toHaveBeenCalled();
+    });
+
+    test("keeping the sentences asks for nothing and keeps the words", async (): Promise<void> => {
+      compose("I");
+      await waitForQuery();
+      expect(modelWordsSignal.value.status).toBe("ready");
+      finishedMessageSignal.value = "I";
+      mockedQueryChat.mockClear();
+
+      raiseQuestion();
+      discardEditPromptSignal.value = null;
+
+      await waitForQuery();
+      expect(mockedQueryChat).not.toHaveBeenCalled();
+      expect(modelWordsSignal.value.status).toBe("ready");
+      expect(finishedMessageSignal.value).toBe("I");
+    });
+
+    test("changing anyway starts prediction for the edit that was applied", async (): Promise<void> => {
+      compose("I");
+      await waitForQuery();
+      finishedMessageSignal.value = "I";
+      mockedQueryChat.mockClear();
+
+      raiseQuestion();
+      batch((): void => {
+        discardEditPromptSignal.value = null;
+        compose("I", "want");
+      });
+
+      expect(finishedMessageSignal.value).toBe("");
+      await waitForQuery();
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+    });
+
+    // The guard is what keeps the ordering above from being the only thing holding the line.
+    // An edit that did reach this effect on its own must still ask for nothing.
+    test("an edit seen before the revert asks for nothing", async (): Promise<void> => {
+      compose("I");
+      await waitForQuery();
+      finishedMessageSignal.value = "I";
+      mockedQueryChat.mockClear();
+
+      compose("I", "want");
+      batch((): void => {
+        discardEditPromptSignal.value = "Change your message?";
+        compose("I");
+      });
+
+      await waitForQuery();
+      expect(mockedQueryChat).not.toHaveBeenCalled();
+    });
+
+    // The question raised by the effect in `TelegraphicTranslationState`, rather than by the
+    // stand-in above, so the two effects run in the order they really do. Asked twice: an
+    // effect that skips a signal while a question is up re-subscribes when the question goes,
+    // which is what could put the two effects the wrong way round from the second edit on.
+    test("a second question still leaves the words on the row", async (): Promise<void> => {
+      sentenceCompletionsSignal.value = {
+        status: "ready", sentences: ["I want food."], model: "phony-model:12b", telegraphicMessage: "I"
+      };
+      compose("I");
+      await waitForQuery();
+      expect(modelWordsSignal.value.status).toBe("ready");
+
+      for (let question = 0; question < 2; question++) {
+        compose("I", "want");
+        expect(discardEditPromptSignal.value).toBe(READY_DISCARD_PROMPT);
+        cancelDiscardEdit();
+      }
+
+      expect(modelWordsSignal.value.status).toBe("ready");
     });
   });
 

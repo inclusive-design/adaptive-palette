@@ -15,14 +15,14 @@ import { render, screen, cleanup, waitFor } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
-import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal } from "../../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../../core/InitGlobals";
 import { DISABLED_MODEL_QUERY } from "../../core/Config";
 import { MESSAGE_LOG_KEY, saveMessageRecord } from "../../core/MessageLog";
 import {
   moreSuggestionsMessage, PredictedWords, PREDICTED_WORDS_LABEL, QUERYING_MESSAGE
 } from "./PredictedWords";
-import { cancelModelQuery, dismissModelStatus, modelWordsSignal, showModelStatusSignal } from "./WordPredictionState";
+import { cancelModelQuery, modelWordsSignal } from "./WordPredictionState";
 import { SymbolEncodingType } from "../../index.d";
 
 // The row is driven from `modelWordsSignal` directly here, so a query left waiting is all
@@ -139,7 +139,7 @@ describe("PredictedWords", (): void => {
 
     afterEach((): void => {
       modelWordsSignal.value = { status: "idle" };
-      showModelStatusSignal.value = true;
+      finishedMessageSignal.value = "";
       adaptivePaletteGlobals.models = [];
     });
 
@@ -193,14 +193,14 @@ describe("PredictedWords", (): void => {
 
     // Pressing Speak or Sentence finishes the message: nothing more to report about it, but
     // its words are still there to press.
-    test("dismissing the status keeps the words on the row", async (): Promise<void> => {
+    test("finishing the message keeps the words on the row", async (): Promise<void> => {
       setMessage("I", "want");
       showModelWords("I want", "food", "tea");
       const { container } = render(html`<${PredictedWords} />`);
       await waitFor(() => expect(screen.getByRole("status").textContent?.trim())
         .toBe(moreSuggestionsMessage(2)));
 
-      dismissModelStatus();
+      finishedMessageSignal.value = "I want";
       await waitFor(() => expect(screen.getByRole("status").textContent?.trim()).toBe(""));
       expect(container.querySelectorAll("button")).toHaveLength(3);
     });

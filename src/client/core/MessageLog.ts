@@ -18,10 +18,9 @@ export const MESSAGE_LOG_KEY = "Message Log";
 /*
  * How the preferred sentence was arrived at:
  * - "chosen" means the user picked it from the list
- * - "auto" means it was spoken automatically, when there was only one choice
  * - "typed" means it was typed by the user
  */
-export type SentenceSourceType = "chosen" | "auto" | "typed";
+export type SentenceSourceType = "chosen" | "typed";
 
 /*
  * What a message turned into, present only on messages the user asked to translate.
@@ -142,7 +141,8 @@ export function saveMessageRecord (payloads: SymbolEncodingType[]): void {
  * rather than being dropped.
  *
  * Choosing a second sentence for the same message replaces the first: the most recently
- * spoken sentence is the preferred one.
+ * spoken sentence is the preferred one. The candidates are added to rather than replaced,
+ * so no sentence the message has been offered is lost.
  * @param {string} telegraphicMessage - The message that was translated.
  * @param {TranslationInfoType} translation - What it was translated into.
  * @returns {void}
@@ -156,7 +156,10 @@ export function saveTranslation (telegraphicMessage: string, translation: Transl
   if (index === -1) {
     entries.push({ timestamp: new Date().toISOString(), payloads: [], telegraphicMessage, translation });
   } else {
-    entries[index] = { ...entries[index], translation };
+    // A recalled sentence with other candidates for a message is saved again.
+    const previous = entries[index].translation?.candidates ?? [];
+    const candidates = [...new Set([...previous, ...translation.candidates])];
+    entries[index] = { ...entries[index], translation: { ...translation, candidates } };
   }
   writeMessageLog(entries);
 }

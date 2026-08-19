@@ -25,6 +25,7 @@ type ModalDialogProps = {
   title: string,
   isOpen: boolean,
   onClose: () => void,
+  restoreFocusTo?: () => HTMLElement | null,
   children?: ComponentChildren
 };
 
@@ -35,15 +36,18 @@ type ModalDialogProps = {
  * restoration is done explicitly by moving focus to the first element before the dialog
  * opens.
  *
+ * `restoreFocusTo` names where focus goes when the dialog closes.
+ *
  * `id` must not contain whitespace: it is used to derive the heading id referenced by
  * `aria-labelledby`, whose value is parsed as a space-separated list.
  * @param {ModalDialogProps} props - Dialog identity, title, open state, and body.
  * @returns {VNode}
  */
 export function ModalDialog (props: ModalDialogProps): VNode {
-  const { id, title, isOpen, onClose, children } = props;
+  const { id, title, isOpen, onClose, restoreFocusTo, children } = props;
   const dialogRef = useRef<HTMLDialogElement>(null);
   const openerRef = useRef<HTMLElement | null>(null);
+  const isUnmountingRef = useRef(false);
   const headingId = `${id}-title`;
 
   // `showModal()` throws when the dialog is already open, and `close()` on an already
@@ -66,6 +70,7 @@ export function ModalDialog (props: ModalDialogProps): VNode {
   // separate from the effect above: putting this in that effect's cleanup would close
   // the dialog on every toggle and make its `else if` branch dead code.
   useEffect(() => () => {
+    isUnmountingRef.current = true;
     const dialog = dialogRef.current;
     if (dialog?.open) {
       dialog.close();
@@ -78,9 +83,21 @@ export function ModalDialog (props: ModalDialogProps): VNode {
   // <body>. Restoring explicitly is a no-op where the engine already did it, and keeps
   // a switch or eye-gaze user from losing their scan position on close. Focus is
   // restored before notifying the parent, since `onClose` triggers a re-render.
+  // The `close` event is queued as a task, so a dialog closed by unmounting fires it once
+  // the component is gone. Reporting that as a close would tell the parent the user
+  // answered a question that was taken off the screen.
+  // A named target can be unreachable: another modal dialog may still be open, which makes
+  // everything outside it `inert`, and `focus()` on an inert element does nothing. Falling
+  // back to the opener keeps focus where the user was working instead of on `<body>`.
   const handleClose = () => {
-    openerRef.current?.focus();
-    onClose();
+    const target = restoreFocusTo?.() ?? openerRef.current;
+    target?.focus();
+    if (target !== openerRef.current && document.activeElement !== target) {
+      openerRef.current?.focus();
+    }
+    if (!isUnmountingRef.current) {
+      onClose();
+    }
   };
 
   return html`

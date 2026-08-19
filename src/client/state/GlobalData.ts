@@ -64,3 +64,11 @@ export const changeEncodingContents = signal<ContentSignalDataType>({
   payloads: [],
   caretPosition: -1,
 });
+
+/**
+ * The message the user has finished composing (when `Speak` or `Make Sentence`
+ * button is pressed). Set to empty when the message being composed has not
+ * been finished. This signal is used by word prediction to not show the querying
+ * status message for finished messages.
+ */
+export const finishedMessageSignal = signal<string>("");

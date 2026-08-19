@@ -13,15 +13,20 @@
 import { vi } from "vitest";
 import { render, screen, cleanup, waitFor } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
+import { userEvent as browserUserEvent } from "vitest/browser";
 import { html } from "htm/preact";
 
 import { changeEncodingContents } from "../../state/GlobalData";
 import { setTestConfig } from "../../testUtils/TestConfig";
-import { IDLE_SENTENCE_STATE, sentenceCompletionsSignal } from "./TelegraphicTranslationState";
+import {
+  discardEditPromptSignal, IDLE_SENTENCE_STATE, READY_DISCARD_PROMPT, sentenceCompletionsSignal
+} from "./TelegraphicTranslationState";
+import { INPUT_AREA_ID } from "../../cells/ContentEncoding";
 import { MESSAGE_LOG_KEY, readMessageLog } from "../../core/MessageLog";
 import {
   SentenceChoices, WORKING_MESSAGE, MAKING_MORE_MESSAGE, CANNOT_COMPLETE_MESSAGE,
-  TYPE_YOUR_OWN_HINT, SPEAK_BUTTON_LABEL, DONE_BUTTON_LABEL
+  TYPE_YOUR_OWN_HINT, SPEAK_BUTTON_LABEL, DONE_BUTTON_LABEL, CHANGE_ANYWAY_LABEL,
+  DISCARD_DIALOG_TITLE, KEEP_SENTENCES_LABEL
 } from "./SentenceChoices";
 import { mockedSpeak, mockedSpeakUnavailable } from "../../testUtils/SpeechUtilsMock";
 
@@ -52,6 +57,7 @@ describe("SentenceChoices", (): void => {
 
   beforeEach((): void => {
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
     setTestConfig({
       telegraphicTranslation: {
         model: "phony-model:12b",
@@ -65,13 +71,18 @@ describe("SentenceChoices", (): void => {
   afterEach((): void => {
     cleanup();
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
+    discardEditPromptSignal.value = null;
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
   });
 
   test("shows nothing but an empty live region when idle", (): void => {
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
     const { container } = render(html`<${SentenceChoices} />`);
-    expect(container.textContent).toBe("");
+    // The closed discard dialog is always in the markup, so what counts is that nothing
+    // is on screen: a closed <dialog> is hidden, and role queries skip hidden elements.
+    expect(screen.queryByRole("button")).toBeNull();
+    expect(screen.queryByRole("dialog")).toBeNull();
 
     // The live region has to be in the document before the announcement arrives,
     // otherwise screen readers routinely miss it.
@@ -321,8 +332,10 @@ describe("SentenceChoices", (): void => {
       (button) => button.textContent
     );
     expect(shown).toEqual(SENTENCES);
-    // The form is the last thing in the area, after every sentence.
-    expect(container.lastElementChild?.lastElementChild?.className).toBe("sentenceTypeYourOwn");
+    // The form is the last thing on screen, after every sentence. The closed discard
+    // dialog sits below it in the markup and shows nothing.
+    expect(container.querySelector(".sentenceChoices > form")?.className).toBe("sentenceTypeYourOwn");
+    expect(container.querySelector("form")?.nextElementSibling?.className).toBe("modalDialog");
   });
 
   test("speaking typed text while a query runs stops the query", async (): Promise<void> => {
@@ -436,5 +449,122 @@ describe("SentenceChoices", (): void => {
 
     await screen.findByRole("button", { name: SENTENCES[0] });
     expect(document.activeElement).toBe(textBox);
+  });
+
+  // The dialog asking whether an edit may throw the sentence work away. It is raised by
+  // editing the message for real, since the question comes from the effect watching the
+  // input area rather than from anything in this component.
+  describe("the discard dialog", (): void => {
+
+    const MESSAGE_CONTENTS = {
+      payloads: [
+        { label: "me", composition: [124], modifierInfo: [] },
+        { label: "hungry", composition: [125], modifierInfo: [] }
+      ],
+      caretPosition: 2
+    };
+
+    const EDITED_CONTENTS = {
+      payloads: [{ label: "later", composition: [126], modifierInfo: [] }],
+      caretPosition: 1
+    };
+
+    // The input area cell is where focus goes when the dialog closes, so it has to be in
+    // the document for these tests, as it is in the running app.
+    const renderWithInputArea = (): void => {
+      render(html`
+        <div>
+          <div id=${INPUT_AREA_ID} tabindex="0" role="textbox" aria-label="Input Area"></div>
+          <${SentenceChoices} />
+        </div>
+      `);
+    };
+
+    // Put sentences for the message on screen, then change the message.
+    const editTheMessage = async (): Promise<void> => {
+      changeEncodingContents.value = MESSAGE_CONTENTS;
+      sentenceCompletionsSignal.value = READY_STATE;
+      renderWithInputArea();
+      changeEncodingContents.value = EDITED_CONTENTS;
+      await screen.findByRole("dialog", { name: DISCARD_DIALOG_TITLE });
+    };
+
+    test("an edit that would discard the sentences asks first", async (): Promise<void> => {
+      await editTheMessage();
+
+      expect(screen.getByRole("dialog", { name: DISCARD_DIALOG_TITLE })).toBeVisible();
+      expect(screen.getByText(READY_DISCARD_PROMPT)).toBeVisible();
+    });
+
+    // The symbol-entry dialogs write the edit straight to the signal. Holding it back until
+    // the question is answered is what keeps word prediction off a message the user has not
+    // agreed to, and stops its query running beside the sentence query.
+    test("the edit is held back while the question is on screen", async (): Promise<void> => {
+      await editTheMessage();
+
+      expect(changeEncodingContents.value).toEqual(MESSAGE_CONTENTS);
+    });
+
+    test("Change anyway applies the edit and drops the sentences", async (): Promise<void> => {
+      await editTheMessage();
+
+      await userEvent.click(screen.getByRole("button", { name: CHANGE_ANYWAY_LABEL }));
+
+      expect(changeEncodingContents.value).toEqual(EDITED_CONTENTS);
+      expect(sentenceCompletionsSignal.value).toEqual(IDLE_SENTENCE_STATE);
+      await waitFor(() => {
+        expect(screen.queryByRole("dialog")).toBeNull();
+      });
+    });
+
+    test("Keep sentences leaves the message as it was", async (): Promise<void> => {
+      await editTheMessage();
+
+      await userEvent.click(screen.getByRole("button", { name: KEEP_SENTENCES_LABEL }));
+
+      expect(changeEncodingContents.value).toEqual(MESSAGE_CONTENTS);
+      expect(sentenceCompletionsSignal.value).toMatchObject({ status: "ready", sentences: SENTENCES });
+    });
+
+    // `userEvent` here comes from `vitest/browser`: Escape closing a `<dialog>` is a UA
+    // default action, which only runs for trusted events.
+    test("Escape keeps the sentences, as losing them must be deliberate", async (): Promise<void> => {
+      await editTheMessage();
+
+      await browserUserEvent.keyboard("{Escape}");
+
+      await waitFor(() => {
+        expect(changeEncodingContents.value).toEqual(MESSAGE_CONTENTS);
+      });
+      expect(sentenceCompletionsSignal.value).toMatchObject({ status: "ready", sentences: SENTENCES });
+    });
+
+    // The dialog no longer blocks the page the way `window.confirm` did, so sentences can
+    // land behind the question. Keeping them is a decision to use them, so they must be
+    // reachable without re-scanning the page.
+    test("sentences arriving behind the question get focus when they are kept", async (): Promise<void> => {
+      changeEncodingContents.value = MESSAGE_CONTENTS;
+      sentenceCompletionsSignal.value = WORKING_STATE;
+      renderWithInputArea();
+      changeEncodingContents.value = EDITED_CONTENTS;
+      await screen.findByRole("dialog", { name: DISCARD_DIALOG_TITLE });
+
+      sentenceCompletionsSignal.value = READY_STATE;
+      await userEvent.click(screen.getByRole("button", { name: KEEP_SENTENCES_LABEL }));
+
+      await waitFor(() => {
+        expect(screen.getByRole("button", { name: SENTENCES[0] })).toHaveFocus();
+      });
+    });
+
+    test("closing the dialog puts focus on the input area", async (): Promise<void> => {
+      await editTheMessage();
+
+      await userEvent.click(screen.getByRole("button", { name: KEEP_SENTENCES_LABEL }));
+
+      await waitFor(() => {
+        expect(document.getElementById(INPUT_AREA_ID)).toHaveFocus();
+      });
+    });
   });
 });

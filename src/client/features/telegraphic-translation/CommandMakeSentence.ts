@@ -13,12 +13,11 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 
-import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal } from "../../state/GlobalData";
 import { saveMessageRecord } from "../../core/MessageLog";
 import {
   currentTelegraphicMessage, makeSentences, sentenceCompletionsSignal
 } from "./TelegraphicTranslationState";
-import { dismissModelStatus } from "../word-prediction/WordPredictionState";
 import { BlissSymbolInfoType, LayoutInfoType } from "../../index.d";
 import { BlissSymbol } from "../../components/BlissSymbol";
 import { generateGridStyle } from "../../utils/GridUtils";
@@ -74,7 +73,7 @@ export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode | n
     // Asking for a sentence means the message is finished, so save it.
     saveMessageRecord(changeEncodingContents.value.payloads);
     // The message is finished, so the row stops reporting on it. Its words stay usable.
-    dismissModelStatus();
+    finishedMessageSignal.value = telegraphicMessage;
     void makeSentences(telegraphicMessage);
   }}>
       ${composition

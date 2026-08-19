@@ -17,11 +17,10 @@
  * 3. the cancellation of a request the user has moved on from
  * `telegraphicTranslationUtils.ts` holds the side-effect-free utility functions.
  */
-import { effect, signal } from "@preact/signals";
+import { batch, effect, signal } from "@preact/signals";
 import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
 import { requestSentences, pickModel } from "./TelegraphicTranslationUtils";
-import { findLatestTranslation, messageText, saveTranslation } from "../../core/MessageLog";
-import { speak } from "../../utils/SpeechUtils";
+import { findLatestTranslation, messageText } from "../../core/MessageLog";
 import type { ContentSignalDataType, SentenceCompletionsStateType } from "../../index.d";
 
 /**
@@ -46,7 +45,17 @@ export const WORKING_DISCARD_PROMPT = "Still making a sentence. Changing your me
 /**
  * Asked before an edit throws away sentences that are already on screen.
  */
-export const READY_DISCARD_PROMPT = "Changing your message will remove the sentences below. Change anyway?";
+export const READY_DISCARD_PROMPT = "Changing your message will remove the sentences. Change anyway?";
+
+/**
+ * The question the discard dialog is showing, or `null` when nothing is being asked.
+ * `SentenceChoices` renders the dialog from this; the answer arrives through
+ * `confirmDiscardEdit` or `cancelDiscardEdit`.
+ *
+ * Also read by `WordPredictionState`'s effect, so a query does not start for a message
+ * when the discard dialog is waiting for user response.
+ */
+export const discardEditPromptSignal = signal<string | null>(null);
 
 /**
  * The abort handle for the sentence request currently in flight, if any.
@@ -98,7 +107,8 @@ export function currentTelegraphicMessage (): string {
  *
  * A sentence already approved for this message is recalled from the message log and shown
  * first. With one sentence asked for in the setting, that is the whole answer and the model
- * is not queried; otherwise the model fills the rest of the list below it.
+ * is not queried; otherwise the model fills the rest of the list below it. Nothing is spoken
+ * or logged here: that waits for the user to pick a sentence.
  * @param {string} telegraphicMessage - The message to translate, as shown in the input area.
  * @returns {Promise<void>}
  */
@@ -111,15 +121,12 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
   const numSentences = config?.numSentences ?? 1;
   const recalled = findLatestTranslation(telegraphicMessage);
 
-  // One sentence asked for and one already approved for this message: say it, and ask the
+  // One sentence asked for and one already approved for this message: show it, and ask the
   // model nothing.
   if (recalled && numSentences === 1) {
     sentenceCompletionsSignal.value = {
       status: "ready", sentences: [recalled.sentence], model: recalled.model, telegraphicMessage
     };
-    speak(recalled.sentence);
-    // Re-saved with the candidates it was first chosen from.
-    saveTranslation(telegraphicMessage, { ...recalled, source: "auto" });
     return;
   }
 
@@ -151,17 +158,6 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
     sentenceCompletionsSignal.value = {
       status: "ready", sentences, model: result.model, telegraphicMessage
     };
-
-    // Single-sentence mode: speak right away when the sentence arrives.
-    if (numSentences === 1) {
-      speak(sentences[0]);
-      saveTranslation(telegraphicMessage, {
-        model: result.model,
-        candidates: sentences,
-        sentence: sentences[0],
-        source: "auto"
-      });
-    }
   } catch (error) {
     // The user editing the message aborts the request. That is normal use, not a failure,
     // so it must not reach the console or turn the display red.
@@ -202,13 +198,73 @@ const snapshot = (contents: ContentSignalDataType): ContentSignalDataType => str
 
 let previousContents = snapshot(changeEncodingContents.peek());
 
+/**
+ * The edit the user is being asked about, held back until they answer. Applying it while
+ * the question is on screen would start word prediction on a message the user may be about
+ * to abandon, and leave two model queries running against different messages.
+ */
+let pendingContents: ContentSignalDataType | null = null;
+
+/**
+ * The user chose to lose the sentence work: stop the request, clear the sentence area, and
+ * apply the edit that was held back. The edit becomes the new baseline, so a later edit is
+ * not measured against a message the user has already abandoned.
+ * @returns {void}
+ */
+export function confirmDiscardEdit (): void {
+  if (!discardEditPromptSignal.peek()) {
+    return;
+  }
+  activeSentenceAbort?.abort();
+  const edit = pendingContents;
+  pendingContents = null;
+  // Batched so the effect below sees every write at once. Clearing the question on its own
+  // would let the effect run while the edited message and the old sentence state still
+  // disagree, and ask the same question again.
+  batch((): void => {
+    discardEditPromptSignal.value = null;
+    sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
+    if (edit) {
+      changeEncodingContents.value = edit;
+    }
+  });
+}
+
+/**
+ * The user chose to keep the sentence work: drop the held-back edit and leave the request
+ * and the sentences alone. The message is already as it was, so nothing is restored here.
+ * Word prediction, which also watches `discardEditPromptSignal`, asks again for this message
+ * once the signal clears.
+ *
+ * Guarded so it can be called twice. Both dialog buttons close the dialog, and the
+ * `close` event then reports the cancel a second time.
+ * @returns {void}
+ */
+export function cancelDiscardEdit (): void {
+  if (!discardEditPromptSignal.peek()) {
+    return;
+  }
+  pendingContents = null;
+  discardEditPromptSignal.value = null;
+}
+
 // Warn the user if they edit a message while its sentences are currently
 // generating or on screen, as this will discard the current progress. A failed fill can
 // leave a recalled sentence on screen under the error line; that counts as "on screen" too.
-// - If they cancel: Revert the edit and continue the original generation.
-// - If they confirm: Abort the current request as stale and apply the edit.
+// The question is asked by publishing it to `discardEditPromptSignal` and returning: a
+// dialog cannot answer on the spot the way `window.confirm` did.
 effect((): void => {
+  // Read before the guard below to return. An effect that stops reading a signal
+  // unsubscribes from it, and re-subscribing puts it at the head of that signal's list of
+  // effects to run. Skipping this read while a question is up would therefore make this
+  // effect run after word prediction's from the next edit onward, which is the opposite of
+  // the order both modules rely on.
   const contents = changeEncodingContents.value;
+  // A question already on screen. The page is `inert` behind the dialog, so the only writes
+  // reaching here are the ones the answer itself makes.
+  if (discardEditPromptSignal.value !== null) {
+    return;
+  }
   const message = currentTelegraphicMessage();
   const state = sentenceCompletionsSignal.peek();
   // A failed fill can leave a recalled sentence on screen. It is as tappable as any other,
@@ -219,14 +275,18 @@ effect((): void => {
   const showsSentences = finished && state.sentences.length > 0;
   if ((state.status === "working" || showsSentences) &&
       state.telegraphicMessage !== message) {
-    const prompt = state.status === "working" ? WORKING_DISCARD_PROMPT : READY_DISCARD_PROMPT;
-    if (!window.confirm(prompt)) {
-      // cancelled scenario: Revert the edit
+    // The edit is taken back for as long as the question is up, and put back only if the
+    // user confirms. Leaving it in place would show a message the user has not agreed to,
+    // and start word prediction on it.
+    // Returning before the snapshot below is what leaves `previousContents` holding the
+    // message from before the edit.
+    pendingContents = contents;
+    batch((): void => {
+      discardEditPromptSignal.value =
+        state.status === "working" ? WORKING_DISCARD_PROMPT : READY_DISCARD_PROMPT;
       changeEncodingContents.value = previousContents;
-      return;
-    }
-    activeSentenceAbort?.abort();
-    sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
+    });
+    return;
   } else if (finished && state.sentences.length === 0) {
     // Nothing left of the old message but the error line or an empty typing area: it goes
     // without asking the user.

@@ -13,13 +13,12 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 
-import { changeEncodingContents } from "../state/GlobalData";
+import { changeEncodingContents, finishedMessageSignal } from "../state/GlobalData";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { generateGridStyle } from "../utils/GridUtils";
 import { normalizeComposition } from "../utils/SymbolEncodingUtils";
 import { speak, speakUnavailable } from "../utils/SpeechUtils";
 import { messageText, saveMessageRecord } from "../core/MessageLog";
-import { dismissModelStatus } from "../features/word-prediction/WordPredictionState";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import "./ActionSpeakCell.scss";
 
@@ -55,10 +54,11 @@ export function ActionSpeakCell (props: ActionSpeakCellPropsType): VNode {
       speakUnavailable(label);
       return;
     }
-    speak(messageText(payloads));
+    const message = messageText(payloads);
+    speak(message);
     saveMessageRecord(payloads);
     // The message is said and finished, so the row stops reporting on it. Its words stay usable.
-    dismissModelStatus();
+    finishedMessageSignal.value = message;
   };
 
   return html`
