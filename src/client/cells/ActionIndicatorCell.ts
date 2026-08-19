@@ -15,8 +15,9 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { changeEncodingContents } from "../state/GlobalData";
+import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
-import { applyModifiersToLabel } from "../utils/SymbolEncodingUtils";
+import { applyModifiersToLabel, replaceAtCaret } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { findIndicators, findClassifierFromLeft } from "../utils/SvgUtils";
 import { getStaticNewLabel, getNewLabelViaModelQuery } from "../utils/IndicatorLabelsUtils";
@@ -77,7 +78,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
     // `baseLabel` already has any modifier text that existed when the indicator was applied.
     // When more modifiers are added after this point, only reapply those to `baseLabel`.
     const baseModifierCount = symbolToEdit.baseModifierCount ?? (symbolToEdit.modifierInfo?.length ?? 0);
-    payloads[caretPosition] = {
+    const edited = replaceAtCaret(payloads, caretPosition, {
       "label": symbolToEdit.label,
       "composition": newComposition,
       "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
@@ -85,11 +86,8 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       "indicatorId": indicatorId,
       "baseLabel": baseLabel,
       "baseModifierCount": baseModifierCount
-    };
-    changeEncodingContents.value = {
-      payloads: payloads,
-      caretPosition: caretPosition
-    };
+    });
+    editMessage({ payloads: edited, caretPosition: caretPosition });
 
     // Compares `indicatorId`, not the full `composition`, because a modifier applied to the
     // same slot while this indicator's label is still resolving changes `composition` without
@@ -109,14 +107,11 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       const finalLabel = symbolToEdit.userSelectedSymbolId !== undefined
         ? applyModifiersToLabel(label, symbolToEdit.modifierInfo)
         : label;
-      latest.payloads[caretPosition] = {
+      const relabelled = replaceAtCaret(latest.payloads, caretPosition, {
         ...latest.payloads[caretPosition],
         "label": finalLabel
-      };
-      changeEncodingContents.value = {
-        payloads: latest.payloads,
-        caretPosition: latest.caretPosition
-      };
+      });
+      editMessage({ payloads: relabelled, caretPosition: latest.caretPosition });
       announceIfEnabled(finalLabel);
     };
 

@@ -106,7 +106,8 @@ describe("ActionRemoveIndicatorCell", (): void => {
   test("becomes available once the symbol has an indicator", async (): Promise<void> => {
 
     // Add a symbol *with* an indicator and render the ActionIndicatorCell.
-    const contentsToModify = changeEncodingContents.value.payloads;
+    // Copied, not pushed onto: what the signal holds is frozen once a click has published it.
+    const contentsToModify = [...changeEncodingContents.value.payloads];
     contentsToModify.push(blissWordWithIndicator);
     changeEncodingContents.value = {
       payloads: contentsToModify,
@@ -126,7 +127,8 @@ describe("ActionRemoveIndicatorCell", (): void => {
 
     // Add two symbols, the last one with an indicator and render the
     // ActionIndicatorCell.
-    const contentsToModify = changeEncodingContents.value.payloads;
+    // Copied, not pushed onto: what the signal holds is frozen once a click has published it.
+    const contentsToModify = [...changeEncodingContents.value.payloads];
     contentsToModify.push(blissWordNoIndicator);
     contentsToModify.push(blissWordWithIndicator);
     changeEncodingContents.value = {

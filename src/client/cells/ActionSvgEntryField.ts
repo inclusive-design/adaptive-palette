@@ -15,6 +15,7 @@ import { html } from "htm/preact";
 import { useRef, useState } from "preact/hooks";
 
 import { changeEncodingContents } from "../state/GlobalData";
+import { editMessage } from "../core/MessageEdit";
 import { bstrToComposition } from "../utils/SvgUtils";
 import { insertWordAtCaret } from "../utils/SymbolEncodingUtils";
 import { MessagePreview } from "../components/MessagePreview";
@@ -75,11 +76,11 @@ export function ActionSvgEntryField (props: ActionSvgEntryFieldProps): VNode {
       modifierInfo: []
     };
 
-    changeEncodingContents.value = insertWordAtCaret(
+    editMessage(insertWordAtCaret(
       payload,
       changeEncodingContents.value.payloads,
       changeEncodingContents.value.caretPosition
-    );
+    ));
 
     // The status region is the only confirmation channel here, for the same reason as in
     // the search dialog: device speech and the screen reader would talk over each other.

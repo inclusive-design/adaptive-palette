@@ -16,10 +16,11 @@ import { effect } from "@preact/signals";
 
 import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
 import { setTestConfig } from "../../testUtils/TestConfig";
+import { editMessage, setEditGuard } from "../../core/MessageEdit";
 import {
   abortActiveSentenceRequest, cancelDiscardEdit, clearMessageAndChoices, confirmDiscardEdit,
-  currentTelegraphicMessage, discardEditPromptSignal, IDLE_SENTENCE_STATE, makeSentences,
-  sentenceCompletionsSignal, READY_DISCARD_PROMPT, WORKING_DISCARD_PROMPT
+  currentTelegraphicMessage, discardEditPromptSignal, guardEdit, IDLE_SENTENCE_STATE,
+  makeSentences, sentenceCompletionsSignal, READY_DISCARD_PROMPT, WORKING_DISCARD_PROMPT
 } from "./TelegraphicTranslationState";
 import { MESSAGE_LOG_KEY, readMessageLog, saveMessageRecord, saveTranslation } from "../../core/MessageLog";
 import { queryChat } from "../../core/OllamaApi";
@@ -72,6 +73,7 @@ describe("telegraphicTranslationState", (): void => {
   let stopAnswering: () => void;
 
   beforeEach((): void => {
+    setEditGuard(guardEdit);
     prompts = [];
     answerDiscard = true;
     stopAnswering = effect((): void => {
@@ -90,7 +92,7 @@ describe("telegraphicTranslationState", (): void => {
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
     adaptivePaletteGlobals.models = ["phony-model:12b"];
     setConfig(3);
-    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+    editMessage({ payloads: [], caretPosition: -1 });
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
   });
 
@@ -99,15 +101,16 @@ describe("telegraphicTranslationState", (): void => {
     discardEditPromptSignal.value = null;
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
+    setEditGuard(null);
   });
 
   test("currentTelegraphicMessage joins the symbol labels with spaces", (): void => {
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     expect(currentTelegraphicMessage()).toBe("me hungry");
   });
 
   test("currentTelegraphicMessage skips symbols with a blank label", (): void => {
-    changeEncodingContents.value = {
+    editMessage({
       payloads: [
         { label: "me", composition: [124], modifierInfo: [] },
         { label: "", composition: [125], modifierInfo: [] },
@@ -115,12 +118,12 @@ describe("telegraphicTranslationState", (): void => {
         { label: "hungry", composition: [127], modifierInfo: [] }
       ],
       caretPosition: 4
-    };
+    });
     expect(currentTelegraphicMessage()).toBe("me hungry");
   });
 
   test("clearMessageAndChoices empties the input area and the sentences", (): void => {
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     sentenceCompletionsSignal.value = {
       status: "ready", sentences: ["I am hungry."], model: "phony-model:12b",
       telegraphicMessage: "me hungry"
@@ -141,10 +144,10 @@ describe("telegraphicTranslationState", (): void => {
   });
 
   test("a whitespace-only message does not query", async (): Promise<void> => {
-    changeEncodingContents.value = {
+    editMessage({
       payloads: [{ label: " ", composition: [124], modifierInfo: [] }],
       caretPosition: 1
-    };
+    });
 
     await requestForCurrentMessage();
 
@@ -153,7 +156,7 @@ describe("telegraphicTranslationState", (): void => {
   });
 
   test("a request queries with the joined labels and publishes the sentences", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockResolvedValue({
       message: { content: "1. I am hungry.\n2. I want food." }
     } as never);
@@ -173,7 +176,7 @@ describe("telegraphicTranslationState", (): void => {
   });
 
   test("a failed query publishes the error state", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockRejectedValue(new Error("connection refused"));
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
@@ -184,17 +187,17 @@ describe("telegraphicTranslationState", (): void => {
   });
 
   test("editing the message clears the error state without asking", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockRejectedValue(new Error("connection refused"));
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     await requestForCurrentMessage();
     expect(sentenceCompletionsSignal.value.status).toBe("error");
 
-    changeEncodingContents.value = {
+    editMessage({
       payloads: [{ label: "me", composition: [124], modifierInfo: [] }],
       caretPosition: 1
-    };
+    });
 
     expect(sentenceCompletionsSignal.value).toEqual(IDLE_SENTENCE_STATE);
     expect(prompts).toEqual([]);
@@ -203,7 +206,7 @@ describe("telegraphicTranslationState", (): void => {
 
   test("with numSentences 1 the sentence waits to be picked, like any other count", async (): Promise<void> => {
     setConfig(1);
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockResolvedValue({ message: { content: "1. I am hungry." } } as never);
 
     await requestForCurrentMessage();
@@ -216,7 +219,7 @@ describe("telegraphicTranslationState", (): void => {
   });
 
   test("with numSentences above 1 nothing is logged until the user picks", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockResolvedValue({
       message: { content: "1. I am hungry.\n2. I want food." }
     } as never);
@@ -228,7 +231,7 @@ describe("telegraphicTranslationState", (): void => {
   });
 
   test("a second request while one is in flight does not start another", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     let resolveQuery: (value: unknown) => void = () => undefined;
     mockedQueryChat.mockReturnValue(new Promise((resolve) => {
       resolveQuery = resolve;
@@ -248,7 +251,7 @@ describe("telegraphicTranslationState", (): void => {
   });
 
   test("editing the message while a request is in flight returns to idle", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     let resolveQuery: (value: unknown) => void = () => undefined;
     mockedQueryChat.mockReturnValue(new Promise((resolve) => {
       resolveQuery = resolve;
@@ -263,7 +266,7 @@ describe("telegraphicTranslationState", (): void => {
     // not when the abandoned query eventually settles: the button reads this signal to decide
     // whether it is available, and a stale `working` leaves it unavailable with nothing on
     // screen explaining itself.
-    changeEncodingContents.value = EDITED_CONTENTS;
+    editMessage(EDITED_CONTENTS);
 
     expect(sentenceCompletionsSignal.value.status).toBe("idle");
 
@@ -273,7 +276,7 @@ describe("telegraphicTranslationState", (): void => {
 
   test("a reply for a message the user has since changed is discarded", async (): Promise<void> => {
     setConfig(1);
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     let resolveQuery: (value: unknown) => void = () => undefined;
     mockedQueryChat.mockReturnValue(new Promise((resolve) => {
       resolveQuery = resolve;
@@ -287,7 +290,7 @@ describe("telegraphicTranslationState", (): void => {
     // The user edits the message while the model is thinking. The sentences coming back
     // are for a message that is no longer on screen: they must not be shown, spoken, or
     // logged.
-    changeEncodingContents.value = EDITED_CONTENTS;
+    editMessage(EDITED_CONTENTS);
     expect(sentenceCompletionsSignal.value.status).toBe("idle");
 
     resolveQuery({ message: { content: "1. I am hungry." } });
@@ -300,7 +303,7 @@ describe("telegraphicTranslationState", (): void => {
 
   test("a reply arriving after a newer request started does not hijack it", async (): Promise<void> => {
     setConfig(1);
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     const resolvers: ((value: unknown) => void)[] = [];
     mockedQueryChat.mockImplementation(
       () => new Promise((resolve) => {
@@ -315,7 +318,7 @@ describe("telegraphicTranslationState", (): void => {
 
     // Editing abandons request 1 and returns to idle, which is what makes a second
     // overlapping request reachable at all.
-    changeEncodingContents.value = EDITED_CONTENTS;
+    editMessage(EDITED_CONTENTS);
     expect(sentenceCompletionsSignal.value.status).toBe("idle");
 
     const secondRequest = requestForCurrentMessage();
@@ -337,7 +340,7 @@ describe("telegraphicTranslationState", (): void => {
   });
 
   test("choices for a message are discarded when that message is edited", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockResolvedValue({
       message: { content: "1. I am hungry.\n2. I want food." }
     } as never);
@@ -347,16 +350,16 @@ describe("telegraphicTranslationState", (): void => {
 
     // Deleting a single symbol, as `CommandDelLastEncoding` does, leaves a different
     // message behind; sentences made from the old one are still tappable until dropped.
-    changeEncodingContents.value = {
+    editMessage({
       payloads: [INPUT_CONTENTS.payloads[0]],
       caretPosition: 0
-    };
+    });
 
     expect(sentenceCompletionsSignal.value.status).toBe("idle");
   });
 
   test("editing the message aborts the request it was made for", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     // A query that never settles: the abort has to be what ends it.
     mockedQueryChat.mockReturnValue(new Promise(() => undefined) as never);
 
@@ -368,13 +371,13 @@ describe("telegraphicTranslationState", (): void => {
     const signal = mockedQueryChat.mock.calls[0][4] as AbortSignal;
     expect(signal.aborted).toBe(false);
 
-    changeEncodingContents.value = EDITED_CONTENTS;
+    editMessage(EDITED_CONTENTS);
 
     expect(signal.aborted).toBe(true);
   });
 
   test("an aborted request is not reported as an error", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     let rejectQuery: (reason: unknown) => void = () => undefined;
     mockedQueryChat.mockReturnValue(new Promise((resolve, reject) => {
       rejectQuery = reject;
@@ -386,7 +389,7 @@ describe("telegraphicTranslationState", (): void => {
       expect(mockedQueryChat).toHaveBeenCalledTimes(1);
     });
 
-    changeEncodingContents.value = EDITED_CONTENTS;
+    editMessage(EDITED_CONTENTS);
     // The aborted fetch rejects. Editing the message is normal use, not a failure, so it
     // must not reach the console or the error state.
     rejectQuery(new DOMException("The operation was aborted.", "AbortError"));
@@ -400,7 +403,7 @@ describe("telegraphicTranslationState", (): void => {
   });
 
   test("a request settling after a newer one started leaves the newer one abortable", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     const resolvers: ((value: unknown) => void)[] = [];
     mockedQueryChat.mockImplementation(
       () => new Promise((resolve) => {
@@ -413,7 +416,7 @@ describe("telegraphicTranslationState", (): void => {
       expect(mockedQueryChat).toHaveBeenCalledTimes(1);
     });
 
-    changeEncodingContents.value = EDITED_CONTENTS;
+    editMessage(EDITED_CONTENTS);
     expect(sentenceCompletionsSignal.value.status).toBe("idle");
 
     void requestForCurrentMessage();
@@ -426,12 +429,12 @@ describe("telegraphicTranslationState", (): void => {
     await firstRequest;
 
     const secondSignal = mockedQueryChat.mock.calls[1][4] as AbortSignal;
-    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+    editMessage({ payloads: [], caretPosition: -1 });
     expect(secondSignal.aborted).toBe(true);
   });
 
   test("editing during a request asks before discarding it", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockReturnValue(new Promise(() => undefined) as never);
 
     void requestForCurrentMessage();
@@ -439,13 +442,46 @@ describe("telegraphicTranslationState", (): void => {
       expect(mockedQueryChat).toHaveBeenCalledTimes(1);
     });
 
-    changeEncodingContents.value = EDITED_CONTENTS;
+    editMessage(EDITED_CONTENTS);
 
     expect(prompts).toEqual([WORKING_DISCARD_PROMPT]);
   });
 
-  test("refusing to discard an in-flight request puts the message back", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
+  // `ActionIndicatorCell` writes a second time when a model resolves a new label, after an
+  // `await`. That write is the only one that can reach the gate while the dialog is up: clicks
+  // cannot, because the page is inert behind it.
+  test("a write arriving while the question is up is dropped", async (): Promise<void> => {
+    editMessage(INPUT_CONTENTS);
+    mockedQueryChat.mockReturnValue(new Promise(() => undefined) as never);
+
+    void requestForCurrentMessage();
+    await waitFor(() => {
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+    });
+
+    // The stand-in that answers every question at once has to stand down: this one stays open
+    // across the write below.
+    stopAnswering();
+    editMessage(EDITED_CONTENTS);
+    expect(discardEditPromptSignal.value).toBe(WORKING_DISCARD_PROMPT);
+
+    // The resolved label, built from the message as it stood before the held edit.
+    editMessage({
+      payloads: [
+        { label: "me", composition: [124], modifierInfo: [] },
+        { label: "hungrier", composition: [125], modifierInfo: [] }
+      ],
+      caretPosition: 2
+    });
+
+    // Dropped, not published, and it did not take the held edit's place.
+    expect(changeEncodingContents.value).toEqual(INPUT_CONTENTS);
+    confirmDiscardEdit();
+    expect(changeEncodingContents.value).toEqual(EDITED_CONTENTS);
+  });
+
+  test("refusing an in-flight edit leaves the message unchanged", async (): Promise<void> => {
+    editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockReturnValue(new Promise(() => undefined) as never);
 
     void requestForCurrentMessage();
@@ -458,7 +494,7 @@ describe("telegraphicTranslationState", (): void => {
     // decides against it. The symbols and the caret go back where they were, and the model
     // keeps working on the message that is once again on screen.
     answerDiscard = false;
-    changeEncodingContents.value = EDITED_CONTENTS;
+    editMessage(EDITED_CONTENTS);
 
     expect(changeEncodingContents.value).toEqual(INPUT_CONTENTS);
     expect(signal.aborted).toBe(false);
@@ -474,7 +510,7 @@ describe("telegraphicTranslationState", (): void => {
     mockedQueryChat.mockReturnValue(new Promise((resolve) => {
       settle = resolve;
     }) as never);
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     void requestForCurrentMessage();
     await waitFor(() => {
       expect(mockedQueryChat).toHaveBeenCalledTimes(1);
@@ -483,7 +519,7 @@ describe("telegraphicTranslationState", (): void => {
     // The stand-in that answers every question at once has to stand down: this one stays
     // open across the reply.
     stopAnswering();
-    changeEncodingContents.value = EDITED_CONTENTS;
+    editMessage(EDITED_CONTENTS);
     expect(discardEditPromptSignal.value).toBe(WORKING_DISCARD_PROMPT);
 
     settle({ message: { content: "1. I am hungry." } });
@@ -499,7 +535,7 @@ describe("telegraphicTranslationState", (): void => {
     expect(readMessageLog()).toEqual([]);
 
     // Editing again asks about the sentences now on screen; changing anyway applies the edit.
-    changeEncodingContents.value = EDITED_CONTENTS;
+    editMessage(EDITED_CONTENTS);
     expect(discardEditPromptSignal.value).toBe(READY_DISCARD_PROMPT);
     confirmDiscardEdit();
 
@@ -508,8 +544,8 @@ describe("telegraphicTranslationState", (): void => {
     expect(changeEncodingContents.value).toEqual(EDITED_CONTENTS);
   });
 
-  test("refusing to discard the sentences on screen puts the message back", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
+  test("refusing to discard the sentences on screen leaves the message unchanged", async (): Promise<void> => {
+    editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockResolvedValue({
       message: { content: "1. I am hungry.\n2. I want food." }
     } as never);
@@ -518,7 +554,7 @@ describe("telegraphicTranslationState", (): void => {
     expect(sentenceCompletionsSignal.value.status).toBe("ready");
 
     answerDiscard = false;
-    changeEncodingContents.value = EDITED_CONTENTS;
+    editMessage(EDITED_CONTENTS);
 
     expect(prompts).toEqual([READY_DISCARD_PROMPT]);
     expect(changeEncodingContents.value).toEqual(INPUT_CONTENTS);
@@ -528,8 +564,8 @@ describe("telegraphicTranslationState", (): void => {
     });
   });
 
-  test("a second refused edit is still put back", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
+  test("a second refused edit still leaves the message unchanged", async (): Promise<void> => {
+    editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockReturnValue(new Promise(() => undefined) as never);
 
     void requestForCurrentMessage();
@@ -537,46 +573,17 @@ describe("telegraphicTranslationState", (): void => {
       expect(mockedQueryChat).toHaveBeenCalledTimes(1);
     });
 
-    // Restoring the contents runs the effect again. That pass must leave the snapshot
-    // pointing at the message being worked on, or the next refusal restores the wrong thing.
+    // The refused edit was never published, so the message being worked on is still the one
+    // on screen and the next refusal has nothing to restore either.
     answerDiscard = false;
-    changeEncodingContents.value = EDITED_CONTENTS;
-    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+    editMessage(EDITED_CONTENTS);
+    editMessage({ payloads: [], caretPosition: -1 });
 
     expect(changeEncodingContents.value).toEqual(INPUT_CONTENTS);
   });
 
-  test("refusing an edit made in place puts the message back and asks only once", async (): Promise<void> => {
-    changeEncodingContents.value = {
-      payloads: [{ label: "me", composition: [124], modifierInfo: [] }],
-      caretPosition: 0
-    };
-    mockedQueryChat.mockReturnValue(new Promise(() => undefined) as never);
-
-    void requestForCurrentMessage();
-    await waitFor(() => {
-      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
-    });
-
-    // The editing cells change the payloads array and the payload's `modifierInfo` in place and
-    // then publish a fresh wrapper, so the revert cannot rely on the wrapper it captured earlier.
-    const { payloads, caretPosition } = changeEncodingContents.value;
-    payloads[0].modifierInfo?.push({ modifierId: [130], modifierGloss: "big", isPrepended: true });
-    payloads.push({ label: "hungry", composition: [125], modifierInfo: [] });
-    answerDiscard = false;
-    changeEncodingContents.value = { payloads, caretPosition };
-
-    expect(prompts).toHaveLength(1);
-    expect(currentTelegraphicMessage()).toBe("me");
-    expect(changeEncodingContents.value).toEqual({
-      payloads: [{ label: "me", composition: [124], modifierInfo: [] }],
-      caretPosition: 0
-    });
-    expect(sentenceCompletionsSignal.value.status).toBe("working");
-  });
-
   test("moving the caret does not ask, since the message is unchanged", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockReturnValue(new Promise(() => undefined) as never);
 
     void requestForCurrentMessage();
@@ -584,22 +591,22 @@ describe("telegraphicTranslationState", (): void => {
       expect(mockedQueryChat).toHaveBeenCalledTimes(1);
     });
 
-    changeEncodingContents.value = { payloads: INPUT_CONTENTS.payloads, caretPosition: 0 };
+    editMessage({ payloads: INPUT_CONTENTS.payloads, caretPosition: 0 });
 
     expect(prompts).toEqual([]);
     expect(sentenceCompletionsSignal.value.status).toBe("working");
   });
 
   test("editing with nothing being made does not ask", (): void => {
-    changeEncodingContents.value = INPUT_CONTENTS;
-    changeEncodingContents.value = EDITED_CONTENTS;
+    editMessage(INPUT_CONTENTS);
+    editMessage(EDITED_CONTENTS);
 
     expect(prompts).toEqual([]);
     expect(changeEncodingContents.value).toEqual(EDITED_CONTENTS);
   });
 
   test("aborting a query in flight stops it and leaves what is on screen", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockReturnValue(new Promise(() => undefined) as never);
 
     void requestForCurrentMessage();
@@ -619,7 +626,7 @@ describe("telegraphicTranslationState", (): void => {
   });
 
   test("editing after an abandoned request with nothing on screen does not ask", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockReturnValue(new Promise(() => undefined) as never);
 
     void requestForCurrentMessage();
@@ -630,7 +637,7 @@ describe("telegraphicTranslationState", (): void => {
     // screen for an edit to discard.
     abortActiveSentenceRequest();
 
-    changeEncodingContents.value = EDITED_CONTENTS;
+    editMessage(EDITED_CONTENTS);
 
     expect(prompts).toEqual([]);
     expect(changeEncodingContents.value).toEqual(EDITED_CONTENTS);
@@ -639,7 +646,7 @@ describe("telegraphicTranslationState", (): void => {
 
   test("no model to ask shows the error line", async (): Promise<void> => {
     adaptivePaletteGlobals.models = [];
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
 
     await requestForCurrentMessage();
 
@@ -669,7 +676,7 @@ describe("telegraphicTranslationState", (): void => {
     setConfig(1);
     recordPastTranslation("I am hungry.");
     const loggedBefore = readMessageLog();
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
 
     await requestForCurrentMessage();
 
@@ -687,7 +694,7 @@ describe("telegraphicTranslationState", (): void => {
 
   test("a recalled sentence shows while the rest are still being made", async (): Promise<void> => {
     recordPastTranslation("I am hungry.");
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockReturnValue(new Promise(() => undefined) as never);
 
     void requestForCurrentMessage();
@@ -706,7 +713,7 @@ describe("telegraphicTranslationState", (): void => {
 
   test("the rest are appended below the recalled sentence, dropping a duplicate", async (): Promise<void> => {
     recordPastTranslation("I am hungry.");
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockResolvedValue({
       message: { content: "1. I am hungry.\n2. I want food.\n3. Can I eat now?" }
     } as never);
@@ -723,7 +730,7 @@ describe("telegraphicTranslationState", (): void => {
 
   test("the total never exceeds numSentences", async (): Promise<void> => {
     recordPastTranslation("I am hungry.");
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockResolvedValue({
       message: { content: "1. I want food.\n2. Can I eat now?\n3. Feed me please." }
     } as never);
@@ -737,7 +744,7 @@ describe("telegraphicTranslationState", (): void => {
 
   test("a failed fill keeps the recalled sentence on screen", async (): Promise<void> => {
     recordPastTranslation("I am hungry.");
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockRejectedValue(new Error("connection refused"));
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
@@ -753,7 +760,7 @@ describe("telegraphicTranslationState", (): void => {
 
   test("editing after a failed fill asks before discarding the recalled sentence", async (): Promise<void> => {
     recordPastTranslation("I am hungry.");
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockRejectedValue(new Error("connection refused"));
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
@@ -762,7 +769,7 @@ describe("telegraphicTranslationState", (): void => {
 
     // A sentence the user can still see and tap must not vanish silently.
     answerDiscard = false;
-    changeEncodingContents.value = EDITED_CONTENTS;
+    editMessage(EDITED_CONTENTS);
 
     expect(prompts).toEqual([READY_DISCARD_PROMPT]);
     expect(changeEncodingContents.value).toEqual(INPUT_CONTENTS);
@@ -774,12 +781,12 @@ describe("telegraphicTranslationState", (): void => {
 
   test("moving the caret after a failed fill does not discard the recalled sentence", async (): Promise<void> => {
     recordPastTranslation("I am hungry.");
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockRejectedValue(new Error("connection refused"));
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     await requestForCurrentMessage();
-    changeEncodingContents.value = { payloads: INPUT_CONTENTS.payloads, caretPosition: 0 };
+    editMessage({ payloads: INPUT_CONTENTS.payloads, caretPosition: 0 });
 
     expect(prompts).toEqual([]);
     expect(sentenceCompletionsSignal.value).toMatchObject({
@@ -789,7 +796,7 @@ describe("telegraphicTranslationState", (): void => {
   });
 
   test("a message with no past translation queries as before", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockReturnValue(new Promise(() => undefined) as never);
 
     void requestForCurrentMessage();
@@ -802,7 +809,7 @@ describe("telegraphicTranslationState", (): void => {
   });
 
   test("clearing the message aborts a query in flight", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
+    editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockReturnValue(new Promise(() => undefined) as never);
 
     void requestForCurrentMessage();

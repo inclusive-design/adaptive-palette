@@ -59,6 +59,11 @@ export const adaptivePaletteGlobals = {
  * Signal for updating the contents of the ContentEncoding area.  The value
  * of the signal is an array of SymbolEncodingType objects to display symbols
  * in the ContentEncoding area. It also tracks the position of the caret.
+ *
+ * Read freely; write through `editMessage()` in `core/MessageEdit.ts`, which offers the edit
+ * to the registered guard first. What it publishes is frozen, so a writer that changes the
+ * message in place after publishing it throws. The only writes that skip the gate are the two
+ * in `features/telegraphic-translation/`, which are the guard's own and are marked as such.
  */
 export const changeEncodingContents = signal<ContentSignalDataType>({
   payloads: [],

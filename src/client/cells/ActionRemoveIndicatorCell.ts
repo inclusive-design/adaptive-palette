@@ -15,8 +15,9 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType, ContentSignalDataType } from "../index.d";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { changeEncodingContents } from "../state/GlobalData";
+import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
-import { applyModifiersToLabel } from "../utils/SymbolEncodingUtils";
+import { applyModifiersToLabel, replaceAtCaret } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { findIndicators } from "../utils/SvgUtils";
 
@@ -86,16 +87,13 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
     const restoredBare = symbolToEdit.baseLabel ?? symbolToEdit.label;
     const modifiersAppliedAfterIndicator = symbolToEdit.modifierInfo?.slice(symbolToEdit.baseModifierCount ?? 0);
     const restoredLabel = applyModifiersToLabel(restoredBare, modifiersAppliedAfterIndicator);
-    payloads[caretPosition] = {
+    const edited = replaceAtCaret(payloads, caretPosition, {
       "label": restoredLabel,
       "composition": newComposition,
       "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
       "modifierInfo": symbolToEdit.modifierInfo
-    };
-    changeEncodingContents.value = {
-      payloads: payloads,
-      caretPosition: caretPosition
-    };
+    });
+    editMessage({ payloads: edited, caretPosition: caretPosition });
     announceIfEnabled(`${restoredLabel}`);
   };
 

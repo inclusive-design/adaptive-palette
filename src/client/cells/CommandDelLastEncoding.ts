@@ -14,6 +14,7 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { changeEncodingContents } from "../state/GlobalData";
+import { editMessage } from "../core/MessageEdit";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
@@ -41,10 +42,10 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNo
     if (payloads.length !== 0 && caretPosition !== -1) {
       const newEncodingContents = [...changeEncodingContents.value.payloads];
       newEncodingContents.splice(caretPosition, 1);
-      changeEncodingContents.value = {
+      editMessage({
         payloads: newEncodingContents,
         caretPosition: caretPosition - 1
-      };
+      });
     }
     announceIfEnabled(label);
   };

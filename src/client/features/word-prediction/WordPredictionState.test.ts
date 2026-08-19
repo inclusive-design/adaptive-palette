@@ -11,15 +11,15 @@
  */
 
 import { vi } from "vitest";
-import { batch } from "@preact/signals";
 import { adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal } from "../../state/GlobalData";
 import { DISABLED_MODEL_QUERY } from "../../core/Config";
 import { MESSAGE_LOG_KEY, saveMessageRecord } from "../../core/MessageLog";
+import { editMessage, setEditGuard } from "../../core/MessageEdit";
 import { queryChat } from "../../core/OllamaApi";
 import { DEBOUNCE_MS, contextKeyOf, modelWordsSignal } from "./WordPredictionState";
 import {
-  cancelDiscardEdit, discardEditPromptSignal, IDLE_SENTENCE_STATE, READY_DISCARD_PROMPT,
-  sentenceCompletionsSignal
+  cancelDiscardEdit, confirmDiscardEdit, discardEditPromptSignal, guardEdit,
+  IDLE_SENTENCE_STATE, READY_DISCARD_PROMPT, sentenceCompletionsSignal
 } from "../telegraphic-translation/TelegraphicTranslationState";
 import { SymbolEncodingType } from "../../index.d";
 
@@ -40,7 +40,7 @@ describe("wordPrediction model query", (): void => {
    */
   const compose = (...labels: string[]): void => {
     const payloads = message(...labels);
-    changeEncodingContents.value = { payloads, caretPosition: payloads.length - 1 };
+    editMessage({ payloads, caretPosition: payloads.length - 1 });
   };
 
   const replyWith = (content: string): void => {
@@ -77,6 +77,7 @@ describe("wordPrediction model query", (): void => {
   });
 
   afterEach((): void => {
+    setEditGuard(null);
     finishedMessageSignal.value = "";
     // Cleared before the input area below, so emptying that is not read as an edit that
     // would discard sentences and raise a question in the next test.
@@ -262,22 +263,39 @@ describe("wordPrediction model query", (): void => {
     });
   });
 
-  // The telegraphic-translation discard dialog holds an edit back. Its effect is registered
-  // before this one -- word prediction imports that module, so it evaluates first, and effects
-  // run in registration order -- so it takes the edit back and raises the question in one batch
-  // before word prediction ever reads the message. See `TelegraphicTranslationState.ts`.
+  // Telegraphic translation holds an edit back while it asks whether the sentence work may be
+  // thrown away. Word prediction knows nothing about that: a held edit is never published, so
+  // this effect does not run until the user has answered. These tests register that feature's
+  // real guard rather than a stand-in, because what is being checked is what word prediction
+  // does against a real held edit -- the one place the two features meet.
   describe("while the discard dialog is asking", (): void => {
 
+    // The sentences on screen were made from "I", so the edit to "I want" below is a different
+    // message and the guard holds it. A `telegraphicMessage` matching the edit would let it
+    // straight through and there would be no question to test against.
+    const SENTENCE_STATE = {
+      status: "ready" as const,
+      sentences: ["I want food."],
+      model: "phony-model:12b",
+      telegraphicMessage: "I"
+    };
+
+    beforeEach((): void => {
+      setEditGuard(guardEdit);
+    });
+
+    afterEach((): void => {
+      setEditGuard(null);
+      cancelDiscardEdit();
+    });
+
     /**
-     * Reproduce what word prediction sees when the question goes up: the question raised and
-     * the edit already taken back, in one batch. The revert writes a fresh copy of the message
-     * that was there before, so the signal changes even though its contents do not.
+     * Put sentences for the message on screen, then edit it. The gate holds the edit and puts
+     * the question up, exactly as a symbol cell would.
      */
     const raiseQuestion = (): void => {
-      batch((): void => {
-        discardEditPromptSignal.value = "Change your message?";
-        changeEncodingContents.value = structuredClone(changeEncodingContents.peek());
-      });
+      sentenceCompletionsSignal.value = SENTENCE_STATE;
+      compose("I", "want");
     };
 
     test("nothing is asked for while the question is on screen", async (): Promise<void> => {
@@ -287,6 +305,7 @@ describe("wordPrediction model query", (): void => {
       mockedQueryChat.mockClear();
 
       raiseQuestion();
+      expect(discardEditPromptSignal.value).toBe(READY_DISCARD_PROMPT);
 
       await waitForQuery();
       expect(mockedQueryChat).not.toHaveBeenCalled();
@@ -300,7 +319,7 @@ describe("wordPrediction model query", (): void => {
       mockedQueryChat.mockClear();
 
       raiseQuestion();
-      discardEditPromptSignal.value = null;
+      cancelDiscardEdit();
 
       await waitForQuery();
       expect(mockedQueryChat).not.toHaveBeenCalled();
@@ -315,48 +334,25 @@ describe("wordPrediction model query", (): void => {
       mockedQueryChat.mockClear();
 
       raiseQuestion();
-      batch((): void => {
-        discardEditPromptSignal.value = null;
-        compose("I", "want");
-      });
+      confirmDiscardEdit();
 
+      expect(changeEncodingContents.value.payloads.map((payload) => payload.label))
+        .toEqual(["I", "want"]);
       expect(finishedMessageSignal.value).toBe("");
       await waitForQuery();
       expect(mockedQueryChat).toHaveBeenCalledTimes(1);
     });
 
-    // The guard is what keeps the ordering above from being the only thing holding the line.
-    // An edit that did reach this effect on its own must still ask for nothing.
-    test("an edit seen before the revert asks for nothing", async (): Promise<void> => {
-      compose("I");
-      await waitForQuery();
-      finishedMessageSignal.value = "I";
-      mockedQueryChat.mockClear();
-
-      compose("I", "want");
-      batch((): void => {
-        discardEditPromptSignal.value = "Change your message?";
-        compose("I");
-      });
-
-      await waitForQuery();
-      expect(mockedQueryChat).not.toHaveBeenCalled();
-    });
-
-    // The question raised by the effect in `TelegraphicTranslationState`, rather than by the
-    // stand-in above, so the two effects run in the order they really do. Asked twice: an
-    // effect that skips a signal while a question is up re-subscribes when the question goes,
-    // which is what could put the two effects the wrong way round from the second edit on.
+    // Asked twice: a held edit that was refused leaves `pendingContents` and the prompt to be
+    // cleared, and the message it was measured against still on screen. The second round is
+    // what shows that cleanup was complete enough for the next edit to be caught the same way.
     test("a second question still leaves the words on the row", async (): Promise<void> => {
-      sentenceCompletionsSignal.value = {
-        status: "ready", sentences: ["I want food."], model: "phony-model:12b", telegraphicMessage: "I"
-      };
       compose("I");
       await waitForQuery();
       expect(modelWordsSignal.value.status).toBe("ready");
 
       for (let question = 0; question < 2; question++) {
-        compose("I", "want");
+        raiseQuestion();
         expect(discardEditPromptSignal.value).toBe(READY_DISCARD_PROMPT);
         cancelDiscardEdit();
       }

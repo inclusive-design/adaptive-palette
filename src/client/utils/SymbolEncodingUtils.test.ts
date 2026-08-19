@@ -10,7 +10,12 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { applyModifiersToLabel, normalizeComposition } from "./SymbolEncodingUtils";
+import {
+  applyModifiersToLabel, insertWordAtCaret, normalizeComposition, replaceAtCaret
+} from "./SymbolEncodingUtils";
+
+// A minimal symbol payload; only the label distinguishes one from another in these tests.
+const symbol = (label: string) => ({ label, composition: [1], modifierInfo: [] });
 
 describe("applyModifiersToLabel()", (): void => {
 
@@ -58,4 +63,59 @@ describe("normalizeComposition()", (): void => {
     expect(normalizeComposition(["foo"])).toEqual(["foo"]);
   });
 
+});
+
+describe("insertWordAtCaret()", (): void => {
+
+  test("Appends when the caret is on the last symbol", (): void => {
+    const symbolSet = [symbol("me"), symbol("hungry")];
+    expect(insertWordAtCaret(symbol("now"), symbolSet, 1)).toEqual({
+      payloads: [symbol("me"), symbol("hungry"), symbol("now")],
+      caretPosition: 2
+    });
+  });
+
+  test("Inserts right after the caret when it is inside the message", (): void => {
+    const symbolSet = [symbol("me"), symbol("hungry")];
+    expect(insertWordAtCaret(symbol("very"), symbolSet, 0)).toEqual({
+      payloads: [symbol("me"), symbol("very"), symbol("hungry")],
+      caretPosition: 1
+    });
+  });
+
+  test("A caret before the first symbol inserts at the front", (): void => {
+    const symbolSet = [symbol("hungry")];
+    expect(insertWordAtCaret(symbol("me"), symbolSet, -1)).toEqual({
+      payloads: [symbol("me"), symbol("hungry")],
+      caretPosition: 0
+    });
+  });
+
+  // The gate freezes what it publishes, so a writer that edits the array it was handed
+  // throws. Mid-message insertion used to splice the caller's array.
+  test("Leaves the array it is given alone", (): void => {
+    const symbolSet = Object.freeze([symbol("me"), symbol("hungry")]) as ReturnType<typeof symbol>[];
+    expect(() => insertWordAtCaret(symbol("very"), symbolSet, 0)).not.toThrow();
+    expect(symbolSet).toHaveLength(2);
+  });
+});
+
+describe("replaceAtCaret()", (): void => {
+
+  test("Swaps the symbol at the caret and leaves the rest", (): void => {
+    const payloads = [symbol("me"), symbol("hungry")];
+    expect(replaceAtCaret(payloads, 1, symbol("thirsty")))
+      .toEqual([symbol("me"), symbol("thirsty")]);
+  });
+
+  test("Leaves the array it is given alone", (): void => {
+    const payloads = Object.freeze([symbol("me")]) as ReturnType<typeof symbol>[];
+    expect(replaceAtCaret(payloads, 0, symbol("you"))).toEqual([symbol("you")]);
+    expect(payloads[0].label).toBe("me");
+  });
+
+  test("A caret pointing at no symbol changes nothing", (): void => {
+    const payloads = [symbol("me")];
+    expect(replaceAtCaret(payloads, -1, symbol("you"))).toEqual([symbol("me")]);
+  });
 });

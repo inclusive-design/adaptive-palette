@@ -15,8 +15,10 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { changeEncodingContents } from "../state/GlobalData";
+import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
+import { replaceAtCaret } from "../utils/SymbolEncodingUtils";
 
 type ActionRemoveModifierPropsType = {
   id: string,
@@ -59,9 +61,12 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
     let newBaseModifierCount = symbolToEdit.baseModifierCount;
 
     // Check for any modifier to remove -- if the symbol has no modifiers,
-    // leave the `newComposition` as is.
+    // leave the `newComposition` as is. The last modifier is read rather than popped: the
+    // message a cell is handed is never edited in place, so the shortened list is a new array.
+    // With no modifiers to drop, `slice` returns the empty or undefined list unchanged.
     const modifierCountBeforeRemoval = symbolToEdit.modifierInfo?.length ?? 0;
-    const removeInfo = symbolToEdit.modifierInfo?.pop();
+    const removeInfo = symbolToEdit.modifierInfo?.[modifierCountBeforeRemoval - 1];
+    const newModifierInfo = symbolToEdit.modifierInfo?.slice(0, -1);
     if (removeInfo) {
       // Either the last modifer added was prepended to the beginning or
       // appended to the end. If it was prepended ...
@@ -90,19 +95,16 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
         newBaseModifierCount = (newBaseModifierCount ?? 0) - 1;
       }
     }
-    payloads[caretPosition] = {
+    const edited = replaceAtCaret(payloads, caretPosition, {
       "label": newLabel,
       "composition": newComposition,
       "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
-      "modifierInfo": symbolToEdit.modifierInfo,
+      "modifierInfo": newModifierInfo,
       "indicatorId": symbolToEdit.indicatorId,
       "baseLabel": newBaseLabel,
       "baseModifierCount": newBaseModifierCount
-    };
-    changeEncodingContents.value = {
-      payloads: payloads,
-      caretPosition: caretPosition
-    };
+    });
+    editMessage({ payloads: edited, caretPosition: caretPosition });
     announceIfEnabled(newLabel);
   };
 

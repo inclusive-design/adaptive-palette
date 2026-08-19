@@ -14,6 +14,7 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { changeEncodingContents } from "../state/GlobalData";
+import { editMessage } from "../core/MessageEdit";
 import { ContentEncodingType, BlissSymbolInfoType } from "../index.d";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
@@ -91,10 +92,12 @@ function moveCursor (positionChange: number = 1) {
   // Note: the new caretPosition can equal -1 indicating that the caret is before the
   // first symbol in the `payloads` array.  But, it cannot be less than -1.
   const newPosition = clamp(changeEncodingContents.value.caretPosition + positionChange, -1, changeEncodingContents.value.payloads.length - 1);
-  changeEncodingContents.value = {
+  // Through the gate like any other edit, though the symbols do not change. A guard that
+  // compares the message text has nothing to object to, so a caret move normally passes.
+  editMessage({
     payloads: changeEncodingContents.value.payloads,
     caretPosition: newPosition
-  };
+  });
 };
 
 export function incrementCursor () {
