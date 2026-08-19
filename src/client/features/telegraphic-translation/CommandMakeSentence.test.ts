@@ -15,7 +15,7 @@ import { render, screen, cleanup, waitFor } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
-import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal } from "../../state/GlobalData";
 import { setTestConfig } from "../../testUtils/TestConfig";
 import {
   confirmDiscardEdit, discardEditPromptSignal, IDLE_SENTENCE_STATE, sentenceCompletionsSignal
@@ -80,6 +80,7 @@ describe("CommandMakeSentence", (): void => {
     adaptivePaletteGlobals.models = ["phony-model:12b"];
     setConfig(3);
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+    finishedMessageSignal.value = "";
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
   });
 
@@ -171,6 +172,18 @@ describe("CommandMakeSentence", (): void => {
       "Telegraphic message: me hungry", "phony-model:12b", false, "Give 3 sentences.",
       expect.any(AbortSignal)
     );
+  });
+
+  test("a click marks the message as finished", async (): Promise<void> => {
+    changeEncodingContents.value = INPUT_CONTENTS;
+    mockedQueryChat.mockResolvedValue({
+      message: { content: "1. I am hungry." }
+    } as never);
+    renderCell();
+
+    await userEvent.click(screen.getByRole("button", { name: make_setence_label }));
+
+    expect(finishedMessageSignal.value).toBe("me hungry");
   });
 
   test("goes unavailable while a query is in flight, and a second click does not start another", async (): Promise<void> => {

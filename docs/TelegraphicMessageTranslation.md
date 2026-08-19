@@ -139,7 +139,8 @@ the message stays as it was: applying it would start word prediction on a messag
 leave that query running beside the sentence query. "Change anyway" aborts the active query, clears the existing
 sentences and applies the edit. "Keep sentences", Escape and the dialog's ✕ all drop the edit and leave
 the query and the sentences as is. Word prediction reports nothing and runs no query of its own
-while the question is on screen.
+while the question is on screen. Keeping the sentences leaves the suggestion row exactly as it
+was -- the same words, no status line, and no new query -- because the message never changed.
 
 If a recalled sentence is shown on the screen with an error message from a failed request, it counts as a
 displayed sentence. But when there is no sentence on screen, for example, when an error occurred, or the user

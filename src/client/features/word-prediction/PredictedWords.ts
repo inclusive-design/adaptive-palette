@@ -13,12 +13,13 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 
-import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal } from "../../state/GlobalData";
+import { messageText } from "../../core/MessageLog";
 import { BlissSymbol } from "../../components/BlissSymbol";
 import { insertWordAtCaret } from "../../utils/SymbolEncodingUtils";
 import { announceIfEnabled } from "../../utils/SpeechUtils";
 import { predictNext } from "./WordPredictionUtils";
-import { contextKeyOf, modelWordsSignal, showModelStatusSignal } from "./WordPredictionState";
+import { contextKeyOf, modelWordsSignal } from "./WordPredictionState";
 import { SymbolEncodingType } from "../../index.d";
 import "./PredictedWords.scss";
 
@@ -104,7 +105,8 @@ export function PredictedWords (): VNode | null {
 
   // The wait and the arrival are both reported. A failed query says nothing, and neither does
   // a message the user has finished with.
-  const statusText = !showModelStatusSignal.value ? ""
+  const isFinished = messageText(payloads) === finishedMessageSignal.value;
+  const statusText = isFinished ? ""
     : isQuerying ? QUERYING_MESSAGE
       : modelSuggestions.length > 0 ? moreSuggestionsMessage(modelSuggestions.length) : "";
 
