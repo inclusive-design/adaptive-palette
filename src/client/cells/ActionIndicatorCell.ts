@@ -99,6 +99,8 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
         latest.payloads[caretPosition].indicatorId === indicatorId;
     };
 
+    const unchangedMessage = `${symbolToEdit.label}, ${props.options.label}`;
+
     // Apply modifier labels so their text isn't lost (e.g. "big walk" + indicator -> "big walked", not "walked").
     // When there's no `userSelectedSymbolId`, skip this because modifier text is already folded into
     // `baseLabel` before it reaches the Ollama prompt. Re-wrapping here would double it.
@@ -111,11 +113,13 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
         ...latest.payloads[caretPosition],
         "label": finalLabel
       });
-      editMessage({ payloads: relabelled, caretPosition: latest.caretPosition });
-      announceIfEnabled(finalLabel);
+      // Annouce the final label if the edit is accepted, otherwise announce the unchanged message.
+      if (editMessage({ payloads: relabelled, caretPosition: latest.caretPosition })) {
+        announceIfEnabled(finalLabel);
+      } else {
+        announceIfEnabled(unchangedMessage);
+      }
     };
-
-    const unchangedMessage = `${symbolToEdit.label}, ${props.options.label}`;
 
     // Every branch below announces something immediately -- synchronously, before any real
     // async wait -- so a click always gets audio feedback even if a later click supersedes it

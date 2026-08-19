@@ -118,11 +118,17 @@ export function ActionSearchGloss (props: ActionSearchGlossProps): VNode {
       userSelectedSymbolId: selected.id,
       modifierInfo: []
     };
-    editMessage(insertWordAtCaret(
+    const added = editMessage(insertWordAtCaret(
       payload,
       changeEncodingContents.value.payloads,
       changeEncodingContents.value.caretPosition
     ));
+
+    // If edit is rejected, the status is cleared.
+    if (!added) {
+      setStatus("");
+      return;
+    }
 
     // The status region is the only confirmation channel here. Calling `speak()` as the
     // palette cells do would put device speech and the screen reader over each other.

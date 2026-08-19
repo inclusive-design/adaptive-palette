@@ -76,17 +76,23 @@ export function ActionSvgEntryField (props: ActionSvgEntryFieldProps): VNode {
       modifierInfo: []
     };
 
-    editMessage(insertWordAtCaret(
+    setMalformed(false);
+    const added = editMessage(insertWordAtCaret(
       payload,
       changeEncodingContents.value.payloads,
       changeEncodingContents.value.caretPosition
     ));
 
+    // If edit is rejected, the status is cleared.
+    if (!added) {
+      setStatus("");
+      return;
+    }
+
     // The status region is the only confirmation channel here, for the same reason as in
     // the search dialog: device speech and the screen reader would talk over each other.
     // The label is optional, so fall back to a generic noun for the announcement.
     setStatus(`${labelString || "Symbol"} added to message`);
-    setMalformed(false);
     form.reset(); // Clear the form for the next entry
     // Several builder strings are typically entered in a row; without this, focus is
     // left on the Add button and every later entry needs manual navigation back.

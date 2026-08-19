@@ -50,6 +50,14 @@ describe("editMessage()", (): void => {
     expect(changeEncodingContents.value.payloads[0].label).toBe("me");
   });
 
+  test("The return value says whether the edit was published", (): void => {
+    expect(editMessage(contents("me"))).toBe(true);
+    setEditGuard(() => true);
+    expect(editMessage(contents("later"))).toBe(false);
+    setEditGuard(() => false);
+    expect(editMessage(contents("you"))).toBe(true);
+  });
+
   test("The guard is offered the edit it is deciding about", (): void => {
     const seen: string[] = [];
     setEditGuard((next): boolean => {

@@ -74,14 +74,15 @@ function deepFreeze (contents: ContentSignalDataType): void {
 /**
  * Publish a change to the message being composed, unless the registered guard holds it.
  * @param {ContentSignalDataType} next - The message as it would be after the edit.
- * @returns {void}
+ * @returns {boolean} - `true` when the edit was published, `false` when the guard held it.
  */
-export function editMessage (next: ContentSignalDataType): void {
+export function editMessage (next: ContentSignalDataType): boolean {
   // Frozen before the guard is asked, so an edit the guard holds is already safe from later
   // in-place changes by the time the guard applies it.
   deepFreeze(next);
   if (guard?.(next)) {
-    return;
+    return false;
   }
   changeEncodingContents.value = next;
+  return true;
 }

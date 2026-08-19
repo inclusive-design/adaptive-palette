@@ -16,6 +16,7 @@ import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
 import { changeEncodingContents } from "../state/GlobalData";
+import { setEditGuard } from "../core/MessageEdit";
 import {
   ActionSearchGloss, SEARCH_FIELD_LABEL, SUBMIT_LABEL, CLEAR_LABEL,
   LABEL_FIELD_LABEL, ADD_LABEL, CLOSE_LABEL, NO_SELECTION_STATUS, MAX_RESULTS
@@ -41,6 +42,7 @@ describe("ActionSearchGloss", () => {
 
   afterEach(() => {
     cleanup();
+    setEditGuard(null);
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
   });
 
@@ -223,6 +225,24 @@ describe("ActionSearchGloss", () => {
     // Focus must not rest on a control that just became unavailable.
     expect(searchInput).toHaveFocus();
     expect(await screen.findByRole("status")).toHaveTextContent(/added to message/);
+  }, 20000);
+
+  // The guard holds the edit while it asks the user whether it may discard their sentence
+  // work, and the user may yet keep the sentences and lose the edit.
+  test("an add the guard holds is not confirmed and keeps the selection", async () => {
+    const user = userEvent.setup();
+    render(html`<${ActionSearchGloss} onRequestClose=${() => {}} />`);
+
+    await searchFor(user, "fish");
+    await user.click(screen.getAllByRole("button", { pressed: false })[0]);
+    setEditGuard(() => true);
+    await user.click(screen.getByRole("button", { name: ADD_LABEL }));
+
+    expect(changeEncodingContents.value.payloads).toHaveLength(0);
+    expect(screen.getByRole("status")).toHaveTextContent("");
+    // The symbol is still selected, so the user can add it again if the edit is lost.
+    expect(screen.queryAllByRole("button", { pressed: true })).toHaveLength(1);
+    expect(screen.getByRole<HTMLInputElement>("textbox", { name: LABEL_FIELD_LABEL })).not.toHaveValue("");
   }, 20000);
 
   test("a second search result appends rather than replacing", async () => {
