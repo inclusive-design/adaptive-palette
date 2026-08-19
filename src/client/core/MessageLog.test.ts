@@ -145,6 +145,17 @@ describe("messageLog", (): void => {
       expect(log[0].translation).toMatchObject({ sentence: "I want food.", source: "typed" });
     });
 
+    // A recalled sentence is shown on its own, so saving it again arrives with only itself
+    // as a candidate. The alternatives it was first chosen from have to survive that.
+    test("saving again keeps the candidates already recorded", (): void => {
+      saveMessageRecord(message("I", "want", "juice"));
+      saveTranslation("I want juice", TRANSLATION);
+      saveTranslation("I want juice", { ...TRANSLATION, candidates: ["I am hungry."] });
+
+      const log = readMessageLog();
+      expect(log[0].translation).toEqual(TRANSLATION);
+    });
+
     test("the most recent copy of a repeated message is the one translated", (): void => {
       saveMessageRecord(message("I", "want", "juice"));
       saveMessageRecord(message("hello"));

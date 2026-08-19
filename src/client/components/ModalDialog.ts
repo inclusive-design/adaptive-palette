@@ -86,8 +86,15 @@ export function ModalDialog (props: ModalDialogProps): VNode {
   // The `close` event is queued as a task, so a dialog closed by unmounting fires it once
   // the component is gone. Reporting that as a close would tell the parent the user
   // answered a question that was taken off the screen.
+  // A named target can be unreachable: another modal dialog may still be open, which makes
+  // everything outside it `inert`, and `focus()` on an inert element does nothing. Falling
+  // back to the opener keeps focus where the user was working instead of on `<body>`.
   const handleClose = () => {
-    (restoreFocusTo?.() ?? openerRef.current)?.focus();
+    const target = restoreFocusTo?.() ?? openerRef.current;
+    target?.focus();
+    if (target !== openerRef.current && document.activeElement !== target) {
+      openerRef.current?.focus();
+    }
     if (!isUnmountingRef.current) {
       onClose();
     }

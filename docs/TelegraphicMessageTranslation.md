@@ -174,7 +174,8 @@ sentence adds the translation to that record:
   - "typed": Entered manually by the user
 
 All generated candidates are retained, including those not selected. Comparing the preferred sentence
-with the alternatives provides useful training data for future model tuning.
+with the alternatives provides useful training data for future model tuning. Saving a sentence for a
+message that already has candidates on record adds to them rather than replacing them.
 
 **The most recently spoken sentence becomes the preferred sentence for that message.** A repeated
 message is recorded each time it is said, and the translation attaches to its most recent record.

@@ -158,4 +158,33 @@ describe("ModalDialog", () => {
       expect(screen.getByRole("button", { name: "elsewhere" })).toHaveFocus();
     });
   });
+
+  // The symbol search and svg-builder-string dialogs stay open while an edit made in them
+  // raises the discard question. Everything outside an open modal is `inert`, so the named
+  // target cannot take focus and it would be left on `<body>`.
+  test("focus falls back to the opener when the named target is inert", async () => {
+    const onClose = vi.fn();
+    const dialog = (isOpen: boolean) => html`
+      <div>
+        <button type="button">elsewhere</button>
+        <dialog id="otherDialog"><button type="button">opener</button></dialog>
+        <${ModalDialog}
+          id="testDialog" title=${TITLE} isOpen=${isOpen} onClose=${onClose}
+          restoreFocusTo=${() => screen.getByRole("button", { name: "elsewhere" })}>
+          <p>body</p>
+        <//>
+      </div>
+    `;
+    const { rerender } = render(dialog(false));
+
+    (document.getElementById("otherDialog") as HTMLDialogElement).showModal();
+    const opener = screen.getByRole("button", { name: "opener" });
+    opener.focus();
+    rerender(dialog(true));
+    await waitFor(() => expect(screen.getByText("body")).toBeVisible());
+
+    await userEvent.keyboard("{Escape}");
+
+    await waitFor(() => expect(opener).toHaveFocus());
+  });
 });

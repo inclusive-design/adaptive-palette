@@ -254,12 +254,17 @@ export function cancelDiscardEdit (): void {
 // The question is asked by publishing it to `discardEditPromptSignal` and returning: a
 // dialog cannot answer on the spot the way `window.confirm` did.
 effect((): void => {
+  // Read before the guard below to return. An effect that stops reading a signal
+  // unsubscribes from it, and re-subscribing puts it at the head of that signal's list of
+  // effects to run. Skipping this read while a question is up would therefore make this
+  // effect run after word prediction's from the next edit onward, which is the opposite of
+  // the order both modules rely on.
+  const contents = changeEncodingContents.value;
   // A question already on screen. The page is `inert` behind the dialog, so the only writes
   // reaching here are the ones the answer itself makes.
   if (discardEditPromptSignal.value !== null) {
     return;
   }
-  const contents = changeEncodingContents.value;
   const message = currentTelegraphicMessage();
   const state = sentenceCompletionsSignal.peek();
   // A failed fill can leave a recalled sentence on screen. It is as tappable as any other,

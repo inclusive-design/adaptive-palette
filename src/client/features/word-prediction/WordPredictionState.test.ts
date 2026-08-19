@@ -17,7 +17,10 @@ import { DISABLED_MODEL_QUERY } from "../../core/Config";
 import { MESSAGE_LOG_KEY, saveMessageRecord } from "../../core/MessageLog";
 import { queryChat } from "../../core/OllamaApi";
 import { DEBOUNCE_MS, contextKeyOf, modelWordsSignal } from "./WordPredictionState";
-import { discardEditPromptSignal } from "../telegraphic-translation/TelegraphicTranslationState";
+import {
+  cancelDiscardEdit, discardEditPromptSignal, IDLE_SENTENCE_STATE, READY_DISCARD_PROMPT,
+  sentenceCompletionsSignal
+} from "../telegraphic-translation/TelegraphicTranslationState";
 import { SymbolEncodingType } from "../../index.d";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
@@ -75,6 +78,9 @@ describe("wordPrediction model query", (): void => {
 
   afterEach((): void => {
     finishedMessageSignal.value = "";
+    // Cleared before the input area below, so emptying that is not read as an edit that
+    // would discard sentences and raise a question in the next test.
+    sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
     discardEditPromptSignal.value = null;
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
     vi.useRealTimers();
@@ -335,6 +341,27 @@ describe("wordPrediction model query", (): void => {
 
       await waitForQuery();
       expect(mockedQueryChat).not.toHaveBeenCalled();
+    });
+
+    // The question raised by the effect in `TelegraphicTranslationState`, rather than by the
+    // stand-in above, so the two effects run in the order they really do. Asked twice: an
+    // effect that skips a signal while a question is up re-subscribes when the question goes,
+    // which is what could put the two effects the wrong way round from the second edit on.
+    test("a second question still leaves the words on the row", async (): Promise<void> => {
+      sentenceCompletionsSignal.value = {
+        status: "ready", sentences: ["I want food."], model: "phony-model:12b", telegraphicMessage: "I"
+      };
+      compose("I");
+      await waitForQuery();
+      expect(modelWordsSignal.value.status).toBe("ready");
+
+      for (let question = 0; question < 2; question++) {
+        compose("I", "want");
+        expect(discardEditPromptSignal.value).toBe(READY_DISCARD_PROMPT);
+        cancelDiscardEdit();
+      }
+
+      expect(modelWordsSignal.value.status).toBe("ready");
     });
   });
 
