@@ -17,37 +17,37 @@ import { SymbolEncodingType, ContentSignalDataType, ModifierInfoType } from "../
  */
 
 /**
- * Given a current set of Bliss-words, the caret position and a Bliss-word to
- * add, insert the new word at the caret position in the set of symbols and
- * update to the new caret position.
+ * Given a current set of Bliss-words, the caret position and a Bliss-word to add, return the
+ * set with the new word inserted right after the caret and the caret moved onto it. A caret of
+ * -1 is before the first symbol, so the word goes at the front.
  * @param {SymbolEncodingType} wordToAdd   - The new Bliss-word to add.
- * @param {SymbolEncodingType[]} symbolSet - The set of Bliss-words to add to.
- * @param {number} caretPos                - The insertion point within
- *                                           `symbolSet`.
- * @return {ContentSignalDataType} - the modified symbol set and new position of
- *                                   the insertion caret.
+ * @param {SymbolEncodingType[]} symbolSet - The set of Bliss-words to add to. Not modified.
+ * @param {number} caretPos                - The insertion point within `symbolSet`.
+ * @return {ContentSignalDataType} - A new symbol set and the new caret position.
  */
 export function insertWordAtCaret (wordToAdd: SymbolEncodingType, symbolSet: SymbolEncodingType[], caretPos: number ): ContentSignalDataType {
-  let newSymbolSet;
-  // If the `caretPos` is the last symbol in the `symbolSet`, append the new
-  // `wordToAdd`.  If the `caretPos` is somwhere within the `symbolSet`, put the
-  // new symbol right after the `caretPos`.  In both cases add one to the caret
-  // position.
   const newCaretPos = caretPos + 1;
-  if (caretPos === symbolSet.length-1) {
-    newSymbolSet = {
-      payloads: [...symbolSet, wordToAdd],
-      caretPosition: newCaretPos
-    };
-  }
-  else {
-    symbolSet.splice(newCaretPos, 0, wordToAdd);
-    newSymbolSet = {
-      payloads: symbolSet,
-      caretPosition: newCaretPos
-    };
-  }
-  return newSymbolSet;
+  return {
+    payloads: [...symbolSet.slice(0, newCaretPos), wordToAdd, ...symbolSet.slice(newCaretPos)],
+    caretPosition: newCaretPos
+  };
+}
+
+/**
+ * Return a copy of the symbols with the one at the caret replaced. Used by the cells that
+ * change the symbol already at the caret rather than adding one.
+ *
+ * `.map()` rather than `Array.prototype.with()`: `with()` is ES2023 and `tsconfig.json`
+ * targets ES2022.
+ * @param {SymbolEncodingType[]} payloads - The symbols in the message. Not modified.
+ * @param {number} caretPos               - Which one to replace.
+ * @param {SymbolEncodingType} payload    - What to put there.
+ * @returns {SymbolEncodingType[]} - A new array.
+ */
+export function replaceAtCaret (
+  payloads: SymbolEncodingType[], caretPos: number, payload: SymbolEncodingType
+): SymbolEncodingType[] {
+  return payloads.map((existing, index) => index === caretPos ? payload : existing);
 }
 
 /**

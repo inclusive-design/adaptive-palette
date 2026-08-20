@@ -17,6 +17,7 @@ import { html } from "htm/preact";
 import { MatchType, SymbolEncodingType } from "../index.d";
 import { findSymbolByGloss } from "../utils/SvgUtils";
 import { changeEncodingContents } from "../state/GlobalData";
+import { editMessage } from "../core/MessageEdit";
 import { insertWordAtCaret } from "../utils/SymbolEncodingUtils";
 import { GlossSearchResults } from "../components/GlossSearchResults";
 import { MessagePreview } from "../components/MessagePreview";
@@ -117,11 +118,17 @@ export function ActionSearchGloss (props: ActionSearchGlossProps): VNode {
       userSelectedSymbolId: selected.id,
       modifierInfo: []
     };
-    changeEncodingContents.value = insertWordAtCaret(
+    const added = editMessage(insertWordAtCaret(
       payload,
       changeEncodingContents.value.payloads,
       changeEncodingContents.value.caretPosition
-    );
+    ));
+
+    // If edit is rejected, the status is cleared.
+    if (!added) {
+      setStatus("");
+      return;
+    }
 
     // The status region is the only confirmation channel here. Calling `speak()` as the
     // palette cells do would put device speech and the screen reader over each other.

@@ -19,6 +19,10 @@
  *
  * For the same reason, `GlobalData` must NOT re-export `initAdaptivePaletteGlobals`.  A value
  * re-export is a real import and would rebuild the cycle.
+ *
+ * It is also where telegraphic translation's edit guard is registered.  Registering it at that
+ * feature's own module scope would fire on any import of the module, including from tests that
+ * import it directly and need to decide for themselves whether a guard is in play.
  */
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { loadConfig } from "./Config";
@@ -26,6 +30,8 @@ import { getModelNames } from "./OllamaApi";
 import { initIndicatorLabels } from "../utils/IndicatorLabelsUtils";
 import { initSvgCompositeDefinitions } from "../utils/SvgUtils";
 import { applyStoredSettings } from "../features/settings/SettingsSchema";
+import { setEditGuard } from "./MessageEdit";
+import { guardEdit } from "../features/telegraphic-translation/TelegraphicTranslationState";
 
 /**
  * Initialize the `adaptivePaletteGlobals` structure.
@@ -38,6 +44,10 @@ import { applyStoredSettings } from "../features/settings/SettingsSchema";
  *                                                the `<body>delement.
  */
 export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string): Promise<void> {
+  // Registered before anything renders, so no edit can reach the message unguarded. Every
+  // edit is offered to telegraphic translation, which holds the ones that would throw away a
+  // request or the sentences on screen until the user agrees to them.
+  setEditGuard(guardEdit);
   initSvgCompositeDefinitions();
   adaptivePaletteGlobals.mainPaletteContainerId = mainPaletteContainerId || "";
   const [ models, config ] = await Promise.all([

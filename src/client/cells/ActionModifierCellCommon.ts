@@ -15,8 +15,10 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { changeEncodingContents } from "../state/GlobalData";
+import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
+import { replaceAtCaret } from "../utils/SymbolEncodingUtils";
 import "./ActionModifierCell.scss";
 
 export type ActionModifierCodeCellPropsType = {
@@ -61,30 +63,27 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
     else {
       newComposition = [ ...newComposition, "/", ...modifierComposition ];
     }
-    // Push the current modifier information onto the `modifierInfo` of the
-    // `symbolToEdit`, tracking the order in which the modifiers were added.
-    if (!symbolToEdit.modifierInfo) {
-      symbolToEdit.modifierInfo = [];
-    }
-    symbolToEdit.modifierInfo.push({
-      modifierId: modifierComposition,
-      modifierGloss: label,
-      isPrepended: prepend
-    });
+    // Track the order in which modifiers were added, without touching the modifier list the
+    // symbol already has: the message a cell is handed is never edited in place.
+    const newModifierInfo = [
+      ...(symbolToEdit.modifierInfo ?? []),
+      {
+        modifierId: modifierComposition,
+        modifierGloss: label,
+        isPrepended: prepend
+      }
+    ];
     const newLabel = prepend ? `${label} ${symbolToEdit.label}` : `${symbolToEdit.label} ${label}`;
-    payloads[caretPosition] = {
+    const edited = replaceAtCaret(payloads, caretPosition, {
       "label": newLabel,
       "composition": newComposition,
       "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
-      "modifierInfo": symbolToEdit.modifierInfo,
+      "modifierInfo": newModifierInfo,
       "indicatorId": symbolToEdit.indicatorId,
       "baseLabel": symbolToEdit.baseLabel,
       "baseModifierCount": symbolToEdit.baseModifierCount
-    };
-    changeEncodingContents.value = {
-      payloads: payloads,
-      caretPosition: caretPosition
-    };
+    });
+    editMessage({ payloads: edited, caretPosition: caretPosition });
     announceIfEnabled(newLabel);
   };
 

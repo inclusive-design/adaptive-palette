@@ -21,11 +21,6 @@ import { effect, signal } from "@preact/signals";
 import { adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal } from "../../state/GlobalData";
 import { messageText } from "../../core/MessageLog";
 import { isModelTierActive, predictNext, rankModelWords, requestModelWords } from "./WordPredictionUtils";
-// Imported for `discardEditPromptSignal`, and load-bearing beyond the name: it makes
-// `TelegraphicTranslationState` evaluate first, so its effect registers first and therefore runs
-// first. Effects run in registration order, so by the time the effect below sees an edit that
-// module objects to, it has already taken the edit back and raised its question.
-import { discardEditPromptSignal } from "../telegraphic-translation/TelegraphicTranslationState";
 import type { ModelWordsStateType, SymbolEncodingType } from "../../index.d";
 
 /**
@@ -148,14 +143,6 @@ async function queryModelWords (contextKey: string, labels: string[]): Promise<v
 effect((): void => {
   const { payloads, caretPosition } = changeEncodingContents.value;
   const contextKey = contextKeyOf(payloads, caretPosition);
-  // The discard dialog is asking whether an edit may stand. Neither the edit nor the module's
-  // own revert of it is a message the user has agreed to: nothing is asked for either, and the
-  // finished message stays as it was.
-  if (discardEditPromptSignal.value !== null) {
-    previousContextKey = contextKey;
-    cancelModelQuery();
-    return;
-  }
   // The user has finished this message. Stop any query still working on it; the words already
   // on the row stay usable.
   if (messageText(payloads) === finishedMessageSignal.value) {

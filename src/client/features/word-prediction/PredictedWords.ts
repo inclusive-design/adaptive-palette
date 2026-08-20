@@ -15,6 +15,7 @@ import { html } from "htm/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal } from "../../state/GlobalData";
 import { messageText } from "../../core/MessageLog";
+import { editMessage } from "../../core/MessageEdit";
 import { BlissSymbol } from "../../components/BlissSymbol";
 import { insertWordAtCaret } from "../../utils/SymbolEncodingUtils";
 import { announceIfEnabled } from "../../utils/SpeechUtils";
@@ -78,7 +79,7 @@ export function PredictedWords (): VNode | null {
   const chooseWord = (suggestion: SymbolEncodingType): void => {
     const { payloads: currentPayloads, caretPosition: currentCaret } = changeEncodingContents.value;
     // A fresh copy each time.
-    changeEncodingContents.value = insertWordAtCaret(structuredClone(suggestion), currentPayloads, currentCaret);
+    editMessage(insertWordAtCaret(structuredClone(suggestion), currentPayloads, currentCaret));
     announceIfEnabled(suggestion.label);
   };
 

@@ -122,7 +122,8 @@ describe("ActionRemoveModifierCell", (): void => {
   test("becomes available once the symbol has a prepended modifier", async (): Promise<void> => {
 
     // Add a symbol *with* a prepended modifier and render the ActionRemoveModifierCell.
-    const newContents = changeEncodingContents.value.payloads;
+    // Copied, not pushed onto: what the signal holds is frozen once a click has published it.
+    const newContents = [...changeEncodingContents.value.payloads];
     newContents.push(blissWordWithPreModifier);
     changeEncodingContents.value = {
       payloads: newContents,
@@ -142,7 +143,8 @@ describe("ActionRemoveModifierCell", (): void => {
 
     // Add two symbols, the last one with a modifier and render the
     // ActionRemoveModifierCell.
-    const newContents = changeEncodingContents.value.payloads;
+    // Copied, not pushed onto: what the signal holds is frozen once a click has published it.
+    const newContents = [...changeEncodingContents.value.payloads];
     newContents.push(blissWordNoModifier);
     newContents.push(blissWordWithPreModifier);
     changeEncodingContents.value = {
@@ -168,7 +170,8 @@ describe("ActionRemoveModifierCell", (): void => {
 
     // Add two symbols, the last one with a modifier and render the
     // ActionRemoveModifierCell.
-    const newContents = changeEncodingContents.value.payloads;
+    // Copied, not pushed onto: what the signal holds is frozen once a click has published it.
+    const newContents = [...changeEncodingContents.value.payloads];
     newContents.push(blissWordNoModifier);
     newContents.push(blissWordPrePostModifiers);
     changeEncodingContents.value = {

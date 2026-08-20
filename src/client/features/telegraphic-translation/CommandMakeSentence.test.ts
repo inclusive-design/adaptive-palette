@@ -17,8 +17,10 @@ import { html } from "htm/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal } from "../../state/GlobalData";
 import { setTestConfig } from "../../testUtils/TestConfig";
+import { editMessage, setEditGuard } from "../../core/MessageEdit";
 import {
-  confirmDiscardEdit, discardEditPromptSignal, IDLE_SENTENCE_STATE, sentenceCompletionsSignal
+  confirmDiscardEdit, discardEditPromptSignal, guardEdit, IDLE_SENTENCE_STATE,
+  sentenceCompletionsSignal
 } from "./TelegraphicTranslationState";
 import { MESSAGE_LOG_KEY } from "../../core/MessageLog";
 import { queryChat } from "../../core/OllamaApi";
@@ -85,6 +87,7 @@ describe("CommandMakeSentence", (): void => {
   });
 
   afterEach((): void => {
+    setEditGuard(null);
     cleanup();
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
     discardEditPromptSignal.value = null;
@@ -210,7 +213,9 @@ describe("CommandMakeSentence", (): void => {
   });
 
   test("editing the message while a query is in flight re-enables the button", async (): Promise<void> => {
-    changeEncodingContents.value = INPUT_CONTENTS;
+    // Gated, since the question the user answers below is raised by the guard.
+    setEditGuard(guardEdit);
+    editMessage(INPUT_CONTENTS);
     let resolveQuery: (value: unknown) => void = () => undefined;
     mockedQueryChat.mockReturnValue(new Promise((resolve) => {
       resolveQuery = resolve;
@@ -225,10 +230,10 @@ describe("CommandMakeSentence", (): void => {
 
     // The user swaps a symbol while the model is still thinking, and says the sentence
     // being made can go.
-    changeEncodingContents.value = {
+    editMessage({
       payloads: [{ label: "later", composition: [126], modifierInfo: [] }],
       caretPosition: 1
-    };
+    });
     confirmDiscardEdit();
 
     // The button must come back now, not when the abandoned query eventually settles.

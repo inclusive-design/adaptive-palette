@@ -16,6 +16,7 @@ import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
 import { changeEncodingContents } from "../state/GlobalData";
+import { setEditGuard } from "../core/MessageEdit";
 import {
   ActionSvgEntryField, SUBMIT_VALUE, CLOSE_LABEL
 } from "./ActionSvgEntryField";
@@ -28,6 +29,7 @@ describe("ActionSvgEntryField", () => {
 
   afterEach(() => {
     cleanup();
+    setEditGuard(null);
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
   });
 
@@ -93,6 +95,23 @@ describe("ActionSvgEntryField", () => {
     await user.click(screen.getByRole("button", { name: SUBMIT_VALUE }));
 
     expect(changeEncodingContents.value.payloads).toHaveLength(2);
+  });
+
+  // The guard holds the edit while it asks the user whether it may discard their sentence
+  // work, and the user may yet keep the sentences and lose the edit.
+  test("an add the guard holds is not confirmed and keeps the typed entry", async () => {
+    const user = userEvent.setup();
+    render(html`<${ActionSvgEntryField} onRequestClose=${() => {}} />`);
+
+    const builderInput = screen.getByLabelText(/Builder string:/i);
+    await user.type(builderInput, VALID_BUILDER_STRING);
+    setEditGuard(() => true);
+    await user.click(screen.getByRole("button", { name: SUBMIT_VALUE }));
+
+    expect(changeEncodingContents.value.payloads).toHaveLength(0);
+    expect(screen.getByRole("status")).toHaveTextContent("");
+    // The form is untouched, so the entry can be submitted again if the edit is lost.
+    expect(builderInput).toHaveValue(VALID_BUILDER_STRING);
   });
 
   // Surrounding spaces would flow straight into the telegraphic message sent to the model.

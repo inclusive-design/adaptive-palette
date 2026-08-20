@@ -15,6 +15,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/preact";
 import { html } from "htm/preact";
 
 import { changeEncodingContents } from "../state/GlobalData";
+import { setEditGuard } from "../core/MessageEdit";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { ActionIndicatorCell } from "./ActionIndicatorCell";
@@ -53,6 +54,10 @@ describe("ActionIndicatorCell", (): void => {
   beforeEach((): void => {
     mockedGetStaticNewLabel.mockReset().mockReturnValue(undefined);
     mockedGetNewLabelViaModelQuery.mockReset().mockReturnValue({ status: "not-viable" });
+  });
+
+  afterEach((): void => {
+    setEditGuard(null);
   });
 
   test("is unavailable while the input area is empty", async (): Promise<void> => {
@@ -438,6 +443,33 @@ describe("ActionIndicatorCell", (): void => {
     expect(changeEncodingContents.value.payloads[0].composition).toStrictEqual(
       [368, "/", 382, ";", testCell.options.composition]
     );
+  });
+
+  // The guard holds the indicator edit to ask whether it may discard the user's sentence
+  // work, and drops the label that resolves behind that question. Announcing the label
+  // anyway would name a word that is nowhere in the message, whichever way the user answers.
+  test("A relabel the guard holds is not announced as the new label", async (): Promise<void> => {
+    mockedGetStaticNewLabel.mockReturnValue("cells");
+
+    changeEncodingContents.value = {
+      payloads: [{
+        label: "cell",
+        composition: [823],
+        userSelectedSymbolId: 823
+      }],
+      caretPosition: 0
+    };
+
+    renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
+    const button = await screen.findByRole("button", {name: testCell.options.label});
+    setEditGuard(() => true);
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(`cell, ${testCell.options.label}`);
+    });
+    expect(mockedAnnounceIfEnabled).not.toHaveBeenCalledWith("cells");
+    expect(changeEncodingContents.value.payloads[0].label).toBe("cell");
   });
 
   test("clicking while unavailable leaves the input untouched and is announced", async (): Promise<void> => {

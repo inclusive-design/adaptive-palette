@@ -18,8 +18,10 @@ import { html } from "htm/preact";
 
 import { changeEncodingContents } from "../../state/GlobalData";
 import { setTestConfig } from "../../testUtils/TestConfig";
+import { editMessage, setEditGuard } from "../../core/MessageEdit";
 import {
-  discardEditPromptSignal, IDLE_SENTENCE_STATE, READY_DISCARD_PROMPT, sentenceCompletionsSignal
+  discardEditPromptSignal, guardEdit, IDLE_SENTENCE_STATE, READY_DISCARD_PROMPT,
+  sentenceCompletionsSignal
 } from "./TelegraphicTranslationState";
 import { INPUT_AREA_ID } from "../../cells/ContentEncoding";
 import { MESSAGE_LOG_KEY, readMessageLog } from "../../core/MessageLog";
@@ -452,9 +454,17 @@ describe("SentenceChoices", (): void => {
   });
 
   // The dialog asking whether an edit may throw the sentence work away. It is raised by
-  // editing the message for real, since the question comes from the effect watching the
-  // input area rather than from anything in this component.
+  // editing the message for real, since the question comes from the guard the gate consults
+  // rather than from anything in this component.
   describe("the discard dialog", (): void => {
+
+    beforeEach((): void => {
+      setEditGuard(guardEdit);
+    });
+
+    afterEach((): void => {
+      setEditGuard(null);
+    });
 
     const MESSAGE_CONTENTS = {
       payloads: [
@@ -482,10 +492,10 @@ describe("SentenceChoices", (): void => {
 
     // Put sentences for the message on screen, then change the message.
     const editTheMessage = async (): Promise<void> => {
-      changeEncodingContents.value = MESSAGE_CONTENTS;
+      editMessage(MESSAGE_CONTENTS);
       sentenceCompletionsSignal.value = READY_STATE;
       renderWithInputArea();
-      changeEncodingContents.value = EDITED_CONTENTS;
+      editMessage(EDITED_CONTENTS);
       await screen.findByRole("dialog", { name: DISCARD_DIALOG_TITLE });
     };
 
@@ -496,9 +506,9 @@ describe("SentenceChoices", (): void => {
       expect(screen.getByText(READY_DISCARD_PROMPT)).toBeVisible();
     });
 
-    // The symbol-entry dialogs write the edit straight to the signal. Holding it back until
-    // the question is answered is what keeps word prediction off a message the user has not
-    // agreed to, and stops its query running beside the sentence query.
+    // The symbol-entry dialogs write the edit through the gate like everything else. It never
+    // reaches the signal while the question is up, so the message on screen is the one the
+    // user last agreed to.
     test("the edit is held back while the question is on screen", async (): Promise<void> => {
       await editTheMessage();
 
@@ -543,10 +553,10 @@ describe("SentenceChoices", (): void => {
     // land behind the question. Keeping them is a decision to use them, so they must be
     // reachable without re-scanning the page.
     test("sentences arriving behind the question get focus when they are kept", async (): Promise<void> => {
-      changeEncodingContents.value = MESSAGE_CONTENTS;
+      editMessage(MESSAGE_CONTENTS);
       sentenceCompletionsSignal.value = WORKING_STATE;
       renderWithInputArea();
-      changeEncodingContents.value = EDITED_CONTENTS;
+      editMessage(EDITED_CONTENTS);
       await screen.findByRole("dialog", { name: DISCARD_DIALOG_TITLE });
 
       sentenceCompletionsSignal.value = READY_STATE;

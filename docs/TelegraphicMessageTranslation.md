@@ -134,18 +134,24 @@ preferred sentence.
 
 If the input area is modified while a query is in progress or while sentences are displayed on the screen,
 a modal dialog titled "Change your message?" will appear. Because the new input invalidates the current translation
-results, the user will be asked if they want to proceed. The edit is held back while the question is on screen, so
-the message stays as it was: applying it would start word prediction on a message the user has not agreed to, and
-leave that query running beside the sentence query. "Change anyway" aborts the active query, clears the existing
+results, the user will be asked if they want to proceed. The edit is held back before it is ever applied, so
+the message on screen never changes: applying it would start word prediction on a message the user has not
+agreed to, and leave that query running beside the sentence query. "Change anyway" aborts the active query, clears the existing
 sentences and applies the edit. "Keep sentences", Escape and the dialog's ✕ all drop the edit and leave
 the query and the sentences as is. Word prediction reports nothing and runs no query of its own
-while the question is on screen. Keeping the sentences leaves the suggestion row exactly as it
-was -- the same words, no status line, and no new query -- because the message never changed.
+while the question is on screen, because the message it watches has not changed. Keeping the sentences leaves
+the suggestion row exactly as it was -- the same words, no status line, and no new query -- because the message
+never changed.
 
 If a recalled sentence is shown on the screen with an error message from a failed request, it counts as a
 displayed sentence. But when there is no sentence on screen, for example, when an error occurred, or the user
 chose "speak" or moved on before the sentence appeared, the state is cleared without asking the user anything
 because there is nothing to discard.
+
+Applying an indicator can produce a new label from a model query that arrives later. If sentences are on screen
+by the time it arrives, the question is asked for it as for any other change to the message. If a question is
+already on screen when it arrives, the new label is dropped: it was worked out from the message as it stood
+before the held edit, so it no longer fits either answer.
 
 ## Response Parsing
 
