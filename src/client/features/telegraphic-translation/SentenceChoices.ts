@@ -151,25 +151,27 @@ export function SentenceChoices (): VNode {
     adaptivePaletteGlobals.config.telegraphicTranslation?.showBlissSentence === true;
   const markAiSuggestions = adaptivePaletteGlobals.config.markAiSuggestions;
 
+  const sentenceButton = (sentence: string, index: number): VNode => {
+    // Everything but the sentence recalled from the log came from the model.
+    const isMarked = markAiSuggestions && sentence !== state.recalledSentence;
+    // A marked sentence says so first. An unmarked one keeps the name it had: the sentence
+    // itself when the Bliss row would otherwise be all a screen reader found.
+    const ariaLabel = isMarked ? aiSuggestionLabel(sentence)
+      : showBlissSentence ? sentence : undefined;
+    return html`
+      <button
+        key=${index}
+        class=${isMarked ? "sentenceChoice aiSuggestion" : "sentenceChoice"}
+        aria-label=${ariaLabel}
+        onClick=${() => logAndSpeak(sentence, "chosen")}>
+        ${isMarked ? html`<${AiBadge} />` : null}
+        ${showBlissSentence ? html`<${BlissSentence} sentence=${sentence} />` : sentence}
+      </button>
+    `;
+  };
+
   const choices = state.status === "idle" ? null : html`
-    ${state.sentences.map((sentence, index) => {
-      // Everything but the sentence recalled from the log came from the model.
-      const isMarked = markAiSuggestions && sentence !== state.recalledSentence;
-      // A marked sentence says so first. An unmarked one keeps the name it had: the sentence
-      // itself when the Bliss row would otherwise be all a screen reader found.
-      const ariaLabel = isMarked ? aiSuggestionLabel(sentence)
-        : showBlissSentence ? sentence : undefined;
-      return html`
-        <button
-          key=${index}
-          class=${isMarked ? "sentenceChoice aiSuggestion" : "sentenceChoice"}
-          aria-label=${ariaLabel}
-          onClick=${() => logAndSpeak(sentence, "chosen")}>
-          ${isMarked ? html`<${AiBadge} />` : null}
-          ${showBlissSentence ? html`<${BlissSentence} sentence=${sentence} />` : sentence}
-        </button>
-      `;
-    })}
+    ${state.sentences.map(sentenceButton)}
     <form class="sentenceTypeYourOwn" onSubmit=${submitTypedSentence}>
       <input
         type="text"
