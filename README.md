@@ -151,7 +151,7 @@ input area, and modal dialogs.
 
 - [Developer Documentation](./docs/devDoc/README.md): technical guide for developers building the
   adaptive palette. Covers the source structure, application state, runtime configuration, palettes,
-  cell types and testing.
+  cell types, Bliss sentences and testing.
 
 ## Attribution
 

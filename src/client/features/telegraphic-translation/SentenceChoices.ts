@@ -22,6 +22,8 @@ import { ModalDialog } from "../../components/ModalDialog";
 import { INPUT_AREA_ID } from "../../cells/ContentEncoding";
 import { announceIfEnabled, speak, speakUnavailable } from "../../utils/SpeechUtils";
 import { saveTranslation, SentenceSourceType } from "../../core/MessageLog";
+import { adaptivePaletteGlobals } from "../../state/GlobalData";
+import { BlissSentence } from "./BlissSentence";
 import "./SentenceChoices.scss";
 
 export const WORKING_MESSAGE = "⏳ Making sentences…";
@@ -142,13 +144,19 @@ export function SentenceChoices (): VNode {
   // Marked unavailable rather than `disabled` because a disabled control loses focus.
   const nothingTyped = typedSentence.trim().length === 0;
 
+  // Read per render rather than at module load: the settings dialog can turn this off while
+  // sentences are on screen.
+  const showBlissSentence =
+    adaptivePaletteGlobals.config.telegraphicTranslation?.showBlissSentence === true;
+
   const choices = state.status === "idle" ? null : html`
     ${state.sentences.map((sentence, index) => html`
       <button
         key=${index}
         class="sentenceChoice"
+        aria-label=${showBlissSentence ? sentence : undefined}
         onClick=${() => logAndSpeak(sentence, "chosen")}>
-        ${sentence}
+        ${showBlissSentence ? html`<${BlissSentence} sentence=${sentence} />` : sentence}
       </button>
     `)}
     <form class="sentenceTypeYourOwn" onSubmit=${submitTypedSentence}>

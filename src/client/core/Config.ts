@@ -83,12 +83,15 @@ function parseIndicatorLabelLookup (section: unknown): IndicatorLabelLookupConfi
  * to report as unconfigured rather than executing with empty prompts.
  * 3. The `model` field may be an empty string, which indicates it should use Ollama's first
  * available model.
+ * 4. `showBlissSentence` is the one optional field. Anything other than `false` reads as
+ * `true`, so a config written before the setting existed keeps working.
  * @param {unknown} section - The raw parsed section.
  * @returns {TelegraphicTranslationConfigType | undefined}
  */
 function parseTelegraphicTranslation (section: unknown): TelegraphicTranslationConfigType | undefined {
   const candidate = section as {
-    model?: unknown, numSentences?: unknown, systemPrompt?: unknown, userPrompt?: unknown
+    model?: unknown, numSentences?: unknown, systemPrompt?: unknown, userPrompt?: unknown,
+    showBlissSentence?: unknown
   } | undefined;
   if (!candidate) {
     return undefined;
@@ -103,7 +106,10 @@ function parseTelegraphicTranslation (section: unknown): TelegraphicTranslationC
     model,
     numSentences: numSentences as number,
     systemPrompt: systemPrompt as string,
-    userPrompt: userPrompt as string
+    userPrompt: userPrompt as string,
+    // Deliberately not required: an existing `config.json` written before this setting
+    // existed must keep working, and a missing field here would discard the whole section.
+    showBlissSentence: candidate.showBlissSentence !== false
   };
 }
 

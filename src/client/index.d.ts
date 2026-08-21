@@ -96,7 +96,9 @@ export type TelegraphicTranslationConfigType = {
   model: string,
   numSentences: number,
   systemPrompt: string,
-  userPrompt: string
+  userPrompt: string,
+  // Whether a row of Bliss symbols is drawn above each sentence choice. Defaults to `true`.
+  showBlissSentence: boolean
 };
 
 export type WordPredictionConfigType = {
@@ -147,6 +149,13 @@ export type AdaptivePaletteConfigType = {
 export type ContentSignalDataType = {
   payloads: SymbolEncodingType[],
   caretPosition: number
+};
+
+// One slot in a Bliss sentence row: the English span it covers, and the symbol found for it.
+// No payload means the span is rendered as text.
+export type BlissSentenceSlotType = {
+  text: string,
+  payload?: SymbolEncodingType
 };
 
 /*

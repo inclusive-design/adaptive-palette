@@ -1,0 +1,41 @@
+/*
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
+ *
+ * Licensed under the New BSD license. You may not use this file except in
+ * compliance with this License.
+ *
+ * You may obtain a copy of the License at
+ * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
+ */
+
+// The Bliss row above one sentence choice. It wraps rather than scrolls, so a long sentence
+// stays inside the button.
+.blissSentence {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.blissSentenceSlot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-size: 1rem;
+
+  svg {
+    height: 2.5rem;
+    width: auto;
+  }
+}
+
+// A span no symbol was found for. Sits on the text baseline so it lines up with the labels
+// under the symbols beside it.
+.blissSentenceTextOnly {
+  justify-content: flex-end;
+  font-style: italic;
+}

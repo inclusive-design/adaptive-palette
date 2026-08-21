@@ -16,8 +16,9 @@ import { MESSAGE_LOG_KEY, saveMessageRecord } from "../../core/MessageLog";
 import { queryChat, NO_MODELS_MESSAGE } from "../../core/OllamaApi";
 import {
   isModelTierActive, NOT_CONFIGURED_MESSAGE, parseModelWords, predictNext, rankModelWords,
-  requestModelWords, resolveWordPayload, SEED_STARTERS, wordPredictionStats
+  requestModelWords, SEED_STARTERS, wordPredictionStats
 } from "./WordPredictionUtils";
+import { resolveWordPayload } from "../../utils/GlossLookupUtils";
 import { SymbolEncodingType } from "../../index.d";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {

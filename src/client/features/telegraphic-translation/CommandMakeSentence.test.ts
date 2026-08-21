@@ -67,7 +67,8 @@ describe("CommandMakeSentence", (): void => {
         model: "phony-model:12b",
         numSentences,
         systemPrompt: "Give {{numSentences}} sentences.",
-        userPrompt: "Telegraphic message: {{telegraphicMessage}}"
+        userPrompt: "Telegraphic message: {{telegraphicMessage}}",
+        showBlissSentence: true
       }
     });
   };

@@ -153,6 +153,19 @@ by the time it arrives, the question is asked for it as for any other change to 
 already on screen when it arrives, the new label is dropped: it was worked out from the message as it stood
 before the held edit, so it no longer fits either answer.
 
+## Bliss sentence rows
+
+Each sentence choice is drawn as a row of Bliss symbols, each labelled with the English words it covers,
+so a user who reads Bliss rather than English can choose between the candidates. The row carries the
+English itself; the sentence is not repeated below it. `showBlissSentence` in `config.json` turns the row
+off, leaving the plain English sentence.
+
+The row is `aria-hidden`, so the button's accessible name comes from its `aria-label`: the plain English
+sentence, unchanged by any of this.
+
+The row is built on the client with no extra model call. How a sentence is parsed, split into spans and
+looked up in the Bliss vocabulary is described in [Bliss Sentences](devDoc/BlissSentences.md).
+
 ## Response Parsing
 
 The model response is split into lines. Blank lines are ignored, and leading list markers such as

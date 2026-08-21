@@ -139,9 +139,10 @@ model merely liked better.
 A suggestion with no Bliss symbol cannot be shown, so each word is looked up in turn:
 
 1. The user's own history, whose stored form carries the indicators and modifiers they used.
-2. A Bliss entry whose whole gloss is the word.
+2. A Bliss entry one of whose senses is the word, matched as
+   [Bliss Sentences](devDoc/BlissSentences.md#look-up-the-key) describes.
 3. A Bliss entry with the word inside a longer gloss, shortest gloss first, since a common word appears
-   in hundreds of them.
+   in hundreds of them. This is the one step the Bliss sentence rows do not take.
 
 A word none of these matches is dropped, and more words are asked for than there are slots to make up
 for it. Every query writes a line to the browser console reporting how many words came back, which step

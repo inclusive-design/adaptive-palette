@@ -61,8 +61,10 @@ section is discarded and the fallback tier is disabled. The pregenerated lookup 
 
 ## `telegraphicTranslation`
 
-There are no hardcoded prompts, so every field below is required. A partially configured section is treated as
-missing and the feature reports itself as unconfigured rather than running with empty prompts.
+There are no hardcoded prompts, so every field below is required except `showBlissSentence`. A partially
+configured section is treated as missing and the feature reports itself as unconfigured rather than running
+with empty prompts. `showBlissSentence` is exempt so that a `config.json` written before it existed keeps
+working: anything other than `false` reads as `true`.
 
 | Field | Type | Description |
 | ----- | ---- | ----------- |
@@ -70,6 +72,7 @@ missing and the feature reports itself as unconfigured rather than running with 
 | `numSentences` | number | Positive integer. How many candidate sentences to request. |
 | `systemPrompt` | string | Non-empty. Supports the `{{numSentences}}` placeholder. |
 | `userPrompt` | string | Non-empty. Supports the `{{telegraphicMessage}}` placeholder. |
+| `showBlissSentence` | boolean | Optional. Draws Bliss symbols above each sentence choice. Only `false` turns it off. |
 
 Placeholders are `{{name}}` and are substituted at query time; one with no matching value is left as is.
 

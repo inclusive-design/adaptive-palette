@@ -29,7 +29,8 @@ const CONFIG = {
   model: "phony-model:12b",
   numSentences: 3,
   systemPrompt: "Give {{numSentences}} sentences.",
-  userPrompt: "Telegraphic message: {{telegraphicMessage}}"
+  userPrompt: "Telegraphic message: {{telegraphicMessage}}",
+  showBlissSentence: true
 };
 
 describe("telegraphicTranslation", (): void => {

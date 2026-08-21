@@ -75,6 +75,10 @@ export const SETTING_DESCRIPTORS: SettingDescriptorType[] = [
     label: "Sentence choices to offer", group: "Sentences"
   },
   {
+    path: ["telegraphicTranslation", "showBlissSentence"], kind: "boolean", requiresModel: true,
+    label: "Show Bliss symbols above each sentence", group: "Sentences"
+  },
+  {
     path: ["indicatorLabelLookup", "useModelQueryFallback"], kind: "boolean", requiresModel: true,
     label: "Ask the AI model when no label is found", group: "Indicator labels"
   }
