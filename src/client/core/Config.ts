@@ -43,6 +43,7 @@ export function makeDefaultConfig (): AdaptivePaletteConfigType {
   return {
     maxStoredRecords: DEFAULT_MAX_STORED_RECORDS,
     announceSymbolOnInput: true,
+    markAiSuggestions: true,
     indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
     symbolSearch: { show: true },
     svgBuilderString: { show: false },
@@ -203,6 +204,9 @@ export async function loadConfig (): Promise<AdaptivePaletteConfigType> {
       // Anything other than `false` leaves announcements on: a mistyped config must not
       // silently mute the palette.
       announceSymbolOnInput: typeof parsed?.announceSymbolOnInput === "boolean" ? parsed.announceSymbolOnInput : true,
+      // Anything other than `false` leaves the marking on: a mistyped config must not quietly
+      // stop telling the user which suggestions a model made.
+      markAiSuggestions: typeof parsed?.markAiSuggestions === "boolean" ? parsed.markAiSuggestions : true,
       indicatorLabelLookup: indicatorLabelLookup ?? makeDefaultConfig().indicatorLabelLookup,
       telegraphicTranslation: parseTelegraphicTranslation(parsed?.telegraphicTranslation),
       symbolSearch: parseShowFlag(parsed?.symbolSearch, true),

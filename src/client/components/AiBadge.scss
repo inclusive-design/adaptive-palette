@@ -1,0 +1,43 @@
+/*
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
+ *
+ * Licensed under the New BSD license. You may not use this file except in
+ * compliance with this License.
+ *
+ * You may obtain a copy of the License at
+ * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
+ */
+
+/*
+ * The badge on a suggestion a model made. White on this brown is 5.02:1, which clears the
+ * 4.5:1 small text needs. Upright even inside the italic text it marks, so the two cues stay
+ * separate rather than blurring into one.
+ */
+.aiBadge {
+  background-color: #b45309;
+  border-radius: 0.25rem;
+  color: white;
+  font-size: 0.6rem;
+  font-style: normal;
+  font-weight: bold;
+  letter-spacing: 0.06em;
+  padding: 0.05rem 0.25rem;
+}
+
+/*
+ * Both features corner the badge the same way, so where it sits is written once here rather
+ * than twice beside the tint each of them adds. Out of the flow, it costs the button it marks
+ * no layout space. Making room for it is left to whatever is marked: only the sentence button
+ * starts its content close enough to the corner to need any.
+ */
+.aiSuggestion {
+  position: relative;
+}
+
+.aiSuggestion .aiBadge {
+  inset-block-start: 0.15rem;
+  inset-inline-start: 0.15rem;
+  position: absolute;
+}

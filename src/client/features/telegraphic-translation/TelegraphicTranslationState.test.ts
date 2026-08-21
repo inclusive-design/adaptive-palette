@@ -126,8 +126,8 @@ describe("telegraphicTranslationState", (): void => {
   test("clearMessageAndChoices empties the input area and the sentences", (): void => {
     editMessage(INPUT_CONTENTS);
     sentenceCompletionsSignal.value = {
-      status: "ready", sentences: ["I am hungry."], model: "phony-model:12b",
-      telegraphicMessage: "me hungry"
+      status: "ready", sentences: ["I am hungry."], recalledSentence: null,
+      model: "phony-model:12b", telegraphicMessage: "me hungry"
     };
 
     clearMessageAndChoices();
@@ -167,6 +167,7 @@ describe("telegraphicTranslationState", (): void => {
     expect(sentenceCompletionsSignal.value).toEqual({
       status: "ready",
       sentences: ["I am hungry.", "I want food."],
+      recalledSentence: null,
       model: "phony-model:12b",
       telegraphicMessage: "me hungry"
     });
@@ -653,7 +654,7 @@ describe("telegraphicTranslationState", (): void => {
 
     expect(mockedQueryChat).not.toHaveBeenCalled();
     expect(sentenceCompletionsSignal.value).toEqual({
-      status: "error", sentences: [], model: "", telegraphicMessage: "me hungry"
+      status: "error", sentences: [], recalledSentence: null, model: "", telegraphicMessage: "me hungry"
     });
   });
 
@@ -686,11 +687,48 @@ describe("telegraphicTranslationState", (): void => {
     expect(sentenceCompletionsSignal.value).toEqual({
       status: "ready",
       sentences: ["I am hungry."],
+      recalledSentence: "I am hungry.",
       model: "old-model:12b",
       telegraphicMessage: "me hungry"
     });
     // Recall reads the log; it writes nothing until the user picks the sentence.
     expect(readMessageLog()).toEqual(loggedBefore);
+  });
+
+  test("the recalled sentence is named in the state", async (): Promise<void> => {
+    recordPastTranslation("I am hungry.");
+    editMessage(INPUT_CONTENTS);
+    mockedQueryChat.mockResolvedValue({
+      message: { content: "1. I am hungry.\n2. I want food.\n3. Can I eat now?" }
+    } as never);
+
+    await requestForCurrentMessage();
+
+    expect(sentenceCompletionsSignal.value.recalledSentence).toBe("I am hungry.");
+  });
+
+  test("nothing is named when there was nothing to recall", async (): Promise<void> => {
+    editMessage(INPUT_CONTENTS);
+    mockedQueryChat.mockResolvedValue({
+      message: { content: "1. I am hungry.\n2. I want food.\n3. Can I eat now?" }
+    } as never);
+
+    await requestForCurrentMessage();
+
+    expect(sentenceCompletionsSignal.value.recalledSentence).toBeNull();
+  });
+
+  // With one sentence asked for, the recalled sentence is the whole answer and no model is
+  // queried, so it must still be named or it would be taken for the model's.
+  test("a recall-only answer names its sentence", async (): Promise<void> => {
+    setConfig(1);
+    recordPastTranslation("I am hungry.");
+    editMessage(INPUT_CONTENTS);
+
+    await requestForCurrentMessage();
+
+    expect(mockedQueryChat).not.toHaveBeenCalled();
+    expect(sentenceCompletionsSignal.value.recalledSentence).toBe("I am hungry.");
   });
 
   test("a recalled sentence shows while the rest are still being made", async (): Promise<void> => {
@@ -724,6 +762,7 @@ describe("telegraphicTranslationState", (): void => {
     expect(sentenceCompletionsSignal.value).toEqual({
       status: "ready",
       sentences: ["I am hungry.", "I want food.", "Can I eat now?"],
+      recalledSentence: "I am hungry.",
       model: "phony-model:12b",
       telegraphicMessage: "me hungry"
     });

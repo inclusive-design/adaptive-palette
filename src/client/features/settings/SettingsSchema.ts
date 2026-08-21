@@ -45,6 +45,10 @@ export const SETTING_DESCRIPTORS: SettingDescriptorType[] = [
     label: "Speak each symbol as I add it", group: "General"
   },
   {
+    path: ["markAiSuggestions"], kind: "boolean",
+    label: "Mark AI suggestions", group: "General"
+  },
+  {
     path: ["maxStoredRecords"], kind: "number", min: 0,
     label: "Messages to keep", group: "General"
   },

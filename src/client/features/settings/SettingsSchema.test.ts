@@ -139,6 +139,14 @@ describe("SettingsSchema", () => {
     test("falls back to the configuration when nothing is stored", () => {
       expect(applyStoredSettings(makeDefaultConfig())).toEqual(makeDefaultConfig());
     });
+
+    test("applies a saved value for the AI marking", () => {
+      store({ "markAiSuggestions": false });
+
+      const config = applyStoredSettings(makeDefaultConfig());
+
+      expect(config.markAiSuggestions).toBe(false);
+    });
   });
 
   describe("saveSettings()", () => {
@@ -200,6 +208,18 @@ describe("SettingsSchema", () => {
       });
 
       expect(saveSettings({ "announceSymbolOnInput": false }, makeDefaultConfig())).toBe(false);
+    });
+
+    // The setting is on in the file, so only switching it off is worth storing.
+    test("stores the AI marking only when it differs from the file", () => {
+      const baseline = makeDefaultConfig();
+
+      saveSettings({ "markAiSuggestions": true }, baseline);
+      expect(window.localStorage.getItem(SETTINGS_KEY)).toBeNull();
+
+      saveSettings({ "markAiSuggestions": false }, baseline);
+      expect(JSON.parse(window.localStorage.getItem(SETTINGS_KEY) as string))
+        .toEqual({ "markAiSuggestions": false });
     });
   });
 });
