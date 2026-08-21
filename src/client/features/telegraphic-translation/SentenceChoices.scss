@@ -18,6 +18,9 @@
 .sentenceChoice {
   background-color: white;
   border: 0.15rem solid blue;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   font-size: 1.1rem;
   padding: 0.75rem 1rem;
   text-align: left;

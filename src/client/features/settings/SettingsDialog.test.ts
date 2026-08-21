@@ -124,7 +124,7 @@ describe("SettingsDialog", () => {
     // Reachable, unlike a natively disabled control, so the note explaining it can be read.
     expect(control).not.toHaveAttribute("disabled");
     expect(control).toHaveAccessibleDescription(MODEL_NOTE);
-    expect(screen.getAllByText(MODEL_NOTE)).toHaveLength(3);
+    expect(screen.getAllByText(MODEL_NOTE)).toHaveLength(4);
 
     // Clicked directly: `userEvent` refuses an `aria-disabled` control, which is the
     // point of the attribute. The control's own handler is what keeps the box unchanged.

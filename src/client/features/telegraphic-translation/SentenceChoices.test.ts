@@ -65,7 +65,8 @@ describe("SentenceChoices", (): void => {
         model: "phony-model:12b",
         numSentences: 3,
         systemPrompt: "prompt",
-        userPrompt: "prompt"
+        userPrompt: "prompt",
+        showBlissSentence: true
       }
     });
   });
@@ -129,6 +130,52 @@ describe("SentenceChoices", (): void => {
       expect(screen.getByRole("button", { name: sentence })).toBeVisible();
     }
     expect(screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT)).toBeVisible();
+  });
+
+  const withBlissSetting = (showBlissSentence: boolean): void => {
+    setTestConfig({
+      telegraphicTranslation: {
+        model: "phony-model:12b", numSentences: 3, systemPrompt: "sys", userPrompt: "user",
+        showBlissSentence
+      }
+    });
+  };
+
+  it("draws a Bliss row inside each sentence choice", async (): Promise<void> => {
+    withBlissSetting(true);
+    sentenceCompletionsSignal.value = READY_STATE;
+    render(html`<${SentenceChoices} />`);
+    const choices = await screen.findAllByRole("button", { name: SENTENCES[0] });
+    expect(choices[0].querySelector(".blissSentence")).not.toBeNull();
+  });
+
+  it("shows the English sentence once, under the symbols", async (): Promise<void> => {
+    withBlissSetting(true);
+    sentenceCompletionsSignal.value = READY_STATE;
+    render(html`<${SentenceChoices} />`);
+    const choice = await screen.findByRole("button", { name: SENTENCES[0] });
+    // The row carries the English itself; nothing else inside the button repeats it.
+    const clone = choice.cloneNode(true) as HTMLElement;
+    clone.querySelector(".blissSentence")?.remove();
+    expect(clone.textContent?.trim()).toBe("");
+    expect(choice.getAttribute("aria-label")).toBe(SENTENCES[0]);
+  });
+
+  it("keeps the choice's accessible name the plain English sentence", async (): Promise<void> => {
+    withBlissSetting(true);
+    sentenceCompletionsSignal.value = READY_STATE;
+    render(html`<${SentenceChoices} />`);
+    // The row is `aria-hidden`, so none of its labels join the button's name.
+    expect(await screen.findByRole("button", { name: SENTENCES[0] })).toBeDefined();
+  });
+
+  it("draws no Bliss row when the setting is off", async (): Promise<void> => {
+    withBlissSetting(false);
+    sentenceCompletionsSignal.value = READY_STATE;
+    render(html`<${SentenceChoices} />`);
+    const choice = await screen.findByRole("button", { name: SENTENCES[0] });
+    expect(choice.querySelector(".blissSentence")).toBeNull();
+    expect(choice.getAttribute("aria-label")).toBeNull();
   });
 
   test("tapping a sentence logs it as chosen and keeps the choices on screen", async (): Promise<void> => {
@@ -330,9 +377,10 @@ describe("SentenceChoices", (): void => {
     sentenceCompletionsSignal.value = { ...READY_STATE, sentences: SENTENCES };
 
     await screen.findByRole("button", { name: SENTENCES[2] });
-    const shown = [...container.querySelectorAll(".sentenceChoice")].map(
-      (button) => button.textContent
-    );
+    // The sentence is the button's accessible name now, not a text node: the Bliss row carries
+    // the visible English.
+    const shown = [...container.querySelectorAll(".sentenceChoice")]
+      .map((button) => button.getAttribute("aria-label"));
     expect(shown).toEqual(SENTENCES);
     // The form is the last thing on screen, after every sentence. The closed discard
     // dialog sits below it in the markup and shows nothing.

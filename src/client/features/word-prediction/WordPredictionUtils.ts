@@ -12,12 +12,12 @@
 
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { readMessageLog } from "../../core/MessageLog";
-import { findSymbolByGloss } from "../../utils/SvgUtils";
+import { resolveWordPayload } from "../../utils/GlossLookupUtils";
 import { normalizeComposition } from "../../utils/SymbolEncodingUtils";
 import { renderTemplate } from "../../utils/PromptUtils";
 import { pickModel } from "../telegraphic-translation/TelegraphicTranslationUtils";
 import { queryChat } from "../../core/OllamaApi";
-import { BlissSymbolEntry, ResolutionRungType, SymbolCompositionType, SymbolEncodingType } from "../../index.d";
+import { ResolutionRungType, SymbolCompositionType, SymbolEncodingType } from "../../index.d";
 
 /*
  * Common sentence starters, offered for the first word until the user has saved a message of
@@ -276,71 +276,6 @@ export function parseModelWords (content: string): string[] {
     words.push(word);
   });
   return words;
-}
-
-/**
- * Build a payload for a symbol found in the Bliss vocabulary, labelled with the word that was
- * looked up rather than the whole gloss: "drink" is what the user asked for, where the gloss
- * may read "drink,beverage".
- * @param {number} symbolId - The id of the matching entry.
- * @param {SymbolCompositionType | undefined} composition - The entry's composition, if it has one.
- * @param {string} word - The word to label the symbol with.
- * @returns {SymbolEncodingType}
- */
-function glossPayload (symbolId: number, composition: SymbolCompositionType | undefined, word: string): SymbolEncodingType {
-  return {
-    label: word,
-    composition: composition ?? symbolId,
-    userSelectedSymbolId: symbolId,
-    modifierInfo: []
-  };
-}
-
-/**
- * Find a symbol to show a model-suggested word with, and report which step found it.
- *
- * The steps, first hit winning:
- * 1. the user's own history, whose payload carries the indicators, modifiers and symbol they
- *    chose for that word themselves;
- * 2. a Bliss entry the word is one of the glosses, since a gloss is often a comma
- *    separated list of synonyms ("water, fluid, liquid"). The entry the word is the earliest
- *    in glosses wins, so "water" is the fluid rather than "urine, piss, pee, ..., water";
- * 3. a Bliss entry with the word inside a longer gloss, the shortest gloss first. A common
- *    word such as "to" appears in hundreds of glosses, so the shortest one keeps this from
- *    picking an arbitrary symbol, and the lowest id settles a tie.
- *
- * A word none of them matches is dropped: a suggestion with no symbol cannot be shown.
- * @param {string} word - The word, lowercased.
- * @param {Map<string, SymbolEncodingType>} payloadByLabel - Past payloads by lowercased label.
- * @returns {{ payload?: SymbolEncodingType, rung: ResolutionRungType }}
- */
-export function resolveWordPayload (word: string, payloadByLabel: Map<string, SymbolEncodingType>): { payload?: SymbolEncodingType, rung: ResolutionRungType } {
-  const fromHistory = payloadByLabel.get(word);
-  if (fromHistory) {
-    return { payload: { ...fromHistory }, rung: "history" };
-  }
-  let senseMatch: { entry: BlissSymbolEntry, position: number } | undefined;
-  for (const entry of adaptivePaletteGlobals.symbols) {
-    // `symbols` is ordered by id, so the first entry at a given position is the lowest id.
-    const position = entry.gloss.toLowerCase().split(",").map((sense) => sense.trim()).indexOf(word);
-    if (position !== -1 && (senseMatch === undefined || position < senseMatch.position)) {
-      senseMatch = { entry, position };
-    }
-  }
-  if (senseMatch) {
-    return { payload: glossPayload(senseMatch.entry.id, senseMatch.entry.composition, word), rung: "exactGloss" };
-  }
-  const matches = findSymbolByGloss(word);
-  if (matches.length > 0) {
-    const best = matches.reduce((shortest, match) =>
-      match.label.length < shortest.label.length ||
-      (match.label.length === shortest.label.length && match.id < shortest.id)
-        ? match
-        : shortest
-    );
-    return { payload: glossPayload(best.id, best.composition, word), rung: "wordInGloss" };
-  }
-  return { rung: "dropped" };
 }
 
 /**

@@ -52,7 +52,36 @@ describe("loadConfig telegraphicTranslation section", (): void => {
       telegraphicTranslation: TELEMSG_SECTION
     });
     const config = await loadConfig();
-    expect(config.telegraphicTranslation).toEqual(TELEMSG_SECTION);
+    expect(config.telegraphicTranslation).toEqual({ ...TELEMSG_SECTION, showBlissSentence: true });
+  });
+
+  test("showBlissSentence defaults to true when it is absent", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      telegraphicTranslation: TELEMSG_SECTION
+    });
+    const config = await loadConfig();
+    expect(config.telegraphicTranslation?.showBlissSentence).toBe(true);
+  });
+
+  test("showBlissSentence is honoured when it is false", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      telegraphicTranslation: { ...TELEMSG_SECTION, showBlissSentence: false }
+    });
+    const config = await loadConfig();
+    expect(config.telegraphicTranslation?.showBlissSentence).toBe(false);
+  });
+
+  test("a malformed showBlissSentence keeps the rest of the section", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      telegraphicTranslation: { ...TELEMSG_SECTION, showBlissSentence: "yes please" }
+    });
+    const config = await loadConfig();
+    // A bad value must not discard the section and disable translation outright.
+    expect(config.telegraphicTranslation?.numSentences).toBe(3);
+    expect(config.telegraphicTranslation?.showBlissSentence).toBe(true);
   });
 
   test("a missing section leaves the feature unconfigured", async (): Promise<void> => {
@@ -83,7 +112,7 @@ describe("loadConfig telegraphicTranslation section", (): void => {
     stubConfigFetch({ telegraphicTranslation: TELEMSG_SECTION });
     const config = await loadConfig();
     expect(config.indicatorLabelLookup.useModelQueryFallback).toBe(false);
-    expect(config.telegraphicTranslation).toEqual(TELEMSG_SECTION);
+    expect(config.telegraphicTranslation).toEqual({ ...TELEMSG_SECTION, showBlissSentence: true });
   });
 });
 

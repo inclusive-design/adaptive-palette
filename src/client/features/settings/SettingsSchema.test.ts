@@ -19,7 +19,7 @@ import { SETTINGS_KEY, applyStoredSettings, saveSettings } from "./SettingsSchem
 const configWithSentences = (): AdaptivePaletteConfigType => ({
   ...makeDefaultConfig(),
   telegraphicTranslation: {
-    model: "", numSentences: 3, systemPrompt: "system", userPrompt: "user"
+    model: "", numSentences: 3, systemPrompt: "system", userPrompt: "user", showBlissSentence: true
   }
 });
 
