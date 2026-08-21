@@ -11,6 +11,8 @@ Technical guide for developers building the adaptive palette.
 - [Palettes](Palettes.md) — how a palette renders, the palette file map, and the palette JSON
   structure.
 - [Cell Types](CellTypes.md) — every registered cell type, its options, and how to add a new one.
+- [Bliss Sentences](BlissSentences.md) — how an English sentence becomes a row of Bliss
+  symbols, and the shared gloss lookup behind it.
 - [Testing](Testing.md) — the browser test setup and how to run it.
 
 Also useful:

@@ -163,24 +163,8 @@ off, leaving the plain English sentence.
 The row is `aria-hidden`, so the button's accessible name comes from its `aria-label`: the plain English
 sentence, unchanged by any of this.
 
-The row is built on the client with no extra model call. Each sentence is parsed by `compromise`, split
-into spans, and each span looked up in the Bliss dictionary:
-
-- A verb is looked up by the `to` form the dictionary glosses actions with, so "want to" finds "to want"
-  (id 2705) rather than the noun "want, desire" (id 4765). A verb takes a following "to" only when another
-  verb follows it, so the directional "to" in "I go to school" survives.
-- A multi-word gloss such as "ice cream" or "Valentine's Day" is matched as one span.
-- A plural noun is looked up in the singular and marked with the plural indicator.
-- Past tense, future tense and the imperative add their indicator. Present tense adds none: an action
-  entry's own indicator 81 is already the unmarked form.
-- Punctuation is drawn too. A mark is resolved by a direct map to its Bliss symbol — `.` (id 4), `,` (5),
-  `?` (3), `!` (1), `:` (6), `'` (7) — not by the gloss lookup, which would send "period" to
-  "limited time, interval, period". A mark with no Bliss symbol, such as a dash or an ellipsis, is shown
-  as text. Contractions are expanded before parsing, so no apostrophe survives to be drawn.
-- A span with no symbol is shown as plain text.
-
-Indicators are attached with the word-level overlay separator `;;`, which `bliss-svg-builder` resolves by
-finding the word's head glyph itself.
+The row is built on the client with no extra model call. How a sentence is parsed, split into spans and
+looked up in the Bliss vocabulary is described in [Bliss Sentences](devDoc/BlissSentences.md).
 
 ## Response Parsing
 
