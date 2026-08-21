@@ -139,6 +139,9 @@ export type AdaptivePaletteConfigType = {
   // Whether each symbol and command label is spoken as the user inputs. When off, the Speak
   // button is the only routine speech; failures still announce.
   announceSymbolOnInput: boolean,
+  // Whether suggestions that came from a model are marked as such, visibly and to a screen
+  // reader. Defaults to `true`.
+  markAiSuggestions: boolean,
   indicatorLabelLookup: IndicatorLabelLookupConfigType,
   telegraphicTranslation?: TelegraphicTranslationConfigType,
   symbolSearch: FeatureVisibilityConfigType,
@@ -182,6 +185,9 @@ export type MatchType = {
 export type SentenceCompletionsStateType = {
   status: "idle" | "working" | "ready" | "error",
   sentences: string[],
+  // The sentence recalled from the message log, when one was found for this message. Every
+  // other sentence in `sentences` came from the model.
+  recalledSentence: string | null,
   model: string,
   telegraphicMessage: string
 };

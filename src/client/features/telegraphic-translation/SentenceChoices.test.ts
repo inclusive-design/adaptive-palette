@@ -16,7 +16,8 @@ import userEvent from "@testing-library/user-event";
 import { userEvent as browserUserEvent } from "vitest/browser";
 import { html } from "htm/preact";
 
-import { changeEncodingContents } from "../../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
+import { AI_BADGE_TEXT, aiSuggestionLabel } from "../../components/AiBadge";
 import { setTestConfig } from "../../testUtils/TestConfig";
 import { editMessage, setEditGuard } from "../../core/MessageEdit";
 import {
@@ -41,6 +42,7 @@ describe("SentenceChoices", (): void => {
   const READY_STATE = {
     status: "ready" as const,
     sentences: SENTENCES,
+    recalledSentence: null,
     model: "phony-model:12b",
     telegraphicMessage: "me hungry"
   };
@@ -48,6 +50,7 @@ describe("SentenceChoices", (): void => {
   const WORKING_STATE = {
     status: "working" as const,
     sentences: [],
+    recalledSentence: null,
     model: "phony-model:12b",
     telegraphicMessage: "me hungry"
   };
@@ -61,6 +64,11 @@ describe("SentenceChoices", (): void => {
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
     setTestConfig({
+      // No fixture here sets `recalledSentence`, so with the marking on every sentence in one
+      // reads as the model's and is named "AI suggestion, ...". These tests are about other
+      // behaviour and find their buttons by the bare sentence, so the marking is off for them.
+      // "marking the model's sentences" below turns it back on.
+      markAiSuggestions: false,
       telegraphicTranslation: {
         model: "phony-model:12b",
         numSentences: 3,
@@ -100,7 +108,8 @@ describe("SentenceChoices", (): void => {
     const liveRegion = container.querySelector("[role=\"status\"]");
 
     sentenceCompletionsSignal.value = {
-      status: "working", sentences: [], model: "phony-model:12b", telegraphicMessage: "me hungry"
+      status: "working", sentences: [], recalledSentence: null, model: "phony-model:12b",
+      telegraphicMessage: "me hungry"
     };
 
     expect(await screen.findByText(WORKING_MESSAGE)).toBeVisible();
@@ -134,6 +143,7 @@ describe("SentenceChoices", (): void => {
 
   const withBlissSetting = (showBlissSentence: boolean): void => {
     setTestConfig({
+      markAiSuggestions: false,
       telegraphicTranslation: {
         model: "phony-model:12b", numSentences: 3, systemPrompt: "sys", userPrompt: "user",
         showBlissSentence
@@ -198,7 +208,8 @@ describe("SentenceChoices", (): void => {
 
   test("focus moves to the first choice when the sentences arrive", async (): Promise<void> => {
     sentenceCompletionsSignal.value = {
-      status: "working", sentences: [], model: "phony-model:12b", telegraphicMessage: "me hungry"
+      status: "working", sentences: [], recalledSentence: null, model: "phony-model:12b",
+      telegraphicMessage: "me hungry"
     };
     render(html`<${SentenceChoices} />`);
 
@@ -623,6 +634,95 @@ describe("SentenceChoices", (): void => {
       await waitFor(() => {
         expect(document.getElementById(INPUT_AREA_ID)).toHaveFocus();
       });
+    });
+  });
+
+  describe("marking the model's sentences", (): void => {
+
+    beforeEach((): void => {
+      adaptivePaletteGlobals.config.markAiSuggestions = true;
+    });
+
+    const RECALLED_STATE = {
+      status: "ready" as const,
+      sentences: SENTENCES,
+      recalledSentence: SENTENCES[0],
+      model: "phony-model:12b",
+      telegraphicMessage: "me hungry"
+    };
+
+    const choiceButtons = (): HTMLElement[] =>
+      [...document.querySelectorAll<HTMLElement>(".sentenceChoice")];
+
+    test("marks the model's sentences and leaves the recalled one plain", (): void => {
+      sentenceCompletionsSignal.value = RECALLED_STATE;
+      render(html`<${SentenceChoices} />`);
+
+      const [recalled, fromModel] = choiceButtons();
+
+      expect(recalled).not.toHaveClass("aiSuggestion");
+      expect(recalled.querySelector(".aiBadge")).toBeNull();
+      // Bliss symbols are on in this file's config, so an unmarked sentence still names
+      // itself for a screen reader.
+      expect(recalled).toHaveAttribute("aria-label", SENTENCES[0]);
+
+      expect(fromModel).toHaveClass("aiSuggestion");
+      expect(fromModel.querySelector(".aiBadge")?.textContent).toBe(AI_BADGE_TEXT);
+      expect(fromModel).toHaveAttribute("aria-label", aiSuggestionLabel(SENTENCES[1]));
+    });
+
+    // Nothing was recalled, so every sentence on screen is the model's.
+    test("marks every sentence when none was recalled", (): void => {
+      sentenceCompletionsSignal.value = { ...RECALLED_STATE, recalledSentence: null };
+      render(html`<${SentenceChoices} />`);
+
+      expect(choiceButtons()).toHaveLength(SENTENCES.length);
+      choiceButtons().forEach((button) => expect(button).toHaveClass("aiSuggestion"));
+    });
+
+    // Without the Bliss row, an unmarked sentence takes its name from its own text and needs
+    // no `aria-label`; a marked one still needs the prefix.
+    test("marks the sentences with the Bliss rows turned off", (): void => {
+      setTestConfig({
+        markAiSuggestions: true,
+        telegraphicTranslation: {
+          model: "phony-model:12b",
+          numSentences: 3,
+          systemPrompt: "prompt",
+          userPrompt: "prompt",
+          showBlissSentence: false
+        }
+      });
+      sentenceCompletionsSignal.value = RECALLED_STATE;
+      render(html`<${SentenceChoices} />`);
+
+      const [recalled, fromModel] = choiceButtons();
+      expect(recalled).not.toHaveAttribute("aria-label");
+      expect(fromModel).toHaveAttribute("aria-label", aiSuggestionLabel(SENTENCES[1]));
+    });
+
+    // The name a screen reader hears carries the prefix; what is spoken and logged must not.
+    test("tapping a marked sentence speaks and logs the sentence, not its name", async (): Promise<void> => {
+      sentenceCompletionsSignal.value = RECALLED_STATE;
+      render(html`<${SentenceChoices} />`);
+
+      await userEvent.click(screen.getByRole("button", { name: aiSuggestionLabel(SENTENCES[1]) }));
+
+      expect(mockedSpeak).toHaveBeenCalledWith(SENTENCES[1]);
+      const log = readMessageLog();
+      expect(log).toHaveLength(1);
+      expect(log[0].translation).toMatchObject({ sentence: SENTENCES[1], source: "chosen" });
+    });
+
+    test("marks nothing when the setting is off", (): void => {
+      adaptivePaletteGlobals.config.markAiSuggestions = false;
+      sentenceCompletionsSignal.value = RECALLED_STATE;
+      render(html`<${SentenceChoices} />`);
+
+      expect(document.querySelectorAll(".aiSuggestion")).toHaveLength(0);
+      expect(document.querySelectorAll(".aiBadge")).toHaveLength(0);
+      // The name it had before the feature existed is unchanged.
+      expect(choiceButtons()[1]).toHaveAttribute("aria-label", SENTENCES[1]);
     });
   });
 });

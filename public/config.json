@@ -1,6 +1,7 @@
 {
   "maxStoredRecords": 500,
   "announceSymbolOnInput": true,
+  "markAiSuggestions": true,
   "indicatorLabelLookup": {
     "useModelQueryFallback": true,
     "model": "gemma4:12b",

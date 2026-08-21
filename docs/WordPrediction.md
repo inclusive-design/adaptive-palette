@@ -67,6 +67,11 @@ of how much the user uses a word when the model's words are ranked.
 
 ## Words from the model
 
+Words from the model are marked apart from the ones the history found, unless the
+`markAiSuggestions` setting is off: a warm fill, an italic label, and an "AI" badge in the
+cell's corner. The badge is hidden from screen readers, and the cell names itself
+"AI suggestion, `<word>`" instead.
+
 ### Request Optimization (Debouncing)
 
 To minimize API calls, requests to the model are debounced by 400ms.

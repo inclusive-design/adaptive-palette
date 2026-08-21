@@ -11,6 +11,7 @@ Settings defined in `public/config.json` except these fields: `model`, `systemPr
 | Group | Setting | Needs Ollama |
 | ----- | ------- | ------------ |
 | General | Speak each symbol as I add it | |
+| General | Mark AI suggestions | |
 | General | Messages to keep | |
 | Symbol entry | Show "Add Symbol to Message" | |
 | Symbol entry | Show SVG-builder string entry | |

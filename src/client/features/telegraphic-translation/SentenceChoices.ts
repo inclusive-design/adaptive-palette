@@ -23,6 +23,7 @@ import { INPUT_AREA_ID } from "../../cells/ContentEncoding";
 import { announceIfEnabled, speak, speakUnavailable } from "../../utils/SpeechUtils";
 import { saveTranslation, SentenceSourceType } from "../../core/MessageLog";
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
+import { AiBadge, aiSuggestionLabel } from "../../components/AiBadge";
 import { BlissSentence } from "./BlissSentence";
 import "./SentenceChoices.scss";
 
@@ -148,17 +149,27 @@ export function SentenceChoices (): VNode {
   // sentences are on screen.
   const showBlissSentence =
     adaptivePaletteGlobals.config.telegraphicTranslation?.showBlissSentence === true;
+  const markAiSuggestions = adaptivePaletteGlobals.config.markAiSuggestions;
 
   const choices = state.status === "idle" ? null : html`
-    ${state.sentences.map((sentence, index) => html`
-      <button
-        key=${index}
-        class="sentenceChoice"
-        aria-label=${showBlissSentence ? sentence : undefined}
-        onClick=${() => logAndSpeak(sentence, "chosen")}>
-        ${showBlissSentence ? html`<${BlissSentence} sentence=${sentence} />` : sentence}
-      </button>
-    `)}
+    ${state.sentences.map((sentence, index) => {
+      // Everything but the sentence recalled from the log came from the model.
+      const isMarked = markAiSuggestions && sentence !== state.recalledSentence;
+      // A marked sentence says so first. An unmarked one keeps the name it had: the sentence
+      // itself when the Bliss row would otherwise be all a screen reader found.
+      const ariaLabel = isMarked ? aiSuggestionLabel(sentence)
+        : showBlissSentence ? sentence : undefined;
+      return html`
+        <button
+          key=${index}
+          class=${isMarked ? "sentenceChoice aiSuggestion" : "sentenceChoice"}
+          aria-label=${ariaLabel}
+          onClick=${() => logAndSpeak(sentence, "chosen")}>
+          ${isMarked ? html`<${AiBadge} />` : null}
+          ${showBlissSentence ? html`<${BlissSentence} sentence=${sentence} />` : sentence}
+        </button>
+      `;
+    })}
     <form class="sentenceTypeYourOwn" onSubmit=${submitTypedSentence}>
       <input
         type="text"
