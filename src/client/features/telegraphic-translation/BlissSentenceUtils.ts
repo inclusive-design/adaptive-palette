@@ -82,6 +82,12 @@ export const FUTURE_INDICATOR_ID = 87;
 export const IMPERATIVE_INDICATOR_ID = 907;
 export const PLURAL_INDICATOR_ID = 99;
 
+// The auxiliary "do" of a question or a negation, which carries no meaning of its own.
+const DO_SUPPORT = /^(do|does|did)$/i;
+
+// A term whose `post` matches this ends a sentence, and with it the clause a verb sits in.
+const SENTENCE_END = /[.!?]/;
+
 // The Bliss punctuation symbols, by the English mark they stand for. A direct map rather than a
 // gloss lookup: "period" also glosses id 426 ("limited time, interval, period") and id 2001
 // ("menstruation, menstrual period").
@@ -118,6 +124,11 @@ function parseSentence (sentence: string): { terms: TaggedTermType[], verbs: Ver
   return { terms, verbs };
 }
 
+// Singulars already worked out. Building a compromise document costs about a millisecond, and
+// the n-gram scan asks for the same word repeatedly -- once as the tail of each candidate, and
+// again for every sentence the model offered.
+const singulars = new Map<string, string>();
+
 /**
  * The singular of a word, as compromise conjugates it: "apples" to "apple", "people" to
  * "person".
@@ -125,12 +136,95 @@ function parseSentence (sentence: string): { terms: TaggedTermType[], verbs: Ver
  * @returns {string}
  */
 function toSingular (word: string): string {
+  const known = singulars.get(word);
+  if (known !== undefined) {
+    return known;
+  }
   // Tagged as a noun first: compromise reads a bare "books" or "drinks" as a verb, which
   // leaves `.nouns()` empty and the word unchanged.
   const doc = nlp(word);
   doc.tag("Noun");
   const singular = doc.nouns().toSingular().text().trim();
-  return singular.length > 0 ? singular.toLowerCase() : word.toLowerCase();
+  const result = singular.length > 0 ? singular.toLowerCase() : word.toLowerCase();
+  singulars.set(word, result);
+  return result;
+}
+
+/**
+ * Whether a pronoun precedes the term at `index` in the same sentence.
+ *
+ * The scan stops at the end of the sentence before, because compromise parses however many
+ * sentences it is given at once: "Please help me." is still an order when "I am tired."
+ * comes ahead of it.
+ * @param {TaggedTermType[]} terms - Every term compromise read.
+ * @param {number} index - Where the verb span starts.
+ * @returns {boolean}
+ */
+function hasSubjectBefore (terms: TaggedTermType[], index: number): boolean {
+  for (let at = index - 1; at >= 0 && !SENTENCE_END.test(terms[at].post ?? ""); at -= 1) {
+    if (terms[at].tags.includes("Pronoun")) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Whether another verb follows the one at `index`, in the same sentence.
+ * @param {TaggedTermType[]} terms - Every term compromise read.
+ * @param {number} index - Where the verb span starts.
+ * @param {Map<string, VerbSpanType>} verbByFirstTerm - Verb spans by their first term's id.
+ * @returns {boolean}
+ */
+function hasVerbAfter (
+  terms: TaggedTermType[], index: number, verbByFirstTerm: Map<string, VerbSpanType>
+): boolean {
+  for (let at = index; at < terms.length; at += 1) {
+    if (at > index && verbByFirstTerm.has(terms[at].id)) {
+      return true;
+    }
+    if (SENTENCE_END.test(terms[at].post ?? "")) {
+      return false;
+    }
+  }
+  return false;
+}
+
+/**
+ * Whether a verb span is do-support rather than an action of its own: the "Do" of "Do you
+ * want to go outside?", which means nothing on its own and would otherwise draw id 1558,
+ * "to do, to act".
+ *
+ * A question word tag marks the one that opens a question. Otherwise a bare "do" carrying
+ * another verb -- "How do you feel?", "Did you eat?" -- is the auxiliary too, unless it is
+ * tagged imperative, which is the real verb of "Do your homework and eat lunch."
+ * @param {VerbSpanType} verb - The verb span.
+ * @param {TaggedTermType[]} terms - Every term compromise read.
+ * @param {number} index - Where the verb span starts.
+ * @param {Map<string, VerbSpanType>} verbByFirstTerm - Verb spans by their first term's id.
+ * @returns {boolean}
+ */
+function isDoSupport (
+  verb: VerbSpanType, terms: TaggedTermType[], index: number,
+  verbByFirstTerm: Map<string, VerbSpanType>
+): boolean {
+  if (verb.ids.length !== 1 || verb.infinitive.toLowerCase() !== "do") {
+    return false;
+  }
+  return terms[index].tags.includes("QuestionWord") ||
+    (!terms[index].tags.includes("Imperative") &&
+     hasVerbAfter(terms, index, verbByFirstTerm));
+}
+
+/**
+ * Whether a term inside a verb span is not part of the verb itself: its negation, or an
+ * adverb compromise folded in. Each gets a span of its own, so a span's label never claims
+ * more than its symbol shows.
+ * @param {TaggedTermType} term - The term.
+ * @returns {boolean}
+ */
+function isAside (term: TaggedTermType): boolean {
+  return term.tags.includes("Negative") || term.tags.includes("Adverb");
 }
 
 /**
@@ -144,11 +238,11 @@ function toSingular (word: string): string {
  * for the bare verb of a modal question, so "Can you help me?" would be marked as an order.
  * A subject pronoun ahead of the verb rules that out, and no real imperative has one.
  * @param {VerbSpanType} verb - The verb span.
- * @param {boolean} hasSubjectBefore - Whether a pronoun precedes the verb in the sentence.
+ * @param {boolean} subjectBefore - Whether a pronoun precedes the verb in its own sentence.
  * @returns {number | undefined}
  */
-function verbIndicator (verb: VerbSpanType, hasSubjectBefore: boolean): number | undefined {
-  if (verb.form === "imperative" && !hasSubjectBefore) {
+function verbIndicator (verb: VerbSpanType, subjectBefore: boolean): number | undefined {
+  if (verb.form === "imperative" && !subjectBefore) {
     return IMPERATIVE_INDICATOR_ID;
   }
   if (verb.tense === "PastTense") {
@@ -239,22 +333,43 @@ export function sentenceSpans (sentence: string): SentenceSpanType[] {
   let index = 0;
   while (index < terms.length) {
     const verb = verbByFirstTerm.get(terms[index].id);
-    if (verb) {
+    if (verb && !isDoSupport(verb, terms, index, verbByFirstTerm)) {
       let end = index + verb.ids.length;
       // A verb takes a following "to" only when another verb follows it.
       if (terms[end]?.text.toLowerCase() === "to" &&
           terms[end + 1] !== undefined && verbByFirstTerm.has(terms[end + 1].id)) {
         end += 1;
       }
-      // compromise already prefixes the infinitive with "to" for a "have to" construction,
-      // which would otherwise key the span "to to go".
-      const infinitive = verb.infinitive.toLowerCase().replace(/^to /, "");
-      spans.push({
-        text: terms.slice(index, end).map((term) => term.text).join(" "),
-        key: `to ${infinitive}`,
-        indicatorId: verbIndicator(verb, terms.slice(0, index).some(
-          (term) => term.tags.includes("Pronoun")
-        ))
+      const covered = terms.slice(index, end);
+      const coreStart = covered.findIndex((term) => !isAside(term));
+      // The verb itself, without the do-support the negative and the question forms add:
+      // "do not want" is drawn, and so labelled, as "want".
+      const core = covered.filter((term) => !isAside(term));
+      const verbCore = core.length > 1
+        ? core.filter((term) => !DO_SUPPORT.test(term.text))
+        : core;
+      // The negation comes first whatever its place in the phrase -- Bliss puts "not" ahead
+      // of the verb it negates, where English has "do not want" and "is not". An adverb keeps
+      // the side of the verb it was read on.
+      covered.forEach((term, at) => {
+        if (isAside(term) && (term.tags.includes("Negative") || at < coreStart)) {
+          spans.push({ text: term.text, ...singleTermKey(term) });
+        }
+      });
+      if (verbCore.length > 0) {
+        // compromise already prefixes the infinitive with "to" for a "have to" construction,
+        // which would otherwise key the span "to to go".
+        const infinitive = verb.infinitive.toLowerCase().replace(/^to /, "");
+        spans.push({
+          text: verbCore.map((term) => term.text).join(" "),
+          key: `to ${infinitive}`,
+          indicatorId: verbIndicator(verb, hasSubjectBefore(terms, index))
+        });
+      }
+      covered.forEach((term, at) => {
+        if (isAside(term) && !term.tags.includes("Negative") && at > coreStart) {
+          spans.push({ text: term.text, ...singleTermKey(term) });
+        }
       });
       spans.push(...punctuationSpans(terms[end - 1]));
       index = end;

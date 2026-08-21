@@ -134,6 +134,49 @@ describe("BlissSentenceUtils", (): void => {
       expect(indicators("I like ice creams")).toEqual([undefined, undefined, PLURAL_INDICATOR_ID]);
     });
 
+    it("gives a negation its own span, ahead of the verb it negates", (): void => {
+      expect(texts("I don't want that.")).toEqual(["I", "not", "want", "that", "."]);
+      expect(texts("I can't go outside.")).toEqual(["I", "not", "can go", "outside", "."]);
+      expect(texts("It is not cold today.")).toEqual(["It", "not", "is", "cold", "today", "."]);
+      expect(texts("I never eat meat.")).toEqual(["I", "never", "eat", "meat", "."]);
+    });
+
+    it("keeps the tense of a negated verb", (): void => {
+      expect(indicators("I will not go.")).toEqual([undefined, undefined, FUTURE_INDICATOR_ID,
+        undefined]);
+      expect(indicators("She has not eaten.")).toEqual([undefined, undefined, PAST_INDICATOR_ID,
+        undefined]);
+    });
+
+    it("drops the do-support of a negation from the verb's label", (): void => {
+      // "do" carries no meaning of its own, and no symbol is drawn for it.
+      expect(texts("Do not open the door.")).toEqual(["not", "open", "the", "door", "."]);
+      expect(indicators("Do not open the door.")[1]).toBe(IMPERATIVE_INDICATOR_ID);
+    });
+
+    it("gives an adverb compromise folded into a verb its own span", (): void => {
+      expect(texts("Mom, I don't feel well."))
+        .toEqual(["Mom", ",", "I", "not", "feel", "well", "."]);
+      expect(texts("I really want that.")).toEqual(["I", "really", "want", "that", "."]);
+    });
+
+    it("does not read the do-support of a question as an action", (): void => {
+      expect(keys("Do you want to go outside?"))
+        .toEqual(["do", "you", "to want", "to go", "outside", "?"]);
+      expect(keys("How do you feel?")).toEqual(["how", "do", "you", "to feel", "?"]);
+    });
+
+    it("still reads a real `do` as an action", (): void => {
+      expect(keys("I do my homework.")).toEqual(["i", "to do", "my", "homework", "."]);
+      expect(keys("Do it now.")).toEqual(["to do", "it", "now", "."]);
+      expect(indicators("Do it now.")[0]).toBe(IMPERATIVE_INDICATOR_ID);
+    });
+
+    it("marks an imperative that follows another sentence", (): void => {
+      // The subject check reaches only into the verb's own sentence, not the one before it.
+      expect(indicators("I am tired. Please help me.")[5]).toBe(IMPERATIVE_INDICATOR_ID);
+    });
+
     it("gives each punctuation mark its own span", (): void => {
       expect(texts("I want ice cream, please."))
         .toEqual(["I", "want", "ice cream", ",", "please", "."]);
@@ -228,6 +271,17 @@ describe("BlissSentenceUtils", (): void => {
       expect(slots[3].payload?.userSelectedSymbolId).toBe(5);
       expect(slots[5].text).toBe(".");
       expect(slots[5].payload?.userSelectedSymbolId).toBe(4);
+    });
+
+    it("draws the Bliss `not` for a negation", (): void => {
+      expect(blissSlots("I don't want that.")[1].payload?.userSelectedSymbolId).toBe(2088);
+      expect(blissSlots("I never eat meat.")[1].payload?.userSelectedSymbolId).toBe(2069);
+    });
+
+    it("leaves the do-support of a question as text", (): void => {
+      const slots = blissSlots("Do you want to go outside?");
+      expect(slots[0].text).toBe("Do");
+      expect(slots[0].payload).toBeUndefined();
     });
 
     it("leaves a mark with no Bliss symbol as text", (): void => {

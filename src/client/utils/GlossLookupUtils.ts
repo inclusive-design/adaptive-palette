@@ -46,42 +46,68 @@ function writtenSenses (entry: BlissSymbolEntry): string[] {
   return entry.gloss.toLowerCase().split(",").map((sense) => sense.trim());
 }
 
+// The entry that answers for each sense of the dictionary.
+type SenseIndexType = Map<string, BlissSymbolEntry>;
+
 /**
- * Scan the whole dictionary for an entry one of whose senses is `key`.
+ * Index every sense of every entry, keeping for each sense the one entry that answers for it.
  *
- * Ties are settled the way `resolveWordPayload` has always settled them: the earliest sense
- * position wins, so "water" is the fluid rather than a late synonym of "urine". Failing that
- * the lowest id wins, since `symbols` is ordered by id and a strict comparison keeps the
- * first one seen.
- *
- * `preferSingleSense` adds one more rule between those two: an entry whose only sense is the
- * key beats a multi-sense one, so "ice cream" alone beats "ice cream, sherbet, sorbet". It is
- * used only on the pass that matches senses as written. On the normalized pass every
- * candidate is qualified by definition, and there the rule picks the more obscure
- * disambiguation: "four" would land on id 23 "four (index number)", a superscript modifier
- * glyph, rather than id 13 "four (digit), 4".
- * @param {string} key - The word or phrase, lowercased.
+ * Tie-breaking rules to pick the "best" one to put in the index:
+ * 1. Position: The word that appears earlier in a symbol's comma-separated list wins.
+ * 2. Single-Sense Preference: (Used only for the written index). A symbol that only means
+ * "ice cream" will beat a symbol that means "ice cream, sherbet, sorbet".
+ * 3. Lowest ID: If all else is equal, the symbol with the lowest ID (first in the database) wins.
+ * @param {BlissSymbolEntry[]} symbols - The dictionary.
  * @param {(entry: BlissSymbolEntry) => string[]} senseFn - How to read an entry's senses.
  * @param {boolean} preferSingleSense - Whether a single-sense entry breaks a positional tie.
- * @returns {BlissSymbolEntry | undefined}
+ * @returns {SenseIndexType}
  */
-function scanSenses (
-  key: string, senseFn: (entry: BlissSymbolEntry) => string[], preferSingleSense: boolean
-): BlissSymbolEntry | undefined {
-  let best: { entry: BlissSymbolEntry, position: number, senseCount: number } | undefined;
-  for (const entry of adaptivePaletteGlobals.symbols) {
+function indexSenses (
+  symbols: BlissSymbolEntry[], senseFn: (entry: BlissSymbolEntry) => string[],
+  preferSingleSense: boolean
+): SenseIndexType {
+  const best = new Map<string, { entry: BlissSymbolEntry, position: number, senseCount: number }>();
+  for (const entry of symbols) {
     const senses = senseFn(entry);
-    const position = senses.indexOf(key);
-    if (position === -1) {
-      continue;
-    }
-    if (best === undefined || position < best.position ||
-        (preferSingleSense && position === best.position &&
-         senses.length === 1 && best.senseCount > 1)) {
-      best = { entry, position, senseCount: senses.length };
-    }
+    senses.forEach((sense, position) => {
+      // An entry that repeats a sense counts at its first position only.
+      if (senses.indexOf(sense) !== position) {
+        return;
+      }
+      const current = best.get(sense);
+      if (current === undefined || position < current.position ||
+          (preferSingleSense && position === current.position &&
+           senses.length === 1 && current.senseCount > 1)) {
+        best.set(sense, { entry, position, senseCount: senses.length });
+      }
+    });
   }
-  return best?.entry;
+  return new Map([...best].map(([sense, { entry }]) => [sense, entry]));
+}
+
+// The dictionary indexed once, rather than scanned per lookup: every span of every sentence
+// choice is looked up, and a miss used to walk all 6420 entries twice. Rebuilt if the
+// dictionary itself is ever replaced.
+let senseIndexes: {
+  symbols: BlissSymbolEntry[], written: SenseIndexType, normalized: SenseIndexType
+} | undefined;
+
+/**
+ * Build two separate indexes, built on first use.
+ * 1. written: Maps exactly what is written in the dictionary (e.g., "a (lowercase)" -> Symbol ID 52).
+ * 2. normalized: Maps the cleaned versions (e.g., "a" -> Symbol ID 52).
+ * @returns {{ written: SenseIndexType, normalized: SenseIndexType }}
+ */
+function indexes (): { written: SenseIndexType, normalized: SenseIndexType } {
+  const symbols = adaptivePaletteGlobals.symbols;
+  if (senseIndexes?.symbols !== symbols) {
+    senseIndexes = {
+      symbols,
+      written: indexSenses(symbols, writtenSenses, true),
+      normalized: indexSenses(symbols, (entry) => writtenSenses(entry).map(normalizeSense), false)
+    };
+  }
+  return senseIndexes;
 }
 
 /**
@@ -92,14 +118,14 @@ function scanSenses (
  * annotate -- "ice cream (cone)", "side (body)", and 52 alphabet entries such as
  * "a (lowercase)". Normalizing in one pass turns those into single-sense entries that outrank
  * the right answer, sending "i" to id 37 instead of id 1840 and "a" to id 29 instead of
- * id 100. Only a key whose every candidate is qualified reaches the second pass, which is
+ * id 100. Only a key whose every candidate is qualified reaches the normalized index, which is
  * exactly what normalization is for.
  * @param {string} key - The word or phrase, lowercased.
  * @returns {BlissSymbolEntry | undefined}
  */
 export function findGlossEntry (key: string): BlissSymbolEntry | undefined {
-  return scanSenses(key, writtenSenses, true) ??
-    scanSenses(key, (entry) => writtenSenses(entry).map(normalizeSense), false);
+  const { written, normalized } = indexes();
+  return written.get(key) ?? normalized.get(key);
 }
 
 /**
