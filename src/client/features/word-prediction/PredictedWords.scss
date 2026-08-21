@@ -65,11 +65,7 @@
 }
 
 /*
- * A word the model suggested: a warm fill, italic label and the badge, all three together, so
- * the mark never rests on colour alone. `AiBadge.scss` corners the badge itself.
- *
- * Cornered rather than set in front of the label because a cell is only a fraction of the
- * row's width: a badge on the label's line would leave too little for the word and wrap it.
+ * A word the model suggested: a warm fill, italic label and the badge.
  */
 .predictedWord.aiSuggestion {
   background-color: #fdf1d0;
