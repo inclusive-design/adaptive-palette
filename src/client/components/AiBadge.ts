@@ -21,8 +21,8 @@ export const AI_BADGE_TEXT = "AI";
 
 /**
  * The accessible name for a suggestion a model made. The badge is hidden from screen readers
- * because "AI" read on its own is easy to mishear, so the fuller phrase is spoken instead.
- * @param {string} text - The suggestion's own text: a word's label, or a sentence.
+ * because "AI" read on its own is easy to mishear, so the fuller phrase is used instead.
+ * @param {string} text - The suggestion's own text: a word's label, a sentence, or an indicator label.
  * @returns {string}
  */
 export function aiSuggestionLabel (text: string): string {
@@ -30,9 +30,11 @@ export function aiSuggestionLabel (text: string): string {
 }
 
 /**
- * The badge marking a suggestion as a model's. Hidden from screen readers: the button carrying
- * it takes an `aria-label` from `aiSuggestionLabel()` instead, which reads better than a badge
- * announced beside the suggestion.
+ * The badge marking a suggestion as a model's. Always `aria-hidden`, because "AI" announced
+ * beside the suggestion reads poorly. A suggested word and a sentence make up for it with an
+ * `aria-label` from `aiSuggestionLabel()` on the button carrying them. An indicator label does
+ * not: assistive technology reading the composed message back gets the label alone, deliberately,
+ * and the announcement spoken as the label lands carries where it came from instead.
  * @returns {VNode}
  */
 export function AiBadge (): VNode {

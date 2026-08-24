@@ -12,6 +12,7 @@ State is managed using the following properties:
 - **`userSelectedSymbolId`**: The symbol's core dictionary ID, retained through any modifier or indicator edits.
 - **`indicatorId`**: The currently applied indicator ID, if any.
 - **`baseLabel`**: The original text label, preserved so it can be restored if the indicator is removed or swapped.
+- **`isAiLabel`**: True when the current label came from a model query rather than the pre-generated table.
 
 The lookup key for resolving a new label is always `{userSelectedSymbolId}_{indicatorId}`.
 
@@ -35,6 +36,12 @@ completes. The system attempts to resolve the label in the following order:
    in `public/config.json` via `indicatorLabelLookup.useModelQueryFallback`. This feature requires the user's
    device to be running Ollama.
 
+   A label resolved this way is recorded as the model's, on the symbol's `isAiLabel` payload field, and shown
+   with an "AI" badge and in italic while it is on screen. The mark is dropped when the indicator is removed
+   or when a swapped indicator resolves through Tier 1, and it survives modifier edits, which leave the
+   model's text in the label. `markAiSuggestions` in `public/config.json` turns the marking off; see
+   [Config.md](devDoc/Config.md).
+
 3. **Unchanged Label**
    If both tiers fail (e.g., missing data, unreachable model, or invalid POS combination), the system gracefully
    degrades: the visual indicator is applied, but the text label remains unchanged.
@@ -44,9 +51,12 @@ completes. The system attempts to resolve the label in the following order:
 Audio feedback triggers immediately when an indicator is clicked:
 
 1. **Lookup Table Match:** Announces the new label immediately.
-2. **Model Fallback:** Announces `"{symbol label} {indicator label} — loading new label"` once the indicator is
-selected. Once the model responds, it announces the new label.
-3. **No Match / Fallback Failed:** Announces `"{symbol label} {indicator label}"`. The text label remains unchanged.
+2. **Cached Model Result:** A label the model already returned this session is applied at once, with no loading
+message. Announces `"AI suggestion, {new label}"`, or the new label alone when `markAiSuggestions` is off.
+3. **Model Fallback:** Announces `"{symbol label}, {indicator label} loading new label"` once the indicator is
+selected. Once the model responds, it announces `"AI suggestion, {new label}"`, or the new label alone when
+`markAiSuggestions` is off.
+4. **No Match / Fallback Failed:** Announces `"{symbol label}, {indicator label}"`. The text label remains unchanged.
 
 ### Modifier Interaction
 
@@ -61,9 +71,12 @@ indicator and automatically reapplies them to the newly resolved label.
 | `public/data/new_labels_with_indicator.json` | Pre-generated lookup table (`{symbolId}_{indicatorId} -> label`). |
 | `public/data/indicators.json` | Indicator metadata (id, group, name, purpose). |
 | `public/data/bliss_symbol_explanations.json` | Bliss vocabulary (gloss, POS, explanation) used to build model prompts. |
-| `public/config.json` | Runtime config (enables/disables Ollama fallback, selects model). |
+| `public/config.json` | Runtime config (enables/disables Ollama fallback, selects model, `markAiSuggestions`). |
 | `src/client/cells/ActionIndicatorCell.ts` | Applies an indicator and triggers label resolution. |
 | `src/client/cells/ActionRemoveIndicatorCell.ts` | Removes an indicator and restores `baseLabel`. |
+| `src/client/cells/ContentEncoding.ts` | Renders the message; folds `markAiSuggestions` into each symbol's AI mark. |
+| `src/client/components/BlissSymbol.ts` | Draws a symbol; badges and italicises a marked label. |
+| `src/client/components/AiBadge.ts` | The "AI" badge and the spoken "AI suggestion" prefix; styles in `AiBadge.scss`. |
 
 ### Runtime Configuration (`public/config.json`)
 

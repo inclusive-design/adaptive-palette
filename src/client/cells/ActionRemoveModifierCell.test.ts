@@ -252,4 +252,18 @@ describe("ActionRemoveModifierCell", (): void => {
     // activated. Speech is the main feedback channel and must not go silent.
     expect(mockedSpeakUnavailable).toHaveBeenCalledWith(testCell.options.label);
   });
+
+  test("keeps the AI mark when a modifier is removed", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [{ ...blissWordIndicatorThenModifier, isAiLabel: true }],
+      caretPosition: 0
+    };
+    renderCell(ActionRemoveModifierCell, TEST_CELL_ID, testCell.options);
+    const removeModifierButton = await screen.findByRole("button", { name: testCell.options.label });
+    fireEvent.click(removeModifierButton);
+
+    const updated = changeEncodingContents.value.payloads[0];
+    expect(updated.label).toBe("walked");
+    expect(updated.isAiLabel).toBe(true);
+  });
 });

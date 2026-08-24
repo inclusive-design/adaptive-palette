@@ -82,7 +82,11 @@ export type SymbolEncodingType = BlissSymbolInfoType & {
   // label before any indicator swap; set when a swap occurs
   baseLabel?: string,
   // number of modifierInfo entries present when baseLabel was captured
-  baseModifierCount?: number
+  baseModifierCount?: number,
+  // True when the label came from the indicator-label model query rather than the
+  // pregenerated table. Cleared whenever the label stops being the model's; absent
+  // and `false` mean the same thing, so test it for truthiness, not against `false`.
+  isAiLabel?: boolean
 }
 
 export type IndicatorLabelLookupConfigType = {

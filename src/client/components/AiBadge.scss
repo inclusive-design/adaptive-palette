@@ -41,3 +41,17 @@
   inset-inline-start: 0.15rem;
   position: absolute;
 }
+
+/*
+ * An indicator label the model produced, in the input area. The badge sits in the flow before
+ * the label rather than in the corner used elsewhere: what is marked here is the label text,
+ * not the symbol, which is the user's own. No fill -- the label is already part of the message,
+ * not an offer to pick, and a fill would fight the yellow caret highlight beneath it.
+ */
+.aiLabel {
+  font-style: italic;
+}
+
+.aiLabel .aiBadge {
+  margin-inline-end: 0.25rem;
+}

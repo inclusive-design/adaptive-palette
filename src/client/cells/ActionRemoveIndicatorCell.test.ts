@@ -223,4 +223,19 @@ describe("ActionRemoveIndicatorCell", (): void => {
     // activated. Speech is the main feedback channel and must not go silent.
     expect(mockedSpeakUnavailable).toHaveBeenCalledWith(testCell.options.label);
   });
+
+  // Removing the indicator restores `baseLabel`, which is the user's own text, so the mark goes.
+  test("clears the AI mark when the indicator is removed", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [{ ...blissWordWithIndicatorAndBaseLabel, isAiLabel: true }],
+      caretPosition: 0
+    };
+    renderCell(ActionRemoveIndicatorCell, TEST_CELL_ID, testCell.options);
+    const removeIndicatorButton = await screen.findByRole("button", { name: testCell.options.label });
+    fireEvent.click(removeIndicatorButton);
+
+    const restored = changeEncodingContents.value.payloads[0];
+    expect(restored.label).toBe("help");
+    expect(restored.isAiLabel).toBeFalsy();
+  });
 });

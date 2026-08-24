@@ -51,13 +51,20 @@ did not. When `true`, a word the model suggested and a sentence the model made e
 fill, italic text, and an "AI" badge, and name themselves to a screen reader as
 "AI suggestion, `<text>`".
 
+An indicator label the model produced is marked too, but more lightly: an "AI" badge before the
+label and the label in italic, with no fill. A word or sentence is an offer the user picks from,
+so a fill that marks the whole cell fits; an indicator label is already applied, part of the
+message rather than an offer. It is announced as "AI suggestion, `<text>`" once, as it lands.
+
 Only what a model produced is marked. A suggested word found in the user's own message history
 is not, and neither is a sentence recalled from the message log, which the user approved
-themselves. A missing or malformed value leaves the marking on.
+themselves. Nor is an indicator label found in the pregenerated table -- only the model-query
+tier is marked. A missing or malformed value leaves the marking on.
 
 The badge and the spoken prefix live in
-[`src/client/components/AiBadge.ts`](../../src/client/components/AiBadge.ts); the fill and the
-italic are set per feature, beside the styles for what they mark.
+[`src/client/components/AiBadge.ts`](../../src/client/components/AiBadge.ts). A word's and a
+sentence's fill and italic are set per feature, beside the styles for what they mark; the
+indicator label's italic sits with the badge in `AiBadge.scss`.
 
 ## `indicatorLabelLookup`
 

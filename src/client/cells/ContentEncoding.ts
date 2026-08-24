@@ -13,9 +13,9 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "../components/BlissSymbol";
-import { changeEncodingContents } from "../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
-import { ContentEncodingType, BlissSymbolInfoType } from "../index.d";
+import { ContentEncodingType, SymbolEncodingType } from "../index.d";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
 import "./ContentEncoding.scss";
@@ -57,31 +57,34 @@ type ContentEncodingProps = {
  * @param {ContentSignalDataType} symbols: Array of symbols and caret position.
  * @return {Array<VNode>} - Array of markup for the symbols
  */
-export function generateMarkupArray (payloadArray: Array<BlissSymbolInfoType>, caretPos: number): Array<VNode> {
+export function generateMarkupArray (payloadArray: Array<SymbolEncodingType>, caretPos: number): Array<VNode> {
+  // Read once here rather than per symbol.
+  const markAiSuggestions = adaptivePaletteGlobals.config.markAiSuggestions;
   // NOTE:  if there are no payloads in the `payloadArray`, the map() function
   // immediately returns an empty array.  That is, the function passed to map()
   // will execute only if `payloadArray.length` is non-zero -- there is no need
   // to check for a length of zero within the mapping function.
   return payloadArray.map((payload, index) => {
+    const isMarked = payload.isAiLabel && markAiSuggestions;
     // Check inserting before first symbol
     if (index === 0 && caretPos === -1) {
       return html`
         <div class="blissSymbol insertionCaret">
-          <${BlissSymbol} composition=${payload.composition} label=${payload.label} isPresentation="true" />
+          <${BlissSymbol} composition=${payload.composition} label=${payload.label} isPresentation="true" isMarked=${isMarked} />
         </div>
       `;
     }
     else if (index === caretPos) {
       return html`
         <div class="blissSymbol cursorCaret">
-          <${BlissSymbol} composition=${payload.composition} label=${payload.label} isPresentation="true" />
+          <${BlissSymbol} composition=${payload.composition} label=${payload.label} isPresentation="true" isMarked=${isMarked} />
         </div>
       `;
     }
     else {
       return html`
         <div class="blissSymbol">
-          <${BlissSymbol} composition=${payload.composition} label=${payload.label} isPresentation="true" />
+          <${BlissSymbol} composition=${payload.composition} label=${payload.label} isPresentation="true" isMarked=${isMarked} />
         </div>
       `;
     }

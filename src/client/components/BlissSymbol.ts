@@ -13,6 +13,7 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { getSvgElement } from "../utils/SvgUtils";
+import { AiBadge } from "./AiBadge";
 import { SymbolCompositionType } from "../index.d";
 
 export const GRAPHIC_ROLE = "graphic-symbol img";
@@ -25,11 +26,16 @@ type BlissSymbolPropsType = {
   // values.
   isPresentation: "true" | "false",
   // @id of label element when isPresntation is "false"
-  labelledBy?: string
+  labelledBy?: string,
+  // True when the label's provenance is to be marked: the badge before the label, and the
+  // label italicised. The caller folds in the config; this only draws it. Only meaningful when
+  // `isPresentation` is "true": otherwise the label element is the `aria-labelledby` target, and
+  // the badge could land in the computed accessible name despite being `aria-hidden`.
+  isMarked?: boolean
 }
 
 export function BlissSymbol (props: BlissSymbolPropsType): VNode {
-  const { composition, label, isPresentation, labelledBy } = props;
+  const { composition, label, isPresentation, labelledBy, isMarked } = props;
   const svgElement = getSvgElement(composition);
 
   // Deal with aria markup, depending on whether the SVG is for presentation only or
@@ -56,8 +62,11 @@ export function BlissSymbol (props: BlissSymbolPropsType): VNode {
     { raw: [`${svgMarkupString}`] }
   ) as unknown as TemplateStringsArray;
 
+  const labelClass = isMarked ? "aiLabel" : undefined;
+  const badge = isMarked ? html`<${AiBadge} />` : null;
+
   return html`
     ${html(templateStringArray)}
-    <div id="${labelledBy}">${label}</div>
+    <div id="${labelledBy}" class=${labelClass}>${badge}${label}</div>
   `;
 }

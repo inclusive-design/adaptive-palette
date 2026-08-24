@@ -92,6 +92,8 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
       "composition": newComposition,
       "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
       "modifierInfo": symbolToEdit.modifierInfo
+      // No "isAiLabel" in this list: restoring `baseLabel` restores the user's own text, so the mark
+      // goes with the indicator -- and the mark is only ever set alongside a `baseLabel`, never without.
     });
     editMessage({ payloads: edited, caretPosition: caretPosition });
     announceIfEnabled(`${restoredLabel}`);

@@ -129,7 +129,14 @@ export function saveMessageRecord (payloads: SymbolEncodingType[]): void {
   if (lastRecord && recordMessageText(lastRecord) === messageText(payloads)) {
     return;
   }
-  writeMessageLog([...entries, { timestamp: new Date().toISOString(), payloads }]);
+  // The AI mark is dropped here: a message the user has said is theirs, so its labels stop being
+  // the model's. Word prediction replays these payloads, and history suggestions are never marked.
+  const unmarked = payloads.map((payload) => {
+    const stored = { ...payload };
+    delete stored.isAiLabel;
+    return stored;
+  });
+  writeMessageLog([...entries, { timestamp: new Date().toISOString(), payloads: unmarked }]);
 }
 
 /**

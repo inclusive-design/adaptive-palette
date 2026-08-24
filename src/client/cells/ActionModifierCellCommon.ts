@@ -81,7 +81,9 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
       "modifierInfo": newModifierInfo,
       "indicatorId": symbolToEdit.indicatorId,
       "baseLabel": symbolToEdit.baseLabel,
-      "baseModifierCount": symbolToEdit.baseModifierCount
+      "baseModifierCount": symbolToEdit.baseModifierCount,
+      // A modifier wraps the label, it does not replace it: the model's text is still in there.
+      "isAiLabel": symbolToEdit.isAiLabel
     });
     editMessage({ payloads: edited, caretPosition: caretPosition });
     announceIfEnabled(newLabel);

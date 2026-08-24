@@ -62,6 +62,14 @@ describe("messageLog", (): void => {
       expect(log[0].translation).toBeUndefined();
     });
 
+    test("the AI mark is dropped from a saved message", (): void => {
+      const [payload] = message("walked");
+      saveMessageRecord([{ ...payload, indicatorId: 1234, baseLabel: "walk", isAiLabel: true }]);
+      const stored = readMessageLog()[0].payloads[0];
+      expect(stored.isAiLabel).toBeFalsy();
+      expect(stored).toMatchObject({ label: "walked", composition: 1840, indicatorId: 1234, baseLabel: "walk" });
+    });
+
     test("an empty message is not saved", (): void => {
       saveMessageRecord([]);
       expect(window.localStorage.getItem(MESSAGE_LOG_KEY)).toBeNull();
