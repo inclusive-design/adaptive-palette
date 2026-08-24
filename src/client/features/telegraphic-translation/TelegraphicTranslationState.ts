@@ -28,7 +28,7 @@ import type { ContentSignalDataType, SentenceCompletionsStateType } from "../../
  * place. It is never mutated.
  */
 export const IDLE_SENTENCE_STATE: SentenceCompletionsStateType = {
-  status: "idle", sentences: [], model: "", telegraphicMessage: ""
+  status: "idle", sentences: [], recalledSentence: null, model: "", telegraphicMessage: ""
 };
 
 /**
@@ -122,7 +122,8 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
   // model nothing.
   if (recalled && numSentences === 1) {
     sentenceCompletionsSignal.value = {
-      status: "ready", sentences: [recalled.sentence], model: recalled.model, telegraphicMessage
+      status: "ready", sentences: [recalled.sentence], recalledSentence: recalled.sentence,
+      model: recalled.model, telegraphicMessage
     };
     return;
   }
@@ -135,7 +136,8 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
     // while the query is running, it needs to be saved under the model that the query was sent to.
     const model = pickModel(config?.model ?? "");
     sentenceCompletionsSignal.value = {
-      status: "working", sentences: recalledSentences, model, telegraphicMessage
+      status: "working", sentences: recalledSentences,
+      recalledSentence: recalled?.sentence ?? null, model, telegraphicMessage
     };
     const result = await requestSentences(telegraphicMessage, controller.signal);
     // Sentences are only displayed if the user has not changed the message or moved on since
@@ -153,7 +155,8 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
         .slice(0, numSentences - 1)]
       : result.sentences;
     sentenceCompletionsSignal.value = {
-      status: "ready", sentences, model: result.model, telegraphicMessage
+      status: "ready", sentences, recalledSentence: recalled?.sentence ?? null,
+      model: result.model, telegraphicMessage
     };
   } catch (error) {
     // The user editing the message aborts the request. That is normal use, not a failure,
@@ -171,7 +174,8 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
       // Picking the model failed, before the state ever went `working`. Without this the user
       // is left with no error line at all.
       sentenceCompletionsSignal.value = {
-        status: "error", sentences: recalledSentences, model: "", telegraphicMessage
+        status: "error", sentences: recalledSentences,
+        recalledSentence: recalled?.sentence ?? null, model: "", telegraphicMessage
       };
     }
   } finally {

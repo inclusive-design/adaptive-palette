@@ -63,3 +63,11 @@
 .predictedWordEmpty {
   background-color: white;
 }
+
+/*
+ * A word the model suggested: a warm fill, italic label and the badge.
+ */
+.predictedWord.aiSuggestion {
+  background-color: #fdf1d0;
+  font-style: italic;
+}

@@ -24,6 +24,7 @@ import {
 } from "./PredictedWords";
 import { cancelModelQuery, modelWordsSignal } from "./WordPredictionState";
 import { SymbolEncodingType } from "../../index.d";
+import { AI_BADGE_TEXT, aiSuggestionLabel } from "../../components/AiBadge";
 
 // The row is driven from `modelWordsSignal` directly here, so a query left waiting is all
 // that is wanted of Ollama.
@@ -53,6 +54,7 @@ describe("PredictedWords", (): void => {
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
     adaptivePaletteGlobals.config.maxStoredRecords = 100;
     adaptivePaletteGlobals.config.wordPrediction = { show: true, maxSuggestions: 4, ...DISABLED_MODEL_QUERY };
+    adaptivePaletteGlobals.config.markAiSuggestions = true;
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
     saveMessageRecord(message("I", "want", "juice"));
     saveMessageRecord(message("I", "want", "juice"));
@@ -239,6 +241,50 @@ describe("PredictedWords", (): void => {
 
     test("one word is announced as one suggestion", (): void => {
       expect(moreSuggestionsMessage(1)).toBe("1 more word suggestion");
+    });
+
+    // "juice" is what the history predicts after "I want"; the model's words follow it, and
+    // only they are marked.
+    test("marks the model's words and leaves the history's plain", (): void => {
+      setMessage("I", "want");
+      showModelWords("I want", "food", "tea");
+      render(html`<${PredictedWords} />`);
+
+      const suggestions = screen.getByRole("group", { name: PREDICTED_WORDS_LABEL });
+      const buttons = [...suggestions.querySelectorAll("button")];
+
+      expect(buttons[0]).not.toHaveClass("aiSuggestion");
+      expect(buttons[0].querySelector(".aiBadge")).toBeNull();
+      expect(buttons[0]).not.toHaveAttribute("aria-label");
+
+      expect(buttons[1]).toHaveClass("aiSuggestion");
+      expect(buttons[1].querySelector(".aiBadge")?.textContent).toBe(AI_BADGE_TEXT);
+      expect(buttons[1]).toHaveAttribute("aria-label", aiSuggestionLabel("food"));
+    });
+
+    // The cell's accessible name carries the prefix; the word added to the message must not.
+    test("choosing a marked word adds the word, not its name", async (): Promise<void> => {
+      const user = userEvent.setup();
+      setMessage("I", "want");
+      showModelWords("I want", "food", "tea");
+      render(html`<${PredictedWords} />`);
+
+      await user.click(screen.getByRole("button", { name: aiSuggestionLabel("food") }));
+
+      expect(changeEncodingContents.value.payloads.map((payload) => payload.label))
+        .toEqual(["I", "want", "food"]);
+    });
+
+    test("marks nothing when the setting is off", (): void => {
+      adaptivePaletteGlobals.config.markAiSuggestions = false;
+      setMessage("I", "want");
+      showModelWords("I want", "food", "tea");
+      render(html`<${PredictedWords} />`);
+
+      const suggestions = screen.getByRole("group", { name: PREDICTED_WORDS_LABEL });
+      expect(suggestions.querySelectorAll(".aiSuggestion")).toHaveLength(0);
+      expect(suggestions.querySelectorAll(".aiBadge")).toHaveLength(0);
+      expect(suggestions.querySelector("button")).not.toHaveAttribute("aria-label");
     });
   });
 });

@@ -14,7 +14,8 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { BlissSymbol } from "../components/BlissSymbol";
-import { changeEncodingContents } from "../state/GlobalData";
+import { aiSuggestionLabel } from "../components/AiBadge";
+import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { applyModifiersToLabel, replaceAtCaret } from "../utils/SymbolEncodingUtils";
@@ -85,7 +86,10 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       "modifierInfo": symbolToEdit.modifierInfo,
       "indicatorId": indicatorId,
       "baseLabel": baseLabel,
-      "baseModifierCount": baseModifierCount
+      "baseModifierCount": baseModifierCount,
+      // The label has not changed yet, so neither has where it came from. If a tier
+      // answers below, `applyLabel()` overwrites this with that tier's answer.
+      "isAiLabel": symbolToEdit.isAiLabel
     });
     editMessage({ payloads: edited, caretPosition: caretPosition });
 
@@ -104,18 +108,22 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
     // Apply modifier labels so their text isn't lost (e.g. "big walk" + indicator -> "big walked", not "walked").
     // When there's no `userSelectedSymbolId`, skip this because modifier text is already folded into
     // `baseLabel` before it reaches the Ollama prompt. Re-wrapping here would double it.
-    const applyLabel = (label: string) => {
+    const applyLabel = (label: string, isAiLabel: boolean) => {
       const latest = changeEncodingContents.value;
       const finalLabel = symbolToEdit.userSelectedSymbolId !== undefined
         ? applyModifiersToLabel(label, symbolToEdit.modifierInfo)
         : label;
       const relabelled = replaceAtCaret(latest.payloads, caretPosition, {
         ...latest.payloads[caretPosition],
-        "label": finalLabel
+        "label": finalLabel,
+        "isAiLabel": isAiLabel
       });
-      // Annouce the final label if the edit is accepted, otherwise announce the unchanged message.
+      // Announce the final label if the edit is accepted, otherwise announce the unchanged message.
+      // The badge in the input area is `aria-hidden`, so this spoken announcement, made once as
+      // the label lands, is the only audible sign that the label is the model's.
       if (editMessage({ payloads: relabelled, caretPosition: latest.caretPosition })) {
-        announceIfEnabled(finalLabel);
+        const isMarked = isAiLabel && adaptivePaletteGlobals.config.markAiSuggestions;
+        announceIfEnabled(isMarked ? aiSuggestionLabel(finalLabel) : finalLabel);
       } else {
         announceIfEnabled(unchangedMessage);
       }
@@ -127,14 +135,14 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
     // is gated on `isStillCurrent()`.
     const staticLabel = getStaticNewLabel(symbolToEdit.userSelectedSymbolId, indicatorId);
     if (staticLabel !== undefined) {
-      applyLabel(staticLabel);
+      applyLabel(staticLabel, false);
       return;
     }
 
     const modelResult = getNewLabelViaModelQuery(symbolToEdit.userSelectedSymbolId, symbolToEdit.label, baseLabel, indicatorId);
 
     if (modelResult.status === "cached" && modelResult.label !== undefined) {
-      applyLabel(modelResult.label);
+      applyLabel(modelResult.label, true);
       return;
     }
     if (modelResult.status !== "pending") {
@@ -148,7 +156,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       return;
     }
     if (newLabel !== undefined) {
-      applyLabel(newLabel);
+      applyLabel(newLabel, true);
     } else {
       announceIfEnabled(unchangedMessage);
     }

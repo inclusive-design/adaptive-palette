@@ -54,3 +54,17 @@
     background-color: lightsalmon;
   }
 }
+
+/*
+ * A sentence the model made: a warm fill, italic text and the badge, all three together, so
+ * the mark never rests on colour alone. `AiBadge.scss` corners the badge itself.
+ *
+ * The extra top padding is the room that corner needs. The `0.75rem` this button otherwise
+ * has is less than the badge is tall, so without it the badge would clip the first Bliss
+ * symbol, or the first word's ascenders when the symbols are off.
+ */
+.sentenceChoice.aiSuggestion {
+  background-color: #fdf1d0;
+  font-style: italic;
+  padding-block-start: 1.1rem;
+}

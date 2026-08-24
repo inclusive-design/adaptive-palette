@@ -16,6 +16,7 @@ which re-validates every value it reads back. See [Settings.md](../Settings.md).
 | ------- | -------- |
 | `maxStoredRecords` | Top-level, not a section. How many messages the local-storage message log keeps. |
 | `announceSymbolOnInput` | Top-level, not a section. Whether labels are spoken as the user inputs. |
+| `markAiSuggestions` | Top-level, not a section. Whether suggestions a model made are marked as such. |
 | `indicatorLabelLookup` | The Ollama fallback tier for looking up indicator labels. See [IndicatorLabelLookup.md](../IndicatorLabelLookup.md). |
 | `telegraphicTranslation` | Translating a telegraphic message into full sentences. See [TelegraphicMessageTranslation.md](../TelegraphicMessageTranslation.md). |
 | `symbolSearch` | The "Add Symbol to Message" trigger and its gloss-search dialog. |
@@ -42,6 +43,28 @@ preview is deliberately not a live region.
 
 The two are separate functions in [`src/client/utils/SpeechUtils.ts`](../../src/client/utils/SpeechUtils.ts):
 `announceIfEnabled()` consults this setting, `speak()` ignores it.
+
+## `markAiSuggestions`
+
+A boolean deciding whether suggestions that came from a model are marked apart from those that
+did not. When `true`, a word the model suggested and a sentence the model made each get a warm
+fill, italic text, and an "AI" badge, and name themselves to a screen reader as
+"AI suggestion, `<text>`".
+
+An indicator label the model produced is marked too, but more lightly: an "AI" badge before the
+label and the label in italic, with no fill. A word or sentence is an offer the user picks from,
+so a fill that marks the whole cell fits; an indicator label is already applied, part of the
+message rather than an offer. It is announced as "AI suggestion, `<text>`" once, as it lands.
+
+Only what a model produced is marked. A suggested word found in the user's own message history
+is not, and neither is a sentence recalled from the message log, which the user approved
+themselves. Nor is an indicator label found in the pregenerated table -- only the model-query
+tier is marked. A missing or malformed value leaves the marking on.
+
+The badge and the spoken prefix live in
+[`src/client/components/AiBadge.ts`](../../src/client/components/AiBadge.ts). A word's and a
+sentence's fill and italic are set per feature, beside the styles for what they mark; the
+indicator label's italic sits with the badge in `AiBadge.scss`.
 
 ## `indicatorLabelLookup`
 

@@ -276,6 +276,7 @@ describe("wordPrediction model query", (): void => {
     const SENTENCE_STATE = {
       status: "ready" as const,
       sentences: ["I want food."],
+      recalledSentence: null,
       model: "phony-model:12b",
       telegraphicMessage: "I"
     };

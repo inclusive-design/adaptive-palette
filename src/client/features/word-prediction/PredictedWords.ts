@@ -16,6 +16,7 @@ import { html } from "htm/preact";
 import { adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal } from "../../state/GlobalData";
 import { messageText } from "../../core/MessageLog";
 import { editMessage } from "../../core/MessageEdit";
+import { AiBadge, aiSuggestionLabel } from "../../components/AiBadge";
 import { BlissSymbol } from "../../components/BlissSymbol";
 import { insertWordAtCaret } from "../../utils/SymbolEncodingUtils";
 import { announceIfEnabled } from "../../utils/SpeechUtils";
@@ -57,6 +58,7 @@ export function moreSuggestionsMessage (count: number): string {
 export function PredictedWords (): VNode | null {
   const { payloads, caretPosition } = changeEncodingContents.value;
   const { show, maxSuggestions } = adaptivePaletteGlobals.config.wordPrediction;
+  const markAiSuggestions = adaptivePaletteGlobals.config.markAiSuggestions;
   const modelWords = modelWordsSignal.value;
 
   if (!show) {
@@ -86,22 +88,29 @@ export function PredictedWords (): VNode | null {
   // Every slot is drawn, whether or not there is a word for it, so the row keeps one shape and
   // each word keeps the same place in it from one symbol to the next. An unfilled slot is an
   // empty cell: there is nothing there to press, and nothing for a screen reader to announce.
+  //
+  // The model's words are appended after the ones the history found, so a slot past the
+  // history's count is the model's, and is marked when the setting asks for it.
   const cells = Array.from({ length: maxSuggestions }, (ignored, index) => {
     const suggestion = suggestions[index];
-    return suggestion
-      ? html`
-        <button
-          key=${index}
-          class="predictedWord"
-          onClick=${() => chooseWord(suggestion)}>
-          <${BlissSymbol}
-            composition=${suggestion.composition}
-            label=${suggestion.label}
-            isPresentation=true
-          />
-        </button>
-      `
-      : html`<div key=${index} class="predictedWord predictedWordEmpty" aria-hidden="true"></div>`;
+    if (!suggestion) {
+      return html`<div key=${index} class="predictedWord predictedWordEmpty" aria-hidden="true"></div>`;
+    }
+    const isMarked = markAiSuggestions && index >= historySuggestions.length;
+    return html`
+      <button
+        key=${index}
+        class=${isMarked ? "predictedWord aiSuggestion" : "predictedWord"}
+        aria-label=${isMarked ? aiSuggestionLabel(suggestion.label) : undefined}
+        onClick=${() => chooseWord(suggestion)}>
+        ${isMarked ? html`<${AiBadge} />` : null}
+        <${BlissSymbol}
+          composition=${suggestion.composition}
+          label=${suggestion.label}
+          isPresentation=true
+        />
+      </button>
+    `;
   });
 
   // The wait and the arrival are both reported. A failed query says nothing, and neither does

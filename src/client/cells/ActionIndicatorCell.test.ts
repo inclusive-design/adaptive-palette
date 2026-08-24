@@ -14,11 +14,12 @@ import { vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/preact";
 import { html } from "htm/preact";
 
-import { changeEncodingContents } from "../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
 import { setEditGuard } from "../core/MessageEdit";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { ActionIndicatorCell } from "./ActionIndicatorCell";
+import { aiSuggestionLabel } from "../components/AiBadge";
 import * as IndicatorLabels from "../utils/IndicatorLabelsUtils";
 import { mockedAnnounceIfEnabled, mockedSpeakUnavailable } from "../testUtils/SpeechUtilsMock";
 
@@ -54,6 +55,7 @@ describe("ActionIndicatorCell", (): void => {
   beforeEach((): void => {
     mockedGetStaticNewLabel.mockReset().mockReturnValue(undefined);
     mockedGetNewLabelViaModelQuery.mockReset().mockReturnValue({ status: "not-viable" });
+    adaptivePaletteGlobals.config.markAiSuggestions = true;
   });
 
   afterEach((): void => {
@@ -197,7 +199,7 @@ describe("ActionIndicatorCell", (): void => {
       expect(changeEncodingContents.value.payloads[0].label).toBe("cells");
     });
     expect(mockedAnnounceIfEnabled).toHaveBeenCalledTimes(1);   // no loading message
-    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith("cells");
+    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(aiSuggestionLabel("cells"));
   });
 
   test("Cached model-query result with no label: speaks the unchanged message immediately, label stays", async (): Promise<void> => {
@@ -252,7 +254,7 @@ describe("ActionIndicatorCell", (): void => {
     await waitFor(() => {
       expect(changeEncodingContents.value.payloads[0].label).toBe("walked");
     });
-    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith("walked");
+    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(aiSuggestionLabel("walked"));
   });
 
   test("Pending model query that fails: speaks the loading message, then the unchanged message as closure", async (): Promise<void> => {
@@ -363,8 +365,11 @@ describe("ActionIndicatorCell", (): void => {
     // Let A's promise settle without a synchronous way to observe it.
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(changeEncodingContents.value.payloads[0].label).toBe("help");   // A's result dropped
+    // The dropped resolution must not mark a label it did not produce: "help" is still
+    // the original label, so nothing here came from the model.
+    expect(changeEncodingContents.value.payloads[0].isAiLabel).toBeFalsy();
     expect(changeEncodingContents.value.payloads[0].composition).toStrictEqual(compositionAfterB);
-    expect(mockedAnnounceIfEnabled).not.toHaveBeenCalledWith("A-result");
+    expect(mockedAnnounceIfEnabled).not.toHaveBeenCalledWith(expect.stringContaining("A-result"));
 
     resolveSecond!("B-result");
     await waitFor(() => {
@@ -489,6 +494,140 @@ describe("ActionIndicatorCell", (): void => {
     // The button keeps `aria-disabled` rather than `disabled`, so it can be focused and
     // activated. Speech is the main feedback channel and must not go silent.
     expect(mockedSpeakUnavailable).toHaveBeenCalledWith(testCell.options.label);
+  });
+
+
+  describe("recording which tier answered", (): void => {
+
+    // A symbol whose label the model already produced, with an indicator on it.
+    const modelLabelledSymbol = {
+      label: "walked",
+      baseLabel: "walk",
+      composition: [ 382, ";", 97 ],
+      indicatorId: 97,
+      userSelectedSymbolId: 382,
+      isAiLabel: true
+    };
+
+    test("a label from the pregenerated table is not marked", async (): Promise<void> => {
+      mockedGetStaticNewLabel.mockReturnValue("helper");
+      changeEncodingContents.value = {
+        payloads: [{ label: "help", composition: 382, userSelectedSymbolId: 382 }],
+        caretPosition: 0
+      };
+
+      renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
+      fireEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
+
+      await waitFor(() => {
+        expect(changeEncodingContents.value.payloads[0].label).toBe("helper");
+      });
+      expect(changeEncodingContents.value.payloads[0].isAiLabel).toBeFalsy();
+    });
+
+    test("a label from the cached model query is marked", async (): Promise<void> => {
+      mockedGetNewLabelViaModelQuery.mockReturnValue({ status: "cached", label: "cells" });
+      changeEncodingContents.value = {
+        payloads: [{ label: "cell", composition: [823], userSelectedSymbolId: 823 }],
+        caretPosition: 0
+      };
+
+      renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
+      fireEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
+
+      await waitFor(() => {
+        expect(changeEncodingContents.value.payloads[0].label).toBe("cells");
+      });
+      expect(changeEncodingContents.value.payloads[0].isAiLabel).toBe(true);
+    });
+
+    test("a label from a resolved pending model query is marked", async (): Promise<void> => {
+      let resolveQuery: (value: string | undefined) => void;
+      mockedGetNewLabelViaModelQuery.mockReturnValue({
+        status: "pending",
+        promise: new Promise((resolve) => { resolveQuery = resolve; })
+      });
+      changeEncodingContents.value = {
+        payloads: [{ label: "cell", composition: [823], userSelectedSymbolId: 823 }],
+        caretPosition: 0
+      };
+
+      renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
+      fireEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
+      resolveQuery!("cells");
+
+      await waitFor(() => {
+        expect(changeEncodingContents.value.payloads[0].label).toBe("cells");
+      });
+      expect(changeEncodingContents.value.payloads[0].isAiLabel).toBe(true);
+    });
+
+    test("swapping to an indicator the table answers clears the mark", async (): Promise<void> => {
+      mockedGetStaticNewLabel.mockReturnValue("walking");
+      changeEncodingContents.value = {
+        payloads: [modelLabelledSymbol],
+        caretPosition: 0
+      };
+
+      renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
+      fireEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
+
+      await waitFor(() => {
+        expect(changeEncodingContents.value.payloads[0].label).toBe("walking");
+      });
+      expect(changeEncodingContents.value.payloads[0].isAiLabel).toBeFalsy();
+    });
+
+    // The model's text is still the label on screen, so the mark has to survive.
+    test("swapping to an indicator nothing answers keeps the mark", async (): Promise<void> => {
+      changeEncodingContents.value = {
+        payloads: [modelLabelledSymbol],
+        caretPosition: 0
+      };
+
+      renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
+      fireEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
+
+      await waitFor(() => {
+        expect(changeEncodingContents.value.payloads[0].indicatorId).toBe(testCell.options.composition);
+      });
+      expect(changeEncodingContents.value.payloads[0].label).toBe("walked");
+      expect(changeEncodingContents.value.payloads[0].isAiLabel).toBe(true);
+    });
+
+    test("a model label is announced as the model's", async (): Promise<void> => {
+      mockedGetNewLabelViaModelQuery.mockReturnValue({ status: "cached", label: "cells" });
+      changeEncodingContents.value = {
+        payloads: [{ label: "cell", composition: [823], userSelectedSymbolId: 823 }],
+        caretPosition: 0
+      };
+
+      renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
+      fireEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
+
+      await waitFor(() => {
+        expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(aiSuggestionLabel("cells"));
+      });
+    });
+
+    // The flag records where the label came from either way; the setting decides whether
+    // that is told to the user.
+    test("with the marking off, a model label is still recorded but announced plainly", async (): Promise<void> => {
+      adaptivePaletteGlobals.config.markAiSuggestions = false;
+      mockedGetNewLabelViaModelQuery.mockReturnValue({ status: "cached", label: "cells" });
+      changeEncodingContents.value = {
+        payloads: [{ label: "cell", composition: [823], userSelectedSymbolId: 823 }],
+        caretPosition: 0
+      };
+
+      renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
+      fireEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
+
+      await waitFor(() => {
+        expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith("cells");
+      });
+      expect(changeEncodingContents.value.payloads[0].isAiLabel).toBe(true);
+    });
   });
 
 });

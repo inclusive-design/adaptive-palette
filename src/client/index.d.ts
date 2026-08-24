@@ -82,7 +82,11 @@ export type SymbolEncodingType = BlissSymbolInfoType & {
   // label before any indicator swap; set when a swap occurs
   baseLabel?: string,
   // number of modifierInfo entries present when baseLabel was captured
-  baseModifierCount?: number
+  baseModifierCount?: number,
+  // True when the label came from the indicator-label model query rather than the
+  // pregenerated table. Cleared whenever the label stops being the model's; absent
+  // and `false` mean the same thing, so test it for truthiness, not against `false`.
+  isAiLabel?: boolean
 }
 
 export type IndicatorLabelLookupConfigType = {
@@ -139,6 +143,9 @@ export type AdaptivePaletteConfigType = {
   // Whether each symbol and command label is spoken as the user inputs. When off, the Speak
   // button is the only routine speech; failures still announce.
   announceSymbolOnInput: boolean,
+  // Whether suggestions that came from a model are marked as such, visibly and to a screen
+  // reader. Defaults to `true`.
+  markAiSuggestions: boolean,
   indicatorLabelLookup: IndicatorLabelLookupConfigType,
   telegraphicTranslation?: TelegraphicTranslationConfigType,
   symbolSearch: FeatureVisibilityConfigType,
@@ -182,6 +189,9 @@ export type MatchType = {
 export type SentenceCompletionsStateType = {
   status: "idle" | "working" | "ready" | "error",
   sentences: string[],
+  // The sentence recalled from the message log, when one was found for this message. Every
+  // other sentence in `sentences` came from the model.
+  recalledSentence: string | null,
   model: string,
   telegraphicMessage: string
 };

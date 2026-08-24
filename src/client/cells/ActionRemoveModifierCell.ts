@@ -102,7 +102,9 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
       "modifierInfo": newModifierInfo,
       "indicatorId": symbolToEdit.indicatorId,
       "baseLabel": newBaseLabel,
-      "baseModifierCount": newBaseModifierCount
+      "baseModifierCount": newBaseModifierCount,
+      // Only the modifier's text goes; the model's text stays in the label.
+      "isAiLabel": symbolToEdit.isAiLabel
     });
     editMessage({ payloads: edited, caretPosition: caretPosition });
     announceIfEnabled(newLabel);

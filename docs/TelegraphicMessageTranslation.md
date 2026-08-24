@@ -153,6 +153,12 @@ by the time it arrives, the question is asked for it as for any other change to 
 already on screen when it arrives, the new label is dropped: it was worked out from the message as it stood
 before the held edit, so it no longer fits either answer.
 
+Sentences the model made are marked apart from a sentence recalled from the message log, unless
+the `markAiSuggestions` setting is off: a warm fill, italic text, and an "AI" badge in the
+button's corner. The badge is hidden from screen readers, and the button names itself
+"AI suggestion, `<sentence>`" instead. A recalled sentence is left plain, because the user
+approved it themselves, and so is anything they type.
+
 ## Bliss sentence rows
 
 Each sentence choice is drawn as a row of Bliss symbols, each labelled with the English words it covers,

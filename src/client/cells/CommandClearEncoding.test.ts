@@ -59,6 +59,7 @@ describe("CommandClearEncoding", (): void => {
     sentenceCompletionsSignal.value = {
       status: "ready",
       sentences: ["I am hungry."],
+      recalledSentence: null,
       model: "phony-model:12b",
       telegraphicMessage: "hungry"
     };

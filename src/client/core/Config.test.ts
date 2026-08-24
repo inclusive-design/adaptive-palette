@@ -357,3 +357,40 @@ describe("loadConfig announceSymbolOnInput", (): void => {
     expect(config.announceSymbolOnInput).toBe(true);
   });
 });
+
+describe("loadConfig markAiSuggestions", (): void => {
+
+  test("false is honoured", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      markAiSuggestions: false
+    });
+    const config = await loadConfig();
+    expect(config.markAiSuggestions).toBe(false);
+  });
+
+  test("true is honoured", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      markAiSuggestions: true
+    });
+    const config = await loadConfig();
+    expect(config.markAiSuggestions).toBe(true);
+  });
+
+  test("a missing value leaves the marking on", async (): Promise<void> => {
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
+    const config = await loadConfig();
+    expect(config.markAiSuggestions).toBe(true);
+  });
+
+  // A mistyped config must not quietly stop telling the user what a model made.
+  test("a malformed value leaves the marking on", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      markAiSuggestions: "no"
+    });
+    const config = await loadConfig();
+    expect(config.markAiSuggestions).toBe(true);
+  });
+});
