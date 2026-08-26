@@ -155,7 +155,6 @@ export function saveMessageRecord (payloads: SymbolEncodingType[]): void {
  * @param {TranslationInfoType} translation - What it was translated into.
  * @returns {void}
  */
-// 
 export function saveTranslation (telegraphicMessage: string, translation: TranslationInfoType): void {
   if (!adaptivePaletteGlobals.config.maxStoredRecords) {
     return;

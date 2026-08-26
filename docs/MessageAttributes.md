@@ -22,7 +22,7 @@ pressing Speak does too; neither one clears the message, so either leaves the at
 
 | Row | Attributes |
 | --- | --- |
-| Intent | question, request, help, stop |
+| Intent | question, request, help |
 | Tone | friendly, polite, serious |
 | Feeling | happy, sad, angry, worried |
 | Priority | urgent, emergency |

@@ -714,6 +714,25 @@ describe("telegraphicTranslationState", (): void => {
     expect(readMessageLog()).toEqual(loggedBefore);
   });
 
+  test("with an attribute set the recalled sentence is not the whole answer", async (): Promise<void> => {
+    setConfig(1);
+    recordPastTranslation("I am hungry.");
+    editMessage(INPUT_CONTENTS);
+    selectedAttributesSignal.value = [
+      { category: "Priority", label: "urgent", composition: 4310 }
+    ];
+    mockedQueryChat.mockResolvedValue({
+      message: { content: "1. I need food now!" }
+    } as never);
+
+    await requestForCurrentMessage();
+
+    // The recalled sentence was made without the attribute, so the model is asked again.
+    expect(mockedQueryChat).toHaveBeenCalled();
+    expect(sentenceCompletionsSignal.value.sentences).toEqual(["I am hungry."]);
+    expect(sentenceCompletionsSignal.value.model).toBe("phony-model:12b");
+  });
+
   test("the recalled sentence is named in the state", async (): Promise<void> => {
     recordPastTranslation("I am hungry.");
     editMessage(INPUT_CONTENTS);

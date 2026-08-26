@@ -102,6 +102,32 @@ describe("ActionBranchToPaletteCell", (): void => {
       expect(adaptivePaletteGlobals.navigationStack.depth).toBe(0);
     });
 
+    test("tapping again once the target is showing does not push it onto itself", async (): Promise<void> => {
+      render(html`
+        <div data-palettename="Command Bar">
+          <${ActionBranchToPaletteCell} id="${TEST_CELL_ID}" options=${branchCellOptions} />
+        </div>
+      `);
+
+      const button = await screen.findByRole("button");
+      fireEvent.click(button);
+      await waitFor(() => {
+        expect(adaptivePaletteGlobals.navigationStack.currentPalette?.name).toBe("Target Palette");
+      });
+
+      // A command-bar cell stays tappable once its palette is current.  A second tap must not
+      // deepen the stack, or the first `Back` press would appear to do nothing.
+      fireEvent.click(button);
+      await waitFor(() => {
+        expect(adaptivePaletteGlobals.navigationStack.depth).toBe(1);
+      });
+
+      await goBackImpl();
+
+      expect(adaptivePaletteGlobals.navigationStack.currentPalette?.name).toBe("Root Palette");
+      expect(adaptivePaletteGlobals.navigationStack.depth).toBe(0);
+    });
+
     test("Home reaches the real root, not the button's own container", async (): Promise<void> => {
       render(html`
         <div data-palettename="Command Bar">

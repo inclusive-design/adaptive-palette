@@ -54,8 +54,8 @@ render(html`<${Palette} json=${inputArea} />`, getRequiredElement("input_palette
 render(html`<${Palette} json=${commandBar} />`, getRequiredElement("commandBar"));
 render(html`<${CurrentPalette} />`, getRequiredElement("mainPaletteDisplayArea"));
 
-// Sentence translation: the trigger button lives in the input area palette and hides
-// itself when unavailable, so only the status line needs wiring here.
+// Sentence translation: the trigger button lives in the input area palette, which `Palette`
+// leaves out when no model is available, so only the status line needs wiring here.
 render(html`<${SentenceChoices} />`, getRequiredElement("sentenceChoices"));
 
 // Suggested next words, drawn from the messages the user has said before.

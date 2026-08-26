@@ -21,7 +21,7 @@ import { batch, signal } from "@preact/signals";
 import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
 import { requestSentences, pickModel } from "./TelegraphicTranslationUtils";
 import { findLatestTranslation, messageText } from "../../core/MessageLog";
-import { clearAttributes } from "../message-attributes/MessageAttributesState";
+import { clearAttributes, selectedAttributesSignal } from "../message-attributes/MessageAttributesState";
 import type { ContentSignalDataType, SentenceCompletionsStateType } from "../../index.d";
 
 /**
@@ -106,9 +106,9 @@ export function currentTelegraphicMessage (): string {
  * nothing when a request is already in flight or the message is empty.
  *
  * A sentence already approved for this message is recalled from the message log and shown
- * first. With one sentence asked for in the setting, that is the whole answer and the model
- * is not queried; otherwise the model fills the rest of the list below it. Nothing is spoken
- * or logged here: that waits for the user to pick a sentence.
+ * first. With one sentence asked for in the setting and no attributes set, that is the whole
+ * answer and the model is not queried; otherwise the model fills the rest of the list below
+ * it. Nothing is spoken or logged here: that waits for the user to pick a sentence.
  * @param {string} telegraphicMessage - The message to translate, as shown in the input area.
  * @returns {Promise<void>}
  */
@@ -122,8 +122,10 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
   const recalled = findLatestTranslation(telegraphicMessage);
 
   // One sentence asked for and one already approved for this message: show it, and ask the
-  // model nothing.
-  if (recalled && numSentences === 1) {
+  // model nothing. Attributes are not part of what was recalled -- they are matched on message
+  // text alone -- so with any set the model is asked again, which is what makes setting an
+  // attribute and tapping again produce a sentence that reflects it.
+  if (recalled && numSentences === 1 && selectedAttributesSignal.peek().length === 0) {
     sentenceCompletionsSignal.value = {
       status: "ready", sentences: [recalled.sentence], recalledSentence: recalled.sentence,
       model: recalled.model, telegraphicMessage

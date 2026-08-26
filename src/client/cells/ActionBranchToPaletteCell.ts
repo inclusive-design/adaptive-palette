@@ -38,6 +38,13 @@ const navigateToPalette = async (event: Event): Promise<void> => {
     return;
   }
 
+  // Already looking at it. A persistent cell such as the command bar's "Msg Style" stays
+  // tappable once its palette is current, and pushing that palette onto itself would leave
+  // the first `Back` press doing nothing.
+  if (navigationStack.currentPalette?.name === branchToPaletteName) {
+    return;
+  }
+
   const paletteDefinition = await paletteStore.getNamedPalette(branchToPaletteName, true);
   if (!paletteDefinition) {
     console.error(`navigateToPalette(): Unable to locate palette definition for ${branchToPaletteName}`);
