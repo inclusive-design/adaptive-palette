@@ -13,10 +13,14 @@
     <div id="aiStatus" role="status"></div>
 
     <!--
-      Triggers for adding a symbol to the message, and the dialogs they open.
-      Each trigger is shown only when its section in config.json enables it.
+      The top bar: the attributes set on the message being displayed at the left, and at the
+      right the buttons for adding symbols and adjusting settings. Each trigger is shown only
+      when its section in config.json enables it.
     -->
-    <div id="symbolEntryToolbar"></div>
+    <div id="topBar">
+      <div id="messageAttributes"></div>
+      <div id="symbolEntryToolbar"></div>
+    </div>
 
     <!--
       Row 1: navigation out of the current palette, the message being composed, and the

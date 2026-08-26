@@ -19,7 +19,7 @@ The feature is controlled by the `wordPrediction` section of `public/config.json
 | `enableModelQuery` | Whether to ask a model for words as well. |
 | `model` | Which Ollama model to ask. Empty means its first available model. |
 | `systemPrompt` | Tells the model to answer with single words, one per line. Supports `{{numWords}}`. |
-| `userPrompt` | Carries the message so far. Supports `{{message}}`. |
+| `userPrompt` | Carries the message so far and the [message attributes](MessageAttributes.md). Supports `{{message}}` and `{{attributes}}`, one field per line -- see [Config.md](devDoc/Config.md#wordprediction). |
 
 The model query needs `enableModelQuery` set and both prompts filled in; anything less leaves it off.
 

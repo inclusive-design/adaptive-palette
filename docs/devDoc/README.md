@@ -21,4 +21,5 @@ Also useful:
   dialogs.
 - Feature documentation: [Indicator Label Lookup](../IndicatorLabelLookup.md),
   [Telegraphic Message Translation](../TelegraphicMessageTranslation.md),
-  [Word Prediction](../WordPrediction.md), [Adjust Settings](../Settings.md).
+  [Word Prediction](../WordPrediction.md), [Message Attributes](../MessageAttributes.md),
+  [Adjust Settings](../Settings.md).

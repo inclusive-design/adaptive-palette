@@ -30,12 +30,15 @@ import { CommandCursorForward } from "../cells/CommandCursorForward";
 import { CommandDelLastEncoding } from "../cells/CommandDelLastEncoding";
 import { CommandGoBackCell } from "../cells/CommandGoBackCell";
 import { CommandGoToRootCell } from "../cells/CommandGoToRootCell";
+import { ActionAttributeCell } from "../features/message-attributes/ActionAttributeCell";
 import { CommandMakeSentence } from "../features/telegraphic-translation/CommandMakeSentence";
 import { ContentEncoding } from "../cells/ContentEncoding";
+import { ContentLabel } from "../cells/ContentLabel";
 
 export const cellTypeRegistry = {
   "ActionCodeCell": ActionCodeCell,
   "ActionBranchToPaletteCell": ActionBranchToPaletteCell,
+  "ActionAttributeCell": ActionAttributeCell,
   "ActionIndicatorCell": ActionIndicatorCell,
   "ActionPreModifierCell": ActionPreModifierCell,
   "ActionPostModifierCell": ActionPostModifierCell,
@@ -51,4 +54,5 @@ export const cellTypeRegistry = {
   "CommandGoToRootCell": CommandGoToRootCell,
   "CommandMakeSentence": CommandMakeSentence,
   "ContentEncoding": ContentEncoding,
+  "ContentLabel": ContentLabel,
 };

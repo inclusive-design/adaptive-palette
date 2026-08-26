@@ -23,6 +23,21 @@ which re-validates every value it reads back. See [Settings.md](../Settings.md).
 | `svgBuilderString` | The "Add Symbol by SVG-Builder String" trigger and its dialog. Off in production: it is for development. |
 | `wordPrediction` | Suggesting the next word from the user's past messages, and optionally from a model. See [WordPrediction.md](../WordPrediction.md). |
 
+## Prompt placeholders
+
+`systemPrompt` and `userPrompt` fields below are templates with `{{name}}` placeholders, filled in at
+query time. A placeholder with no matching value is left as is. Nothing validates the names in either
+prompt: remove one and that data silently stops reaching the model; misspell one and the literal
+`{{name}}` text is sent instead.
+
+`userPrompt` fields are one field per line, rendered with `renderPromptLines()`: a line whose
+placeholders all resolve empty is dropped before substitution. This is what lets an optional field --
+such as the message attributes line -- disappear from the prompt when there is nothing to say.
+The `systemPrompt` fields of `telegraphicTranslation` and `wordPrediction` are prose, not one field
+per line, so they keep plain substitution (`renderTemplate()`) instead, and no line of theirs is ever
+dropped. `indicatorLabelLookup.systemPrompt` is the exception: it is sent verbatim, so a placeholder
+written there reaches the model as literal text.
+
 ## `maxStoredRecords`
 
 An integer capping the message log, the single local-storage log holding the messages the
@@ -73,11 +88,11 @@ indicator label's italic sits with the badge in `AiBadge.scss`.
 | `useModelQueryFallback` | boolean | Required. Whether to ask a model when the local label lookup finds nothing. |
 | `model` | string | Ollama model name. Defaults to the empty string, which means Ollama's first available model. |
 | `systemPrompt` | string | Required, non-empty. Tells the model to answer with the resulting label alone. |
-| `userPrompt` | string | Required, non-empty. One field per line, using the placeholders below. |
+| `userPrompt` | string | Required, non-empty. See [Prompt placeholders](#prompt-placeholders). |
 
-`userPrompt` placeholders: `{{word}}`, `{{pos}}`, `{{explanation}}`, `{{indicator}}`, `{{purpose}}`. A line
-whose placeholder value is empty is dropped, so one template covers a symbol with an explanation, one without,
-and a hand-built symbol that has neither a part of speech nor an explanation.
+`userPrompt` placeholders: `{{word}}`, `{{pos}}`, `{{explanation}}`, `{{indicator}}`, `{{purpose}}` --
+one template covers a symbol with an explanation, one without, and a hand-built symbol that has
+neither a part of speech nor an explanation.
 
 When `useModelQueryFallback` is missing or is not a boolean, or either prompt is missing or blank, the whole
 section is discarded and the fallback tier is disabled. The pregenerated lookup keeps working.
@@ -94,10 +109,12 @@ working: anything other than `false` reads as `true`.
 | `model` | string | Ollama model name. The empty string means Ollama's first available model. |
 | `numSentences` | number | Positive integer. How many candidate sentences to request. |
 | `systemPrompt` | string | Non-empty. Supports the `{{numSentences}}` placeholder. |
-| `userPrompt` | string | Non-empty. Supports the `{{telegraphicMessage}}` placeholder. |
+| `userPrompt` | string | Non-empty. See [Prompt placeholders](#prompt-placeholders). |
 | `showBlissSentence` | boolean | Optional. Draws Bliss symbols above each sentence choice. Only `false` turns it off. |
 
-Placeholders are `{{name}}` and are substituted at query time; one with no matching value is left as is.
+`userPrompt` placeholders: `{{telegraphicMessage}}` and `{{attributes}}` -- the message attributes
+the user set, as `Intent: question; Feeling: angry`. Its line is dropped when no attribute is set,
+so give it a line of its own. See [MessageAttributes.md](../MessageAttributes.md).
 
 ## `wordPrediction`
 
@@ -108,9 +125,12 @@ Placeholders are `{{name}}` and are substituted at query time; one with no match
 | `enableModelQuery` | boolean | Whether a model is asked for words as well as the message history. Defaults to `false`. |
 | `model` | string | Ollama model name. The empty string means Ollama's first available model. |
 | `systemPrompt` | string | Non-empty when the query is enabled. Supports the `{{numWords}}` placeholder. |
-| `userPrompt` | string | Non-empty when the query is enabled. Supports the `{{message}}` placeholder. |
+| `userPrompt` | string | Non-empty when the query is enabled. See [Prompt placeholders](#prompt-placeholders). |
 
-`{{numWords}}` is how many words to ask for, and `{{message}}` the labels of the message up to the caret.
+`userPrompt` placeholders: `{{message}}` -- the labels of the message up to the caret -- and
+`{{attributes}}` -- the message attributes the user set, as `Intent: question; Feeling: angry`. Its
+line is dropped when no attribute is set, so give it a line of its own. See
+[MessageAttributes.md](../MessageAttributes.md).
 
 When the section is missing or `show` is not a boolean, the feature is off. A malformed `maxSuggestions`
 alone falls back to 10 and leaves the feature on.

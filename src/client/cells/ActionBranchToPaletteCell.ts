@@ -32,16 +32,9 @@ const navigateToPalette = async (event: Event): Promise<void> => {
   const button = event.currentTarget as HTMLElement;
   announceIfEnabled(button.innerText);
 
-  const buttonParent = button.parentElement;
-  if (!buttonParent) {
-    console.error(`navigateToPalette(): Missing parent element for button ${button.id}`);
-    return;
-  }
-
-  const buttonsPaletteName = buttonParent?.getAttribute("data-palettename");
   const branchToPaletteName = button.getAttribute("data-branchto");
-  if (!buttonsPaletteName || !branchToPaletteName) {
-    console.error(`navigateToPalette(): Missing routing attributes (data-palettename/branchto) for ${button.id}`);
+  if (!branchToPaletteName) {
+    console.error(`navigateToPalette(): Missing routing attribute (data-branchto) for ${button.id}`);
     return;
   }
 
@@ -51,21 +44,19 @@ const navigateToPalette = async (event: Event): Promise<void> => {
     return;
   }
 
-  const goBackPalette = await paletteStore.getNamedPalette(buttonsPaletteName);
-  if (!goBackPalette) {
-    console.error(`navigateToPalette(): Unable to locate go-back palette definition for ${buttonsPaletteName}`);
-    return;
-  }
-
-  // Update state; the component watching the navigation stack redraws.
-  navigationStack.push(goBackPalette);
+  // Push the palette the user is looking at, not the one this button happens to sit in:
+  // for cells in the main display area these are the same palette.
+  navigationStack.push(navigationStack.currentPalette);
   navigationStack.currentPalette = paletteDefinition;
 };
 
+/**
+ * A cell that makes the palette it names the current one.
+ * @param {ActionBranchToPalettePropsType} props - The cell id and its palette options.
+ * @returns {VNode}
+ */
 export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType): VNode {
-  const {
-    columnStart, columnSpan, rowStart, rowSpan, branchTo, composition, label
-  } = props.options;
+  const { columnStart, columnSpan, rowStart, rowSpan, branchTo, composition, label } = props.options;
 
   const gridStyles = `
     grid-column: ${columnStart} / span ${columnSpan};

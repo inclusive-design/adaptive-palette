@@ -394,3 +394,16 @@ describe("loadConfig markAiSuggestions", (): void => {
     expect(config.markAiSuggestions).toBe(true);
   });
 });
+
+// Every other test in this file stubs `fetch` and checks how a given section is parsed; none
+// of them would notice the attributes line going missing from the real `public/config.json` --
+// the section would still validate, and the feature would just silently never reach the model.
+// This loads the shipped file itself, like `SettingsDialog.test.ts` already does.
+describe("loadConfig with the shipped config.json", (): void => {
+
+  test("the shipped config sends the attributes", async (): Promise<void> => {
+    const config = await loadConfig();
+    expect(config.telegraphicTranslation?.userPrompt).toContain("{{attributes}}");
+    expect(config.wordPrediction?.userPrompt).toContain("{{attributes}}");
+  });
+});

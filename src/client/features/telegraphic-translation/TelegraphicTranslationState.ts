@@ -21,6 +21,7 @@ import { batch, signal } from "@preact/signals";
 import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
 import { requestSentences, pickModel } from "./TelegraphicTranslationUtils";
 import { findLatestTranslation, messageText } from "../../core/MessageLog";
+import { clearAttributes } from "../message-attributes/MessageAttributesState";
 import type { ContentSignalDataType, SentenceCompletionsStateType } from "../../index.d";
 
 /**
@@ -77,8 +78,8 @@ export function abortActiveSentenceRequest (): void {
 }
 
 /**
- * Discard the message in the input area together with any sentences made from it, aborting
- * a request in flight first.
+ * Discard the message in the input area together with the attributes set on it and any
+ * sentences made from it, aborting a request in flight first.
  * The sentence state is cleared first, and the message is then written past `editMessage()`:
  * going through the gate with the state still `working` or `ready` would ask the user to
  * confirm a discard they have just asked for.
@@ -88,6 +89,8 @@ export function clearMessageAndChoices (): void {
   abortActiveSentenceRequest();
   sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
   changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+  // The attributes belong to the message.
+  clearAttributes();
 }
 
 /**

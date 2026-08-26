@@ -11,8 +11,9 @@
  */
 
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
-import { renderTemplate } from "../../utils/PromptUtils";
+import { renderTemplate, renderPromptLines } from "../../utils/PromptUtils";
 import { queryChat, NO_MODELS_MESSAGE } from "../../core/OllamaApi";
+import { attributesPromptText } from "../message-attributes/MessageAttributesState";
 
 export const NOT_CONFIGURED_MESSAGE = "Sentence translation is not configured. Check the telegraphicTranslation section of config.json.";
 export const NO_SENTENCES_MESSAGE = "The model returned no usable sentences.";
@@ -71,11 +72,12 @@ export async function requestSentences (telegraphicMessage: string, abortSignal?
   const model = pickModel(config.model);
   const values = {
     numSentences: String(config.numSentences),
-    telegraphicMessage
+    telegraphicMessage,
+    attributes: attributesPromptText()
   };
 
   const response = await queryChat(
-    renderTemplate(config.userPrompt, values),
+    renderPromptLines(config.userPrompt, values),
     model,
     false,
     renderTemplate(config.systemPrompt, values),

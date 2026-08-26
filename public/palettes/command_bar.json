@@ -122,17 +122,6 @@
         "columnSpan": 1
       }
     },
-    "modifier-very": {
-      "type": "ActionPostModifierCell",
-      "options": {
-        "label": "very",
-        "composition": 401,
-        "rowStart": 1,
-        "rowSpan": 1,
-        "columnStart": 10,
-        "columnSpan": 1
-      }
-    },
     "modifier-without": {
       "type": "ActionPreModifierCell",
       "options": {
@@ -140,7 +129,7 @@
         "composition": 449,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 11,
+        "columnStart": 10,
         "columnSpan": 1
       }
     },
@@ -151,7 +140,7 @@
         "composition": 486,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 12,
+        "columnStart": 11,
         "columnSpan": 1
       }
     },
@@ -162,7 +151,7 @@
         "composition": 937,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 13,
+        "columnStart": 12,
         "columnSpan": 1
       }
     },
@@ -173,7 +162,7 @@
         "composition": 968,
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 14,
+        "columnStart": 13,
         "columnSpan": 1
       }
     },
@@ -194,7 +183,7 @@
         ],
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 15,
+        "columnStart": 14,
         "columnSpan": 1
       }
     },
@@ -210,6 +199,23 @@
           106,
           "/",
           158
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 15,
+        "columnSpan": 1
+      }
+    },
+    "command-message-attributes": {
+      "type": "ActionBranchToPaletteCell",
+      "options": {
+        "label": "Msg Style",
+        "branchTo": "attributes",
+        "requiresModel": true,
+        "composition": [
+          4544,
+          "//",
+          4681
         ],
         "rowStart": 1,
         "rowSpan": 1,

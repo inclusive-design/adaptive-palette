@@ -16,6 +16,7 @@ three categories by prefix.
 | `ActionRemoveIndicatorCell` | Removes an indicator from the symbol at the caret | `label`, `composition` |
 | `ActionRemoveModifierCell` | Removes a modifier from the symbol at the caret | `label`, `composition` |
 | `ActionSpeakCell` | Speaks the message aloud and records it, which feeds word prediction | `label`, `composition`, `ariaControls` |
+| `ActionAttributeCell` | Toggles one attribute on the message being composed; `aria-pressed` reflects whether it is set. See [Message Attributes](../MessageAttributes.md) | `label`, `category`, `composition` |
 
 ## `Command*` — palette navigation and editing
 
@@ -28,13 +29,14 @@ three categories by prefix.
 | `CommandDelLastEncoding` | Deletes the last symbol in the encoding area | `label`, `composition`, `ariaControls` |
 | `CommandGoBackCell` | Pops the navigation stack and returns to the previous palette | `label`, `composition` |
 | `CommandGoToRootCell` | Empties the navigation stack and returns to the root palette | `label`, `composition` |
-| `CommandMakeSentence` | Translates the telegraphic message into full sentences; renders nothing when the feature is unavailable | `label`, `composition`, `ariaControls` |
+| `CommandMakeSentence` | Translates the telegraphic message into full sentences. Flagged `requiresModel` and `requiresConfig` in the palette JSON, so the palette leaves it out when the feature is unavailable | `label`, `composition`, `ariaControls` |
 
 ## `Content*` — display areas
 
 | Type | Purpose | Key options beyond layout |
 | ---- | ------- | ------------------------- |
 | `ContentEncoding` | Displays the current encoding (the input area showing selected symbols) | layout fields only |
+| `ContentLabel` | Text in a grid slot, with no interaction; `aria-hidden`, so use it only where the cells it heads already name themselves. See [Message Attributes](../MessageAttributes.md) | `label` |
 
 ## Adding a new cell type
 

@@ -13,7 +13,7 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 
-import { adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal } from "../../state/GlobalData";
+import { changeEncodingContents, finishedMessageSignal } from "../../state/GlobalData";
 import { saveMessageRecord } from "../../core/MessageLog";
 import {
   currentTelegraphicMessage, makeSentences, sentenceCompletionsSignal
@@ -34,21 +34,17 @@ type CommandMakeSentenceProps = {
 };
 
 /**
- * This button is the entry point to trigger telegraphic translation. It renders nothing when
- * the feature is unavailable for example when no model is available.
+ * This button is the entry point to trigger telegraphic translation. The palette leaves it out
+ * when the feature is unavailable: its cell is flagged `requiresModel` and `requiresConfig` in
+ * `input_area.json`.
  * @param {CommandMakeSentenceProps} props - The cell id and its palette options.
- * @returns {VNode | null}
+ * @returns {VNode}
  */
-export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode | null {
+export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode {
   const { id, options } = props;
   const { label, composition, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
   const isFetching = sentenceCompletionsSignal.value.status === "working";
   const telegraphicMessage = currentTelegraphicMessage();
-
-  if (adaptivePaletteGlobals.models.length === 0 ||
-      !adaptivePaletteGlobals.config.telegraphicTranslation) {
-    return null;
-  }
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 

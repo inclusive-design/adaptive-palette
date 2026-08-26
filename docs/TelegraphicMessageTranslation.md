@@ -54,7 +54,11 @@ The user prompt:
 
 ```text
 Telegraphic message: {{telegraphicMessage}}
+Message attributes: {{attributes}}
 ```
+
+`{{attributes}}` carries what the user set on the [message attributes](MessageAttributes.md)
+palette, for example `Intent: question; Feeling: angry`. Its line is dropped when nothing is set.
 
 ## Model selection
 
@@ -68,7 +72,10 @@ If Ollama reports no models at all, the feature is unavailable.
 
 The `Sentence` button starts this feature. It becomes available when the input area has text.
 
-When no model is available, the `Sentence` button is hidden. Its space is taken by the input area.
+When no model is available, or `telegraphicTranslation` is missing from `public/config.json`, the
+`Sentence` button is hidden and the rest of the input area spreads over its column. Its cell in
+`public/palettes/input_area.json` carries `requiresModel` and `requiresConfig`, which
+[`Palette.ts`](devDoc/Palettes.md) acts on.
 
 When the input is empty or a request is in progress, the button is marked with `aria-disabled`
 instead of the native `disabled` attribute. This keeps the button focusable for keyboard, switch,

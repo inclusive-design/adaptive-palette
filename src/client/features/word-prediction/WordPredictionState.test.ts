@@ -16,11 +16,14 @@ import { DISABLED_MODEL_QUERY } from "../../core/Config";
 import { MESSAGE_LOG_KEY, saveMessageRecord } from "../../core/MessageLog";
 import { editMessage, setEditGuard } from "../../core/MessageEdit";
 import { queryChat } from "../../core/OllamaApi";
-import { DEBOUNCE_MS, contextKeyOf, modelWordsSignal } from "./WordPredictionState";
+import { DEBOUNCE_MS, messageUpToCaret, queryContextKeyOf, modelWordsSignal } from "./WordPredictionState";
 import {
   cancelDiscardEdit, confirmDiscardEdit, discardEditPromptSignal, guardEdit,
   IDLE_SENTENCE_STATE, READY_DISCARD_PROMPT, sentenceCompletionsSignal
 } from "../telegraphic-translation/TelegraphicTranslationState";
+import {
+  selectedAttributesSignal, clearAttributes
+} from "../message-attributes/MessageAttributesState";
 import { SymbolEncodingType } from "../../index.d";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
@@ -90,11 +93,12 @@ describe("wordPrediction model query", (): void => {
       show: false, maxSuggestions: 10, ...DISABLED_MODEL_QUERY
     };
     adaptivePaletteGlobals.models = [];
+    clearAttributes();
   });
 
   test("the context is the labels up to the caret", (): void => {
-    expect(contextKeyOf(message("I", "want", "music"), 1)).toBe("I want");
-    expect(contextKeyOf(message("I", "  ", "music"), 2)).toBe("I music");
+    expect(messageUpToCaret(message("I", "want", "music"), 1)).toBe("I want");
+    expect(messageUpToCaret(message("I", "  ", "music"), 2)).toBe("I music");
   });
 
   test("the model's words are published for the message they answer", async (): Promise<void> => {
@@ -194,6 +198,18 @@ describe("wordPrediction model query", (): void => {
 
     test("when the message is empty", async (): Promise<void> => {
       changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+      await waitForQuery();
+      expect(mockedQueryChat).not.toHaveBeenCalled();
+    });
+
+    // The caret sits before any symbol, so there is nothing before it to predict from, even
+    // though the message on screen (and so the combined key, with an attribute set) is not
+    // empty. The guard has to test the text up to the caret, not the combined key.
+    test("when there is nothing before the caret even with an attribute set", async (): Promise<void> => {
+      changeEncodingContents.value = { payloads: message("juice"), caretPosition: -1 };
+      selectedAttributesSignal.value = [
+        { category: "Feeling", label: "angry", composition: 1198 }
+      ];
       await waitForQuery();
       expect(mockedQueryChat).not.toHaveBeenCalled();
     });
@@ -367,5 +383,64 @@ describe("wordPrediction model query", (): void => {
     await waitForQuery();
     // Three slots left after the history's one suggestion.
     expect(mockedQueryChat.mock.calls[0][3]).toBe("List 6 words.");
+  });
+
+  describe("queryContextKeyOf", (): void => {
+
+    const payloads = [
+      { label: "I", composition: 1840, modifierInfo: [] },
+      { label: "want", composition: 2705, modifierInfo: [] }
+    ];
+
+    test("is the message text alone when no attribute is set", (): void => {
+      expect(queryContextKeyOf("I want")).toBe("I want");
+    });
+
+    test("changes when an attribute is set", (): void => {
+      const withoutAttributes = queryContextKeyOf("I want");
+      selectedAttributesSignal.value = [
+        { category: "Feeling", label: "angry", composition: 1198 }
+      ];
+      expect(queryContextKeyOf("I want")).not.toBe(withoutAttributes);
+    });
+
+    test("the message text itself is unchanged by the attributes", (): void => {
+      selectedAttributesSignal.value = [
+        { category: "Feeling", label: "angry", composition: 1198 }
+      ];
+      expect(messageUpToCaret(payloads, 1)).toBe("I want");
+    });
+
+    test("two different attribute sets give two different keys", (): void => {
+      selectedAttributesSignal.value = [
+        { category: "Feeling", label: "angry", composition: 1198 }
+      ];
+      const angry = queryContextKeyOf("I want");
+      selectedAttributesSignal.value = [
+        { category: "Feeling", label: "happy", composition: 1780 }
+      ];
+      expect(queryContextKeyOf("I want")).not.toBe(angry);
+    });
+
+    // The effect must read the attributes on this run -- the one that schedules a query -- so
+    // it stays subscribed and a later attribute change is noticed. See "setting an attribute
+    // after finishing keeps the words on the row" in `PredictedWords.test.ts` for the early
+    // return path, where the read has to happen before the return rather than after it.
+    test("setting an attribute after suggestions are shown asks again", async (): Promise<void> => {
+      compose("I");
+      await waitForQuery();
+      expect(modelWordsSignal.value.status).toBe("ready");
+      mockedQueryChat.mockClear();
+
+      selectedAttributesSignal.value = [
+        { category: "Feeling", label: "angry", composition: 1198 }
+      ];
+
+      await waitForQuery();
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+      // The model is asked about the message alone -- the attributes reach it as their own
+      // prompt line, not folded into the text the model reads as the message.
+      expect(mockedQueryChat.mock.calls[0][0]).toBe("Message so far: I");
+    });
   });
 });

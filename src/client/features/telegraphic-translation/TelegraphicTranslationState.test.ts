@@ -25,6 +25,9 @@ import {
 import { MESSAGE_LOG_KEY, readMessageLog, saveMessageRecord, saveTranslation } from "../../core/MessageLog";
 import { queryChat } from "../../core/OllamaApi";
 import { mockedSpeak } from "../../testUtils/SpeechUtilsMock";
+import {
+  selectedAttributesSignal, clearAttributes
+} from "../message-attributes/MessageAttributesState";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../core/OllamaApi")>();
@@ -103,6 +106,7 @@ describe("telegraphicTranslationState", (): void => {
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
     setEditGuard(null);
+    clearAttributes();
   });
 
   test("currentTelegraphicMessage joins the symbol labels with spaces", (): void => {
@@ -135,6 +139,21 @@ describe("telegraphicTranslationState", (): void => {
     expect(changeEncodingContents.value).toEqual({ payloads: [], caretPosition: -1 });
     expect(sentenceCompletionsSignal.value).toEqual(IDLE_SENTENCE_STATE);
     expect(prompts).toEqual([]);
+  });
+
+  test("clearing the message also clears the attributes set on it", (): void => {
+    selectedAttributesSignal.value = [
+      { category: "Priority", label: "urgent", composition: 4310 }
+    ];
+    changeEncodingContents.value = {
+      payloads: [{ label: "hungry", composition: [124], modifierInfo: [] }],
+      caretPosition: 0
+    };
+
+    clearMessageAndChoices();
+
+    expect(changeEncodingContents.value.payloads).toEqual([]);
+    expect(selectedAttributesSignal.value).toEqual([]);
   });
 
   test("an empty message does not query", async (): Promise<void> => {

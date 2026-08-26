@@ -1,0 +1,36 @@
+/*
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
+ *
+ * Licensed under the New BSD license. You may not use this file except in
+ * compliance with this License.
+ *
+ * You may obtain a copy of the License at
+ * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
+ */
+
+.actionAttributeCell {
+  border: 3px solid gray;
+  background-color: white;
+  padding-inline: 0.5rem;
+  text-align: center;
+
+  /* Selection is carried by the border; the fill reinforces it. */
+  &[aria-pressed="true"] {
+    border-color: black;
+    border-style: double;
+    background-color: #ffe14d;
+
+    /* Fill and border colour are replaced in forced-colors mode; an outline is not. */
+    @media (forced-colors: active) {
+      outline: 3px solid;
+      outline-offset: -8px;
+    }
+  }
+
+  /* Restated because the rule above outranks the global indicator. */
+  &:hover, &:focus {
+    border-color: red;
+  }
+}

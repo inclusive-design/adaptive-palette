@@ -22,9 +22,10 @@ import { MESSAGE_LOG_KEY, saveMessageRecord } from "../../core/MessageLog";
 import {
   moreSuggestionsMessage, PredictedWords, PREDICTED_WORDS_LABEL, QUERYING_MESSAGE
 } from "./PredictedWords";
-import { cancelModelQuery, modelWordsSignal } from "./WordPredictionState";
+import { cancelModelQuery, modelWordsSignal, queryContextKeyOf } from "./WordPredictionState";
 import { SymbolEncodingType } from "../../index.d";
 import { AI_BADGE_TEXT, aiSuggestionLabel } from "../../components/AiBadge";
+import { selectedAttributesSignal, clearAttributes } from "../message-attributes/MessageAttributesState";
 
 // The row is driven from `modelWordsSignal` directly here, so a query left waiting is all
 // that is wanted of Ollama.
@@ -143,6 +144,7 @@ describe("PredictedWords", (): void => {
       modelWordsSignal.value = { status: "idle" };
       finishedMessageSignal.value = "";
       adaptivePaletteGlobals.models = [];
+      clearAttributes();
     });
 
     test("model words fill the slots the history left empty", (): void => {
@@ -157,6 +159,32 @@ describe("PredictedWords", (): void => {
       expect(labels[1]).toContain("food");
       expect(labels[2]).toContain("tea");
       expect(suggestions.querySelectorAll(".predictedWordEmpty")).toHaveLength(1);
+    });
+
+    // The row has to compare against the same combined key the query was made under, or the
+    // model's words never clear the `contextKey` check once an attribute is set.
+    test("model words render with an attribute set", (): void => {
+      selectedAttributesSignal.value = [
+        { category: "Feeling", label: "angry", composition: 1198 }
+      ];
+      setMessage("I", "want");
+      showModelWords(queryContextKeyOf("I want"), "food", "tea");
+      render(html`<${PredictedWords} />`);
+
+      const labels = [...screen.getByRole("group").querySelectorAll("button")]
+        .map((button) => button.textContent);
+      expect(labels.some((label) => label?.includes("food"))).toBe(true);
+    });
+
+    test("the querying status shows with an attribute set", async (): Promise<void> => {
+      selectedAttributesSignal.value = [
+        { category: "Feeling", label: "angry", composition: 1198 }
+      ];
+      setMessage("I", "want");
+      render(html`<${PredictedWords} />`);
+
+      modelWordsSignal.value = { status: "working", contextKey: queryContextKeyOf("I want") };
+      await waitFor(() => expect(screen.getByRole("status").textContent?.trim()).toBe(QUERYING_MESSAGE));
     });
 
     // Moving a button out from under someone reaching for it is worse than suggesting less.
@@ -205,6 +233,51 @@ describe("PredictedWords", (): void => {
       finishedMessageSignal.value = "I want";
       await waitFor(() => expect(screen.getByRole("status").textContent?.trim()).toBe(""));
       expect(container.querySelectorAll("button")).toHaveLength(3);
+    });
+
+    // Speak leaves the message and its attributes in place, so adjusting an attribute after
+    // finishing is normal use. The words already on the row must stay recognized as the answer
+    // to this message, not vanish because the key they were stored under has gone stale.
+    test("setting an attribute after finishing keeps the words on the row", async (): Promise<void> => {
+      setMessage("I", "want");
+      showModelWords("I want", "food", "tea");
+      const { container } = render(html`<${PredictedWords} />`);
+      await waitFor(() => expect(screen.getByRole("status").textContent?.trim())
+        .toBe(moreSuggestionsMessage(2)));
+
+      finishedMessageSignal.value = "I want";
+      await waitFor(() => expect(screen.getByRole("status").textContent?.trim()).toBe(""));
+
+      selectedAttributesSignal.value = [
+        { category: "Feeling", label: "angry", composition: 1198 }
+      ];
+      // The row's existing "3 buttons" DOM state does not change on its own, so wait for the
+      // signal's key to be restamped -- the thing this fix actually does -- before checking
+      // that the row still reflects it, rather than asserting a value the DOM already had.
+      await waitFor(() => {
+        const shown = modelWordsSignal.peek();
+        expect(shown.status === "ready" && shown.contextKey).toBe(queryContextKeyOf("I want"));
+      });
+      expect(container.querySelectorAll("button")).toHaveLength(3);
+    });
+
+    // "Delete all" jumps straight to an empty message without ever setting
+    // `finishedMessageSignal`, so it must not be read as matching the still-empty
+    // `finishedMessageSignal` and have the deleted message's model suggestions restamped onto
+    // the now-empty row.
+    test("deleting the whole message clears the model's suggestions", async (): Promise<void> => {
+      setMessage("I", "want");
+      showModelWords("I want", "food", "tea");
+      const { container } = render(html`<${PredictedWords} />`);
+      await waitFor(() => expect(screen.getByRole("status").textContent?.trim())
+        .toBe(moreSuggestionsMessage(2)));
+
+      changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+
+      await waitFor(() => {
+        const labels = [...container.querySelectorAll("button")].map((button) => button.textContent);
+        expect(labels.some((label) => label?.includes("food"))).toBe(false);
+      });
     });
 
     // The wait belongs to the message it was started for, as its answer does.

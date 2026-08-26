@@ -74,6 +74,19 @@ svg.inter-word-padding {
   }
 }
 
+/*
+ * The top bar: the chips for the attributes set on the message at the left, the symbol-entry
+ * and settings triggers at the right.  It wraps rather than squeezing the triggers when there
+ * are more chips than fit.
+ */
+#topBar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+
 #aiStatus:not(:empty) {
   background-color: #ffecec;
   border-radius: 1rem;

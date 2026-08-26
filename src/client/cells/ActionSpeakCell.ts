@@ -49,6 +49,8 @@ export function ActionSpeakCell (props: ActionSpeakCellPropsType): VNode {
   // order: a switch or eye-gaze user who loses focus mid-scan has to start over.
   const cannotRun = payloads.length === 0;
 
+  // The message attributes are not spoken. They are context for the model, not words the user
+  // chose to say.
   const cellClicked = (): void => {
     if (cannotRun) {
       speakUnavailable(label);

@@ -10,11 +10,11 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-.btn-makeSentence {
-  background-color: #ffe14d;
-  width: 100%;
-
-  &[aria-disabled="true"] {
-    background-color: silver;
-  }
+.contentLabel {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-inline-end: 0.5rem;
+  font-weight: bold;
+  text-align: end;
 }

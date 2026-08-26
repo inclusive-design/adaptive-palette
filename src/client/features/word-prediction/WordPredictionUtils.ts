@@ -14,9 +14,10 @@ import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { readMessageLog } from "../../core/MessageLog";
 import { resolveWordPayload } from "../../utils/GlossLookupUtils";
 import { normalizeComposition } from "../../utils/SymbolEncodingUtils";
-import { renderTemplate } from "../../utils/PromptUtils";
+import { renderTemplate, renderPromptLines } from "../../utils/PromptUtils";
 import { pickModel } from "../telegraphic-translation/TelegraphicTranslationUtils";
 import { queryChat } from "../../core/OllamaApi";
+import { attributesPromptText } from "../message-attributes/MessageAttributesState";
 import { ResolutionRungType, SymbolCompositionType, SymbolEncodingType } from "../../index.d";
 
 /*
@@ -377,9 +378,10 @@ export async function requestModelWords (message: string, numWords: number, abor
     throw new Error(NOT_CONFIGURED_MESSAGE);
   }
   const model = pickModel(config.model);
-  const values = { message, numWords: String(numWords) };
+  const values = { message, numWords: String(numWords), attributes: attributesPromptText() };
   const response = await queryChat(
-    renderTemplate(config.userPrompt, values),
+    // Line-per-field: with no attributes set, `attributes` is empty and its line is dropped.
+    renderPromptLines(config.userPrompt, values),
     model,
     false,
     renderTemplate(config.systemPrompt, values),

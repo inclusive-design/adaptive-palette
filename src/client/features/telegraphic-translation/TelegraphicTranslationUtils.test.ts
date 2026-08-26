@@ -17,6 +17,9 @@ import { setTestConfig } from "../../testUtils/TestConfig";
 import {
   pickModel, parseSentences, requestSentences
 } from "./TelegraphicTranslationUtils";
+import {
+  selectedAttributesSignal, clearAttributes
+} from "../message-attributes/MessageAttributesState";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../core/OllamaApi")>();
@@ -39,6 +42,7 @@ describe("telegraphicTranslation", (): void => {
     mockedQueryChat.mockReset();
     adaptivePaletteGlobals.models = ["phony-model:12b", "other-model:7b"];
     setTestConfig({ telegraphicTranslation: { ...CONFIG } });
+    clearAttributes();
   });
 
   describe("pickModel", (): void => {
@@ -140,6 +144,38 @@ describe("telegraphicTranslation", (): void => {
     test("rejects when the feature is unavailable", async (): Promise<void> => {
       adaptivePaletteGlobals.models = [];
       await expect(requestSentences("me hungry")).rejects.toThrow(NO_MODELS_MESSAGE);
+    });
+  });
+
+  describe("the attributes line in the user prompt", (): void => {
+
+    const promptConfig = {
+      ...CONFIG,
+      userPrompt: "Telegraphic message: {{telegraphicMessage}}\nMessage attributes: {{attributes}}"
+    };
+
+    beforeEach((): void => {
+      setTestConfig({ telegraphicTranslation: promptConfig });
+      mockedQueryChat.mockResolvedValue({ message: { content: "1. Am I late?" } } as never);
+    });
+
+    test("carries the attributes when some are set", async (): Promise<void> => {
+      selectedAttributesSignal.value = [
+        { category: "Intent", label: "question", composition: 553 },
+        { category: "Priority", label: "urgent", composition: 4310 }
+      ];
+
+      await requestSentences("late");
+
+      expect(mockedQueryChat.mock.calls[0][0]).toBe(
+        "Telegraphic message: late\nMessage attributes: Intent: question; Priority: urgent"
+      );
+    });
+
+    test("drops the attributes line when none are set", async (): Promise<void> => {
+      await requestSentences("late");
+
+      expect(mockedQueryChat.mock.calls[0][0]).toBe("Telegraphic message: late");
     });
   });
 });

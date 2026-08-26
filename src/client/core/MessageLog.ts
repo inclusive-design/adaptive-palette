@@ -140,7 +140,8 @@ export function saveMessageRecord (payloads: SymbolEncodingType[]): void {
 }
 
 /**
- * Record what a message was translated into, against the message itself.
+ * Record what a message was translated into, against the message itself. The message
+ * attributes are not saved.
  *
  * The translation is attached to the most recent record of that message, which was stored
  * when the user asked for a sentence. Should there be no such record, because the log was
@@ -154,6 +155,7 @@ export function saveMessageRecord (payloads: SymbolEncodingType[]): void {
  * @param {TranslationInfoType} translation - What it was translated into.
  * @returns {void}
  */
+// 
 export function saveTranslation (telegraphicMessage: string, translation: TranslationInfoType): void {
   if (!adaptivePaletteGlobals.config.maxStoredRecords) {
     return;
@@ -173,6 +175,8 @@ export function saveTranslation (telegraphicMessage: string, translation: Transl
 
 /**
  * Find the most recent translation for a message, if there is one.
+ *
+ * Matches on message text alone -- ignores attributes; see `saveTranslation()`.
  * @param {string} telegraphicMessage - The message to look up.
  * @returns {TranslationInfoType | undefined}
  */
