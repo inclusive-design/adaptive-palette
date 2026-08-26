@@ -21,7 +21,7 @@ import { BlissSymbol } from "../../components/BlissSymbol";
 import { insertWordAtCaret } from "../../utils/SymbolEncodingUtils";
 import { announceIfEnabled } from "../../utils/SpeechUtils";
 import { predictNext } from "./WordPredictionUtils";
-import { contextKeyOf, modelWordsSignal } from "./WordPredictionState";
+import { messageUpToCaret, queryContextKeyOf, modelWordsSignal } from "./WordPredictionState";
 import { SymbolEncodingType } from "../../index.d";
 import "./PredictedWords.scss";
 
@@ -70,8 +70,9 @@ export function PredictedWords (): VNode | null {
   const precedingLabels = payloads.slice(0, caretPosition + 1).map((payload) => payload.label);
   const historySuggestions = predictNext(precedingLabels, maxSuggestions);
 
-  // Stop showing the status message when the user changes the message.
-  const contextKey = contextKeyOf(payloads, caretPosition);
+  // Stop showing the status message when the user changes the message or its attributes -- the
+  // model was asked under the combined key, so the row has to compare against that same key.
+  const contextKey = queryContextKeyOf(messageUpToCaret(payloads, caretPosition));
   const modelSuggestions = modelWords.status === "ready" && modelWords.contextKey === contextKey
     ? modelWords.payloads
     : [];
@@ -115,7 +116,10 @@ export function PredictedWords (): VNode | null {
 
   // The wait and the arrival are both reported. A failed query says nothing, and neither does
   // a message the user has finished with.
-  const isFinished = messageText(payloads) === finishedMessageSignal.value;
+  // The length check keeps an empty message with nothing finished from counting as finished,
+  // matching the guard in `WordPredictionState.ts`.
+  const finishedMessage = finishedMessageSignal.value;
+  const isFinished = finishedMessage.length > 0 && messageText(payloads) === finishedMessage;
   const statusText = isFinished ? ""
     : isQuerying ? QUERYING_MESSAGE
       : modelSuggestions.length > 0 ? moreSuggestionsMessage(modelSuggestions.length) : "";

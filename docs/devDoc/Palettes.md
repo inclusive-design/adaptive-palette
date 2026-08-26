@@ -62,7 +62,15 @@ hint; the UUID makes the key unique.
 | `rowSpan` | number | Number of grid rows the cell occupies |
 | `columnStart` | number | CSS grid column start (1-based) |
 | `columnSpan` | number | Number of grid columns the cell occupies |
+| `requiresModel` | boolean | Optional. When true the cell is left out unless a model is available |
+| `requiresConfig` | string | Optional. The `config.json` section the cell needs; the cell is left out when that section is missing |
+
+Both flags mark a cell whose feature can be unavailable: the command bar's "Msg Style" button
+carries `requiresModel`, and the input area's "Make Sentences" button carries both. `Palette.ts`
+leaves such a cell out and collapses the grid column it would have taken, so the rest of the row
+spreads over the space instead of showing a hole.
 
 **`composition`** identifies the Bliss symbol(s) to render. It is either a
-single numeric ID (e.g., `398`) or an array of IDs and separator strings
+single numeric ID -- the `id` field from `bliss_symbol_explanations.json`, not its `bciAvId` --
+(e.g., `398`) or an array of IDs and separator strings
 (e.g., `[1433, "/", 1234]`) used to compose a combined symbol.

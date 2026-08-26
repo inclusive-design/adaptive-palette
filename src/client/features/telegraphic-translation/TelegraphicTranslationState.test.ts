@@ -25,6 +25,9 @@ import {
 import { MESSAGE_LOG_KEY, readMessageLog, saveMessageRecord, saveTranslation } from "../../core/MessageLog";
 import { queryChat } from "../../core/OllamaApi";
 import { mockedSpeak } from "../../testUtils/SpeechUtilsMock";
+import {
+  selectedAttributesSignal, clearAttributes
+} from "../message-attributes/MessageAttributesState";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../core/OllamaApi")>();
@@ -103,6 +106,7 @@ describe("telegraphicTranslationState", (): void => {
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
     setEditGuard(null);
+    clearAttributes();
   });
 
   test("currentTelegraphicMessage joins the symbol labels with spaces", (): void => {
@@ -135,6 +139,21 @@ describe("telegraphicTranslationState", (): void => {
     expect(changeEncodingContents.value).toEqual({ payloads: [], caretPosition: -1 });
     expect(sentenceCompletionsSignal.value).toEqual(IDLE_SENTENCE_STATE);
     expect(prompts).toEqual([]);
+  });
+
+  test("clearing the message also clears the attributes set on it", (): void => {
+    selectedAttributesSignal.value = [
+      { category: "Priority", label: "urgent", composition: 4310 }
+    ];
+    changeEncodingContents.value = {
+      payloads: [{ label: "hungry", composition: [124], modifierInfo: [] }],
+      caretPosition: 0
+    };
+
+    clearMessageAndChoices();
+
+    expect(changeEncodingContents.value.payloads).toEqual([]);
+    expect(selectedAttributesSignal.value).toEqual([]);
   });
 
   test("an empty message does not query", async (): Promise<void> => {
@@ -693,6 +712,25 @@ describe("telegraphicTranslationState", (): void => {
     });
     // Recall reads the log; it writes nothing until the user picks the sentence.
     expect(readMessageLog()).toEqual(loggedBefore);
+  });
+
+  test("with an attribute set the recalled sentence is not the whole answer", async (): Promise<void> => {
+    setConfig(1);
+    recordPastTranslation("I am hungry.");
+    editMessage(INPUT_CONTENTS);
+    selectedAttributesSignal.value = [
+      { category: "Priority", label: "urgent", composition: 4310 }
+    ];
+    mockedQueryChat.mockResolvedValue({
+      message: { content: "1. I need food now!" }
+    } as never);
+
+    await requestForCurrentMessage();
+
+    // The recalled sentence was made without the attribute, so the model is asked again.
+    expect(mockedQueryChat).toHaveBeenCalled();
+    expect(sentenceCompletionsSignal.value.sentences).toEqual(["I am hungry."]);
+    expect(sentenceCompletionsSignal.value.model).toBe("phony-model:12b");
   });
 
   test("the recalled sentence is named in the state", async (): Promise<void> => {

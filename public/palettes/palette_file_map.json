@@ -1,5 +1,6 @@
 {
   "Bliss standard chart": "/palettes/bliss_standard_chart.json",
+  "attributes": "/palettes/attributes.json",
   "questions": "/palettes/questions.json",
   "to_be": "/palettes/to_be.json",
   "much_many": "/palettes/much_many.json",

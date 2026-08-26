@@ -30,6 +30,7 @@ import { CurrentPalette } from "./components/CurrentPalette";
 import { SentenceChoices } from "./features/telegraphic-translation/SentenceChoices";
 import { PredictedWords } from "./features/word-prediction/PredictedWords";
 import { SymbolEntryToolbar } from "./components/SymbolEntryToolbar";
+import { MessageAttributesBar } from "./features/message-attributes/MessageAttributesBar";
 
 const paletteFileMap = await loadPaletteFromJsonFile("/palettes/palette_file_map.json");
 const firstLayer = await loadPaletteFromJsonFile("/palettes/bliss_standard_chart.json");
@@ -53,8 +54,8 @@ render(html`<${Palette} json=${inputArea} />`, getRequiredElement("input_palette
 render(html`<${Palette} json=${commandBar} />`, getRequiredElement("commandBar"));
 render(html`<${CurrentPalette} />`, getRequiredElement("mainPaletteDisplayArea"));
 
-// Sentence translation: the trigger button lives in the input area palette and hides
-// itself when unavailable, so only the status line needs wiring here.
+// Sentence translation: the trigger button lives in the input area palette, which `Palette`
+// leaves out when no model is available, so only the status line needs wiring here.
 render(html`<${SentenceChoices} />`, getRequiredElement("sentenceChoices"));
 
 // Suggested next words, drawn from the messages the user has said before.
@@ -72,7 +73,9 @@ if (adaptivePaletteGlobals.models.length === 0) {
   aiStatus.remove();
 }
 
-// Triggers for adding symbols to the message; each dialog lives inside this component.
+// The top bar. The chips for the attributes set on the message sit at its left, the triggers
+// for adding symbols at its right; each dialog lives inside the toolbar component.
+render(html`<${MessageAttributesBar} />`, getRequiredElement("messageAttributes"));
 render(html`<${SymbolEntryToolbar} />`, getRequiredElement("symbolEntryToolbar"));
 
 // Window keydown listener for a global "go back" keystroke

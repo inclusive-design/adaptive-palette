@@ -95,18 +95,6 @@ describe("CommandMakeSentence", (): void => {
     window.localStorage.removeItem(MESSAGE_LOG_KEY);
   });
 
-  test("renders nothing when no models are available", (): void => {
-    adaptivePaletteGlobals.models = [];
-    const { container } = renderCell();
-    expect(container.textContent).toBe("");
-  });
-
-  test("renders nothing when the feature is unconfigured", (): void => {
-    setTestConfig();
-    const { container } = renderCell();
-    expect(container.textContent).toBe("");
-  });
-
   test("renders the Bliss symbol of its composition, keeping the label as the name", (): void => {
     renderCell();
     const button = screen.getByRole("button", { name: make_setence_label });

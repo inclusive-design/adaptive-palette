@@ -1,0 +1,69 @@
+{
+  "name": "attributes",
+  "cells": {
+    "attribute-label-intent": {
+      "type": "ContentLabel",
+      "options": { "label": "Intent", "rowStart": 1, "rowSpan": 1, "columnStart": 1, "columnSpan": 1 }
+    },
+    "attribute-question": {
+      "type": "ActionAttributeCell",
+      "options": { "label": "question", "category": "Intent", "composition": 553, "rowStart": 1, "rowSpan": 1, "columnStart": 2, "columnSpan": 1 }
+    },
+    "attribute-request": {
+      "type": "ActionAttributeCell",
+      "options": { "label": "request", "category": "Intent", "composition": 2267, "rowStart": 1, "rowSpan": 1, "columnStart": 3, "columnSpan": 1 }
+    },
+    "attribute-help": {
+      "type": "ActionAttributeCell",
+      "options": { "label": "help", "category": "Intent", "composition": 382, "rowStart": 1, "rowSpan": 1, "columnStart": 4, "columnSpan": 1 }
+    },
+    "attribute-label-tone": {
+      "type": "ContentLabel",
+      "options": { "label": "Tone", "rowStart": 2, "rowSpan": 1, "columnStart": 1, "columnSpan": 1 }
+    },
+    "attribute-friendly": {
+      "type": "ActionAttributeCell",
+      "options": { "label": "friendly", "category": "Tone", "composition": [1705, ";;", 86], "rowStart": 2, "rowSpan": 1, "columnStart": 2, "columnSpan": 1 }
+    },
+    "attribute-polite": {
+      "type": "ActionAttributeCell",
+      "options": { "label": "polite", "category": "Tone", "composition": 2174, "rowStart": 2, "rowSpan": 1, "columnStart": 3, "columnSpan": 1 }
+    },
+    "attribute-serious": {
+      "type": "ActionAttributeCell",
+      "options": { "label": "serious", "category": "Tone", "composition": 6389, "rowStart": 2, "rowSpan": 1, "columnStart": 4, "columnSpan": 1 }
+    },
+    "attribute-label-feeling": {
+      "type": "ContentLabel",
+      "options": { "label": "Feeling", "rowStart": 3, "rowSpan": 1, "columnStart": 1, "columnSpan": 1 }
+    },
+    "attribute-happy": {
+      "type": "ActionAttributeCell",
+      "options": { "label": "happy", "category": "Feeling", "composition": 1780, "rowStart": 3, "rowSpan": 1, "columnStart": 2, "columnSpan": 1 }
+    },
+    "attribute-sad": {
+      "type": "ActionAttributeCell",
+      "options": { "label": "sad", "category": "Feeling", "composition": 2304, "rowStart": 3, "rowSpan": 1, "columnStart": 3, "columnSpan": 1 }
+    },
+    "attribute-angry": {
+      "type": "ActionAttributeCell",
+      "options": { "label": "angry", "category": "Feeling", "composition": 1198, "rowStart": 3, "rowSpan": 1, "columnStart": 4, "columnSpan": 1 }
+    },
+    "attribute-worried": {
+      "type": "ActionAttributeCell",
+      "options": { "label": "worried", "category": "Feeling", "composition": 6401, "rowStart": 3, "rowSpan": 1, "columnStart": 5, "columnSpan": 1 }
+    },
+    "attribute-label-priority": {
+      "type": "ContentLabel",
+      "options": { "label": "Priority", "rowStart": 4, "rowSpan": 1, "columnStart": 1, "columnSpan": 1 }
+    },
+    "attribute-urgent": {
+      "type": "ActionAttributeCell",
+      "options": { "label": "urgent", "category": "Priority", "composition": 4310, "rowStart": 4, "rowSpan": 1, "columnStart": 2, "columnSpan": 1 }
+    },
+    "attribute-emergency": {
+      "type": "ActionAttributeCell",
+      "options": { "label": "emergency", "category": "Priority", "composition": 1604, "rowStart": 4, "rowSpan": 1, "columnStart": 3, "columnSpan": 1 }
+    }
+  }
+}

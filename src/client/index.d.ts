@@ -34,6 +34,12 @@ export type LayoutInfoType = {
   columnSpan: number,
   rowStart: number,
   rowSpan: number,
+  // When true the palette leaves the cell out unless a model is available, and closes the row
+  // up over the column it would have taken.
+  requiresModel?: boolean,
+  // The `config.json` section the cell's feature needs. The palette leaves the cell out, and
+  // closes the row up, when that section is missing.
+  requiresConfig?: keyof AdaptivePaletteConfigType
 };
 
 export type BranchToInfoType = {
@@ -48,7 +54,7 @@ export type JsonPaletteType = {
   cells: {
     [key: string]: {
       type: string,
-      options: BlissSymbolCellType | ContentEncodingType
+      options: BlissSymbolCellType | ContentEncodingType | ContentLabelType | AttributeCellType
     }
   }
 };
@@ -194,4 +200,26 @@ export type SentenceCompletionsStateType = {
   recalledSentence: string | null,
   model: string,
   telegraphicMessage: string
+};
+
+/*
+ * One attribute the user has set on the message being composed. `category` is the palette row
+ * it came from ("Intent", "Tone", "Feeling", "Priority"); `label` is the attribute itself.
+ * `composition` travels with it so the chip row can draw the symbol without going back to the
+ * palette JSON.
+ */
+export type MessageAttributeType = {
+  category: string,
+  label: string,
+  composition: SymbolCompositionType
+};
+
+// The options an `ActionAttributeCell` carries in the palette JSON.
+export type AttributeCellType = BlissSymbolInfoType & LayoutInfoType & {
+  category: string
+};
+
+// The options a `ContentLabel` carries in the palette JSON.
+export type ContentLabelType = LayoutInfoType & {
+  label: string
 };

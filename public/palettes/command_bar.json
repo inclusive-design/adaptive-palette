@@ -217,6 +217,23 @@
         "columnSpan": 1
       }
     },
+    "command-message-attributes": {
+      "type": "ActionBranchToPaletteCell",
+      "options": {
+        "label": "Msg Style",
+        "branchTo": "attributes",
+        "requiresModel": true,
+        "composition": [
+          4544,
+          "//",
+          4681
+        ],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 17,
+        "columnSpan": 1
+      }
+    },
     "command-clear-saved-data": {
       "type": "CommandClearSavedData",
       "options": {
@@ -230,7 +247,7 @@
         ],
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 17,
+        "columnStart": 18,
         "columnSpan": 1
       }
     }

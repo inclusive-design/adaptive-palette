@@ -31,11 +31,12 @@ export const SETTINGS_DIALOG_ID = "adjustSettingsDialog";
 type OpenDialogType = "search" | "svg" | "settings" | null;
 
 /**
- * The row of triggers above the input area, and the dialogs they open: adding a symbol to
+ * The triggers at the right of the top bar, and the dialogs they open: adding a symbol to
  * the message, and adjusting the settings.
  *
  * The triggers live outside the palette grid because no palette row has a spare column:
- * a trigger cell would have to shrink a neighbour.
+ * a trigger cell would have to shrink a neighbour.  `#topBar` in `index.scss` is what keeps
+ * them to the right, opposite the message attributes.
  *
  * Each dialog body is mounted only while its dialog is open, so reopening starts from a
  * clean form without any explicit reset code.
@@ -73,7 +74,7 @@ export function SymbolEntryToolbar (): VNode {
       `}
       <button
         type="button"
-        class="btn-command settingsTrigger"
+        class="btn-command"
         aria-haspopup="dialog"
         onClick=${open("settings")}>${SETTINGS_TRIGGER_LABEL}</button>
 

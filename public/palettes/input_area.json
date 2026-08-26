@@ -37,6 +37,8 @@
       "options": {
         "label": "Make Sentences",
         "composition": [1968, "//", 2351, ";;", 99],
+        "requiresModel": true,
+        "requiresConfig": "telegraphicTranslation",
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 14,

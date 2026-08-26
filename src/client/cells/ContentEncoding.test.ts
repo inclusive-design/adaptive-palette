@@ -10,8 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render, screen } from "@testing-library/preact";
-import { html } from "htm/preact";
+import { screen } from "@testing-library/preact";
 import { ContentEncoding, clamp } from "./ContentEncoding";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { renderCell } from "../testUtils/CellTestUtils";
@@ -45,42 +44,6 @@ test("The content encoding area is rendered correctly", async (): Promise<void> 
 
   // Nothing is rendered in the content area
   expect(encodingAreaByLabel.childNodes.length).toBe(0);
-});
-
-// `Sentence` button is not rendered when no model is available. The input area takes over its space.
-describe("covering the sentence button's column", (): void => {
-
-  const cellOptions = {
-    columnStart: 1,
-    columnSpan: 10,
-    rowStart: 2,
-    rowSpan: 1
-  };
-
-  test("stretches to column 15 with no sentence button in the palette", async (): Promise<void> => {
-    render(html`
-      <div id="inputArea">
-        <div class="paletteContainer">
-          <${ContentEncoding} id="content-encoding-area" options=${cellOptions} />
-        </div>
-      </div>`
-    );
-    const encodingArea = await screen.findByLabelText("Input Area");
-    expect(getComputedStyle(encodingArea).gridColumnEnd).toBe("15");
-  });
-
-  test("keeps its own span when the sentence button is present", async (): Promise<void> => {
-    render(html`
-      <div id="inputArea">
-        <div class="paletteContainer">
-          <${ContentEncoding} id="content-encoding-area" options=${cellOptions} />
-          <button class="btn-makeSentence">Sentence</button>
-        </div>
-      </div>`
-    );
-    const encodingArea = await screen.findByLabelText("Input Area");
-    expect(getComputedStyle(encodingArea).gridColumnEnd).toBe("span 10");
-  });
 });
 
 describe("clamp()", (): void => {

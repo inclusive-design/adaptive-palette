@@ -19,6 +19,9 @@ import {
   requestModelWords, SEED_STARTERS, wordPredictionStats
 } from "./WordPredictionUtils";
 import { resolveWordPayload } from "../../utils/GlossLookupUtils";
+import {
+  selectedAttributesSignal, clearAttributes
+} from "../message-attributes/MessageAttributesState";
 import { SymbolEncodingType } from "../../index.d";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
@@ -172,6 +175,7 @@ describe("wordPrediction with a model answering as well", (): void => {
     adaptivePaletteGlobals.config.wordPrediction = { ...MODEL_CONFIG };
     adaptivePaletteGlobals.models = ["phony-model:12b"];
     wordPredictionStats.reset();
+    clearAttributes();
   });
 
   afterEach((): void => {
@@ -348,6 +352,41 @@ describe("wordPrediction with a model answering as well", (): void => {
     test("reports that there is no model to ask", async (): Promise<void> => {
       adaptivePaletteGlobals.models = [];
       await expect(requestModelWords("I want", 6)).rejects.toThrow(NO_MODELS_MESSAGE);
+    });
+  });
+
+  describe("the attributes line in the user prompt", (): void => {
+
+    const promptConfig = {
+      ...MODEL_CONFIG,
+      userPrompt: "Message so far: {{message}}\nMessage attributes: {{attributes}}"
+    };
+
+    beforeEach((): void => {
+      adaptivePaletteGlobals.config.wordPrediction = { ...promptConfig };
+      replyWith("now\nplease");
+    });
+
+    afterEach((): void => {
+      clearAttributes();
+    });
+
+    test("carries the attributes when some are set", async (): Promise<void> => {
+      selectedAttributesSignal.value = [
+        { category: "Feeling", label: "angry", composition: 1198 }
+      ];
+
+      await requestModelWords("I want", 5);
+
+      expect(mockedQueryChat.mock.calls[0][0]).toBe(
+        "Message so far: I want\nMessage attributes: Feeling: angry"
+      );
+    });
+
+    test("drops the attributes line when none are set", async (): Promise<void> => {
+      await requestModelWords("I want", 5);
+
+      expect(mockedQueryChat.mock.calls[0][0]).toBe("Message so far: I want");
     });
   });
 });
