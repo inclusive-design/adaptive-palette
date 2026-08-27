@@ -14,7 +14,7 @@
     },
     "bci-av": {
       "author": "Blissymbolics Communication International",
-      "source": "https://blissymbolics.org/index.php/symbol-files-2025"
+      "source": "https://blissymbolics.org/index.php/bci-av-2026"
     }
   },
   "data": [
@@ -664,7 +664,8 @@
       "gloss": "indicator (action)",
       "pos": "function",
       "explanation": "action [quarter-sized]: placed above a symbol to create (1) the infinitive form of a verb, and (2) the present tense of a verb",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 82,
@@ -672,7 +673,8 @@
       "gloss": "indicator (active)",
       "pos": "function",
       "explanation": "action indicator [modification]: turned on its side and pointing forward: placed above a symbol to emphasize that something is acting on something else. The symbol is logically related to about.",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 83,
@@ -680,7 +682,8 @@
       "gloss": "indicator (conditional)",
       "pos": "function",
       "explanation": "question mark [quarter-sized]: placed above a symbol to indicate the equivalent of the English present conditional form",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 84,
@@ -688,7 +691,8 @@
       "gloss": "indicator (description after fact)",
       "pos": "function",
       "explanation": "description indicator + dot: placed above a symbol to indicate meanings equivalent to an English past participle, usually with an -ed or -en ending",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 85,
@@ -696,7 +700,8 @@
       "gloss": "indicator (description before fact)",
       "pos": "function",
       "explanation": "dot + description indicator: the dot comes before the indicator: placed above a symbol to produce meanings equivalent to English words ending in -able",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 86,
@@ -704,7 +709,8 @@
       "gloss": "indicator (description)",
       "pos": "function",
       "explanation": "evaluation [quarter-sized]: placed above a symbol to show that it is describing or evaluating something. This indicator produces meanings equivalent to English adjectives and adverbs.",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 87,
@@ -712,7 +718,8 @@
       "gloss": "indicator (future action)",
       "pos": "function",
       "explanation": "future [quarter-sized]: placed above a symbol to indicate future action",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 88,
@@ -720,7 +727,8 @@
       "gloss": "indicator (future conditional)",
       "pos": "function",
       "explanation": "conditional indicator + future action indicator: placed above a symbol to indicate the future conditional form",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 89,
@@ -728,7 +736,8 @@
       "gloss": "indicator (future passive)",
       "pos": "function",
       "explanation": "passive indicator + future action indicator",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 90,
@@ -736,7 +745,8 @@
       "gloss": "indicator (future passive conditional)",
       "pos": "function",
       "explanation": "passive indicator + future conditional indicator",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 91,
@@ -744,7 +754,8 @@
       "gloss": "indicator (passive)",
       "pos": "function",
       "explanation": "action indicator [modification]: turned on its side and pointing backward: placed above a symbol to emphasize that something is being acted upon. The symbol is logically related to by.",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 92,
@@ -752,7 +763,8 @@
       "gloss": "indicator (past action)",
       "pos": "function",
       "explanation": "past [quarter-sized]: placed above a symbol to indicate past action",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 93,
@@ -760,7 +772,8 @@
       "gloss": "indicator (past conditional)",
       "pos": "function",
       "explanation": "conditional indicator + past action indicator: placed above a symbol to indicate the past conditional form",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 94,
@@ -768,7 +781,8 @@
       "gloss": "indicator (past passive conditional)",
       "pos": "function",
       "explanation": "passive indicator + past conditional indicator",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 95,
@@ -776,7 +790,8 @@
       "gloss": "indicator (past passive)",
       "pos": "function",
       "explanation": "passive indicator + past action indicator",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 96,
@@ -784,7 +799,8 @@
       "gloss": "indicator (present passive conditional)",
       "pos": "function",
       "explanation": "passive indicator + conditional indicator",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 97,
@@ -792,7 +808,8 @@
       "gloss": "indicator (thing)",
       "pos": "function",
       "explanation": "thing [quarter-sized]: placed above a symbol to represent a concrete object",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 98,
@@ -800,7 +817,8 @@
       "gloss": "indicator (thing plural)",
       "pos": "function",
       "explanation": "thing indicator + plural indicator",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 99,
@@ -808,7 +826,8 @@
       "gloss": "indicator (plural)",
       "pos": "function",
       "explanation": "multiplication [quarter-sized]: placed above a symbol to indicate a plural form",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 100,
@@ -933,7 +952,7 @@
     {
       "id": 115,
       "bciAvId": 12357,
-      "gloss": "airplane, aeroplane, plane",
+      "gloss": "aeroplane, airplane, plane",
       "pos": "noun",
       "explanation": "wings + wheel",
       "isCharacter": true
@@ -1901,7 +1920,7 @@
     {
       "id": 236,
       "bciAvId": 13395,
-      "gloss": "conception, fertilization, fertilized egg",
+      "gloss": "conception, fertilisation, fertilised egg, fertilization, fertilized egg",
       "pos": "noun",
       "explanation": "sperm + egg [combination]",
       "isCharacter": true
@@ -2797,7 +2816,7 @@
     {
       "id": 348,
       "bciAvId": 14430,
-      "gloss": "generalization",
+      "gloss": "generalisation, generalization",
       "pos": "noun",
       "explanation": "mouth + many: what one says to characterize many things: CKB describes this symbol as \"a saying about a multitude\".",
       "isCharacter": true
@@ -3581,7 +3600,7 @@
     {
       "id": 446,
       "bciAvId": 15464,
-      "gloss": "middle, centre",
+      "gloss": "middle, centre, center",
       "pos": "noun",
       "explanation": "enclosure + pointer, to centre",
       "isCharacter": true
@@ -4813,7 +4832,7 @@
     {
       "id": 600,
       "bciAvId": 17017,
-      "gloss": "smell, odour",
+      "gloss": "smell, odour, odor",
       "pos": "noun",
       "explanation": "nose + earth [half-sized]: what the nose gets from the earth",
       "isCharacter": true
@@ -5901,7 +5920,7 @@
     {
       "id": 736,
       "bciAvId": 21054,
-      "gloss": "leader, director, guide (1)",
+      "gloss": "leader, director, guide, coach (1)",
       "pos": "person",
       "explanation": "person + leadership,guidance",
       "isCharacter": true
@@ -6445,7 +6464,7 @@
     {
       "id": 804,
       "bciAvId": 22914,
-      "gloss": "must (a), force",
+      "gloss": "must, force - (a)",
       "pos": "noun",
       "explanation": "mind + strong [modification]: the use of the power of the mind, and/or physical strength, to make something happen",
       "isCharacter": true
@@ -7197,7 +7216,7 @@
     {
       "id": 898,
       "bciAvId": 24515,
-      "gloss": "substance",
+      "gloss": "substance, element",
       "pos": "noun",
       "explanation": "material + dot, in the material: can also be seen as a combination of material and in [modification, half-sized]; what is in a material",
       "isCharacter": true
@@ -7232,7 +7251,8 @@
       "gloss": "indicator (adverb)",
       "pos": "function",
       "explanation": "indicator (description) + indicator (action): may be placed above a symbol to show that it is representing an adverb in a natural language. Used restrictively, primarily for language teaching purposes.",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 903,
@@ -7240,7 +7260,8 @@
       "gloss": "indicator (continuous form)",
       "pos": "function",
       "explanation": "horizontal line [quarter-sized]: may be placed above a symbol to show that it is representing a verb in continuous form in a natural language.",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 904,
@@ -7248,7 +7269,8 @@
       "gloss": "indicator (definite form)",
       "pos": "function",
       "explanation": "the [quarter-sized]: may be placed above a symbol to show that it is representing a noun or other word in definite form in a natural language. Used restrictively, primarily for language teaching purposes.",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 905,
@@ -7256,7 +7278,8 @@
       "gloss": "indicator (female)",
       "pos": "function",
       "explanation": "female (gender) [quarter-sized]: may be placed above a symbol to show that it is representing a word in feminine form in a natural language (male = unmarked). Used restrictively, primarily for language teaching purposes.",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 906,
@@ -7264,7 +7287,8 @@
       "gloss": "indicator (first person)",
       "pos": "function",
       "explanation": "one (digit) [quarter-sized]: may be placed above a symbol to show that it is representing a verb or other word in first person form in a natural language. Used restrictively, primarily for language teaching purposes.",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 907,
@@ -7272,7 +7296,8 @@
       "gloss": "indicator (imperative form)",
       "pos": "function",
       "explanation": "exclamation mark [quarter-sized]: may be placed above a symbol to show that it is representing a verb in imperative form in a natural language. Used restrictively, primarily for language teaching purposes.",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 908,
@@ -7280,7 +7305,8 @@
       "gloss": "indicator (indefinite form)",
       "pos": "function",
       "explanation": "a,an,any [quarter-sized]: may be placed above a symbol to show that it is representing a noun or other word in indefinite form in a natural language. Used restrictively, primarily for language teaching purposes.",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 909,
@@ -7288,7 +7314,8 @@
       "gloss": "indicator (neutral)",
       "pos": "function",
       "explanation": "vertical line [quarter-sized]: may be placed above a symbol to show that it is representing a word in neutral form in a natural language. Used restrictively, primarily for language teaching purposes.",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 910,
@@ -7296,7 +7323,8 @@
       "gloss": "indicator (object form)",
       "pos": "function",
       "explanation": "to,toward,towards [quarter-sized]: may be placed above a symbol to show that it is representing a word in object form in a natural language. Used restrictively, primarily for language teaching purposes.",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 911,
@@ -7304,7 +7332,8 @@
       "gloss": "indicator (past participle 1)",
       "pos": "function",
       "explanation": "indicator (past action) + indicator (description): may be placed above a symbol to show that it is representing a verb in past participle form in a natural language. Used restrictively, primarily for language teaching purposes.",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 912,
@@ -7312,7 +7341,8 @@
       "gloss": "indicator (past participle 2)",
       "pos": "function",
       "explanation": "indicator (past action) + dot: may be placed above a symbol to show that it is representing a verb in past participle form in a natural language. Used restrictively, primarily for language teaching purposes.",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 913,
@@ -7320,7 +7350,8 @@
       "gloss": "indicator (possessive form)",
       "pos": "function",
       "explanation": "plus [quarter-sized]: may be placed above a symbol to show that it is representing a word in possessive form in a natural language. Used restrictively, primarily for language teaching purposes.",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 914,
@@ -7328,7 +7359,8 @@
       "gloss": "indicator (present participle)",
       "pos": "function",
       "explanation": "indicator (present action) + indicator (description): may be placed above a symbol to show that it is representing a verb in present participle form in a natural language. Used restrictively, primarily for language teaching purposes.",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 915,
@@ -7336,7 +7368,8 @@
       "gloss": "indicator (second person)",
       "pos": "function",
       "explanation": "two (digit) [quarter-sized]: may be placed above a symbol to show that it is representing a verb or other word in second person form in a natural language. Used restrictively, primarily for language teaching purposes.",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 916,
@@ -7344,7 +7377,8 @@
       "gloss": "indicator (third person)",
       "pos": "function",
       "explanation": "three (digit) [quarter-sized]: may be placed above a symbol to show that it is representing a verb or other word in third person form in a natural language. Used restrictively, primarily for language teaching purposes.",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 917,
@@ -7440,7 +7474,8 @@
       "gloss": "indicator (present action)",
       "pos": "function",
       "explanation": "indicator (past action) + indicator (future action): may be placed above a symbol to show that it is representing a verb in present action form in a natural language: Used restrictively, primarily for language teaching purposes.",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 929,
@@ -7741,7 +7776,7 @@
     {
       "id": 966,
       "bciAvId": 24940,
-      "gloss": "spray, vaporization",
+      "gloss": "spray, vaporisation, vaporization",
       "pos": "noun",
       "explanation": "water,fluid,liquid + a cluster of seven dots: a liquid transformed into a spray of small drops",
       "isCharacter": true
@@ -7781,7 +7816,7 @@
     {
       "id": 971,
       "bciAvId": 24962,
-      "gloss": "coarse slang",
+      "gloss": "coarse slang, swear word, swearing",
       "pos": "noun",
       "explanation": "knife + to speak: sharp talk",
       "isCharacter": true
@@ -7952,7 +7987,8 @@
       "gloss": "indicator (diminutive form)",
       "pos": "function",
       "explanation": "little [quarter-sized]: may be placed above a symbol to show that it is representing a word in diminutive form in a natural language: Used restrictively, primarily for language teaching purposes.",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 993,
@@ -9293,7 +9329,7 @@
     {
       "id": 1161,
       "bciAvId": 13377,
-      "gloss": "colour",
+      "gloss": "colour, color",
       "pos": "noun",
       "explanation": "eye + earth [half-sized]: what the eye receives from things on earth",
       "isCharacter": true
@@ -10063,7 +10099,7 @@
     {
       "id": 1216,
       "bciAvId": 12404,
-      "gloss": "to apologize, to apologise, to regret (express)",
+      "gloss": "to apologise, to apologize, to regret (express)",
       "pos": "action",
       "explanation": "to speak + comma + to regret + action indicator",
       "isCharacter": false,
@@ -10986,7 +11022,7 @@
     {
       "id": 1280,
       "bciAvId": 12659,
-      "gloss": "behaviour",
+      "gloss": "behaviour, behavior",
       "pos": "noun",
       "explanation": "action + creature + thing indicator: action of a living being",
       "isCharacter": false,
@@ -12164,7 +12200,7 @@
     {
       "id": 1362,
       "bciAvId": 13103,
-      "gloss": "caesarean section, C-section",
+      "gloss": "caesarean section, cesarean section, C-section",
       "pos": "noun",
       "explanation": "to remove + medical + fetus",
       "isCharacter": false,
@@ -12803,7 +12839,7 @@
     {
       "id": 1405,
       "bciAvId": 13173,
-      "gloss": "chocolate flavouring, cocoa, cacao powder",
+      "gloss": "chocolate flavouring, chocolate flavoring, cocoa, cacao powder",
       "pos": "noun",
       "explanation": "adding,additive + chocolate [contraction]",
       "isCharacter": false,
@@ -13966,7 +14002,7 @@
     {
       "id": 1485,
       "bciAvId": 13604,
-      "gloss": "crayon, coloured pencil, marker",
+      "gloss": "crayon, coloured pencil, colored pencil, marker",
       "pos": "noun",
       "explanation": "pencil + colour",
       "isCharacter": false,
@@ -16288,7 +16324,7 @@
     {
       "id": 1648,
       "bciAvId": 14158,
-      "gloss": "favourite",
+      "gloss": "favourite, favorite",
       "pos": "description",
       "explanation": "to choose + first + description after the fact indicator: one's first choice",
       "isCharacter": false,
@@ -16630,9 +16666,9 @@
     {
       "id": 1672,
       "bciAvId": 14191,
-      "gloss": "fishing",
+      "gloss": "fishing, angling",
       "pos": "noun",
-      "explanation": "receiving + fish",
+      "explanation": "getting + fish: catching fish",
       "isCharacter": false,
       "composition": [
         920,
@@ -16714,7 +16750,7 @@
     {
       "id": 1678,
       "bciAvId": 14198,
-      "gloss": "flavouring, condiment, seasoning",
+      "gloss": "flavouring, flavoring, condiment, seasoning",
       "pos": "noun",
       "explanation": "addition + taste + thing indicator",
       "isCharacter": false,
@@ -18214,7 +18250,7 @@
     {
       "id": 1782,
       "bciAvId": 14678,
-      "gloss": "harbour",
+      "gloss": "harbour, harbor",
       "pos": "noun",
       "explanation": "protected water + boat",
       "isCharacter": false,
@@ -19392,7 +19428,7 @@
     {
       "id": 1864,
       "bciAvId": 14949,
-      "gloss": "international",
+      "gloss": "international, multinational",
       "pos": "description",
       "explanation": "country + all + description indicator",
       "isCharacter": false,
@@ -20024,7 +20060,7 @@
     {
       "id": 1906,
       "bciAvId": 15165,
-      "gloss": "labour",
+      "gloss": "labour, labor",
       "pos": "noun",
       "explanation": "work + birth",
       "isCharacter": false,
@@ -20228,7 +20264,7 @@
     {
       "id": 1920,
       "bciAvId": 15182,
-      "gloss": "leader, director, guide (2)",
+      "gloss": "leader, director, guide, coach (2)",
       "pos": "person",
       "explanation": "person + leadership",
       "isCharacter": false,
@@ -21944,7 +21980,7 @@
     {
       "id": 2041,
       "bciAvId": 15670,
-      "gloss": "movie theatre, cinema",
+      "gloss": "movie theatre, movie theater, cinema",
       "pos": "noun",
       "explanation": "building + projector",
       "isCharacter": false,
@@ -22288,7 +22324,7 @@
     {
       "id": 2065,
       "bciAvId": 15705,
-      "gloss": "neighbour",
+      "gloss": "neighbour, neighbor",
       "pos": "person",
       "explanation": "person + to live + near",
       "isCharacter": false,
@@ -22961,7 +22997,7 @@
     {
       "id": 2112,
       "bciAvId": 15935,
-      "gloss": "to organize, to arrange",
+      "gloss": "to organise, to organize, to arrange",
       "pos": "action",
       "explanation": "to plan + many + thing + action indicator: to make a system from many things",
       "isCharacter": false,
@@ -27624,7 +27660,7 @@
     {
       "id": 2433,
       "bciAvId": 17019,
-      "gloss": "to smell, to give off odour",
+      "gloss": "to smell, to give off odour, to give off odor",
       "pos": "action",
       "explanation": "smell + action indicator: to give off a smell or odour",
       "isCharacter": false,
@@ -28100,7 +28136,7 @@
     {
       "id": 2465,
       "bciAvId": 17224,
-      "gloss": "specific",
+      "gloss": "specific, definite",
       "pos": "description",
       "explanation": "the + description indicator",
       "isCharacter": false,
@@ -28418,7 +28454,7 @@
     {
       "id": 2487,
       "bciAvId": 17262,
-      "gloss": "sterilization",
+      "gloss": "sterilisation, sterilization",
       "pos": "noun",
       "explanation": "to cause + infertile",
       "isCharacter": false,
@@ -29661,7 +29697,7 @@
     {
       "id": 2570,
       "bciAvId": 17527,
-      "gloss": "to terrorize",
+      "gloss": "to terrorise - (to), to terrorize",
       "pos": "action",
       "explanation": "terrorism + action indicator",
       "isCharacter": false,
@@ -31879,7 +31915,7 @@
     {
       "id": 2725,
       "bciAvId": 18222,
-      "gloss": "weight (a)",
+      "gloss": "weight - (a)",
       "pos": "noun",
       "explanation": "weight + thing indicator",
       "isCharacter": false,
@@ -32884,7 +32920,7 @@
     {
       "id": 2796,
       "bciAvId": 20513,
-      "gloss": "cross (a)",
+      "gloss": "cross - (a)",
       "pos": "noun",
       "explanation": "cross + thing indicator",
       "isCharacter": false,
@@ -32912,7 +32948,7 @@
     {
       "id": 2798,
       "bciAvId": 20515,
-      "gloss": "star of David (a)",
+      "gloss": "star of David - (a)",
       "pos": "noun",
       "explanation": "star of David + thing indicator",
       "isCharacter": false,
@@ -32976,7 +33012,7 @@
     {
       "id": 2802,
       "bciAvId": 20526,
-      "gloss": "tasty, good, appetizing",
+      "gloss": "tasty, good, appetising, appetizing",
       "pos": "description",
       "explanation": "taste + description indicator",
       "isCharacter": false,
@@ -33613,7 +33649,7 @@
     {
       "id": 2845,
       "bciAvId": 20771,
-      "gloss": "chocolate flavouring",
+      "gloss": "chocolate flavouring, chocolate flavoring",
       "pos": "noun",
       "explanation": "flavouring + chocolate [contraction] + thing indicator",
       "isCharacter": false,
@@ -35799,7 +35835,7 @@
     {
       "id": 2987,
       "bciAvId": 21346,
-      "gloss": "to evangelise",
+      "gloss": "to evangelise, to evangelize",
       "pos": "action",
       "explanation": "to disseminate + news + positive + action indicator",
       "isCharacter": false,
@@ -35818,7 +35854,7 @@
     {
       "id": 2988,
       "bciAvId": 21347,
-      "gloss": "to evangelise (christian)",
+      "gloss": "to evangelise, to evangelize (christian)",
       "pos": "action",
       "explanation": "to disseminate + news + positive + Christianity [contraction] + action indicator",
       "isCharacter": false,
@@ -36448,7 +36484,7 @@
     {
       "id": 3032,
       "bciAvId": 21554,
-      "gloss": "archeology, archaeology",
+      "gloss": "archaeology, archeology",
       "pos": "noun",
       "explanation": "history + thing: study of physical objects and material evidence from the past",
       "isCharacter": false,
@@ -36682,7 +36718,7 @@
     {
       "id": 3048,
       "bciAvId": 21570,
-      "gloss": "archeologist, archaeologist",
+      "gloss": "archaeologist, archeologist",
       "pos": "person",
       "explanation": "person + archeology",
       "isCharacter": false,
@@ -36744,7 +36780,7 @@
     {
       "id": 3052,
       "bciAvId": 21574,
-      "gloss": "pediatrician, paediatrician",
+      "gloss": "paediatrician, pediatrician",
       "pos": "person",
       "explanation": "doctor + child",
       "isCharacter": false,
@@ -36795,7 +36831,7 @@
     {
       "id": 3055,
       "bciAvId": 21577,
-      "gloss": "orthopedist, orthopaedist",
+      "gloss": "orthopaedist, orthopedist",
       "pos": "person",
       "explanation": "doctor + bone",
       "isCharacter": false,
@@ -36842,7 +36878,7 @@
     {
       "id": 3058,
       "bciAvId": 21580,
-      "gloss": "gynecologist, gynaecologist",
+      "gloss": "gynaecologist, gynecologist",
       "pos": "person",
       "explanation": "doctor + woman: physician who diagnoses and treats female reproduction organs",
       "isCharacter": false,
@@ -37466,7 +37502,7 @@
     {
       "id": 3098,
       "bciAvId": 21622,
-      "gloss": "suit of armour",
+      "gloss": "suit of armour, suit of armor",
       "pos": "noun",
       "explanation": "protection + intensity + body",
       "isCharacter": false,
@@ -38904,7 +38940,7 @@
     {
       "id": 3194,
       "bciAvId": 22054,
-      "gloss": "synchronized diving, synchro diving (sport)",
+      "gloss": "synchronised diving, synchronized diving, synchro diving (sport)",
       "pos": "noun",
       "explanation": "sport + diving + design",
       "isCharacter": false,
@@ -38936,7 +38972,7 @@
     {
       "id": 3196,
       "bciAvId": 22056,
-      "gloss": "synchronized swimming (sport)",
+      "gloss": "synchronised swimming, synchronized swimming (sport)",
       "pos": "noun",
       "explanation": "sport + swimming + plan",
       "isCharacter": false,
@@ -38968,9 +39004,9 @@
     {
       "id": 3198,
       "bciAvId": 22058,
-      "gloss": "fishing (sport)",
+      "gloss": "sport fishing, fishing, angling (sport)",
       "pos": "noun",
-      "explanation": "sport + fishing",
+      "explanation": "sport + to fish",
       "isCharacter": false,
       "composition": [
         719,
@@ -39624,7 +39660,7 @@
     {
       "id": 3244,
       "bciAvId": 22118,
-      "gloss": "appetizer, starter, entree",
+      "gloss": "appetiser, appetizer, starter, entree",
       "pos": "noun",
       "explanation": "food + to start",
       "isCharacter": false,
@@ -40048,7 +40084,7 @@
     {
       "id": 3272,
       "bciAvId": 22309,
-      "gloss": "flavouring, seasoning (liquid)",
+      "gloss": "flavouring, flavoring, seasoning (liquid)",
       "pos": "noun",
       "explanation": "flavouring [contraction] + liquid + thing indicator",
       "isCharacter": false,
@@ -40063,7 +40099,7 @@
     {
       "id": 3273,
       "bciAvId": 22310,
-      "gloss": "flavouring, seasoning (powder)",
+      "gloss": "flavouring, flavoring, seasoning (powder)",
       "pos": "noun",
       "explanation": "flavouring [contraction] + powder + thing indicator",
       "isCharacter": false,
@@ -40240,7 +40276,7 @@
     {
       "id": 3284,
       "bciAvId": 22321,
-      "gloss": "herb flavouring (powder)",
+      "gloss": "herb flavouring, herb flavoring (powder)",
       "pos": "noun",
       "explanation": "flavouring (powder) + herb flavouring [contraction] + thing indicator",
       "isCharacter": false,
@@ -40257,7 +40293,7 @@
     {
       "id": 3285,
       "bciAvId": 22322,
-      "gloss": "herb flavouring",
+      "gloss": "herb flavouring, herb flavoring",
       "pos": "noun",
       "explanation": "flavouring + leaf + thing indicator",
       "isCharacter": false,
@@ -40453,7 +40489,7 @@
     {
       "id": 3297,
       "bciAvId": 22334,
-      "gloss": "maple syrup flavouring",
+      "gloss": "maple syrup flavouring, maple syrup flavoring",
       "pos": "noun",
       "explanation": "sap (flavouring) + maple-leaf",
       "isCharacter": false,
@@ -43126,7 +43162,7 @@
     {
       "id": 3474,
       "bciAvId": 23006,
-      "gloss": "to act in favour of (legal)",
+      "gloss": "to act in favour of, to act in favor of (legal)",
       "pos": "action",
       "explanation": "action,demonstration (in favour of) + judgement,law (in combinations) + action indicator",
       "isCharacter": false,
@@ -46243,7 +46279,7 @@
     {
       "id": 3687,
       "bciAvId": 23237,
-      "gloss": "theatre",
+      "gloss": "theatre, theater",
       "pos": "noun",
       "explanation": "building + to see + to hear",
       "isCharacter": false,
@@ -51283,7 +51319,7 @@
     {
       "id": 4025,
       "bciAvId": 23847,
-      "gloss": "district, area, neighbourhood (country)",
+      "gloss": "district, area, neighbourhood, neighborhood (country)",
       "pos": "noun",
       "explanation": "part of + countryside",
       "isCharacter": false,
@@ -51296,7 +51332,7 @@
     {
       "id": 4026,
       "bciAvId": 23848,
-      "gloss": "district, city district, neighbourhood (town)",
+      "gloss": "district, city district, neighbourhood, neighborhood (town)",
       "pos": "noun",
       "explanation": "part of + city",
       "isCharacter": false,
@@ -51808,7 +51844,7 @@
     {
       "id": 4060,
       "bciAvId": 23887,
-      "gloss": "hurricane",
+      "gloss": "hurricane, cyclone, typhoon",
       "pos": "noun",
       "explanation": "much + storm: i.e., much + much + much + wind",
       "isCharacter": false,
@@ -52709,7 +52745,7 @@
     {
       "id": 4119,
       "bciAvId": 23953,
-      "gloss": "to spray, to vaporize",
+      "gloss": "to spray, to vaporise, to vaporize",
       "pos": "action",
       "explanation": "spray,vaporization + action indicator",
       "isCharacter": false,
@@ -52722,7 +52758,7 @@
     {
       "id": 4120,
       "bciAvId": 23954,
-      "gloss": "spray bottle, vaporizer, spray can",
+      "gloss": "spray bottle, vaporiser, vaporizer, spray can",
       "pos": "noun",
       "explanation": "bottle + spray,vaporization",
       "isCharacter": false,
@@ -52820,7 +52856,7 @@
     {
       "id": 4126,
       "bciAvId": 23963,
-      "gloss": "synthesizer, synthesiser, keyboard",
+      "gloss": "synthesiser, synthesizer, keyboard",
       "pos": "noun",
       "explanation": "piano (1) + digits (computer): a digital keyboard instrument",
       "isCharacter": false,
@@ -54766,7 +54802,7 @@
     {
       "id": 4254,
       "bciAvId": 24110,
-      "gloss": "fertilized",
+      "gloss": "fertilised, fertilized",
       "pos": "description",
       "explanation": "conception + description after the fact indicator",
       "isCharacter": false,
@@ -55851,7 +55887,7 @@
     {
       "id": 4325,
       "bciAvId": 24185,
-      "gloss": "manure, fertilizer",
+      "gloss": "manure, fertiliser, fertilizer",
       "pos": "noun",
       "explanation": "addition + to grow + thing indicator",
       "isCharacter": false,
@@ -58230,7 +58266,7 @@
     {
       "id": 4484,
       "bciAvId": 24419,
-      "gloss": "bruise, contusion, haematoma",
+      "gloss": "bruise, contusion, haematoma, hematoma",
       "pos": "noun",
       "explanation": "spot + blue",
       "isCharacter": false,
@@ -59331,7 +59367,7 @@
       "bciAvId": 24498,
       "gloss": "Pluto (dwarf planet)",
       "pos": "noun",
-      "explanation": "dwarf + planet ice",
+      "explanation": "dwarf planet + ice",
       "isCharacter": false,
       "composition": [
         800,
@@ -63045,7 +63081,7 @@
     {
       "id": 4805,
       "bciAvId": 24919,
-      "gloss": "malodor, malodour, stench",
+      "gloss": "malodour, malodor, stench",
       "pos": "noun",
       "explanation": "smell,odour + negative",
       "isCharacter": false,
@@ -67936,7 +67972,7 @@
     {
       "id": 5129,
       "bciAvId": 25348,
-      "gloss": "organization, organizing",
+      "gloss": "organisation, organising, organization, organizing",
       "pos": "noun",
       "explanation": "plan + many + thing",
       "isCharacter": false,
@@ -68287,9 +68323,9 @@
     {
       "id": 5152,
       "bciAvId": 25375,
-      "gloss": "social network, facebook (etc)",
+      "gloss": "social network, social media",
       "pos": "noun",
-      "explanation": "exchange + digital world + person: digital world representing the Internet (contr.)",
+      "explanation": "exchange + digital world + person: digital world representing the Internet [contraction]",
       "isCharacter": false,
       "composition": [
         1029,
@@ -68900,7 +68936,7 @@
     {
       "id": 5191,
       "bciAvId": 25422,
-      "gloss": "armoured force, tank force",
+      "gloss": "armoured force, armored force, tank force",
       "pos": "noun",
       "explanation": "military,armed forces,armed services + tank",
       "isCharacter": false,
@@ -68957,7 +68993,7 @@
     {
       "id": 5194,
       "bciAvId": 25430,
-      "gloss": "appendix, cecum, caecum",
+      "gloss": "appendix, caecum, cecum",
       "pos": "noun",
       "explanation": "intestine(s),bowel(s),gut(s) + end,arrival,stop: The intestine that stops in a dead end",
       "isCharacter": false,
@@ -69684,7 +69720,7 @@
     {
       "id": 5241,
       "bciAvId": 25479,
-      "gloss": "oesophagus, gullet",
+      "gloss": "oesophagus, esophagus, gullet",
       "pos": "noun",
       "explanation": "organ + food + receive + tube: The food goes into the container (of the stomach) by a tube",
       "isCharacter": false,
@@ -75543,7 +75579,7 @@
     {
       "id": 5630,
       "bciAvId": 26105,
-      "gloss": "loss (competition)",
+      "gloss": "defeat, loss (competition)",
       "pos": "noun",
       "explanation": "competition + loss",
       "isCharacter": false,
@@ -75961,7 +75997,7 @@
     {
       "id": 5659,
       "bciAvId": 26145,
-      "gloss": "coloring book, colouring book",
+      "gloss": "colouring book, coloring book",
       "pos": "noun",
       "explanation": "book + pen + colour",
       "isCharacter": false,
@@ -78422,7 +78458,7 @@
     {
       "id": 5822,
       "bciAvId": 26326,
-      "gloss": "to realize, to realise",
+      "gloss": "to realise, to realize, to comprehend",
       "pos": "action",
       "explanation": "understand + suddenly [contraction] + action indicator",
       "isCharacter": false,
@@ -78784,7 +78820,7 @@
     {
       "id": 5851,
       "bciAvId": 27007,
-      "gloss": "anaesthesia, numbness",
+      "gloss": "anaesthesia, anesthesia, numbness",
       "pos": "noun",
       "explanation": "without + feeling: loss of feeling",
       "isCharacter": false,
@@ -78797,7 +78833,7 @@
     {
       "id": 5852,
       "bciAvId": 27008,
-      "gloss": "anaesthetic",
+      "gloss": "anaesthetic, anesthetic",
       "pos": "noun",
       "explanation": "medication + end + feeling",
       "isCharacter": false,
@@ -78872,7 +78908,7 @@
     {
       "id": 5857,
       "bciAvId": 27014,
-      "gloss": "bone fracture",
+      "gloss": "bone fracture, broken bone",
       "pos": "noun",
       "explanation": "fracture + bone",
       "isCharacter": false,
@@ -79062,7 +79098,7 @@
     {
       "id": 5869,
       "bciAvId": 27027,
-      "gloss": "to conceptualise",
+      "gloss": "to conceptualise, to conceptualize",
       "pos": "action",
       "explanation": "concept + action indicator",
       "isCharacter": false,
@@ -80962,7 +80998,8 @@
       "gloss": "indicator (plural definite)",
       "pos": "function",
       "explanation": "indicator (plural + definite)",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 5997,
@@ -80970,7 +81007,8 @@
       "gloss": "indicator (thing definite)",
       "pos": "function",
       "explanation": "indicator (thing + definite)",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 5998,
@@ -80978,7 +81016,8 @@
       "gloss": "indicator (thing plural definite)",
       "pos": "function",
       "explanation": "indicator (thing + plural + definite)",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 5999,
@@ -81605,7 +81644,7 @@
     {
       "id": 6045,
       "bciAvId": 28042,
-      "gloss": "implementation, realization",
+      "gloss": "implementation, realisation, realization",
       "pos": "noun",
       "explanation": "cause + happen",
       "isCharacter": false,
@@ -81841,7 +81880,7 @@
     {
       "id": 6071,
       "bciAvId": 28068,
-      "gloss": "to realize",
+      "gloss": "to realise, to realize",
       "pos": "action",
       "explanation": "to cause + reality",
       "isCharacter": false,
@@ -83070,7 +83109,7 @@
       "bciAvId": 29072,
       "gloss": "re-usable, recycable",
       "pos": "description",
-      "explanation": "use + again + description indicator before fact",
+      "explanation": "use + again + description indicator before the fact",
       "isCharacter": false,
       "composition": [
         932,
@@ -83085,7 +83124,7 @@
       "bciAvId": 29073,
       "gloss": "re-used, recycled",
       "pos": "description",
-      "explanation": "use + again + description indicator after fact",
+      "explanation": "use + again + description indicator after the fact",
       "isCharacter": false,
       "composition": [
         932,
@@ -83511,7 +83550,7 @@
       "bciAvId": 29102,
       "gloss": "vaccinated",
       "pos": "description",
-      "explanation": "vaccination + description indicator after fact",
+      "explanation": "vaccination + description indicator after the fact",
       "isCharacter": false,
       "composition": [
         399,
@@ -83556,7 +83595,7 @@
     {
       "id": 6192,
       "bciAvId": 29105,
-      "gloss": "to whine",
+      "gloss": "whine - (to) (dog)",
       "pos": "action",
       "explanation": "talk + high pitch",
       "isCharacter": false,
@@ -83861,7 +83900,7 @@
       "bciAvId": 29213,
       "gloss": "ripe, fully developed",
       "pos": "description",
-      "explanation": "development + complete [contr.] + descriptive indicator",
+      "explanation": "development + complete [contraction] + description indicator",
       "isCharacter": false,
       "composition": [
         6015,
@@ -83876,7 +83915,7 @@
       "bciAvId": 29214,
       "gloss": "to ripen, to fully develop",
       "pos": "action",
-      "explanation": "development + complete [contr.] + action indicator",
+      "explanation": "development + complete [contraction] + action indicator",
       "isCharacter": false,
       "composition": [
         6015,
@@ -83891,7 +83930,7 @@
       "bciAvId": 29215,
       "gloss": "ripening",
       "pos": "description",
-      "explanation": "ripe,fully developed + description indicator, before fact",
+      "explanation": "ripe,fully developed + description indicator before the fact",
       "isCharacter": false,
       "composition": [
         6015,
@@ -83934,7 +83973,7 @@
     {
       "id": 6216,
       "bciAvId": 29218,
-      "gloss": "to apprentice, to intern, to serve as an apprentice, to intern, to trainee",
+      "gloss": "to apprentice, to intern - (to), to serve as an apprentice, to intern, to trainee",
       "pos": "action",
       "explanation": "to learn + work + action indicator: to work as an apprentice, intern or trainee",
       "isCharacter": false,
@@ -84098,7 +84137,7 @@
       "bciAvId": 29229,
       "gloss": "bank customer",
       "pos": "person",
-      "explanation": "client, customer + bank [contr.]",
+      "explanation": "client, customer + bank [contraction]",
       "isCharacter": false,
       "composition": [
         513,
@@ -84279,7 +84318,7 @@
       "bciAvId": 29241,
       "gloss": "knowable",
       "pos": "description",
-      "explanation": "knowledge + description indicator before fact: capable of being known",
+      "explanation": "knowledge + description indicator before the fact: capable of being known",
       "isCharacter": false,
       "composition": [
         412,
@@ -84292,7 +84331,7 @@
       "bciAvId": 29242,
       "gloss": "known",
       "pos": "description",
-      "explanation": "knowledge + description indicator after fact",
+      "explanation": "knowledge + description indicator after the fact",
       "isCharacter": false,
       "composition": [
         412,
@@ -84335,7 +84374,7 @@
       "bciAvId": 29245,
       "gloss": "to melt (metal)",
       "pos": "action",
-      "explanation": "metal [contr.] + fluid + action indicator: heat changing solid metal to fluid",
+      "explanation": "metal [contraction] + fluid + action indicator: heat changing solid metal to fluid",
       "isCharacter": false,
       "composition": [
         6437,
@@ -84444,7 +84483,7 @@
       "bciAvId": 29252,
       "gloss": "untidy",
       "pos": "description",
-      "explanation": "not [contr.] + tidy + description indicator: things are not in their right places",
+      "explanation": "not [contraction] + tidy + description indicator: things are not in their right places",
       "isCharacter": false,
       "composition": [
         449,
@@ -85117,7 +85156,7 @@
       "bciAvId": 29323,
       "gloss": "to embroider",
       "pos": "action",
-      "explanation": "sew-(to)  + art + action indicator",
+      "explanation": "sew-(to) + art + action indicator",
       "isCharacter": false,
       "composition": [
         468,
@@ -85164,7 +85203,7 @@
     {
       "id": 6300,
       "bciAvId": 29326,
-      "gloss": "picture (SYN)",
+      "gloss": "picture (2)",
       "pos": "noun",
       "explanation": "picture",
       "isCharacter": true
@@ -85277,7 +85316,7 @@
       "bciAvId": 29334,
       "gloss": "wordplay, pun, punning",
       "pos": "noun",
-      "explanation": "play, game (in  combinations) + word",
+      "explanation": "play, game (in combinations) + word",
       "isCharacter": false,
       "composition": [
         106,
@@ -85320,7 +85359,7 @@
     {
       "id": 6311,
       "bciAvId": 29337,
-      "gloss": "handcraft (class), craft (class)",
+      "gloss": "handcraft, craft (class)",
       "pos": "noun",
       "explanation": "knowledge + craft",
       "isCharacter": false,
@@ -85437,7 +85476,7 @@
     {
       "id": 6318,
       "bciAvId": 29402,
-      "gloss": "ethanol, sanitizer, alcohol (chemical)",
+      "gloss": "ethanol, sanitiser, sanitizer, alcohol (chemical)",
       "pos": "noun",
       "explanation": "chemical product + OH",
       "isCharacter": false,
@@ -85450,7 +85489,7 @@
     {
       "id": 6319,
       "bciAvId": 29403,
-      "gloss": "hand sanitizer",
+      "gloss": "hand sanitiser, hand sanitizer",
       "pos": "noun",
       "explanation": "ethanol,sanititzer,alcohol (chemical) + hand",
       "isCharacter": false,
@@ -85857,7 +85896,7 @@
       "bciAvId": 29506,
       "gloss": "bored, lacking interest",
       "pos": "description",
-      "explanation": "boredom + description indicator after fact: a feeling of being uninterested in anything at all",
+      "explanation": "boredom + description indicator after the fact: a feeling of being uninterested in anything at all",
       "isCharacter": false,
       "composition": [
         313,
@@ -86017,7 +86056,7 @@
       "bciAvId": 29519,
       "gloss": "confused (mentally)",
       "pos": "noun",
-      "explanation": "confusion + description indicator, after fact",
+      "explanation": "confusion + description indicator, after the fact",
       "isCharacter": false,
       "composition": [
         447,
@@ -86062,7 +86101,7 @@
       "bciAvId": 29522,
       "gloss": "depressed",
       "pos": "description",
-      "explanation": "depression + after fact",
+      "explanation": "depression + after the fact",
       "isCharacter": false,
       "composition": [
         985,
@@ -86081,7 +86120,7 @@
       "bciAvId": 29523,
       "gloss": "depressing",
       "pos": "description",
-      "explanation": "depression+ before fact",
+      "explanation": "depression+ before the fact",
       "isCharacter": false,
       "composition": [
         985,
@@ -86132,7 +86171,7 @@
       "bciAvId": 29529,
       "gloss": "faded, withered (plant)",
       "pos": "description",
-      "explanation": "to fade, wither + description indicator, after fact",
+      "explanation": "to fade, wither + description indicator after the fact",
       "isCharacter": false,
       "composition": [
         259,
@@ -86200,7 +86239,7 @@
       "bciAvId": 29533,
       "gloss": "glued, stuck",
       "pos": "description",
-      "explanation": "glue,adhesive, paste + description indicator after fact",
+      "explanation": "glue,adhesive, paste + description indicator after the fact",
       "isCharacter": false,
       "composition": [
         216,
@@ -86354,7 +86393,7 @@
     {
       "id": 6376,
       "bciAvId": 29544,
-      "gloss": "moisturizer",
+      "gloss": "moisturiser, moisturizer",
       "pos": "noun",
       "explanation": "chemical product + for + moist: chemical product for the purpose of moisterizing",
       "isCharacter": false,
@@ -86687,7 +86726,7 @@
       "bciAvId": 29567,
       "gloss": "to wake",
       "pos": "action",
-      "explanation": "cause + wake up",
+      "explanation": "cause-(to) + wake up",
       "isCharacter": false,
       "composition": [
         206,
@@ -87224,7 +87263,8 @@
       "gloss": "indicator (abstract)",
       "pos": "function",
       "explanation": "mind [quarter-sized]: placed above a symbol to mark abstract sense where ambiguity may arise -- Note: This symbol does not exist in the official BCI version yet.",
-      "isCharacter": true
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 6437,
@@ -87242,19 +87282,11 @@
     },
     {
       "id": 6439,
-      "gloss": "smartwatch",
-      "pos": "noun",
-      "explanation": "a digital wristwatch -- Note: This entry is part of Blissary View and does not exist as part of the official BCI Authorized.",
-      "isCharacter": false,
-      "composition": [
-        655,
-        ";",
-        97,
-        "/",
-        714,
-        "/",
-        829
-      ]
+      "gloss": "indicator (indirect object form)",
+      "pos": "function",
+      "explanation": "to,toward,towards [quarter-sized, modified - two pointers]: may be placed above a symbol to show that it is representing a word in indirect object form in a natural language. Used restrictively, primarily for language teaching purposes. Note: This entry is part of Blissary View and does not exist as part of the official BCI Authorized.",
+      "isCharacter": true,
+      "isIndicator": true
     },
     {
       "id": 6440,
@@ -87284,6 +87316,2119 @@
         97,
         "/",
         714
+      ]
+    },
+    {
+      "id": 6442,
+      "gloss": "smartwatch",
+      "pos": "noun",
+      "explanation": "a digital wristwatch -- Note: This entry is part of Blissary View and does not exist as part of the official BCI Authorized.",
+      "isCharacter": false,
+      "composition": [
+        655,
+        ";",
+        97,
+        "/",
+        714,
+        "/",
+        829
+      ]
+    },
+    {
+      "id": 6443,
+      "bciAvId": 28098,
+      "gloss": "resource",
+      "pos": "noun",
+      "explanation": "all things coming from earth and heaven",
+      "isCharacter": true
+    },
+    {
+      "id": 6444,
+      "gloss": "state of being",
+      "pos": "noun",
+      "explanation": "world B712 superimposed with being (state of) B894 -- Note: This symbol does not exist in the official BCI version yet.",
+      "isCharacter": true
+    },
+    {
+      "id": 6445,
+      "bciAvId": 29701,
+      "gloss": "service user",
+      "pos": "person",
+      "explanation": "person + use + help; person who use help",
+      "isCharacter": false,
+      "composition": [
+        513,
+        "/",
+        932,
+        "/",
+        382
+      ]
+    },
+    {
+      "id": 6446,
+      "bciAvId": 29702,
+      "gloss": "tennis ball",
+      "pos": "noun",
+      "explanation": "ball + racket",
+      "isCharacter": false,
+      "composition": [
+        148,
+        "/",
+        555
+      ]
+    },
+    {
+      "id": 6447,
+      "bciAvId": 29703,
+      "gloss": "sportsperson, athlete",
+      "pos": "person",
+      "explanation": "person + sport",
+      "isCharacter": false,
+      "composition": [
+        513,
+        "/",
+        719
+      ]
+    },
+    {
+      "id": 6448,
+      "bciAvId": 29704,
+      "gloss": "loser (game)",
+      "pos": "person",
+      "explanation": "person + defeat",
+      "isCharacter": false,
+      "composition": [
+        513,
+        "/",
+        554,
+        "/",
+        634
+      ]
+    },
+    {
+      "id": 6449,
+      "bciAvId": 29705,
+      "gloss": "winner (game)",
+      "pos": "person",
+      "explanation": "person + victory",
+      "isCharacter": false,
+      "composition": [
+        513,
+        "/",
+        554,
+        "/",
+        107
+      ]
+    },
+    {
+      "id": 6450,
+      "bciAvId": 29706,
+      "gloss": "victory",
+      "pos": "noun",
+      "explanation": "victory",
+      "isCharacter": false,
+      "composition": [
+        554,
+        "/",
+        107
+      ]
+    },
+    {
+      "id": 6451,
+      "bciAvId": 29707,
+      "gloss": "competitive",
+      "pos": "description",
+      "explanation": "competition + description indicator",
+      "isCharacter": false,
+      "composition": [
+        554,
+        ";",
+        86
+      ]
+    },
+    {
+      "id": 6452,
+      "bciAvId": 29708,
+      "gloss": "competitor",
+      "pos": "person",
+      "explanation": "person + to compete",
+      "isCharacter": false,
+      "composition": [
+        513,
+        "/",
+        554
+      ]
+    },
+    {
+      "id": 6453,
+      "bciAvId": 29709,
+      "gloss": "sports equipment",
+      "pos": "noun",
+      "explanation": "equipment [contraction] + sport",
+      "isCharacter": false,
+      "composition": [
+        368,
+        "/",
+        651,
+        "/",
+        719
+      ]
+    },
+    {
+      "id": 6454,
+      "bciAvId": 29710,
+      "gloss": "safety equipment",
+      "pos": "noun",
+      "explanation": "equipment [contraction]+ protection",
+      "isCharacter": false,
+      "composition": [
+        368,
+        "/",
+        651,
+        "/",
+        548
+      ]
+    },
+    {
+      "id": 6455,
+      "bciAvId": 29711,
+      "gloss": "stopwatch",
+      "pos": "noun",
+      "explanation": "clock + stop",
+      "isCharacter": false,
+      "composition": [
+        655,
+        ";",
+        97,
+        "/",
+        292
+      ]
+    },
+    {
+      "id": 6456,
+      "bciAvId": 29712,
+      "gloss": "dental guard",
+      "pos": "noun",
+      "explanation": "protection + exclamation mark + teeth",
+      "isCharacter": false,
+      "composition": [
+        548,
+        "/",
+        401,
+        "/",
+        644
+      ]
+    },
+    {
+      "id": 6457,
+      "bciAvId": 29713,
+      "gloss": "bicycle chain",
+      "pos": "noun",
+      "explanation": "chain + bicycle",
+      "isCharacter": false,
+      "composition": [
+        759,
+        "/",
+        11,
+        "/",
+        700
+      ]
+    },
+    {
+      "id": 6458,
+      "bciAvId": 29714,
+      "gloss": "bicycle brake",
+      "pos": "noun",
+      "explanation": "brake + bicycle",
+      "isCharacter": false,
+      "composition": [
+        660,
+        "/",
+        292,
+        "/",
+        11,
+        "/",
+        700
+      ]
+    },
+    {
+      "id": 6459,
+      "bciAvId": 29715,
+      "gloss": "bicycle wheel",
+      "pos": "noun",
+      "explanation": "wheel + comma + bicycle",
+      "isCharacter": false,
+      "composition": [
+        700,
+        "/",
+        5,
+        "/",
+        11,
+        "/",
+        700
+      ]
+    },
+    {
+      "id": 6460,
+      "bciAvId": 29716,
+      "gloss": "bicycle tyre, bicycle tire",
+      "pos": "noun",
+      "explanation": "tire,tyre, + comma + bicycle",
+      "isCharacter": false,
+      "composition": [
+        656,
+        "/",
+        5,
+        "/",
+        11,
+        "/",
+        700
+      ]
+    },
+    {
+      "id": 6461,
+      "bciAvId": 29717,
+      "gloss": "bicycle racing, bicycle race",
+      "pos": "noun",
+      "explanation": "competition + cycling",
+      "isCharacter": false,
+      "composition": [
+        554,
+        "/",
+        719,
+        "/",
+        11,
+        "/",
+        700
+      ]
+    },
+    {
+      "id": 6462,
+      "bciAvId": 29719,
+      "gloss": "Paralympics, Special Olympics",
+      "pos": "noun",
+      "explanation": "Olympic games + accessibility",
+      "isCharacter": false,
+      "composition": [
+        554,
+        "/",
+        14,
+        "/",
+        567,
+        "/",
+        894,
+        "/",
+        653
+      ]
+    },
+    {
+      "id": 6463,
+      "bciAvId": 29726,
+      "gloss": "citizenship",
+      "pos": "noun",
+      "explanation": "state of being + citizen; the status of a citizen",
+      "isCharacter": false,
+      "composition": [
+        6444,
+        "/",
+        512
+      ]
+    },
+    {
+      "id": 6464,
+      "bciAvId": 29727,
+      "gloss": "term, reign",
+      "pos": "noun",
+      "explanation": "limited time + to govern",
+      "isCharacter": false,
+      "composition": [
+        426,
+        "/",
+        803,
+        "/",
+        243
+      ]
+    },
+    {
+      "id": 6465,
+      "bciAvId": 29728,
+      "gloss": "torture",
+      "pos": "noun",
+      "explanation": "cause + intensity + pain; the deliberate causing of pain",
+      "isCharacter": false,
+      "composition": [
+        206,
+        "/",
+        401,
+        "/",
+        313,
+        "/",
+        "RK:-2",
+        "/",
+        516
+      ]
+    },
+    {
+      "id": 6466,
+      "bciAvId": 29729,
+      "gloss": "to torture",
+      "pos": "action",
+      "explanation": "torture + action indicator",
+      "isCharacter": false,
+      "composition": [
+        206,
+        ";",
+        81,
+        "/",
+        401,
+        "/",
+        313,
+        "/",
+        "RK:-2",
+        "/",
+        516
+      ]
+    },
+    {
+      "id": 6467,
+      "bciAvId": 29730,
+      "gloss": "refugee, asylum-seeker",
+      "pos": "person",
+      "explanation": "person + exit + for the purpose of + protection: person who leaves for the purpose of protection",
+      "isCharacter": false,
+      "composition": [
+        513,
+        "/",
+        491,
+        "/",
+        332,
+        "/",
+        548
+      ]
+    },
+    {
+      "id": 6468,
+      "bciAvId": 29731,
+      "gloss": "immigration",
+      "pos": "noun",
+      "explanation": "entering + country + another [contraction] + to live; entering another country to live",
+      "isCharacter": false,
+      "composition": [
+        402,
+        "/",
+        243,
+        "/",
+        11,
+        "/",
+        423
+      ]
+    },
+    {
+      "id": 6469,
+      "bciAvId": 29732,
+      "gloss": "to immigrate",
+      "pos": "action",
+      "explanation": "immigration + action indicator",
+      "isCharacter": false,
+      "composition": [
+        402,
+        ";",
+        81,
+        "/",
+        243,
+        "/",
+        11,
+        "/",
+        423
+      ]
+    },
+    {
+      "id": 6470,
+      "bciAvId": 29733,
+      "gloss": "immigrant",
+      "pos": "person",
+      "explanation": "person + immigration; person having entered another country for life",
+      "isCharacter": false,
+      "composition": [
+        513,
+        "/",
+        402,
+        "/",
+        243,
+        "/",
+        11,
+        "/",
+        423
+      ]
+    },
+    {
+      "id": 6471,
+      "bciAvId": 29734,
+      "gloss": "emigration",
+      "pos": "noun",
+      "explanation": "exit + country + life; exiting/leaving a country for life",
+      "isCharacter": false,
+      "composition": [
+        491,
+        "/",
+        243,
+        "/",
+        423
+      ]
+    },
+    {
+      "id": 6472,
+      "bciAvId": 29735,
+      "gloss": "to emigrate",
+      "pos": "action",
+      "explanation": "emigration + action indicator",
+      "isCharacter": false,
+      "composition": [
+        491,
+        ";",
+        81,
+        "/",
+        243,
+        "/",
+        423
+      ]
+    },
+    {
+      "id": 6473,
+      "bciAvId": 29736,
+      "gloss": "emigrant",
+      "pos": "person",
+      "explanation": "person + exit + country + life; person who have left a country for life",
+      "isCharacter": false,
+      "composition": [
+        513,
+        "/",
+        491,
+        "/",
+        243,
+        "/",
+        423
+      ]
+    },
+    {
+      "id": 6474,
+      "bciAvId": 29741,
+      "gloss": "evolution (science, biology)",
+      "pos": "noun",
+      "explanation": "development + life + time; the development of life over time",
+      "isCharacter": false,
+      "composition": [
+        6015,
+        "/",
+        423,
+        "/",
+        655
+      ]
+    },
+    {
+      "id": 6475,
+      "bciAvId": 29742,
+      "gloss": "evolution (general)",
+      "pos": "noun",
+      "explanation": "development + time",
+      "isCharacter": false,
+      "composition": [
+        6015,
+        "/",
+        655
+      ]
+    },
+    {
+      "id": 6476,
+      "bciAvId": 29743,
+      "gloss": "immune system, immune defence",
+      "pos": "noun",
+      "explanation": "generalization + organ,inner body + against + sickness; the body's protection and defence against disease",
+      "isCharacter": false,
+      "composition": [
+        348,
+        "/",
+        993,
+        "/",
+        111,
+        "/",
+        516
+      ]
+    },
+    {
+      "id": 6477,
+      "bciAvId": 29744,
+      "gloss": "ecosystem",
+      "pos": "noun",
+      "explanation": "environment + action + together; the action together within the environment",
+      "isCharacter": false,
+      "composition": [
+        294,
+        "/",
+        106,
+        "/",
+        823
+      ]
+    },
+    {
+      "id": 6478,
+      "bciAvId": 29747,
+      "gloss": "electron",
+      "pos": "noun",
+      "explanation": "part of + atom + negative; a stable subatomic particle with a charge of negative electricity",
+      "isCharacter": false,
+      "composition": [
+        502,
+        "/",
+        136,
+        "/",
+        449
+      ]
+    },
+    {
+      "id": 6479,
+      "bciAvId": 29748,
+      "gloss": "proton",
+      "pos": "noun",
+      "explanation": "part of + nucleus (atom); a stable subatomic particle occurring in all atomic nuclei, with a positive electric charge",
+      "isCharacter": false,
+      "composition": [
+        502,
+        "/",
+        477,
+        "/",
+        120
+      ]
+    },
+    {
+      "id": 6480,
+      "bciAvId": 29749,
+      "gloss": "neutron",
+      "pos": "noun",
+      "explanation": "part of + nucleus (atom) + zero; a subatomic particle without an electric charge (neutral), present in atomic nuclei",
+      "isCharacter": false,
+      "composition": [
+        502,
+        "/",
+        477,
+        "/",
+        9
+      ]
+    },
+    {
+      "id": 6481,
+      "bciAvId": 29750,
+      "gloss": "circumference",
+      "pos": "noun",
+      "explanation": "measurement + around",
+      "isCharacter": false,
+      "composition": [
+        441,
+        "/",
+        134
+      ]
+    },
+    {
+      "id": 6482,
+      "bciAvId": 29751,
+      "gloss": "sum (mathematics)",
+      "pos": "noun",
+      "explanation": "result + addition",
+      "isCharacter": false,
+      "composition": [
+        284,
+        "/",
+        107
+      ]
+    },
+    {
+      "id": 6483,
+      "bciAvId": 29752,
+      "gloss": "product (mathematics)",
+      "pos": "noun",
+      "explanation": "result + multiplication",
+      "isCharacter": false,
+      "composition": [
+        284,
+        "/",
+        459
+      ]
+    },
+    {
+      "id": 6484,
+      "bciAvId": 29753,
+      "gloss": "difference (mathematics)",
+      "pos": "noun",
+      "explanation": "result + subtraction",
+      "isCharacter": false,
+      "composition": [
+        284,
+        "/",
+        634
+      ]
+    },
+    {
+      "id": 6485,
+      "bciAvId": 29754,
+      "gloss": "quotient (mathematics)",
+      "pos": "noun",
+      "explanation": "result + division",
+      "isCharacter": false,
+      "composition": [
+        284,
+        "/",
+        266
+      ]
+    },
+    {
+      "id": 6486,
+      "bciAvId": 29755,
+      "gloss": "ozone layer",
+      "pos": "noun",
+      "explanation": "layer + gas + ozone",
+      "isCharacter": false,
+      "composition": [
+        1116,
+        "/",
+        345,
+        "/",
+        "XO",
+        "/",
+        22
+      ]
+    },
+    {
+      "id": 6487,
+      "bciAvId": 29756,
+      "gloss": "ozone (gas)",
+      "pos": "noun",
+      "explanation": "gas + ozone",
+      "isCharacter": false,
+      "composition": [
+        345,
+        "/",
+        "XO",
+        "/",
+        22
+      ]
+    },
+    {
+      "id": 6488,
+      "bciAvId": 29757,
+      "gloss": "oxygen (gas)",
+      "pos": "noun",
+      "explanation": "gas + oxygen",
+      "isCharacter": false,
+      "composition": [
+        345,
+        "/",
+        "XO"
+      ]
+    },
+    {
+      "id": 6489,
+      "bciAvId": 29758,
+      "gloss": "carbon dioxide (gas)",
+      "pos": "noun",
+      "explanation": "gas + carbon dioxide",
+      "isCharacter": false,
+      "composition": [
+        345,
+        "/",
+        "XC",
+        "/",
+        "XO",
+        "/",
+        21
+      ]
+    },
+    {
+      "id": 6490,
+      "bciAvId": 29760,
+      "gloss": "computer science, computer studies",
+      "pos": "noun",
+      "explanation": "knowledge + digital world",
+      "isCharacter": false,
+      "composition": [
+        412,
+        "/",
+        1026
+      ]
+    },
+    {
+      "id": 6491,
+      "bciAvId": 29761,
+      "gloss": "social studies, social science",
+      "pos": "noun",
+      "explanation": "knowledge + society",
+      "isCharacter": false,
+      "composition": [
+        412,
+        "/",
+        348,
+        "/",
+        225
+      ]
+    },
+    {
+      "id": 6492,
+      "bciAvId": 29762,
+      "gloss": "art (class)",
+      "pos": "noun",
+      "explanation": "knowledge + art",
+      "isCharacter": false,
+      "composition": [
+        412,
+        "/",
+        840,
+        "/",
+        "RK:-2",
+        "/",
+        313
+      ]
+    },
+    {
+      "id": 6493,
+      "bciAvId": 29763,
+      "gloss": "music (class)",
+      "pos": "noun",
+      "explanation": "knowledge + music",
+      "isCharacter": false,
+      "composition": [
+        412,
+        "/",
+        278,
+        "/",
+        462
+      ]
+    },
+    {
+      "id": 6494,
+      "bciAvId": 29764,
+      "gloss": "to memorise, to memorize",
+      "pos": "action",
+      "explanation": "activity + for + remember: any activity with the purpose to remember",
+      "isCharacter": false,
+      "composition": [
+        106,
+        ";",
+        81,
+        "/",
+        332,
+        "/",
+        841
+      ]
+    },
+    {
+      "id": 6495,
+      "bciAvId": 29765,
+      "gloss": "cooperation",
+      "pos": "noun",
+      "explanation": "activity + agreement: activity which is harmonious",
+      "isCharacter": false,
+      "composition": [
+        106,
+        "/",
+        113
+      ]
+    },
+    {
+      "id": 6496,
+      "bciAvId": 29766,
+      "gloss": "to cooperate",
+      "pos": "action",
+      "explanation": "activity + agreement + action indicator: to act harmoniously",
+      "isCharacter": false,
+      "composition": [
+        106,
+        ";",
+        81,
+        "/",
+        113
+      ]
+    },
+    {
+      "id": 6497,
+      "bciAvId": 29767,
+      "gloss": "school yard, playground (school)",
+      "pos": "noun",
+      "explanation": "yard + school [in combination]",
+      "isCharacter": false,
+      "composition": [
+        715,
+        "/",
+        392,
+        "/",
+        412
+      ]
+    },
+    {
+      "id": 6498,
+      "bciAvId": 29769,
+      "gloss": "demonstration (instruction)",
+      "pos": "noun",
+      "explanation": "Noun of show",
+      "isCharacter": false,
+      "composition": [
+        206,
+        "/",
+        931
+      ]
+    },
+    {
+      "id": 6499,
+      "bciAvId": 29771,
+      "gloss": "monk",
+      "pos": "person",
+      "explanation": "man + connection + religion + total: a man who dedicated his life to religion",
+      "isCharacter": false,
+      "composition": [
+        433,
+        "/",
+        232,
+        "/",
+        726,
+        "/",
+        117
+      ]
+    },
+    {
+      "id": 6500,
+      "bciAvId": 29772,
+      "gloss": "nun",
+      "pos": "person",
+      "explanation": "woman + connection + religion + total: a woman who dedicated her life to religion",
+      "isCharacter": false,
+      "composition": [
+        710,
+        "/",
+        232,
+        "/",
+        726,
+        "/",
+        117
+      ]
+    },
+    {
+      "id": 6501,
+      "bciAvId": 29773,
+      "gloss": "monastery, convent",
+      "pos": "noun",
+      "explanation": "home [contraction] + person + connection + religion: home for monks and nuns respectively",
+      "isCharacter": false,
+      "composition": [
+        392,
+        "/",
+        513,
+        "/",
+        232,
+        "/",
+        726
+      ]
+    },
+    {
+      "id": 6502,
+      "bciAvId": 29780,
+      "gloss": "Maundy Thursday",
+      "pos": "noun",
+      "explanation": "Thursday + before + Easter [contraction]: marks the night of the Last Supper before Easter",
+      "isCharacter": false,
+      "composition": [
+        258,
+        "/",
+        13,
+        "/",
+        158,
+        "/",
+        678,
+        "/",
+        248
+      ]
+    },
+    {
+      "id": 6503,
+      "bciAvId": 29781,
+      "gloss": "Palm Sunday",
+      "pos": "noun",
+      "explanation": "Sunday + palm: the crowd waved with palm branches to honour Jesus as he entered Jerusalem",
+      "isCharacter": false,
+      "composition": [
+        258,
+        "/",
+        16,
+        "/",
+        496
+      ]
+    },
+    {
+      "id": 6504,
+      "bciAvId": 29782,
+      "gloss": "Pentecost day, Whitsun",
+      "pos": "noun",
+      "explanation": "day + Christian + Holy Spirit: the day of the descent of the Holy Spirit upon the Virgin Mary and the Apostles",
+      "isCharacter": false,
+      "composition": [
+        258,
+        "/",
+        248,
+        "/",
+        355,
+        "/",
+        319
+      ]
+    },
+    {
+      "id": 6505,
+      "bciAvId": 29783,
+      "gloss": "pilgrimage",
+      "pos": "noun",
+      "explanation": "journey + holy",
+      "isCharacter": false,
+      "composition": [
+        667,
+        "/",
+        738,
+        "/",
+        6435
+      ]
+    },
+    {
+      "id": 6506,
+      "bciAvId": 29784,
+      "gloss": "Eid al-Adha, Id al-Adha",
+      "pos": "noun",
+      "explanation": "event + end + journey + holy + Islam: marks the end of the pilgrimage in Islam",
+      "isCharacter": false,
+      "composition": [
+        299,
+        "/",
+        292,
+        "/",
+        667,
+        "/",
+        738,
+        "/",
+        6435
+      ]
+    },
+    {
+      "id": 6507,
+      "bciAvId": 29785,
+      "gloss": "Eid al-Fitr, Id al-Fitr",
+      "pos": "noun",
+      "explanation": "party [contraction] + end + Ramadan [contraction]: the feast after Ramadan",
+      "isCharacter": false,
+      "composition": [
+        346,
+        "/",
+        292,
+        "/",
+        449,
+        "/",
+        329,
+        "/",
+        6435
+      ]
+    },
+    {
+      "id": 6508,
+      "bciAvId": 29790,
+      "gloss": "train driver, engine driver",
+      "pos": "person",
+      "explanation": "person + train: person who drives the train",
+      "isCharacter": false,
+      "composition": [
+        513,
+        "/",
+        368,
+        "/",
+        688
+      ]
+    },
+    {
+      "id": 6509,
+      "bciAvId": 29791,
+      "gloss": "gold (colour)",
+      "pos": "noun",
+      "explanation": "colour + gold: colour of the metal gold",
+      "isCharacter": false,
+      "composition": [
+        1161,
+        "/",
+        814,
+        "/",
+        567
+      ]
+    },
+    {
+      "id": 6510,
+      "bciAvId": 29792,
+      "gloss": "silver (colour)",
+      "pos": "noun",
+      "explanation": "colour + silver: colour of the metal silver",
+      "isCharacter": false,
+      "composition": [
+        1161,
+        "/",
+        814,
+        "/",
+        614
+      ]
+    },
+    {
+      "id": 6511,
+      "bciAvId": 29793,
+      "gloss": "bronze (colour)",
+      "pos": "noun",
+      "explanation": "colour + bronze: colour of the metal bronze",
+      "isCharacter": false,
+      "composition": [
+        1161,
+        "/",
+        814,
+        "/",
+        251,
+        "/",
+        542
+      ]
+    },
+    {
+      "id": 6512,
+      "bciAvId": 29794,
+      "gloss": "TV room",
+      "pos": "noun",
+      "explanation": "room + TV",
+      "isCharacter": false,
+      "composition": [
+        572,
+        "/",
+        303,
+        "/",
+        278,
+        "/",
+        288
+      ]
+    },
+    {
+      "id": 6513,
+      "bciAvId": 29795,
+      "gloss": "computer room",
+      "pos": "noun",
+      "explanation": "room + computer",
+      "isCharacter": false,
+      "composition": [
+        572,
+        "/",
+        432,
+        "/",
+        829
+      ]
+    },
+    {
+      "id": 6514,
+      "bciAvId": 29796,
+      "gloss": "hobby room",
+      "pos": "noun",
+      "explanation": "room + hobby",
+      "isCharacter": false,
+      "composition": [
+        572,
+        "/",
+        106,
+        "/",
+        955
+      ]
+    },
+    {
+      "id": 6515,
+      "bciAvId": 29797,
+      "gloss": "opera house",
+      "pos": "noun",
+      "explanation": "house,building + opera",
+      "isCharacter": false,
+      "composition": [
+        392,
+        "/",
+        457,
+        "/",
+        462,
+        "/",
+        723
+      ]
+    },
+    {
+      "id": 6516,
+      "bciAvId": 29801,
+      "gloss": "arm fracture",
+      "pos": "noun",
+      "explanation": "bone fracture + arm",
+      "isCharacter": false,
+      "composition": [
+        933,
+        "/",
+        172,
+        "/",
+        132
+      ]
+    },
+    {
+      "id": 6517,
+      "bciAvId": 29802,
+      "gloss": "leg fracture",
+      "pos": "noun",
+      "explanation": "bone fracture + leg",
+      "isCharacter": false,
+      "composition": [
+        933,
+        "/",
+        172,
+        "/",
+        417
+      ]
+    },
+    {
+      "id": 6518,
+      "bciAvId": 29803,
+      "gloss": "high blood pressure",
+      "pos": "noun",
+      "explanation": "blood pressure + high",
+      "isCharacter": false,
+      "composition": [
+        815,
+        "/",
+        695,
+        "/",
+        423,
+        "/",
+        952
+      ]
+    },
+    {
+      "id": 6519,
+      "bciAvId": 29804,
+      "gloss": "low blood pressure",
+      "pos": "noun",
+      "explanation": "blood pressure + low",
+      "isCharacter": false,
+      "composition": [
+        815,
+        "/",
+        695,
+        "/",
+        423,
+        "/",
+        957
+      ]
+    },
+    {
+      "id": 6520,
+      "bciAvId": 29805,
+      "gloss": "burn",
+      "pos": "noun",
+      "explanation": "flame + skin",
+      "isCharacter": false,
+      "composition": [
+        319,
+        "/",
+        548,
+        "/",
+        171
+      ]
+    },
+    {
+      "id": 6521,
+      "bciAvId": 29806,
+      "gloss": "scar",
+      "pos": "noun",
+      "explanation": "result + wound",
+      "isCharacter": false,
+      "composition": [
+        284,
+        "/",
+        933,
+        "/",
+        548,
+        "/",
+        171
+      ]
+    },
+    {
+      "id": 6522,
+      "bciAvId": 29807,
+      "gloss": "scab",
+      "pos": "noun",
+      "explanation": "crust + skin",
+      "isCharacter": false,
+      "composition": [
+        588,
+        "/",
+        548,
+        "/",
+        171
+      ]
+    },
+    {
+      "id": 6523,
+      "bciAvId": 29808,
+      "gloss": "diabetes",
+      "pos": "noun",
+      "explanation": "disease + insulin",
+      "isCharacter": false,
+      "composition": [
+        516,
+        "/",
+        216,
+        "/",
+        748,
+        "/",
+        711
+      ]
+    },
+    {
+      "id": 6524,
+      "bciAvId": 29809,
+      "gloss": "autoimmune disease",
+      "pos": "noun",
+      "explanation": "disease + immunity; a disease affecting the immune system",
+      "isCharacter": false,
+      "composition": [
+        516,
+        "/",
+        5,
+        "/",
+        111,
+        "/",
+        516
+      ]
+    },
+    {
+      "id": 6525,
+      "bciAvId": 29811,
+      "gloss": "HIV virus",
+      "pos": "noun",
+      "explanation": "virus + HIV",
+      "isCharacter": false,
+      "composition": [
+        894,
+        ";",
+        97,
+        "/",
+        956,
+        "/",
+        963,
+        "/",
+        "XH",
+        "/",
+        "XI",
+        "/",
+        "XV"
+      ]
+    },
+    {
+      "id": 6526,
+      "bciAvId": 29812,
+      "gloss": "AIDS",
+      "pos": "noun",
+      "explanation": "disease + AIDS",
+      "isCharacter": false,
+      "composition": [
+        516,
+        "/",
+        "XA",
+        "/",
+        "XI",
+        "/",
+        "XD",
+        "/",
+        "XS"
+      ]
+    },
+    {
+      "id": 6527,
+      "bciAvId": 29814,
+      "gloss": "respiratory disorder",
+      "pos": "noun",
+      "explanation": "limitation + respiratory system [contraction]",
+      "isCharacter": false,
+      "composition": [
+        1053,
+        "/",
+        473,
+        "/",
+        457
+      ]
+    },
+    {
+      "id": 6528,
+      "bciAvId": 29815,
+      "gloss": "language impairment, language disorder",
+      "pos": "noun",
+      "explanation": "limitation + language",
+      "isCharacter": false,
+      "composition": [
+        1053,
+        "/",
+        414
+      ]
+    },
+    {
+      "id": 6529,
+      "bciAvId": 29816,
+      "gloss": "seizure (epileptic), fit (epileptic)",
+      "pos": "noun",
+      "explanation": "attack + central nervous system",
+      "isCharacter": false,
+      "composition": [
+        516,
+        "/",
+        426,
+        "/",
+        991
+      ]
+    },
+    {
+      "id": 6530,
+      "bciAvId": 29817,
+      "gloss": "epilepsy",
+      "pos": "noun",
+      "explanation": "disease + central nervous system",
+      "isCharacter": false,
+      "composition": [
+        516,
+        "/",
+        991
+      ]
+    },
+    {
+      "id": 6531,
+      "bciAvId": 29818,
+      "gloss": "physical violence, physical abuse",
+      "pos": "noun",
+      "explanation": "violence + body",
+      "isCharacter": false,
+      "composition": [
+        804,
+        "/",
+        401,
+        "/",
+        171
+      ]
+    },
+    {
+      "id": 6532,
+      "bciAvId": 29819,
+      "gloss": "mental abuse, emotional abuse",
+      "pos": "noun",
+      "explanation": "violence + psychology [contraction]",
+      "isCharacter": false,
+      "composition": [
+        804,
+        "/",
+        401,
+        "/",
+        447,
+        "/",
+        313
+      ]
+    },
+    {
+      "id": 6533,
+      "bciAvId": 29820,
+      "gloss": "throat infection, pharyngitis",
+      "pos": "noun",
+      "explanation": "disease + throat",
+      "isCharacter": false,
+      "composition": [
+        516,
+        "/",
+        1142
+      ]
+    },
+    {
+      "id": 6534,
+      "bciAvId": 29821,
+      "gloss": "sore throat",
+      "pos": "noun",
+      "explanation": "pain + throat",
+      "isCharacter": false,
+      "composition": [
+        313,
+        "/",
+        "RK:-2",
+        "/",
+        516,
+        "/",
+        1142
+      ]
+    },
+    {
+      "id": 6535,
+      "bciAvId": 29822,
+      "gloss": "tooth damage",
+      "pos": "noun",
+      "explanation": "break + tooth",
+      "isCharacter": false,
+      "composition": [
+        933,
+        "/",
+        1121
+      ]
+    },
+    {
+      "id": 6536,
+      "bciAvId": 29823,
+      "gloss": "toothache",
+      "pos": "noun",
+      "explanation": "pain + teeth",
+      "isCharacter": false,
+      "composition": [
+        313,
+        "/",
+        "RK:-2",
+        "/",
+        516,
+        "/",
+        644
+      ]
+    },
+    {
+      "id": 6537,
+      "bciAvId": 29824,
+      "gloss": "headache",
+      "pos": "noun",
+      "explanation": "pain + head",
+      "isCharacter": false,
+      "composition": [
+        313,
+        "/",
+        "RK:-2",
+        "/",
+        516,
+        "/",
+        376
+      ]
+    },
+    {
+      "id": 6538,
+      "bciAvId": 29825,
+      "gloss": "back pain, pain in back",
+      "pos": "noun",
+      "explanation": "pain + back",
+      "isCharacter": false,
+      "composition": [
+        313,
+        "/",
+        "RK:-2",
+        "/",
+        516,
+        "/",
+        143
+      ]
+    },
+    {
+      "id": 6539,
+      "bciAvId": 29826,
+      "gloss": "earache",
+      "pos": "noun",
+      "explanation": "pain + ear",
+      "isCharacter": false,
+      "composition": [
+        313,
+        "/",
+        "RK:-2",
+        "/",
+        516,
+        "/",
+        278
+      ]
+    },
+    {
+      "id": 6540,
+      "bciAvId": 29827,
+      "gloss": "ear infection",
+      "pos": "noun",
+      "explanation": "disease + ear",
+      "isCharacter": false,
+      "composition": [
+        516,
+        "/",
+        278
+      ]
+    },
+    {
+      "id": 6541,
+      "bciAvId": 29828,
+      "gloss": "symptom (disease)",
+      "pos": "noun",
+      "explanation": "observation + part of + disease",
+      "isCharacter": false,
+      "composition": [
+        931,
+        "/",
+        502,
+        "/",
+        516
+      ]
+    },
+    {
+      "id": 6542,
+      "bciAvId": 29829,
+      "gloss": "joint dislocation",
+      "pos": "noun",
+      "explanation": "detachment + joint",
+      "isCharacter": false,
+      "composition": [
+        1022,
+        "/",
+        406
+      ]
+    },
+    {
+      "id": 6543,
+      "bciAvId": 29830,
+      "gloss": "hip dislocation",
+      "pos": "noun",
+      "explanation": "detachment + joint+hip",
+      "isCharacter": false,
+      "composition": [
+        1022,
+        "/",
+        406,
+        "/",
+        384
+      ]
+    },
+    {
+      "id": 6544,
+      "bciAvId": 29831,
+      "gloss": "joint injury",
+      "pos": "noun",
+      "explanation": "damage + joint",
+      "isCharacter": false,
+      "composition": [
+        933,
+        "/",
+        406
+      ]
+    },
+    {
+      "id": 6545,
+      "bciAvId": 29832,
+      "gloss": "sting (insect), insect bite",
+      "pos": "noun",
+      "explanation": "effect + stinging insect",
+      "isCharacter": false,
+      "composition": [
+        284,
+        "/",
+        400,
+        "/",
+        538
+      ]
+    },
+    {
+      "id": 6546,
+      "bciAvId": 29833,
+      "gloss": "to sting",
+      "pos": "action",
+      "explanation": "to prick + insect",
+      "isCharacter": false,
+      "composition": [
+        538,
+        ";",
+        81,
+        "/",
+        400
+      ]
+    },
+    {
+      "id": 6547,
+      "bciAvId": 29840,
+      "gloss": "to misunderstand",
+      "pos": "action",
+      "explanation": "understand + incorrect + action indicator: understand in the wrong way",
+      "isCharacter": false,
+      "composition": [
+        1103,
+        ";",
+        81,
+        "/",
+        1013,
+        "/",
+        401
+      ]
+    },
+    {
+      "id": 6548,
+      "bciAvId": 29841,
+      "gloss": "complain, grumble, whine - (to) (people)",
+      "pos": "action",
+      "explanation": "say + unhappy + action indicator: express discontent, express annoyance, report pain",
+      "isCharacter": false,
+      "composition": [
+        457,
+        ";",
+        81,
+        "/",
+        313,
+        "/",
+        271
+      ]
+    },
+    {
+      "id": 6549,
+      "bciAvId": 29843,
+      "gloss": "to swear",
+      "pos": "action",
+      "explanation": "coarse slang + action indicator",
+      "isCharacter": false,
+      "composition": [
+        971,
+        ";",
+        81
+      ]
+    },
+    {
+      "id": 6550,
+      "bciAvId": 29844,
+      "gloss": "to comment",
+      "pos": "action",
+      "explanation": "say + addition + action indicator: make an addition to something said",
+      "isCharacter": false,
+      "composition": [
+        457,
+        ";",
+        81,
+        "/",
+        107
+      ]
+    },
+    {
+      "id": 6551,
+      "bciAvId": 29845,
+      "gloss": "to send (digital)",
+      "pos": "action",
+      "explanation": "out of (forward) + digital+action indicator: send digitally",
+      "isCharacter": false,
+      "composition": [
+        491,
+        ";",
+        81,
+        "/",
+        829
+      ]
+    },
+    {
+      "id": 6552,
+      "bciAvId": 29846,
+      "gloss": "text (writing)",
+      "pos": "noun",
+      "explanation": "pen + language: written language",
+      "isCharacter": false,
+      "composition": [
+        509,
+        "/",
+        414
+      ]
+    },
+    {
+      "id": 6553,
+      "bciAvId": 29847,
+      "gloss": "edit - (to) (text)",
+      "pos": "action",
+      "explanation": "do + better [contraction] + text: revise text",
+      "isCharacter": false,
+      "composition": [
+        106,
+        ";",
+        81,
+        "/",
+        937,
+        "/",
+        509,
+        "/",
+        414
+      ]
+    },
+    {
+      "id": 6554,
+      "bciAvId": 29848,
+      "gloss": "to text, to write (digital)",
+      "pos": "action",
+      "explanation": "text + digital + action indicator",
+      "isCharacter": false,
+      "composition": [
+        509,
+        ";",
+        81,
+        "/",
+        829
+      ]
+    },
+    {
+      "id": 6555,
+      "bciAvId": 29849,
+      "gloss": "volume (sound)",
+      "pos": "noun",
+      "explanation": "scale,measurement + sound: measurement of sound volume",
+      "isCharacter": false,
+      "composition": [
+        927,
+        "/",
+        608
+      ]
+    },
+    {
+      "id": 6556,
+      "bciAvId": 29850,
+      "gloss": "Coca Cola, Coke (drink)",
+      "pos": "noun",
+      "explanation": "soda pop, pop, soft drink + C: a soft drink with the initials C for Coke",
+      "isCharacter": false,
+      "composition": [
+        275,
+        "/",
+        345,
+        "/",
+        "XC"
+      ]
+    },
+    {
+      "id": 6557,
+      "bciAvId": 29851,
+      "gloss": "muesli",
+      "pos": "noun",
+      "explanation": "grain, cereal + mixture",
+      "isCharacter": false,
+      "composition": [
+        211,
+        "/",
+        783
+      ]
+    },
+    {
+      "id": 6558,
+      "bciAvId": 29852,
+      "gloss": "seafood",
+      "pos": "noun",
+      "explanation": "food + sea",
+      "isCharacter": false,
+      "composition": [
+        329,
+        "/",
+        368,
+        "/",
+        368,
+        "/",
+        1117
+      ]
+    },
+    {
+      "id": 6559,
+      "bciAvId": 29853,
+      "gloss": "ice cream kiosk",
+      "pos": "noun",
+      "explanation": "kiosk + ice cream: a small place where ice cream is sold",
+      "isCharacter": false,
+      "composition": [
+        5841,
+        "/",
+        395
+      ]
+    },
+    {
+      "id": 6560,
+      "bciAvId": 29855,
+      "gloss": "used",
+      "pos": "description",
+      "explanation": "to use + description indicator after the fact: describing any item previously used",
+      "isCharacter": false,
+      "composition": [
+        932,
+        ";",
+        84
+      ]
+    },
+    {
+      "id": 6561,
+      "bciAvId": 29856,
+      "gloss": "blunt",
+      "pos": "description",
+      "explanation": "minus + sharp",
+      "isCharacter": false,
+      "composition": [
+        449,
+        "/",
+        411,
+        ";",
+        86
+      ]
+    },
+    {
+      "id": 6562,
+      "bciAvId": 29860,
+      "gloss": "ballet dancer",
+      "pos": "person",
+      "explanation": "person + ballet [contraction]",
+      "isCharacter": false,
+      "composition": [
+        513,
+        "/",
+        658,
+        "/",
+        278,
+        "/",
+        462
+      ]
+    },
+    {
+      "id": 6563,
+      "bciAvId": 29861,
+      "gloss": "ballet shoes",
+      "pos": "noun",
+      "explanation": "shoes [contraction] + ballet [contraction]",
+      "isCharacter": false,
+      "composition": [
+        548,
+        "/",
+        658,
+        "/",
+        278,
+        "/",
+        462
+      ]
+    },
+    {
+      "id": 6564,
+      "bciAvId": 29862,
+      "gloss": "string of lights",
+      "pos": "noun",
+      "explanation": "many + electric light,lamp [contraction] + chain: many lights connected in a chain",
+      "isCharacter": false,
+      "composition": [
+        368,
+        "/",
+        424,
+        ";",
+        97,
+        "/",
+        232
+      ]
+    },
+    {
+      "id": 6565,
+      "bciAvId": 29863,
+      "gloss": "entertainment",
+      "pos": "noun",
+      "explanation": "activity + purpose + pleasure: an activity for pleasure",
+      "isCharacter": false,
+      "composition": [
+        106,
+        "/",
+        551,
+        "/",
+        313,
+        "/",
+        678
+      ]
+    },
+    {
+      "id": 6566,
+      "bciAvId": 29864,
+      "gloss": "march, parade (general)",
+      "pos": "noun",
+      "explanation": "group (people) + walk + purpose: a group of people walking with a particular purpose",
+      "isCharacter": false,
+      "composition": [
+        368,
+        "/",
+        513,
+        "/",
+        418,
+        "/",
+        551
+      ]
+    },
+    {
+      "id": 6567,
+      "bciAvId": 29865,
+      "gloss": "week schedule",
+      "pos": "noun",
+      "explanation": "schedule, timetable + week: a timetable that covers a full week",
+      "isCharacter": false,
+      "composition": [
+        497,
+        "/",
+        655,
+        "/",
+        16,
+        "/",
+        258
+      ]
+    },
+    {
+      "id": 6568,
+      "bciAvId": 29866,
+      "gloss": "day schedule",
+      "pos": "noun",
+      "explanation": "schedule, timetable + day: a timetable that covers a full day",
+      "isCharacter": false,
+      "composition": [
+        497,
+        "/",
+        655,
+        "/",
+        258
+      ]
+    },
+    {
+      "id": 6569,
+      "bciAvId": 29867,
+      "gloss": "shopping street, high street",
+      "pos": "noun",
+      "explanation": "street + shop",
+      "isCharacter": false,
+      "composition": [
+        632,
+        "/",
+        819
+      ]
+    },
+    {
+      "id": 6570,
+      "bciAvId": 29868,
+      "gloss": "home office",
+      "pos": "noun",
+      "explanation": "office [contraction] + home",
+      "isCharacter": false,
+      "composition": [
+        572,
+        "/",
+        711,
+        "/",
+        392,
+        "/",
+        313
+      ]
+    },
+    {
+      "id": 6571,
+      "bciAvId": 29869,
+      "gloss": "emergency exit",
+      "pos": "noun",
+      "explanation": "exit + danger: an exit in case of danger, emergency",
+      "isCharacter": false,
+      "composition": [
+        491,
+        "/",
+        256
+      ]
+    },
+    {
+      "id": 6572,
+      "bciAvId": 29870,
+      "gloss": "downtown, city centre, city center",
+      "pos": "noun",
+      "explanation": "middle,centre + city; the centre of a city",
+      "isCharacter": false,
+      "composition": [
+        446,
+        "/",
+        368,
+        "/",
+        368,
+        "/",
+        392
+      ]
+    },
+    {
+      "id": 6573,
+      "bciAvId": 29875,
+      "gloss": "pastry chef, pastry cook",
+      "pos": "person",
+      "explanation": "person + cake: the person making pastry",
+      "isCharacter": false,
+      "composition": [
+        513,
+        "/",
+        180,
+        "/",
+        642,
+        "/",
+        678
+      ]
+    },
+    {
+      "id": 6574,
+      "bciAvId": 29876,
+      "gloss": "receptionist",
+      "pos": "person",
+      "explanation": "person + work + reception; the person who works at the reception",
+      "isCharacter": false,
+      "composition": [
+        513,
+        "/",
+        402,
+        "/",
+        553
+      ]
+    },
+    {
+      "id": 6575,
+      "bciAvId": 29877,
+      "gloss": "workshop, course (educational)",
+      "pos": "noun",
+      "explanation": "limited time, period + exchange + knowledge; a limited period for learning and teaching",
+      "isCharacter": false,
+      "composition": [
+        426,
+        "/",
+        1029,
+        "/",
+        412
+      ]
+    },
+    {
+      "id": 6576,
+      "bciAvId": 29878,
+      "gloss": "contact lens",
+      "pos": "noun",
+      "explanation": "thing + curve + eye; a contact lens described as curved thing for the eye",
+      "isCharacter": false,
+      "composition": [
+        651,
+        "/",
+        255,
+        "/",
+        303
+      ]
+    },
+    {
+      "id": 6577,
+      "bciAvId": 29879,
+      "gloss": "media",
+      "pos": "noun",
+      "explanation": "resource + information",
+      "isCharacter": false,
+      "composition": [
+        6443,
+        "/",
+        835
+      ]
+    },
+    {
+      "id": 6578,
+      "bciAvId": 29880,
+      "gloss": "media (digital)",
+      "pos": "noun",
+      "explanation": "media + digital",
+      "isCharacter": false,
+      "composition": [
+        6443,
+        "/",
+        835,
+        "/",
+        829
       ]
     }
   ]

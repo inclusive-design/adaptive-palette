@@ -3,7 +3,7 @@
  * node generate_bliss_symbol_explanations.js <inputFile.json> <outputFile.json> [--verbose]
  *
  * Example:
- * node generate_bliss_symbol_explanations.js data/bliss_dictionary_20260513.json ../public/data/bliss_symbol_explanations.json
+ * node generate_bliss_symbol_explanations.js data/bliss_dictionary_20260827.json ../public/data/bliss_symbol_explanations.json
  *
  * This script processes a JSON file containing linguistic derivation data and
  * maps it into a new hierarchical structure used by this project. The original
@@ -14,14 +14,19 @@
  * Operations:
  * 1. Field Mapping: Maps specified fields (e.g., `id` -> `id`, `bciAvId` -> `bciAvId`,
  *     `isChar` -> `isCharacter`, `gloss` -> `gloss`, `explanation` -> `explanation`,
- *     `code` -> parses the code into `composition`).
+ *     `isIndicator` -> `isIndicator` (kept only when true), `code` -> parses the code
+ *     into `composition`).
  *    1.1 Fallback for missing `isChar`: defaults to `false`.
  * 2. Composition Generation: Parses `item.code` directly for non-character items
  *    (`isChar === false`) — `B`-prefixed IDs are resolved to character IDs.
  *    Separators (`/` and `;`) are preserved as strings.
  *
+ * 3. Output: rewrites only the `data` array of the existing output file. Its `license` and
+ *    `attribution` sections are preserved untouched.
+ *
  * Reporting (use --verbose for full output):
- * - Errors (always shown): missing code, missing ID references, non-character references
+ * - Errors (always shown): null required fields, missing code, missing ID references,
+ *     non-character references
  * - Warnings (always shown): missing bciAvId, missing pos
  * - Verbose-only (--verbose): special code segments, missing isChar, missing explanation
  */
@@ -36,11 +41,13 @@ import fs from "fs";
  *   gloss: string,
  *   explanation?: string,
  *   pos?: string,
+ *   isIndicator?: boolean,
  *   code?: string
  * }} BlissItem
  */
 
 const errors = {
+  nullRequiredField: new Set(),
   missingCode: new Set(),
   missingIDReference: new Set(),
   notACharacter: new Set()
@@ -105,9 +112,12 @@ function buildLookupMap(data) {
   /** @type {Map<number, BlissItem>} */
   const map = new Map();
   data.forEach(item => {
-    if (!Object.prototype.hasOwnProperty.call(item, "isChar") || item.isChar === null) {
+    if (!Object.prototype.hasOwnProperty.call(item, "isChar")) {
       item.isChar = false;
       verboseWarnings.missingIsChar.add(item.id);
+    } else if (item.isChar === null) {
+      item.isChar = false;
+      errors.nullRequiredField.add(`Error: ID ${item.id} has a null "isChar"; defaulted to false.`);
     }
     map.set(Number(item.id), item);
   });
@@ -165,18 +175,33 @@ function buildComposition(item, lookupMap) {
 }
 
 /**
+ * Report a null value in any field the output type declares non-null. A missing "isChar" key is
+ * handled in buildLookupMap; only a present-but-null value counts as an error.
+ * @param {BlissItem} item
+ */
+function checkRequiredFields(item) {
+  if (item.id === null) {
+    errors.nullRequiredField.add(`Error: an item has a null "id" (gloss: "${item.gloss}").`);
+  }
+  if (item.gloss === null) {
+    errors.nullRequiredField.add(`Error: ID ${item.id} has a null "gloss".`);
+  }
+}
+
+/**
  * Transform the input data array into the desired output structure, while performing error and warning checks.
  * @param {BlissItem[]} data
  * @param {Map<number, BlissItem>} lookupMap
- * @returns {{ id: number, bciAvId?: number, gloss: string, pos?: string, explanation?: string, isCharacter: boolean, composition?: (string | number)[] }[]}
+ * @returns {{ id: number, bciAvId?: number, gloss: string, pos?: string, explanation?: string, isCharacter: boolean, isIndicator?: boolean, composition?: (string | number)[] }[]}
  */
 function transformItems(data, lookupMap) {
   return data.map(item => {
+    checkRequiredFields(item);
     if (!item.bciAvId) warnings.missingBciAvId.add(item.id);
     if (!item.pos) warnings.missingPos.add(item.id);
     if (!item.explanation) verboseWarnings.missingExplanation.add(item.id);
 
-    /** @type {{ id: number, bciAvId?: number, gloss: string, pos?: string, explanation?: string, isCharacter: boolean, composition?: (string | number)[] }} */
+    /** @type {{ id: number, bciAvId?: number, gloss: string, pos?: string, explanation?: string, isCharacter: boolean, isIndicator?: boolean, composition?: (string | number)[] }} */
     const outItem = {
       id: item.id,
       bciAvId: item.bciAvId ?? undefined,
@@ -185,6 +210,8 @@ function transformItems(data, lookupMap) {
       explanation: item.explanation ?? undefined,
       isCharacter: item.isChar
     };
+
+    if (item.isIndicator === true) outItem.isIndicator = true;
 
     if (item.isChar === false) {
       outItem.composition = buildComposition(item, lookupMap);
@@ -195,13 +222,23 @@ function transformItems(data, lookupMap) {
 }
 
 /**
- * Write the output data array to a JSON file, with error handling for write failures.
+ * Replace the "data" array of the existing output file, preserving its "license" and
+ * "attribution" sections. The output file must already exist and parse; the script does not
+ * invent a wrapper.
  * @param {string} fileName
  * @param {object[]} data
  */
 function writeOutput(fileName, data) {
+  let existing;
   try {
-    fs.writeFileSync(fileName, JSON.stringify(data, null, 2), "utf8");
+    existing = JSON.parse(fs.readFileSync(fileName, "utf8"));
+  } catch {
+    console.error(`Error: Failed to read or parse the existing "${fileName}". Regeneration updates the "data" section of that file, so it must exist and be valid JSON.`);
+    process.exit(1);
+  }
+
+  try {
+    fs.writeFileSync(fileName, JSON.stringify({ ...existing, data }, null, 2), "utf8");
   } catch {
     console.error(`Error: Failed to write to "${fileName}". Check directory permissions.`);
     process.exit(1);
@@ -218,6 +255,11 @@ function printReport(outputFile, count, verbose) {
   console.log("\n=== Processing Report ===");
   console.log(`Report: Successfully processed ${count} records into ${outputFile}`);
 
+  if (errors.nullRequiredField.size > 0) {
+    console.log(`\n=== Null Required Field Report (Total: ${errors.nullRequiredField.size}) ===`);
+    errors.nullRequiredField.forEach(msg => console.log(msg));
+  }
+
   if (errors.missingCode.size > 0) {
     console.log(`\n=== Missing Code Report (Total: ${errors.missingCode.size}) ===`);
     errors.missingCode.forEach(msg => console.log(msg));
@@ -233,7 +275,7 @@ function printReport(outputFile, count, verbose) {
     errors.notACharacter.forEach(msg => console.log(msg));
   }
 
-  const hasErrors = errors.missingCode.size > 0 || errors.missingIDReference.size > 0 || errors.notACharacter.size > 0;
+  const hasErrors = errors.nullRequiredField.size > 0 || errors.missingCode.size > 0 || errors.missingIDReference.size > 0 || errors.notACharacter.size > 0;
   if (!hasErrors) {
     console.log("\nReport: No structural errors detected.");
   }
