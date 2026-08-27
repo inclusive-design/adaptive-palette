@@ -22,6 +22,8 @@ export type BlissSymbolEntry = {
   pos?: string,
   explanation?: string,
   isCharacter: boolean,
+  // present only on the 41 indicator symbols
+  isIndicator?: boolean,
   composition?: SymbolCompositionType
 };
 
