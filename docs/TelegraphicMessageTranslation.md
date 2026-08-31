@@ -194,7 +194,7 @@ the feature enters the **Error** state.
 
 ## Saved Data
 
-Translations are stored in the shared **Message Log** in browser local storage, described in
+Translations are stored in the shared **Message Log**, described in
 [WordPrediction.md](WordPrediction.md). Pressing **Sentence** records the message itself; choosing a
 sentence adds the translation to that record:
 
@@ -212,9 +212,10 @@ message that already has candidates on record adds to them rather than replacing
 **The most recently spoken sentence becomes the preferred sentence for that message.** A repeated
 message is recorded each time it is said, and the translation attaches to its most recent record.
 
-The log is limited to the top-level `maxStoredRecords` setting in `public/config.json`, which caps every
-log the application keeps. When the limit is reached, the oldest records are removed first. Setting it to
-`0` keeps the feature but stores nothing.
+Every message is stored, and nothing is ever removed -- see [Storage.md](devDoc/Storage.md). What a
+sentence can be recalled from is narrower: `findLatestTranslation()` only looks at the newest
+`maxRecalledRecords` messages, the top-level setting in `public/config.json` that caps every log
+the application keeps. Setting it to `0` keeps the feature but stores and recalls nothing.
 
 Data can currently be inspected through browser developer tools. No in-application export is provided.
 
@@ -235,5 +236,5 @@ Data can currently be inspected through browser developer tools. No in-applicati
 | Request fails or times out | The feature enters the **Error** state: the error line replaces the progress line and the typing area stays on screen, along with any recalled sentence. The message remains available so the user can retry. |
 | Model returns fewer or more sentences than requested | All usable returned sentences are displayed, unless a sentence was recalled for the message — see above. |
 | Model returns no usable sentences | The feature enters the **Error** state. |
-| Local storage write fails | An error is logged to the console. Speech and UI behaviour are unaffected. |
+| The store cannot be written | An error is logged to the console. Speech and UI behaviour are unaffected. |
 | Speech synthesis is unavailable | No speech is produced, but sentence selection and data storage continue to work. |

@@ -18,16 +18,17 @@ import { html } from "htm/preact";
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { loadConfig } from "../../core/Config";
 import type { AdaptivePaletteConfigType } from "../../index.d";
-import { SETTINGS_KEY } from "./SettingsSchema";
+import { setStorage } from "../../core/StorageBackend";
+import { FakeStorage } from "../../testUtils/FakeStorage";
 import {
   SettingsDialog, SAVE_LABEL, CLOSE_LABEL, CONFIRM_LABEL, DECLINE_LABEL,
   MODEL_NOTE, WARNING_TEXT, FAILURE_MESSAGE, dependentNote
 } from "./SettingsDialog";
 
-// Saving reloads the page, which would restart the test runner. Making local storage throw
-// keeps every test on the failure path, where the dialog stays put; what the dialog asked
-// to write is what these tests are about.
-let setItemSpy: MockInstance;
+// Saving reloads the page, which would restart the test runner. Making the store's write
+// reject keeps every test on the failure path, where the dialog stays put; what the dialog
+// asked to write is what these tests are about.
+let writeSettingsSpy: MockInstance;
 
 const originalConfig = adaptivePaletteGlobals.config;
 const originalFileConfig = adaptivePaletteGlobals.fileConfig;
@@ -64,12 +65,9 @@ describe("SettingsDialog", () => {
 
   beforeEach(() => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
-    setItemSpy = vi.spyOn(Storage.prototype, "setItem").mockImplementation((): void => {
-      throw new Error("storage is not available");
-    });
-    vi.spyOn(Storage.prototype, "removeItem").mockImplementation((): void => {
-      throw new Error("storage is not available");
-    });
+    const storage = new FakeStorage();
+    setStorage(storage);
+    writeSettingsSpy = vi.spyOn(storage, "writeSettings").mockRejectedValue(new Error("storage is not available"));
   });
 
   afterEach(() => {
@@ -177,7 +175,7 @@ describe("SettingsDialog", () => {
     expect(suggestions).toHaveAttribute("min", "1");
     expect(suggestions).toHaveAttribute("step", "1");
     expect(suggestions).toBeRequired();
-    expect(screen.getByLabelText("Messages to keep")).toHaveAttribute("min", "0");
+    expect(screen.getByLabelText("Messages to remember")).toHaveAttribute("min", "0");
   });
 
   test("saves nothing when the dialog is closed", async () => {
@@ -189,7 +187,7 @@ describe("SettingsDialog", () => {
     await userEvent.click(screen.getByRole("button", { name: CLOSE_LABEL }));
 
     expect(onRequestClose).toHaveBeenCalled();
-    expect(setItemSpy).not.toHaveBeenCalled();
+    expect(writeSettingsSpy).not.toHaveBeenCalled();
   });
 
   test("warns before saving, and saves nothing while the warning is up", async () => {
@@ -199,7 +197,7 @@ describe("SettingsDialog", () => {
     await userEvent.click(screen.getByRole("button", { name: SAVE_LABEL }));
 
     expect(await screen.findByText(WARNING_TEXT)).toBeInTheDocument();
-    expect(setItemSpy).not.toHaveBeenCalled();
+    expect(writeSettingsSpy).not.toHaveBeenCalled();
   });
 
   test("declining the warning returns to the form with the edits still there", async () => {
@@ -212,7 +210,7 @@ describe("SettingsDialog", () => {
 
     const control = await screen.findByLabelText(SPEAK_LABEL);
     expect(control).toHaveProperty("checked", !fileConfig.announceSymbolOnInput);
-    expect(setItemSpy).not.toHaveBeenCalled();
+    expect(writeSettingsSpy).not.toHaveBeenCalled();
   });
 
   test("saves the changed settings alone once the warning is confirmed", async () => {
@@ -224,9 +222,8 @@ describe("SettingsDialog", () => {
     await userEvent.click(await screen.findByRole("button", { name: CONFIRM_LABEL }));
 
     await waitFor(() => {
-      expect(setItemSpy).toHaveBeenCalledWith(
-        SETTINGS_KEY,
-        JSON.stringify({ "announceSymbolOnInput": !fileConfig.announceSymbolOnInput })
+      expect(writeSettingsSpy).toHaveBeenCalledWith(
+        { "announceSymbolOnInput": !fileConfig.announceSymbolOnInput }
       );
     });
   });
@@ -243,9 +240,8 @@ describe("SettingsDialog", () => {
     await userEvent.click(await screen.findByRole("button", { name: CONFIRM_LABEL }));
 
     await waitFor(() => {
-      expect(setItemSpy).toHaveBeenCalledWith(
-        SETTINGS_KEY,
-        JSON.stringify({ "wordPrediction.show": !fileConfig.wordPrediction.show })
+      expect(writeSettingsSpy).toHaveBeenCalledWith(
+        { "wordPrediction.show": !fileConfig.wordPrediction.show }
       );
     });
   });

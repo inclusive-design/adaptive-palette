@@ -8,13 +8,14 @@ every section falls back.
 
 Some of these fields can also be changed from within the app, through the **Adjust Settings**
 dialog: everything except `model`, `systemPrompt`, and `userPrompt`. Those choices are kept in
-local storage and applied over the file at start-up by `applyStoredSettings()` in
+the storage layer and applied over the file at start-up by `applyStoredSettings()` in
 [`src/client/features/settings/SettingsSchema.ts`](../../src/client/features/settings/SettingsSchema.ts),
-which re-validates every value it reads back. See [Settings.md](../Settings.md).
+which re-validates every value it reads back. See [Settings.md](../Settings.md) and
+[Storage.md](Storage.md).
 
 | Section | Controls |
 | ------- | -------- |
-| `maxStoredRecords` | Top-level, not a section. How many messages the local-storage message log keeps. |
+| `maxRecalledRecords` | Top-level, not a section. How many of the newest stored messages the app reads back for word prediction and sentence recall. |
 | `announceSymbolOnInput` | Top-level, not a section. Whether labels are spoken as the user inputs. |
 | `markAiSuggestions` | Top-level, not a section. Whether suggestions a model made are marked as such. |
 | `indicatorLabelLookup` | The Ollama fallback tier for looking up indicator labels. See [IndicatorLabelLookup.md](../IndicatorLabelLookup.md). |
@@ -38,12 +39,14 @@ per line, so they keep plain substitution (`renderTemplate()`) instead, and no l
 dropped. `indicatorLabelLookup.systemPrompt` is the exception: it is sent verbatim, so a placeholder
 written there reaches the model as literal text.
 
-## `maxStoredRecords`
+## `maxRecalledRecords`
 
-An integer capping the message log, the single local-storage log holding the messages the
-user has said and the translations made from them. When it reaches the limit, its oldest records are
-dropped first. `0` keeps the features that log but stores nothing. A missing or malformed value falls
-back to 500.
+An integer controlling how many of the newest stored messages are read back into the app's message
+log, the record of what the user has said and the translations made from it. Nothing is ever deleted
+from storage; this caps what is read into memory for word prediction and sentence recall, not what is
+kept. `0` turns the history off entirely: nothing is read back and nothing new is written. A missing
+or malformed value falls back to 500 -- a working-set size, not a storage limit, chosen because word
+prediction walks the whole set on every keystroke.
 
 ## `announceSymbolOnInput`
 

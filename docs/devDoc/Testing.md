@@ -68,3 +68,17 @@ dismiss` and `Home is unavailable when the stack is empty` are correct as writte
 ### Shared Utilities
 
 `src/client/testUtils/` holds shared utility functions for tests.
+
+### The message log's storage
+
+A test that reads or writes the message log calls `resetMessageLog()` from
+`testUtils/MessageLogTestUtils.ts` in `beforeEach`, after setting `adaptivePaletteGlobals.config`:
+how much is read back into the log comes from `maxRecalledRecords`. `seedMessageLog()` and
+`readStoredMessages()` are there for seeding the store directly and reading back what is actually
+in it, as opposed to what the app has cached. These three are the only place a test reaches into
+the message log's storage.
+
+`core/IndexedDbStorage.test.ts` is the one test file that touches a real database, opening one
+with a name of its own per test so nothing waits on `deleteDatabase` unblocking behind a
+connection another test left open. `window.localStorage` is untouched by production code except
+the one-line sweep on clear, and by the test that checks it. See [Storage.md](Storage.md).

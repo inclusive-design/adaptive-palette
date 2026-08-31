@@ -12,7 +12,7 @@
 
 import { vi } from "vitest";
 import {
-  loadConfig, DISABLED_MODEL_QUERY, DEFAULT_MAX_STORED_RECORDS, DEFAULT_MAX_SUGGESTIONS
+  loadConfig, DISABLED_MODEL_QUERY, DEFAULT_MAX_RECALLED_RECORDS, DEFAULT_MAX_SUGGESTIONS
 } from "./Config";
 
 /**
@@ -150,29 +150,29 @@ describe("loadConfig indicatorLabelLookup section", (): void => {
   });
 });
 
-describe("loadConfig maxStoredRecords", (): void => {
+describe("loadConfig maxRecalledRecords", (): void => {
 
   test("a positive integer is loaded as given", async (): Promise<void> => {
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, maxStoredRecords: 42 });
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, maxRecalledRecords: 42 });
     const config = await loadConfig();
-    expect(config.maxStoredRecords).toBe(42);
+    expect(config.maxRecalledRecords).toBe(42);
   });
 
   // Zero is how logging is turned off while the features that log stay available.
   test("zero is kept rather than treated as missing", async (): Promise<void> => {
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, maxStoredRecords: 0 });
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, maxRecalledRecords: 0 });
     const config = await loadConfig();
-    expect(config.maxStoredRecords).toBe(0);
+    expect(config.maxRecalledRecords).toBe(0);
   });
 
   test("a missing or malformed value falls back to the default", async (): Promise<void> => {
     stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
     const missing = await loadConfig();
-    expect(missing.maxStoredRecords).toBe(DEFAULT_MAX_STORED_RECORDS);
+    expect(missing.maxRecalledRecords).toBe(DEFAULT_MAX_RECALLED_RECORDS);
 
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, maxStoredRecords: -5 });
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, maxRecalledRecords: -5 });
     const malformed = await loadConfig();
-    expect(malformed.maxStoredRecords).toBe(DEFAULT_MAX_STORED_RECORDS);
+    expect(malformed.maxRecalledRecords).toBe(DEFAULT_MAX_RECALLED_RECORDS);
   });
 });
 

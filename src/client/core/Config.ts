@@ -21,8 +21,10 @@ import type {
   TelegraphicTranslationConfigType, FeatureVisibilityConfigType, WordPredictionConfigType
 } from "../index.d";
 
-// Used when `maxStoredRecords` or `wordPrediction.maxSuggestions` is missing or malformed.
-export const DEFAULT_MAX_STORED_RECORDS = 500;
+// Used when `maxRecalledRecords` or `wordPrediction.maxSuggestions` is missing or malformed.
+// 500 is a working-set size, not a storage limit: reading further back costs time on every
+// keystroke, because word prediction walks the whole set each time it suggests.
+export const DEFAULT_MAX_RECALLED_RECORDS = 500;
 export const DEFAULT_MAX_SUGGESTIONS = 10;
 
 // The model half of `wordPrediction`, switched off. Used wherever the section is unusable.
@@ -41,7 +43,7 @@ const isFilledString = (value: unknown): boolean => typeof value === "string" &&
  */
 export function makeDefaultConfig (): AdaptivePaletteConfigType {
   return {
-    maxStoredRecords: DEFAULT_MAX_STORED_RECORDS,
+    maxRecalledRecords: DEFAULT_MAX_RECALLED_RECORDS,
     announceSymbolOnInput: true,
     markAiSuggestions: true,
     indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
@@ -115,16 +117,16 @@ function parseTelegraphicTranslation (section: unknown): TelegraphicTranslationC
 }
 
 /**
- * Validate the top-level `maxStoredRecords`, the cap shared by every log kept in local
- * storage. Zero is valid and means keep the features but store nothing.
+ * Validate the top-level `maxRecalledRecords`, how many of the newest stored messages the app
+ * reads back. Zero is valid and turns the history off entirely.
  * @param {unknown} value - The raw parsed value.
  * @returns {number}
  */
-function parseMaxStoredRecords (value: unknown): number {
+function parseMaxRecalledRecords (value: unknown): number {
   if (isPositiveInteger(value) || value === 0) {
     return value as number;
   }
-  return DEFAULT_MAX_STORED_RECORDS;
+  return DEFAULT_MAX_RECALLED_RECORDS;
 }
 
 /**
@@ -186,7 +188,7 @@ function parseShowFlag (section: unknown, fallback: boolean): FeatureVisibilityC
 }
 
 /**
- * Fetch and validate `public/config.json`: the top-level `maxStoredRecords` and the
+ * Fetch and validate `public/config.json`: the top-level `maxRecalledRecords` and the
  * `indicatorLabelLookup`, `telegraphicTranslation`, `symbolSearch`, `svgBuilderString`,
  * and `wordPrediction` sections.
  * @returns {Promise<AdaptivePaletteConfigType>}
@@ -200,7 +202,7 @@ export async function loadConfig (): Promise<AdaptivePaletteConfigType> {
     const parsed = await response.json() as Record<string, unknown>;
     const indicatorLabelLookup = parseIndicatorLabelLookup(parsed?.indicatorLabelLookup);
     return {
-      maxStoredRecords: parseMaxStoredRecords(parsed?.maxStoredRecords),
+      maxRecalledRecords: parseMaxRecalledRecords(parsed?.maxRecalledRecords),
       // Anything other than `false` leaves announcements on: a mistyped config must not
       // silently mute the palette.
       announceSymbolOnInput: typeof parsed?.announceSymbolOnInput === "boolean" ? parsed.announceSymbolOnInput : true,

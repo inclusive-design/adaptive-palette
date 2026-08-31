@@ -14,9 +14,10 @@ import {
   blissSlots, FUTURE_INDICATOR_ID, IMPERATIVE_INDICATOR_ID, PAST_INDICATOR_ID,
   PLURAL_INDICATOR_ID, sentenceSpans
 } from "./BlissSentenceUtils";
-import { MESSAGE_LOG_KEY, saveMessageRecord } from "../../core/MessageLog";
+import { saveMessageRecord } from "../../core/MessageLog";
 import { SymbolCompositionType, SymbolEncodingType } from "../../index.d";
 import { compositionToBstr, getSvgElement, initSvgCompositeDefinitions } from "../../utils/SvgUtils";
+import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 
 describe("BlissSentenceUtils", (): void => {
 
@@ -197,8 +198,8 @@ describe("BlissSentenceUtils", (): void => {
       initSvgCompositeDefinitions();
     });
 
-    beforeEach((): void => {
-      window.localStorage.removeItem(MESSAGE_LOG_KEY);
+    beforeEach(async (): Promise<void> => {
+      await resetMessageLog();
     });
 
     const compositions = (sentence: string): (SymbolCompositionType | undefined)[] =>

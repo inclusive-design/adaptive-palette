@@ -13,7 +13,7 @@
 import { vi } from "vitest";
 import { adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal } from "../../state/GlobalData";
 import { DISABLED_MODEL_QUERY } from "../../core/Config";
-import { MESSAGE_LOG_KEY, saveMessageRecord } from "../../core/MessageLog";
+import { saveMessageRecord } from "../../core/MessageLog";
 import { editMessage, setEditGuard } from "../../core/MessageEdit";
 import { queryChat } from "../../core/OllamaApi";
 import { DEBOUNCE_MS, messageUpToCaret, queryContextKeyOf, modelWordsSignal } from "./WordPredictionState";
@@ -25,6 +25,7 @@ import {
   selectedAttributesSignal, clearAttributes
 } from "../message-attributes/MessageAttributesState";
 import { SymbolEncodingType } from "../../index.d";
+import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../core/OllamaApi")>();
@@ -58,12 +59,12 @@ describe("wordPrediction model query", (): void => {
     await vi.advanceTimersByTimeAsync(0);
   };
 
-  beforeEach((): void => {
+  beforeEach(async (): Promise<void> => {
     vi.useFakeTimers();
     mockedQueryChat.mockReset();
     replyWith("food\ntea\ncoffee");
-    window.localStorage.removeItem(MESSAGE_LOG_KEY);
-    adaptivePaletteGlobals.config.maxStoredRecords = 100;
+    await resetMessageLog();
+    adaptivePaletteGlobals.config.maxRecalledRecords = 100;
     adaptivePaletteGlobals.config.wordPrediction = {
       show: true,
       maxSuggestions: 4,
@@ -79,7 +80,7 @@ describe("wordPrediction model query", (): void => {
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
   });
 
-  afterEach((): void => {
+  afterEach(async (): Promise<void> => {
     setEditGuard(null);
     finishedMessageSignal.value = "";
     // Cleared before the input area below, so emptying that is not read as an edit that
@@ -88,7 +89,7 @@ describe("wordPrediction model query", (): void => {
     discardEditPromptSignal.value = null;
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
     vi.useRealTimers();
-    window.localStorage.removeItem(MESSAGE_LOG_KEY);
+    await resetMessageLog();
     adaptivePaletteGlobals.config.wordPrediction = {
       show: false, maxSuggestions: 10, ...DISABLED_MODEL_QUERY
     };

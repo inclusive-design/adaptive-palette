@@ -23,7 +23,7 @@ three categories by prefix.
 | Type | Purpose | Key options beyond layout |
 | ---- | ------- | ------------------------- |
 | `CommandClearEncoding` | Clears the entire encoding area | `label`, `composition`, `ariaControls` |
-| `CommandClearSavedData` | Deletes everything the app has saved in local storage, after a confirmation dialog, then reloads the page | `label`, `composition` |
+| `CommandClearSavedData` | Deletes everything the app has saved, after a confirmation dialog, then reloads the page | `label`, `composition` |
 | `CommandCursorBackward` | Moves the caret one position left in the encoding area | `label`, `composition`, `ariaControls` |
 | `CommandCursorForward` | Moves the caret one position right in the encoding area | `label`, `composition`, `ariaControls` |
 | `CommandDelLastEncoding` | Deletes the last symbol in the encoding area | `label`, `composition`, `ariaControls` |

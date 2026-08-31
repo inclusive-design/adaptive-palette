@@ -12,15 +12,14 @@
 
 /**
  * The settings the user may change from within the app, and the reading and writing of
- * their choices in local storage.
+ * their choices in storage.
  *
  * The prompts and model names in `config.json` are deliberately absent: they are not
- * something to edit in a dialog, and leaving them out means local storage cannot carry
- * them at all.
+ * something to edit in a dialog, and leaving them out means the store cannot carry them
+ * at all.
  */
 import type { AdaptivePaletteConfigType } from "../../index.d";
-
-export const SETTINGS_KEY = "Settings";
+import { getStorage } from "../../core/StorageBackend";
 
 export type SettingValueType = boolean | number;
 
@@ -49,8 +48,8 @@ export const SETTING_DESCRIPTORS: SettingDescriptorType[] = [
     label: "Mark AI suggestions", group: "General"
   },
   {
-    path: ["maxStoredRecords"], kind: "number", min: 0,
-    label: "Messages to keep", group: "General"
+    path: ["maxRecalledRecords"], kind: "number", min: 0,
+    label: "Messages to remember", group: "General"
   },
   {
     path: ["symbolSearch", "show"], kind: "boolean",
@@ -159,8 +158,8 @@ export function isOffered (
 }
 
 /**
- * Whether a stored value is one this setting can take.  Local storage is hand-editable, so
- * this runs on every value read back from it.
+ * Whether a stored value is one this setting can take.  The store is hand-editable, so this
+ * runs on every value read back from it.
  * @param {SettingDescriptorType} descriptor - The setting.
  * @param {unknown} value - The stored value.
  * @returns {boolean}
@@ -176,14 +175,12 @@ function isValidValue (descriptor: SettingDescriptorType, value: unknown): boole
 }
 
 /**
- * The stored overrides, or an empty object when there are none or they are unreadable.
- * @returns {Record<string, unknown>}
+ * The stored overrides, or an empty object when there are none or they cannot be read.
+ * @returns {Promise<Record<string, unknown>>}
  */
-function readOverrides (): Record<string, unknown> {
+async function readOverrides (): Promise<Record<string, unknown>> {
   try {
-    const stored = window.localStorage.getItem(SETTINGS_KEY);
-    const parsed: unknown = stored ? JSON.parse(stored) : null;
-    return parsed && typeof parsed === "object" ? parsed as Record<string, unknown> : {};
+    return await getStorage().readSettings();
   } catch (error) {
     console.error(`Could not read the saved settings: ${String(error)}`);
     return {};
@@ -194,14 +191,16 @@ function readOverrides (): Record<string, unknown> {
  * A copy of the configuration with the user's saved choices applied.
  *
  * The descriptors are what is iterated, never the stored object's keys, so a hand-edited
- * local storage can only reach the settings named here: a `systemPrompt` written into it
- * is never looked at.  An override that fails validation is skipped and the value from
- * `config.json` stands.  Nothing here throws; a corrupt local storage degrades to the file.
+ * store can only reach the settings named here: a `systemPrompt` written into it is never
+ * looked at.  An override that fails validation is skipped and the value from `config.json`
+ * stands.  Nothing here throws; a store that cannot be read degrades to the file.
  * @param {AdaptivePaletteConfigType} config - The configuration parsed from `config.json`.
- * @returns {AdaptivePaletteConfigType}
+ * @returns {Promise<AdaptivePaletteConfigType>}
  */
-export function applyStoredSettings (config: AdaptivePaletteConfigType): AdaptivePaletteConfigType {
-  const overrides = readOverrides();
+export async function applyStoredSettings (
+  config: AdaptivePaletteConfigType
+): Promise<AdaptivePaletteConfigType> {
+  const overrides = await readOverrides();
   const merged = structuredClone(config);
   SETTING_DESCRIPTORS.forEach((descriptor) => {
     const key = settingKey(descriptor);
@@ -226,12 +225,12 @@ export function applyStoredSettings (config: AdaptivePaletteConfigType): Adaptiv
  * @param {Record<string, SettingValueType>} values - The dialog's values, keyed by `settingKey`.
  * @param {AdaptivePaletteConfigType} baseline - The configuration as `config.json` has it,
  *                                               without any overrides applied.
- * @returns {boolean} - `true` when the choices were saved; `false` when the browser denied
- *                      access to its storage, in which case nothing was written.
+ * @returns {Promise<boolean>} - `true` when the choices were saved; `false` when the store
+ *                      denied the write, in which case nothing was written.
  */
-export function saveSettings (
+export async function saveSettings (
   values: Record<string, SettingValueType>, baseline: AdaptivePaletteConfigType
-): boolean {
+): Promise<boolean> {
   const overrides: Record<string, SettingValueType> = {};
   SETTING_DESCRIPTORS.forEach((descriptor) => {
     const key = settingKey(descriptor);
@@ -246,11 +245,9 @@ export function saveSettings (
     overrides[key] = value;
   });
   try {
-    if (Object.keys(overrides).length === 0) {
-      window.localStorage.removeItem(SETTINGS_KEY);
-    } else {
-      window.localStorage.setItem(SETTINGS_KEY, JSON.stringify(overrides));
-    }
+    // An empty object rather than a delete: an absent record and one holding nothing read
+    // back the same, so there is no second case to keep.
+    await getStorage().writeSettings(overrides);
     return true;
   } catch (error) {
     console.error(`Could not save the settings: ${String(error)}`);

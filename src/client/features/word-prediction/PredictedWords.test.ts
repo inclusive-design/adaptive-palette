@@ -18,7 +18,7 @@ import { html } from "htm/preact";
 import { adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal } from "../../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../../core/InitGlobals";
 import { DISABLED_MODEL_QUERY } from "../../core/Config";
-import { MESSAGE_LOG_KEY, saveMessageRecord } from "../../core/MessageLog";
+import { saveMessageRecord } from "../../core/MessageLog";
 import {
   moreSuggestionsMessage, PredictedWords, PREDICTED_WORDS_LABEL, QUERYING_MESSAGE
 } from "./PredictedWords";
@@ -26,6 +26,7 @@ import { cancelModelQuery, modelWordsSignal, queryContextKeyOf } from "./WordPre
 import { SymbolEncodingType } from "../../index.d";
 import { AI_BADGE_TEXT, aiSuggestionLabel } from "../../components/AiBadge";
 import { selectedAttributesSignal, clearAttributes } from "../message-attributes/MessageAttributesState";
+import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 
 // The row is driven from `modelWordsSignal` directly here, so a query left waiting is all
 // that is wanted of Ollama.
@@ -51,9 +52,9 @@ describe("PredictedWords", (): void => {
     await initAdaptivePaletteGlobals();
   });
 
-  beforeEach((): void => {
-    window.localStorage.removeItem(MESSAGE_LOG_KEY);
-    adaptivePaletteGlobals.config.maxStoredRecords = 100;
+  beforeEach(async (): Promise<void> => {
+    await resetMessageLog();
+    adaptivePaletteGlobals.config.maxRecalledRecords = 100;
     adaptivePaletteGlobals.config.wordPrediction = { show: true, maxSuggestions: 4, ...DISABLED_MODEL_QUERY };
     adaptivePaletteGlobals.config.markAiSuggestions = true;
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
@@ -62,9 +63,9 @@ describe("PredictedWords", (): void => {
     saveMessageRecord(message("you", "help", "me"));
   });
 
-  afterEach((): void => {
+  afterEach(async (): Promise<void> => {
     cleanup();
-    window.localStorage.removeItem(MESSAGE_LOG_KEY);
+    await resetMessageLog();
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
   });
 
@@ -106,8 +107,8 @@ describe("PredictedWords", (): void => {
   });
 
   // The row holds its place so that the rest of the page does not shift as words are added.
-  test("keeps a row of empty slots when there is nothing to suggest", (): void => {
-    window.localStorage.removeItem(MESSAGE_LOG_KEY);
+  test("keeps a row of empty slots when there is nothing to suggest", async (): Promise<void> => {
+    await resetMessageLog();
     setMessage("unknown");
     render(html`<${PredictedWords} />`);
 

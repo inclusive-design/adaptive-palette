@@ -104,7 +104,7 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
    * was read at start-up: the globals' `config` is the merged one, which is no use as a
    * baseline.
    */
-  const confirm = (): void => {
+  const confirm = async (): Promise<void> => {
     const toSave: Record<string, SettingValueType> = {};
     shown.forEach((descriptor) => {
       const key = settingKey(descriptor);
@@ -112,7 +112,7 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
     });
     // A failed write leaves the dialog open with its reason shown. Reloading anyway would
     // look like the settings had taken.
-    if (saveSettings(toSave, fileConfig)) {
+    if (await saveSettings(toSave, fileConfig)) {
       window.location.reload();
     } else {
       setHasFailed(true);
@@ -205,7 +205,7 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
   const footer = isConfirming
     ? html`
       <div class="dialogFooter">
-        <button type="button" class="settingsSave" onClick=${confirm}>${CONFIRM_LABEL}</button>
+        <button type="button" class="settingsSave" onClick=${() => void confirm()}>${CONFIRM_LABEL}</button>
         <button
           type="button"
           onClick=${() => { setIsConfirming(false); setHasFailed(false); }}>${DECLINE_LABEL}</button>

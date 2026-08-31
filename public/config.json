@@ -1,5 +1,5 @@
 {
-  "maxStoredRecords": 500,
+  "maxRecalledRecords": 500,
   "announceSymbolOnInput": true,
   "markAiSuggestions": true,
   "indicatorLabelLookup": {

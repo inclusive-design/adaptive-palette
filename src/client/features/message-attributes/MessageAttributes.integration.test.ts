@@ -36,7 +36,7 @@ import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/Glob
 import { loadPaletteFromJsonFile, PaletteStore } from "../../core/PaletteStore";
 import { setTestConfig } from "../../testUtils/TestConfig";
 import { mockedSpeak } from "../../testUtils/SpeechUtilsMock";
-import { MESSAGE_LOG_KEY } from "../../core/MessageLog";
+import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 import { queryChat } from "../../core/OllamaApi";
 import { Palette } from "../../components/Palette";
 import { CurrentPalette } from "../../components/CurrentPalette";
@@ -106,24 +106,24 @@ describe("Message attributes: whole-feature walkthrough", (): void => {
     render(html`<${MessageAttributesBar} />`);
   };
 
-  beforeEach((): void => {
+  beforeEach(async (): Promise<void> => {
     clearAttributes();
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
     discardEditPromptSignal.value = null;
     mockedQueryChat.mockReset();
     adaptivePaletteGlobals.models = ["phony-model:12b"];
-    window.localStorage.removeItem(MESSAGE_LOG_KEY);
+    await resetMessageLog();
   });
 
-  afterEach((): void => {
+  afterEach(async (): Promise<void> => {
     cleanup();
     clearAttributes();
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
     discardEditPromptSignal.value = null;
     adaptivePaletteGlobals.models = [];
-    window.localStorage.removeItem(MESSAGE_LOG_KEY);
+    await resetMessageLog();
   });
 
   // Items 1-4: the palette opens, two attributes fill in, Back returns, chips show,

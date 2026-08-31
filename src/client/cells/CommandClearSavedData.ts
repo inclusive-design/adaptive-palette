@@ -19,6 +19,8 @@ import { ModalDialog } from "../components/ModalDialog";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
+import { hydrateMessageLog } from "../core/MessageLog";
+import { getStorage } from "../core/StorageBackend";
 import "./CommandClearSavedData.scss";
 
 export const CLEAR_SAVED_DATA_DIALOG_ID = "clearSavedDataDialog";
@@ -28,16 +30,18 @@ export const CONFIRM_QUESTION = "This deletes every message you have saved, and 
 export const FAILURE_MESSAGE = "The saved data could not be cleared. This browser is not letting the app use its storage.";
 
 /**
- * Discard everything the app has saved in local storage.
+ * Discard everything the app has saved.
  *
- * The whole of local storage goes, rather than a list of known keys: the app owns its
- * origin, so nothing else stores anything here, and a key added by a later feature is
- * covered without anyone remembering to extend the list.
- * @returns {boolean} - `true` if storage was cleared; `false` if the browser denied
- *                      access to it, in which case the saved data is still there.
+ * Local storage is emptied as well as the store. Local storage has been replaced by IndexedDB. Nothing writes to it any more.
+ * @returns {Promise<boolean>} - `true` if the data was cleared; `false` if the browser denied
+ *                               access to its storage, in which case the saved data is still
+ *                               there.
  */
-export function clearSavedData (): boolean {
+export async function clearSavedData (): Promise<boolean> {
   try {
+    await getStorage().clearAll();
+    // Reads an empty store, which empties the log the app is working from.
+    await hydrateMessageLog();
     window.localStorage.clear();
     return true;
   } catch (error) {
@@ -82,13 +86,16 @@ export function CommandClearSavedData (props: CommandClearSavedDataProps): VNode
   };
 
   // A failed clear leaves the dialog open with its reason shown. Reloading anyway would
-  // look like the data had gone when it is all still there.
+  // look like the data had gone when it is all still there. Synchronous because it is a
+  // Preact event handler; the clear itself is awaited inside.
   const confirm = (): void => {
-    if (clearSavedData()) {
-      window.location.reload();
-    } else {
-      setHasFailed(true);
-    }
+    void clearSavedData().then((cleared) => {
+      if (cleared) {
+        window.location.reload();
+      } else {
+        setHasFailed(true);
+      }
+    });
   };
 
   // A Fragment: the button is the grid item, and the dialog must not be wrapped in one

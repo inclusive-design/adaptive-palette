@@ -10,11 +10,15 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+import { vi } from "vitest";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import {
-  MESSAGE_LOG_KEY, TranslationInfoType, findLatestTranslation, messageText, readMessageLog, recordMessageText,
+  TranslationInfoType, findLatestTranslation, hydrateMessageLog, messageText, readMessageLog, recordMessageText,
   saveMessageRecord, saveTranslation
 } from "./MessageLog";
+import { setStorage } from "./StorageBackend";
+import { FakeStorage } from "../testUtils/FakeStorage";
+import { readStoredMessages, resetMessageLog, seedMessageLog } from "../testUtils/MessageLogTestUtils";
 import { SymbolEncodingType } from "../index.d";
 
 describe("messageLog", (): void => {
@@ -29,13 +33,9 @@ describe("messageLog", (): void => {
     source: "chosen" as const
   };
 
-  beforeEach((): void => {
-    window.localStorage.removeItem(MESSAGE_LOG_KEY);
-    adaptivePaletteGlobals.config.maxStoredRecords = 3;
-  });
-
-  afterEach((): void => {
-    window.localStorage.removeItem(MESSAGE_LOG_KEY);
+  beforeEach(async (): Promise<void> => {
+    adaptivePaletteGlobals.config.maxRecalledRecords = 3;
+    await resetMessageLog();
   });
 
   describe("message text", (): void => {
@@ -70,9 +70,9 @@ describe("messageLog", (): void => {
       expect(stored).toMatchObject({ label: "walked", composition: 1840, indicatorId: 1234, baseLabel: "walk" });
     });
 
-    test("an empty message is not saved", (): void => {
+    test("an empty message is not saved", async (): Promise<void> => {
       saveMessageRecord([]);
-      expect(window.localStorage.getItem(MESSAGE_LOG_KEY)).toBeNull();
+      expect(await readStoredMessages()).toEqual([]);
     });
 
     test("a repeated message is saved again rather than replacing the earlier one", (): void => {
@@ -88,7 +88,7 @@ describe("messageLog", (): void => {
       expect(readMessageLog()).toHaveLength(1);
     });
 
-    test("the log is capped at maxStoredRecords, dropping oldest first", (): void => {
+    test("only maxRecalledRecords messages are held, oldest dropped first", (): void => {
       for (let index = 1; index <= 5; index++) {
         saveMessageRecord(message(`word ${index}`));
       }
@@ -97,35 +97,51 @@ describe("messageLog", (): void => {
       expect(log.map((entry) => entry.payloads[0].label)).toEqual(["word 3", "word 4", "word 5"]);
     });
 
-    test("nothing is stored when maxStoredRecords is zero", (): void => {
-      adaptivePaletteGlobals.config.maxStoredRecords = 0;
+    test("messages past maxRecalledRecords are still stored", async (): Promise<void> => {
+      for (let index = 1; index <= 5; index++) {
+        saveMessageRecord(message(`word ${index}`));
+      }
+      await vi.waitFor(async () => {
+        expect(await readStoredMessages()).toHaveLength(5);
+      });
+    });
+
+    test("a store that cannot be read leaves an empty log rather than throwing", async (): Promise<void> => {
+      const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
+      const storage = new FakeStorage();
+      setStorage(storage);
+      vi.spyOn(storage, "readMessages").mockRejectedValue(new Error("the store is not available"));
+
+      await hydrateMessageLog();
+
+      expect(readMessageLog()).toEqual([]);
+      expect(consoleError).toHaveBeenCalled();
+    });
+
+    test("nothing is stored when maxRecalledRecords is zero", async (): Promise<void> => {
+      adaptivePaletteGlobals.config.maxRecalledRecords = 0;
       saveMessageRecord(message("I", "want", "juice"));
       saveTranslation("I want juice", TRANSLATION);
-      expect(window.localStorage.getItem(MESSAGE_LOG_KEY)).toBeNull();
+      expect(await readStoredMessages()).toEqual([]);
     });
 
-    test("corrupt stored data reads as an empty log rather than throwing", (): void => {
-      window.localStorage.setItem(MESSAGE_LOG_KEY, "{ not json");
-      expect(readMessageLog()).toEqual([]);
-    });
-
-    test("entries without a payloads array are dropped", (): void => {
-      window.localStorage.setItem(MESSAGE_LOG_KEY, JSON.stringify([
+    test("entries without a payloads array are dropped", async (): Promise<void> => {
+      await seedMessageLog([
         { timestamp: "2026-08-07T00:00:00.000Z" },
         null,
         { timestamp: "2026-08-07T00:00:01.000Z", payloads: [{ label: "I", composition: 1840 }] }
-      ]));
+      ]);
       const log = readMessageLog();
       expect(log).toHaveLength(1);
       expect(log[0].payloads[0].label).toBe("I");
     });
 
-    test("entries with an unlabelled symbol are dropped", (): void => {
-      window.localStorage.setItem(MESSAGE_LOG_KEY, JSON.stringify([
+    test("entries with an unlabelled symbol are dropped", async (): Promise<void> => {
+      await seedMessageLog([
         { timestamp: "2026-08-07T00:00:00.000Z", payloads: [{}] },
         { timestamp: "2026-08-07T00:00:01.000Z", payloads: [{ label: 3, composition: 1840 }] },
         { timestamp: "2026-08-07T00:00:02.000Z", payloads: [{ label: "I", composition: 1840 }] }
-      ]));
+      ]);
       const log = readMessageLog();
       expect(log).toHaveLength(1);
       expect(log.map(recordMessageText)).toEqual(["I"]);

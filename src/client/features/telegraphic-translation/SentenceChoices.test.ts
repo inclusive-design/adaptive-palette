@@ -25,13 +25,14 @@ import {
   sentenceCompletionsSignal
 } from "./TelegraphicTranslationState";
 import { INPUT_AREA_ID } from "../../cells/ContentEncoding";
-import { MESSAGE_LOG_KEY, readMessageLog } from "../../core/MessageLog";
+import { readMessageLog } from "../../core/MessageLog";
 import {
   SentenceChoices, WORKING_MESSAGE, MAKING_MORE_MESSAGE, CANNOT_COMPLETE_MESSAGE,
   TYPE_YOUR_OWN_HINT, SPEAK_BUTTON_LABEL, DONE_BUTTON_LABEL, CHANGE_ANYWAY_LABEL,
   DISCARD_DIALOG_TITLE, KEEP_SENTENCES_LABEL
 } from "./SentenceChoices";
 import { mockedSpeak, mockedSpeakUnavailable } from "../../testUtils/SpeechUtilsMock";
+import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 
 vi.mock("../../utils/SpeechUtils");
 
@@ -60,8 +61,8 @@ describe("SentenceChoices", (): void => {
     sentences: [SENTENCES[0]]
   };
 
-  beforeEach((): void => {
-    window.localStorage.removeItem(MESSAGE_LOG_KEY);
+  beforeEach(async (): Promise<void> => {
+    await resetMessageLog();
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
     setTestConfig({
       // No fixture here sets `recalledSentence`, so with the marking on every sentence in one
@@ -79,12 +80,12 @@ describe("SentenceChoices", (): void => {
     });
   });
 
-  afterEach((): void => {
+  afterEach(async (): Promise<void> => {
     cleanup();
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
     discardEditPromptSignal.value = null;
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
-    window.localStorage.removeItem(MESSAGE_LOG_KEY);
+    await resetMessageLog();
   });
 
   test("shows nothing but an empty live region when idle", (): void => {
