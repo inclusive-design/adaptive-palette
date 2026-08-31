@@ -135,12 +135,10 @@ describe("clearSavedData()", (): void => {
       payloads: [{ label: "juice", composition: 1840, modifierInfo: [] }]
     });
     await storage.writeSettings({ "maxRecalledRecords": 12 });
-    window.localStorage.setItem("a key left by an earlier build", "value");
 
     expect(await clearSavedData()).toBe(true);
     expect(await storage.readMessages(10)).toEqual([]);
     expect(await storage.readSettings()).toEqual({});
-    expect(window.localStorage.length).toBe(0);
   });
 
   test("Reports failure when storage cannot be written", async (): Promise<void> => {

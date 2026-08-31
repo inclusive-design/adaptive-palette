@@ -84,10 +84,10 @@ export class IndexedDbStorage implements AdaptivePaletteStorage {
           database.createObjectStore(SETTINGS_STORE);
         }
       };
-      // Another tab holding the old version open. Logged rather than thrown: the caller
-      // degrades to storing nothing, which is better than failing to start.
+      // Another tab holding the old version open. Rejected rather than left hanging: the
+      // caller logs it and degrades to storing nothing, which is better than never starting.
       request.onblocked = (): void => {
-        console.error("The saved data cannot be opened while another tab has it open.");
+        reject(new Error("The saved data cannot be opened while another tab has it open."));
       };
       request.onsuccess = (): void => {
         this.database = request.result;
@@ -164,8 +164,24 @@ export class IndexedDbStorage implements AdaptivePaletteStorage {
     await asPromise(this.objectStore(MESSAGES_STORE, "readwrite").put({ ...record, id }));
   }
 
-  async clearAll (): Promise<void> {
-    await asPromise(this.objectStore(MESSAGES_STORE, "readwrite").clear());
-    await asPromise(this.objectStore(SETTINGS_STORE, "readwrite").clear());
+  clearAll (): Promise<void> {
+    if (!this.database) {
+      return Promise.reject(new Error("The database is not open."));
+    }
+    // Both stores in one transaction, so a failure on either leaves both as they were rather
+    // than the messages gone and the settings kept.
+    const transaction = this.database.transaction([MESSAGES_STORE, SETTINGS_STORE], "readwrite");
+    transaction.objectStore(MESSAGES_STORE).clear();
+    transaction.objectStore(SETTINGS_STORE).clear();
+    return new Promise((resolve, reject) => {
+      const failed = (): void => reject(
+        transaction.error
+          ? new Error(`${transaction.error.name}: ${transaction.error.message}`)
+          : new Error("The saved data could not be cleared.")
+      );
+      transaction.oncomplete = (): void => resolve();
+      transaction.onerror = failed;
+      transaction.onabort = failed;
+    });
   }
 }

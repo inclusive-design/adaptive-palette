@@ -31,8 +31,6 @@ export const FAILURE_MESSAGE = "The saved data could not be cleared. This browse
 
 /**
  * Discard everything the app has saved.
- *
- * Local storage is emptied as well as the store. Local storage has been replaced by IndexedDB. Nothing writes to it any more.
  * @returns {Promise<boolean>} - `true` if the data was cleared; `false` if the browser denied
  *                               access to its storage, in which case the saved data is still
  *                               there.
@@ -42,7 +40,6 @@ export async function clearSavedData (): Promise<boolean> {
     await getStorage().clearAll();
     // Reads an empty store, which empties the log the app is working from.
     await hydrateMessageLog();
-    window.localStorage.clear();
     return true;
   } catch (error) {
     console.error(`Could not clear the saved data: ${String(error)}`);

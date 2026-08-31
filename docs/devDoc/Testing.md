@@ -80,5 +80,4 @@ the message log's storage.
 
 `core/IndexedDbStorage.test.ts` is the one test file that touches a real database, opening one
 with a name of its own per test so nothing waits on `deleteDatabase` unblocking behind a
-connection another test left open. `window.localStorage` is untouched by production code except
-the one-line sweep on clear, and by the test that checks it. See [Storage.md](Storage.md).
+connection another test left open. See [Storage.md](Storage.md).

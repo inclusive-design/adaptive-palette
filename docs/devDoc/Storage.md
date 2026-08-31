@@ -60,9 +60,12 @@ keeps a module-level cache and reads off that instead:
 
 - `hydrateMessageLog()` fills the cache from storage before the first render.
 - `saveMessageRecord()` and `saveTranslation()` update the cache immediately, then persist
-  behind it with a fire-and-forget write (`void persistNew(record)` /
+  behind it with a fire-and-forget write (`persistNew(record)` /
   `void persistChange(record)`). A read straight after a save always sees the change, whether
   or not the write has resolved yet.
+- A record's `id` only arrives when its `addMessage` resolves, so `persistNew()` keeps that
+  write in a `WeakMap` keyed by the record and `persistChange()` waits on it. A translation
+  saved in that gap is written against the id rather than dropped.
 
 ## What is kept versus what is read
 
@@ -87,7 +90,7 @@ persisted. No fallback backend is needed.
 
 | Failure | Result |
 | --- | --- |
-| `open()` rejects | Logged. Later calls reject and are logged. The session works; nothing persists. |
+| `open()` rejects | Logged. Later calls reject and are logged. The session works; nothing persists. Includes a blocked upgrade, which rejects rather than leaving start-up waiting. |
 | Hydration rejects | Empty log, app starts normally — the same as a first run. |
 | `addMessage` rejects | Logged. The record stays in the cache for the session and gets no `id`; a later `saveTranslation` on it skips the write and logs, rather than failing silently. |
 | `updateMessage` rejects | Logged. The cache keeps the translation for the session. |
@@ -97,9 +100,9 @@ persisted. No fallback backend is needed.
 
 `clearSavedData()` in
 [`cells/CommandClearSavedData.ts`](../../src/client/cells/CommandClearSavedData.ts) calls
-`clearAll()`, empties the cache by calling `hydrateMessageLog()` again, and then clears
-`window.localStorage` — a one-line sweep of the keys earlier builds left there. Nothing writes
-to local storage any more.
+`clearAll()` and then empties the cache by calling `hydrateMessageLog()` again. `clearAll()`
+empties both object stores in one transaction, so a failure on either leaves both as they
+were rather than half the data gone.
 
 ## Testing
 

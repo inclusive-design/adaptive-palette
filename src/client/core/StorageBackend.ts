@@ -13,7 +13,7 @@
 /**
  * Where the app's data lives, behind an interface a second implementation can satisfy.
  *
- * The web build installs `IndexedDbStorage`; a desktop build will install a `better-sqlite3`
+ * The web build installs `IndexedDbStorage`; a desktop build will install a different
  * one, changing only the line in `InitGlobals.ts` that calls `setStorage()`.
  *
  * The interface names the app's own operations rather than generic get/set, so each backend
@@ -43,7 +43,7 @@ export interface AdaptivePaletteStorage {
   /** Store a message that is not in the store yet, and hand back the id it was given. */
   addMessage (record: MessageRecordType): Promise<StoredMessage>;
 
-  /** Replace the message with that id. */
+  /** Replace the message with that id, storing it when nothing is under that id yet. */
   updateMessage (id: number, record: MessageRecordType): Promise<void>;
 
   /** Discard everything the app has stored. */

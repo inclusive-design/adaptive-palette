@@ -128,30 +128,37 @@ export function readMessageLog (): MessageRecordType[] {
   });
 }
 
+/*
+ * The first write of a record, until it lands. `persistChange()` waits on it, so a change
+ * made in the round trip between storing a record and its id coming back -- a translation
+ * saved seconds after the message it belongs to -- is written rather than dropped.
+ */
+const pendingWrites = new WeakMap<LoggedMessage, Promise<void>>();
+
 /**
  * Store a record that is not in storage yet, and remember the identity it was given so a
  * later translation can be written against it.
- *
- * ponytail: a translation saved before this resolves loses its write. The gap is one store
- * round trip, and the only caller is a user choosing a sentence, seconds after the model was
- * asked. Hold the promise in a WeakMap keyed by record if that ever stops being true.
  * @param {LoggedMessage} record - The record, already in `log`.
- * @returns {Promise<void>}
+ * @returns {void}
  */
-async function persistNew (record: LoggedMessage): Promise<void> {
-  try {
-    record.id = (await getStorage().addMessage(record)).id;
-  } catch (error) {
-    console.error(`Could not save the message: ${String(error)}`);
-  }
+function persistNew (record: LoggedMessage): void {
+  pendingWrites.set(record, (async (): Promise<void> => {
+    try {
+      record.id = (await getStorage().addMessage(record)).id;
+    } catch (error) {
+      console.error(`Could not save the message: ${String(error)}`);
+    }
+  })());
 }
 
 /**
- * Store a change to a record that is already in storage.
+ * Store a change to a record that is already in storage, or on its way there.
  * @param {LoggedMessage} record - The changed record, already in `log`.
  * @returns {Promise<void>}
  */
 async function persistChange (record: LoggedMessage): Promise<void> {
+  // The id arrives with the record's first write, which may still be in flight.
+  await pendingWrites.get(record);
   if (record.id === undefined) {
     console.error("Could not save the translation: its message was never stored.");
     return;
@@ -202,7 +209,7 @@ export function saveMessageRecord (payloads: SymbolEncodingType[]): void {
   });
   const record: LoggedMessage = { timestamp: new Date().toISOString(), payloads: unmarked };
   remember(record);
-  void persistNew(record);
+  persistNew(record);
 }
 
 /**
@@ -231,7 +238,7 @@ export function saveTranslation (telegraphicMessage: string, translation: Transl
       timestamp: new Date().toISOString(), payloads: [], telegraphicMessage, translation
     };
     remember(record);
-    void persistNew(record);
+    persistNew(record);
     return;
   }
   // A recalled sentence with other candidates for a message is saved again.

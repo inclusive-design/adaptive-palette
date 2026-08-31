@@ -78,8 +78,4 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
 
   // After the settings, because how much of the log is read back is one of them.
   await hydrateMessageLog();
-
-  // Clean up what earlier builds left in local storage. Nothing writes to it any more, and
-  // the app owns its origin.
-  window.localStorage.clear();
 }

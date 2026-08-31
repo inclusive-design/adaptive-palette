@@ -54,11 +54,15 @@ export class FakeStorage implements AdaptivePaletteStorage {
   }
 
   updateMessage (id: number, record: MessageRecordType): Promise<void> {
+    const stored: StoredMessage = { ...structuredClone(record), id };
     const index = this.messages.findIndex((message) => message.id === id);
     if (index === -1) {
-      return Promise.reject(new Error(`No stored message has the id ${id}.`));
+      // What IndexedDB's `put` does with a key nothing is stored under.
+      this.messages.push(stored);
+      this.nextId = Math.max(this.nextId, id + 1);
+    } else {
+      this.messages[index] = stored;
     }
-    this.messages[index] = { ...structuredClone(record), id };
     return Promise.resolve();
   }
 

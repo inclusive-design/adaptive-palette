@@ -111,6 +111,13 @@ export function runStorageContractTests (
       expect(messages[1].telegraphicMessage).toBeUndefined();
     });
 
+    test("updateMessage stores a record whose id nothing is under", async (): Promise<void> => {
+      const first = await storage.addMessage(record("one"));
+      await storage.updateMessage(first.id + 100, record("two"));
+
+      expect(labelsOf(await storage.readMessages(10))).toEqual(["one", "two"]);
+    });
+
     test("clearAll empties both stores", async (): Promise<void> => {
       await storage.addMessage(record("juice"));
       await storage.writeSettings({ "maxRecalledRecords": 12 });

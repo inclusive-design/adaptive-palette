@@ -13,7 +13,7 @@
 import { vi } from "vitest";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import {
-  TranslationInfoType, findLatestTranslation, hydrateMessageLog, messageText, readMessageLog, recordMessageText,
+  MessageRecordType, TranslationInfoType, findLatestTranslation, hydrateMessageLog, messageText, readMessageLog, recordMessageText,
   saveMessageRecord, saveTranslation
 } from "./MessageLog";
 import { setStorage } from "./StorageBackend";
@@ -199,6 +199,19 @@ describe("messageLog", (): void => {
       const log = readMessageLog();
       expect(log[0].translation).toEqual(TRANSLATION);
       expect(log[1].translation).toBeUndefined();
+    });
+
+    // The message's own write is a store round trip, and the id it brings back is what the
+    // translation is written against.
+    test("a translation saved before its message has landed is still stored", async (): Promise<void> => {
+      saveMessageRecord(message("I", "want", "juice"));
+      saveTranslation("I want juice", TRANSLATION);
+
+      await vi.waitFor(async (): Promise<void> => {
+        const stored = await readStoredMessages() as MessageRecordType[];
+        expect(stored).toHaveLength(1);
+        expect(stored[0].translation).toEqual(TRANSLATION);
+      });
     });
 
     test("a translation with no message on record is still kept", (): void => {

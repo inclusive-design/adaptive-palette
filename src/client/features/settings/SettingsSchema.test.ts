@@ -151,6 +151,7 @@ describe("SettingsSchema", () => {
 
       expect(await applyStoredSettings(makeDefaultConfig())).toEqual(makeDefaultConfig());
       expect(consoleError).toHaveBeenCalled();
+      vi.restoreAllMocks();
     });
   });
 
