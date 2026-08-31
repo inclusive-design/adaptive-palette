@@ -22,12 +22,13 @@ import {
   currentTelegraphicMessage, discardEditPromptSignal, guardEdit, IDLE_SENTENCE_STATE,
   makeSentences, sentenceCompletionsSignal, READY_DISCARD_PROMPT, WORKING_DISCARD_PROMPT
 } from "./TelegraphicTranslationState";
-import { MESSAGE_LOG_KEY, readMessageLog, saveMessageRecord, saveTranslation } from "../../core/MessageLog";
+import { readMessageLog, saveMessageRecord, saveTranslation } from "../../core/MessageLog";
 import { queryChat } from "../../core/OllamaApi";
 import { mockedSpeak } from "../../testUtils/SpeechUtilsMock";
 import {
   selectedAttributesSignal, clearAttributes
 } from "../message-attributes/MessageAttributesState";
+import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../core/OllamaApi")>();
@@ -76,7 +77,7 @@ describe("telegraphicTranslationState", (): void => {
   let answerDiscard: boolean;
   let stopAnswering: () => void;
 
-  beforeEach((): void => {
+  beforeEach(async (): Promise<void> => {
     setEditGuard(guardEdit);
     prompts = [];
     answerDiscard = true;
@@ -93,18 +94,18 @@ describe("telegraphicTranslationState", (): void => {
       }
     });
     mockedQueryChat.mockReset();
-    window.localStorage.removeItem(MESSAGE_LOG_KEY);
+    await resetMessageLog();
     adaptivePaletteGlobals.models = ["phony-model:12b"];
     setConfig(3);
     editMessage({ payloads: [], caretPosition: -1 });
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
   });
 
-  afterEach((): void => {
+  afterEach(async (): Promise<void> => {
     stopAnswering();
     discardEditPromptSignal.value = null;
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
-    window.localStorage.removeItem(MESSAGE_LOG_KEY);
+    await resetMessageLog();
     setEditGuard(null);
     clearAttributes();
   });

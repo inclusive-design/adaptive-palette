@@ -12,7 +12,7 @@
 
 import { vi } from "vitest";
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
-import { MESSAGE_LOG_KEY, saveMessageRecord } from "../../core/MessageLog";
+import { saveMessageRecord } from "../../core/MessageLog";
 import { queryChat, NO_MODELS_MESSAGE } from "../../core/OllamaApi";
 import {
   isModelTierActive, NOT_CONFIGURED_MESSAGE, parseModelWords, predictNext, rankModelWords,
@@ -23,6 +23,7 @@ import {
   selectedAttributesSignal, clearAttributes
 } from "../message-attributes/MessageAttributesState";
 import { SymbolEncodingType } from "../../index.d";
+import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../core/OllamaApi")>();
@@ -39,13 +40,13 @@ describe("wordPrediction", (): void => {
   const predictedLabels = (currentLabels: string[], maxSuggestions = 4): string[] =>
     predictNext(currentLabels, maxSuggestions).map((payload) => payload.label);
 
-  beforeEach((): void => {
-    window.localStorage.removeItem(MESSAGE_LOG_KEY);
-    adaptivePaletteGlobals.config.maxStoredRecords = 100;
+  beforeEach(async (): Promise<void> => {
+    await resetMessageLog();
+    adaptivePaletteGlobals.config.maxRecalledRecords = 100;
   });
 
-  afterEach((): void => {
-    window.localStorage.removeItem(MESSAGE_LOG_KEY);
+  afterEach(async (): Promise<void> => {
+    await resetMessageLog();
   });
 
   describe("with no saved messages", (): void => {
@@ -168,18 +169,18 @@ describe("wordPrediction with a model answering as well", (): void => {
     mockedQueryChat.mockResolvedValue({ message: { content } } as unknown as Awaited<ReturnType<typeof queryChat>>);
   };
 
-  beforeEach((): void => {
+  beforeEach(async (): Promise<void> => {
     mockedQueryChat.mockReset();
-    window.localStorage.removeItem(MESSAGE_LOG_KEY);
-    adaptivePaletteGlobals.config.maxStoredRecords = 100;
+    await resetMessageLog();
+    adaptivePaletteGlobals.config.maxRecalledRecords = 100;
     adaptivePaletteGlobals.config.wordPrediction = { ...MODEL_CONFIG };
     adaptivePaletteGlobals.models = ["phony-model:12b"];
     wordPredictionStats.reset();
     clearAttributes();
   });
 
-  afterEach((): void => {
-    window.localStorage.removeItem(MESSAGE_LOG_KEY);
+  afterEach(async (): Promise<void> => {
+    await resetMessageLog();
     adaptivePaletteGlobals.config.wordPrediction = {
       show: false, maxSuggestions: 10, enableModelQuery: false, model: "", systemPrompt: "", userPrompt: ""
     };

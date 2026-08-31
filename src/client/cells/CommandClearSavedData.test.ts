@@ -20,7 +20,8 @@ import { expectCellRendered } from "../testUtils/CellTestUtils";
 import {
   CommandClearSavedData, CANCEL_LABEL, CONFIRM_LABEL, clearSavedData
 } from "./CommandClearSavedData";
-import { MESSAGE_LOG_KEY } from "../core/MessageLog";
+import { FakeStorage } from "../testUtils/FakeStorage";
+import { setStorage } from "../core/StorageBackend";
 
 // `userEvent` is the provider-backed instance from `vitest/browser`, not the one from
 // `@testing-library/user-event`: these tests drive a native `<dialog>`, whose default
@@ -39,14 +40,14 @@ describe("CommandClearSavedData", () => {
   };
 
   // A successful clear reloads the page, which would restart the test runner's own page.
-  // Making `Storage.clear` throw keeps every test on the failure path, where the dialog
+  // Making the store's clear reject keeps every test on the failure path, where the dialog
   // stays put. Whether the cell asked for the clear is what these tests are about.
   let clearSpy: MockInstance;
 
   beforeEach((): void => {
-    clearSpy = vi.spyOn(Storage.prototype, "clear").mockImplementation((): void => {
-      throw new Error("storage is not available");
-    });
+    const storage = new FakeStorage();
+    setStorage(storage);
+    clearSpy = vi.spyOn(storage, "clearAll").mockRejectedValue(new Error("storage is not available"));
     vi.spyOn(console, "error").mockImplementation(() => undefined);
   });
 
@@ -108,32 +109,43 @@ describe("CommandClearSavedData", () => {
 
     await userEvent.click(screen.getByRole("button", { name: CONFIRM_LABEL }));
 
-    expect(clearSpy).toHaveBeenCalledTimes(1);
+    // The reload happens a tick later, on the promise returned by the now-async clearSavedData().
+    await waitFor(() => {
+      expect(clearSpy).toHaveBeenCalledTimes(1);
+    });
   });
 });
 
 describe("clearSavedData()", (): void => {
 
+  let storage: FakeStorage;
+
+  beforeEach((): void => {
+    storage = new FakeStorage();
+    setStorage(storage);
+  });
+
   afterEach((): void => {
     vi.restoreAllMocks();
-    window.localStorage.clear();
   });
 
-  test("Removes everything the app has saved", (): void => {
-    window.localStorage.setItem(MESSAGE_LOG_KEY, JSON.stringify([{ timestamp: "now", payloads: [] }]));
-    window.localStorage.setItem("some other key", "value");
-
-    expect(clearSavedData()).toBe(true);
-    expect(window.localStorage.length).toBe(0);
-  });
-
-  test("Reports failure when storage cannot be written", (): void => {
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
-    vi.spyOn(Storage.prototype, "clear").mockImplementation((): void => {
-      throw new Error("storage is not available");
+  test("Removes everything the app has saved", async (): Promise<void> => {
+    await storage.addMessage({
+      timestamp: "2026-08-28T00:00:00.000Z",
+      payloads: [{ label: "juice", composition: 1840, modifierInfo: [] }]
     });
+    await storage.writeSettings({ "maxRecalledRecords": 12 });
 
-    expect(clearSavedData()).toBe(false);
+    expect(await clearSavedData()).toBe(true);
+    expect(await storage.readMessages(10)).toEqual([]);
+    expect(await storage.readSettings()).toEqual({});
+  });
+
+  test("Reports failure when storage cannot be written", async (): Promise<void> => {
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    vi.spyOn(storage, "clearAll").mockRejectedValue(new Error("storage is not available"));
+
+    expect(await clearSavedData()).toBe(false);
     expect(consoleError).toHaveBeenCalled();
   });
 

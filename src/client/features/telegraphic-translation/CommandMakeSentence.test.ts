@@ -22,10 +22,10 @@ import {
   confirmDiscardEdit, discardEditPromptSignal, guardEdit, IDLE_SENTENCE_STATE,
   sentenceCompletionsSignal
 } from "./TelegraphicTranslationState";
-import { MESSAGE_LOG_KEY } from "../../core/MessageLog";
 import { queryChat } from "../../core/OllamaApi";
 import { CommandMakeSentence } from "./CommandMakeSentence";
 import { mockedSpeakUnavailable } from "../../testUtils/SpeechUtilsMock";
+import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 
 const make_setence_label = "Make a sentence";
 
@@ -77,9 +77,9 @@ describe("CommandMakeSentence", (): void => {
     html`<${CommandMakeSentence} id="command-make-sentence" options=${CELL_OPTIONS} />`
   );
 
-  beforeEach((): void => {
+  beforeEach(async (): Promise<void> => {
     mockedQueryChat.mockReset();
-    window.localStorage.removeItem(MESSAGE_LOG_KEY);
+    await resetMessageLog();
     adaptivePaletteGlobals.models = ["phony-model:12b"];
     setConfig(3);
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
@@ -87,12 +87,12 @@ describe("CommandMakeSentence", (): void => {
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
   });
 
-  afterEach((): void => {
+  afterEach(async (): Promise<void> => {
     setEditGuard(null);
     cleanup();
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
     discardEditPromptSignal.value = null;
-    window.localStorage.removeItem(MESSAGE_LOG_KEY);
+    await resetMessageLog();
   });
 
   test("renders the Bliss symbol of its composition, keeping the label as the name", (): void => {

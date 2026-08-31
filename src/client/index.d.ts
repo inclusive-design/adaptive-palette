@@ -146,8 +146,10 @@ export type FeatureVisibilityConfigType = {
 };
 
 export type AdaptivePaletteConfigType = {
-  // Caps every log kept in local storage. Zero keeps the features but stores nothing.
-  maxStoredRecords: number,
+  // How many of the newest stored messages are read back for word prediction and for
+  // recalling a sentence. Nothing is ever deleted; this caps what is read, not what is kept.
+  // Zero turns the history off: nothing is read and nothing is written.
+  maxRecalledRecords: number,
   // Whether each symbol and command label is spoken as the user inputs. When off, the Speak
   // button is the only routine speech; failures still announce.
   announceSymbolOnInput: boolean,

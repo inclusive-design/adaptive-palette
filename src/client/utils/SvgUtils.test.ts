@@ -61,7 +61,7 @@ describe("SvgUtils", (): void => {
 
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
-  }, 10000);
+  });
 
   test("Create svg builder argument", (): void => {
     let result = compositionToBstr(singleId);
@@ -253,11 +253,9 @@ describe("findSymbolByGloss()", (): void => {
   ];
   const NO_SUCH_GLOSS = "noSuchGloss";
 
-  // Github test runs suggested that more that 5000 msec was needed for these
-  // tests, so increased timeout to 7000.
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
-  }, 10000);
+  });
 
   test("Find multiple 'bark'", (): void => {
     expect(findSymbolByGloss(BARK)).toStrictEqual(expectedBarkResults);

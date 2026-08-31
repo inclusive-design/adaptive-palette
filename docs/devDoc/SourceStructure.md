@@ -26,9 +26,9 @@ src/client/
 | ------ | ----- | -------- |
 | `cells/` | Components named in `cellTypeRegistry`, one per palette cell type | `ActionCodeCell.ts`, `CommandGoBackCell.ts` |
 | `components/` | Preact components a palette JSON never names | `Palette.ts`, `ModalDialog.ts`, `BlissSymbol.ts` |
-| `core/` | Services with their own state or I/O, and start-up | `Config.ts`, `PaletteStore.ts`, `OllamaApi.ts`, `InitGlobals.ts` |
+| `core/` | Services with their own state or I/O, and start-up | `Config.ts`, `PaletteStore.ts`, `OllamaApi.ts`, `InitGlobals.ts`, `StorageBackend.ts`, `IndexedDbStorage.ts` |
 | `state/` | The globals singleton and the signals shared across features | `GlobalData.ts` |
-| `testUtils/` | Helpers shared between test files. Test-only, never imported by production code. Files here carry no `.test.ts` suffix, so Vitest does not collect them as suites | `CellTestUtils.ts` |
+| `testUtils/` | Helpers shared between test files. Test-only, never imported by production code. Files here carry no `.test.ts` suffix, so Vitest does not collect them as suites | `CellTestUtils.ts`, `StorageContract.ts`, `FakeStorage.ts`, `MessageLogTestUtils.ts` |
 | `utils/` | Functions with no state of their own | `SpeechUtils.ts`, `GridUtils.ts`, `SvgUtils.ts`, `GlossLookupUtils.ts` |
 | `features/<slice>/` | Everything belonging to one feature and nothing else | `word-prediction/`, `telegraphic-translation/`, `message-attributes/`, `settings/` |
 

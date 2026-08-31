@@ -12,7 +12,7 @@ Settings defined in `public/config.json` except these fields: `model`, `systemPr
 | ----- | ------- | ------------ |
 | General | Speak each symbol as I add it | |
 | General | Mark AI suggestions | |
-| General | Messages to keep | |
+| General | Messages to remember | |
 | Symbol entry | Show "Add Symbol to Message" | |
 | Symbol entry | Show SVG-builder string entry | |
 | Word prediction | Enable word suggestion | |
@@ -47,9 +47,9 @@ there; **Yes, save** saves and reloads.
 
 ## Where the choices are kept
 
-In local storage, under the key `Settings`, and only the settings that differ from
-`public/config.json`. Anything left alone keeps following the file, so a later change to a default
-still reaches everyone who has saved. "Clear all saved data" removes these choices along with
-everything else, returning the app to the file's settings.
+In the app's storage layer, and only the settings that differ from `public/config.json`.
+Anything left alone keeps following the file, so a later change to a default still reaches
+everyone who has saved. "Clear all saved data" removes these choices along with everything
+else, returning the app to the config file's settings.
 
 See [Runtime Configuration](devDoc/Config.md) for the file itself and every field in it.

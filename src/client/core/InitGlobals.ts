@@ -23,6 +23,9 @@
  * It is also where telegraphic translation's edit guard is registered.  Registering it at that
  * feature's own module scope would fire on any import of the module, including from tests that
  * import it directly and need to decide for themselves whether a guard is in play.
+ *
+ * It also installs the storage backend and reads the saved data in.  The backend is installed
+ * here, not at module scope, so a test can put its own in place instead.
  */
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { loadConfig } from "./Config";
@@ -32,6 +35,9 @@ import { initSvgCompositeDefinitions } from "../utils/SvgUtils";
 import { applyStoredSettings } from "../features/settings/SettingsSchema";
 import { setEditGuard } from "./MessageEdit";
 import { guardEdit } from "../features/telegraphic-translation/TelegraphicTranslationState";
+import { IndexedDbStorage } from "./IndexedDbStorage";
+import { setStorage } from "./StorageBackend";
+import { hydrateMessageLog } from "./MessageLog";
 
 /**
  * Initialize the `adaptivePaletteGlobals` structure.
@@ -50,16 +56,26 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
   setEditGuard(guardEdit);
   initSvgCompositeDefinitions();
   adaptivePaletteGlobals.mainPaletteContainerId = mainPaletteContainerId || "";
+
+  // Installed before it is opened, so a browser that refuses a database still leaves every
+  // later call with somewhere to fail: the calls reject and are logged, and the app runs for
+  // the session with nothing persisted.
+  const storage = new IndexedDbStorage();
+  setStorage(storage);
+
   const [ models, config ] = await Promise.all([
     getModelNames(),
     loadConfig(),
-    initIndicatorLabels()
+    initIndicatorLabels(),
+    storage.open().catch((error: unknown) => {
+      console.error(`Could not open the saved data: ${String(error)}`);
+    })
   ]);
   adaptivePaletteGlobals.models = models;
   adaptivePaletteGlobals.fileConfig = config;
   // The user's saved settings are applied.
-  adaptivePaletteGlobals.config = applyStoredSettings(config);
+  adaptivePaletteGlobals.config = await applyStoredSettings(config);
 
-  // Clean up the system prompts left in local storage by earlier builds.
-  window.localStorage.removeItem("Telegraphic System Prompts");
+  // After the settings, because how much of the log is read back is one of them.
+  await hydrateMessageLog();
 }

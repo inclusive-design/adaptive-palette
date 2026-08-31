@@ -23,8 +23,8 @@ The feature is controlled by the `wordPrediction` section of `public/config.json
 
 The model query needs `enableModelQuery` set and both prompts filled in; anything less leaves it off.
 
-How many messages are kept comes from the top-level `maxStoredRecords` setting, which caps this
-log and the telegraphic translation log together.
+How many messages prediction draws on comes from the top-level `maxRecalledRecords` setting,
+which caps this log and the telegraphic translation log together -- see [Saved Data](#saved-data).
 
 When the section is missing or malformed, the feature is off and the rest of the configuration
 keeps working.
@@ -162,8 +162,9 @@ as the history grows.
 
 ## Saved Data
 
-Messages are kept in the shared **Message Log** in browser local storage, one record per message
-the user has said. Each record contains:
+Messages are kept in the shared **Message Log**, one record per message the user has said. Every
+message is stored and none is ever deleted; see [Storage.md](devDoc/Storage.md). Each record
+contains:
 
 * Timestamp
 * The message's symbols, including their labels, indicators, and modifiers
@@ -178,9 +179,9 @@ finished, so it counts towards prediction.
 
 Repeated messages identical to the last stored message are skipped.
 
-The log is limited to `maxStoredRecords` entries. When the limit is reached, the oldest records are
-removed first. Setting it to `0` keeps the feature running but stores nothing, which also means no
-new predictions are learned.
+Prediction reads back the newest `maxRecalledRecords` entries; older messages stay stored but stop
+being read. Setting it to `0` keeps the feature running but stores and reads nothing, which also
+means no new predictions are learned.
 
 ## Edge Cases
 
@@ -188,7 +189,7 @@ new predictions are learned.
 | --- | --- |
 | No messages saved yet | The first word is suggested from the built-in starter list. A message in progress gets no suggestions. |
 | `config.wordPrediction` is missing or invalid | The feature is off and no suggestion row is rendered. |
-| `maxStoredRecords` is `0` | Suggestions still come from whatever is already stored, but no new messages are saved. |
+| `maxRecalledRecords` is `0` | No suggestions come from history: nothing is read back and no new messages are saved. |
 | Fewer matches than `maxSuggestions` | The row shows what it has; its remaining cells are empty. |
 | No matches at all | The row stays in place as a row of empty cells. |
 | Ollama is not running, or has no models | No query is sent. The history-based suggestions are unaffected and nothing is reported to the user. |
@@ -198,7 +199,7 @@ new predictions are learned.
 | **Speak** or **Sentence** is pressed mid-query | The request is cancelled and the status line goes quiet. The words already on the row stay there. |
 | The message is finished and the caret is moved | Nothing is asked for. Moving the caret does not change the message. |
 | A message said earlier is built again | Prediction runs as normal: the first change to the message ends the finished state. |
-| Local storage read fails or holds unreadable data | An error is logged to the console and the history reads as empty. Composing a message is unaffected. |
-| Local storage write fails | An error is logged to the console. Speech and the message itself are unaffected. |
+| The store cannot be read | An error is logged to the console and the history reads as empty. Composing a message is unaffected. |
+| The store cannot be written | An error is logged to the console. Speech and the message itself are unaffected. |
 | Speech synthesis is unavailable | No speech is produced. Suggestions, selection, and saving continue to work. |
 | Empty message when **Speak** or **Sentence** is pressed | The button is `aria-disabled` and announces that it is unavailable. Nothing is saved. |

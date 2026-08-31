@@ -11,9 +11,8 @@
  */
 
 import { adaptivePaletteGlobals } from "../state/GlobalData";
+import { StoredMessage, getStorage } from "./StorageBackend";
 import { SymbolEncodingType } from "../index.d";
-
-export const MESSAGE_LOG_KEY = "Message Log";
 
 /*
  * How the preferred sentence was arrived at:
@@ -69,45 +68,118 @@ export function recordMessageText (record: MessageRecordType): string {
   return record.payloads.length > 0 ? messageText(record.payloads) : (record.telegraphicMessage ?? "");
 }
 
-// Store the last parse of the log because word prediction reads it several times for one suggestion.
-let cachedText: string | null = null;
-let cachedLog: MessageRecordType[] = [];
+/*
+ * A record in this session's log. `id` is what storage gave it, and is absent only while its
+ * write is still in flight or after one failed.
+ */
+type LoggedMessage = MessageRecordType & { id?: number };
+
+/*
+ * The messages this session works from: the newest `maxRecalledRecords`, hydrated once at
+ * start-up and then kept in step by the writes below.
+ *
+ * Storage is asynchronous and `readMessageLog()` is called during render, so the log cannot be
+ * fetched when it is wanted. Holding it here is what lets the read stay synchronous.
+ */
+let log: LoggedMessage[] = [];
 
 /**
- * Read the stored messages. Anything unreadable reads as an empty log.
- * @returns {MessageRecordType[]}
+ * Whether a stored entry is a message record. The store is hand-editable through the
+ * browser's developer tools, so this runs over everything read back from it.
+ * @param {unknown} entry - The stored entry.
+ * @returns {boolean}
  */
-export function readMessageLog (): MessageRecordType[] {
+function isMessageRecord (entry: unknown): entry is StoredMessage {
+  const payloads = (entry as StoredMessage)?.payloads;
+  return entry !== null && typeof entry === "object" && Array.isArray(payloads) &&
+    payloads.every((payload) => payload !== null && typeof payload?.label === "string");
+}
+
+/**
+ * Read the stored messages into this session's log. Called once from
+ * `initAdaptivePaletteGlobals()`, before anything renders, and by tests that seed a log.
+ *
+ * A store that cannot be read leaves an empty log, which is how the app starts anyway.
+ * @returns {Promise<void>}
+ */
+export async function hydrateMessageLog (): Promise<void> {
+  log = [];
+  const maxRecords = adaptivePaletteGlobals.config.maxRecalledRecords;
+  if (!maxRecords) {
+    return;
+  }
   try {
-    const stored = window.localStorage.getItem(MESSAGE_LOG_KEY);
-    if (stored !== cachedText) {
-      const parsed: unknown = stored ? JSON.parse(stored) : [];
-      cachedText = stored;
-      cachedLog = !Array.isArray(parsed) ? [] : parsed.filter((entry) => {
-        const payloads = (entry as MessageRecordType)?.payloads;
-        return entry !== null && typeof entry === "object" && Array.isArray(payloads) &&
-          payloads.every((payload) => payload !== null && typeof payload?.label === "string");
-      }) as MessageRecordType[];
-    }
-    // A deep copy so a caller cannot alter what is cached.
-    return structuredClone(cachedLog);
+    log = (await getStorage().readMessages(maxRecords)).filter(isMessageRecord);
   } catch (error) {
-    console.error(`Could not read "${MESSAGE_LOG_KEY}": ${String(error)}`);
-    return [];
+    console.error(`Could not read the saved messages: ${String(error)}`);
   }
 }
 
 /**
- * Replace the stored log, trimmed to `maxStoredRecords` by dropping the oldest entries.
- * @param {MessageRecordType[]} entries - The log to store.
+ * Read the messages this session is working from.
+ * @returns {MessageRecordType[]}
+ */
+export function readMessageLog (): MessageRecordType[] {
+  // A deep copy so a caller cannot alter what is held here, with the storage id dropped: it
+  // is bookkeeping for `persistChange`, not part of the public record shape.
+  return structuredClone(log).map((record) => {
+    delete record.id;
+    return record;
+  });
+}
+
+/*
+ * The first write of a record, until it lands. `persistChange()` waits on it, so a change
+ * made in the round trip between storing a record and its id coming back -- a translation
+ * saved seconds after the message it belongs to -- is written rather than dropped.
+ */
+const pendingWrites = new WeakMap<LoggedMessage, Promise<void>>();
+
+/**
+ * Store a record that is not in storage yet, and remember the identity it was given so a
+ * later translation can be written against it.
+ * @param {LoggedMessage} record - The record, already in `log`.
  * @returns {void}
  */
-function writeMessageLog (entries: MessageRecordType[]): void {
-  const maxRecords = adaptivePaletteGlobals.config.maxStoredRecords;
+function persistNew (record: LoggedMessage): void {
+  pendingWrites.set(record, (async (): Promise<void> => {
+    try {
+      record.id = (await getStorage().addMessage(record)).id;
+    } catch (error) {
+      console.error(`Could not save the message: ${String(error)}`);
+    }
+  })());
+}
+
+/**
+ * Store a change to a record that is already in storage, or on its way there.
+ * @param {LoggedMessage} record - The changed record, already in `log`.
+ * @returns {Promise<void>}
+ */
+async function persistChange (record: LoggedMessage): Promise<void> {
+  // The id arrives with the record's first write, which may still be in flight.
+  await pendingWrites.get(record);
+  if (record.id === undefined) {
+    console.error("Could not save the translation: its message was never stored.");
+    return;
+  }
   try {
-    window.localStorage.setItem(MESSAGE_LOG_KEY, JSON.stringify(entries.slice(-maxRecords)));
+    await getStorage().updateMessage(record.id, record);
   } catch (error) {
-    console.error(`Could not save to "${MESSAGE_LOG_KEY}": ${String(error)}`);
+    console.error(`Could not save the translation: ${String(error)}`);
+  }
+}
+
+/**
+ * Add a record to the log, dropping the oldest if that puts it over `maxRecalledRecords`.
+ * Only the log is trimmed. Storage keeps every message.
+ * @param {LoggedMessage} record - The record to add.
+ * @returns {void}
+ */
+function remember (record: LoggedMessage): void {
+  log.push(record);
+  if (log.length > adaptivePaletteGlobals.config.maxRecalledRecords) {
+    log.shift();
   }
 }
 
@@ -121,11 +193,10 @@ function writeMessageLog (entries: MessageRecordType[]): void {
  * @returns {void}
  */
 export function saveMessageRecord (payloads: SymbolEncodingType[]): void {
-  if (!adaptivePaletteGlobals.config.maxStoredRecords || payloads.length === 0) {
+  if (!adaptivePaletteGlobals.config.maxRecalledRecords || payloads.length === 0) {
     return;
   }
-  const entries = readMessageLog();
-  const lastRecord = entries[entries.length - 1];
+  const lastRecord = log[log.length - 1];
   if (lastRecord && recordMessageText(lastRecord) === messageText(payloads)) {
     return;
   }
@@ -136,7 +207,9 @@ export function saveMessageRecord (payloads: SymbolEncodingType[]): void {
     delete stored.isAiLabel;
     return stored;
   });
-  writeMessageLog([...entries, { timestamp: new Date().toISOString(), payloads: unmarked }]);
+  const record: LoggedMessage = { timestamp: new Date().toISOString(), payloads: unmarked };
+  remember(record);
+  persistNew(record);
 }
 
 /**
@@ -156,20 +229,25 @@ export function saveMessageRecord (payloads: SymbolEncodingType[]): void {
  * @returns {void}
  */
 export function saveTranslation (telegraphicMessage: string, translation: TranslationInfoType): void {
-  if (!adaptivePaletteGlobals.config.maxStoredRecords) {
+  if (!adaptivePaletteGlobals.config.maxRecalledRecords) {
     return;
   }
-  const entries = readMessageLog();
-  const index = entries.map(recordMessageText).lastIndexOf(telegraphicMessage);
+  const index = log.map(recordMessageText).lastIndexOf(telegraphicMessage);
   if (index === -1) {
-    entries.push({ timestamp: new Date().toISOString(), payloads: [], telegraphicMessage, translation });
-  } else {
-    // A recalled sentence with other candidates for a message is saved again.
-    const previous = entries[index].translation?.candidates ?? [];
-    const candidates = [...new Set([...previous, ...translation.candidates])];
-    entries[index] = { ...entries[index], translation: { ...translation, candidates } };
+    const record: LoggedMessage = {
+      timestamp: new Date().toISOString(), payloads: [], telegraphicMessage, translation
+    };
+    remember(record);
+    persistNew(record);
+    return;
   }
-  writeMessageLog(entries);
+  // A recalled sentence with other candidates for a message is saved again.
+  const previous = log[index].translation?.candidates ?? [];
+  const candidates = [...new Set([...previous, ...translation.candidates])];
+  // Changed in place rather than replaced, so an id still on its way from storage lands on
+  // the record this is about to persist.
+  log[index].translation = { ...translation, candidates };
+  void persistChange(log[index]);
 }
 
 /**
@@ -180,12 +258,11 @@ export function saveTranslation (telegraphicMessage: string, translation: Transl
  * @returns {TranslationInfoType | undefined}
  */
 export function findLatestTranslation (telegraphicMessage: string): TranslationInfoType | undefined {
-  if (!adaptivePaletteGlobals.config.maxStoredRecords) {
+  if (!adaptivePaletteGlobals.config.maxRecalledRecords) {
     return undefined;
   }
-  const entries = readMessageLog();
-  for (let index = entries.length - 1; index >= 0; index--) {
-    const entry = entries[index];
+  for (let index = log.length - 1; index >= 0; index--) {
+    const entry = log[index];
     if (entry.translation && recordMessageText(entry) === telegraphicMessage) {
       return entry.translation;
     }

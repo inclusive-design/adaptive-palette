@@ -17,9 +17,10 @@ import { html } from "htm/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
-import { MESSAGE_LOG_KEY, readMessageLog } from "../core/MessageLog";
+import { readMessageLog } from "../core/MessageLog";
 import { ActionSpeakCell } from "./ActionSpeakCell";
 import { mockedSpeak } from "../testUtils/SpeechUtilsMock";
+import { readStoredMessages, resetMessageLog } from "../testUtils/MessageLogTestUtils";
 
 vi.mock("../utils/SpeechUtils");
 
@@ -43,9 +44,9 @@ describe("ActionSpeakCell", (): void => {
     await initAdaptivePaletteGlobals();
   });
 
-  beforeEach((): void => {
-    window.localStorage.removeItem(MESSAGE_LOG_KEY);
-    adaptivePaletteGlobals.config.maxStoredRecords = 100;
+  beforeEach(async (): Promise<void> => {
+    await resetMessageLog();
+    adaptivePaletteGlobals.config.maxRecalledRecords = 100;
     finishedMessageSignal.value = "";
     changeEncodingContents.value = {
       payloads: [
@@ -56,9 +57,9 @@ describe("ActionSpeakCell", (): void => {
     };
   });
 
-  afterEach((): void => {
+  afterEach(async (): Promise<void> => {
     cleanup();
-    window.localStorage.removeItem(MESSAGE_LOG_KEY);
+    await resetMessageLog();
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
   });
 
@@ -99,6 +100,6 @@ describe("ActionSpeakCell", (): void => {
     expect(button.getAttribute("aria-disabled")).toBe("true");
 
     await user.click(button);
-    expect(window.localStorage.getItem(MESSAGE_LOG_KEY)).toBeNull();
+    expect(await readStoredMessages()).toEqual([]);
   });
 });
