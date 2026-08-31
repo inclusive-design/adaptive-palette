@@ -7,6 +7,16 @@ export default defineConfig({
   test: {
     globals: true,
     clearMocks: true,
+    // Every test file runs once per browser, and module loading dominates the run: the
+    // imports take several times longer than the tests themselves. Under that contention a
+    // test occasionally overruns a timeout and fails where it passes on its own -- a
+    // different one each run, in any of the three browsers. One retry absorbs that; a real
+    // failure still fails both attempts.
+    retry: 1,
+    // `initAdaptivePaletteGlobals()` runs in a `beforeAll` in 26 of these files and loads the
+    // symbol data, so the default 10s hook budget is the first thing contention breaks.
+    hookTimeout: 30000,
+    testTimeout: 30000,
     projects: [
       {
         extends: true,
