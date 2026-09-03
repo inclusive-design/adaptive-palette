@@ -117,7 +117,7 @@ describe("FirstRunSetup", (): void => {
     await userEvent.click(screen.getByRole("button", { name: RETRY_LABEL }));
 
     await waitFor(() =>
-      expect(screen.getByRole("dialog")).toHaveTextContent(MISSING_MODEL_TEXT(["gemma4:12b"]))
+      expect(screen.getByRole("dialog")).toMatchTextContent(MISSING_MODEL_TEXT(["gemma4:12b"]))
     );
     expect(screen.getByRole("button", { name: DOWNLOAD_LABEL })).toBeInTheDocument();
     expect(mockedReloadPage).not.toHaveBeenCalled();
@@ -127,7 +127,7 @@ describe("FirstRunSetup", (): void => {
     adaptivePaletteGlobals.models = ["llama3:8b"];
     render(html`<${FirstRunSetup} />`);
 
-    expect(screen.getByRole("dialog")).toHaveTextContent("gemma4:12b");
+    expect(screen.getByRole("dialog")).toMatchTextContent("gemma4:12b");
     expect(screen.getByRole("button", { name: DOWNLOAD_LABEL })).toBeInTheDocument();
   });
 
