@@ -17,6 +17,14 @@ npx playwright install
 
 Browsers run headless, but audio may still play.
 
+## The launcher, in node
+
+`launcher/` is not part of the app and does not run in a browser, so it has a vitest project of its
+own: `launcher`, node environment, `launcher/**/*.test.?(c|m)[jt]s`. Run it alone with
+`npm test -- --project launcher`.
+
+Its tests bind the one fixed port the launcher may use, so the project runs its files one at a time.
+
 ## Running
 
 ```bash

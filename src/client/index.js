@@ -31,6 +31,7 @@ import { SentenceChoices } from "./features/telegraphic-translation/SentenceChoi
 import { PredictedWords } from "./features/word-prediction/PredictedWords";
 import { SymbolEntryToolbar } from "./components/SymbolEntryToolbar";
 import { MessageAttributesBar } from "./features/message-attributes/MessageAttributesBar";
+import { FirstRunSetup } from "./features/setup/FirstRunSetup";
 
 const paletteFileMap = await loadPaletteFromJsonFile("/palettes/palette_file_map.json");
 const firstLayer = await loadPaletteFromJsonFile("/palettes/bliss_standard_chart.json");
@@ -60,6 +61,9 @@ render(html`<${SentenceChoices} />`, getRequiredElement("sentenceChoices"));
 
 // Suggested next words, drawn from the messages the user has said before.
 render(html`<${PredictedWords} />`, getRequiredElement("predictedWords"));
+
+// First-run setup. It draws nothing when Ollama is running with the configured models.
+render(html`<${FirstRunSetup} />`, getRequiredElement("firstRunSetup"));
 
 const aiStatus = getRequiredElement("aiStatus");
 if (adaptivePaletteGlobals.models.length === 0) {

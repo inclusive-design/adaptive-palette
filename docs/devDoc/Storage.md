@@ -20,12 +20,18 @@ export interface AdaptivePaletteStorage {
   addMessage (record: MessageRecordType): Promise<StoredMessage>;
   updateMessage (id: number, record: MessageRecordType): Promise<void>;
   clearAll (): Promise<void>;
+  destroy (): Promise<void>;
 }
 ```
 
 The interface names the app's own operations rather than generic get/set, so each backend can
 use what its store is good at: a cursor in IndexedDB, a real table in SQL. `readMessages(limit)`
 returns the newest `limit` records, oldest first.
+
+`destroy()` removes the store itself rather than emptying it. `clearAll()` is what "Clear all saved
+data" uses: the app keeps running, and its database stays in place. `destroy()` is what "Erase all
+app data and quit" uses, where the point is that nothing of the app's is left in the browser
+afterwards. A destroyed store can be opened again, empty.
 
 [`src/client/core/IndexedDbStorage.ts`](../../src/client/core/IndexedDbStorage.ts) is the web
 implementation: one database, version 1, with two object stores created in `onupgradeneeded`:

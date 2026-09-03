@@ -48,6 +48,15 @@ export interface AdaptivePaletteStorage {
 
   /** Discard everything the app has stored. */
   clearAll (): Promise<void>;
+
+  /**
+   * Remove the store itself, not just its contents.
+   *
+   * `clearAll()` empties the store and leaves it in place, which is what the in-app
+   * "clear saved data" wants. This is what uninstalling wants: nothing of the app's is
+   * left in the browser afterwards. The store can be opened again, empty.
+   */
+  destroy (): Promise<void>;
 }
 
 let backend: AdaptivePaletteStorage | undefined;

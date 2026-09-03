@@ -29,6 +29,21 @@ export async function getModelNames(): Promise<string[]> {
 }
 
 /**
+ * The client a request should go through.
+ *
+ * Ollama's own abort only covers streaming requests, so a cancellable request gets its own
+ * client whose `fetch` carries the signal. Per-request, so cancelling one leaves the other
+ * in-flight requests alone.
+ * @param {AbortSignal} abortSignal - Optional signal cancelling this request.
+ * @returns {Ollama} - A client for this request, or the shared one when nothing can cancel it.
+ */
+function clientFor (abortSignal?: AbortSignal): Ollama {
+  return abortSignal
+    ? new Ollama({ fetch: (input, init) => fetch(input, { ...init, signal: abortSignal }) })
+    : ollama;
+}
+
+/**
  * Function for passing the chat string and optionally a system prompt to the
  * ollama `chat()` service. The request can optionally ask that the response
  * be streamed or returned all at once.
@@ -72,12 +87,7 @@ export async function queryChat (query: string, modelName: string, streamResp: b
     think: false
   };
 
-  // Because Ollama API only provides abort function for streaming requests which we don't use,
-  // need to create a new Ollama client with a custom fetch function that includes the abort signal
-  // so the cancellations don't affect other in-flight queries.
-  const client = abortSignal
-    ? new Ollama({ fetch: (input, init) => fetch(input, { ...init, signal: abortSignal }) })
-    : ollama;
+  const client = clientFor(abortSignal);
 
   // Workaround for TypeScript error TS2769:
   // `ollama.chat()` has overloads that require a literal `true` or `false` for the `stream` property.
@@ -88,5 +98,46 @@ export async function queryChat (query: string, modelName: string, streamResp: b
     return await client.chat({ ...request, stream: true });
   } else {
     return await client.chat({ ...request, stream: false });
+  }
+}
+
+/**
+ * How far a model download has got. `total` is always positive; a step that does not know
+ * the size yet is not reported at all.
+ */
+export type PullProgressType = {
+  completed: number,
+  total: number
+};
+
+/**
+ * Download a model into Ollama, reporting progress as it goes.
+ *
+ * The first steps of a pull carry no size -- Ollama is still fetching the manifest -- so
+ * they are skipped rather than reported as a zero-length download, which would draw a full
+ * progress bar for an instant.
+ * @param {string} modelName - The model to pull, tag and all.
+ * @param {Function} onProgress - Called for each step that carries a size.
+ * @param {AbortSignal} abortSignal - Optional signal to cancel the download. As in
+ *                                    `queryChat`, it is injected through a custom `fetch`
+ *                                    on a client of its own so a cancellation cannot
+ *                                    disturb any other request. Rejects with a
+ *                                    `DOMException` named `"AbortError"` when it fires;
+ *                                    a caller that cancelled deliberately should not treat
+ *                                    that as a failure.
+ * @returns {Promise<void>} - Resolves when the model is in place.
+ */
+export async function pullModel (
+  modelName: string,
+  onProgress: (progress: PullProgressType) => void,
+  abortSignal?: AbortSignal
+): Promise<void> {
+  const client = clientFor(abortSignal);
+
+  const stream = await client.pull({ model: modelName, stream: true });
+  for await (const part of stream) {
+    if (typeof part.total === "number" && part.total > 0) {
+      onProgress({ completed: part.completed ?? 0, total: part.total });
+    }
   }
 }

@@ -11,21 +11,22 @@
  */
 
 import { vi } from "vitest";
-import { getModelNames, queryChat } from "./OllamaApi";
+import { getModelNames, pullModel, queryChat } from "./OllamaApi";
 import ollama from "ollama/browser";
 
 // Mock the entire ollama/browser module.
 // `vi.mock` is hoisted above const declarations, so anything the factory closes over has
 // to be created inside `vi.hoisted`.
-const { mockOllamaClass, mockClientChat } = vi.hoisted(() => {
+const { mockOllamaClass, mockClientChat, mockClientPull } = vi.hoisted(() => {
   const mockClientChat = vi.fn();
+  const mockClientPull = vi.fn();
   // A function expression, not an arrow: `queryChat` calls this with `new`, and arrow
   // functions are not constructible.
   const mockOllamaClass = vi.fn(function (config?: { fetch?: typeof fetch }) {
     void config;
-    return { chat: mockClientChat };
+    return { chat: mockClientChat, pull: mockClientPull };
   });
-  return { mockOllamaClass, mockClientChat };
+  return { mockOllamaClass, mockClientChat, mockClientPull };
 });
 
 vi.mock("ollama/browser", () => ({
@@ -33,6 +34,7 @@ vi.mock("ollama/browser", () => ({
   default: {
     list: vi.fn(),
     chat: vi.fn(),
+    pull: vi.fn(),
   },
   Ollama: mockOllamaClass,
 }));
@@ -41,6 +43,7 @@ const mockedOllama = vi.mocked(ollama);
 // Dynamically infer what mockedOllama returned types are supposed to be
 type OllamaListResponse = Awaited<ReturnType<typeof mockedOllama.list>>;
 type OllamaChatResponse = Awaited<ReturnType<typeof mockedOllama.chat>>;
+type OllamaPullResponse = Awaited<ReturnType<typeof mockedOllama.pull>>;
 
 describe("OllamaApi", (): void => {
 
@@ -199,6 +202,77 @@ describe("OllamaApi", (): void => {
       );
 
       fetchSpy.mockRestore();
+    });
+  });
+
+  describe("pullModel", () => {
+    // The shape ollama-js streams while a model downloads.
+    const progressStream = (parts: unknown[]): AsyncIterable<unknown> => ({
+      // eslint-disable-next-line @typescript-eslint/require-await
+      async *[Symbol.asyncIterator] () {
+        for (const part of parts) { yield part; }
+      }
+    });
+
+    test("reports every step of the download", async (): Promise<void> => {
+      mockedOllama.pull.mockResolvedValue(progressStream([
+        { status: "pulling", completed: 0, total: 100 },
+        { status: "pulling", completed: 60, total: 100 },
+        { status: "success", completed: 100, total: 100 },
+      ]) as unknown as OllamaPullResponse);
+      const seen: { completed: number, total: number }[] = [];
+
+      await pullModel("gemma4:12b", (progress) => seen.push(progress));
+
+      expect(mockedOllama.pull).toHaveBeenCalledWith({ model: "gemma4:12b", stream: true });
+      expect(seen).toEqual([
+        { completed: 0, total: 100 },
+        { completed: 60, total: 100 },
+        { completed: 100, total: 100 },
+      ]);
+    });
+
+    test("ignores the steps that carry no size", async (): Promise<void> => {
+      // The manifest steps arrive before Ollama knows how big the download is.
+      mockedOllama.pull.mockResolvedValue(progressStream([
+        { status: "pulling manifest" },
+        { status: "pulling", completed: 5, total: 0 },
+        { status: "pulling", completed: 10, total: 50 },
+      ]) as unknown as OllamaPullResponse);
+      const seen: { completed: number, total: number }[] = [];
+
+      await pullModel("gemma4:12b", (progress) => seen.push(progress));
+
+      expect(seen).toEqual([{ completed: 10, total: 50 }]);
+    });
+
+    test("treats a missing `completed` as nothing downloaded yet", async (): Promise<void> => {
+      mockedOllama.pull.mockResolvedValue(progressStream([
+        { status: "pulling", total: 80 },
+      ]) as unknown as OllamaPullResponse);
+      const seen: { completed: number, total: number }[] = [];
+
+      await pullModel("gemma4:12b", (progress) => seen.push(progress));
+
+      expect(seen).toEqual([{ completed: 0, total: 80 }]);
+    });
+
+    test("a signal routes the pull through a client of its own", async (): Promise<void> => {
+      mockClientPull.mockResolvedValue(progressStream([]));
+      const controller = new AbortController();
+
+      await pullModel("gemma4:12b", () => {}, controller.signal);
+
+      expect(mockOllamaClass).toHaveBeenCalledTimes(1);
+      expect(mockClientPull).toHaveBeenCalledWith({ model: "gemma4:12b", stream: true });
+      // The shared client is left alone, so cancelling one pull cannot disturb anything else.
+      expect(mockedOllama.pull).not.toHaveBeenCalled();
+    });
+
+    test("a failed pull rejects", async (): Promise<void> => {
+      mockedOllama.pull.mockRejectedValue(new Error("Connection refused"));
+
+      await expect(pullModel("gemma4:12b", () => {})).rejects.toThrow("Connection refused");
     });
   });
 });

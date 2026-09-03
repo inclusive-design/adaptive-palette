@@ -1,0 +1,38 @@
+name: Package
+
+# Only on a published release. The bundles are attached to that release; nothing is
+# committed to a branch, so no binary ever enters the repository's history.
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+
+  package:
+    name: Package (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      CI: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 26.x
+      - name: NPM install (ci)
+        run: npm ci
+      - name: Package
+        run: npm run package:desktop
+      - name: Attach to the release
+        shell: bash
+        run: gh release upload "${{ github.event.release.tag_name }}" dist-desktop/AdaptivePalette-*.zip --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}

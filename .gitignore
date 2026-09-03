@@ -9,4 +9,4 @@ dist
 
 # Testing related artifacts
 /**/__screenshots__/
-.vitest-attachments
+.vitest

@@ -11,7 +11,7 @@
  */
 
 import { vi, type MockInstance } from "vitest";
-import { render, screen, cleanup, waitFor } from "@testing-library/preact";
+import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/preact";
 import { userEvent } from "vitest/browser";
 import { html } from "htm/preact";
 
@@ -24,6 +24,7 @@ import {
   SettingsDialog, SAVE_LABEL, CLOSE_LABEL, CONFIRM_LABEL, DECLINE_LABEL,
   MODEL_NOTE, WARNING_TEXT, FAILURE_MESSAGE, dependentNote
 } from "./SettingsDialog";
+import { ERASE_CONFIRM_LABEL, ERASE_DONE_TEXT, ERASE_LABEL } from "./EraseAllData";
 
 // Saving reloads the page, which would restart the test runner. Making the store's write
 // reject keeps every test on the failure path, where the dialog stays put; what the dialog
@@ -176,6 +177,42 @@ describe("SettingsDialog", () => {
     expect(suggestions).toHaveAttribute("step", "1");
     expect(suggestions).toBeRequired();
     expect(screen.getByLabelText("Messages to remember")).toHaveAttribute("min", "0");
+  });
+
+  // The store is gone once the erase has finished, so every later write fails where only
+  // the console sees it. Leaving "Save and close" live would tell the user the app was
+  // still saving when it was not.
+  test("stops offering to save once the data has been erased", async () => {
+    withConfig({});
+    vi.spyOn(window, "fetch").mockResolvedValue(new Response(null, { status: 204 }));
+    renderDialog();
+
+    await userEvent.click(screen.getByRole("button", { name: ERASE_LABEL }));
+    await userEvent.click(await screen.findByRole("button", { name: ERASE_CONFIRM_LABEL }));
+
+    await waitFor(() => expect(screen.getByText(ERASE_DONE_TEXT)).toBeInTheDocument());
+    const save = screen.getByRole("button", { name: SAVE_LABEL });
+    expect(save).toHaveAttribute("aria-disabled", "true");
+
+    // Marked unavailable rather than disabled, so the click has to be refused as well.
+    // `fireEvent` because the button is still clickable: only the handler turns it away.
+    fireEvent.click(save);
+    expect(screen.queryByRole("button", { name: CONFIRM_LABEL })).not.toBeInTheDocument();
+  });
+
+  // Nothing is left to save, but the user still has to get out of the dialog.
+  test("still closes once the data has been erased", async () => {
+    withConfig({});
+    vi.spyOn(window, "fetch").mockResolvedValue(new Response(null, { status: 204 }));
+    const onRequestClose = vi.fn();
+    renderDialog(onRequestClose);
+
+    await userEvent.click(screen.getByRole("button", { name: ERASE_LABEL }));
+    await userEvent.click(await screen.findByRole("button", { name: ERASE_CONFIRM_LABEL }));
+    await waitFor(() => expect(screen.getByText(ERASE_DONE_TEXT)).toBeInTheDocument());
+
+    await userEvent.click(screen.getByRole("button", { name: CLOSE_LABEL }));
+    expect(onRequestClose).toHaveBeenCalled();
   });
 
   test("saves nothing when the dialog is closed", async () => {

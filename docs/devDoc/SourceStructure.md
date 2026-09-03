@@ -5,6 +5,9 @@ Where the client-side files live, and the rule that decides where a new one goes
 ## Layout
 
 ```text
+launcher/         — The desktop launcher: a static server for `dist/` and the OS glue
+                    around it. CommonJS, because Node's single-executable feature runs
+                    only CommonJS. Not part of the app and never imported by it.
 src/client/
   index.js          Entry point: initializes globals, then mounts the fixed components
   index.d.ts        Shared types, including the palette JSON shapes

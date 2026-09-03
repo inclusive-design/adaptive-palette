@@ -51,20 +51,24 @@
     padding: 0.5rem 1rem;
   }
 
-  /*
-   * Marked unavailable rather than `disabled`: a disabled button loses focus, which costs
-   * a switch or eye-gaze user their scan position mid-interaction.
-   *
-   * Nested inside `.modalDialog` so the unavailable state outweighs the base rule above
-   * instead of tying with it and depending on stylesheet order.
-   */
   .btn-addToMessage {
     background-color: lightsalmon;
+  }
 
-    &[aria-disabled="true"] {
-      background-color: white;
-      border-style: dashed;
-    }
+  /*
+   * Marked unavailable rather than `disabled`: a disabled control loses focus, which costs
+   * a switch or eye-gaze user their scan position mid-interaction. Silver is the greying
+   * the palette already uses for that state, in `.btn-command` and the indicator and
+   * modifier cells; white cannot mean it here, because white is what an available dialog
+   * button looks like.
+   *
+   * The element names carry it past every `.modalDialog <class>` variant above and in the
+   * dialogs' own stylesheets, so it does not depend on the order they are loaded in.
+   */
+  button[aria-disabled="true"],
+  input[type="submit"][aria-disabled="true"],
+  input[type="button"][aria-disabled="true"] {
+    background-color: silver;
   }
 
   /* A single glyph, so equal padding keeps it round rather than stretching it wide.

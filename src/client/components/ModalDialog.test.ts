@@ -78,6 +78,35 @@ describe("ModalDialog", () => {
     await waitFor(() => expect(onClose).toHaveBeenCalled());
   });
 
+  // Both ways out have to be refused separately: Escape runs the `cancel` default action,
+  // the header button calls `close()` directly.
+  test("Escape leaves the dialog open when it is not dismissible", async () => {
+    const onClose = vi.fn();
+    render(html`
+      <${ModalDialog} id="testDialog" title=${TITLE} isOpen=${true} isDismissible=${false} onClose=${onClose}>
+        <p>body</p>
+      <//>
+    `);
+
+    await userEvent.keyboard("{Escape}");
+
+    expect(screen.getByText("body")).toBeVisible();
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  test("the dismiss button is disabled when the dialog is not dismissible", () => {
+    const onClose = vi.fn();
+    render(html`
+      <${ModalDialog} id="testDialog" title=${TITLE} isOpen=${true} isDismissible=${false} onClose=${onClose}>
+        <p>body</p>
+      <//>
+    `);
+
+    expect(screen.getByRole("button", { name: DISMISS_LABEL })).toBeDisabled();
+    expect(screen.getByText("body")).toBeVisible();
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
   // A dialog body's footer Close button closes by flipping `isOpen`, which is a different
   // route than Escape or the dismiss button and exercises the effect's close branch.
   test("closes when the parent withdraws isOpen", async () => {

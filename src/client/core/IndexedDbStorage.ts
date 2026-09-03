@@ -184,4 +184,34 @@ export class IndexedDbStorage implements AdaptivePaletteStorage {
       transaction.onabort = failed;
     });
   }
+
+  async destroy (): Promise<void> {
+    // A request's `onsuccess` fires before its transaction actually commits, and in WebKit
+    // that gap is wide enough that `close()` right after a write does not yet fully release
+    // the connection -- the delete below then sees a connection that looks still open and
+    // reports `onblocked` for a tab that is not there. A no-op transaction queues behind
+    // whatever came before it and only completes once that has, so waiting on it first is a
+    // reliable way to know the connection is actually free to close.
+    if (this.database) {
+      const database = this.database;
+      await new Promise<void>((resolve) => {
+        const flush = database.transaction([MESSAGES_STORE, SETTINGS_STORE], "readonly");
+        flush.oncomplete = (): void => resolve();
+        flush.onerror = (): void => resolve();
+        flush.onabort = (): void => resolve();
+      });
+    }
+    // The connection has to go first: an open one blocks the delete indefinitely.
+    this.close();
+    return new Promise((resolve, reject) => {
+      const request = window.indexedDB.deleteDatabase(this.name);
+      // Another tab still has it open. Reported rather than left hanging, so the caller
+      // can tell the tester to close the other tab.
+      request.onblocked = (): void => {
+        reject(new Error("The saved data cannot be deleted while another tab has it open."));
+      };
+      request.onsuccess = (): void => resolve();
+      request.onerror = (): void => reject(requestError(request));
+    });
+  }
 }

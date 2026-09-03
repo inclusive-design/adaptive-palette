@@ -15,7 +15,7 @@ const compat = new FlatCompat({
 });
 
 export default [{
-  ignores: ["**/dist/", "**/node_modules/"],
+  ignores: ["**/dist/", "**/dist-desktop/", "**/node_modules/"],
 }, ...compat.extends(
   "eslint:recommended",
   "plugin:@typescript-eslint/recommended",
@@ -67,4 +67,28 @@ export default [{
   rules: {
     "@typescript-eslint/unbound-method": "off",
   },
+},
+// The launcher is CommonJS because Node's single-executable feature runs only
+// CommonJS, and it is plain JavaScript, so type-aware rules have nothing to read.
+{
+  files: ["launcher/**/*.cjs"],
+  languageOptions: {
+    sourceType: "commonjs",
+    parserOptions: { project: null }
+  },
+  rules: {
+    ...typescriptEslint.configs["disable-type-checked"].rules,
+    // `require` is not a style choice here: Node's single-executable feature runs the
+    // embedded main script under CommonJS only.
+    "@typescript-eslint/no-require-imports": "off"
+  }
+},
+{
+  files: ["launcher/**/*.test.js"],
+  languageOptions: {
+    parserOptions: { project: null }
+  },
+  rules: {
+    ...typescriptEslint.configs["disable-type-checked"].rules
+  }
 }];

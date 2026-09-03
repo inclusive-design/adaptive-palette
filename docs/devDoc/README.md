@@ -14,6 +14,8 @@ Technical guide for developers building the adaptive palette.
 - [Bliss Sentences](BlissSentences.md) — how an English sentence becomes a row of Bliss
   symbols, and the shared gloss lookup behind it.
 - [Testing](Testing.md) — the browser test setup and how to run it.
+- [Packaging the Desktop Build](Deployment.md) — how the macOS and Windows bundles are built,
+  how to test one, and the release checklist.
 
 Also useful:
 

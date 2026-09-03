@@ -1,0 +1,37 @@
+/*
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
+ *
+ * Licensed under the New BSD license. You may not use this file except in
+ * compliance with this License.
+ *
+ * You may obtain a copy of the License at
+ * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
+ */
+
+.firstRunSetupChoices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+// The link is a choice alongside the buttons, so it is sized like one.
+.firstRunSetupInstall {
+  align-items: center;
+  display: inline-flex;
+  padding: 0.25rem 0.75rem;
+}
+
+.firstRunSetupProgress {
+  margin-top: 1rem;
+
+  progress {
+    width: 100%;
+  }
+}
+
+.firstRunSetupFailure {
+  font-weight: bold;
+}

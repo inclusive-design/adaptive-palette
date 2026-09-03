@@ -21,7 +21,8 @@ describe("storage backend registry", (): void => {
     readMessages: () => Promise.resolve([]),
     addMessage: (record) => Promise.resolve({ ...record, id: 1 }),
     updateMessage: (): Promise<void> => Promise.resolve(),
-    clearAll: (): Promise<void> => Promise.resolve()
+    clearAll: (): Promise<void> => Promise.resolve(),
+    destroy: (): Promise<void> => Promise.resolve()
   });
 
   // First in the file deliberately: the registry is module state, so this is the only point

@@ -67,7 +67,7 @@ describe("ActionSearchGloss", () => {
     render(html`<${ActionSearchGloss} onRequestClose=${() => {}} />`);
 
     await searchFor(user, "fish");
-    expect(await screen.findByRole("status")).toHaveTextContent(/symbols found for "fish"/);
+    expect(await screen.findByRole("status")).toMatchTextContent(/symbols found for "fish"/);
   }, 20000);
 
   test("announces when nothing matched", async () => {
@@ -75,7 +75,7 @@ describe("ActionSearchGloss", () => {
     render(html`<${ActionSearchGloss} onRequestClose=${() => {}} />`);
 
     await searchFor(user, "zzzznotaword");
-    expect(await screen.findByRole("status")).toHaveTextContent(/No symbols found for "zzzznotaword"/);
+    expect(await screen.findByRole("status")).toMatchTextContent(/No symbols found for "zzzznotaword"/);
   }, 20000);
 
   // A term with a regular expression metacharacter used to throw inside the handler,
@@ -85,7 +85,7 @@ describe("ActionSearchGloss", () => {
     render(html`<${ActionSearchGloss} onRequestClose=${() => {}} />`);
 
     await searchFor(user, "zzzznotaword (");
-    expect(await screen.findByRole("status")).toHaveTextContent(/No symbols found for "zzzznotaword \("/);
+    expect(await screen.findByRole("status")).toMatchTextContent(/No symbols found for "zzzznotaword \("/);
     expect(screen.queryAllByRole("button", { pressed: false })).toHaveLength(0);
   }, 20000);
 
@@ -97,7 +97,7 @@ describe("ActionSearchGloss", () => {
     // "to" matches several hundred glosses in the shipped vocabulary.
     await searchFor(user, "to");
     expect(screen.getAllByRole("button", { pressed: false })).toHaveLength(MAX_RESULTS);
-    expect(await screen.findByRole("status")).toHaveTextContent(
+    expect(await screen.findByRole("status")).toMatchTextContent(
       new RegExp(`Showing the first ${MAX_RESULTS}`)
     );
   }, 20000);
@@ -203,7 +203,7 @@ describe("ActionSearchGloss", () => {
     await user.click(screen.getByRole("button", { name: ADD_LABEL }));
 
     expect(changeEncodingContents.value.payloads[0].label).toEqual("");
-    expect(await screen.findByRole("status")).toHaveTextContent(/^Symbol added to message$/);
+    expect(await screen.findByRole("status")).toMatchTextContent(/^Symbol added to message$/);
   }, 20000);
 
   // The dialog deliberately survives an add so several symbols can be added in one visit.
@@ -224,7 +224,7 @@ describe("ActionSearchGloss", () => {
     expect(screen.getByRole<HTMLInputElement>("textbox", { name: LABEL_FIELD_LABEL })).toHaveValue("");
     // Focus must not rest on a control that just became unavailable.
     expect(searchInput).toHaveFocus();
-    expect(await screen.findByRole("status")).toHaveTextContent(/added to message/);
+    expect(await screen.findByRole("status")).toMatchTextContent(/added to message/);
   }, 20000);
 
   // The guard holds the edit while it asks the user whether it may discard their sentence

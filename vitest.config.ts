@@ -35,6 +35,17 @@ export default defineConfig({
             ],
           },
         }
+      },
+      {
+        extends: true,
+        test: {
+          name: "launcher",
+          include: ["./launcher/**/*.test.?(c|m)[jt]s"],
+          environment: "node",
+          // These bind the one fixed port the launcher is allowed to use, so two of
+          // them at once would collide.
+          fileParallelism: false,
+        }
       }
     ]
   },

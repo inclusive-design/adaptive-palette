@@ -78,7 +78,7 @@ describe("ActionSvgEntryField", () => {
     expect(changeEncodingContents.value.payloads[0].label).toEqual("dog");
     expect(builderInput).toHaveValue("");
     expect(labelInput).toHaveValue("");
-    expect(await screen.findByRole("status")).toHaveTextContent(/dog added to message/);
+    expect(await screen.findByRole("status")).toMatchTextContent(/dog added to message/);
     expect(builderInput).toHaveFocus();
   });
 
@@ -134,7 +134,7 @@ describe("ActionSvgEntryField", () => {
     await user.type(screen.getByLabelText(/Builder string:/i), VALID_BUILDER_STRING);
     await user.click(screen.getByRole("button", { name: SUBMIT_VALUE }));
 
-    expect(await screen.findByRole("status")).toHaveTextContent(/Symbol added to message/);
+    expect(await screen.findByRole("status")).toMatchTextContent(/Symbol added to message/);
   });
 
   test("Close asks the dialog to dismiss", async () => {
