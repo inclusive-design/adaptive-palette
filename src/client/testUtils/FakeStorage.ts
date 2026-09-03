@@ -72,4 +72,11 @@ export class FakeStorage implements AdaptivePaletteStorage {
     this.nextId = 1;
     return Promise.resolve();
   }
+
+  destroy (): Promise<void> {
+    this.messages = [];
+    this.settings = {};
+    this.nextId = 1;
+    return Promise.resolve();
+  }
 }

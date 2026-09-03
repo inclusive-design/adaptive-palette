@@ -5,6 +5,7 @@
   "scripts": {
     "start": "vite --port 3000",
     "build": "vite build",
+    "package:desktop": "npm run build && node scripts/package_desktop.js",
     "typecheck": "tsc --noEmit",
     "lint": "run-p lint:*",
     "lint:js": "eslint .",

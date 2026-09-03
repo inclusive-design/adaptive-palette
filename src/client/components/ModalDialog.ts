@@ -26,6 +26,7 @@ type ModalDialogProps = {
   isOpen: boolean,
   onClose: () => void,
   restoreFocusTo?: () => HTMLElement | null,
+  isDismissible?: boolean,
   children?: ComponentChildren
 };
 
@@ -38,13 +39,20 @@ type ModalDialogProps = {
  *
  * `restoreFocusTo` names where focus goes when the dialog closes.
  *
+ * `isDismissible` defaults to true. Setting it false withdraws every way out of the dialog
+ * -- Escape and the header button alike -- for a dialog whose parent is midway through
+ * something it cannot undo, so that closing cannot imply a cancellation that is no longer
+ * available. Escape and the header button reach the dialog by different routes: Escape runs
+ * the `cancel` default action, which `preventDefault()` blocks, while the button calls
+ * `close()` directly and has to be stopped on its own.
+ *
  * `id` must not contain whitespace: it is used to derive the heading id referenced by
  * `aria-labelledby`, whose value is parsed as a space-separated list.
  * @param {ModalDialogProps} props - Dialog identity, title, open state, and body.
  * @returns {VNode}
  */
 export function ModalDialog (props: ModalDialogProps): VNode {
-  const { id, title, isOpen, onClose, restoreFocusTo, children } = props;
+  const { id, title, isOpen, onClose, restoreFocusTo, isDismissible = true, children } = props;
   const dialogRef = useRef<HTMLDialogElement>(null);
   const openerRef = useRef<HTMLElement | null>(null);
   const isUnmountingRef = useRef(false);
@@ -79,6 +87,14 @@ export function ModalDialog (props: ModalDialogProps): VNode {
 
   const dismiss = () => dialogRef.current?.close();
 
+  // Escape's close is a default action on the `cancel` event, so refusing it is what keeps
+  // the dialog on screen.
+  const refuseCancel = (event: Event) => {
+    if (!isDismissible) {
+      event.preventDefault();
+    }
+  };
+
   // Chromium and Firefox return focus to the opener themselves; WebKit leaves it on
   // <body>. Restoring explicitly is a no-op where the engine already did it, and keeps
   // a switch or eye-gaze user from losing their scan position on close. Focus is
@@ -106,6 +122,7 @@ export function ModalDialog (props: ModalDialogProps): VNode {
       ref=${dialogRef}
       class="modalDialog"
       aria-labelledby=${headingId}
+      onCancel=${refuseCancel}
       onClose=${handleClose}>
       <div class="modalDialogHeader">
         <h2 id=${headingId}>${title}</h2>
@@ -113,6 +130,7 @@ export function ModalDialog (props: ModalDialogProps): VNode {
           type="button"
           class="modalDialogDismiss"
           aria-label=${DISMISS_LABEL}
+          disabled=${!isDismissible}
           onClick=${dismiss}>✕</button>
       </div>
       ${children}

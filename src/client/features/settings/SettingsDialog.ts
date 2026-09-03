@@ -19,6 +19,7 @@ import {
   SETTING_DESCRIPTORS, SettingDescriptorType, SettingValueType,
   currentValue, isOffered, saveSettings, settingKey
 } from "./SettingsSchema";
+import { EraseAllData } from "./EraseAllData";
 import "./SettingsDialog.scss";
 
 export const SETTINGS_FORM_ID = "adjustSettingsForm";
@@ -70,6 +71,10 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
   });
   const [isConfirming, setIsConfirming] = useState(false);
   const [hasFailed, setHasFailed] = useState(false);
+  // Set once the erase has finished. The store is gone by then, so every later write fails
+  // where only the console sees it; the footer must stop offering a save that cannot happen.
+  // "Close" stays live.
+  const [isErased, setIsErased] = useState(false);
 
   const setValue = (key: string, value: FormValueType): void => {
     setValues((previous) => ({ ...previous, [key]: value }));
@@ -116,6 +121,18 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
       window.location.reload();
     } else {
       setHasFailed(true);
+    }
+  };
+
+  /**
+   * Move on to the warning. `aria-disabled` does not stop a submit, so an erased store is
+   * refused here rather than by the button.
+   * @param {Event} event - The form's submit event.
+   */
+  const askToSave = (event: Event): void => {
+    event.preventDefault();
+    if (!isErased) {
+      setIsConfirming(true);
     }
   };
 
@@ -182,7 +199,7 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
     <form
       id=${SETTINGS_FORM_ID}
       class="settingsForm"
-      onSubmit=${(event: Event) => { event.preventDefault(); setIsConfirming(true); }}>
+      onSubmit=${askToSave}>
       ${groups.map((group) => html`
         <fieldset class="settingsGroup" key=${group}>
           <legend>${group}</legend>
@@ -213,14 +230,23 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
     `
     : html`
       <div class="dialogFooter">
-        <button type="submit" class="settingsSave" form=${SETTINGS_FORM_ID}>${SAVE_LABEL}</button>
+        <button
+          type="submit"
+          class="settingsSave"
+          aria-disabled=${isErased ? "true" : undefined}
+          form=${SETTINGS_FORM_ID}>${SAVE_LABEL}</button>
         <button type="button" onClick=${props.onRequestClose}>${CLOSE_LABEL}</button>
       </div>
     `;
 
   return html`
     <${Fragment}>
-      ${isConfirming ? warning : form}
+      ${isConfirming ? warning : html`
+        <${Fragment}>
+          ${form}
+          <${EraseAllData} onErased=${() => setIsErased(true)} />
+        <//>
+      `}
       ${footer}
     <//>
   `;

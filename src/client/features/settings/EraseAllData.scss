@@ -1,0 +1,33 @@
+/*
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
+ *
+ * Licensed under the New BSD license. You may not use this file except in
+ * compliance with this License.
+ *
+ * You may obtain a copy of the License at
+ * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
+ */
+
+// Set apart from the settings above it: what it does cannot be undone, and it must not
+// read as one more setting to try.
+.eraseAllData {
+  border-top: 1px solid;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+}
+
+.eraseAllDataNote {
+  margin: 0.5rem 0 0;
+}
+
+.eraseAllDataChoices {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.eraseAllDataFailure {
+  font-weight: bold;
+}

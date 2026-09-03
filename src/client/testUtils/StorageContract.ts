@@ -127,5 +127,16 @@ export function runStorageContractTests (
       expect(await storage.readMessages(10)).toEqual([]);
       expect(await storage.readSettings()).toEqual({});
     });
+
+    test("destroy leaves a store with nothing in it", async (): Promise<void> => {
+      await storage.writeSettings({ "maxRecalledRecords": 12 });
+      await storage.addMessage(record("hello"));
+
+      await storage.destroy();
+      await storage.open();
+
+      expect(await storage.readSettings()).toEqual({});
+      expect(await storage.readMessages(10)).toEqual([]);
+    });
   });
 }

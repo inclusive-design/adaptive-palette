@@ -134,6 +134,8 @@ turn telegraphic messages into complete, speakable English sentences.
 past messages and optionally from a local Ollama model.
 - [Adjust Settings](./docs/Settings.md): change the runtime settings from within the app, saved in the
 browser and applied at the next page load.
+- [Install on Your Computer](./docs/Deployment.md): install Adaptive Palette and Ollama on macOS or
+Windows, run it for the first time, and uninstall it cleanly.
 
 ### Utility Documentation
 
@@ -151,7 +153,8 @@ input area, and modal dialogs.
 
 - [Developer Documentation](./docs/devDoc/README.md): technical guide for developers building the
   adaptive palette. Covers the source structure, application state, runtime configuration, palettes,
-  cell types, Bliss sentences and testing.
+  cell types, Bliss sentences and testing, testing, and desktop
+  packaging.
 
 ## Attribution
 

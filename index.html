@@ -13,6 +13,12 @@
     <div id="aiStatus" role="status"></div>
 
     <!--
+      First-run setup: shown only when Ollama is not running or a model the configuration
+      asks for has not been downloaded yet.
+    -->
+    <div id="firstRunSetup"></div>
+
+    <!--
       The top bar: the attributes set on the message being displayed at the left, and at the
       right the buttons for adding symbols and adjusting settings. Each trigger is shown only
       when its section in config.json enables it.
