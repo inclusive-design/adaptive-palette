@@ -70,6 +70,7 @@ export function EraseAllData (props: EraseAllDataProps): VNode {
   const [isPending, setIsPending] = useState(false);
   const pendingRef = useRef<HTMLParagraphElement>(null);
   const doneRef = useRef<HTMLParagraphElement>(null);
+  const failureRef = useRef<HTMLParagraphElement>(null);
 
   // `showModal()` makes everything outside the dialog inert, and while the erase runs every
   // control inside it is disabled, so without this focus would sit on `<body>` with nothing
@@ -78,6 +79,13 @@ export function EraseAllData (props: EraseAllDataProps): VNode {
   useEffect(() => {
     pendingRef.current?.focus();
   }, [isPending]);
+
+  // The pending paragraph that held focus is unmounted with the failure, so focus would fall
+  // back to `<body>` inside a dialog that is open again. The failure message is where the
+  // tester needs to be, and focusing it is also what reads it out.
+  useEffect(() => {
+    failureRef.current?.focus();
+  }, [hasFailed]);
 
   // The dialog is gone by now, and the opener it would have restored focus to went with it,
   // so focus would land on `<body>`. Moving it to the completion message is also the only
@@ -143,7 +151,7 @@ export function EraseAllData (props: EraseAllDataProps): VNode {
         ${isPending && html`
           <p class="eraseAllDataPending" role="status" tabindex="-1" ref=${pendingRef}>${ERASE_PENDING_TEXT}</p>
         `}
-        ${hasFailed && html`<p class="eraseAllDataFailure" role="alert">${ERASE_FAILED_TEXT}</p>`}
+        ${hasFailed && html`<p class="eraseAllDataFailure" role="alert" tabindex="-1" ref=${failureRef}>${ERASE_FAILED_TEXT}</p>`}
         <div class="eraseAllDataChoices">
           <button
             type="button"

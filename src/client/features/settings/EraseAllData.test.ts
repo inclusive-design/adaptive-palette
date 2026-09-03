@@ -119,6 +119,9 @@ describe("EraseAllData", (): void => {
     // A failed erase is not an in-flight one: the tester must be able to try again or back out.
     expect(screen.getByRole("button", { name: ERASE_CONFIRM_LABEL })).not.toBeDisabled();
     expect(screen.getByRole("button", { name: ERASE_CANCEL_LABEL })).not.toBeDisabled();
+    // The pending text that held focus is gone with the failure, so focus moves to the
+    // failure message rather than dropping to `<body>` in the still-open dialog.
+    await waitFor(() => expect(screen.getByText(ERASE_FAILED_TEXT)).toHaveFocus());
     consoleErrorSpy.mockRestore();
   });
 
