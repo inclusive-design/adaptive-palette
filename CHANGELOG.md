@@ -1,5 +1,54 @@
 # Changelog
 
+## [0.2.0](https://github.com/inclusive-design/adaptive-palette/compare/v0.1.0...v0.2.0) (2026-09-04)
+
+### Features
+
+#### Settings & Configuration
+
+* Users can now modify application settings directly from the `config.json` file ([#191](https://github.com/inclusive-design/adaptive-palette/issues/191)) ([e2fc3e7](https://github.com/inclusive-design/adaptive-palette/commit/e2fc3e744d9ba7cf190ef58b4ebde63aefecd27e)).
+* A configuration option has been added to toggle Text-to-Speech (TTS) announcements for individual symbols during input ([#185](https://github.com/inclusive-design/adaptive-palette/issues/185)) ([70c0feb](https://github.com/inclusive-design/adaptive-palette/commit/70c0feb0720151fb05ce0a0970cd04a370aafc3e)).
+
+#### AI-involved Features
+
+* A new model has been integrated to provide improved next-word suggestions during sentence construction ([#183](https://github.com/inclusive-design/adaptive-palette/issues/183)) ([d7148d0](https://github.com/inclusive-design/adaptive-palette/commit/d7148d0f333eb84fbd0561b2a8775e658e179c87)).
+* Word prediction now utilizes user history to offer more personalized and accurate suggestions ([#177](https://github.com/inclusive-design/adaptive-palette/issues/177)) ([6fe0a1c](https://github.com/inclusive-design/adaptive-palette/commit/6fe0a1c90fb7d2825c15a81c3bb78fb906f2540d)).
+* The "telegraphic translation" feature has been improved by allowing users to recall previously saved translations ([#194](https://github.com/inclusive-design/adaptive-palette/issues/194)) ([506cfd7](https://github.com/inclusive-design/adaptive-palette/commit/506cfd7bb9a0c8c852f6775dae10eef6e275829f)).
+* The process for translating a telegraphic message into a full sentence has been simplified for better usability ([#163](https://github.com/inclusive-design/adaptive-palette/issues/163)) ([fc50a91](https://github.com/inclusive-design/adaptive-palette/commit/fc50a91a19461b6bccc9ecfeb65725e6ae53cb9f)).
+* AI-suggested labels, words, and sentences are now visually distinguished from user inputs to provide clearer context ([#204](https://github.com/inclusive-design/adaptive-palette/issues/204)) ([ead7ea6](https://github.com/inclusive-design/adaptive-palette/commit/ead7ea6630c5365c805de1251c674d92bcaa5140)).
+* The AI "thinking" state is now disabled by default ([#150](https://github.com/inclusive-design/adaptive-palette/issues/150)) ([90a0b73](https://github.com/inclusive-design/adaptive-palette/commit/90a0b7364bbdda20302b5ac80fbea294835b8f06)).
+
+#### Bliss Symbol Rendering & UI
+
+* Bliss symbols are now displayed alongside English sentences to improve multimodal reading comprehension ([#202](https://github.com/inclusive-design/adaptive-palette/issues/202)) ([e4fe2d6](https://github.com/inclusive-design/adaptive-palette/commit/e4fe2d6870d91998971ce9f9af29442ac8db0a57)).
+* Symbol labels now dynamically update when a grammatical indicator is applied ([#155](https://github.com/inclusive-design/adaptive-palette/issues/155)) ([98abe67](https://github.com/inclusive-design/adaptive-palette/commit/98abe678b72e7eb99fcb610b83a1c2c04ab11755)).
+* Message-level attribute tagging is now supported to provide additional context to composed messages ([#206](https://github.com/inclusive-design/adaptive-palette/issues/206)) ([23d48aa](https://github.com/inclusive-design/adaptive-palette/commit/23d48aa0d70664a260b4273b6e39bb68dd4c5831)).
+* The "SVG builder string" and "search by vocabulary" features have been moved out of the main view and into dedicated modal dialogs for a cleaner interface ([#169](https://github.com/inclusive-design/adaptive-palette/issues/169)) ([54b2dd3](https://github.com/inclusive-design/adaptive-palette/commit/54b2dd3681da721b849dceb0c7b669da2a3fda1d)).
+* General layout changes have been implemented to improve the overall user interface ([#175](https://github.com/inclusive-design/adaptive-palette/issues/175)) ([0eef263](https://github.com/inclusive-design/adaptive-palette/commit/0eef2632747167a6ebc61ca362ba8c1cc220cdd0)).
+
+#### Data Management
+
+* A "clear all saved data" button has been added to allow users to easily reset their application state ([#181](https://github.com/inclusive-design/adaptive-palette/issues/181)) ([058a78b](https://github.com/inclusive-design/adaptive-palette/commit/058a78b0da9ee651bb57921982b3781de3f75c76)).
+
+#### Accessibility
+
+* The standard `window.confirm()` dialog has been replaced with a fully accessible modal dialog ([#195](https://github.com/inclusive-design/adaptive-palette/issues/195)) ([826d922](https://github.com/inclusive-design/adaptive-palette/commit/826d9221eeeb1bbb37cbcefb120a3fcfa578d2e7)).
+
+### Bug Fixes
+
+* Edits to the user message are now properly guarded to prevent unintended modifications ([#197](https://github.com/inclusive-design/adaptive-palette/issues/197)) ([5702b12](https://github.com/inclusive-design/adaptive-palette/commit/5702b12f01af025f7214673d9eb8b4a32e1944b9)).
+
+### Infrastructure
+
+* Local storage has been replaced with IndexedDB to handle larger data payloads and improve application performance ([#212](https://github.com/inclusive-design/adaptive-palette/issues/212)) ([44eb7bd](https://github.com/inclusive-design/adaptive-palette/commit/44eb7bdbc0196f1f694f947ca26867019611185f)).
+* The deployment process has been automated and fully implemented ([#216](https://github.com/inclusive-design/adaptive-palette/issues/216)) ([503790a](https://github.com/inclusive-design/adaptive-palette/commit/503790a2848f32e813ecf6f41d8a928ed745b116)).
+* The application dependency for BCI-AV has been updated to the newly released version ([#210](https://github.com/inclusive-design/adaptive-palette/issues/210)) ([82671bb](https://github.com/inclusive-design/adaptive-palette/commit/82671bba1ec0822fb677e0fce7eb0610b960939d)).
+* The `bliss_symbol_explanations.json` file has been updated and a new ID system has been implemented ([#126](https://github.com/inclusive-design/adaptive-palette/issues/126)) ([d973c57](https://github.com/inclusive-design/adaptive-palette/commit/d973c57d82020314b858e53a726a40b7e020302e)).
+* General codebase refactoring and restructuring has been completed to improve long-term maintainability ([#188](https://github.com/inclusive-design/adaptive-palette/issues/188)) ([99c2567](https://github.com/inclusive-design/adaptive-palette/commit/99c25674f977fee12a3c0061b63742600b752322)).
+* The automated test suite has been cleaned up and improved ([#189](https://github.com/inclusive-design/adaptive-palette/issues/189)) ([68979a2](https://github.com/inclusive-design/adaptive-palette/commit/68979a2ab0630f9cc314880798152c56937c3ca7)).
+* Documentation for label lookups has been improved, and variable names have been adjusted for better code clarity ([#165](https://github.com/inclusive-design/adaptive-palette/issues/165)) ([6bcddd9](https://github.com/inclusive-design/adaptive-palette/commit/6bcddd9f8715408efa9938833eb570b9e2186eb8)).
+* The legacy BMW palette has been safely removed from the codebase ([#145](https://github.com/inclusive-design/adaptive-palette/issues/145)) ([2511528](https://github.com/inclusive-design/adaptive-palette/commit/2511528274c1e110f393dae5f2ae6ac5f37e6e49)).
+
 ## 0.1.0 (2026-05-25)
 
 ### Features
