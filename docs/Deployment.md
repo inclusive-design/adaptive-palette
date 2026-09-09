@@ -12,9 +12,9 @@ itself.
 (`gemma4:12b`, 7.6 GB); Adaptive Palette itself is about 200 MB. You can skip the model and
 run the palette without the AI features, which needs only the 200 MB.
 
-**Computer** — Windows or macOS. The computer requirements are decided by Ollama — see Ollama's
-requirements [on Windows](https://docs.ollama.com/windows#system-requirements) and
-[on macOS](https://docs.ollama.com/macos#system-requirements).
+**Computer** — Windows or macOS. The computer requirements are decided by Ollama to support
+model execution — see Ollama's requirements [on Windows](https://docs.ollama.com/windows#system-requirements)
+and [on macOS](https://docs.ollama.com/macos#system-requirements).
 
 ## 1. Install Ollama
 
