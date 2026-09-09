@@ -13,6 +13,8 @@ Technical guide for developers building the adaptive palette.
 - [Cell Types](CellTypes.md) — every registered cell type, its options, and how to add a new one.
 - [Bliss Sentences](BlissSentences.md) — how an English sentence becomes a row of Bliss
   symbols, and the shared gloss lookup behind it.
+- [Storage](Storage.md) — the storage interface, the IndexedDB backend, and the message log cache
+  that keeps reads synchronous.
 - [Testing](Testing.md) — the browser test setup and how to run it.
 - [Packaging the Desktop Build](Deployment.md) — how the macOS and Windows bundles are built,
   how to test one, and the release checklist.
@@ -25,3 +27,5 @@ Also useful:
   [Telegraphic Message Translation](../TelegraphicMessageTranslation.md),
   [Word Prediction](../WordPrediction.md), [Message Attributes](../MessageAttributes.md),
   [Adjust Settings](../Settings.md).
+- Tooling: [Palette Generator](../PaletteJsonGenerator.md),
+  [Generating Bliss Symbol Explanations](../GenerateBlissSymbolExplanations.md).
