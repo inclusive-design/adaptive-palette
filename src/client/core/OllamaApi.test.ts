@@ -11,7 +11,7 @@
  */
 
 import { vi } from "vitest";
-import { getModelNames, pullModel, queryChat } from "./OllamaApi";
+import { getModelNames, isLocalHost, pullModel, queryChat } from "./OllamaApi";
 import ollama from "ollama/browser";
 
 // Mock the entire ollama/browser module.
@@ -50,6 +50,18 @@ describe("OllamaApi", (): void => {
   // Clear mocks before each test so they don't interfere with one another
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  describe("isLocalHost", () => {
+    test("is true for the hostnames of this computer", (): void => {
+      expect(isLocalHost("localhost")).toBe(true);
+      expect(isLocalHost("127.0.0.1")).toBe(true);
+      expect(isLocalHost("[::1]")).toBe(true);
+    });
+
+    test("is false for a public hostname", (): void => {
+      expect(isLocalHost("adaptive-palette.pages.dev")).toBe(false);
+    });
   });
 
   describe("getModelNames", () => {

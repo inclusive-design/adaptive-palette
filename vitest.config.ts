@@ -39,11 +39,15 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          name: "launcher",
-          include: ["./launcher/**/*.test.?(c|m)[jt]s"],
+          name: "node",
+          include: [
+            "./launcher/**/*.test.?(c|m)[jt]s",
+            "./scripts/**/*.test.?(c|m)[jt]s"
+          ],
           environment: "node",
-          // These bind the one fixed port the launcher is allowed to use, so two of
-          // them at once would collide.
+          // The launcher tests bind the one fixed port the launcher is allowed to use, so
+          // two of them at once would collide. This also serialises the pure-function
+          // tests in `scripts/`.
           fileParallelism: false,
         }
       }

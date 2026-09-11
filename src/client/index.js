@@ -13,7 +13,7 @@ import { render } from "preact";
 import { html } from "htm/preact";
 import { adaptivePaletteGlobals } from "./state/GlobalData";
 import { initAdaptivePaletteGlobals } from "./core/InitGlobals";
-import { NO_MODELS_MESSAGE } from "./core/OllamaApi";
+import { HOSTED_MESSAGE, NO_MODELS_MESSAGE, isLocalHost } from "./core/OllamaApi";
 import { loadPaletteFromJsonFile } from "./core/PaletteStore";
 import { announceIfEnabled, speakUnavailable } from "./utils/SpeechUtils";
 import { goBackImpl } from "./cells/CommandGoBackCell";
@@ -62,11 +62,16 @@ render(html`<${SentenceChoices} />`, getRequiredElement("sentenceChoices"));
 // Suggested next words, drawn from the messages the user has said before.
 render(html`<${PredictedWords} />`, getRequiredElement("predictedWords"));
 
-// First-run setup. It draws nothing when Ollama is running with the configured models.
-render(html`<${FirstRunSetup} />`, getRequiredElement("firstRunSetup"));
+// First-run setup. It draws nothing when Ollama is running with the configured models. It is
+// not mounted away from this computer, where Ollama cannot be installed.
+if (isLocalHost()) {
+  render(html`<${FirstRunSetup} />`, getRequiredElement("firstRunSetup"));
+}
 
 const aiStatus = getRequiredElement("aiStatus");
-if (adaptivePaletteGlobals.models.length === 0) {
+if (!isLocalHost()) {
+  aiStatus.textContent = HOSTED_MESSAGE;
+} else if (adaptivePaletteGlobals.models.length === 0) {
   aiStatus.textContent = NO_MODELS_MESSAGE;
 } else if (!adaptivePaletteGlobals.config.telegraphicTranslation) {
   aiStatus.textContent = NOT_CONFIGURED_MESSAGE;
