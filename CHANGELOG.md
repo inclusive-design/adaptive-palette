@@ -5,7 +5,7 @@
 
 ### Bug Fixes
 
-* support intel core and Apple Silicon MacOS & only run first time setup for local installations (resolves [#223](https://github.com/inclusive-design/adaptive-palette/issues/223)) ([#224](https://github.com/inclusive-design/adaptive-palette/issues/224)) ([d817b60](https://github.com/inclusive-design/adaptive-palette/commit/d817b60cba51ae726c202fa92018b000fe7f600f))
+* Support Intel and Apple Silicon Macs running macOS, and ensure first-time setup runs only for local installations (resolves [#223](https://github.com/inclusive-design/adaptive-palette/issues/223)) ([#224](https://github.com/inclusive-design/adaptive-palette/issues/224)) ([d817b60](https://github.com/inclusive-design/adaptive-palette/commit/d817b60cba51ae726c202fa92018b000fe7f600f))
 
 ## [0.2.0](https://github.com/inclusive-design/adaptive-palette/compare/v0.1.0...v0.2.0) (2026-09-04)
 
