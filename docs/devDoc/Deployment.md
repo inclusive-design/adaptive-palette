@@ -7,18 +7,23 @@ human runs before a release ships. For the tester-facing install guide, see
 ## How it is built
 
 `npm run package:desktop` builds the bundle for whichever system it runs
-on: `npm run build` produces `dist/`, then `scripts/package_desktop.js` copies the running
-Node binary and `launcher/` into a bundle, puts `dist/` beside them, and zips the result
-into `dist-desktop/`.
+on: `npm run build` produces `dist/`, then `scripts/package_desktop.js` builds a Node
+runtime and copies it with `launcher/` into a bundle, puts `dist/` beside them, and zips the
+result into `dist-desktop/`. On macOS that runtime is a universal binary downloaded from
+nodejs.org and merged with `lipo`; on Windows it is a copy of the running `node.exe`.
 
 Node's single-executable-application feature was tried first, but its embedded main script
 may only `require()` Node builtins, so `launcher/main.cjs` could not `require("./serve.cjs")`.
-Copying the Node binary in as-is and running the launcher as plain CommonJS files avoids that
-limitation, at the cost of shipping a full Node runtime instead of one file.
+Shipping a plain Node binary and running the launcher as plain CommonJS files avoids that
+limitation, at the cost of a full Node runtime instead of one file — two of them, merged, on
+macOS.
 
-- **macOS** — `Adaptive Palette.app/Contents/MacOS/` holds the copied `node` binary,
-  `launcher/`, and a two-line shell script, `adaptive-palette`, which is the bundle's
-  `CFBundleExecutable`. `dist/` sits in `Contents/Resources/`. The app is ad-hoc signed
+- **macOS** — `Adaptive Palette.app/Contents/MacOS/` holds a universal `node` binary merged
+  with `lipo`, `launcher/`, and `adaptive-palette`, the bundle's `CFBundleExecutable`. That
+  script preflights by requiring `launcher/serve.cjs` and resolving `launcher/main.cjs`, so a
+  `node` the kernel refuses to run — which would otherwise do nothing at all — shows an
+  `osascript` dialog instead; on success it `exec`s the launcher, so no shell process outlives
+  it. `dist/` sits in `Contents/Resources/`. The app is ad-hoc signed
   (`codesign --sign - --force --deep`) — not a paid certificate, which is why testers see
   the Gatekeeper warning above — and zipped with `ditto` to keep the signature intact.
 - **Windows** — `AdaptivePalette\` holds `node.exe`, `launcher\`, `dist\`, and
@@ -27,14 +32,25 @@ limitation, at the cost of shipping a full Node runtime instead of one file.
 The zips are `dist-desktop/AdaptivePalette-macos.zip` and
 `dist-desktop/AdaptivePalette-windows.zip`.
 
-Packaging on macOS refuses to run against a package-manager Node (Homebrew, MacPorts,
-...): a copy of one is linked against library paths that only exist on the machine that
-built it, so it would not run on a tester's computer. Package with an official build from
-[nodejs.org](https://nodejs.org/) — the kind `actions/setup-node` installs in CI. `nvm`
-installs those same official builds, so
-`source ~/.nvm/nvm.sh && nvm use <version> && npm run package:desktop` is enough;
-`otool -L "$(which node)"` tells you which kind you are on, an official build links only
-`/usr/lib` and `/System`.
+On macOS, the local Node is never copied into the bundle: `scripts/package_desktop.js`
+downloads both official nodejs.org builds for `process.versions.node`, caches them under
+`node_modules/.cache/adaptive-palette-node/`, and merges them with `lipo`. So the Node you
+package with only decides the **version**, not the binary — the first macOS package
+downloads roughly 110 MB, and later packages for the same version reuse the cache. The cache
+sits under `node_modules/`, so `npm ci` wipes it and the next package downloads again.
+
+The macOS version floor comes with those binaries rather than from anything here: the
+Node 26.0.0 builds CI packages with declare `minos 13.5`, which is what [Install on Your
+Computer](../Deployment.md) states. Raising `node-version` can raise that floor without
+anything failing, so check `otool -l` for `minos` after a version bump and update the
+install guide to match.
+
+The old warning about a package-manager Node still applies to **Windows**, which does copy
+`process.execPath`: `packageWindows()` bundles whatever `node.exe` is running the script, so
+package with an official build from [nodejs.org](https://nodejs.org/) — the kind
+`actions/setup-node` installs in CI — not one from a package manager. A package manager's
+Node can be linked against library paths specific to the machine that installed it, and
+would not run on a tester's computer.
 
 ### Testing a build without releasing
 
@@ -90,6 +106,10 @@ build — a clean install, not a developer's own machine with a checkout already
 6. Settings → **Erase all app data and quit**. Confirm the saved messages are gone.
 7. Delete the app.
 8. Confirm nothing the app created remains outside the deleted folder.
+
+On macOS, before step 1: `lipo -archs "Adaptive Palette.app/Contents/MacOS/node"` on the
+downloaded bundle must report both `x86_64` and `arm64`. A bundle short an architecture does
+nothing at all when double-clicked on a Mac of that kind.
 
 Steps 2, 3, 5 and 8 are the project's four release success criteria, in that order: a
 non-technical tester reaches a working palette with no terminal; a tester with no Ollama

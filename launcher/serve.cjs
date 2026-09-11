@@ -17,7 +17,9 @@
  * CommonJS because Node's single-executable-application feature runs the embedded main
  * script under CommonJS only.
  *
- * Nothing here runs on import. `main.cjs` is the entry point.
+ * Nothing here runs on import. `main.cjs` is the entry point. The macOS entry script
+ * requires this file as a launch preflight, so a top-level side effect that keeps the
+ * event loop alive would hang the app at every launch.
  *
  * The one rule this file exists to keep: it writes nothing, anywhere. No log, no cache,
  * no port file. That is what makes deleting the app a complete uninstall.

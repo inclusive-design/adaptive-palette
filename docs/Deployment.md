@@ -9,10 +9,12 @@ itself.
 ## System requirements
 
 **Disk space** — 8 GB free. Almost all of that is the AI model Ollama downloads
-(`gemma4:12b`, 7.6 GB); Adaptive Palette itself is about 200 MB. You can skip the model and
-run the palette without the AI features, which needs only the 200 MB.
+(`gemma4:12b`, 7.6 GB); Adaptive Palette itself is up to about 300 MB — macOS ships a
+universal binary covering both Mac architectures, so it is the larger of the two; Windows is
+smaller. You can skip the model and run the palette without the AI features, which needs
+only that much.
 
-**Computer** — Windows or macOS. The computer requirements are decided by Ollama to support
+**Computer** — Windows, or macOS 13.5 (Ventura) or newer. The computer requirements are decided by Ollama to support
 model execution — see Ollama's requirements [on Windows](https://docs.ollama.com/windows#system-requirements)
 and [on macOS](https://docs.ollama.com/macos#system-requirements).
 
@@ -34,6 +36,9 @@ take the newest release. Under its **Assets** section, download the zip for your
 | Windows | `AdaptivePalette-windows.zip` |
 | macOS | `AdaptivePalette-macos.zip` |
 
+One macOS download covers both Intel and Apple Silicon Macs, so there is no processor to
+choose between: take `AdaptivePalette-macos.zip` whichever Mac you have.
+
 **Windows** — open the zip and drag the **AdaptivePalette** folder to wherever you want to
 keep it, such as your Desktop. Keep the folder together: the app is the whole folder, and
 will not run out of it. Inside it, **AdaptivePalette** (the file with the two gears) is what
@@ -50,9 +55,15 @@ the first time.
 **Windows** — you will see a blue "Windows protected your PC" box. Choose **More info**,
 then **Run anyway**. You only have to do this once.
 
-**macOS** — double-clicking shows "Adaptive Palette cannot be opened because it is from an
-unidentified developer". Instead: hold Control and click the app, choose **Open** from the
-menu, then choose **Open** in the box that appears. You only have to do this once.
+**macOS** — double-clicking shows a warning that the app cannot be opened because Apple
+cannot check it for malicious software. To let it through, which you only have to do once:
+
+1. Double-click the app, then choose **Done** in the warning box.
+2. Click the Apple menu in the top left corner, and choose **System Settings**.
+3. Choose **Privacy & Security** in the side menu.
+4. Scroll down to the **Security** section.
+5. Choose **Open Anyway** next to the message about the app.
+6. Type your Mac login password and choose **OK**.
 
 ## 3. First run
 
