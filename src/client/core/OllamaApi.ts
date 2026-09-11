@@ -13,12 +13,32 @@
 import ollama, { ChatResponse, Ollama } from "ollama/browser";
 
 export const NO_MODELS_MESSAGE = "No models available. Start Ollama to enable AI features.";
+export const HOSTED_MESSAGE = "AI features are available only in the desktop version.";
+
+const LOCAL_HOSTNAMES = ["localhost", "127.0.0.1", "[::1]"];
+
+/**
+ * Whether the app is served from this computer, the only place Ollama can run.
+ *
+ * Away from these hostnames nothing may be sent to Ollama: a request from a public site to
+ * this computer makes Chrome ask the user for permission to reach local services.
+ * @param {string} hostname - The hostname to check. Defaults to the page's own.
+ * @returns {boolean}
+ */
+export function isLocalHost (hostname: string = window.location.hostname): boolean {
+  return LOCAL_HOSTNAMES.includes(hostname);
+}
 
 /**
  * Retrieve a list of models available from the service
  * @return {Promise<string[]>} - Array of the names of the available models.
  */
 export async function getModelNames(): Promise<string[]> {
+  // An empty list is how every feature already reads "no Ollama", so nothing else has to
+  // know about hosting.
+  if (!isLocalHost()) {
+    return [];
+  }
   try {
     const list = await ollama.list();
     return list.models.map((model) => model.name);
@@ -71,6 +91,11 @@ function clientFor (abortSignal?: AbortSignal): Ollama {
  *                                https://github.com/ollama/ollama-js/issues/187
  */
 export async function queryChat (query: string, modelName: string, streamResp: boolean, systemPrompt?: string, abortSignal?: AbortSignal): Promise<ChatResponse | AsyncIterable<ChatResponse>> {
+  // Indicator label lookup queries a named model without checking the model list, so the
+  // model list alone does not keep a hosted page from reaching Ollama.
+  if (!isLocalHost()) {
+    throw new Error(HOSTED_MESSAGE);
+  }
   const messageArray = [];
   if (systemPrompt && systemPrompt.length !== 0) {
     messageArray.push({
@@ -132,6 +157,9 @@ export async function pullModel (
   onProgress: (progress: PullProgressType) => void,
   abortSignal?: AbortSignal
 ): Promise<void> {
+  if (!isLocalHost()) {
+    throw new Error(HOSTED_MESSAGE);
+  }
   const client = clientFor(abortSignal);
 
   const stream = await client.pull({ model: modelName, stream: true });

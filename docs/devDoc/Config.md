@@ -13,6 +13,9 @@ the storage layer and applied over the file at start-up by `applyStoredSettings(
 which re-validates every value it reads back. See [Settings.md](../Settings.md) and
 [Storage.md](Storage.md).
 
+Away from `localhost`, `127.0.0.1` and `[::1]`, the app never contacts Ollama, so every model feature is off
+whatever this file says. See `isLocalHost()` in [`src/client/core/OllamaApi.ts`](../../src/client/core/OllamaApi.ts).
+
 | Section | Controls |
 | ------- | -------- |
 | `maxRecalledRecords` | Top-level, not a section. How many of the newest stored messages the app reads back for word prediction and sentence recall. |

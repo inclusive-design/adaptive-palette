@@ -1,6 +1,7 @@
 # Dependency directories
 node_modules
 dist
+dist-desktop
 
 # Editor directories and files
 .vscode/*

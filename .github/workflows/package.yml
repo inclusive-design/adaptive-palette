@@ -5,9 +5,6 @@ name: Package
 on:
   release:
     types: [published]
-  push:
-    branches:
-      - 'fix/deployment'
 
 permissions:
   contents: write
@@ -34,10 +31,8 @@ jobs:
         run: npm ci
       - name: Package
         run: npm run package:desktop
-      - name: Upload Artifact for Testing
-        if: github.event_name == 'push'
-        uses: actions/upload-artifact@v4
-        with:
-          name: AdaptivePalette-${{ matrix.os }}
-          path: dist-desktop/AdaptivePalette-*.zip
-          retention-days: 1
+      - name: Attach to the release
+        shell: bash
+        run: gh release upload "${{ github.event.release.tag_name }}" dist-desktop/AdaptivePalette-*.zip --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
