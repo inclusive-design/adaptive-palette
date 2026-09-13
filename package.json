@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@preact/signals": "^2.9.0",
-    "@types/node": "^22.0.0",
+    "@types/node": "^24.0.0",
     "bliss-svg-builder": "^1.0.0",
     "compromise": "^14.16.0",
     "htm": "^3.1.1",
