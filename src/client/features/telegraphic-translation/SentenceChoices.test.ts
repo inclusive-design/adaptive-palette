@@ -13,23 +13,19 @@
 import { vi } from "vitest";
 import { render, screen, cleanup, waitFor } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
-import { userEvent as browserUserEvent } from "vitest/browser";
 import { html } from "htm/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
 import { AI_BADGE_TEXT, aiSuggestionLabel } from "../../components/AiBadge";
 import { setTestConfig } from "../../testUtils/TestConfig";
-import { editMessage, setEditGuard } from "../../core/MessageEdit";
 import {
-  discardEditPromptSignal, guardEdit, IDLE_SENTENCE_STATE, READY_DISCARD_PROMPT,
-  sentenceCompletionsSignal
+  discardEditPromptSignal, focusedMessageSignal, IDLE_SENTENCE_STATE,
+  sentenceCompletionsSignal, typedSentenceSignal
 } from "./TelegraphicTranslationState";
-import { INPUT_AREA_ID } from "../../cells/ContentEncoding";
 import { readMessageLog } from "../../core/MessageLog";
 import {
   SentenceChoices, WORKING_MESSAGE, MAKING_MORE_MESSAGE, CANNOT_COMPLETE_MESSAGE,
-  TYPE_YOUR_OWN_HINT, SPEAK_BUTTON_LABEL, DONE_BUTTON_LABEL, CHANGE_ANYWAY_LABEL,
-  DISCARD_DIALOG_TITLE, KEEP_SENTENCES_LABEL
+  TYPE_YOUR_OWN_HINT, SPEAK_BUTTON_LABEL, DONE_BUTTON_LABEL
 } from "./SentenceChoices";
 import { mockedSpeak, mockedSpeakUnavailable } from "../../testUtils/SpeechUtilsMock";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
@@ -37,6 +33,9 @@ import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 vi.mock("../../utils/SpeechUtils");
 
 describe("SentenceChoices", (): void => {
+
+  const CELL_ID = "sentence-choices";
+  const CELL_OPTIONS = { rowStart: 1, rowSpan: 1, columnStart: 1, columnSpan: 1 };
 
   const SENTENCES = ["I am hungry.", "I want food.", "Can I eat now?"];
 
@@ -84,17 +83,17 @@ describe("SentenceChoices", (): void => {
     cleanup();
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
     discardEditPromptSignal.value = null;
+    typedSentenceSignal.value = "";
+    focusedMessageSignal.value = null;
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
     await resetMessageLog();
   });
 
   test("shows nothing but an empty live region when idle", (): void => {
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
-    const { container } = render(html`<${SentenceChoices} />`);
-    // The closed discard dialog is always in the markup, so what counts is that nothing
-    // is on screen: a closed <dialog> is hidden, and role queries skip hidden elements.
+    const { container } = render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+    // Nothing is on screen.
     expect(screen.queryByRole("button")).toBeNull();
-    expect(screen.queryByRole("dialog")).toBeNull();
 
     // The live region has to be in the document before the announcement arrives,
     // otherwise screen readers routinely miss it.
@@ -105,7 +104,7 @@ describe("SentenceChoices", (): void => {
 
   test("the working message lands in the live region that was already there", async (): Promise<void> => {
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
-    const { container } = render(html`<${SentenceChoices} />`);
+    const { container } = render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
     const liveRegion = container.querySelector("[role=\"status\"]");
 
     sentenceCompletionsSignal.value = {
@@ -123,7 +122,7 @@ describe("SentenceChoices", (): void => {
 
   test("the error message lands in the live region that was already there", async (): Promise<void> => {
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
-    const { container } = render(html`<${SentenceChoices} />`);
+    const { container } = render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
     const liveRegion = container.querySelector("[role=\"status\"]");
 
     sentenceCompletionsSignal.value = { ...IDLE_SENTENCE_STATE, status: "error" };
@@ -135,11 +134,22 @@ describe("SentenceChoices", (): void => {
 
   test("renders one button per sentence plus the text box", (): void => {
     sentenceCompletionsSignal.value = READY_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
     for (const sentence of SENTENCES) {
       expect(screen.getByRole("button", { name: sentence })).toBeVisible();
     }
     expect(screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT)).toBeVisible();
+  });
+
+  test("is drawn at its grid position, under its cell id", (): void => {
+    sentenceCompletionsSignal.value = READY_STATE;
+    const options = { ...CELL_OPTIONS, rowStart: 2, columnSpan: 3 };
+    const { container } = render(html`<${SentenceChoices} id=${CELL_ID} options=${options} />`);
+
+    const area = container.querySelector(".sentenceChoices") as HTMLElement;
+    expect(area.id).toBe(CELL_ID);
+    expect(area.style.gridRowStart).toBe("2");
+    expect(area.style.gridColumnEnd).toBe("span 3");
   });
 
   const withBlissSetting = (showBlissSentence: boolean): void => {
@@ -155,7 +165,7 @@ describe("SentenceChoices", (): void => {
   it("draws a Bliss row inside each sentence choice", async (): Promise<void> => {
     withBlissSetting(true);
     sentenceCompletionsSignal.value = READY_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
     const choices = await screen.findAllByRole("button", { name: SENTENCES[0] });
     expect(choices[0].querySelector(".blissSentence")).not.toBeNull();
   });
@@ -163,7 +173,7 @@ describe("SentenceChoices", (): void => {
   it("shows the English sentence once, under the symbols", async (): Promise<void> => {
     withBlissSetting(true);
     sentenceCompletionsSignal.value = READY_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
     const choice = await screen.findByRole("button", { name: SENTENCES[0] });
     // The row carries the English itself; nothing else inside the button repeats it.
     const clone = choice.cloneNode(true) as HTMLElement;
@@ -175,7 +185,7 @@ describe("SentenceChoices", (): void => {
   it("keeps the choice's accessible name the plain English sentence", async (): Promise<void> => {
     withBlissSetting(true);
     sentenceCompletionsSignal.value = READY_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
     // The row is `aria-hidden`, so none of its labels join the button's name.
     expect(await screen.findByRole("button", { name: SENTENCES[0] })).toBeDefined();
   });
@@ -183,7 +193,7 @@ describe("SentenceChoices", (): void => {
   it("draws no Bliss row when the setting is off", async (): Promise<void> => {
     withBlissSetting(false);
     sentenceCompletionsSignal.value = READY_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
     const choice = await screen.findByRole("button", { name: SENTENCES[0] });
     expect(choice.querySelector(".blissSentence")).toBeNull();
     expect(choice.getAttribute("aria-label")).toBeNull();
@@ -191,7 +201,7 @@ describe("SentenceChoices", (): void => {
 
   test("tapping a sentence logs it as chosen and keeps the choices on screen", async (): Promise<void> => {
     sentenceCompletionsSignal.value = READY_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     await userEvent.click(screen.getByRole("button", { name: SENTENCES[1] }));
 
@@ -212,7 +222,7 @@ describe("SentenceChoices", (): void => {
       status: "working", sentences: [], recalledSentence: null, model: "phony-model:12b",
       telegraphicMessage: "me hungry"
     };
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     sentenceCompletionsSignal.value = READY_STATE;
 
@@ -222,9 +232,41 @@ describe("SentenceChoices", (): void => {
     });
   });
 
+  test("typed text survives the sentence area being drawn again", async (): Promise<void> => {
+    sentenceCompletionsSignal.value = READY_STATE;
+    const { unmount } = render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+    await userEvent.type(screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT), "I would like a snack.");
+
+    unmount();
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+
+    expect(screen.getByPlaceholderText<HTMLInputElement>(TYPE_YOUR_OWN_HINT).value).toBe("I would like a snack.");
+  });
+
+  test("drawing the sentence area again does not move focus to the first sentence again", async (): Promise<void> => {
+    sentenceCompletionsSignal.value = READY_STATE;
+    const { unmount } = render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: SENTENCES[0] })).toHaveFocus();
+    });
+
+    unmount();
+    const elsewhere = document.createElement("button");
+    document.body.append(elsewhere);
+    elsewhere.focus();
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+    // Safety margin for effects that run after paint, though `render` already runs effects
+    // inside `act()`.
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    const focused = document.activeElement;
+    elsewhere.remove();
+    expect(focused).toBe(elsewhere);
+  });
+
   test("tapping the same sentence again speaks it again without a second record", async (): Promise<void> => {
     sentenceCompletionsSignal.value = READY_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     await userEvent.click(screen.getByRole("button", { name: SENTENCES[1] }));
     await userEvent.click(screen.getByRole("button", { name: SENTENCES[1] }));
@@ -237,7 +279,7 @@ describe("SentenceChoices", (): void => {
 
   test("a mis-tap is corrected by the next tap, which becomes the preference", async (): Promise<void> => {
     sentenceCompletionsSignal.value = READY_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     await userEvent.click(screen.getByRole("button", { name: SENTENCES[1] }));
     await userEvent.click(screen.getByRole("button", { name: SENTENCES[0] }));
@@ -249,7 +291,7 @@ describe("SentenceChoices", (): void => {
 
   test("typed text overrides an earlier tap for the same message", async (): Promise<void> => {
     sentenceCompletionsSignal.value = READY_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     await userEvent.click(screen.getByRole("button", { name: SENTENCES[0] }));
     await userEvent.type(
@@ -268,7 +310,7 @@ describe("SentenceChoices", (): void => {
       caretPosition: 1
     };
     sentenceCompletionsSignal.value = READY_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
     await userEvent.type(screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT), "leftover text");
 
     await userEvent.click(screen.getByRole("button", { name: DONE_BUTTON_LABEL }));
@@ -276,11 +318,12 @@ describe("SentenceChoices", (): void => {
     expect(sentenceCompletionsSignal.value).toEqual(IDLE_SENTENCE_STATE);
     expect(changeEncodingContents.value.payloads).toEqual([]);
     expect(screen.queryByRole("button", { name: SENTENCES[0] })).toBeNull();
+    expect(typedSentenceSignal.value).toBe("");
   });
 
   test("Done keeps the sentence already recorded for the message", async (): Promise<void> => {
     sentenceCompletionsSignal.value = READY_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     await userEvent.click(screen.getByRole("button", { name: SENTENCES[0] }));
     await userEvent.click(screen.getByRole("button", { name: DONE_BUTTON_LABEL }));
@@ -292,7 +335,7 @@ describe("SentenceChoices", (): void => {
 
   test("a different message keeps its own preference", async (): Promise<void> => {
     sentenceCompletionsSignal.value = READY_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
     await userEvent.click(screen.getByRole("button", { name: SENTENCES[0] }));
 
     sentenceCompletionsSignal.value = { ...READY_STATE, telegraphicMessage: "me thirsty" };
@@ -305,7 +348,7 @@ describe("SentenceChoices", (): void => {
 
   test("submitting typed text logs it as typed and keeps it in the box", async (): Promise<void> => {
     sentenceCompletionsSignal.value = READY_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     const textBox = screen.getByPlaceholderText<HTMLInputElement>(TYPE_YOUR_OWN_HINT);
     await userEvent.type(textBox, "I would like a snack.");
@@ -323,7 +366,7 @@ describe("SentenceChoices", (): void => {
 
   test("edited text can be spoken again and replaces the earlier preference", async (): Promise<void> => {
     sentenceCompletionsSignal.value = READY_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     const textBox = screen.getByPlaceholderText<HTMLInputElement>(TYPE_YOUR_OWN_HINT);
     const speakButton = screen.getByRole("button", { name: SPEAK_BUTTON_LABEL });
@@ -341,7 +384,7 @@ describe("SentenceChoices", (): void => {
 
   test("submitting an empty text box logs nothing", async (): Promise<void> => {
     sentenceCompletionsSignal.value = READY_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     await userEvent.click(screen.getByRole("button", { name: SPEAK_BUTTON_LABEL }));
 
@@ -350,7 +393,7 @@ describe("SentenceChoices", (): void => {
 
   test("the typing area is there while the first sentences are being made", (): void => {
     sentenceCompletionsSignal.value = WORKING_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     expect(screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT)).toBeVisible();
     expect(screen.getByRole("button", { name: SPEAK_BUTTON_LABEL })).toBeVisible();
@@ -359,7 +402,7 @@ describe("SentenceChoices", (): void => {
 
   test("the typing area is there after a failure", (): void => {
     sentenceCompletionsSignal.value = { ...WORKING_STATE, status: "error" };
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     expect(screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT)).toBeVisible();
     expect(screen.getByRole("button", { name: SPEAK_BUTTON_LABEL })).toBeVisible();
@@ -367,7 +410,7 @@ describe("SentenceChoices", (): void => {
 
   test("a recalled sentence being topped up says more are coming", async (): Promise<void> => {
     sentenceCompletionsSignal.value = FILLING_STATE;
-    const { container } = render(html`<${SentenceChoices} />`);
+    const { container } = render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     expect(await screen.findByText(MAKING_MORE_MESSAGE)).toBeVisible();
     expect(container.querySelector("[role=\"status\"]")?.textContent).toBe(MAKING_MORE_MESSAGE);
@@ -377,14 +420,14 @@ describe("SentenceChoices", (): void => {
 
   test("nothing on screen yet says sentences are being made", async (): Promise<void> => {
     sentenceCompletionsSignal.value = WORKING_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     expect(await screen.findByText(WORKING_MESSAGE)).toBeVisible();
   });
 
   test("the fill lands below the recalled sentence and above the typing area", async (): Promise<void> => {
     sentenceCompletionsSignal.value = FILLING_STATE;
-    const { container } = render(html`<${SentenceChoices} />`);
+    const { container } = render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     sentenceCompletionsSignal.value = { ...READY_STATE, sentences: SENTENCES };
 
@@ -394,15 +437,13 @@ describe("SentenceChoices", (): void => {
     const shown = [...container.querySelectorAll(".sentenceChoice")]
       .map((button) => button.getAttribute("aria-label"));
     expect(shown).toEqual(SENTENCES);
-    // The form is the last thing on screen, after every sentence. The closed discard
-    // dialog sits below it in the markup and shows nothing.
+    // The form is the last thing on screen, after every sentence.
     expect(container.querySelector(".sentenceChoices > form")?.className).toBe("sentenceTypeYourOwn");
-    expect(container.querySelector("form")?.nextElementSibling?.className).toBe("modalDialog");
   });
 
   test("speaking typed text while a query runs stops the query", async (): Promise<void> => {
     sentenceCompletionsSignal.value = FILLING_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     await userEvent.type(screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT), "I want a snack.");
     await userEvent.click(screen.getByRole("button", { name: SPEAK_BUTTON_LABEL }));
@@ -421,7 +462,7 @@ describe("SentenceChoices", (): void => {
 
   test("typed text with no sentences yet is recorded with the model that was asked", async (): Promise<void> => {
     sentenceCompletionsSignal.value = WORKING_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     await userEvent.type(screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT), "I want a snack.");
     await userEvent.click(screen.getByRole("button", { name: SPEAK_BUTTON_LABEL }));
@@ -434,7 +475,7 @@ describe("SentenceChoices", (): void => {
 
   test("tapping the recalled sentence while a query runs stops the query", async (): Promise<void> => {
     sentenceCompletionsSignal.value = FILLING_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     await userEvent.click(screen.getByRole("button", { name: SENTENCES[0] }));
 
@@ -444,7 +485,7 @@ describe("SentenceChoices", (): void => {
 
   test("Speak is unavailable while the box is empty", async (): Promise<void> => {
     sentenceCompletionsSignal.value = READY_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
     const speakButton = screen.getByRole("button", { name: SPEAK_BUTTON_LABEL });
 
     expect(speakButton).toHaveAttribute("aria-disabled", "true");
@@ -463,7 +504,7 @@ describe("SentenceChoices", (): void => {
 
   test("whitespace alone leaves Speak unavailable", async (): Promise<void> => {
     sentenceCompletionsSignal.value = READY_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     await userEvent.type(screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT), "   ");
 
@@ -475,7 +516,7 @@ describe("SentenceChoices", (): void => {
 
   test("pressing Speak on an empty box says it is unavailable", async (): Promise<void> => {
     sentenceCompletionsSignal.value = READY_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     await userEvent.click(screen.getByRole("button", { name: SPEAK_BUTTON_LABEL }));
 
@@ -485,7 +526,7 @@ describe("SentenceChoices", (): void => {
 
   test("an arriving fill does not pull focus back to the first sentence", async (): Promise<void> => {
     sentenceCompletionsSignal.value = FILLING_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     const firstChoice = await screen.findByRole("button", { name: SENTENCES[0] });
     await waitFor(() => {
@@ -503,7 +544,7 @@ describe("SentenceChoices", (): void => {
 
   test("sentences arriving do not interrupt someone typing", async (): Promise<void> => {
     sentenceCompletionsSignal.value = WORKING_STATE;
-    render(html`<${SentenceChoices} />`);
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     const textBox = screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT);
     await userEvent.type(textBox, "I want");
@@ -511,131 +552,6 @@ describe("SentenceChoices", (): void => {
 
     await screen.findByRole("button", { name: SENTENCES[0] });
     expect(document.activeElement).toBe(textBox);
-  });
-
-  // The dialog asking whether an edit may throw the sentence work away. It is raised by
-  // editing the message for real, since the question comes from the guard the gate consults
-  // rather than from anything in this component.
-  describe("the discard dialog", (): void => {
-
-    beforeEach((): void => {
-      setEditGuard(guardEdit);
-    });
-
-    afterEach((): void => {
-      setEditGuard(null);
-    });
-
-    const MESSAGE_CONTENTS = {
-      payloads: [
-        { label: "me", composition: [124], modifierInfo: [] },
-        { label: "hungry", composition: [125], modifierInfo: [] }
-      ],
-      caretPosition: 2
-    };
-
-    const EDITED_CONTENTS = {
-      payloads: [{ label: "later", composition: [126], modifierInfo: [] }],
-      caretPosition: 1
-    };
-
-    // The input area cell is where focus goes when the dialog closes, so it has to be in
-    // the document for these tests, as it is in the running app.
-    const renderWithInputArea = (): void => {
-      render(html`
-        <div>
-          <div id=${INPUT_AREA_ID} tabindex="0" role="textbox" aria-label="Input Area"></div>
-          <${SentenceChoices} />
-        </div>
-      `);
-    };
-
-    // Put sentences for the message on screen, then change the message.
-    const editTheMessage = async (): Promise<void> => {
-      editMessage(MESSAGE_CONTENTS);
-      sentenceCompletionsSignal.value = READY_STATE;
-      renderWithInputArea();
-      editMessage(EDITED_CONTENTS);
-      await screen.findByRole("dialog", { name: DISCARD_DIALOG_TITLE });
-    };
-
-    test("an edit that would discard the sentences asks first", async (): Promise<void> => {
-      await editTheMessage();
-
-      expect(screen.getByRole("dialog", { name: DISCARD_DIALOG_TITLE })).toBeVisible();
-      expect(screen.getByText(READY_DISCARD_PROMPT)).toBeVisible();
-    });
-
-    // The symbol-entry dialogs write the edit through the gate like everything else. It never
-    // reaches the signal while the question is up, so the message on screen is the one the
-    // user last agreed to.
-    test("the edit is held back while the question is on screen", async (): Promise<void> => {
-      await editTheMessage();
-
-      expect(changeEncodingContents.value).toEqual(MESSAGE_CONTENTS);
-    });
-
-    test("Change anyway applies the edit and drops the sentences", async (): Promise<void> => {
-      await editTheMessage();
-
-      await userEvent.click(screen.getByRole("button", { name: CHANGE_ANYWAY_LABEL }));
-
-      expect(changeEncodingContents.value).toEqual(EDITED_CONTENTS);
-      expect(sentenceCompletionsSignal.value).toEqual(IDLE_SENTENCE_STATE);
-      await waitFor(() => {
-        expect(screen.queryByRole("dialog")).toBeNull();
-      });
-    });
-
-    test("Keep sentences leaves the message as it was", async (): Promise<void> => {
-      await editTheMessage();
-
-      await userEvent.click(screen.getByRole("button", { name: KEEP_SENTENCES_LABEL }));
-
-      expect(changeEncodingContents.value).toEqual(MESSAGE_CONTENTS);
-      expect(sentenceCompletionsSignal.value).toMatchObject({ status: "ready", sentences: SENTENCES });
-    });
-
-    // `userEvent` here comes from `vitest/browser`: Escape closing a `<dialog>` is a UA
-    // default action, which only runs for trusted events.
-    test("Escape keeps the sentences, as losing them must be deliberate", async (): Promise<void> => {
-      await editTheMessage();
-
-      await browserUserEvent.keyboard("{Escape}");
-
-      await waitFor(() => {
-        expect(changeEncodingContents.value).toEqual(MESSAGE_CONTENTS);
-      });
-      expect(sentenceCompletionsSignal.value).toMatchObject({ status: "ready", sentences: SENTENCES });
-    });
-
-    // The dialog no longer blocks the page the way `window.confirm` did, so sentences can
-    // land behind the question. Keeping them is a decision to use them, so they must be
-    // reachable without re-scanning the page.
-    test("sentences arriving behind the question get focus when they are kept", async (): Promise<void> => {
-      editMessage(MESSAGE_CONTENTS);
-      sentenceCompletionsSignal.value = WORKING_STATE;
-      renderWithInputArea();
-      editMessage(EDITED_CONTENTS);
-      await screen.findByRole("dialog", { name: DISCARD_DIALOG_TITLE });
-
-      sentenceCompletionsSignal.value = READY_STATE;
-      await userEvent.click(screen.getByRole("button", { name: KEEP_SENTENCES_LABEL }));
-
-      await waitFor(() => {
-        expect(screen.getByRole("button", { name: SENTENCES[0] })).toHaveFocus();
-      });
-    });
-
-    test("closing the dialog puts focus on the input area", async (): Promise<void> => {
-      await editTheMessage();
-
-      await userEvent.click(screen.getByRole("button", { name: KEEP_SENTENCES_LABEL }));
-
-      await waitFor(() => {
-        expect(document.getElementById(INPUT_AREA_ID)).toHaveFocus();
-      });
-    });
   });
 
   describe("marking the model's sentences", (): void => {
@@ -657,7 +573,7 @@ describe("SentenceChoices", (): void => {
 
     test("marks the model's sentences and leaves the recalled one plain", (): void => {
       sentenceCompletionsSignal.value = RECALLED_STATE;
-      render(html`<${SentenceChoices} />`);
+      render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
       const [recalled, fromModel] = choiceButtons();
 
@@ -675,7 +591,7 @@ describe("SentenceChoices", (): void => {
     // Nothing was recalled, so every sentence on screen is the model's.
     test("marks every sentence when none was recalled", (): void => {
       sentenceCompletionsSignal.value = { ...RECALLED_STATE, recalledSentence: null };
-      render(html`<${SentenceChoices} />`);
+      render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
       expect(choiceButtons()).toHaveLength(SENTENCES.length);
       choiceButtons().forEach((button) => expect(button).toHaveClass("aiSuggestion"));
@@ -695,7 +611,7 @@ describe("SentenceChoices", (): void => {
         }
       });
       sentenceCompletionsSignal.value = RECALLED_STATE;
-      render(html`<${SentenceChoices} />`);
+      render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
       const [recalled, fromModel] = choiceButtons();
       expect(recalled).not.toHaveAttribute("aria-label");
@@ -705,7 +621,7 @@ describe("SentenceChoices", (): void => {
     // The name a screen reader hears carries the prefix; what is spoken and logged must not.
     test("tapping a marked sentence speaks and logs the sentence, not its name", async (): Promise<void> => {
       sentenceCompletionsSignal.value = RECALLED_STATE;
-      render(html`<${SentenceChoices} />`);
+      render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
       await userEvent.click(screen.getByRole("button", { name: aiSuggestionLabel(SENTENCES[1]) }));
 
@@ -718,7 +634,7 @@ describe("SentenceChoices", (): void => {
     test("marks nothing when the setting is off", (): void => {
       adaptivePaletteGlobals.config.markAiSuggestions = false;
       sentenceCompletionsSignal.value = RECALLED_STATE;
-      render(html`<${SentenceChoices} />`);
+      render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
       expect(document.querySelectorAll(".aiSuggestion")).toHaveLength(0);
       expect(document.querySelectorAll(".aiBadge")).toHaveLength(0);

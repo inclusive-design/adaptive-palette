@@ -86,4 +86,6 @@ anything renders. It:
 4. Fetches the Ollama model list, `public/config.json` and the indicator label lookup in parallel,
    then stores the results on `adaptivePaletteGlobals`.
 
-Only then does `index.js` load the palette file map and the fixed palettes and mount the components.
+Only then does `index.js` load the palette set the page URL names (see [Palettes](Palettes.md#choosing-a-set)),
+then the start palette with the palettes it includes. It mounts `CurrentPalette` and the discard dialog, then the
+first-run setup and the top bar.

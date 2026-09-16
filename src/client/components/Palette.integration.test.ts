@@ -329,7 +329,7 @@ describe("Palette integration", () => {
     const navStack = adaptivePaletteGlobals.navigationStack;
     navStack.currentPalette = testPalette;
     render(html`<${CurrentPalette}/>`);
-    const firstCell = await screen.findByText("First Cell");
+    await screen.findByText("First Cell");
 
     // Trigger forward navigation.
     // Note: the element whose text is "Go To" is actually a <div> within the
@@ -359,7 +359,8 @@ describe("Palette integration", () => {
 
     // Trigger go-back navigation by clicking the `goBackButon`
     fireEvent.click(goBackButton);
-    await waitFor(() => expect(firstCell).toBeInTheDocument());
+    // Going back draws "First Cell" anew: keyed by id, it is not carried over from "People".
+    expect(await screen.findByText("First Cell")).toBeInTheDocument();
     const currentPaletteAfterGoBack = navStack.currentPalette;
     if (!currentPaletteAfterGoBack) {
       throw new Error("Current palette on navStack is null after go-back navigation");
@@ -388,7 +389,8 @@ describe("Palette integration", () => {
     }
     expect(peekedPaletteAfterSecondGoForward).toBe(testPalette);
     await goBackImpl();
-    await waitFor(() => expect(firstCell).toBeInTheDocument());
+    // Going back draws "First Cell" anew: keyed by id, it is not carried over from "People".
+    expect(await screen.findByText("First Cell")).toBeInTheDocument();
     const currentPaletteAfterSecondGoBack = navStack.currentPalette;
     if (!currentPaletteAfterSecondGoBack) {
       throw new Error("Current palette on navStack is null after go-back navigation");

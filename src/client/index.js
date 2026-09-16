@@ -13,8 +13,8 @@ import { render } from "preact";
 import { html } from "htm/preact";
 import { adaptivePaletteGlobals } from "./state/GlobalData";
 import { initAdaptivePaletteGlobals } from "./core/InitGlobals";
+import { paletteSetPath } from "./core/PaletteStore";
 import { HOSTED_MESSAGE, NO_MODELS_MESSAGE, isLocalHost } from "./core/OllamaApi";
-import { loadPaletteFromJsonFile } from "./core/PaletteStore";
 import { announceIfEnabled, speakUnavailable } from "./utils/SpeechUtils";
 import { goBackImpl } from "./cells/CommandGoBackCell";
 import { INPUT_AREA_ID } from "./cells/ContentEncoding";
@@ -24,43 +24,27 @@ import "./index.scss";
 // Initialize any globals used elsewhere in the code.
 await initAdaptivePaletteGlobals("mainPaletteDisplayArea");
 
-import { PaletteStore } from "./core/PaletteStore";
-import { Palette } from "./components/Palette";
 import { CurrentPalette } from "./components/CurrentPalette";
-import { SentenceChoices } from "./features/telegraphic-translation/SentenceChoices";
-import { PredictedWords } from "./features/word-prediction/PredictedWords";
+import { DiscardEditDialog } from "./features/telegraphic-translation/DiscardEditDialog";
 import { SymbolEntryToolbar } from "./components/SymbolEntryToolbar";
 import { MessageAttributesBar } from "./features/message-attributes/MessageAttributesBar";
 import { FirstRunSetup } from "./features/setup/FirstRunSetup";
 
-const paletteFileMap = await loadPaletteFromJsonFile("/palettes/palette_file_map.json");
-const firstLayer = await loadPaletteFromJsonFile("/palettes/bliss_standard_chart.json");
-const inputArea = await loadPaletteFromJsonFile("/palettes/input_area.json");
-const commandBar = await loadPaletteFromJsonFile("/palettes/command_bar.json");
+// Each palette draws the whole screen below the top bar, so the start palette and the palettes
+// it includes are all that must load before the first render. `?set=<folder>` in the page URL
+// picks the palette set. `paletteSetPath` throws for an invalid set name; `loadPaletteSet` throws
+// when the file is missing or has a format this code does not read.
+const { paletteStore, navigationStack } = adaptivePaletteGlobals;
+const startPaletteName = await paletteStore.loadPaletteSet(paletteSetPath(window.location.search));
+const startPalette = await paletteStore.getNamedPalette(startPaletteName, true);
+if (!startPalette) { throw new Error(`Failed to load the start palette "${startPaletteName}"`); }
 
-if (!paletteFileMap) { throw new Error("Failed to load /palettes/palette_file_map.json"); }
-if (!firstLayer) { throw new Error("Failed to load /palettes/bliss_standard_chart.json"); }
-if (!inputArea) { throw new Error("Failed to load /palettes/input_area.json"); }
-if (!commandBar) { throw new Error("Failed to load /palettes/command_bar.json"); }
-
-PaletteStore.paletteFileMap = /** @type {import("./index").PaletteFileMapType} */ (/** @type {unknown} */ (paletteFileMap));
-adaptivePaletteGlobals.paletteStore.addPalette(firstLayer);
-adaptivePaletteGlobals.paletteStore.addPalette(inputArea);
-adaptivePaletteGlobals.paletteStore.addPalette(commandBar);
-
-// The input area and command bar are fixed mounts.  The main display area is mounted
-// once with the component that draws whatever palette navigation has made current.
-adaptivePaletteGlobals.navigationStack.currentPalette = firstLayer;
-render(html`<${Palette} json=${inputArea} />`, getRequiredElement("input_palette"));
-render(html`<${Palette} json=${commandBar} />`, getRequiredElement("commandBar"));
+navigationStack.currentPalette = startPalette;
 render(html`<${CurrentPalette} />`, getRequiredElement("mainPaletteDisplayArea"));
 
-// Sentence translation: the trigger button lives in the input area palette, which `Palette`
-// leaves out when no model is available, so only the status line needs wiring here.
-render(html`<${SentenceChoices} />`, getRequiredElement("sentenceChoices"));
-
-// Suggested next words, drawn from the messages the user has said before.
-render(html`<${PredictedWords} />`, getRequiredElement("predictedWords"));
+// Asks before an edit throws sentence work away. Mounted outside the palettes, so it is there on
+// every screen.
+render(html`<${DiscardEditDialog} />`, getRequiredElement("pageDialogs"));
 
 // First-run setup. It draws nothing when Ollama is running with the configured models. It is
 // not mounted away from this computer, where Ollama cannot be installed.

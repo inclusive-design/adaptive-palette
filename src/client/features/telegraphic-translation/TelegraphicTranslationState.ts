@@ -56,6 +56,18 @@ export const READY_DISCARD_PROMPT = "Changing your message will remove the sente
 export const discardEditPromptSignal = signal<string | null>(null);
 
 /**
+ * The text in the sentence area's "type yours" box. Held here rather than in the component, so
+ * a sentence area drawn again on another palette keeps it.
+ */
+export const typedSentenceSignal = signal("");
+
+/**
+ * The message whose sentences focus has already moved to, or `null`. Focus moves to the first
+ * sentence once per message; held here so a sentence area drawn again does not move it again.
+ */
+export const focusedMessageSignal = signal<string | null>(null);
+
+/**
  * The abort handle for the sentence request currently in flight, if any.
  */
 let activeSentenceAbort: AbortController | null = null;

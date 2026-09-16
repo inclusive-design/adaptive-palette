@@ -1,0 +1,43 @@
+{
+  "name": "Standard Header",
+  "cells": {
+    "input-area": {
+      "type": "PaletteInclude",
+      "options": {
+        "palette": "Input Area",
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "sentence-choices": {
+      "type": "ContentSentenceChoices",
+      "options": {
+        "rowStart": 2,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "predicted-words": {
+      "type": "ContentPredictedWords",
+      "options": {
+        "rowStart": 3,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "command-bar": {
+      "type": "PaletteInclude",
+      "options": {
+        "palette": "Command Bar",
+        "rowStart": 4,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    }
+  }
+}

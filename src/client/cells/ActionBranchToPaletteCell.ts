@@ -52,7 +52,7 @@ const navigateToPalette = async (event: Event): Promise<void> => {
   }
 
   // Push the palette the user is looking at, not the one this button happens to sit in:
-  // for cells in the main display area these are the same palette.
+  // a cell in an included palette, such as the Command Bar, sits in a different one.
   navigationStack.push(navigationStack.currentPalette);
   navigationStack.currentPalette = paletteDefinition;
 };

@@ -12,14 +12,14 @@
 
 /*
  * The message-attributes feature driven end to end over the real palette files, loaded the way
- * `index.js` loads them at start-up: `palette_file_map.json`, `command_bar.json`,
- * `input_area.json` and `attributes.json`.
+ * `index.js` loads them at start-up: `palette_set.json`, then a screen that includes the Standard
+ * Header (`input_area.json` and `command_bar.json`), and `attributes.json` on demand.
  *
  * This is what `Palette.integration.test.ts` cannot cover. That one exercises the palette
  * engine -- how cells coordinate with each other -- against a mock palette defined inline, and
  * would still pass if `attributes.json` were deleted. This one checks that the shipped data and
  * the code still agree: that the registry keys the JSON names exist, that "Msg Style" resolves
- * through the file map, that the cells land where the grid expects them, and that a selection
+ * through the palette set, that the cells land where the grid expects them, and that a selection
  * made on the palette reaches the chip bar and the model prompt.
  *
  * The chip bar is mounted here the way `index.js` mounts it -- on its own, beside the palettes
@@ -33,21 +33,20 @@ import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals } from "../../core/InitGlobals";
 import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
-import { loadPaletteFromJsonFile, PaletteStore } from "../../core/PaletteStore";
 import { setTestConfig } from "../../testUtils/TestConfig";
 import { mockedSpeak } from "../../testUtils/SpeechUtilsMock";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 import { queryChat } from "../../core/OllamaApi";
-import { Palette } from "../../components/Palette";
 import { CurrentPalette } from "../../components/CurrentPalette";
 import { DEBOUNCE_MS } from "../word-prediction/WordPredictionState";
 import {
   selectedAttributesSignal, clearAttributes
 } from "./MessageAttributesState";
 import {
-  sentenceCompletionsSignal, IDLE_SENTENCE_STATE, discardEditPromptSignal
+  sentenceCompletionsSignal, IDLE_SENTENCE_STATE, discardEditPromptSignal, typedSentenceSignal,
+  focusedMessageSignal
 } from "../telegraphic-translation/TelegraphicTranslationState";
-import { SentenceChoices } from "../telegraphic-translation/SentenceChoices";
+import { DiscardEditDialog } from "../telegraphic-translation/DiscardEditDialog";
 import { MessageAttributesBar } from "./MessageAttributesBar";
 import { JsonPaletteType } from "../../index.d";
 
@@ -64,45 +63,40 @@ describe("Message attributes: whole-feature walkthrough", (): void => {
   const rootPalette: JsonPaletteType = {
     name: "Walkthrough Root",
     cells: {
+      "standard-header": {
+        type: "PaletteInclude",
+        options: {
+          palette: "Standard Header",
+          rowStart: 1, rowSpan: 1, columnStart: 1, columnSpan: 1
+        }
+      },
       "hungry": {
         type: "ActionCodeCell",
         options: {
           label: "hungry", composition: 124,
-          rowStart: 1, rowSpan: 1, columnStart: 1, columnSpan: 1
+          rowStart: 2, rowSpan: 1, columnStart: 1, columnSpan: 1
         }
       }
     }
   };
 
-  let commandBar: JsonPaletteType;
-  let inputArea: JsonPaletteType;
-
   beforeAll(async (): Promise<void> => {
     await initAdaptivePaletteGlobals();
-    // The real app sets this from palette_file_map.json before mounting (see index.js), so
-    // "Msg Style" -> attributes.json resolves the same way it does in the running app.
-    const fileMap = await loadPaletteFromJsonFile("/palettes/palette_file_map.json");
-    if (!fileMap) {
-      throw new Error("Could not load /palettes/palette_file_map.json");
+    // As index.js does, so "Msg Style" -> attributes.json resolves the same way it does in the
+    // running app.
+    const { paletteStore } = adaptivePaletteGlobals;
+    await paletteStore.loadPaletteSet("/palette-sets/standardBlissChart/palette_set.json");
+    if (!await paletteStore.getNamedPalette("Standard Header", true)) {
+      throw new Error("Could not load the real standard_header.json");
     }
-    PaletteStore.paletteFileMap = fileMap as unknown as Record<string, string>;
-    const loadedCommandBar = await loadPaletteFromJsonFile("/palettes/command_bar.json");
-    const loadedInputArea = await loadPaletteFromJsonFile("/palettes/input_area.json");
-    if (!loadedCommandBar || !loadedInputArea) {
-      throw new Error("Could not load the real command_bar.json / input_area.json");
-    }
-    commandBar = loadedCommandBar;
-    inputArea = loadedInputArea;
   });
 
   const mount = (): void => {
     const { navigationStack, paletteStore } = adaptivePaletteGlobals;
     paletteStore.addPalette(rootPalette);
     navigationStack.flushReset(rootPalette);
-    render(html`<${Palette} json=${commandBar} />`);
-    render(html`<${Palette} json=${inputArea} />`);
     render(html`<${CurrentPalette} />`);
-    render(html`<${SentenceChoices} />`);
+    render(html`<${DiscardEditDialog} />`);
     render(html`<${MessageAttributesBar} />`);
   };
 
@@ -122,6 +116,8 @@ describe("Message attributes: whole-feature walkthrough", (): void => {
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
     discardEditPromptSignal.value = null;
+    typedSentenceSignal.value = "";
+    focusedMessageSignal.value = null;
     adaptivePaletteGlobals.models = [];
     await resetMessageLog();
   });

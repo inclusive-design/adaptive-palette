@@ -37,6 +37,9 @@ vi.mock("../../core/OllamaApi", async (importOriginal) => {
 
 describe("PredictedWords", (): void => {
 
+  const CELL_ID = "predicted-words";
+  const CELL_OPTIONS = { rowStart: 1, rowSpan: 1, columnStart: 1, columnSpan: 1 };
+
   const message = (...labels: string[]): SymbolEncodingType[] =>
     labels.map((label) => ({ label, composition: 1840, modifierInfo: [] }));
 
@@ -70,29 +73,57 @@ describe("PredictedWords", (): void => {
   });
 
   test("renders one button per suggestion", (): void => {
-    render(html`<${PredictedWords} />`);
+    render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
     const suggestions = screen.getByRole("group", { name: PREDICTED_WORDS_LABEL });
     expect(suggestions.querySelectorAll("button")).toHaveLength(2);
   });
 
   // The row is a fixed set of slots, so a word keeps its place as the message grows.
   test("draws every slot the configuration asks for, filled or not", (): void => {
-    render(html`<${PredictedWords} />`);
+    render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
     const suggestions = screen.getByRole("group", { name: PREDICTED_WORDS_LABEL });
     expect(suggestions.querySelectorAll(".predictedWord")).toHaveLength(4);
     expect(suggestions.querySelectorAll(".predictedWordEmpty")).toHaveLength(2);
   });
 
+  test("is drawn at its grid position, under its cell id", (): void => {
+    const options = { ...CELL_OPTIONS, rowStart: 3, columnSpan: 2 };
+    const { container } = render(html`<${PredictedWords} id=${CELL_ID} options=${options} />`);
+
+    const area = container.querySelector(".predictedWordsArea") as HTMLElement;
+    expect(area.id).toBe(CELL_ID);
+    expect(area.style.gridRowStart).toBe("3");
+    expect(area.style.gridColumnEnd).toBe("span 2");
+  });
+
+  test("sets the slots out in one row by default", (): void => {
+    const { container } = render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+
+    const row = container.querySelector(".predictedWords") as HTMLElement;
+    expect(row.style.gridTemplateColumns).toBe("repeat(4, 1fr)");
+  });
+
+  test("sets the slots out in the number of columns the palette asks for", (): void => {
+    const options = { ...CELL_OPTIONS, numColumns: 2 };
+    const { container } = render(html`<${PredictedWords} id=${CELL_ID} options=${options} />`);
+
+    const row = container.querySelector(".predictedWords") as HTMLElement;
+    expect(row.style.gridTemplateColumns).toBe("repeat(2, 1fr)");
+    const slots = container.querySelectorAll(".predictedWord");
+    expect(slots).toHaveLength(4);
+    expect(slots[2].getBoundingClientRect().top).toBeGreaterThan(slots[0].getBoundingClientRect().top);
+  });
+
   test("suggests what usually follows the message so far", (): void => {
     setMessage("I", "want");
-    render(html`<${PredictedWords} />`);
+    render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
     expect(screen.getByRole("group").querySelector("button")?.textContent).toContain("juice");
   });
 
   test("choosing a suggestion adds it to the message", async (): Promise<void> => {
     const user = userEvent.setup();
     setMessage("I", "want");
-    render(html`<${PredictedWords} />`);
+    render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     await user.click(screen.getByRole("group").querySelectorAll("button")[0]);
     expect(changeEncodingContents.value.payloads.map((payload) => payload.label))
@@ -102,7 +133,7 @@ describe("PredictedWords", (): void => {
 
   test("renders nothing when the feature is turned off", (): void => {
     adaptivePaletteGlobals.config.wordPrediction = { show: false, maxSuggestions: 4, ...DISABLED_MODEL_QUERY };
-    const { container } = render(html`<${PredictedWords} />`);
+    const { container } = render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
     expect(container.innerHTML).toBe("");
   });
 
@@ -110,7 +141,7 @@ describe("PredictedWords", (): void => {
   test("keeps a row of empty slots when there is nothing to suggest", async (): Promise<void> => {
     await resetMessageLog();
     setMessage("unknown");
-    render(html`<${PredictedWords} />`);
+    render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     const suggestions = screen.getByRole("group", { name: PREDICTED_WORDS_LABEL });
     expect(suggestions.querySelectorAll("button")).toHaveLength(0);
@@ -151,7 +182,7 @@ describe("PredictedWords", (): void => {
     test("model words fill the slots the history left empty", (): void => {
       setMessage("I", "want");
       showModelWords("I want", "food", "tea");
-      render(html`<${PredictedWords} />`);
+      render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
       const suggestions = screen.getByRole("group", { name: PREDICTED_WORDS_LABEL });
       const labels = [...suggestions.querySelectorAll("button")].map((button) => button.textContent);
@@ -170,7 +201,7 @@ describe("PredictedWords", (): void => {
       ];
       setMessage("I", "want");
       showModelWords(queryContextKeyOf("I want"), "food", "tea");
-      render(html`<${PredictedWords} />`);
+      render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
       const labels = [...screen.getByRole("group").querySelectorAll("button")]
         .map((button) => button.textContent);
@@ -182,7 +213,7 @@ describe("PredictedWords", (): void => {
         { category: "Feeling", label: "angry", composition: 1198 }
       ];
       setMessage("I", "want");
-      render(html`<${PredictedWords} />`);
+      render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
       modelWordsSignal.value = { status: "working", contextKey: queryContextKeyOf("I want") };
       await waitFor(() => expect(screen.getByRole("status").textContent?.trim()).toBe(QUERYING_MESSAGE));
@@ -191,7 +222,7 @@ describe("PredictedWords", (): void => {
     // Moving a button out from under someone reaching for it is worse than suggesting less.
     test("a word from the history keeps its place when the model answers", async (): Promise<void> => {
       setMessage("I", "want");
-      const { container } = render(html`<${PredictedWords} />`);
+      const { container } = render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
       const beforeModel = container.querySelector("button")?.textContent;
 
       showModelWords("I want", "food", "tea");
@@ -202,7 +233,7 @@ describe("PredictedWords", (): void => {
     test("words answering a message the user has moved past are not drawn", (): void => {
       setMessage("I", "want");
       showModelWords("you help", "food", "tea");
-      render(html`<${PredictedWords} />`);
+      render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
       const labels = [...screen.getByRole("group").querySelectorAll("button")]
         .map((button) => button.textContent);
@@ -211,7 +242,7 @@ describe("PredictedWords", (): void => {
 
     test("the wait and the arrival are both reported", async (): Promise<void> => {
       setMessage("I", "want");
-      render(html`<${PredictedWords} />`);
+      render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
       expect(screen.getByRole("status").textContent?.trim()).toBe("");
 
       modelWordsSignal.value = { status: "working", contextKey: "I want" };
@@ -227,7 +258,7 @@ describe("PredictedWords", (): void => {
     test("finishing the message keeps the words on the row", async (): Promise<void> => {
       setMessage("I", "want");
       showModelWords("I want", "food", "tea");
-      const { container } = render(html`<${PredictedWords} />`);
+      const { container } = render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
       await waitFor(() => expect(screen.getByRole("status").textContent?.trim())
         .toBe(moreSuggestionsMessage(2)));
 
@@ -242,7 +273,7 @@ describe("PredictedWords", (): void => {
     test("setting an attribute after finishing keeps the words on the row", async (): Promise<void> => {
       setMessage("I", "want");
       showModelWords("I want", "food", "tea");
-      const { container } = render(html`<${PredictedWords} />`);
+      const { container } = render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
       await waitFor(() => expect(screen.getByRole("status").textContent?.trim())
         .toBe(moreSuggestionsMessage(2)));
 
@@ -269,7 +300,7 @@ describe("PredictedWords", (): void => {
     test("deleting the whole message clears the model's suggestions", async (): Promise<void> => {
       setMessage("I", "want");
       showModelWords("I want", "food", "tea");
-      const { container } = render(html`<${PredictedWords} />`);
+      const { container } = render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
       await waitFor(() => expect(screen.getByRole("status").textContent?.trim())
         .toBe(moreSuggestionsMessage(2)));
 
@@ -285,14 +316,14 @@ describe("PredictedWords", (): void => {
     test("a query for a message the user has moved past is not reported", (): void => {
       setMessage("I", "want");
       modelWordsSignal.value = { status: "working", contextKey: "you help" };
-      render(html`<${PredictedWords} />`);
+      render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
       expect(screen.getByRole("status").textContent?.trim()).toBe("");
     });
 
     test("the status line sits above the row of words", (): void => {
       setMessage("I", "want");
-      const { container } = render(html`<${PredictedWords} />`);
+      const { container } = render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
       const status = screen.getByRole("status");
       const row = container.querySelector(".predictedWords");
@@ -304,7 +335,7 @@ describe("PredictedWords", (): void => {
     // move a word out from under a user already reaching for it.
     test("the row does not move when the status line fills", async (): Promise<void> => {
       setMessage("I", "want");
-      const { container } = render(html`<${PredictedWords} />`);
+      const { container } = render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
       const row = container.querySelector(".predictedWords") as HTMLElement;
       const topWhileEmpty = row.getBoundingClientRect().top;
 
@@ -322,7 +353,7 @@ describe("PredictedWords", (): void => {
     test("marks the model's words and leaves the history's plain", (): void => {
       setMessage("I", "want");
       showModelWords("I want", "food", "tea");
-      render(html`<${PredictedWords} />`);
+      render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
       const suggestions = screen.getByRole("group", { name: PREDICTED_WORDS_LABEL });
       const buttons = [...suggestions.querySelectorAll("button")];
@@ -341,7 +372,7 @@ describe("PredictedWords", (): void => {
       const user = userEvent.setup();
       setMessage("I", "want");
       showModelWords("I want", "food", "tea");
-      render(html`<${PredictedWords} />`);
+      render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
       await user.click(screen.getByRole("button", { name: aiSuggestionLabel("food") }));
 
@@ -353,7 +384,7 @@ describe("PredictedWords", (): void => {
       adaptivePaletteGlobals.config.markAiSuggestions = false;
       setMessage("I", "want");
       showModelWords("I want", "food", "tea");
-      render(html`<${PredictedWords} />`);
+      render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
       const suggestions = screen.getByRole("group", { name: PREDICTED_WORDS_LABEL });
       expect(suggestions.querySelectorAll(".aiSuggestion")).toHaveLength(0);

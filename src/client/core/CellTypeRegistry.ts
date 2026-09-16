@@ -32,6 +32,8 @@ import { CommandGoBackCell } from "../cells/CommandGoBackCell";
 import { CommandGoToRootCell } from "../cells/CommandGoToRootCell";
 import { ActionAttributeCell } from "../features/message-attributes/ActionAttributeCell";
 import { CommandMakeSentence } from "../features/telegraphic-translation/CommandMakeSentence";
+import { SentenceChoices } from "../features/telegraphic-translation/SentenceChoices";
+import { PredictedWords } from "../features/word-prediction/PredictedWords";
 import { ContentEncoding } from "../cells/ContentEncoding";
 import { ContentLabel } from "../cells/ContentLabel";
 
@@ -55,4 +57,6 @@ export const cellTypeRegistry = {
   "CommandMakeSentence": CommandMakeSentence,
   "ContentEncoding": ContentEncoding,
   "ContentLabel": ContentLabel,
+  "ContentPredictedWords": PredictedWords,
+  "ContentSentenceChoices": SentenceChoices,
 };

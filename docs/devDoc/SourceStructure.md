@@ -9,7 +9,8 @@ launcher/         — The desktop launcher: a static server for `dist/` and the 
                     around it. CommonJS, because Node's single-executable feature runs
                     only CommonJS. Not part of the app and never imported by it.
 src/client/
-  index.js          Entry point: initializes globals, then mounts the fixed components
+  index.js          Entry point: initializes globals, loads the palette set, then mounts the current palette,
+                    dialogs and top bar
   index.d.ts        Shared types, including the palette JSON shapes
   index.scss        Global styles
   cells/            Components registered in the cell type registry

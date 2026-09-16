@@ -22,7 +22,8 @@ import { insertWordAtCaret } from "../../utils/SymbolEncodingUtils";
 import { announceIfEnabled } from "../../utils/SpeechUtils";
 import { predictNext } from "./WordPredictionUtils";
 import { messageUpToCaret, queryContextKeyOf, modelWordsSignal } from "./WordPredictionState";
-import { SymbolEncodingType } from "../../index.d";
+import { ContentPredictedWordsType, SymbolEncodingType } from "../../index.d";
+import { generateGridStyle } from "../../utils/GridUtils";
 import "./PredictedWords.scss";
 
 export const PREDICTED_WORDS_LABEL = "Suggested next words";
@@ -41,8 +42,14 @@ export function moreSuggestionsMessage (count: number): string {
   return `${count} more word suggestion${count === 1 ? "" : "s"}`;
 }
 
+type PredictedWordsPropsType = {
+  id: string,
+  options: ContentPredictedWordsType
+};
+
 /**
- * The row of suggested next words, each shown as a Bliss symbol with its label.
+ * The suggested next words, the `ContentPredictedWords` cell. Each word is shown as a Bliss
+ * symbol with its label, in `numColumns` columns: one row when the palette does not say.
  *
  * The suggestions are recomputed whenever the message changes, from the words the user has
  * used after the same words before. Choosing one adds it to the message exactly as choosing
@@ -53,11 +60,13 @@ export function moreSuggestionsMessage (count: number): string {
  *
  * The row keeps its place whenever the feature is on, even with nothing to suggest: a row
  * that appears and disappears would shift everything below it mid-composition.
+ * @param {PredictedWordsPropsType} props - The cell id and its options.
  * @returns {VNode | null}
  */
-export function PredictedWords (): VNode | null {
+export function PredictedWords (props: PredictedWordsPropsType): VNode | null {
   const { payloads, caretPosition } = changeEncodingContents.value;
   const { show, maxSuggestions } = adaptivePaletteGlobals.config.wordPrediction;
+  const { columnStart, columnSpan, rowStart, rowSpan, numColumns } = props.options;
   const markAiSuggestions = adaptivePaletteGlobals.config.markAiSuggestions;
   const modelWords = modelWordsSignal.value;
 
@@ -125,13 +134,16 @@ export function PredictedWords (): VNode | null {
       : modelSuggestions.length > 0 ? moreSuggestionsMessage(modelSuggestions.length) : "";
 
   return html`
-    <div class="predictedWordsArea">
+    <div
+      id="${props.id}"
+      class="predictedWordsArea"
+      style="${generateGridStyle(columnStart, columnSpan, rowStart, rowSpan)}">
       <p class="statusMessage" role="status">${statusText}</p>
       <div
         class="predictedWords"
         role="group"
         aria-label=${PREDICTED_WORDS_LABEL}
-        style="grid-template-columns: repeat(${maxSuggestions}, 1fr);">
+        style="grid-template-columns: repeat(${numColumns ?? maxSuggestions}, 1fr);">
         ${cells}
       </div>
     </div>

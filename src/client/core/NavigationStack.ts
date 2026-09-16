@@ -36,8 +36,8 @@ export class NavigationStack {
   }
 
   /**
-   * Publish the current stack size so cells rendered outside the palette grid, such as
-   * the `Back` and `Home` buttons, re-render when navigation happens.
+   * Publish the current stack size so cells that stay mounted across navigation, such as
+   * the `Back` and `Home` buttons in the Standard Header, re-render when navigation happens.
    */
   syncDepth (): void {
     this.depthSignal.value = this.navigateBackStack.length;

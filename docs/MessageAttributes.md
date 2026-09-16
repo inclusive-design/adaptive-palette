@@ -68,13 +68,13 @@ the line from a prompt stops the attributes reaching that feature and breaks not
 Without Ollama running, neither feature queries a model — word prediction falls back to message
 history alone and the Sentence button is hidden — so the attributes have nothing to reach. **Msg
 Style** is hidden as well: `"requiresModel": true` on its cell in
-`public/palettes/command_bar.json` tells [`Palette.ts`](devDoc/Palettes.md) to leave the cell out
-and to close the command bar up over its column. The rest of the feature is untouched, so
-restoring a model brings the button back with no other change.
+`public/palette-sets/standardBlissChart/palettes/command_bar.json` tells [`Palette.ts`](devDoc/Palettes.md)
+to leave the cell out and to close the command bar up over its column. The rest of the feature is
+untouched, so restoring a model brings the button back with no other change.
 
 ## Adding an attribute
 
-Edit `public/palettes/attributes.json`. Add a cell of type
+Edit `public/palette-sets/standardBlissChart/palettes/attributes.json`. Add a cell of type
 [`ActionAttributeCell`](devDoc/CellTypes.md) with a `label`, a `category` matching its row
 heading, and a `composition` — that symbol's `id` field from
 `public/data/bliss_symbol_explanations.json`. See [Palettes.md](devDoc/Palettes.md) for the

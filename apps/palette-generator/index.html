@@ -12,12 +12,17 @@
     <fieldset>
       <legend>Settings</legend>
       <p>
+        Note: every generated palette uses the "Standard Header" palette as its header. The header
+        fills row 1 and comes from the palette set named by <code>?set=</code> in the page URL
+        (default: standardBlissChart). Generated cells start at row 2.
+      </p>
+      <p>
         <label for="paletteName">Palette name:</label><br>
         <input type="text" id="paletteName" value="palette">
       </p>
       <p>
-        <label for="rowStart">Starting row (>=1):</label><br>
-        <input type="number" id="rowStart" min="1" max="100" value="1">
+        <label for="rowStart">Starting row (>=2, row 1 is the header):</label><br>
+        <input type="number" id="rowStart" min="2" max="100" value="2">
       </p>
       <p>
         <label for="colStart">Starting column (>=1):</label><br>

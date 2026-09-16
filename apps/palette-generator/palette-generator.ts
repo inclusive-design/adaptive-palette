@@ -13,12 +13,12 @@
 import { render } from "preact";
 import { html } from "htm/preact";
 import { Palette } from "../../src/client/components/Palette";
-import { BlissSymbol } from "../../src/client/components/BlissSymbol";
-import { processPaletteLabels, fetchBlissGlossJson } from "./paletteJsonGenerator";
+import { processPaletteLabels, fetchBlissGlossJson, STANDARD_HEADER_PALETTE } from "./paletteJsonGenerator";
 import "../../src/client/index.scss";
 import { adaptivePaletteGlobals } from "../../src/client/state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../../src/client/core/InitGlobals";
 import { cellTypeRegistry } from "../../src/client/core/CellTypeRegistry";
+import { PALETTE_INCLUDE_TYPE, paletteSetPath } from "../../src/client/core/PaletteStore";
 import { JsonPaletteType } from "../../src/client/index.d";
 
 type MatchInfo = {
@@ -33,6 +33,11 @@ type MatchByInfo = { [label: string]: MatchInfo[] };
 // Initialize any globals used elsewhere in the code.
 await initAdaptivePaletteGlobals("paletteDisplay");
 await fetchBlissGlossJson();
+// Generated palettes include the Standard Header, so it and the palettes it includes are loaded from
+// the palette set that `?set=` in the page URL names. As in the main app, a bad set name or a missing
+// `palette_set.json` throws.
+await adaptivePaletteGlobals.paletteStore.loadPaletteSet(paletteSetPath(window.location.search));
+await adaptivePaletteGlobals.paletteStore.getNamedPalette(STANDARD_HEADER_PALETTE, true);
 let currentPaletteName = "";
 
 const MAX_MATCHES_OUTPUT = 7;
@@ -44,9 +49,8 @@ const MAX_MATCHES_OUTPUT = 7;
 function initCellTypesSelect () {
   const cellTypesSelect = document.getElementById("cellTypes") as HTMLSelectElement;
   Object.keys(cellTypeRegistry).forEach ((cellType) => {
-    // The "cell" type `ContentEncoding` is for an array of symbols within
-    // a content area, not for cells within a palette.  Avoid for now.
-    if (cellType !== "ContentEncoding") {
+    // Content areas are not symbol cells, so they are not offered.
+    if (!["ContentEncoding", "ContentPredictedWords", "ContentSentenceChoices"].includes(cellType)) {
       cellTypesSelect.add(new Option(cellType));
     }
   });
@@ -59,71 +63,6 @@ function initCellTypesSelect () {
 }
 
 /**
- * Render the inline Blissymbol examples
- */
-function renderExamples() {
-  // Slash example
-  render(html`
-    <${BlissSymbol}
-      composition=${[ 122, "/", 1056 ]}
-      label="slash - half space between symbols (raccoon)"
-      isPresentation=false
-      labelledBy="slashExampleLabel"
-    />
-    `, document.getElementById("slashExample"));
-
-  // Double slash example
-  render(html`
-    <${BlissSymbol}
-      composition=${[ 122, "//", 1056 ]}
-      label="double slash - full space between symbols (raccoon)"
-      isPresentation=false
-      labelledBy="doubleSlashExampleLabel"
-    />
-    `, document.getElementById("doubleSlashExample"));
-
-  // Semi-colon example
-  render(html`
-    <${BlissSymbol}
-      composition=${[ 122, ";", 99, "/", 1056 ]}
-      label="semi-colon - superimpose plural indicator symbol (raccoons)"
-      isPresentation=false
-      labelledBy="semicolonExampleLabel"
-    />
-  `, document.getElementById("semicolonExample"));
-
-  // Double semi-colon example
-  render(html`
-    <${BlissSymbol}
-      composition=${[ 122, "/", 1056, ";;", 99 ]}
-      label="double semi-colon - superimpose plural indicator symbol (raccoons)"
-      isPresentation=false
-      labelledBy="doubleSemicolonExampleLabel"
-    />
-  `, document.getElementById("doubleSemicolonExample"));
-
-  // Kerning example (relative kerning)
-  render(html`
-    <${BlissSymbol}
-      composition=${[ 313, "/", "RK:-2", "/", 516 ]}
-      label="kerning - quarter space between symbols (pain)"
-      isPresentation=false
-      labelledBy="kerningExampleLabel"
-    />
-  `, document.getElementById("kerningExample"));
-
-  // X example
-  render(html`
-    <${BlissSymbol}
-      composition=${[ "XH", "/", "Xo", "/", "Xl", "/", "Xl", "/", "Xi", "/", "Xs" ]}
-      label="'X' for letters - (Hollis)"
-      isPresentation=false
-      labelledBy="XExampleLabel"
-    />
-  `, document.getElementById("XExample"));
-}
-
-/**
  * Given a new cell type, change all of the palette's cells to that type, and
  * re-render the palette.
  * @param {Palette} palette - the palette in question.
@@ -133,7 +72,10 @@ function renderExamples() {
 function updatePaletteCells (palette: JsonPaletteType, cellType: string) {
   if (palette && cellType) {
     Object.keys(palette.cells).forEach((id) => {
-      palette.cells[id].type = cellType;
+      // The header include is not a symbol cell.
+      if (palette.cells[id].type !== PALETTE_INCLUDE_TYPE) {
+        palette.cells[id].type = cellType;
+      }
     });
     render(html`<${Palette} json=${palette} />`, paletteDisplay);
   }
@@ -345,4 +287,3 @@ document.getElementById("clearPaletteDisplay").addEventListener("click", clearPa
 document.getElementById("savePalette").addEventListener("click", () => { void savePalette(); });
 
 initCellTypesSelect();
-renderExamples();

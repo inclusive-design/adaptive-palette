@@ -4,7 +4,8 @@
 
 The Palette Generator is a web-based tool in `apps/palette-generator/` for creating custom Bliss symbol palette
 JSON files. Users specify which symbols to include, configure the layout, preview the result, and export it as a
-JSON file ready to place in `public/palettes/`.
+JSON file ready to place in a palette set's `palettes/` folder and list in its `palette_set.json`. See
+[Palette sets](devDoc/Palettes.md#palette-sets).
 
 ## Launch
 
@@ -22,7 +23,9 @@ The **Settings** fieldset at the top of the page controls palette-level options.
 
 - **Palette name** — any printable characters including spaces; used as the exported filename
   (`<palette-name>.json`).
-- **Starting row / Starting column** — the grid position of the first cell (default: row 1, column 1).
+- **Starting row / Starting column** — the grid position of the first cell (default: row 2, column 1). Row 1 holds
+  the Standard Header include the generator adds to every palette, so a starting row of 1 is moved to 2. The preview
+  draws the Standard Header from the palette set named by `?set=` in the page URL (default: `standardBlissChart`).
 - **Type of cell** — the cell component type applied to every cell in the palette; all cells share one type.
 
 ## Search for Matches

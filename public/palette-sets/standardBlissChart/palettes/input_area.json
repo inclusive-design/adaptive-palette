@@ -1,0 +1,62 @@
+{
+  "name": "Input Area",
+  "cells": {
+    "command-go-back": {
+      "type": "CommandGoBackCell",
+      "options": {
+        "label": "Back",
+        "composition": [145, ";", 907],
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 1,
+        "columnSpan": 1
+      }
+    },
+    "command-go-to-root": {
+      "type": "CommandGoToRootCell",
+      "options": {
+        "label": "Home",
+        "composition": 392,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 2,
+        "columnSpan": 1
+      }
+    },
+    "content-encoding-area": {
+      "type": "ContentEncoding",
+      "options": {
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 3,
+        "columnSpan": 11
+      }
+    },
+    "command-make-sentence": {
+      "type": "CommandMakeSentence",
+      "options": {
+        "label": "Make Sentences",
+        "composition": [1968, "//", 2351, ";;", 99],
+        "requiresModel": true,
+        "requiresConfig": "telegraphicTranslation",
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 14,
+        "columnSpan": 1,
+        "ariaControls": "sentence-choices"
+      }
+    },
+    "action-speak": {
+      "type": "ActionSpeakCell",
+      "options": {
+        "label": "Speak",
+        "composition": 2325,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 15,
+        "columnSpan": 1,
+        "ariaControls": "content-encoding-area"
+      }
+    }
+  }
+}

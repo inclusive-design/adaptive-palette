@@ -22,10 +22,10 @@ import type { MessageAttributeType } from "../../index.d";
 
 /**
  * The order the categories are reported to the model in. It matches the row order of
- * `public/palettes/attributes.json`, so the prompt reads the way the palette looks. A category
- * not listed here is still reported, after these, in the order it was selected — but only these
- * four are placed to match the palette; adding a palette row in a new category means adding it
- * here too if it should be reported in position.
+ * `public/palette-sets/standardBlissChart/palettes/attributes.json`, so the prompt reads the way
+ * the palette looks. A category not listed here is still reported, after these, in the order it
+ * was selected — but only these four are placed to match the palette; adding a palette row in a
+ * new category means adding it here too if it should be reported in position.
  */
 const CATEGORY_ORDER = ["Intent", "Tone", "Feeling", "Priority"];
 

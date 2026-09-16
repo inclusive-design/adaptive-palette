@@ -12,11 +12,16 @@
 import { v4 as uuidv4 } from "uuid";
 import { findSymbolByBciAvId } from "../../src/client/utils/SvgUtils";
 import { SymbolCompositionType, BlissSymbolEntry, JsonPaletteType } from "../../src/client/index.d";
+import { PALETTE_INCLUDE_TYPE } from "../../src/client/core/PaletteStore";
 
 const BLANK_CELL = "BLANK";
 const SVG_PREFIX = "SVG:";
 const SVG_SUFFIX = ":SVG";
 const LABEL_PATTERN = /LABEL:(.+?):LABEL/;
+// Every screen palette starts with the Standard Header in row 1, so generated cells start below it.
+export const STANDARD_HEADER_PALETTE = "Standard Header";
+const STANDARD_HEADER_ID = "standard-header";
+const FIRST_CELL_ROW = 2;
 
 type MatchInfo = {
   id: number,
@@ -158,6 +163,8 @@ function findByBciAvId (bciAvId: string, blissSymbolEntries: BlissSymbolEntry[])
  * placed at `(startRow, startColumn)`.  The column index is advanced by one
  * for every other label in that array.  The row index is advance by one for
  * every array of labels in the input.
+ * The palette gets a "Standard Header" include as its first cell, in row 1 across every column,
+ * so a `startRow` below 2 is moved to 2.
  *
  * Matches against the gloss are found by two criteria:  either an exact match
  * to the label or a partial match where the match is a "word" in the gloss.
@@ -209,9 +216,10 @@ export function processPaletteLabels (
   const matchByInfoArray: MatchByInfo[] = [];
   const errors: string[] = [];
 
+  const firstRow = Math.max(startRow, FIRST_CELL_ROW);
   paletteLabels.forEach((row, rowIndex) => {
     row.forEach((infoString, colIndex) => {
-      const current_row = startRow + rowIndex;
+      const current_row = firstRow + rowIndex;
       const current_column = startColumn + colIndex;
 
       // Handle empty cells by advancing to the next item
@@ -289,5 +297,15 @@ export function processPaletteLabels (
       finalJson.cells[`${infoString}-${uuidv4()}`] = cell;
     });
   });
+  // First in `cells`, so navigating between palettes keeps the header's elements.
+  const numColumns = Math.max(1, ...Object.values(finalJson.cells)
+    .map(({ options }) => options.columnStart + options.columnSpan - 1));
+  finalJson.cells = {
+    [STANDARD_HEADER_ID]: {
+      type: PALETTE_INCLUDE_TYPE,
+      options: { palette: STANDARD_HEADER_PALETTE, rowStart: 1, rowSpan: 1, columnStart: 1, columnSpan: numColumns }
+    },
+    ...finalJson.cells
+  };
   return { paletteJson: finalJson, matches: matchByInfoArray, errors: errors };
 }
