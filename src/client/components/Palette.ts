@@ -12,13 +12,25 @@
 
 import { VNode } from "preact";
 import { html } from "htm/preact";
-import { JsonPaletteType, LayoutInfoType } from "../index.d";
+import { JsonPaletteType, LayoutInfoType, PaletteIncludeType } from "../index.d";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { cellTypeRegistry } from "../core/CellTypeRegistry";
+import { PALETTE_INCLUDE_TYPE, PaletteStore } from "../core/PaletteStore";
+import { generateGridStyle } from "../utils/GridUtils";
 import "./Palette.scss";
 
 type PalettePropsType = {
-  json: JsonPaletteType
+  json: JsonPaletteType,
+  // The chain of nested palettes: starting from the outermost then move inwards.
+  includeChain?: JsonPaletteType[]
+};
+
+type PaletteCellsType = {
+  cells: VNode[],
+  // The columns a drawn cell occupies.
+  renderedColumns: Set<number>,
+  // The columns an unavailable cell would have occupied.
+  skippedColumns: Set<number>
 };
 
 /**
@@ -93,37 +105,82 @@ function isAvailable (options: LayoutInfoType): boolean {
   return hasModel && isConfigured;
 }
 
-export function Palette (props: PalettePropsType): VNode {
-
-  const { paletteStore } = adaptivePaletteGlobals;
-  const paletteDefinition = props.json;
-  const rowsCols = countRowsColumns(paletteDefinition);
-  const cellIds = Object.keys(paletteDefinition.cells);
-
-  // Loop to create an array of renderings for each cell.  A cell whose feature is unavailable
-  // -- no model, or no configuration for it -- is left out.
-  const theCells: VNode[] = [];
-  const skippedColumns = new Set<number>();
-  const renderedColumns = new Set<number>();
-  cellIds.forEach((id) => {
+/**
+ * Render a palette's cells, and report the columns they occupy.  A cell whose feature is
+ * unavailable -- no model, or no configuration for it -- is left out.  Each cell is keyed by its
+ * id, so a cell with the same id on the next palette keeps its element.
+ *
+ * @param {JsonPaletteType} paletteDefinition - The palette whose cells to render.
+ * @param {JsonPaletteType[]} includeChain - The palettes this one is drawn inside.
+ * @return {PaletteCellsType} - The cells, and the columns rendered and skipped.
+ */
+function renderCells (paletteDefinition: JsonPaletteType, includeChain: JsonPaletteType[]): PaletteCellsType {
+  const result: PaletteCellsType = { cells: [], renderedColumns: new Set(), skippedColumns: new Set() };
+  Object.keys(paletteDefinition.cells).forEach((id) => {
     const aCell = paletteDefinition.cells[id];
     const cellOptions = aCell.options;
     if (!isAvailable(cellOptions)) {
-      columnsOf(cellOptions).forEach((column) => skippedColumns.add(column));
+      columnsOf(cellOptions).forEach((column) => result.skippedColumns.add(column));
       return;
     }
-    columnsOf(cellOptions).forEach((column) => renderedColumns.add(column));
+    if (aCell.type === PALETTE_INCLUDE_TYPE) {
+      const include = renderInclude(id, cellOptions as PaletteIncludeType, [...includeChain, paletteDefinition]);
+      if (include) {
+        columnsOf(cellOptions).forEach((column) => result.renderedColumns.add(column));
+        result.cells.push(include);
+      }
+      return;
+    }
+    columnsOf(cellOptions).forEach((column) => result.renderedColumns.add(column));
     const cellComponent = cellTypeRegistry[aCell.type as keyof typeof cellTypeRegistry];
     if (!cellComponent) {
       console.error(`Error at rendering the cell type "${aCell.type}". Fix it by defining the render component for this cell type at CellTypeRegistry.ts -> cellTypeRegistry.`);
     } else {
-      const paletteCell = html`
-        <${cellComponent} id="${id}" options=${cellOptions} />
-      `;
-      theCells.push(paletteCell);
+      result.cells.push(html`
+        <${cellComponent} key=${id} id="${id}" options=${cellOptions} />
+      `);
     }
   });
-  paletteStore.addPalette(paletteDefinition);
+  return result;
+}
+
+/**
+ * Render a `PaletteInclude` cell: the included palette is drawn inside the span, with rows and
+ * columns of its own.  Nothing is rendered, and an error is logged, when the included palette is
+ * not loaded or would be drawn inside itself.
+ *
+ * @param {string} id - The include cell's id.
+ * @param {PaletteIncludeType} options - The include cell's options.
+ * @param {JsonPaletteType[]} includeChain - The palettes the included one is drawn inside, ending
+ *                                          with the palette that holds this cell.
+ * @return {VNode | null} - The include cell, or `null` when it cannot be drawn.
+ */
+function renderInclude (id: string, options: PaletteIncludeType, includeChain: JsonPaletteType[]): VNode | null {
+  const included = PaletteStore.paletteMap[options.palette];
+  if (!included) {
+    console.error(`PaletteInclude "${id}": palette "${options.palette}" is not loaded.`);
+    return null;
+  }
+  // The palettes are compared by reference: a palette may be stored under a key that differs
+  // from its `name`, so matching on either one would miss a cycle.
+  if (includeChain.includes(included)) {
+    const chainNames = includeChain.map((palette) => palette.name).join(" > ");
+    console.error(`PaletteInclude "${id}": "${options.palette}" would be drawn inside itself (${chainNames}).`);
+    return null;
+  }
+  const gridStyle = generateGridStyle(options.columnStart, options.columnSpan, options.rowStart, options.rowSpan);
+  return html`
+    <div key=${id} class="paletteInclude" style="${gridStyle}">
+      <${Palette} json=${included} includeChain=${includeChain} />
+    </div>
+  `;
+}
+
+export function Palette (props: PalettePropsType): VNode {
+
+  const paletteDefinition = props.json;
+  const rowsCols = countRowsColumns(paletteDefinition);
+  const { cells, renderedColumns, skippedColumns } = renderCells(paletteDefinition, props.includeChain ?? []);
 
   const emptyColumns = new Set(
     [...skippedColumns].filter((column) => !renderedColumns.has(column))
@@ -134,7 +191,7 @@ export function Palette (props: PalettePropsType): VNode {
       data-palettename="${paletteDefinition.name}"
       class="paletteContainer"
       style="grid-template-columns: ${gridTemplateColumns(rowsCols.numColumns, emptyColumns)};">
-        ${theCells}
+        ${cells}
     </div>
   `;
 }

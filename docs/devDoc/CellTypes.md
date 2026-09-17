@@ -9,7 +9,7 @@ three categories by prefix.
 | Type | Purpose | Key options beyond layout |
 | ---- | ------- | ------------------------- |
 | `ActionCodeCell` | Appends a Bliss symbol to the encoding area when clicked | `label`, `composition` |
-| `ActionBranchToPaletteCell` | Navigates to another palette | `label`, `composition`, `branchTo` (the palette's key in [`palette_file_map.json`](../../public/palettes/palette_file_map.json)) |
+| `ActionBranchToPaletteCell` | Navigates to another palette | `label`, `composition`, `branchTo` (the palette's name in [`palette_set.json`](../../public/palette-sets/standardBlissChart/palette_set.json)) |
 | `ActionIndicatorCell` | Applies a Bliss indicator to the last symbol in the encoding area | `label`, `composition` |
 | `ActionPreModifierCell` | Prepends a modifier to the last symbol | `label`, `composition` |
 | `ActionPostModifierCell` | Appends a modifier to the last symbol | `label`, `composition` |
@@ -37,6 +37,17 @@ three categories by prefix.
 | ---- | ------- | ------------------------- |
 | `ContentEncoding` | Displays the current encoding (the input area showing selected symbols) | layout fields only |
 | `ContentLabel` | Text in a grid slot, with no interaction; `aria-hidden`, so use it only where the cells it heads already name themselves. See [Message Attributes](../MessageAttributes.md) | `label` |
+| `ContentPredictedWords` | The suggested next words: a status line and `maxSuggestions` slots (a user setting) | `numColumns` (optional; default `maxSuggestions`, one row) |
+| `ContentSentenceChoices` | The sentence area: a status line, the sentences `CommandMakeSentence` made, and the "type yours" box. Its cell id becomes its element id; point `CommandMakeSentence`'s `ariaControls` at it | layout fields only |
+
+## `PaletteInclude` — another palette in a span
+
+Not in `cellTypeRegistry`: `components/Palette.ts` draws it, because the registry importing `Palette` would make an
+import cycle. See [Including a palette](Palettes.md#including-a-palette).
+
+| Option | Description |
+| ------ | ----------- |
+| `palette` | The name of the palette to draw |
 
 ## Adding a new cell type
 

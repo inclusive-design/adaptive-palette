@@ -50,7 +50,7 @@ describe("CommandMakeSentence", (): void => {
     rowSpan: 1,
     columnStart: 1,
     columnSpan: 14,
-    ariaControls: "sentenceChoices"
+    ariaControls: "sentence-choices"
   };
 
   const INPUT_CONTENTS = {

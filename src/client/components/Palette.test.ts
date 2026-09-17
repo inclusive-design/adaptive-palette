@@ -10,6 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+import { vi } from "vitest";
 import { render, screen } from "@testing-library/preact";
 import { html } from "htm/preact";
 
@@ -168,6 +169,145 @@ describe("Palette", (): void => {
 
       expect(screen.queryByText("Feature Cell")).toBeNull();
       expect(gridColumns(container)).toBe("1fr 0fr 1fr");
+    });
+  });
+
+  describe("a PaletteInclude cell", (): void => {
+
+    const symbolCell = (label: string, rowStart: number, columnStart: number): object => ({
+      type: "ActionCodeCell",
+      options: { label, composition: 823, rowStart, rowSpan: 1, columnStart, columnSpan: 1 }
+    });
+
+    const includeCell = (options: object): object => ({
+      type: "PaletteInclude",
+      options: { rowStart: 1, rowSpan: 1, columnStart: 1, columnSpan: 1, ...options }
+    });
+
+    // Two symbols side by side.
+    const pair = {
+      name: "Pair",
+      cells: { "left": symbolCell("Left", 1, 1), "right": symbolCell("Right", 1, 2) }
+    };
+
+    const outerColumns = (container: Element): string => {
+      const paletteElement = container.querySelector("div.paletteContainer") as HTMLElement;
+      return paletteElement.style["grid-template-columns" as keyof typeof paletteElement.style] as string;
+    };
+
+    const buttonFor = (label: string): HTMLElement => screen.getByText(label).closest("button") as HTMLElement;
+
+    beforeEach((): void => {
+      adaptivePaletteGlobals.paletteStore.addPalette(pair as JsonPaletteType);
+    });
+
+    afterEach((): void => {
+      vi.restoreAllMocks();
+    });
+
+    test("nested: the included palette is drawn inside the span, with its own columns", async (): Promise<void> => {
+      const screenPalette = {
+        name: "Screen",
+        cells: {
+          "pair": includeCell({ palette: "Pair", columnSpan: 3 }),
+          "below": symbolCell("Below", 2, 1)
+        }
+      };
+
+      const { container } = render(html`<${Palette} json=${screenPalette}/>`);
+      await screen.findByText("Right");
+
+      const wrapper = container.querySelector(".paletteInclude") as HTMLElement;
+      expect(wrapper.style.gridColumnEnd).toBe("span 3");
+      const inner = wrapper.querySelector("[data-palettename='Pair']") as HTMLElement;
+      expect(inner.style["grid-template-columns" as keyof typeof inner.style]).toBe("repeat(2, 1fr)");
+      expect(outerColumns(container)).toBe("repeat(3, 1fr)");
+    });
+
+    // Draws a screen holding `include` beside an "After" cell, and checks the include drew nothing.
+    const expectIncludeRejected = async (include: object): Promise<void> => {
+      const consoleError = vi.spyOn(console, "error").mockImplementation((): void => {});
+      const screenPalette = {
+        name: "Screen",
+        cells: { "include": includeCell(include), "after": symbolCell("After", 1, 3) }
+      };
+      // In the store, so that a screen including itself gets past the lookup to the cycle check.
+      adaptivePaletteGlobals.paletteStore.addPalette(screenPalette as JsonPaletteType);
+
+      render(html`<${Palette} json=${screenPalette}/>`);
+      await screen.findByText("After");
+
+      expect(screen.queryByText("Left")).toBeNull();
+      expect(document.querySelector(".paletteInclude")).toBeNull();
+      expect(consoleError).toHaveBeenCalledWith(expect.stringContaining("PaletteInclude \"include\""));
+    };
+
+    test("draws nothing and logs an error when the palette is not loaded", async (): Promise<void> => {
+      await expectIncludeRejected({ palette: "Nowhere" });
+    });
+
+    test("draws nothing and logs an error when the palette includes itself", async (): Promise<void> => {
+      await expectIncludeRejected({ palette: "Screen" });
+    });
+
+    test("catches a cycle when the palette is stored under a key that differs from its name", async (): Promise<void> => {
+      const consoleError = vi.spyOn(console, "error").mockImplementation((): void => {});
+      // Stored under "Alias", named "Other", and including itself by its store key.
+      const aliased = {
+        name: "Other",
+        cells: { "self": includeCell({ palette: "Alias" }), "after": symbolCell("After", 1, 3) }
+      };
+      adaptivePaletteGlobals.paletteStore.addPalette(aliased as JsonPaletteType, "Alias");
+
+      render(html`<${Palette} json=${aliased}/>`);
+
+      expect(await screen.findByText("After")).toBeInTheDocument();
+      expect(document.querySelector(".paletteInclude")).toBeNull();
+      expect(consoleError).toHaveBeenCalledWith(expect.stringContaining("would be drawn inside itself"));
+    });
+
+    test("logs an error when a palette includes itself through another palette", async (): Promise<void> => {
+      const consoleError = vi.spyOn(console, "error").mockImplementation((): void => {});
+      const screenPalette = {
+        name: "Screen",
+        cells: { "loop": includeCell({ palette: "Loop", columnSpan: 2 }), "after": symbolCell("After", 1, 3) }
+      };
+      // Screen nests Loop, Loop nests Mid, Mid includes Screen: the chain has to carry through each level.
+      const loopPalette = {
+        name: "Loop",
+        cells: { "mid": includeCell({ palette: "Mid" }) }
+      };
+      const midPalette = {
+        name: "Mid",
+        cells: { "back": includeCell({ palette: "Screen" }) }
+      };
+      adaptivePaletteGlobals.paletteStore.addPalette(screenPalette as JsonPaletteType);
+      adaptivePaletteGlobals.paletteStore.addPalette(loopPalette as JsonPaletteType);
+      adaptivePaletteGlobals.paletteStore.addPalette(midPalette as JsonPaletteType);
+
+      render(html`<${Palette} json=${screenPalette}/>`);
+
+      expect(await screen.findByText("After")).toBeInTheDocument();
+      expect(consoleError).toHaveBeenCalledWith(expect.stringMatching(/^PaletteInclude "back": .* drawn inside itself/));
+    });
+
+    test("a cell keeps its element when the next palette has a cell with the same id", async (): Promise<void> => {
+      // "shared" is the second cell here and the first in `second`: only a key matches them up.
+      const first = {
+        name: "First", cells: { "one": symbolCell("One", 1, 1), "shared": symbolCell("Shared", 1, 2) }
+      };
+      const second = {
+        name: "Second", cells: { "shared": symbolCell("Shared", 1, 2), "two": symbolCell("Two", 1, 1) }
+      };
+
+      const { rerender } = render(html`<${Palette} json=${first}/>`);
+      await screen.findByText("Shared");
+      const sharedBefore = buttonFor("Shared");
+
+      rerender(html`<${Palette} json=${second}/>`);
+      await screen.findByText("Two");
+
+      expect(buttonFor("Shared")).toBe(sharedBefore);
     });
   });
 });

@@ -26,11 +26,12 @@
 }
 
 /*
- * Laid out like a palette row: full width, one column per suggestion slot. The columns come
- * from the component, which knows how many slots the configuration asks for.
+ * Laid out like palette rows: full width, with the columns the palette asks for (one per slot by
+ * default). The columns come from the component, which knows how many slots there are.
  */
 .predictedWords {
   column-gap: 0.5rem;
+  row-gap: 0.5rem;
   display: grid;
   /* Holds the row open while there is nothing to suggest, so the page below does not shift. */
   min-height: 3.5rem;

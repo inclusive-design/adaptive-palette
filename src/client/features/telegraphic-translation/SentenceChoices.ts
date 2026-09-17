@@ -12,16 +12,16 @@
 
 import { VNode } from "preact";
 import { html } from "htm/preact";
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useEffect, useRef } from "preact/hooks";
 
 import {
   sentenceCompletionsSignal, clearMessageAndChoices, abortActiveSentenceRequest,
-  discardEditPromptSignal, confirmDiscardEdit, cancelDiscardEdit
+  discardEditPromptSignal, typedSentenceSignal, focusedMessageSignal
 } from "./TelegraphicTranslationState";
-import { ModalDialog } from "../../components/ModalDialog";
-import { INPUT_AREA_ID } from "../../cells/ContentEncoding";
 import { announceIfEnabled, speak, speakUnavailable } from "../../utils/SpeechUtils";
 import { saveTranslation, SentenceSourceType } from "../../core/MessageLog";
+import { generateGridStyle } from "../../utils/GridUtils";
+import { ContentSentenceChoicesType } from "../../index.d";
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { AiBadge, aiSuggestionLabel } from "../../components/AiBadge";
 import { BlissSentence } from "./BlissSentence";
@@ -33,13 +33,15 @@ export const CANNOT_COMPLETE_MESSAGE = "⚠ Could not make sentences. Try again.
 export const TYPE_YOUR_OWN_HINT = "None fit? Type yours";
 export const SPEAK_BUTTON_LABEL = "Speak";
 export const DONE_BUTTON_LABEL = "✓ Done";
-export const DISCARD_EDIT_DIALOG_ID = "discardEditDialog";
-export const DISCARD_DIALOG_TITLE = "Change your message?";
-export const CHANGE_ANYWAY_LABEL = "Change anyway";
-export const KEEP_SENTENCES_LABEL = "Keep sentences";
+
+type SentenceChoicesPropsType = {
+  id: string,
+  options: ContentSentenceChoicesType
+};
 
 /**
- * The sentence choice area. Renders whichever state `sentenceCompletionsSignal` is in:
+ * The sentence choice area, the `ContentSentenceChoices` cell. Renders whichever state
+ * `sentenceCompletionsSignal` is in:
  * 1. `idle` means the user has not yet built a message, so there is nothing to show.
  * 2. Every other state shows the typing area -- a text box, Speak and Done -- together with
  *    whatever sentences are on screen, each one a button to tap. Typing need not wait for
@@ -47,19 +49,16 @@ export const KEEP_SENTENCES_LABEL = "Keep sentences";
  * 3. `working` also says sentences are being made, or that more are when one is already there.
  * 4. `error` also says sentences could not be made, keeping any sentence on screen.
  *
- * The dialog asking whether an edit may discard the sentence work is rendered here because
- * this component is mounted for the life of the page and always renders its outer element,
- * so the dialog survives the change to `idle`.
- *
  * The live region is always in the document to announce the state.
+ * @param {SentenceChoicesPropsType} props - The cell id and its layout options.
  * @returns {VNode}
  */
-export function SentenceChoices (): VNode {
+export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
   const state = sentenceCompletionsSignal.value;
   const discardPrompt = discardEditPromptSignal.value;
-  const [typedSentence, setTypedSentence] = useState("");
+  const { columnStart, columnSpan, rowStart, rowSpan } = props.options;
+  const typedSentence = typedSentenceSignal.value;
   const choicesRef = useRef<HTMLDivElement>(null);
-  const focusedMessageRef = useRef<string | null>(null);
   const wasAskingRef = useRef(false);
 
   const firstChoice = (): HTMLButtonElement | null =>
@@ -74,43 +73,25 @@ export function SentenceChoices (): VNode {
     const wasAsking = wasAskingRef.current;
     wasAskingRef.current = discardPrompt !== null;
     if (state.status === "idle") {
-      focusedMessageRef.current = null;
+      focusedMessageSignal.value = null;
       return;
     }
-    // The discard dialog holds the page `inert`, so focusing a sentence behind it does
-    // nothing; and on the pass that closes the dialog, `restoreDialogFocus` below is what
-    // decides where focus goes. Standing aside on both leaves the one-shot move unspent
-    // for whichever of them can land it.
+    // The discard dialog holds the page `inert`, so focusing a sentence behind it does nothing;
+    // and on the pass that closes the dialog, `DiscardEditDialog`'s focus restore is what decides
+    // where focus goes. Standing aside on both leaves the one-shot move unspent for whichever of
+    // them can land it.
     if (discardPrompt !== null || wasAsking) {
       return;
     }
     const textBox = choicesRef.current?.querySelector(".sentenceTypeYourOwn input");
     if (state.sentences.length === 0 ||
-        focusedMessageRef.current === state.telegraphicMessage ||
+        focusedMessageSignal.peek() === state.telegraphicMessage ||
         document.activeElement === textBox) {
       return;
     }
-    focusedMessageRef.current = state.telegraphicMessage;
+    focusedMessageSignal.value = state.telegraphicMessage;
     firstChoice()?.focus();
   }, [state, discardPrompt]);
-
-  // Where focus goes when the discard dialog closes. Normally the input area, where the
-  // edit was made. The exception is sentences that arrived behind the question and have
-  // not been reached yet: keeping them is a decision to use them, so they get the focus
-  // move they would have had if the question had never been up.
-  //
-  // The dialog's `close` event is queued as a task, so this runs after the effect above --
-  // which is why that effect leaves this pass alone rather than racing it.
-  const restoreDialogFocus = (): HTMLElement | null => {
-    if (state.sentences.length > 0 && focusedMessageRef.current !== state.telegraphicMessage) {
-      focusedMessageRef.current = state.telegraphicMessage;
-      const choice = firstChoice();
-      if (choice) {
-        return choice;
-      }
-    }
-    return document.getElementById(INPUT_AREA_ID);
-  };
 
   const logAndSpeak = (sentence: string, source: SentenceSourceType): void => {
     abortActiveSentenceRequest();
@@ -139,7 +120,7 @@ export function SentenceChoices (): VNode {
   const finish = (): void => {
     announceIfEnabled("Done");
     clearMessageAndChoices();
-    setTypedSentence("");
+    typedSentenceSignal.value = "";
   };
 
   // Marked unavailable rather than `disabled` because a disabled control loses focus.
@@ -178,7 +159,7 @@ export function SentenceChoices (): VNode {
         aria-label=${TYPE_YOUR_OWN_HINT}
         placeholder=${TYPE_YOUR_OWN_HINT}
         value=${typedSentence}
-        onInput=${(event: Event) => setTypedSentence((event.target as HTMLInputElement).value)}
+        onInput=${(event: Event) => { typedSentenceSignal.value = (event.target as HTMLInputElement).value; }}
       />
       <button type="submit" aria-disabled=${nothingTyped}>${SPEAK_BUTTON_LABEL}</button>
       <button type="button" class="sentenceDone" onClick=${finish}>${DONE_BUTTON_LABEL}</button>
@@ -190,21 +171,13 @@ export function SentenceChoices (): VNode {
     : state.status === "error" ? CANNOT_COMPLETE_MESSAGE : "";
 
   return html`
-    <div class="sentenceChoices" ref=${choicesRef}>
+    <div
+      id="${props.id}"
+      class="sentenceChoices"
+      style="${generateGridStyle(columnStart, columnSpan, rowStart, rowSpan)}"
+      ref=${choicesRef}>
       <p class=${state.status === "error" ? "statusMessage sentenceError" : "statusMessage"} role="status">${statusText}</p>
       ${choices}
-      <${ModalDialog}
-        id=${DISCARD_EDIT_DIALOG_ID}
-        title=${DISCARD_DIALOG_TITLE}
-        isOpen=${discardPrompt !== null}
-        onClose=${cancelDiscardEdit}
-        restoreFocusTo=${restoreDialogFocus}>
-        <p>${discardPrompt}</p>
-        <div class="dialogFooter">
-          <button type="button" onClick=${confirmDiscardEdit}>${CHANGE_ANYWAY_LABEL}</button>
-          <button type="button" onClick=${cancelDiscardEdit}>${KEEP_SENTENCES_LABEL}</button>
-        </div>
-      <//>
     </div>
   `;
 }

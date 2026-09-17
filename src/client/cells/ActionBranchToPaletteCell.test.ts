@@ -96,7 +96,7 @@ describe("ActionBranchToPaletteCell", (): void => {
       });
       expect(adaptivePaletteGlobals.navigationStack.depth).toBe(1);
 
-      await goBackImpl();
+      goBackImpl();
 
       expect(adaptivePaletteGlobals.navigationStack.currentPalette?.name).toBe("Root Palette");
       expect(adaptivePaletteGlobals.navigationStack.depth).toBe(0);
@@ -122,7 +122,7 @@ describe("ActionBranchToPaletteCell", (): void => {
         expect(adaptivePaletteGlobals.navigationStack.depth).toBe(1);
       });
 
-      await goBackImpl();
+      goBackImpl();
 
       expect(adaptivePaletteGlobals.navigationStack.currentPalette?.name).toBe("Root Palette");
       expect(adaptivePaletteGlobals.navigationStack.depth).toBe(0);

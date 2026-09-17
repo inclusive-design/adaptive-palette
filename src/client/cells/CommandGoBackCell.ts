@@ -29,18 +29,14 @@ type CommandGoBackCellPropsType = {
  * by consulting the navigation stack and adjusts the stack accordingly.  The
  * component watching the stack redraws.
  */
-export async function goBackImpl (): Promise<void> {
-  const { paletteStore, navigationStack } = adaptivePaletteGlobals;
+export function goBackImpl (): void {
+  const { navigationStack } = adaptivePaletteGlobals;
 
+  // The stack holds the palette itself, so there is nothing to look up: looking it up by
+  // `name` would miss a palette stored under a key that differs from its name.
   const paletteToGoBackTo = navigationStack.peek();
   if (paletteToGoBackTo) {
-    const paletteDefinition = await paletteStore.getNamedPalette(paletteToGoBackTo.name, true);
-    if (paletteDefinition) {
-      navigationStack.popAndSetCurrent(paletteDefinition);
-    }
-    else {
-      console.error(`goBackImpl(): Unable to locate the palette definition for ${paletteToGoBackTo.name}`);
-    }
+    navigationStack.popAndSetCurrent(paletteToGoBackTo);
   }
 };
 
@@ -48,14 +44,14 @@ export async function goBackImpl (): Promise<void> {
  * Event handler for an CommandGoBackCellPropsType button/cell that, when
  * clicked, goes back one palette.
  */
-const goBackToPalette = async (event: Event): Promise<void> => {
+const goBackToPalette = (event: Event): void => {
   const button = event.currentTarget as HTMLElement;
   if (adaptivePaletteGlobals.navigationStack.depth === 0) {
     speakUnavailable(button.innerText);
     return;
   }
   announceIfEnabled(button.innerText);
-  return goBackImpl();
+  goBackImpl();
 };
 
 export function CommandGoBackCell (props: CommandGoBackCellPropsType): VNode {

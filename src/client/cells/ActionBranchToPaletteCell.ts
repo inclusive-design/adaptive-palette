@@ -38,21 +38,22 @@ const navigateToPalette = async (event: Event): Promise<void> => {
     return;
   }
 
-  // Already looking at it. A persistent cell such as the command bar's "Msg Style" stays
-  // tappable once its palette is current, and pushing that palette onto itself would leave
-  // the first `Back` press doing nothing.
-  if (navigationStack.currentPalette?.name === branchToPaletteName) {
-    return;
-  }
-
   const paletteDefinition = await paletteStore.getNamedPalette(branchToPaletteName, true);
   if (!paletteDefinition) {
     console.error(`navigateToPalette(): Unable to locate palette definition for ${branchToPaletteName}`);
     return;
   }
 
+  // Already looking at it. A persistent cell such as the command bar's "Msg Style" stays
+  // tappable once its palette is current, and pushing that palette onto itself would leave
+  // the first `Back` press doing nothing.  The palettes are compared by reference because a
+  // palette may be stored under a key that differs from its `name`.
+  if (navigationStack.currentPalette === paletteDefinition) {
+    return;
+  }
+
   // Push the palette the user is looking at, not the one this button happens to sit in:
-  // for cells in the main display area these are the same palette.
+  // a cell in an included palette, such as the Command Bar, sits in a different one.
   navigationStack.push(navigationStack.currentPalette);
   navigationStack.currentPalette = paletteDefinition;
 };

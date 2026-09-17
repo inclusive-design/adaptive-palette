@@ -11,8 +11,9 @@
  */
 
 /**
- * Nothing ties together `public/palettes/attributes.json`'s row labels, its cells' `category`
- * fields, and `CATEGORY_ORDER` in `MessageAttributesState.ts` -- three places that have to be
+ * Nothing ties together `public/palette-sets/standardBlissChart/palettes/attributes.json`'s row
+ * labels, its cells' `category` fields, and `CATEGORY_ORDER` in `MessageAttributesState.ts` --
+ * three places that have to be
  * kept in sync by hand, and a rename that misses one leaves the row heading, the announcement,
  * and the model prompt disagreeing with each other silently.
  *
@@ -35,9 +36,9 @@ describe("attributes.json agrees with MessageAttributesState on category names a
   let palette: JsonPaletteType;
 
   beforeAll(async (): Promise<void> => {
-    const loaded = await loadPaletteFromJsonFile("/palettes/attributes.json");
+    const loaded = await loadPaletteFromJsonFile("/palette-sets/standardBlissChart/palettes/attributes.json");
     if (!loaded) {
-      throw new Error("Could not load /palettes/attributes.json");
+      throw new Error("Could not load /palette-sets/standardBlissChart/palettes/attributes.json");
     }
     palette = loaded;
   });

@@ -61,7 +61,7 @@ svg.inter-word-padding {
 /*
  * Command bar buttons are smaller than other cells.
  */
-#commandBar {
+[data-palettename="Command Bar"] {
   svg {
     max-height: 2rem;
     max-width: 100%;
@@ -120,13 +120,9 @@ svg.inter-word-padding {
   }
 }
 
-#sentenceChoices {
-  margin: 0 0.5rem;
-}
-
 /*
- * Without this "predictedWords" div would still consume a row-gap.
+ * Palettes have no grid gap, so each row of the Standard Header keeps a gap below it.
  */
-#predictedWords:empty {
-  display: none;
+[data-palettename="Standard Header"] > * {
+  margin-bottom: 0.25rem;
 }

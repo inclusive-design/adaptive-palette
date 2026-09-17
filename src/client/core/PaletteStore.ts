@@ -10,7 +10,35 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { JsonPaletteType, PaletteFileMapType } from "../index.d";
+import { JsonPaletteType, PaletteFileMapType, PaletteIncludeType, PaletteSetType } from "../index.d";
+
+// The cell type that draws another palette. `Palette.ts` handles it rather than the cell type
+// registry, which cannot import `Palette` without making an import cycle.
+export const PALETTE_INCLUDE_TYPE = "PaletteInclude";
+
+// The only palette set format this code reads.
+const PALETTE_SET_FORMAT_VERSION = 1;
+
+// The palette set loaded when the page URL names none.
+export const DEFAULT_PALETTE_SET = "standardBlissChart";
+
+// A set name is a folder name under `/palette-sets/`. Allowing only these characters keeps the
+// path from reaching outside that folder.
+const PALETTE_SET_NAME = /^[A-Za-z0-9_-]+$/;
+
+/**
+ * The path of the palette set file the page URL asks for with `?set=<folder>`.
+ * @param {String} search - The URL's query string, such as `window.location.search`.
+ * @return {String} - `/palette-sets/<set>/palette_set.json`.
+ * @throws when `set` holds anything but letters, digits, `_` and `-`.
+ */
+export function paletteSetPath (search: string): string {
+  const setName = new URLSearchParams(search).get("set") ?? DEFAULT_PALETTE_SET;
+  if (!PALETTE_SET_NAME.test(setName)) {
+    throw new Error(`Invalid palette set name "${setName}"`);
+  }
+  return `/palette-sets/${setName}/palette_set.json`;
+}
 
 /**
  * Load a palette from the given JSON file using `fetch()`. The location of the
@@ -112,12 +140,38 @@ export class PaletteStore {
   }
 
   /**
+   * Load a palette set file and record where each of its palettes is, so `getNamedPalette()` can
+   * load them by name.
+   * @param {String} paletteSetPath - Path of the palette set file.
+   * @return {String} - The name of the palette to show first.
+   * @throws when the file cannot be loaded, or has a format version this code does not read.
+   */
+  async loadPaletteSet (paletteSetPath: string): Promise<string> {
+    const response = await fetch(paletteSetPath);
+    if (!response.ok) {
+      throw new Error(`Failed to load ${paletteSetPath}: ${response.status}`);
+    }
+    const paletteSet = await response.json() as PaletteSetType;
+    if (paletteSet.formatVersion !== PALETTE_SET_FORMAT_VERSION) {
+      throw new Error(`${paletteSetPath}: unsupported formatVersion ${paletteSet.formatVersion}`);
+    }
+    // Paths in the file are relative to the file itself.
+    const baseUrl = new URL(paletteSetPath, window.location.href);
+    const fileMap: PaletteFileMapType = {};
+    Object.entries(paletteSet.palettes).forEach(([paletteName, relativePath]) => {
+      fileMap[paletteName] = new URL(relativePath, baseUrl).pathname;
+    });
+    PaletteStore.paletteFileMap = fileMap;
+    return paletteSet.startPalette;
+  }
+
+  /**
    * Accessor for retrieving the named palette.
    * @param {String} paletteName    - The palette to retrieve.
    * @param {boolean} loadIfMissing - Optional. When `true` and the palette is not in the
    *                                  store, load it from the file the store's
-   *                                  `paletteFileMap` names for it, and add it to the
-   *                                  store.
+   *                                  `paletteFileMap` names for it, add it to the store,
+   *                                  and load the palettes it includes the same way.
    * @return {JsonPaletteType} reference to the named palette, or undefined if there is no
    *                           such palette.
    */
@@ -132,7 +186,19 @@ export class PaletteStore {
       return undefined;
     }
     const loadedPalette = await loadPaletteFromJsonFile(filePath);
-    this.addPalette(loadedPalette);
+    if (!loadedPalette) {
+      return undefined;
+    }
+    this.addPalette(loadedPalette, paletteName);
+
+    // Included palettes are drawn with this one, so they are loaded now rather than on click.
+    // This palette is already in the store, so an include cycle, or a palette included twice,
+    // finds it there instead of fetching it again.
+    for (const cell of Object.values(loadedPalette.cells)) {
+      if (cell.type === PALETTE_INCLUDE_TYPE) {
+        await this.getNamedPalette((cell.options as PaletteIncludeType).palette, true);
+      }
+    }
     return loadedPalette;
   }
 }

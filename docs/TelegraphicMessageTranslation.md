@@ -74,7 +74,8 @@ The `Sentence` button starts this feature. It becomes available when the input a
 
 When no model is available, or `telegraphicTranslation` is missing from `public/config.json`, the
 `Sentence` button is hidden and the rest of the input area spreads over its column. Its cell in
-`public/palettes/input_area.json` carries `requiresModel` and `requiresConfig`, which
+`public/palette-sets/standardBlissChart/palettes/input_area.json` carries `requiresModel` and
+`requiresConfig`, which
 [`Palette.ts`](devDoc/Palettes.md) acts on.
 
 When the input is empty or a request is in progress, the button is marked with `aria-disabled`

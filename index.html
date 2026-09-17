@@ -29,28 +29,16 @@
     </div>
 
     <!--
-      Row 1: navigation out of the current palette, the message being composed, and the
-      trigger that turns it into a sentence.
-    -->
-    <div id="inputArea">
-      <div id="input_palette"></div>
-    </div>
-    <div id="sentenceChoices"></div>
-    <!-- Suggested next words. -->
-    <div id="predictedWords"></div>
-
-    <!--
-      Row 2: message editing commands, indicators, and modifiers, in one short bar.
-    -->
-    <div id="commandBar"></div>
-
-    <!--
-      Row 3: the palette itself, at full page width.
+      The current palette. It draws the whole screen below the top bar: the input area, sentence
+      choices, word predictions and command bar are cells in it.
     -->
     <div id="mainPaletteDisplayArea">
       <script type="module">
         import "./src/client/index.js";
       </script>
     </div>
+
+    <!-- Dialogs that belong to the page rather than to one palette. -->
+    <div id="pageDialogs"></div>
   </body>
 </html>

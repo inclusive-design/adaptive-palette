@@ -12,7 +12,7 @@
 
 import { vi } from "vitest";
 import { JsonPaletteType } from "../index.d";
-import { PaletteStore } from "./PaletteStore";
+import { PaletteStore, paletteSetPath } from "./PaletteStore";
 
 describe("PaletteStore", (): void => {
 
@@ -154,5 +154,116 @@ describe("PaletteStore", (): void => {
     expect(paletteStore.numPalettes).toBe(numPalettes - 1);
     const retrievedPalette = await paletteStore.getNamedPalette(dummyPalette1.name);
     expect(retrievedPalette).toBeUndefined();
+  });
+});
+
+describe("PaletteStore palette sets and includes", (): void => {
+
+  const cell = (type: string, options: object): object => ({
+    type, options: { rowStart: 1, rowSpan: 1, columnStart: 1, columnSpan: 1, ...options }
+  });
+
+  // "Screen" includes "Header" twice; "Header" and "Loop" include each other.
+  const FILES: Record<string, unknown> = {
+    "/sets/palette_set.json": {
+      formatVersion: 1,
+      startPalette: "Screen",
+      palettes: {
+        "Screen": "screen.json",
+        "Header": "parts/header.json",
+        "Loop": "parts/loop.json"
+      }
+    },
+    "/sets/future_set.json": { formatVersion: 2, startPalette: "Screen", palettes: {} },
+    "/sets/screen.json": {
+      name: "Screen",
+      cells: {
+        "header": cell("PaletteInclude", { palette: "Header" }),
+        "again": cell("PaletteInclude", { palette: "Header", rowStart: 2 })
+      }
+    },
+    "/sets/parts/header.json": {
+      name: "Header", cells: { "loop": cell("PaletteInclude", { palette: "Loop" }) }
+    },
+    // This fixture's `name` deliberately differs from the "Loop" key it's included by, so the
+    // store has to key it by the requested name, not by this field.
+    "/sets/parts/loop.json": {
+      name: "Loop palette", cells: { "back": cell("PaletteInclude", { palette: "Header" }) }
+    }
+  };
+
+  const paletteStore = new PaletteStore();
+  let fetched: string[];
+
+  beforeEach((): void => {
+    fetched = [];
+    PaletteStore.paletteMap = {};
+    PaletteStore.paletteFileMap = {};
+    vi.stubGlobal("fetch", (filePath: string): Promise<Response> => {
+      fetched.push(filePath);
+      return Promise.resolve({
+        ok: filePath in FILES,
+        status: filePath in FILES ? 200 : 404,
+        json: (): Promise<unknown> => Promise.resolve(FILES[filePath])
+      } as Response);
+    });
+  });
+
+  afterEach((): void => {
+    vi.unstubAllGlobals();
+  });
+
+  test("loadPaletteSet resolves paths against the set file and returns the start palette", async (): Promise<void> => {
+    const startPalette = await paletteStore.loadPaletteSet("/sets/palette_set.json");
+
+    expect(startPalette).toBe("Screen");
+    expect(PaletteStore.paletteFileMap).toEqual({
+      "Screen": "/sets/screen.json",
+      "Header": "/sets/parts/header.json",
+      "Loop": "/sets/parts/loop.json"
+    });
+  });
+
+  test("loadPaletteSet throws for a format version it does not read", async (): Promise<void> => {
+    await expect(paletteStore.loadPaletteSet("/sets/future_set.json")).rejects.toThrow("formatVersion");
+  });
+
+  test("loadPaletteSet throws when the file is missing", async (): Promise<void> => {
+    await expect(paletteStore.loadPaletteSet("/sets/missing.json")).rejects.toThrow("Failed to load");
+  });
+
+  test("loading a palette loads what it includes, fetching each file once", async (): Promise<void> => {
+    await paletteStore.loadPaletteSet("/sets/palette_set.json");
+
+    const loaded = await paletteStore.getNamedPalette("Screen", true);
+
+    expect(loaded?.name).toBe("Screen");
+    expect(paletteStore.paletteList.sort()).toEqual(["Header", "Loop", "Screen"]);
+    expect(fetched).toEqual([
+      "/sets/palette_set.json", "/sets/screen.json", "/sets/parts/header.json", "/sets/parts/loop.json"
+    ]);
+
+    // Stored under the "Loop" key it was requested by, even though its own `name` field differs.
+    const loopPalette = await paletteStore.getNamedPalette("Loop");
+    expect(loopPalette?.name).toBe("Loop palette");
+  });
+});
+
+describe("paletteSetPath", (): void => {
+
+  test("names the default set when the URL names none", (): void => {
+    expect(paletteSetPath("")).toBe("/palette-sets/standardBlissChart/palette_set.json");
+    expect(paletteSetPath("?other=1")).toBe("/palette-sets/standardBlissChart/palette_set.json");
+  });
+
+  test("names the set the URL names", (): void => {
+    expect(paletteSetPath("?set=demo_1")).toBe("/palette-sets/demo_1/palette_set.json");
+    expect(paletteSetPath("?set=my-demo")).toBe("/palette-sets/my-demo/palette_set.json");
+  });
+
+  test("throws for a name that is not a plain folder name", (): void => {
+    ["?set=../x", "?set=a/b", "?set=%2E%2E", "?set="].forEach((search) => {
+      expect(() => paletteSetPath(search), search).toThrow("Invalid palette set name");
+    });
   });
 });

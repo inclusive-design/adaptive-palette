@@ -56,16 +56,37 @@ export type JsonPaletteType = {
   cells: {
     [key: string]: {
       type: string,
-      options: BlissSymbolCellType | ContentEncodingType | ContentLabelType | AttributeCellType
+      options: BlissSymbolCellType | ContentEncodingType | ContentLabelType | AttributeCellType |
+        PaletteIncludeType | ContentPredictedWordsType
     }
   }
 };
 
 export type ContentEncodingType = LayoutInfoType;
 
+export type ContentSentenceChoicesType = LayoutInfoType;
+
+export type ContentPredictedWordsType = LayoutInfoType & {
+  // How many columns the suggestion slots are set out in. Defaults to `maxSuggestions`: one row.
+  numColumns?: number
+};
+
+export type PaletteIncludeType = LayoutInfoType & {
+  // The name of the palette drawn in this cell's span.
+  palette: string
+};
+
 export type PaletteFileMapType = {
   [paletteName: string]: string
 }
+
+export type PaletteSetType = {
+  formatVersion: number,
+  // The name of the palette shown at start-up.
+  startPalette: string,
+  // Palette names mapped to their files, relative to the palette set file.
+  palettes: PaletteFileMapType
+};
 
 // Extra information in a content payload structure when the symbol has
 // modifiers
