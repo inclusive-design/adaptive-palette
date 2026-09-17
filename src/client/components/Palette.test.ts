@@ -250,6 +250,22 @@ describe("Palette", (): void => {
       await expectIncludeRejected({ palette: "Screen" });
     });
 
+    test("catches a cycle when the palette is stored under a key that differs from its name", async (): Promise<void> => {
+      const consoleError = vi.spyOn(console, "error").mockImplementation((): void => {});
+      // Stored under "Alias", named "Other", and including itself by its store key.
+      const aliased = {
+        name: "Other",
+        cells: { "self": includeCell({ palette: "Alias" }), "after": symbolCell("After", 1, 3) }
+      };
+      adaptivePaletteGlobals.paletteStore.addPalette(aliased as JsonPaletteType, "Alias");
+
+      render(html`<${Palette} json=${aliased}/>`);
+
+      expect(await screen.findByText("After")).toBeInTheDocument();
+      expect(document.querySelector(".paletteInclude")).toBeNull();
+      expect(consoleError).toHaveBeenCalledWith(expect.stringContaining("would be drawn inside itself"));
+    });
+
     test("logs an error when a palette includes itself through another palette", async (): Promise<void> => {
       const consoleError = vi.spyOn(console, "error").mockImplementation((): void => {});
       const screenPalette = {

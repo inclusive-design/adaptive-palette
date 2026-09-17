@@ -388,7 +388,7 @@ describe("Palette integration", () => {
       throw new Error("Peeked palette on navStack is null after second forward navigation");
     }
     expect(peekedPaletteAfterSecondGoForward).toBe(testPalette);
-    await goBackImpl();
+    goBackImpl();
     // Going back draws "First Cell" anew: keyed by id, it is not carried over from "People".
     expect(await screen.findByText("First Cell")).toBeInTheDocument();
     const currentPaletteAfterSecondGoBack = navStack.currentPalette;

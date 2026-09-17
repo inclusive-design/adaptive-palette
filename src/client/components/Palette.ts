@@ -21,8 +21,8 @@ import "./Palette.scss";
 
 type PalettePropsType = {
   json: JsonPaletteType,
-  // The names of the palettes this one is drawn inside, outermost first.
-  includeChain?: string[]
+  // The chain of nested palettes: starting from the outermost then move inwards.
+  includeChain?: JsonPaletteType[]
 };
 
 type PaletteCellsType = {
@@ -111,10 +111,10 @@ function isAvailable (options: LayoutInfoType): boolean {
  * id, so a cell with the same id on the next palette keeps its element.
  *
  * @param {JsonPaletteType} paletteDefinition - The palette whose cells to render.
- * @param {string[]} includeChain - The names of the palettes this one is drawn inside.
+ * @param {JsonPaletteType[]} includeChain - The palettes this one is drawn inside.
  * @return {PaletteCellsType} - The cells, and the columns rendered and skipped.
  */
-function renderCells (paletteDefinition: JsonPaletteType, includeChain: string[]): PaletteCellsType {
+function renderCells (paletteDefinition: JsonPaletteType, includeChain: JsonPaletteType[]): PaletteCellsType {
   const result: PaletteCellsType = { cells: [], renderedColumns: new Set(), skippedColumns: new Set() };
   Object.keys(paletteDefinition.cells).forEach((id) => {
     const aCell = paletteDefinition.cells[id];
@@ -124,7 +124,7 @@ function renderCells (paletteDefinition: JsonPaletteType, includeChain: string[]
       return;
     }
     if (aCell.type === PALETTE_INCLUDE_TYPE) {
-      const include = renderInclude(id, cellOptions as PaletteIncludeType, [...includeChain, paletteDefinition.name]);
+      const include = renderInclude(id, cellOptions as PaletteIncludeType, [...includeChain, paletteDefinition]);
       if (include) {
         columnsOf(cellOptions).forEach((column) => result.renderedColumns.add(column));
         result.cells.push(include);
@@ -151,18 +151,21 @@ function renderCells (paletteDefinition: JsonPaletteType, includeChain: string[]
  *
  * @param {string} id - The include cell's id.
  * @param {PaletteIncludeType} options - The include cell's options.
- * @param {string[]} includeChain - The names of the palettes the included one is drawn inside,
- *                                  ending with the palette that holds this cell.
+ * @param {JsonPaletteType[]} includeChain - The palettes the included one is drawn inside, ending
+ *                                          with the palette that holds this cell.
  * @return {VNode | null} - The include cell, or `null` when it cannot be drawn.
  */
-function renderInclude (id: string, options: PaletteIncludeType, includeChain: string[]): VNode | null {
+function renderInclude (id: string, options: PaletteIncludeType, includeChain: JsonPaletteType[]): VNode | null {
   const included = PaletteStore.paletteMap[options.palette];
   if (!included) {
     console.error(`PaletteInclude "${id}": palette "${options.palette}" is not loaded.`);
     return null;
   }
-  if (includeChain.includes(options.palette)) {
-    console.error(`PaletteInclude "${id}": "${options.palette}" would be drawn inside itself (${includeChain.join(" > ")}).`);
+  // The palettes are compared by reference: a palette may be stored under a key that differs
+  // from its `name`, so matching on either one would miss a cycle.
+  if (includeChain.includes(included)) {
+    const chainNames = includeChain.map((palette) => palette.name).join(" > ");
+    console.error(`PaletteInclude "${id}": "${options.palette}" would be drawn inside itself (${chainNames}).`);
     return null;
   }
   const gridStyle = generateGridStyle(options.columnStart, options.columnSpan, options.rowStart, options.rowSpan);
@@ -175,11 +178,9 @@ function renderInclude (id: string, options: PaletteIncludeType, includeChain: s
 
 export function Palette (props: PalettePropsType): VNode {
 
-  const { paletteStore } = adaptivePaletteGlobals;
   const paletteDefinition = props.json;
   const rowsCols = countRowsColumns(paletteDefinition);
   const { cells, renderedColumns, skippedColumns } = renderCells(paletteDefinition, props.includeChain ?? []);
-  paletteStore.addPalette(paletteDefinition);
 
   const emptyColumns = new Set(
     [...skippedColumns].filter((column) => !renderedColumns.has(column))
