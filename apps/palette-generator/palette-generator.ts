@@ -108,8 +108,7 @@ function handleGenerateDisplayButton () {
   currentPaletteName = lookupResults.paletteJson.name;
 
   // Display the palette and report the errors.
-  // (Note: that the `Palette` Preact component will add the palette to the
-  // `PaletteStore`)
+  adaptivePaletteGlobals.paletteStore.addPalette(lookupResults.paletteJson);
   render(html`<${Palette} json=${lookupResults.paletteJson} />`, paletteDisplay);
   reportMatches(lookupResults.matches);
   reportErrors(lookupResults.errors);
