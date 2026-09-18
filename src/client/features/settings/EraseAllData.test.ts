@@ -17,7 +17,7 @@ import { vi, type MockInstance } from "vitest";
 
 import { DISMISS_LABEL } from "../../components/ModalDialog";
 import { setStorage } from "../../core/StorageBackend";
-import { FakeStorage } from "../../testUtils/FakeStorage";
+import { MemoryStorage } from "../../core/MemoryStorage";
 import {
   ERASE_CANCEL_LABEL, ERASE_CONFIRM_LABEL, ERASE_DONE_TEXT, ERASE_FAILED_TEXT, ERASE_LABEL,
   ERASE_PENDING_TEXT, EraseAllData
@@ -25,11 +25,11 @@ import {
 
 describe("EraseAllData", (): void => {
 
-  let storage: FakeStorage;
+  let storage: MemoryStorage;
   let fetchSpy: MockInstance;
 
   beforeEach(async (): Promise<void> => {
-    storage = new FakeStorage();
+    storage = new MemoryStorage();
     await storage.open();
     setStorage(storage);
     fetchSpy = vi.spyOn(window, "fetch").mockResolvedValue(new Response(null, { status: 204 }));

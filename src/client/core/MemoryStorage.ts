@@ -11,19 +11,30 @@
  */
 
 /**
- * An in-memory storage backend for tests.
+ * A storage backend that keeps everything in memory and nothing in the browser.
  *
- * Every test but `IndexedDbStorage.test.ts` uses this rather than a real database: it is
- * quick, it cannot leave a database behind for the next test to find, and deleting one is
- * slow enough in Firefox and WebKit to make tests flaky.
+ * This is what the hosted site runs on. Away from `localhost` the app may be on a public or
+ * shared computer, where a message left in IndexedDB is readable by whoever sits down at it
+ * next. Holding the data here instead means nothing outlives the tab: a reload clears it.
+ *
+ * It is also what every test but the two that open a real database stores into. It is quick, it
+ * cannot leave a database behind for the next test to find, and deleting one is slow enough
+ * in Firefox and WebKit to make tests flaky.
  *
  * Values are cloned on the way in and out, as a real store's structured clone would, so a
- * test cannot alter what is stored by holding on to a reference.
+ * caller cannot alter what is stored by holding on to a reference.
  */
-import { AdaptivePaletteStorage, StoredMessage } from "../core/StorageBackend";
-import { MessageRecordType } from "../core/MessageLog";
+import { AdaptivePaletteStorage, StoredMessage } from "./StorageBackend";
+import { MessageRecordType } from "./MessageLog";
 
-export class FakeStorage implements AdaptivePaletteStorage {
+/*
+ * What this backend means for the user, shown on the hosted site's status line. It lives here
+ * rather than with the other status text because it states this backend's own consequence.
+ */
+export const NOT_SAVED_MESSAGE =
+  "Nothing is saved on this computer. Reloading the page clears your messages and settings.";
+
+export class MemoryStorage implements AdaptivePaletteStorage {
 
   private messages: StoredMessage[] = [];
   private settings: Record<string, unknown> = {};

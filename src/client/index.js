@@ -15,6 +15,7 @@ import { adaptivePaletteGlobals } from "./state/GlobalData";
 import { initAdaptivePaletteGlobals } from "./core/InitGlobals";
 import { paletteSetPath } from "./core/PaletteStore";
 import { HOSTED_MESSAGE, NO_MODELS_MESSAGE, isLocalHost } from "./core/OllamaApi";
+import { NOT_SAVED_MESSAGE } from "./core/MemoryStorage";
 import { announceIfEnabled, speakUnavailable } from "./utils/SpeechUtils";
 import { goBackImpl } from "./cells/CommandGoBackCell";
 import { INPUT_AREA_ID } from "./cells/ContentEncoding";
@@ -54,7 +55,9 @@ if (isLocalHost()) {
 
 const aiStatus = getRequiredElement("aiStatus");
 if (!isLocalHost()) {
-  aiStatus.textContent = HOSTED_MESSAGE;
+  // Two sentences in the element that is already there: what the AI features do here, and
+  // what happens to what the user writes.
+  aiStatus.textContent = `${HOSTED_MESSAGE} ${NOT_SAVED_MESSAGE}`;
 } else if (adaptivePaletteGlobals.models.length === 0) {
   aiStatus.textContent = NO_MODELS_MESSAGE;
 } else if (!adaptivePaletteGlobals.config.telegraphicTranslation) {

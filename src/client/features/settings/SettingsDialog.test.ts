@@ -19,7 +19,7 @@ import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { loadConfig } from "../../core/Config";
 import type { AdaptivePaletteConfigType } from "../../index.d";
 import { setStorage } from "../../core/StorageBackend";
-import { FakeStorage } from "../../testUtils/FakeStorage";
+import { MemoryStorage } from "../../core/MemoryStorage";
 import {
   SettingsDialog, SAVE_LABEL, CLOSE_LABEL, CONFIRM_LABEL, DECLINE_LABEL,
   MODEL_NOTE, WARNING_TEXT, FAILURE_MESSAGE, dependentNote
@@ -66,7 +66,7 @@ describe("SettingsDialog", () => {
 
   beforeEach(() => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
-    const storage = new FakeStorage();
+    const storage = new MemoryStorage();
     setStorage(storage);
     writeSettingsSpy = vi.spyOn(storage, "writeSettings").mockRejectedValue(new Error("storage is not available"));
   });

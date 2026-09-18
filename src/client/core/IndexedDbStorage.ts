@@ -11,8 +11,9 @@
  */
 
 /**
- * The web build's storage: one IndexedDB database with a store for messages and a store for
- * settings.
+ * The storage of a page served from this computer: one IndexedDB database with a store for
+ * messages and a store for settings. The hosted site uses `MemoryStorage` instead and keeps
+ * nothing.
  *
  * Nothing is ever deleted to make room. The message log is kept whole, and how much of it the
  * app reads back is `maxRecalledRecords`, applied by the caller through `readMessages()`.
@@ -97,8 +98,35 @@ export class IndexedDbStorage implements AdaptivePaletteStorage {
     });
   }
 
-  /** Release the connection. Used by tests; the app holds one open for its lifetime. */
-  close (): void {
+  /**
+   * Release the connection. Used by tests; the app holds one open for its lifetime.
+   *
+   * A request's `onsuccess` fires before its transaction actually commits, and in WebKit that
+   * gap is wide enough that closing right after a write does not yet fully release the
+   * connection -- whatever comes next then sees a connection that looks still open. A no-op
+   * transaction queues behind whatever came before it and only completes once that has, so
+   * waiting on it first is a reliable way to know the connection is free to close.
+   *
+   * The no-op is `readwrite` although it writes nothing: two `readonly` transactions may run
+   * at the same time, so a `readonly` one would not be made to wait for a read.
+   * @returns {Promise<void>} - Resolves once the connection is actually released. A caller
+   *                            that does nothing afterwards need not wait.
+   */
+  async close (): Promise<void> {
+    if (this.database) {
+      const database = this.database;
+      try {
+        await new Promise<void>((resolve) => {
+          const flush = database.transaction([MESSAGES_STORE, SETTINGS_STORE], "readwrite");
+          flush.oncomplete = (): void => resolve();
+          flush.onerror = (): void => resolve();
+          flush.onabort = (): void => resolve();
+        });
+      } catch {
+        // `transaction()` throws on a connection that is already going away. There is then
+        // nothing to wait for, and the release below must happen either way.
+      }
+    }
     this.database?.close();
     this.database = undefined;
   }
@@ -186,23 +214,10 @@ export class IndexedDbStorage implements AdaptivePaletteStorage {
   }
 
   async destroy (): Promise<void> {
-    // A request's `onsuccess` fires before its transaction actually commits, and in WebKit
-    // that gap is wide enough that `close()` right after a write does not yet fully release
-    // the connection -- the delete below then sees a connection that looks still open and
-    // reports `onblocked` for a tab that is not there. A no-op transaction queues behind
-    // whatever came before it and only completes once that has, so waiting on it first is a
-    // reliable way to know the connection is actually free to close.
-    if (this.database) {
-      const database = this.database;
-      await new Promise<void>((resolve) => {
-        const flush = database.transaction([MESSAGES_STORE, SETTINGS_STORE], "readonly");
-        flush.oncomplete = (): void => resolve();
-        flush.onerror = (): void => resolve();
-        flush.onabort = (): void => resolve();
-      });
-    }
-    // The connection has to go first: an open one blocks the delete indefinitely.
-    this.close();
+    // The connection has to go first, and has to be gone rather than merely closed: an open
+    // one blocks the delete indefinitely, and a connection closed mid-transaction still
+    // counts as open. `close()` waits that out.
+    await this.close();
     return new Promise((resolve, reject) => {
       const request = window.indexedDB.deleteDatabase(this.name);
       // Another tab still has it open. Reported rather than left hanging, so the caller

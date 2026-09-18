@@ -54,6 +54,33 @@ npx vite preview
 _**NOTE:** `npx vite preview` launches a local static web server to preview the build
 in the `/dist` directory.
 
+### Test the Public Website Version
+
+The app runs as the public website version whenever the page is not opened from `localhost`,
+`127.0.0.1` or `[::1]`. In this version, model features are off, first-run setup is skipped, and
+nothing is saved in the browser.
+
+To test it locally:
+
+1. Start the server with `--host` so it is reachable on your network:
+
+   ```bash
+   # Development server
+   npm start -- --host
+
+   # Or the production build
+   npm run build
+   npx vite preview --host
+   ```
+
+2. Open the `Network` URL the server prints, such as `http://192.168.1.6:3000/`, instead of the
+   `localhost` one.
+
+_**NOTE:** On macOS, if the `Network` URL shows a blank page while `localhost` works, the firewall
+is blocking Node. This happens when Node is not code-signed, such as Node installed by Homebrew. Use
+a signed Node from [nodejs.org](https://nodejs.org) or [nvm](https://github.com/nvm-sh/nvm), then
+allow `node` when macOS asks to accept incoming connections._
+
 ### Lint
 
 To lint the source code, run:

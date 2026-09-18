@@ -17,7 +17,7 @@ import {
   saveMessageRecord, saveTranslation
 } from "./MessageLog";
 import { setStorage } from "./StorageBackend";
-import { FakeStorage } from "../testUtils/FakeStorage";
+import { MemoryStorage } from "./MemoryStorage";
 import { readStoredMessages, resetMessageLog, seedMessageLog } from "../testUtils/MessageLogTestUtils";
 import { SymbolEncodingType } from "../index.d";
 
@@ -108,7 +108,7 @@ describe("messageLog", (): void => {
 
     test("a store that cannot be read leaves an empty log rather than throwing", async (): Promise<void> => {
       const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
-      const storage = new FakeStorage();
+      const storage = new MemoryStorage();
       setStorage(storage);
       vi.spyOn(storage, "readMessages").mockRejectedValue(new Error("the store is not available"));
 

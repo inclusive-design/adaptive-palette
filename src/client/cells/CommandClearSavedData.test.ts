@@ -20,7 +20,7 @@ import { expectCellRendered } from "../testUtils/CellTestUtils";
 import {
   CommandClearSavedData, CANCEL_LABEL, CONFIRM_LABEL, clearSavedData
 } from "./CommandClearSavedData";
-import { FakeStorage } from "../testUtils/FakeStorage";
+import { MemoryStorage } from "../core/MemoryStorage";
 import { setStorage } from "../core/StorageBackend";
 
 // `userEvent` is the provider-backed instance from `vitest/browser`, not the one from
@@ -45,7 +45,7 @@ describe("CommandClearSavedData", () => {
   let clearSpy: MockInstance;
 
   beforeEach((): void => {
-    const storage = new FakeStorage();
+    const storage = new MemoryStorage();
     setStorage(storage);
     clearSpy = vi.spyOn(storage, "clearAll").mockRejectedValue(new Error("storage is not available"));
     vi.spyOn(console, "error").mockImplementation(() => undefined);
@@ -118,10 +118,10 @@ describe("CommandClearSavedData", () => {
 
 describe("clearSavedData()", (): void => {
 
-  let storage: FakeStorage;
+  let storage: MemoryStorage;
 
   beforeEach((): void => {
-    storage = new FakeStorage();
+    storage = new MemoryStorage();
     setStorage(storage);
   });
 

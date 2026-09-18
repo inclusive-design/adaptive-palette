@@ -20,6 +20,7 @@ import {
   currentValue, isOffered, saveSettings, settingKey
 } from "./SettingsSchema";
 import { EraseAllData } from "./EraseAllData";
+import { isLocalHost } from "../../core/OllamaApi";
 import "./SettingsDialog.scss";
 
 export const SETTINGS_FORM_ID = "adjustSettingsForm";
@@ -239,12 +240,15 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
       </div>
     `;
 
+  // "Erase all app data and quit" is the uninstall path, so it is shown only where there is
+  // an app to uninstall. On the hosted site nothing was installed and a reload clears the
+  // data anyway.
   return html`
     <${Fragment}>
       ${isConfirming ? warning : html`
         <${Fragment}>
           ${form}
-          <${EraseAllData} onErased=${() => setIsErased(true)} />
+          ${isLocalHost() && html`<${EraseAllData} onErased=${() => setIsErased(true)} />`}
         <//>
       `}
       ${footer}

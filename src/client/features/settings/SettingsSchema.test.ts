@@ -15,7 +15,7 @@ import { vi } from "vitest";
 import { makeDefaultConfig } from "../../core/Config";
 import type { AdaptivePaletteConfigType } from "../../index.d";
 import { applyStoredSettings, saveSettings } from "./SettingsSchema";
-import { FakeStorage } from "../../testUtils/FakeStorage";
+import { MemoryStorage } from "../../core/MemoryStorage";
 import { setStorage } from "../../core/StorageBackend";
 
 const configWithSentences = (): AdaptivePaletteConfigType => ({
@@ -25,7 +25,7 @@ const configWithSentences = (): AdaptivePaletteConfigType => ({
   }
 });
 
-let storage = new FakeStorage();
+let storage = new MemoryStorage();
 
 const store = async (overrides: Record<string, unknown>): Promise<void> => {
   await storage.writeSettings(overrides);
@@ -34,7 +34,7 @@ const store = async (overrides: Record<string, unknown>): Promise<void> => {
 describe("SettingsSchema", () => {
 
   beforeEach((): void => {
-    storage = new FakeStorage();
+    storage = new MemoryStorage();
     setStorage(storage);
   });
 
