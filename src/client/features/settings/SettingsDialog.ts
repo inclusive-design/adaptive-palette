@@ -20,7 +20,7 @@ import {
   currentValue, isOffered, saveSettings, settingKey
 } from "./SettingsSchema";
 import { EraseAllData } from "./EraseAllData";
-import { isLocalHost } from "../../core/OllamaApi";
+import { HOSTED_MESSAGE, isLocalHost } from "../../core/OllamaApi";
 import "./SettingsDialog.scss";
 
 export const SETTINGS_FORM_ID = "adjustSettingsForm";
@@ -99,8 +99,9 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
       );
       return dependentNote(master?.label ?? "");
     }
+    // On the hosted site there is no Ollama to start.
     if (descriptor.requiresModel === true && models.length === 0) {
-      return MODEL_NOTE;
+      return isLocalHost() ? MODEL_NOTE : HOSTED_MESSAGE;
     }
     return undefined;
   };

@@ -25,6 +25,14 @@ import {
   MODEL_NOTE, WARNING_TEXT, FAILURE_MESSAGE, dependentNote
 } from "./SettingsDialog";
 import { ERASE_CONFIRM_LABEL, ERASE_DONE_TEXT, ERASE_LABEL } from "./EraseAllData";
+import { HOSTED_MESSAGE, isLocalHost } from "../../core/OllamaApi";
+
+// Under the test runner the hostname is always `localhost`. The real function stays in place
+// so every test sees the local page unless it asks for the hosted one.
+vi.mock("../../core/OllamaApi", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../../core/OllamaApi")>();
+  return { ...actual, isLocalHost: vi.fn(actual.isLocalHost) };
+});
 
 // Saving reloads the page, which would restart the test runner. Making the store's write
 // reject keeps every test on the failure path, where the dialog stays put; what the dialog
@@ -74,6 +82,7 @@ describe("SettingsDialog", () => {
   afterEach(() => {
     cleanup();
     vi.restoreAllMocks();
+    vi.mocked(isLocalHost).mockReset();
     adaptivePaletteGlobals.config = originalConfig;
     adaptivePaletteGlobals.fileConfig = originalFileConfig;
     adaptivePaletteGlobals.models = originalModels;
@@ -130,6 +139,19 @@ describe("SettingsDialog", () => {
     const wasChecked = (control as HTMLInputElement).checked;
     (control as HTMLInputElement).click();
     expect((control as HTMLInputElement).checked).toBe(wasChecked);
+  });
+
+  // There is no Ollama to start on the hosted site, so the note says where the features are.
+  test("says the AI features are desktop-only on the hosted site", () => {
+    vi.mocked(isLocalHost).mockReturnValue(false);
+    withConfig({}, []);
+    renderDialog();
+
+    const control = screen.getByLabelText(MODEL_WORDS_LABEL);
+    expect(control).toHaveAttribute("aria-disabled", "true");
+    expect(control).toHaveAccessibleDescription(HOSTED_MESSAGE);
+    expect(screen.getAllByText(HOSTED_MESSAGE)).toHaveLength(4);
+    expect(screen.queryByText(MODEL_NOTE)).not.toBeInTheDocument();
   });
 
   test("leaves those settings editable when Ollama has a model", async () => {
