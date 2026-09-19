@@ -32,6 +32,7 @@ turned back on.
 
 The three marked above do nothing without a model Ollama can serve. When Ollama is not up and running,
 they are still shown but in a disabled state, and carry the note "Start Ollama to use this."
+On the public website they carry "AI features are available only in the desktop version." instead.
 Their saved values are kept, so starting Ollama later brings them back as they were.
 
 They are left out of the dialog altogether when their section of `public/config.json` carries no

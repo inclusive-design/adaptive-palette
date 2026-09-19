@@ -22,6 +22,10 @@ const LOCAL_HOSTNAMES = ["localhost", "127.0.0.1", "[::1]"];
  *
  * Away from these hostnames nothing may be sent to Ollama: a request from a public site to
  * this computer makes Chrome ask the user for permission to reach local services.
+ *
+ * It has since come to mark the desktop build generally, not only what may reach Ollama:
+ * `installStorage()` reads it to decide whether the browser may keep the user's data at all.
+ * It stays here because this is where it is defined and most used.
  * @param {string} hostname - The hostname to check. Defaults to the page's own.
  * @returns {boolean}
  */

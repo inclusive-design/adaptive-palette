@@ -10,7 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { FakeStorage } from "./FakeStorage";
-import { runStorageContractTests } from "./StorageContract";
+import { MemoryStorage } from "./MemoryStorage";
+import { runStorageContractTests } from "../testUtils/StorageContract";
 
-runStorageContractTests("FakeStorage", () => new FakeStorage());
+runStorageContractTests("MemoryStorage", () => new MemoryStorage());

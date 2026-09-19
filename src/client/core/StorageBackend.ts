@@ -13,8 +13,9 @@
 /**
  * Where the app's data lives, behind an interface a second implementation can satisfy.
  *
- * The web build installs `IndexedDbStorage`; a desktop build will install a different
- * one, changing only the line in `InitGlobals.ts` that calls `setStorage()`.
+ * A page served from this computer installs `IndexedDbStorage` and keeps its data; the hosted
+ * site installs `MemoryStorage` and keeps nothing. `installStorage()` in `InitGlobals.ts` is
+ * the one place that chooses.
  *
  * The interface names the app's own operations rather than generic get/set, so each backend
  * can use what its store is good at: a cursor in IndexedDB, a real table in SQL.

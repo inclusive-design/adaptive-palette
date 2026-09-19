@@ -21,9 +21,9 @@
  */
 import { MessageRecordType, hydrateMessageLog } from "../core/MessageLog";
 import { setStorage } from "../core/StorageBackend";
-import { FakeStorage } from "./FakeStorage";
+import { MemoryStorage } from "../core/MemoryStorage";
 
-let storage = new FakeStorage();
+let storage = new MemoryStorage();
 
 /**
  * Empty the message log, in storage and in the app. Call in `beforeEach` of any test that
@@ -31,7 +31,7 @@ let storage = new FakeStorage();
  * @returns {Promise<void>}
  */
 export async function resetMessageLog (): Promise<void> {
-  storage = new FakeStorage();
+  storage = new MemoryStorage();
   setStorage(storage);
   await hydrateMessageLog();
 }
@@ -44,7 +44,7 @@ export async function resetMessageLog (): Promise<void> {
  * @returns {Promise<void>}
  */
 export async function seedMessageLog (entries: unknown[]): Promise<void> {
-  storage = new FakeStorage();
+  storage = new MemoryStorage();
   setStorage(storage);
   for (const entry of entries) {
     await storage.addMessage(entry as MessageRecordType);

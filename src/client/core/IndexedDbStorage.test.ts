@@ -11,7 +11,8 @@
  */
 
 /**
- * The only test that touches a real IndexedDB. Everything else uses `FakeStorage`.
+ * The main test against a real IndexedDB; `InitGlobals.test.ts` opens one too. Everything
+ * else uses `MemoryStorage`.
  */
 import { IndexedDbStorage } from "./IndexedDbStorage";
 import { runStorageContractTests } from "../testUtils/StorageContract";
@@ -35,7 +36,7 @@ describe("IndexedDbStorage", (): void => {
       payloads: [{ label: "juice", composition: 1840, modifierInfo: [] }]
     });
     await first.writeSettings({ "maxRecalledRecords": 12 });
-    first.close();
+    await first.close();
 
     const second = new IndexedDbStorage(name);
     await second.open();
@@ -43,7 +44,7 @@ describe("IndexedDbStorage", (): void => {
     expect(messages).toHaveLength(1);
     expect(messages[0].payloads[0].label).toBe("juice");
     expect(await second.readSettings()).toEqual({ "maxRecalledRecords": 12 });
-    second.close();
+    await second.close();
   });
 
   test("a call before open rejects rather than throwing", async (): Promise<void> => {

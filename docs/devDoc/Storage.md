@@ -5,9 +5,8 @@ Where the app's data lives.
 ## The interface
 
 [`src/client/core/StorageBackend.ts`](../../src/client/core/StorageBackend.ts) defines
-`AdaptivePaletteStorage`, the interface every backend storage implements. Changing a
-backend storage implementation changes only the line in `InitGlobals.ts` that calls
-`setStorage()`.
+`AdaptivePaletteStorage`, the interface every backend storage implements. Which one a page
+gets is decided in one place: `installStorage()` in `InitGlobals.ts`.
 
 ```ts
 export type StoredMessage = MessageRecordType & { id: number };
@@ -33,12 +32,38 @@ data" uses: the app keeps running, and its database stays in place. `destroy()` 
 app data and quit" uses, where the point is that nothing of the app's is left in the browser
 afterwards. A destroyed store can be opened again, empty.
 
-[`src/client/core/IndexedDbStorage.ts`](../../src/client/core/IndexedDbStorage.ts) is the web
-implementation: one database, version 1, with two object stores created in `onupgradeneeded`:
+[`src/client/core/IndexedDbStorage.ts`](../../src/client/core/IndexedDbStorage.ts) is the
+implementation for a page served from this computer: one database, version 1, with two object
+stores created in `onupgradeneeded`:
 
 - `messages` — key path `id`, `autoIncrement: true`. Insertion order is id order, so the newest
   messages are the tail and `readMessages()` is a cursor opened in reverse rather than a sort.
 - `settings` — a single record holding the overrides object.
+
+## Which backend a page gets
+
+A page served from `localhost`, `127.0.0.1` or `[::1]` — the desktop bundle, the Vite dev server, the
+test runner — installs `IndexedDbStorage`, and the user's messages and settings survive a reload.
+
+Anywhere else is the hosted site, which may be running on a public or shared computer. There the app
+installs [`core/MemoryStorage.ts`](../../src/client/core/MemoryStorage.ts) and puts nothing in the
+browser at all: messages and settings live for as long as the tab does, and a reload clears them. The
+status line says so.
+
+Settings go into memory along with the messages. They carry nothing personal, but keeping them would
+mean a backend that is half one thing and half the other, and a database created on a public computer
+anyway.
+
+`installStorage(isLocal)` in [`core/InitGlobals.ts`](../../src/client/core/InitGlobals.ts) makes the
+choice, from `isLocalHost()` — the same guard that decides whether the app may contact Ollama. It takes
+the answer as an argument rather than reading the hostname, because under the test runner the hostname
+is always `localhost` and the hosted branch could not otherwise be tested.
+
+On a hosted page it also calls `removeLegacyDatabase()`, which deletes the app's IndexedDB database.
+The hosted site used to save messages there, so visitors from before this change still have them in
+their browser — on the very machines where that is the problem. The delete is not awaited, and runs on
+every hosted load: deleting a database that is not there succeeds, so it needs no flag, and a load
+blocked by another tab is retried by the next one.
 
 ## Installing a backend
 
@@ -46,7 +71,7 @@ implementation: one database, version 1, with two object stores created in `onup
 is installed. Both live in `StorageBackend.ts`.
 
 `initAdaptivePaletteGlobals()` in [`core/InitGlobals.ts`](../../src/client/core/InitGlobals.ts)
-is the only place that installs one outside a test: `setStorage(new IndexedDbStorage())` runs
+is the only place that installs one outside a test: `installStorage(isLocalHost())` runs
 before the store is opened, so that even a browser that refuses a database leaves every later
 call with somewhere to fail, rather than nowhere to call. Nothing installs a backend at module
 scope, so a test is free to install its own.
@@ -112,23 +137,29 @@ were rather than half the data gone.
 
 ## Testing
 
-`FakeStorage` ([`testUtils/FakeStorage.ts`](../../src/client/testUtils/FakeStorage.ts)) is an
-in-memory implementation of the interface, used by every test but one: it is quick, leaves
-nothing behind for the next test to find, and avoids the `deleteDatabase` slowness that makes
-Firefox and WebKit tests flaky.
+`MemoryStorage` ([`core/MemoryStorage.ts`](../../src/client/core/MemoryStorage.ts)) is what almost
+every test stores into: it is quick, leaves nothing behind for the next test to find, and avoids
+the `deleteDatabase` slowness that makes Firefox and WebKit tests flaky. It is the hosted site's
+backend as well, so the tests run against the code the app runs, not a double that resembles it.
 
-`core/IndexedDbStorage.test.ts` is the one test that touches a real database. Each test uses a
-database name of its own, so nothing ever waits on `deleteDatabase` unblocking behind a
-connection another test left open.
+`core/IndexedDbStorage.test.ts` and `core/InitGlobals.test.ts` are the two that touch a real
+database. Each test uses a database name of its own, so nothing ever waits on `deleteDatabase`
+unblocking behind a connection another test left open.
+
+`close()` is awaited in those tests rather than called and forgotten. An IndexedDB request's
+`onsuccess` fires before its transaction commits, and in WebKit the connection is still counted
+as open in that gap — so a delete straight after a close reported itself blocked by a tab that
+was not there. `close()` waits out a no-op transaction before releasing, and `destroy()` is now
+just that wait followed by `deleteDatabase`.
 
 [`testUtils/StorageContract.ts`](../../src/client/testUtils/StorageContract.ts) exports
 `runStorageContractTests()`, the behaviour suite both backends must pass — settings
 round-tripping, messages read back oldest first, a limit returning the newest records,
 `updateMessage` replacing a record, `clearAll` emptying both stores. It is what makes "the
-backend is swappable" a tested claim rather than a hope.
+backend is swappable" a tested claim rather than a hope — and both backends it covers now ship.
 
 Tests that touch the message log use
 [`testUtils/MessageLogTestUtils.ts`](../../src/client/testUtils/MessageLogTestUtils.ts) —
 `resetMessageLog()`, `seedMessageLog()`, `readStoredMessages()` — the only place a test reaches
 into the message log's storage. A test that only needs settings, such as
-`SettingsSchema.test.ts`, installs a `FakeStorage` directly. See [Testing.md](Testing.md).
+`SettingsSchema.test.ts`, installs a `MemoryStorage` directly. See [Testing.md](Testing.md).
