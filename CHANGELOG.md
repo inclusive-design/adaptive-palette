@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.0](https://github.com/inclusive-design/adaptive-palette/compare/v0.2.1...v0.3.0) (2026-09-19)
+
+
+### Features
+
+* implement the flexible palette layout ([#228](https://github.com/inclusive-design/adaptive-palette/issues/228)) ([e6b62fb](https://github.com/inclusive-design/adaptive-palette/commit/e6b62fbba0d8504cc4498fd4a83fa512d5634224))
+
+
+### Bug Fixes
+
+* not to save user data on the public website version ([#233](https://github.com/inclusive-design/adaptive-palette/issues/233)) ([f64a4c6](https://github.com/inclusive-design/adaptive-palette/commit/f64a4c6057d354e91fc96f9797a95566307ad9e3))
+
 ## [0.2.1](https://github.com/inclusive-design/adaptive-palette/compare/v0.2.0...v0.2.1) (2026-09-11)
 
 
