@@ -3,6 +3,10 @@
 Adaptive Palette runs on your own computer, in your own web browser. Nothing you write
 leaves the machine.
 
+This is the desktop version. To try Adaptive Palette without installing it, use the
+[public website](https://adaptive-palette.pages.dev/), which has no AI features and saves
+nothing you write.
+
 There are two things to install: Ollama, which runs the AI features, and Adaptive Palette
 itself.
 
