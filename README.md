@@ -7,6 +7,24 @@ others.
 
 The front end of the project is built with [Preact](https://preactjs.com/).
 
+## Two Versions
+
+Adaptive Palette comes in two versions:
+
+| | Public website | Desktop version |
+| --- | --- | --- |
+| Where | [adaptive-palette.pages.dev](https://adaptive-palette.pages.dev/) | Installed on your computer — see [Install on Your Computer](./docs/Deployment.md) |
+| AI features | Off | On, with [Ollama](https://ollama.com) running on the same computer |
+| Your messages and settings | Kept until the page is reloaded or closed; nothing is saved in the browser | Saved in the browser's IndexedDB on your computer |
+
+The public website is for trying Adaptive Palette without installing anything: the palette
+layout, Bliss input, and the other features that need no AI. It saves nothing because it may
+be opened on a shared or public computer.
+
+The desktop version is for everyday use and protects your privacy. It saves your messages so
+the AI features can tailor their suggestions to you, and both that data and the AI models stay
+on your computer: nothing you write leaves it.
+
 ## Install
 
 To work on the project, you need to install [NodeJS and NPM](https://nodejs.org/en/download/)
