@@ -11,24 +11,34 @@
  */
 
 /**
- * The storage of a page served from this computer: one IndexedDB database with a store for
- * messages and a store for settings. The hosted site uses `MemoryStorage` instead and keeps
- * nothing.
+ * The storage of a page served from this computer: one IndexedDB database with a store each
+ * for messages, settings and About Me. The hosted site uses `MemoryStorage` instead and
+ * keeps nothing.
  *
  * Nothing is ever deleted to make room. The message log is kept whole, and how much of it the
  * app reads back is `maxRecalledRecords`, applied by the caller through `readMessages()`.
  */
 import { AdaptivePaletteStorage, StoredMessage } from "./StorageBackend";
 import type { MessageRecordType } from "./MessageLog";
+import type { AboutMeType } from "../index.d";
 
 export const DATABASE_NAME = "AdaptivePalette";
 export const MESSAGES_STORE = "messages";
 export const SETTINGS_STORE = "settings";
+export const ABOUT_ME_STORE = "aboutMe";
 
-const DATABASE_VERSION = 1;
+// 2 added the About Me store. The `contains` guards in `open()` let a version-1 database
+// upgrade in place, keeping its messages and settings.
+const DATABASE_VERSION = 2;
 
 // The settings store holds one record; this is its key.
 const SETTINGS_KEY = "overrides";
+
+// The About Me store holds one record; this is its key.
+const ABOUT_ME_KEY = "aboutMe";
+
+// Every store, for the transactions that must cover all of them.
+const ALL_STORES = [MESSAGES_STORE, SETTINGS_STORE, ABOUT_ME_STORE];
 
 /**
  * An `Error` for a failed request. `DOMException` carries the real message but is not
@@ -84,6 +94,9 @@ export class IndexedDbStorage implements AdaptivePaletteStorage {
         if (!database.objectStoreNames.contains(SETTINGS_STORE)) {
           database.createObjectStore(SETTINGS_STORE);
         }
+        if (!database.objectStoreNames.contains(ABOUT_ME_STORE)) {
+          database.createObjectStore(ABOUT_ME_STORE);
+        }
       };
       // Another tab holding the old version open. Rejected rather than left hanging: the
       // caller logs it and degrades to storing nothing, which is better than never starting.
@@ -117,7 +130,7 @@ export class IndexedDbStorage implements AdaptivePaletteStorage {
       const database = this.database;
       try {
         await new Promise<void>((resolve) => {
-          const flush = database.transaction([MESSAGES_STORE, SETTINGS_STORE], "readwrite");
+          const flush = database.transaction(ALL_STORES, "readwrite");
           flush.oncomplete = (): void => resolve();
           flush.onerror = (): void => resolve();
           flush.onabort = (): void => resolve();
@@ -155,6 +168,27 @@ export class IndexedDbStorage implements AdaptivePaletteStorage {
     await asPromise(this.objectStore(SETTINGS_STORE, "readwrite").put(overrides, SETTINGS_KEY));
   }
 
+  async readAboutMe (): Promise<AboutMeType> {
+    const stored = await asPromise(
+      this.objectStore(ABOUT_ME_STORE, "readonly").get(ABOUT_ME_KEY)
+    ) as Partial<AboutMeType> | undefined;
+    // Hand-editable through the developer tools, so each list is checked. The entries
+    // themselves, and `learntUpTo`, are checked by `hydrateAboutMe()`.
+    const facts = stored?.facts;
+    const dismissed = stored?.dismissed;
+    const pending = stored?.pending;
+    return {
+      facts: Array.isArray(facts) ? facts : [],
+      dismissed: Array.isArray(dismissed) ? dismissed : [],
+      pending: Array.isArray(pending) ? pending : [],
+      ...(stored?.learntUpTo === undefined ? {} : { learntUpTo: stored.learntUpTo })
+    };
+  }
+
+  async writeAboutMe (aboutMe: AboutMeType): Promise<void> {
+    await asPromise(this.objectStore(ABOUT_ME_STORE, "readwrite").put(aboutMe, ABOUT_ME_KEY));
+  }
+
   readMessages (limit: number): Promise<StoredMessage[]> {
     if (limit <= 0) {
       return Promise.resolve([]);
@@ -183,6 +217,34 @@ export class IndexedDbStorage implements AdaptivePaletteStorage {
     });
   }
 
+  readMessagesAfter (afterId: number | undefined, limit: number): Promise<StoredMessage[]> {
+    if (limit <= 0) {
+      return Promise.resolve([]);
+    }
+    return new Promise((resolve, reject) => {
+      let request: IDBRequest<IDBCursorWithValue | null>;
+      try {
+        // Keys are ids, so walking forward from just past `afterId` is oldest first.
+        const range = afterId === undefined ? null : IDBKeyRange.lowerBound(afterId, true);
+        request = this.objectStore(MESSAGES_STORE, "readonly").openCursor(range);
+      } catch (error) {
+        reject(error instanceof Error ? error : new Error(String(error)));
+        return;
+      }
+      const oldest: StoredMessage[] = [];
+      request.onsuccess = (): void => {
+        const cursor = request.result;
+        if (cursor && oldest.length < limit) {
+          oldest.push(cursor.value as StoredMessage);
+          cursor.continue();
+        } else {
+          resolve(oldest);
+        }
+      };
+      request.onerror = (): void => reject(requestError(request));
+    });
+  }
+
   async addMessage (record: MessageRecordType): Promise<StoredMessage> {
     const id = await asPromise(this.objectStore(MESSAGES_STORE, "readwrite").add(record));
     return { ...record, id: id as number };
@@ -196,11 +258,9 @@ export class IndexedDbStorage implements AdaptivePaletteStorage {
     if (!this.database) {
       return Promise.reject(new Error("The database is not open."));
     }
-    // Both stores in one transaction, so a failure on either leaves both as they were rather
-    // than the messages gone and the settings kept.
-    const transaction = this.database.transaction([MESSAGES_STORE, SETTINGS_STORE], "readwrite");
-    transaction.objectStore(MESSAGES_STORE).clear();
-    transaction.objectStore(SETTINGS_STORE).clear();
+    // Every store in one transaction, so a failure on any leaves all of them as they were.
+    const transaction = this.database.transaction(ALL_STORES, "readwrite");
+    ALL_STORES.forEach((store) => transaction.objectStore(store).clear());
     return new Promise((resolve, reject) => {
       const failed = (): void => reject(
         transaction.error

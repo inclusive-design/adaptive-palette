@@ -26,18 +26,20 @@
  */
 import { AdaptivePaletteStorage, StoredMessage } from "./StorageBackend";
 import { MessageRecordType } from "./MessageLog";
+import type { AboutMeType } from "../index.d";
 
 /*
  * What this backend means for the user, shown on the hosted site's status line. It lives here
  * rather than with the other status text because it states this backend's own consequence.
  */
 export const NOT_SAVED_MESSAGE =
-  "Nothing is saved on this computer. Reloading the page clears your messages and settings.";
+  "Nothing is saved on this computer. Reloading the page clears your messages, settings and About Me notes.";
 
 export class MemoryStorage implements AdaptivePaletteStorage {
 
   private messages: StoredMessage[] = [];
   private settings: Record<string, unknown> = {};
+  private aboutMe: AboutMeType = { facts: [], dismissed: [], pending: [] };
   private nextId = 1;
 
   open (): Promise<void> {
@@ -53,8 +55,22 @@ export class MemoryStorage implements AdaptivePaletteStorage {
     return Promise.resolve();
   }
 
+  readAboutMe (): Promise<AboutMeType> {
+    return Promise.resolve(structuredClone(this.aboutMe));
+  }
+
+  writeAboutMe (aboutMe: AboutMeType): Promise<void> {
+    this.aboutMe = structuredClone(aboutMe);
+    return Promise.resolve();
+  }
+
   readMessages (limit: number): Promise<StoredMessage[]> {
     return Promise.resolve(limit > 0 ? structuredClone(this.messages.slice(-limit)) : []);
+  }
+
+  readMessagesAfter (afterId: number | undefined, limit: number): Promise<StoredMessage[]> {
+    const after = this.messages.filter((message) => afterId === undefined || message.id > afterId);
+    return Promise.resolve(limit > 0 ? structuredClone(after.slice(0, limit)) : []);
   }
 
   addMessage (record: MessageRecordType): Promise<StoredMessage> {
@@ -80,6 +96,7 @@ export class MemoryStorage implements AdaptivePaletteStorage {
   clearAll (): Promise<void> {
     this.messages = [];
     this.settings = {};
+    this.aboutMe = { facts: [], dismissed: [], pending: [] };
     this.nextId = 1;
     return Promise.resolve();
   }
@@ -87,6 +104,7 @@ export class MemoryStorage implements AdaptivePaletteStorage {
   destroy (): Promise<void> {
     this.messages = [];
     this.settings = {};
+    this.aboutMe = { facts: [], dismissed: [], pending: [] };
     this.nextId = 1;
     return Promise.resolve();
   }

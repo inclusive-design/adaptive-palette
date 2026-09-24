@@ -22,6 +22,7 @@ import { resolveWordPayload } from "../../utils/GlossLookupUtils";
 import {
   selectedAttributesSignal, clearAttributes
 } from "../message-attributes/MessageAttributesState";
+import { aboutMeSignal } from "../about-me/AboutMeState";
 import { SymbolEncodingType } from "../../index.d";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 
@@ -385,6 +386,41 @@ describe("wordPrediction with a model answering as well", (): void => {
     });
 
     test("drops the attributes line when none are set", async (): Promise<void> => {
+      await requestModelWords("I want", 5);
+
+      expect(mockedQueryChat.mock.calls[0][0]).toBe("Message so far: I want");
+    });
+  });
+
+  describe("the About Me line in the user prompt", (): void => {
+
+    const promptConfig = {
+      ...MODEL_CONFIG,
+      userPrompt: "Message so far: {{message}}\nWhat you know about the user: {{aboutMe}}"
+    };
+
+    beforeEach((): void => {
+      adaptivePaletteGlobals.config.wordPrediction = { ...promptConfig };
+      replyWith("walk\nfood");
+      aboutMeSignal.value = { facts: [], dismissed: [], pending: [] };
+    });
+
+    test("carries About Me when it has facts", async (): Promise<void> => {
+      aboutMeSignal.value = {
+        facts: [{
+          id: "fact-1", category: "Family", text: "has a dog named Rex",
+          source: "manual", addedAt: "2026-09-22T00:00:00.000Z"
+        }],
+        dismissed: [], pending: [] };
+
+      await requestModelWords("I want", 5);
+
+      expect(mockedQueryChat.mock.calls[0][0]).toBe(
+        "Message so far: I want\nWhat you know about the user: Family: has a dog named Rex"
+      );
+    });
+
+    test("drops the About Me line when there are no facts", async (): Promise<void> => {
       await requestModelWords("I want", 5);
 
       expect(mockedQueryChat.mock.calls[0][0]).toBe("Message so far: I want");

@@ -20,7 +20,7 @@ import "./EraseAllData.scss";
 
 export const ERASE_DIALOG_ID = "eraseAllDataDialog";
 export const ERASE_LABEL = "Erase all app data and quit";
-export const ERASE_QUESTION = "This deletes every message and setting you have saved, and then quits. It cannot be undone.";
+export const ERASE_QUESTION = "This deletes every message, setting and About Me note you have saved, and then quits. It cannot be undone.";
 export const ERASE_NOTE = "Do this before deleting the app: once the app is gone there is no way left to reach this data.";
 export const ERASE_CONFIRM_LABEL = "Erase and quit";
 export const ERASE_CANCEL_LABEL = "Cancel";

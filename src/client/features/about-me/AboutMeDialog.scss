@@ -1,0 +1,158 @@
+/*
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
+ *
+ * Licensed under the New BSD license. You may not use this file except in
+ * compliance with this License.
+ *
+ * You may obtain a copy of the License at
+ * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
+ */
+
+/* The body is the dialog's only scroll region, as in the settings dialog, so the footer
+   stays put.
+
+   The width is set here rather than left to the dialog. `<dialog>` is shrink-to-fit, so it
+   would otherwise grow and shrink as notes are added, edited and removed. `min()` keeps it
+   inside a narrow viewport. */
+.aboutMeBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+  width: min(52rem, 84vw);
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.aboutMeSubtitle {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Each of the three parts of About Me is a panel on the dialog's blue, so a long list
+   reads as three things rather than one run of text. The border and radius are the dialog's
+   own, from `ModalDialog.scss`. */
+.aboutMeSection {
+  background-color: rgb(255 255 255 / 35%);
+  border: 2px solid black;
+  border-radius: 0.8rem;
+  padding: 0.75rem;
+
+  h3 {
+    font-size: 1rem;
+    margin: 0 0 0.5rem;
+  }
+
+  /* The category headings `byCategory()` draws. Styled like the settings dialog's group
+     legends. */
+  h4 {
+    font-size: 0.8rem;
+    font-weight: bold;
+    letter-spacing: 0.08em;
+    margin: 0.75rem 0 0.35rem;
+    text-transform: uppercase;
+  }
+
+  /* The empty-state paragraphs only. `.statusMessage` is also a direct child here, and this
+     selector outranks its own rule in `index.scss`, which is not this stylesheet's business. */
+  > p:not(.statusMessage) {
+    margin: 0.25rem 0;
+  }
+}
+
+/* One card per row, so each card has the full width for its text and buttons. */
+.aboutMeFactList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* One fact, with its date and the buttons that act on it. Grouping them is the whole point
+   of the card: loose in a wrapping row, which button belonged to which fact depended on where
+   the line broke. The buttons sit to the right of the text and drop below it when the card is
+   too narrow for both, as at high magnification, rather than squeezing the text. */
+.aboutMeCard {
+  align-items: center;
+  background-color: white;
+  border: 2px solid black;
+  border-radius: 0.7rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.5rem 0.65rem;
+}
+
+/* The text and its date or category. `min-width: 0` lets a long note wrap instead of pushing
+   the buttons out of the card; `overflow-wrap` breaks a single long word. */
+.aboutMeFactBody {
+  display: flex;
+  flex: 1 1 12rem;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* The edit form is the card's only child while a note is being edited. It grows to fill the
+   card, which is a row, and drops the form's own bottom margin so the card's padding is even. */
+.aboutMeCard > .aboutMeFactForm {
+  flex: 1;
+  margin: 0;
+}
+
+.aboutMeFactText {
+  font-weight: 600;
+  margin: 0;
+}
+
+.aboutMeFactMeta {
+  font-size: 0.8rem;
+  margin: 0;
+  opacity: 0.75;
+}
+
+/* After the text in the markup, so a fact is read before the buttons that act on it. */
+.aboutMeFactActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Suggestions waiting to be accepted or rejected. The same pale yellow as `.statusMessage`
+   in `index.scss`, which sits directly above and names this panel, so the two read as one
+   block. Pulled up against that line for the same reason. */
+.aboutMeReviewPanel {
+  background-color: #fffbe6;
+  border: 2px solid black;
+  border-radius: 0.7rem;
+  margin: -0.25rem 0 0.5rem;
+  padding: 0.6rem;
+}
+
+/* The add-note and edit forms stay a wrapping row of labelled controls. */
+.aboutMeFactForm {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+/* The add-note form gets the card's look without its layout. It opens the notes section, so
+   its space is below it. Declared after `.aboutMeFactForm` so this bottom margin wins. */
+.aboutMeFormCard {
+  background-color: white;
+  border: 2px solid black;
+  border-radius: 0.7rem;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 0.65rem;
+}

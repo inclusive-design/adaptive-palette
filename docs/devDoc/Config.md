@@ -7,8 +7,9 @@ falls back to its default and leaves the other sections intact. If the file itse
 every section falls back.
 
 Some of these fields can also be changed from within the app, through the **Adjust Settings**
-dialog: everything except `model`, `systemPrompt`, and `userPrompt`. Those choices are kept in
-the storage layer and applied over the file at start-up by `applyStoredSettings()` in
+dialog: everything except `model`, `systemPrompt`, `userPrompt`, and `aboutMe.messagesPerRun`.
+Those choices are kept in the storage layer and applied over the file at start-up by
+`applyStoredSettings()` in
 [`src/client/features/settings/SettingsSchema.ts`](../../src/client/features/settings/SettingsSchema.ts),
 which re-validates every value it reads back. See [Settings.md](../Settings.md) and
 [Storage.md](Storage.md).
@@ -23,6 +24,7 @@ whatever this file says. See `isLocalHost()` in [`src/client/core/OllamaApi.ts`]
 | `markAiSuggestions` | Top-level, not a section. Whether suggestions a model made are marked as such. |
 | `indicatorLabelLookup` | The Ollama fallback tier for looking up indicator labels. See [IndicatorLabelLookup.md](../IndicatorLabelLookup.md). |
 | `telegraphicTranslation` | Translating a telegraphic message into full sentences. See [TelegraphicMessageTranslation.md](../TelegraphicMessageTranslation.md). |
+| `aboutMe` | The "Suggest updates" button in the "About Me" dialog, which asks a model for facts about the user. See [AboutMe.md](../AboutMe.md). |
 | `symbolSearch` | The "Add Symbol to Message" trigger and its gloss-search dialog. |
 | `svgBuilderString` | The "Add Symbol by SVG-Builder String" trigger and its dialog. Off in production: it is for development. |
 | `wordPrediction` | Suggesting the next word from the user's past messages, and optionally from a model. See [WordPrediction.md](../WordPrediction.md). |
@@ -118,9 +120,42 @@ working: anything other than `false` reads as `true`.
 | `userPrompt` | string | Non-empty. See [Prompt placeholders](#prompt-placeholders). |
 | `showBlissSentence` | boolean | Optional. Draws Bliss symbols above each sentence choice. Only `false` turns it off. |
 
-`userPrompt` placeholders: `{{telegraphicMessage}}` and `{{attributes}}` -- the message attributes
-the user set, as `Intent: question; Feeling: angry`. Its line is dropped when no attribute is set,
-so give it a line of its own. See [MessageAttributes.md](../MessageAttributes.md).
+`userPrompt` placeholders: `{{telegraphicMessage}}`; `{{attributes}}` -- the message attributes
+the user set, as `Intent: question; Feeling: angry`, see
+[MessageAttributes.md](../MessageAttributes.md); and `{{aboutMe}}` -- the user's About Me facts, as
+`Family: has a dog named Rex; Preferences: likes tea`, see [AboutMe.md](../AboutMe.md).
+The `{{attributes}}` and `{{aboutMe}}` lines are each dropped when there is nothing to fill them
+with, so give each one a line of its own.
+
+## `aboutMe`
+
+Configures "Suggest updates" in the "About Me" dialog. Both prompts are required, because there
+are no hardcoded prompts to fall back on: with either missing or blank, the whole section is
+discarded and the button is hidden. About Me itself keeps working, since typing notes in by hand
+needs no model.
+
+| Field | Type | Description |
+| ----- | ---- | ----------- |
+| `model` | string | Required. Ollama model name. The empty string means Ollama's first available model. |
+| `systemPrompt` | string | Required, non-empty. Tells the model to answer with one `Category: fact` per line. |
+| `userPrompt` | string | Required, non-empty. See [Prompt placeholders](#prompt-placeholders). |
+| `messagesPerRun` | number | Optional. Positive integer. How many messages each "Suggest updates" run reads, oldest first, after the last one read. Defaults to 200. |
+
+`userPrompt` placeholders: `{{messages}}` -- the messages this run reads, one per line, a
+message the user turned into a sentence sent as that sentence and the rest as their symbol labels;
+`{{facts}}` -- About Me as it stands, as `Category: text` pairs separated by semicolons; and
+`{{dismissed}}` -- the texts the user has rejected or deleted, separated by semicolons, so the model
+does not suggest them again. They stay in About Me, listed in the dialog, until the user adds one
+back. A line whose placeholders all resolve empty is dropped, so give each
+field a line of its own.
+
+`DEFAULT_MESSAGES_PER_RUN` in
+[`src/client/core/Config.ts`](../../src/client/core/Config.ts) holds the `messagesPerRun` default.
+Messages are read from storage, not from the `maxRecalledRecords` kept in memory, so no message
+is skipped however long the user waits between runs.
+
+The button is also hidden away from `localhost`, whatever this section says, since there is no model
+to ask.
 
 ## `wordPrediction`
 
@@ -133,10 +168,12 @@ so give it a line of its own. See [MessageAttributes.md](../MessageAttributes.md
 | `systemPrompt` | string | Non-empty when the query is enabled. Supports the `{{numWords}}` placeholder. |
 | `userPrompt` | string | Non-empty when the query is enabled. See [Prompt placeholders](#prompt-placeholders). |
 
-`userPrompt` placeholders: `{{message}}` -- the labels of the message up to the caret -- and
-`{{attributes}}` -- the message attributes the user set, as `Intent: question; Feeling: angry`. Its
-line is dropped when no attribute is set, so give it a line of its own. See
-[MessageAttributes.md](../MessageAttributes.md).
+`userPrompt` placeholders: `{{message}}` -- the labels of the message up to the caret;
+`{{attributes}}` -- the message attributes the user set, as `Intent: question; Feeling: angry`, see
+[MessageAttributes.md](../MessageAttributes.md); and `{{aboutMe}}` -- the user's About Me facts, as
+`Family: has a dog named Rex; Preferences: likes tea`, see [AboutMe.md](../AboutMe.md).
+The `{{attributes}}` and `{{aboutMe}}` lines are each dropped when there is nothing to fill them
+with, so give each one a line of its own.
 
 When the section is missing or `show` is not a boolean, the feature is off. A malformed `maxSuggestions`
 alone falls back to 10 and leaves the feature on.

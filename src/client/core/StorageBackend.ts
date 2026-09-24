@@ -24,6 +24,7 @@
  * dependency graph and no cycle is formed with `MessageLog.ts`.
  */
 import type { MessageRecordType } from "./MessageLog";
+import type { AboutMeType } from "../index.d";
 
 // A message as it exists in storage: the record plus the identity storage gave it.
 export type StoredMessage = MessageRecordType & { id: number };
@@ -38,8 +39,20 @@ export interface AdaptivePaletteStorage {
   /** Replace the saved settings overrides. */
   writeSettings (overrides: Record<string, unknown>): Promise<void>;
 
+  /** The saved About Me facts, or empty ones when nothing has been saved. */
+  readAboutMe (): Promise<AboutMeType>;
+
+  /** Replace the saved About Me facts. */
+  writeAboutMe (aboutMe: AboutMeType): Promise<void>;
+
   /** The newest `limit` messages, oldest first. Empty when `limit` is not positive. */
   readMessages (limit: number): Promise<StoredMessage[]>;
+
+  /**
+   * Up to `limit` messages with an id greater than `afterId`, oldest first. Every message is a
+   * candidate when `afterId` is undefined. Empty when `limit` is not positive.
+   */
+  readMessagesAfter (afterId: number | undefined, limit: number): Promise<StoredMessage[]>;
 
   /** Store a message that is not in the store yet, and hand back the id it was given. */
   addMessage (record: MessageRecordType): Promise<StoredMessage>;

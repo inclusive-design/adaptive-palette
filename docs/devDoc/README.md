@@ -28,6 +28,7 @@ Technical guide for developers building the adaptive palette.
 - [Word Prediction](../WordPrediction.md)
 - [Message Attributes](../MessageAttributes.md)
 - [Adjust Settings](../Settings.md)
+- [About Me](../AboutMe.md)
 
 ## Interoperability
 

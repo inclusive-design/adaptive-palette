@@ -6,7 +6,8 @@ the page loads, so nothing has to be rebuilt or edited by hand.
 
 ## What can be changed
 
-Settings defined in `public/config.json` except these fields: `model`, `systemPrompt`, and `userPrompt`.
+Settings defined in `public/config.json` except these fields: `model`, `systemPrompt`, `userPrompt`,
+and `aboutMe.messagesPerRun`.
 
 | Group | Setting | Needs Ollama |
 | ----- | ------- | ------------ |

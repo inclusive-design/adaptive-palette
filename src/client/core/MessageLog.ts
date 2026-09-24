@@ -89,7 +89,7 @@ let log: LoggedMessage[] = [];
  * @param {unknown} entry - The stored entry.
  * @returns {boolean}
  */
-function isMessageRecord (entry: unknown): entry is StoredMessage {
+export function isMessageRecord (entry: unknown): entry is StoredMessage {
   const payloads = (entry as StoredMessage)?.payloads;
   return entry !== null && typeof entry === "object" && Array.isArray(payloads) &&
     payloads.every((payload) => payload !== null && typeof payload?.label === "string");

@@ -144,6 +144,14 @@ export type WordPredictionConfigType = {
   userPrompt: string
 };
 
+export type AboutMeConfigType = {
+  model: string,
+  systemPrompt: string,
+  userPrompt: string,
+  // How many messages each "Suggest updates" run reads, oldest first, after the last one read.
+  messagesPerRun: number
+};
+
 /*
  * Which step of the word-to-symbol ladder found a symbol for a word the model suggested, or
  * "dropped" when no step did. Counted to report how often model words go unused.
@@ -179,6 +187,7 @@ export type AdaptivePaletteConfigType = {
   markAiSuggestions: boolean,
   indicatorLabelLookup: IndicatorLabelLookupConfigType,
   telegraphicTranslation?: TelegraphicTranslationConfigType,
+  aboutMe?: AboutMeConfigType,
   symbolSearch: FeatureVisibilityConfigType,
   svgBuilderString: FeatureVisibilityConfigType,
   wordPrediction: WordPredictionConfigType
@@ -247,4 +256,48 @@ export type AttributeCellType = BlissSymbolInfoType & LayoutInfoType & {
 // The options a `ContentLabel` carries in the palette JSON.
 export type ContentLabelType = LayoutInfoType & {
   label: string
+};
+
+/*
+ * What an About Me fact is about. The dialog and the prompt list categories in the order of
+ * `FACT_CATEGORIES` in `features/about-me/AboutMeState.ts`.
+ */
+export type FactCategoryType = "Family" | "Background" | "Preferences" | "Communication style" | "Other";
+
+/*
+ * One thing known about the user: typed in by the user ("manual"), or suggested by a model
+ * reading their messages and then accepted ("suggested").
+ */
+export type AboutMeFactType = {
+  id: string,
+  category: FactCategoryType,
+  text: string,
+  source: "manual" | "suggested",
+  // ISO timestamp
+  addedAt: string
+};
+
+/*
+ * A suggestion the user turned down, or a learnt fact they deleted. Kept so the model does
+ * not suggest it again, and shown in the About Me dialog, where it can be added back.
+ */
+export type DismissedFactType = {
+  category: FactCategoryType,
+  text: string
+};
+
+// The last message "Suggest updates" sent to the model: its storage id, which the next run
+// reads after, and its timestamp, which the dialog shows.
+export type LearntUpToType = {
+  id: number,
+  timestamp: string
+};
+
+export type AboutMeType = {
+  facts: AboutMeFactType[],
+  dismissed: DismissedFactType[],
+  // Suggestions the user has not accepted or rejected yet.
+  pending: DismissedFactType[],
+  // Absent until the first successful "Suggest updates".
+  learntUpTo?: LearntUpToType
 };
