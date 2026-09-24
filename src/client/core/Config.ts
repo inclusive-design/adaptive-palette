@@ -18,7 +18,8 @@
  */
 import type {
   AdaptivePaletteConfigType, IndicatorLabelLookupConfigType,
-  TelegraphicTranslationConfigType, FeatureVisibilityConfigType, WordPredictionConfigType
+  TelegraphicTranslationConfigType, FeatureVisibilityConfigType, WordPredictionConfigType,
+  AboutMeConfigType
 } from "../index.d";
 
 // Used when `maxRecalledRecords` or `wordPrediction.maxSuggestions` is missing or malformed.
@@ -26,6 +27,10 @@ import type {
 // keystroke, because word prediction walks the whole set each time it suggests.
 export const DEFAULT_MAX_RECALLED_RECORDS = 500;
 export const DEFAULT_MAX_SUGGESTIONS = 10;
+
+// Used when `aboutMe.messagesPerRun` is missing or malformed: enough history to find facts
+// in, and few enough messages to fit a small local model's context.
+export const DEFAULT_MESSAGES_PER_RUN = 200;
 
 // The model half of `wordPrediction`, switched off. Used wherever the section is unusable.
 export const DISABLED_MODEL_QUERY = { enableModelQuery: false, model: "", systemPrompt: "", userPrompt: "" };
@@ -117,6 +122,34 @@ function parseTelegraphicTranslation (section: unknown): TelegraphicTranslationC
 }
 
 /**
+ * Validate the `aboutMe` section, which configures "Suggest updates" in the About Me
+ * dialog. Both prompts are required because there are no hardcoded fallback prompts. A
+ * missing or malformed section returns `undefined`, which hides the button. A bad
+ * `messagesPerRun` falls back to the default and keeps the rest of the section.
+ * @param {unknown} section - The raw parsed section.
+ * @returns {AboutMeConfigType | undefined}
+ */
+function parseAboutMe (section: unknown): AboutMeConfigType | undefined {
+  const candidate = section as {
+    model?: unknown, systemPrompt?: unknown, userPrompt?: unknown, messagesPerRun?: unknown
+  } | undefined;
+  if (!candidate) {
+    return undefined;
+  }
+  const { model, systemPrompt, userPrompt, messagesPerRun } = candidate;
+  // An empty `model` is valid and means the first model Ollama reports.
+  if (typeof model !== "string" || !isFilledString(systemPrompt) || !isFilledString(userPrompt)) {
+    return undefined;
+  }
+  return {
+    model,
+    systemPrompt: systemPrompt as string,
+    userPrompt: userPrompt as string,
+    messagesPerRun: isPositiveInteger(messagesPerRun) ? messagesPerRun as number : DEFAULT_MESSAGES_PER_RUN
+  };
+}
+
+/**
  * Validate the top-level `maxRecalledRecords`, how many of the newest stored messages the app
  * reads back. Zero is valid and turns the history off entirely.
  * @param {unknown} value - The raw parsed value.
@@ -190,7 +223,7 @@ function parseShowFlag (section: unknown, fallback: boolean): FeatureVisibilityC
 /**
  * Fetch and validate `public/config.json`: the top-level `maxRecalledRecords` and the
  * `indicatorLabelLookup`, `telegraphicTranslation`, `symbolSearch`, `svgBuilderString`,
- * and `wordPrediction` sections.
+ * `wordPrediction` and `aboutMe` sections.
  * @returns {Promise<AdaptivePaletteConfigType>}
  */
 export async function loadConfig (): Promise<AdaptivePaletteConfigType> {
@@ -211,6 +244,7 @@ export async function loadConfig (): Promise<AdaptivePaletteConfigType> {
       markAiSuggestions: typeof parsed?.markAiSuggestions === "boolean" ? parsed.markAiSuggestions : true,
       indicatorLabelLookup: indicatorLabelLookup ?? makeDefaultConfig().indicatorLabelLookup,
       telegraphicTranslation: parseTelegraphicTranslation(parsed?.telegraphicTranslation),
+      aboutMe: parseAboutMe(parsed?.aboutMe),
       symbolSearch: parseShowFlag(parsed?.symbolSearch, true),
       svgBuilderString: parseShowFlag(parsed?.svgBuilderString, false),
       wordPrediction: parseWordPrediction(parsed?.wordPrediction)

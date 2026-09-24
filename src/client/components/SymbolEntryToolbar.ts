@@ -15,10 +15,12 @@ import { html } from "htm/preact";
 import { useState } from "preact/hooks";
 
 import { adaptivePaletteGlobals } from "../state/GlobalData";
+import { isLocalHost } from "../core/OllamaApi";
 import { ModalDialog } from "./ModalDialog";
 import { ActionSearchGloss } from "../cells/ActionSearchGloss";
 import { ActionSvgEntryField } from "../cells/ActionSvgEntryField";
 import { SettingsDialog } from "../features/settings/SettingsDialog";
+import { AboutMeDialog } from "../features/about-me/AboutMeDialog";
 import "./SymbolEntryToolbar.scss";
 
 export const SEARCH_TRIGGER_LABEL = "Add Symbol to Message";
@@ -27,12 +29,15 @@ export const SEARCH_DIALOG_ID = "searchSymbolDialog";
 export const SVG_DIALOG_ID = "svgBuilderStringDialog";
 export const SETTINGS_TRIGGER_LABEL = "Adjust Settings";
 export const SETTINGS_DIALOG_ID = "adjustSettingsDialog";
+export const ABOUT_ME_TRIGGER_LABEL = "About Me";
+export const ABOUT_ME_DIALOG_ID = "aboutMeDialog";
 
-type OpenDialogType = "search" | "svg" | "settings" | null;
+type OpenDialogType = "search" | "svg" | "settings" | "aboutMe" | null;
 
 /**
  * The triggers at the right of the top bar, and the dialogs they open: adding a symbol to
- * the message, and adjusting the settings.
+ * the message, adjusting the settings, and About Me.  About Me is offered on the
+ * desktop version only.
  *
  * The triggers live outside the palette grid because no palette row has a spare column:
  * a trigger cell would have to shrink a neighbour.  `#topBar` in `index.scss` is what keeps
@@ -45,6 +50,9 @@ type OpenDialogType = "search" | "svg" | "settings" | null;
 export function SymbolEntryToolbar (): VNode {
   const [openDialog, setOpenDialog] = useState<OpenDialogType>(null);
   const { symbolSearch, svgBuilderString } = adaptivePaletteGlobals.config;
+  // About Me is only of use where a model reads it: the hosted site has none, so notes
+  // typed there would go into prompts that are never sent.
+  const showAboutMe = isLocalHost();
 
   const close = () => setOpenDialog(null);
 
@@ -77,6 +85,13 @@ export function SymbolEntryToolbar (): VNode {
         class="btn-command"
         aria-haspopup="dialog"
         onClick=${open("settings")}>${SETTINGS_TRIGGER_LABEL}</button>
+      ${showAboutMe && html`
+        <button
+          type="button"
+          class="btn-command"
+          aria-haspopup="dialog"
+          onClick=${open("aboutMe")}>${ABOUT_ME_TRIGGER_LABEL}</button>
+      `}
 
       ${symbolSearch.show && html`
         <${ModalDialog}
@@ -103,6 +118,15 @@ export function SymbolEntryToolbar (): VNode {
         onClose=${close}>
         ${openDialog === "settings" && html`<${SettingsDialog} onRequestClose=${close} />`}
       <//>
+      ${showAboutMe && html`
+        <${ModalDialog}
+          id=${ABOUT_ME_DIALOG_ID}
+          title=${ABOUT_ME_TRIGGER_LABEL}
+          isOpen=${openDialog === "aboutMe"}
+          onClose=${close}>
+          ${openDialog === "aboutMe" && html`<${AboutMeDialog} onRequestClose=${close} />`}
+        <//>
+      `}
     </div>
   `;
 }

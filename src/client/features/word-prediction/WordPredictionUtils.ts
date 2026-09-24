@@ -18,6 +18,7 @@ import { renderTemplate, renderPromptLines } from "../../utils/PromptUtils";
 import { pickModel } from "../telegraphic-translation/TelegraphicTranslationUtils";
 import { queryChat } from "../../core/OllamaApi";
 import { attributesPromptText } from "../message-attributes/MessageAttributesState";
+import { aboutMePromptText } from "../about-me/AboutMeState";
 import { ResolutionRungType, SymbolCompositionType, SymbolEncodingType } from "../../index.d";
 
 /*
@@ -378,9 +379,11 @@ export async function requestModelWords (message: string, numWords: number, abor
     throw new Error(NOT_CONFIGURED_MESSAGE);
   }
   const model = pickModel(config.model);
-  const values = { message, numWords: String(numWords), attributes: attributesPromptText() };
+  const values = {
+    message, numWords: String(numWords), attributes: attributesPromptText(), aboutMe: aboutMePromptText()
+  };
   const response = await queryChat(
-    // Line-per-field: with no attributes set, `attributes` is empty and its line is dropped.
+    // Line-per-field: an empty `attributes` or `aboutMe` drops its line.
     renderPromptLines(config.userPrompt, values),
     model,
     false,

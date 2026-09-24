@@ -100,7 +100,7 @@ stops the app straight away.
 restart or shut down your computer.
 
 "Adjust Settings" page has **Erase all app data and quit**. That is not a quit button: it permanently
-deletes every message you have saved, and there is no undo. Use it only when you mean to
+deletes every message, setting and About Me note you have saved, and there is no undo. Use it only when you mean to
 erase your data, such as when you are uninstalling.
 
 ## 5. Uninstalling

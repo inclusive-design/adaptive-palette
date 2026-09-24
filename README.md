@@ -179,6 +179,8 @@ turn telegraphic messages into complete, speakable English sentences.
 past messages and optionally from a local Ollama model.
 - [Adjust Settings](./docs/Settings.md): change the runtime settings from within the app, saved in the
 browser and applied at the next page load.
+- [About Me](./docs/AboutMe.md): notes about the user that sentence and word suggestions use,
+typed in or accepted from the AI model's suggestions. Desktop version only.
 - [Install on Your Computer](./docs/Deployment.md): install Adaptive Palette and Ollama on macOS or
 Windows, run it for the first time, and uninstall it cleanly.
 

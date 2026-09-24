@@ -20,6 +20,7 @@ import {
 import {
   selectedAttributesSignal, clearAttributes
 } from "../message-attributes/MessageAttributesState";
+import { aboutMeSignal } from "../about-me/AboutMeState";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../core/OllamaApi")>();
@@ -43,6 +44,7 @@ describe("telegraphicTranslation", (): void => {
     adaptivePaletteGlobals.models = ["phony-model:12b", "other-model:7b"];
     setTestConfig({ telegraphicTranslation: { ...CONFIG } });
     clearAttributes();
+    aboutMeSignal.value = { facts: [], dismissed: [], pending: [] };
   });
 
   describe("pickModel", (): void => {
@@ -176,6 +178,40 @@ describe("telegraphicTranslation", (): void => {
       await requestSentences("late");
 
       expect(mockedQueryChat.mock.calls[0][0]).toBe("Telegraphic message: late");
+    });
+  });
+
+  describe("the About Me line in the user prompt", (): void => {
+
+    const promptConfig = {
+      ...CONFIG,
+      userPrompt: "Telegraphic message: {{telegraphicMessage}}\nWhat you know about the user: {{aboutMe}}"
+    };
+
+    beforeEach((): void => {
+      setTestConfig({ telegraphicTranslation: promptConfig });
+      mockedQueryChat.mockResolvedValue({ message: { content: "1. Rex needs a walk." } } as never);
+    });
+
+    test("carries About Me when it has facts", async (): Promise<void> => {
+      aboutMeSignal.value = {
+        facts: [{
+          id: "fact-1", category: "Family", text: "has a dog named Rex",
+          source: "manual", addedAt: "2026-09-22T00:00:00.000Z"
+        }],
+        dismissed: [], pending: [] };
+
+      await requestSentences("dog walk");
+
+      expect(mockedQueryChat.mock.calls[0][0]).toBe(
+        "Telegraphic message: dog walk\nWhat you know about the user: Family: has a dog named Rex"
+      );
+    });
+
+    test("drops the About Me line when there are no facts", async (): Promise<void> => {
+      await requestSentences("dog walk");
+
+      expect(mockedQueryChat.mock.calls[0][0]).toBe("Telegraphic message: dog walk");
     });
   });
 });

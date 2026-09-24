@@ -41,7 +41,8 @@ Each one must be a plausible reading of what the user meant.
 Rules:
 - Write in the first person, as the user speaking aloud to another person.
 - Preserve the meaning of every content word.
-- Do not invent facts, names, times, places, or feelings the user did not give.
+- Do not invent facts, names, times, places, or feelings the user did not give. What you know
+  about the user counts as given: use it to fill in names and details.
 - When the message is ambiguous, vary the readings: different tense, different politeness,
   or a different sentence type (statement, question, request).
 - Keep each sentence short and natural to say out loud.
@@ -55,10 +56,13 @@ The user prompt:
 ```text
 Telegraphic message: {{telegraphicMessage}}
 Message attributes: {{attributes}}
+What you know about the user: {{aboutMe}}
 ```
 
 `{{attributes}}` carries what the user set on the [message attributes](MessageAttributes.md)
-palette, for example `Intent: question; Feeling: angry`. Its line is dropped when nothing is set.
+palette, for example `Intent: question; Feeling: angry`. `{{aboutMe}}` carries the user's [About Me](AboutMe.md)
+facts, for example `Family: has a dog named Rex`. Either line is dropped
+when there is nothing to fill it with.
 
 ## Model selection
 

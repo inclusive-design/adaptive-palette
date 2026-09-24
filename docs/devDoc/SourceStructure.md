@@ -40,12 +40,13 @@ See [State.md](State.md) for what `state/` and `core/` hold and why they are sep
 
 ## Choosing a folder
 
-A module belongs in `features/<slice>/` when nothing outside that slice imports it. A feature slice
-keeps its own cells, components, state and helpers together, so changing the feature touches one
-folder.
+A module belongs in `features/<slice>/` when it is part of that feature. A feature slice keeps its
+own cells, components, state and helpers together, so changing the feature touches one folder.
 
-Everything else belongs in the folder matching what the module is. When a helper that lived in a
-slice gains an importer elsewhere, move it out to `utils/` or `core/`.
+Other code may import from a slice to wire the feature in (`CellTypeRegistry.ts`, `InitGlobals.ts`,
+the toolbar) or to use its state and prompt helpers (`aboutMePromptText()` in the translation
+prompt). A general helper with no tie to one feature belongs in the folder matching what it is,
+such as `utils/` or `core/`.
 
 `cells/` is decided by the registry, not by what the component does: if `cellTypeRegistry` maps a
 `type` string to it, it is a cell. `CommandMakeSentence` is a registered cell that lives in

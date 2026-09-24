@@ -15,7 +15,10 @@ export interface AdaptivePaletteStorage {
   open (): Promise<void>;
   readSettings (): Promise<Record<string, unknown>>;
   writeSettings (overrides: Record<string, unknown>): Promise<void>;
+  readAboutMe (): Promise<AboutMeType>;
+  writeAboutMe (aboutMe: AboutMeType): Promise<void>;
   readMessages (limit: number): Promise<StoredMessage[]>;
+  readMessagesAfter (afterId: number | undefined, limit: number): Promise<StoredMessage[]>;
   addMessage (record: MessageRecordType): Promise<StoredMessage>;
   updateMessage (id: number, record: MessageRecordType): Promise<void>;
   clearAll (): Promise<void>;
@@ -25,7 +28,9 @@ export interface AdaptivePaletteStorage {
 
 The interface names the app's own operations rather than generic get/set, so each backend can
 use what its store is good at: a cursor in IndexedDB, a real table in SQL. `readMessages(limit)`
-returns the newest `limit` records, oldest first.
+returns the newest `limit` records, oldest first. `readMessagesAfter(afterId, limit)`
+returns up to `limit` records with an id greater than `afterId`, oldest first; "Suggest
+updates" uses it to read each message once.
 
 `destroy()` removes the store itself rather than emptying it. `clearAll()` is what "Clear all saved
 data" uses: the app keeps running, and its database stays in place. `destroy()` is what "Erase all
@@ -33,22 +38,27 @@ app data and quit" uses, where the point is that nothing of the app's is left in
 afterwards. A destroyed store can be opened again, empty.
 
 [`src/client/core/IndexedDbStorage.ts`](../../src/client/core/IndexedDbStorage.ts) is the
-implementation for a page served from this computer: one database, version 1, with two object
+implementation for a page served from this computer: one database, version 1, with three object
 stores created in `onupgradeneeded`:
 
 - `messages` — key path `id`, `autoIncrement: true`. Insertion order is id order, so the newest
   messages are the tail and `readMessages()` is a cursor opened in reverse rather than a sort.
 - `settings` — a single record holding the overrides object.
+- `aboutMe` — a single record holding the About Me facts: `facts`; `dismissed`, the
+  `{ category, text }` pairs the user turned down; `pending`, suggestions not answered yet; and
+  `learntUpTo`, the id and timestamp of the last message "Suggest updates" read. See
+  [AboutMe.md](../AboutMe.md).
 
 ## Which backend a page gets
 
 A page served from `localhost`, `127.0.0.1` or `[::1]` — the desktop bundle, the Vite dev server, the
-test runner — installs `IndexedDbStorage`, and the user's messages and settings survive a reload.
+test runner — installs `IndexedDbStorage`, and the user's messages, settings and About Me facts survive a
+reload.
 
 Anywhere else is the hosted site, which may be running on a public or shared computer. There the app
 installs [`core/MemoryStorage.ts`](../../src/client/core/MemoryStorage.ts) and puts nothing in the
-browser at all: messages and settings live for as long as the tab does, and a reload clears them. The
-status line says so.
+browser at all: messages, settings and About Me facts live for as long as the tab does, and a reload
+clears them. The status line says so.
 
 Settings go into memory along with the messages. They carry nothing personal, but keeping them would
 mean a backend that is half one thing and half the other, and a database created on a public computer
@@ -126,14 +136,16 @@ persisted. No fallback backend is needed.
 | `addMessage` rejects | Logged. The record stays in the cache for the session and gets no `id`; a later `saveTranslation` on it skips the write and logs, rather than failing silently. |
 | `updateMessage` rejects | Logged. The cache keeps the translation for the session. |
 | `readSettings` rejects | `{}`, so the values from `config.json` stand — today's `readOverrides` behaviour. |
+| `readAboutMe` rejects | Logged. About Me starts empty and the app runs without it. |
+| `writeAboutMe` rejects | Logged. The change still applies for the session; it is not saved. |
 | `writeSettings` rejects | `saveSettings()` resolves `false`; the dialog shows its existing failure message. |
 | `clearAll` rejects | `clearSavedData()` resolves `false`; the existing failure dialog shows and the page is not reloaded. |
 
 `clearSavedData()` in
 [`cells/CommandClearSavedData.ts`](../../src/client/cells/CommandClearSavedData.ts) calls
 `clearAll()` and then empties the cache by calling `hydrateMessageLog()` again. `clearAll()`
-empties both object stores in one transaction, so a failure on either leaves both as they
-were rather than half the data gone.
+empties every object store in one transaction, so a failure on any of them leaves all three as
+they were rather than half the data gone.
 
 ## Testing
 
@@ -153,10 +165,11 @@ was not there. `close()` waits out a no-op transaction before releasing, and `de
 just that wait followed by `deleteDatabase`.
 
 [`testUtils/StorageContract.ts`](../../src/client/testUtils/StorageContract.ts) exports
-`runStorageContractTests()`, the behaviour suite both backends must pass — settings
-round-tripping, messages read back oldest first, a limit returning the newest records,
-`updateMessage` replacing a record, `clearAll` emptying both stores. It is what makes "the
-backend is swappable" a tested claim rather than a hope — and both backends it covers now ship.
+`runStorageContractTests()`, the behaviour suite both backends must pass — settings and the
+About Me round-tripping, messages read back oldest first, a limit returning the newest records,
+`readMessagesAfter` reading past an id, `updateMessage` replacing a record, `clearAll` emptying
+every store. It is what makes "the backend is swappable" a tested claim rather than a hope — and
+both backends it covers now ship.
 
 Tests that touch the message log use
 [`testUtils/MessageLogTestUtils.ts`](../../src/client/testUtils/MessageLogTestUtils.ts) —

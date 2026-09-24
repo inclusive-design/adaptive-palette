@@ -24,7 +24,7 @@
  * feature's own module scope would fire on any import of the module, including from tests that
  * import it directly and need to decide for themselves whether a guard is in play.
  *
- * It also installs the storage backend and reads the saved data in.  The backend is installed
+ * It also installs the storage backend and reads the saved messages and About Me facts in.  The backend is installed
  * here, not at module scope, so a test can put its own in place instead.
  */
 import { adaptivePaletteGlobals } from "../state/GlobalData";
@@ -39,6 +39,7 @@ import { DATABASE_NAME, IndexedDbStorage } from "./IndexedDbStorage";
 import { MemoryStorage } from "./MemoryStorage";
 import { AdaptivePaletteStorage, setStorage } from "./StorageBackend";
 import { hydrateMessageLog } from "./MessageLog";
+import { hydrateAboutMe } from "../features/about-me/AboutMeState";
 
 /**
  * Delete the app's IndexedDB database.
@@ -118,5 +119,5 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
   adaptivePaletteGlobals.config = await applyStoredSettings(config);
 
   // After the settings, because how much of the log is read back is one of them.
-  await hydrateMessageLog();
+  await Promise.all([hydrateMessageLog(), hydrateAboutMe()]);
 }

@@ -47,6 +47,14 @@ describe("IndexedDbStorage", (): void => {
     await second.close();
   });
 
+  test("About Me facts saved before pending existed reads back with none", async (): Promise<void> => {
+    const storage = new IndexedDbStorage(`AdaptivePaletteTest-pending-${Date.now()}`);
+    await storage.open();
+    await storage.writeAboutMe({ facts: [], dismissed: [] } as never);
+    expect(await storage.readAboutMe()).toEqual({ facts: [], dismissed: [], pending: [] });
+    await storage.destroy();
+  });
+
   test("a call before open rejects rather than throwing", async (): Promise<void> => {
     const unopened = new IndexedDbStorage(`AdaptivePaletteTest-unopened-${Date.now()}`);
     await expect(unopened.readMessages(10)).rejects.toThrow("The database is not open.");

@@ -12,7 +12,8 @@
 
 import { vi } from "vitest";
 import {
-  loadConfig, DISABLED_MODEL_QUERY, DEFAULT_MAX_RECALLED_RECORDS, DEFAULT_MAX_SUGGESTIONS
+  loadConfig, DISABLED_MODEL_QUERY, DEFAULT_MAX_RECALLED_RECORDS, DEFAULT_MAX_SUGGESTIONS,
+  DEFAULT_MESSAGES_PER_RUN
 } from "./Config";
 
 /**
@@ -401,9 +402,53 @@ describe("loadConfig markAiSuggestions", (): void => {
 // This loads the shipped file itself, like `SettingsDialog.test.ts` already does.
 describe("loadConfig with the shipped config.json", (): void => {
 
-  test("the shipped config sends the attributes", async (): Promise<void> => {
+  test("the shipped config sends the attributes and About Me", async (): Promise<void> => {
     const config = await loadConfig();
     expect(config.telegraphicTranslation?.userPrompt).toContain("{{attributes}}");
     expect(config.wordPrediction?.userPrompt).toContain("{{attributes}}");
+    expect(config.telegraphicTranslation?.userPrompt).toContain("{{aboutMe}}");
+    expect(config.wordPrediction?.userPrompt).toContain("{{aboutMe}}");
+  });
+});
+
+describe("loadConfig aboutMe section", (): void => {
+
+  const ABOUT_ME_SECTION = {
+    model: "phony-model:12b",
+    systemPrompt: "Find facts.",
+    userPrompt: "Messages:\n{{messages}}",
+    messagesPerRun: 40
+  };
+
+  test("a valid section is loaded as given", async (): Promise<void> => {
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, aboutMe: ABOUT_ME_SECTION });
+    const config = await loadConfig();
+    expect(config.aboutMe).toEqual(ABOUT_ME_SECTION);
+  });
+
+  test("a missing section leaves suggestions unconfigured", async (): Promise<void> => {
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
+    const config = await loadConfig();
+    expect(config.aboutMe).toBeUndefined();
+  });
+
+  test("an empty prompt leaves suggestions unconfigured", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      aboutMe: { ...ABOUT_ME_SECTION, userPrompt: "   " }
+    });
+    const config = await loadConfig();
+    expect(config.aboutMe).toBeUndefined();
+  });
+
+  test("a missing or invalid messagesPerRun falls back and keeps the section", async (): Promise<void> => {
+    for (const messagesPerRun of [undefined, 0, -3, 2.5, "40"]) {
+      stubConfigFetch({
+        indicatorLabelLookup: INDICATOR_SECTION,
+        aboutMe: { ...ABOUT_ME_SECTION, messagesPerRun }
+      });
+      const config = await loadConfig();
+      expect(config.aboutMe).toEqual({ ...ABOUT_ME_SECTION, messagesPerRun: DEFAULT_MESSAGES_PER_RUN });
+    }
   });
 });

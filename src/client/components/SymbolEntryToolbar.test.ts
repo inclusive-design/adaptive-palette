@@ -10,22 +10,33 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+import { vi } from "vitest";
 import { render, screen, cleanup, waitFor } from "@testing-library/preact";
 import { userEvent } from "vitest/browser";
 import { html } from "htm/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
 import { DISABLED_MODEL_QUERY } from "../core/Config";
+import { isLocalHost } from "../core/OllamaApi";
 import { DISMISS_LABEL } from "./ModalDialog";
 import { SEARCH_FIELD_LABEL } from "../cells/ActionSearchGloss";
 import {
-  SymbolEntryToolbar, SEARCH_TRIGGER_LABEL, SVG_TRIGGER_LABEL, SETTINGS_TRIGGER_LABEL
+  SymbolEntryToolbar, SEARCH_TRIGGER_LABEL, SVG_TRIGGER_LABEL, SETTINGS_TRIGGER_LABEL,
+  ABOUT_ME_TRIGGER_LABEL
 } from "./SymbolEntryToolbar";
 
 // `userEvent` is the provider-backed instance from `vitest/browser`, not the one from
 // `@testing-library/user-event`. These tests drive a native `<dialog>`, whose
 // Escape-to-close is a UA default action that only runs for trusted events.
 
+// Under the test runner the hostname is always `localhost`; the test for the hosted site
+// says so.
+vi.mock("../core/OllamaApi", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../core/OllamaApi")>();
+  return { ...actual, isLocalHost: vi.fn() };
+});
+
+const mockedIsLocalHost = vi.mocked(isLocalHost);
 const originalConfig = adaptivePaletteGlobals.config;
 
 /**
@@ -41,6 +52,10 @@ const withVisibility = (searchShown: boolean, svgShown: boolean): void => {
 };
 
 describe("SymbolEntryToolbar", () => {
+
+  beforeEach(() => {
+    mockedIsLocalHost.mockReturnValue(true);
+  });
 
   afterEach(() => {
     cleanup();
@@ -91,6 +106,34 @@ describe("SymbolEntryToolbar", () => {
 
     await waitFor(() => {
       expect(screen.getByRole("dialog", { name: SETTINGS_TRIGGER_LABEL })).toBeVisible();
+    });
+  });
+
+  test("shows the About Me trigger", () => {
+    withVisibility(false, false);
+    render(html`<${SymbolEntryToolbar} />`);
+
+    expect(screen.getByRole("button", { name: ABOUT_ME_TRIGGER_LABEL })).toBeInTheDocument();
+  });
+
+  // About Me is only used to fill prompts, and the hosted site sends none.
+  test("hides the About Me trigger on the hosted site", () => {
+    mockedIsLocalHost.mockReturnValue(false);
+    withVisibility(true, true);
+    render(html`<${SymbolEntryToolbar} />`);
+
+    expect(screen.queryByRole("button", { name: ABOUT_ME_TRIGGER_LABEL })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: SETTINGS_TRIGGER_LABEL })).toBeInTheDocument();
+  });
+
+  test("clicking the About Me trigger opens its dialog", async () => {
+    withVisibility(true, true);
+    render(html`<${SymbolEntryToolbar} />`);
+
+    await userEvent.click(screen.getByRole("button", { name: ABOUT_ME_TRIGGER_LABEL }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("dialog", { name: ABOUT_ME_TRIGGER_LABEL })).toBeVisible();
     });
   });
 
