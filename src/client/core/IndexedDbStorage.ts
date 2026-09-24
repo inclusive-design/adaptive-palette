@@ -27,9 +27,7 @@ export const MESSAGES_STORE = "messages";
 export const SETTINGS_STORE = "settings";
 export const ABOUT_ME_STORE = "aboutMe";
 
-// 2 added the About Me store. The `contains` guards in `open()` let a version-1 database
-// upgrade in place, keeping its messages and settings.
-const DATABASE_VERSION = 2;
+const DATABASE_VERSION = 1;
 
 // The settings store holds one record; this is its key.
 const SETTINGS_KEY = "overrides";

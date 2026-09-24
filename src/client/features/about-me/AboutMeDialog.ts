@@ -386,7 +386,7 @@ export function AboutMeDialog (props: AboutMeDialogProps): VNode {
         ${dateLine(fact)}
       </div>
       <div class="aboutMeFactActions">
-        ${deleteButton(fact, orderedLearnt, ".aboutMeSuggest")}
+        ${deleteButton(fact, orderedLearnt, canSuggest ? ".aboutMeSuggest" : ".aboutMeAddNote")}
       </div>
     </li>
   `;

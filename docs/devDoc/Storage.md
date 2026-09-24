@@ -38,7 +38,7 @@ app data and quit" uses, where the point is that nothing of the app's is left in
 afterwards. A destroyed store can be opened again, empty.
 
 [`src/client/core/IndexedDbStorage.ts`](../../src/client/core/IndexedDbStorage.ts) is the
-implementation for a page served from this computer: one database, version 2, with three object
+implementation for a page served from this computer: one database, version 1, with three object
 stores created in `onupgradeneeded`:
 
 - `messages` — key path `id`, `autoIncrement: true`. Insertion order is id order, so the newest
@@ -48,9 +48,6 @@ stores created in `onupgradeneeded`:
   `{ category, text }` pairs the user turned down; `pending`, suggestions not answered yet; and
   `learntUpTo`, the id and timestamp of the last message "Suggest updates" read. See
   [AboutMe.md](../AboutMe.md).
-
-`aboutMe` arrived in version 2. Each store is created only when it is not there already, so a
-version-1 database gains `aboutMe` on its next `open()` and keeps its messages and settings.
 
 ## Which backend a page gets
 

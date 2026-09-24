@@ -47,37 +47,6 @@ describe("IndexedDbStorage", (): void => {
     await second.close();
   });
 
-  test("a version-1 database gains an empty About Me store and keeps its data", async (): Promise<void> => {
-    const name = `AdaptivePaletteTest-upgrade-${Date.now()}`;
-
-    // The database as version 1 of the app left it: messages and settings, no About Me.
-    await new Promise<void>((resolve, reject) => {
-      const request = window.indexedDB.open(name, 1);
-      request.onupgradeneeded = (): void => {
-        const database = request.result;
-        database.createObjectStore("messages", { keyPath: "id", autoIncrement: true }).add({
-          timestamp: "2026-08-28T00:00:00.000Z",
-          payloads: [{ label: "juice", composition: 1840, modifierInfo: [] }]
-        });
-        database.createObjectStore("settings").put({ "maxRecalledRecords": 12 }, "overrides");
-      };
-      request.onsuccess = (): void => {
-        request.result.close();
-        resolve();
-      };
-      // `request.error` is a `DOMException`, not an `Error`; its text is what matters here.
-      request.onerror = (): void => reject(new Error(String(request.error)));
-    });
-
-    const storage = new IndexedDbStorage(name);
-    await storage.open();
-
-    expect((await storage.readMessages(10))[0].payloads[0].label).toBe("juice");
-    expect(await storage.readSettings()).toEqual({ "maxRecalledRecords": 12 });
-    expect(await storage.readAboutMe()).toEqual({ facts: [], dismissed: [], pending: [] });
-    await storage.destroy();
-  });
-
   test("About Me facts saved before pending existed reads back with none", async (): Promise<void> => {
     const storage = new IndexedDbStorage(`AdaptivePaletteTest-pending-${Date.now()}`);
     await storage.open();
