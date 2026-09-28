@@ -17,7 +17,7 @@
  * below its content size and never scrolls.
  */
 .actionSvgEntryField {
-  flex: 1;
+  flex: 1 1 auto;
   max-width: 32rem;
   min-height: 0;
   overflow-y: auto;

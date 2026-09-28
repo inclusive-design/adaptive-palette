@@ -76,10 +76,8 @@ render(html`<${SymbolEntryToolbar} />`, getRequiredElement("symbolEntryToolbar")
 
 // Window keydown listener for a global "go back" keystroke
 window.addEventListener("keydown", (event) => {
-  if (event.code === "Backquote") {
-    // A modal dialog is on top. Backquote must not navigate the palette behind it,
-    // which it otherwise would whenever focus sits on a non-text control such as a
-    // search result button.
+  if (event.code === "Backquote" && adaptivePaletteGlobals.config.backquoteGoesBack) {
+    // A modal dialog is on top. Backquote must not navigate the palette behind it.
     if (document.querySelector("dialog[open]")) {
       return;
     }

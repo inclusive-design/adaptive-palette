@@ -93,7 +93,7 @@ describe("Palette", (): void => {
     expect(paletteElement).toBeValid();
 
     // There should be 6 columns in the grid and NUM_CELLS children.
-    expect(paletteElement.style["grid-template-columns" as keyof typeof paletteElement.style]).toBe("repeat(5, 1fr)");
+    expect(paletteElement.style["grid-template-columns" as keyof typeof paletteElement.style]).toBe("repeat(5, minmax(0px, 1fr))");
     expect(paletteElement.childNodes.length).toBe(NUM_CELLS);
   });
 
@@ -146,7 +146,7 @@ describe("Palette", (): void => {
       await screen.findByText("Last Cell");
 
       expect(screen.queryByText("Feature Cell")).toBeNull();
-      expect(gridColumns(container)).toBe("1fr 0fr 1fr");
+      expect(gridColumns(container)).toBe("minmax(0px, 1fr) 0fr minmax(0px, 1fr)");
     });
 
     test("flagged `requiresModel` is rendered as usual when a model is available", async (): Promise<void> => {
@@ -155,7 +155,7 @@ describe("Palette", (): void => {
       const { container } = render(html`<${Palette} json=${paletteFlagging({ requiresModel: true })}/>`);
 
       expect(await screen.findByText("Feature Cell")).toBeInTheDocument();
-      expect(gridColumns(container)).toBe("repeat(3, 1fr)");
+      expect(gridColumns(container)).toBe("repeat(3, minmax(0px, 1fr))");
     });
 
     test("flagged `requiresConfig` is left out when its config section is missing", async (): Promise<void> => {
@@ -168,7 +168,7 @@ describe("Palette", (): void => {
       await screen.findByText("Last Cell");
 
       expect(screen.queryByText("Feature Cell")).toBeNull();
-      expect(gridColumns(container)).toBe("1fr 0fr 1fr");
+      expect(gridColumns(container)).toBe("minmax(0px, 1fr) 0fr minmax(0px, 1fr)");
     });
   });
 
@@ -220,8 +220,8 @@ describe("Palette", (): void => {
       const wrapper = container.querySelector(".paletteInclude") as HTMLElement;
       expect(wrapper.style.gridColumnEnd).toBe("span 3");
       const inner = wrapper.querySelector("[data-palettename='Pair']") as HTMLElement;
-      expect(inner.style["grid-template-columns" as keyof typeof inner.style]).toBe("repeat(2, 1fr)");
-      expect(outerColumns(container)).toBe("repeat(3, 1fr)");
+      expect(inner.style["grid-template-columns" as keyof typeof inner.style]).toBe("repeat(2, minmax(0px, 1fr))");
+      expect(outerColumns(container)).toBe("repeat(3, minmax(0px, 1fr))");
     });
 
     // Draws a screen holding `include` beside an "After" cell, and checks the include drew nothing.

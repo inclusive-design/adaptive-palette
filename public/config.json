@@ -2,6 +2,7 @@
   "maxRecalledRecords": 500,
   "announceSymbolOnInput": true,
   "markAiSuggestions": true,
+  "backquoteGoesBack": true,
   "indicatorLabelLookup": {
     "useModelQueryFallback": true,
     "model": "gemma4:12b",

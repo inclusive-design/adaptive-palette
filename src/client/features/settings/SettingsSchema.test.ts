@@ -145,6 +145,14 @@ describe("SettingsSchema", () => {
       expect(config.markAiSuggestions).toBe(false);
     });
 
+    test("applies a saved value for the backquote shortcut", async (): Promise<void> => {
+      await store({ "backquoteGoesBack": false });
+
+      const config = await applyStoredSettings(makeDefaultConfig());
+
+      expect(config.backquoteGoesBack).toBe(false);
+    });
+
     test("a store that cannot be read leaves the file's values standing", async (): Promise<void> => {
       const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
       vi.spyOn(storage, "readSettings").mockRejectedValue(new Error("the store is not available"));

@@ -20,6 +20,19 @@
   white-space: nowrap;
   font-weight: bold;
 
+  /* The same hover and focus indicators as the palette buttons in index.scss, which do not
+     reach this `<div>`. */
+  &:hover {
+    outline: 3px dashed red;
+    outline-offset: -3px;
+  }
+
+  &:focus-visible {
+    border-color: red;
+    outline: 3px solid black;
+    outline-offset: 1px;
+  }
+
   .blissSymbol {
     margin: 0 0.5rem;
     text-align: center;

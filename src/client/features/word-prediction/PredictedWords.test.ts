@@ -100,7 +100,7 @@ describe("PredictedWords", (): void => {
     const { container } = render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     const row = container.querySelector(".predictedWords") as HTMLElement;
-    expect(row.style.gridTemplateColumns).toBe("repeat(4, 1fr)");
+    expect(row.style.gridTemplateColumns).toBe("repeat(4, minmax(0px, 1fr))");
   });
 
   test("sets the slots out in the number of columns the palette asks for", (): void => {
@@ -108,7 +108,7 @@ describe("PredictedWords", (): void => {
     const { container } = render(html`<${PredictedWords} id=${CELL_ID} options=${options} />`);
 
     const row = container.querySelector(".predictedWords") as HTMLElement;
-    expect(row.style.gridTemplateColumns).toBe("repeat(2, 1fr)");
+    expect(row.style.gridTemplateColumns).toBe("repeat(2, minmax(0px, 1fr))");
     const slots = container.querySelectorAll(".predictedWord");
     expect(slots).toHaveLength(4);
     expect(slots[2].getBoundingClientRect().top).toBeGreaterThan(slots[0].getBoundingClientRect().top);

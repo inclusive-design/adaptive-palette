@@ -19,6 +19,7 @@ import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { setTestConfig } from "../testUtils/TestConfig";
 import { CurrentPalette } from "./CurrentPalette";
+import { goBackImpl } from "../cells/CommandGoBackCell";
 import {
   sentenceCompletionsSignal, IDLE_SENTENCE_STATE, typedSentenceSignal, focusedMessageSignal
 } from "../features/telegraphic-translation/TelegraphicTranslationState";
@@ -79,5 +80,73 @@ describe("Navigating between screens that share the Standard Header", (): void =
     expect(screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT)).toBe(textBox);
     expect(textBox).toHaveFocus();
     expect(textBox.value).toBe("I want lunch.");
+  });
+
+  /**
+   * The start palette's first branch cell that is its own, not one in an included palette such
+   * as the shared header.  Pressing it unmounts it, which is what drops focus.
+   */
+  function ownBranchCell (container: HTMLElement): HTMLElement {
+    const cell = Array.from(container.querySelectorAll<HTMLElement>(".actionBranchToPaletteCell"))
+      .find((el) => !el.closest(".paletteInclude"));
+    if (!cell) {
+      throw new Error("The start palette has no branch cell of its own");
+    }
+    return cell;
+  }
+
+  async function renderStartPalette (): Promise<{ container: HTMLElement, startName: string }> {
+    const { paletteStore, navigationStack } = adaptivePaletteGlobals;
+    const startName = await paletteStore.loadPaletteSet("/palette-sets/standardBlissChart/palette_set.json");
+    const startPalette = await paletteStore.getNamedPalette(startName, true);
+    if (!startPalette) {
+      throw new Error(`Start palette "${startName}" did not load`);
+    }
+    navigationStack.flushReset(startPalette);
+    const { container } = render(html`<${CurrentPalette} />`);
+    return { container: container as HTMLElement, startName: startPalette.name };
+  }
+
+  test("moves focus to a cell of the new palette when the pressed cell is gone", async (): Promise<void> => {
+    const { container } = await renderStartPalette();
+    const branch = await waitFor(() => ownBranchCell(container));
+    const target = branch.dataset.branchto;
+
+    branch.focus();
+    await userEvent.keyboard("{Enter}");
+
+    const newPalette = await waitFor(() => {
+      const el = container.querySelector(`[data-palettename='${target}']`);
+      if (!el) {
+        throw new Error(`Palette "${target}" is not drawn`);
+      }
+      return el;
+    });
+    await waitFor(() => {
+      expect(document.activeElement).not.toBe(document.body);
+    });
+    expect(newPalette.contains(document.activeElement)).toBe(true);
+    expect(document.activeElement?.closest(".paletteInclude")).toBeNull();
+  });
+
+  test("moves focus to a cell of the palette gone back to", async (): Promise<void> => {
+    const { container, startName } = await renderStartPalette();
+    const branch = await waitFor(() => ownBranchCell(container));
+    const target = branch.dataset.branchto;
+    branch.focus();
+    await userEvent.keyboard("{Enter}");
+    await waitFor(() => {
+      expect(container.querySelector(`[data-palettename='${target}']`)).not.toBeNull();
+    });
+
+    // As the backquote key does: focus is on no cell when the palette changes.
+    (document.activeElement as HTMLElement | null)?.blur();
+    goBackImpl();
+
+    await waitFor(() => {
+      const startPalette = container.querySelector(`[data-palettename='${startName}']`);
+      expect(startPalette?.contains(document.activeElement)).toBe(true);
+    });
+    expect(document.activeElement?.closest(".paletteInclude")).toBeNull();
   });
 });

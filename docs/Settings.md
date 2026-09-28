@@ -13,6 +13,7 @@ and `aboutMe.messagesPerRun`.
 | ----- | ------- | ------------ |
 | General | Speak each symbol as I add it | |
 | General | Mark AI suggestions | |
+| General | Go back with the backquote (`` ` ``) key | |
 | General | Messages to remember | |
 | Symbol entry | Show "Add Symbol to Message" | |
 | Symbol entry | Show SVG-builder string entry | |

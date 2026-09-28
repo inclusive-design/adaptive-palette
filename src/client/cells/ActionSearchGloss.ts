@@ -164,8 +164,8 @@ export function ActionSearchGloss (props: ActionSearchGlossProps): VNode {
           size="25"
           autofocus
         />
-        <input type="submit" value=${SUBMIT_LABEL} />
-        <input type="button" value=${CLEAR_LABEL} onClick=${clearResults} />
+        <button type="submit">${SUBMIT_LABEL}</button>
+        <button type="button" onClick=${clearResults}>${CLEAR_LABEL}</button>
       </form>
 
       <!-- One region carries both the result count and the add confirmation, so two

@@ -48,6 +48,10 @@ export const SETTING_DESCRIPTORS: SettingDescriptorType[] = [
     label: "Mark AI suggestions", group: "General"
   },
   {
+    path: ["backquoteGoesBack"], kind: "boolean",
+    label: "Go back with the backquote (`) key", group: "General"
+  },
+  {
     path: ["maxRecalledRecords"], kind: "number", min: 0,
     label: "Messages to remember", group: "General"
   },

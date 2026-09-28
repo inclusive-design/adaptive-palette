@@ -24,15 +24,21 @@ button {
   color: black;
   font-weight: bold;
   padding-bottom: 0.5rem;
-}
 
-/* The submit and button inputs are listed so the dialogs' controls get the same
-   indicator; the rest of the rule above is left to `<button>` alone. */
-button,
-input[type="submit"],
-input[type="button"] {
-  &:hover, &:focus {
+  /* Hover draws a dashed red line over the border; focus a red border and a solid black
+     ring, so the two can be told apart. Focus comes second so it wins on a hovered,
+     focused control. An outline is used because no cell rule sets one, so every cell gets
+     it without restating it. The focus ring stays within the 0.25rem padding of the
+     symbol search results, which scroll. */
+  &:hover {
+    outline: 3px dashed red;
+    outline-offset: -3px;
+  }
+
+  &:focus-visible {
     border-color: red;
+    outline: 3px solid black;
+    outline-offset: 1px;
   }
 }
 
@@ -48,6 +54,11 @@ input[type="button"] {
 svg {
   max-height: 4rem;
   width: auto;
+}
+
+/* A palette column can be narrower than a wide symbol, so the symbol scales down to fit. */
+button svg {
+  max-width: 100%;
 }
 
 svg.inter-word-padding {
@@ -69,6 +80,8 @@ svg.inter-word-padding {
 
   button {
     border-radius: 0.5rem;
+    /* 18 cells share one row, so a long label breaks at a hyphen rather than widening it. */
+    hyphens: auto;
     overflow-wrap: break-word;
     padding-bottom: 0.25rem;
   }

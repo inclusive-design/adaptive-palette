@@ -12,7 +12,7 @@
 
 import { vi } from "vitest";
 import {
-  loadConfig, DISABLED_MODEL_QUERY, DEFAULT_MAX_RECALLED_RECORDS, DEFAULT_MAX_SUGGESTIONS,
+  loadConfig, makeDefaultConfig, DISABLED_MODEL_QUERY, DEFAULT_MAX_RECALLED_RECORDS, DEFAULT_MAX_SUGGESTIONS,
   DEFAULT_MESSAGES_PER_RUN
 } from "./Config";
 
@@ -450,5 +450,36 @@ describe("loadConfig aboutMe section", (): void => {
       const config = await loadConfig();
       expect(config.aboutMe).toEqual({ ...ABOUT_ME_SECTION, messagesPerRun: DEFAULT_MESSAGES_PER_RUN });
     }
+  });
+});
+
+describe("loadConfig backquoteGoesBack", (): void => {
+
+  test("`false` turns the shortcut off", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      backquoteGoesBack: false
+    });
+    const config = await loadConfig();
+    expect(config.backquoteGoesBack).toBe(false);
+  });
+
+  test("a missing key leaves it on", async (): Promise<void> => {
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
+    const config = await loadConfig();
+    expect(config.backquoteGoesBack).toBe(true);
+  });
+
+  test("a non-boolean value leaves it on", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      backquoteGoesBack: "no"
+    });
+    const config = await loadConfig();
+    expect(config.backquoteGoesBack).toBe(true);
+  });
+
+  test("the default config has it on", (): void => {
+    expect(makeDefaultConfig().backquoteGoesBack).toBe(true);
   });
 });
