@@ -76,17 +76,20 @@ function columnsOf (options: LayoutInfoType): number[] {
  * except a column left empty by a cell that was not rendered.  That one collapses, so the cells
  * beside it spread over the space instead of leaving a hole in the row.
  *
+ * A column's minimum is 0, not its content's width: a plain `1fr` cannot shrink below its
+ * content, so a row of many cells ran off the right of a tablet screen.
+ *
  * @param {number} numColumns - The number of columns in the palette.
  * @param {Set<number>} emptyColumns - The columns no rendered cell occupies.
  * @return {string} - The CSS value.
  */
 function gridTemplateColumns (numColumns: number, emptyColumns: Set<number>): string {
   if (emptyColumns.size === 0) {
-    return `repeat(${numColumns}, 1fr)`;
+    return `repeat(${numColumns}, minmax(0, 1fr))`;
   }
   const tracks = [];
   for (let column = 1; column <= numColumns; column++) {
-    tracks.push(emptyColumns.has(column) ? "0fr" : "1fr");
+    tracks.push(emptyColumns.has(column) ? "0fr" : "minmax(0, 1fr)");
   }
   return tracks.join(" ");
 }

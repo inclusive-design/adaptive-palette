@@ -22,6 +22,7 @@ whatever this file says. See `isLocalHost()` in [`src/client/core/OllamaApi.ts`]
 | `maxRecalledRecords` | Top-level, not a section. How many of the newest stored messages the app reads back for word prediction and sentence recall. |
 | `announceSymbolOnInput` | Top-level, not a section. Whether labels are spoken as the user inputs. |
 | `markAiSuggestions` | Top-level, not a section. Whether suggestions a model made are marked as such. |
+| `backquoteGoesBack` | Top-level, not a section. Whether the backquote key goes back one palette. |
 | `indicatorLabelLookup` | The Ollama fallback tier for looking up indicator labels. See [IndicatorLabelLookup.md](../IndicatorLabelLookup.md). |
 | `telegraphicTranslation` | Translating a telegraphic message into full sentences. See [TelegraphicMessageTranslation.md](../TelegraphicMessageTranslation.md). |
 | `aboutMe` | The "Suggest updates" button in the "About Me" dialog, which asks a model for facts about the user. See [AboutMe.md](../AboutMe.md). |

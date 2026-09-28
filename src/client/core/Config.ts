@@ -51,6 +51,7 @@ export function makeDefaultConfig (): AdaptivePaletteConfigType {
     maxRecalledRecords: DEFAULT_MAX_RECALLED_RECORDS,
     announceSymbolOnInput: true,
     markAiSuggestions: true,
+    backquoteGoesBack: true,
     indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
     symbolSearch: { show: true },
     svgBuilderString: { show: false },
@@ -242,6 +243,8 @@ export async function loadConfig (): Promise<AdaptivePaletteConfigType> {
       // Anything other than `false` leaves the marking on: a mistyped config must not quietly
       // stop telling the user which suggestions a model made.
       markAiSuggestions: typeof parsed?.markAiSuggestions === "boolean" ? parsed.markAiSuggestions : true,
+      // Anything other than `false` leaves the shortcut on, as it was before the setting existed.
+      backquoteGoesBack: typeof parsed?.backquoteGoesBack === "boolean" ? parsed.backquoteGoesBack : true,
       indicatorLabelLookup: indicatorLabelLookup ?? makeDefaultConfig().indicatorLabelLookup,
       telegraphicTranslation: parseTelegraphicTranslation(parsed?.telegraphicTranslation),
       aboutMe: parseAboutMe(parsed?.aboutMe),

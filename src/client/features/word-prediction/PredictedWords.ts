@@ -143,7 +143,7 @@ export function PredictedWords (props: PredictedWordsPropsType): VNode | null {
         class="predictedWords"
         role="group"
         aria-label=${PREDICTED_WORDS_LABEL}
-        style="grid-template-columns: repeat(${numColumns ?? maxSuggestions}, 1fr);">
+        style="grid-template-columns: repeat(${numColumns ?? maxSuggestions}, minmax(0, 1fr));">
         ${cells}
       </div>
     </div>

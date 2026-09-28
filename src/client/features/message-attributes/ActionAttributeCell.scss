@@ -30,7 +30,7 @@
   }
 
   /* Restated because the rule above outranks the global indicator. */
-  &:hover, &:focus {
+  &:focus-visible {
     border-color: red;
   }
 }

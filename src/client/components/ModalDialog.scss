@@ -18,7 +18,9 @@
   max-height: 90vh;
   max-width: 90vw;
   /* The dialog itself never scrolls. Exactly one descendant does, so a small or
-     magnified viewport cannot produce two scrollbars competing for one gesture. */
+     magnified viewport cannot produce two scrollbars competing for one gesture.
+     That descendant uses `flex: 1 1 auto`, not `flex: 1`: the dialog's height comes from
+     its content, and older Safari gives a `flex: 1` item zero height there, hiding it. */
   overflow: hidden;
   padding: 1rem;
 
@@ -36,14 +38,13 @@
     background-color: rgb(0 0 0 / 50%);
   }
 
-  /* Base style for every control in a dialog. `input[type="submit"]` and
-     `input[type="button"]` are listed because the global `button` rule never matches
-     them, which left them with the browser's default grey, square look. The symmetric
-     padding overrides that rule's bottom-only padding, which sat labels low in the
-     button and left no room beside them. */
+  /* Base style for every button in a dialog. Dialogs use `<button>`, never
+     `<input type="submit">` or `type="button"`: iOS Safari styles those inputs itself,
+     which hid the Search label and ignored taps on it. The symmetric padding overrides
+     the global rule's bottom-only padding, which sat labels low in the button. */
   /* `:where()` keeps this at the specificity of `.modalDialog` alone, so the global
      hover/focus rule and the variants below all still outrank it. */
-  :where(button, input[type="submit"], input[type="button"]) {
+  :where(button) {
     background-color: white;
     border: 2px solid blue;  /* same as the palette cells */
     border-radius: 1rem;
@@ -65,9 +66,7 @@
    * The element names carry it past every `.modalDialog <class>` variant above and in the
    * dialogs' own stylesheets, so it does not depend on the order they are loaded in.
    */
-  button[aria-disabled="true"],
-  input[type="submit"][aria-disabled="true"],
-  input[type="button"][aria-disabled="true"] {
+  button[aria-disabled="true"] {
     background-color: silver;
   }
 

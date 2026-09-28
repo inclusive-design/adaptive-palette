@@ -132,7 +132,7 @@ export function ActionSvgEntryField (props: ActionSvgEntryFieldProps): VNode {
         <${MessagePreview} />
 
         <div class="dialogFooter">
-          <input type="submit" class="btn-addToMessage" value=${SUBMIT_VALUE} />
+          <button type="submit" class="btn-addToMessage">${SUBMIT_VALUE}</button>
           <button type="button" onClick=${onRequestClose}>${CLOSE_LABEL}</button>
         </div>
       </form>

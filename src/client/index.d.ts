@@ -185,6 +185,10 @@ export type AdaptivePaletteConfigType = {
   // Whether suggestions that came from a model are marked as such, visibly and to a screen
   // reader. Defaults to `true`.
   markAiSuggestions: boolean,
+  // Whether the backquote (`) key goes back one palette. It can be turned off because a
+  // one-key shortcut is easy to press by accident with a switch, a head pointer or a
+  // tremor. Defaults to `true`.
+  backquoteGoesBack: boolean,
   indicatorLabelLookup: IndicatorLabelLookupConfigType,
   telegraphicTranslation?: TelegraphicTranslationConfigType,
   aboutMe?: AboutMeConfigType,
