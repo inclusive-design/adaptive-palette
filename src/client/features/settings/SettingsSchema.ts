@@ -52,6 +52,10 @@ export const SETTING_DESCRIPTORS: SettingDescriptorType[] = [
     label: "Go back with the backquote (`) key", group: "General"
   },
   {
+    path: ["switchScanning", "enabled"], kind: "boolean",
+    label: "Use switch scanning (two switches)", group: "General"
+  },
+  {
     path: ["maxRecalledRecords"], kind: "number", min: 0,
     label: "Messages to remember", group: "General"
   },

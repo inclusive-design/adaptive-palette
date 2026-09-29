@@ -7,13 +7,14 @@ the page loads, so nothing has to be rebuilt or edited by hand.
 ## What can be changed
 
 Settings defined in `public/config.json` except these fields: `model`, `systemPrompt`, `userPrompt`,
-and `aboutMe.messagesPerRun`.
+`aboutMe.messagesPerRun`, `switchScanning.moveKey` and `switchScanning.selectKey`.
 
 | Group | Setting | Needs Ollama |
 | ----- | ------- | ------------ |
 | General | Speak each symbol as I add it | |
 | General | Mark AI suggestions | |
 | General | Go back with the backquote (`` ` ``) key | |
+| General | Use switch scanning (two switches) | |
 | General | Messages to remember | |
 | Symbol entry | Show "Add Symbol to Message" | |
 | Symbol entry | Show SVG-builder string entry | |
@@ -25,6 +26,9 @@ and `aboutMe.messagesPerRun`.
 
 The prompts sent to the model, and which model is asked, are not adjustable here. They stay in
 `public/config.json`.
+
+See [Access Methods](AccessMethods.md#switches) for switch scanning. Its keys are set in
+`public/config.json` only.
 
 **Enable word suggestion** is the switch for its whole group. Turning it off switches off the two
 settings under it, which carry the note "Turn on \"Enable word suggestion\" to use this." until it is

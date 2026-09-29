@@ -14,6 +14,20 @@ control (`<input>` of a textual type, `<textarea>`, `<select>`, or any element w
 
 Implemented in [index.js:78](../src/client/index.js#L78).
 
+## Switch Scanning
+
+Active only when "Use switch scanning (two switches)" is on. The keys are set in
+`public/config.json`; see [Access Methods](AccessMethods.md#switches).
+
+| Key (default) | Action |
+| :--- | :--- |
+| `Space` | Move the highlight to the next row, cell, or dialog control |
+| `Enter` | Enter the row, press the cell, or leave the row from "Exit row" |
+
+Ignored when focus is in a text or number field, where the keys type as usual.
+
+Implemented in [SwitchScanning.ts](../src/client/features/switch-scanning/SwitchScanning.ts).
+
 ## Input Area
 
 Active when the input area (the message composition region, `role="textbox"`) has focus. Each

@@ -483,3 +483,72 @@ describe("loadConfig backquoteGoesBack", (): void => {
     expect(makeDefaultConfig().backquoteGoesBack).toBe(true);
   });
 });
+
+describe("loadConfig switchScanning", (): void => {
+
+  test("a valid section is loaded", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      switchScanning: { enabled: true, moveKey: "KeyA", selectKey: "KeyB" }
+    });
+    const config = await loadConfig();
+    expect(config.switchScanning).toEqual({ enabled: true, moveKey: "KeyA", selectKey: "KeyB" });
+  });
+
+  test("a missing section leaves scanning off with the default keys", async (): Promise<void> => {
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
+    const config = await loadConfig();
+    expect(config.switchScanning).toEqual({ enabled: false, moveKey: "Space", selectKey: "Enter" });
+  });
+
+  test("a missing key falls back to both default keys and keeps enabled", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      switchScanning: { enabled: true, moveKey: "KeyA" }
+    });
+    const config = await loadConfig();
+    expect(config.switchScanning).toEqual({ enabled: true, moveKey: "Space", selectKey: "Enter" });
+  });
+
+  test("the same key twice falls back to the default keys", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      switchScanning: { enabled: true, moveKey: "KeyA", selectKey: "KeyA" }
+    });
+    const config = await loadConfig();
+    expect(config.switchScanning).toEqual({ enabled: true, moveKey: "Space", selectKey: "Enter" });
+  });
+
+  test("a key that is not a KeyboardEvent.code falls back to the default keys", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      switchScanning: { enabled: true, moveKey: "space", selectKey: "Enter" }
+    });
+    const config = await loadConfig();
+    expect(config.switchScanning).toEqual({ enabled: true, moveKey: "Space", selectKey: "Enter" });
+  });
+
+  test("a non-boolean enabled leaves scanning off", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      switchScanning: { enabled: "yes", moveKey: "KeyA", selectKey: "KeyB" }
+    });
+    const config = await loadConfig();
+    expect(config.switchScanning).toEqual({ enabled: false, moveKey: "KeyA", selectKey: "KeyB" });
+  });
+
+  test("a malformed section does not affect other sections", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      markAiSuggestions: false,
+      switchScanning: "on"
+    });
+    const config = await loadConfig();
+    expect(config.switchScanning.enabled).toBe(false);
+    expect(config.markAiSuggestions).toBe(false);
+  });
+
+  test("the default config has scanning off with Space and Enter", (): void => {
+    expect(makeDefaultConfig().switchScanning).toEqual({ enabled: false, moveKey: "Space", selectKey: "Enter" });
+  });
+});

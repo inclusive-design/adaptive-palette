@@ -23,6 +23,7 @@ whatever this file says. See `isLocalHost()` in [`src/client/core/OllamaApi.ts`]
 | `announceSymbolOnInput` | Top-level, not a section. Whether labels are spoken as the user inputs. |
 | `markAiSuggestions` | Top-level, not a section. Whether suggestions a model made are marked as such. |
 | `backquoteGoesBack` | Top-level, not a section. Whether the backquote key goes back one palette. |
+| `switchScanning` | Two-switch row-column scanning: whether it is on, and its two keys. See [AccessMethods.md](../AccessMethods.md#switches). |
 | `indicatorLabelLookup` | The Ollama fallback tier for looking up indicator labels. See [IndicatorLabelLookup.md](../IndicatorLabelLookup.md). |
 | `telegraphicTranslation` | Translating a telegraphic message into full sentences. See [TelegraphicMessageTranslation.md](../TelegraphicMessageTranslation.md). |
 | `aboutMe` | The "Suggest updates" button in the "About Me" dialog, which asks a model for facts about the user. See [AboutMe.md](../AboutMe.md). |
@@ -89,6 +90,17 @@ The badge and the spoken prefix live in
 [`src/client/components/AiBadge.ts`](../../src/client/components/AiBadge.ts). A word's and a
 sentence's fill and italic are set per feature, beside the styles for what they mark; the
 indicator label's italic sits with the badge in `AiBadge.scss`.
+
+## `switchScanning`
+
+| Field | Type | Default | Meaning |
+| ----- | ---- | ------- | ------- |
+| `enabled` | boolean | `false` | Whether scanning is on. Anything other than `true` leaves it off. Offered in Adjust Settings. |
+| `moveKey` | string | `"Space"` | The `KeyboardEvent.code` that moves the highlight. |
+| `selectKey` | string | `"Enter"` | The `KeyboardEvent.code` that selects. |
+
+If either key is missing, not shaped like a `KeyboardEvent.code` (`/^[A-Z][A-Za-z0-9]*$/`), or
+both are the same, both keys fall back to the defaults. `enabled` is still read.
 
 ## `indicatorLabelLookup`
 

@@ -1,0 +1,41 @@
+/*
+ * The switch-scanning highlight: yellow inside black. It differs from hover (dashed red) and
+ * keyboard focus (red border, black ring), and stands out on the teal page and every cell colour.
+ */
+$scan-yellow: #ffd400;
+
+/* The one cell the scan is on. `!important` wins over the hover and focus outlines in
+   index.scss, which apply to the same buttons. */
+.switchScanCell {
+  outline: 6px solid $scan-yellow !important;
+  outline-offset: 0 !important;
+  box-shadow: 0 0 0 10px black;
+}
+
+/* The outline around a whole row. Clicks pass through it. */
+#switchScanOverlay {
+  position: absolute;
+  z-index: 1000;
+  box-sizing: border-box;
+  pointer-events: none;
+  border: 6px solid $scan-yellow;
+  outline: 4px solid black;
+  border-radius: 1rem;
+
+  &[hidden] {
+    display: none;
+  }
+
+  /* The exit stop: the row itself, tagged. */
+  &[data-exit]::after {
+    content: "Exit row";
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 0.1rem 0.5rem;
+    border-radius: 0.5rem;
+    background-color: black;
+    color: $scan-yellow;
+    font-weight: bold;
+  }
+}

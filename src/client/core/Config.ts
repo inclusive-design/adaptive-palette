@@ -19,7 +19,7 @@
 import type {
   AdaptivePaletteConfigType, IndicatorLabelLookupConfigType,
   TelegraphicTranslationConfigType, FeatureVisibilityConfigType, WordPredictionConfigType,
-  AboutMeConfigType
+  AboutMeConfigType, SwitchScanningConfigType
 } from "../index.d";
 
 // Used when `maxRecalledRecords` or `wordPrediction.maxSuggestions` is missing or malformed.
@@ -38,6 +38,8 @@ export const DISABLED_MODEL_QUERY = { enableModelQuery: false, model: "", system
 const isPositiveInteger = (value: unknown): boolean => Number.isInteger(value) && (value as number) > 0;
 
 const isFilledString = (value: unknown): boolean => typeof value === "string" && value.trim().length > 0;
+// The shape of a `KeyboardEvent.code` value: "Space", "KeyA", "Digit1", "F1".
+const isKeyCode = (value: unknown): boolean => typeof value === "string" && /^[A-Z][A-Za-z0-9]*$/.test(value);
 
 /**
  * Build the configuration the app uses when `config.json` is missing, unreadable, or malformed.
@@ -52,6 +54,7 @@ export function makeDefaultConfig (): AdaptivePaletteConfigType {
     announceSymbolOnInput: true,
     markAiSuggestions: true,
     backquoteGoesBack: true,
+    switchScanning: { enabled: false, moveKey: "Space", selectKey: "Enter" },
     indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
     symbolSearch: { show: true },
     svgBuilderString: { show: false },
@@ -222,9 +225,28 @@ function parseShowFlag (section: unknown, fallback: boolean): FeatureVisibilityC
 }
 
 /**
+ * Validate the `switchScanning` section. Scanning is on only when `enabled` is `true`. The two
+ * keys must both look like `KeyboardEvent.code` values ("Space", "KeyA") and differ; otherwise
+ * both fall back to Space and Enter. This catches a wrong case or stray space, not a misspelled
+ * name such as "Spcae".
+ * @param {unknown} section - The raw parsed section.
+ * @returns {SwitchScanningConfigType}
+ */
+function parseSwitchScanning (section: unknown): SwitchScanningConfigType {
+  const candidate = section as { enabled?: unknown, moveKey?: unknown, selectKey?: unknown } | undefined;
+  const enabled = candidate?.enabled === true;
+  const moveKey = candidate?.moveKey;
+  const selectKey = candidate?.selectKey;
+  if (isKeyCode(moveKey) && isKeyCode(selectKey) && moveKey !== selectKey) {
+    return { enabled, moveKey: moveKey as string, selectKey: selectKey as string };
+  }
+  return { enabled, moveKey: "Space", selectKey: "Enter" };
+}
+
+/**
  * Fetch and validate `public/config.json`: the top-level `maxRecalledRecords` and the
  * `indicatorLabelLookup`, `telegraphicTranslation`, `symbolSearch`, `svgBuilderString`,
- * `wordPrediction` and `aboutMe` sections.
+ * `wordPrediction`, `aboutMe` and `switchScanning` sections.
  * @returns {Promise<AdaptivePaletteConfigType>}
  */
 export async function loadConfig (): Promise<AdaptivePaletteConfigType> {
@@ -245,6 +267,7 @@ export async function loadConfig (): Promise<AdaptivePaletteConfigType> {
       markAiSuggestions: typeof parsed?.markAiSuggestions === "boolean" ? parsed.markAiSuggestions : true,
       // Anything other than `false` leaves the shortcut on, as it was before the setting existed.
       backquoteGoesBack: typeof parsed?.backquoteGoesBack === "boolean" ? parsed.backquoteGoesBack : true,
+      switchScanning: parseSwitchScanning(parsed?.switchScanning),
       indicatorLabelLookup: indicatorLabelLookup ?? makeDefaultConfig().indicatorLabelLookup,
       telegraphicTranslation: parseTelegraphicTranslation(parsed?.telegraphicTranslation),
       aboutMe: parseAboutMe(parsed?.aboutMe),
