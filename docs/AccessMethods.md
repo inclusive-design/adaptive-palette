@@ -36,8 +36,9 @@ public website keeps no settings, so there it can be turned on only in `public/c
 1. **Rows.** The highlight outlines one row of controls at a time, top to bottom: the top bar,
    the input area, sentence choices, word predictions, the command bar, then each row of the
    palette. Empty rows are skipped. After the last row it goes back to the first.
-2. **Enter a row.** Select enters the outlined row. The first stop is the row itself, tagged
-   "Exit row": select there goes back to choosing rows. A wrong row is left with one press.
+2. **Enter a row.** Select enters the outlined row. The first stop is "Exit row": the row goes
+   dark with a "↩ Exit row" sign in its middle. Select there goes back to choosing rows, so a
+   wrong row is left with one press.
 3. **Pick a cell.** Move steps through the row's cells, then back to "Exit row". Select presses
    the highlighted cell.
 4. **After a choice,** the highlight goes back to choosing rows, on the row just used, so the next
@@ -50,8 +51,8 @@ public website keeps no settings, so there it can be turned on only in `public/c
 6. **Scrolling.** The page, or the list inside a dialog, scrolls by itself to keep the highlight
    in view.
 
-The highlight is yellow inside black: an outline around the whole row when choosing rows, a ring
-on the cell inside a row.
+The highlight is yellow inside black: an outline around the whole row when choosing rows, the
+row darkened with a "↩ Exit row" sign on the exit stop, and a ring on the cell inside a row.
 
 ### Switch keys
 
