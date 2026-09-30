@@ -174,6 +174,16 @@ export type FeatureVisibilityConfigType = {
   show: boolean
 };
 
+/*
+ * Two-switch row–column scanning. The keys are `KeyboardEvent.code` values: one moves the
+ * highlight, the other selects what it is on.
+ */
+export type SwitchScanningConfigType = {
+  enabled: boolean,
+  moveKey: string,
+  selectKey: string
+};
+
 export type AdaptivePaletteConfigType = {
   // How many of the newest stored messages are read back for word prediction and for
   // recalling a sentence. Nothing is ever deleted; this caps what is read, not what is kept.
@@ -189,6 +199,8 @@ export type AdaptivePaletteConfigType = {
   // one-key shortcut is easy to press by accident with a switch, a head pointer or a
   // tremor. Defaults to `true`.
   backquoteGoesBack: boolean,
+  // Two-switch scanning. Off by default; the keys are set in config.json only.
+  switchScanning: SwitchScanningConfigType,
   indicatorLabelLookup: IndicatorLabelLookupConfigType,
   telegraphicTranslation?: TelegraphicTranslationConfigType,
   aboutMe?: AboutMeConfigType,

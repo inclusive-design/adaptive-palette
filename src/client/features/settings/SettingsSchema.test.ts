@@ -153,6 +153,14 @@ describe("SettingsSchema", () => {
       expect(config.backquoteGoesBack).toBe(false);
     });
 
+    test("applies a saved value for switch scanning", async (): Promise<void> => {
+      await store({ "switchScanning.enabled": true });
+
+      const config = await applyStoredSettings(makeDefaultConfig());
+
+      expect(config.switchScanning.enabled).toBe(true);
+    });
+
     test("a store that cannot be read leaves the file's values standing", async (): Promise<void> => {
       const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
       vi.spyOn(storage, "readSettings").mockRejectedValue(new Error("the store is not available"));

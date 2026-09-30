@@ -80,8 +80,7 @@ describe("MessageAttributesBar", (): void => {
 
     expect(bar()).toBeNull();
     expect(mockedAnnounceIfEnabled).toHaveBeenLastCalledWith("Priority: urgent, off");
-    // No sibling survives, so focus falls back to the document -- see the `ponytail:` comment
-    // in MessageAttributesBar.ts.
+    // No sibling survives, so focus falls back to the document.
     expect(document.activeElement).toBe(document.body);
   });
 

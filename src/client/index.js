@@ -18,7 +18,7 @@ import { HOSTED_MESSAGE, NO_MODELS_MESSAGE, isLocalHost } from "./core/OllamaApi
 import { NOT_SAVED_MESSAGE } from "./core/MemoryStorage";
 import { announceIfEnabled, speakUnavailable } from "./utils/SpeechUtils";
 import { goBackImpl } from "./cells/CommandGoBackCell";
-import { INPUT_AREA_ID } from "./cells/ContentEncoding";
+import { elementAllowsTextEntry } from "./utils/TextEntryUtils";
 import { NOT_CONFIGURED_MESSAGE } from "./features/telegraphic-translation/TelegraphicTranslationUtils";
 import "./index.scss";
 
@@ -30,6 +30,7 @@ import { DiscardEditDialog } from "./features/telegraphic-translation/DiscardEdi
 import { SymbolEntryToolbar } from "./components/SymbolEntryToolbar";
 import { MessageAttributesBar } from "./features/message-attributes/MessageAttributesBar";
 import { FirstRunSetup } from "./features/setup/FirstRunSetup";
+import { startSwitchScanning } from "./features/switch-scanning/SwitchScanning";
 
 // Each palette draws the whole screen below the top bar, so the start palette and the palettes
 // it includes are all that must load before the first render. `?set=<folder>` in the page URL
@@ -95,10 +96,11 @@ window.addEventListener("keydown", (event) => {
   }
 });
 
-const textInputTypes = [
-  "date", "datetime-local", "email", "month", "number", "password", "search",
-  "tel", "text", "time", "url", "week"
-];
+// Two-switch scanning, when the user has turned it on. Off, nothing listens, so keyboard access
+// is unchanged.
+if (adaptivePaletteGlobals.config.switchScanning.enabled) {
+  startSwitchScanning(adaptivePaletteGlobals.config.switchScanning);
+}
 
 /**
  * @param {string} id
@@ -108,18 +110,4 @@ function getRequiredElement(id) {
   const el = document.getElementById(id);
   if (!el) { throw new Error(`Required DOM element #${id} not found`); }
   return el;
-}
-
-/**
- * @param {unknown} element
- * @returns {boolean}
- */
-function elementAllowsTextEntry(element) {
-  if (!(element instanceof HTMLElement)) { return false; }
-  return element.id !== INPUT_AREA_ID && (
-    (element instanceof HTMLInputElement && textInputTypes.includes(element.type)) ||
-    element instanceof HTMLTextAreaElement ||
-    element instanceof HTMLSelectElement ||
-    element.getAttribute("role") === "textbox"
-  );
 }

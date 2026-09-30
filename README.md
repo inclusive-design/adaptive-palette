@@ -181,6 +181,8 @@ past messages and optionally from a local Ollama model.
 browser and applied at the next page load.
 - [About Me](./docs/AboutMe.md): notes about the user that sentence and word suggestions use,
 typed in or accepted from the AI model's suggestions. Desktop version only.
+- [Access Methods](./docs/AccessMethods.md): use the palette with a keyboard, mouse, touch or two
+switches, and how they work together.
 - [Install on Your Computer](./docs/Deployment.md): install Adaptive Palette and Ollama on macOS or
 Windows, run it for the first time, and uninstall it cleanly.
 

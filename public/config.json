@@ -3,6 +3,11 @@
   "announceSymbolOnInput": true,
   "markAiSuggestions": true,
   "backquoteGoesBack": true,
+  "switchScanning": {
+    "enabled": false,
+    "moveKey": "Space",
+    "selectKey": "Enter"
+  },
   "indicatorLabelLookup": {
     "useModelQueryFallback": true,
     "model": "gemma4:12b",
