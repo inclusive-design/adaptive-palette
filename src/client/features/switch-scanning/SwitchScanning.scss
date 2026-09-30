@@ -5,8 +5,11 @@
 $scan-yellow: #ffd400;
 
 /* The one cell the scan is on. `!important` wins over the hover and focus outlines in
-   index.scss, which apply to the same buttons. */
+   index.scss, which apply to the same buttons. Palettes have no grid gap, so the cell is
+   raised to keep its neighbours from painting over the highlight. */
 .switchScanCell {
+  position: relative;
+  z-index: 1;
   outline: 6px solid $scan-yellow !important;
   outline-offset: 0 !important;
   box-shadow: 0 0 0 10px black;
