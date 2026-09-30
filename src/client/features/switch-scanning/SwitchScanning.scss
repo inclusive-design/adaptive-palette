@@ -13,6 +13,8 @@ $scan-yellow: #ffd400;
   outline: 6px solid $scan-yellow !important;
   outline-offset: 0 !important;
   box-shadow: 0 0 0 10px black;
+  /* Room for the outline and shadow when the scan scrolls the cell into view. */
+  scroll-margin: 16px;
 }
 
 /* The outline around a whole row. Clicks pass through it. */
@@ -24,6 +26,7 @@ $scan-yellow: #ffd400;
   border: 6px solid $scan-yellow;
   outline: 4px solid black;
   border-radius: 1rem;
+  scroll-margin: 4px;
 
   &[hidden] {
     display: none;

@@ -45,6 +45,10 @@ switches)". The public website keeps no settings, so there it can be turned on o
 5. **Dialogs.** While a dialog is open, the highlight steps through its buttons and checkboxes
    one at a time. Text and number fields, drop-down menus and links are skipped; a support person
    fills those in.
+   When a dialog opened from another dialog closes, the highlight returns to the control that
+   opened it.
+6. **Scrolling.** The page, or the list inside a dialog, scrolls by itself to keep the highlight
+   in view.
 
 The highlight is yellow inside black: an outline around the whole row when choosing rows, a ring
 on the cell inside a row.

@@ -49,8 +49,8 @@ export function scannableControls (root: Element): HTMLElement[] {
  * left to right. A control joins a row when it spans the middle of the row's first control, so
  * a taller chip beside a button still shares its row.
  *
- * ponytail: a cell spanning two grid rows joins the upper row only. The shipped palettes are
- * regular grids; read rows from the palette JSON if that changes.
+ * A cell spanning two grid rows joins the upper row only. The palettes so-far are regular grids;
+ * read rows from the palette JSON if that changes.
  * @param {Element[]} roots - The regions to scan.
  * @returns {HTMLElement[][]}
  */
@@ -76,8 +76,8 @@ const PAGE_REGION_IDS = ["topBar", "mainPaletteDisplayArea"];
 /**
  * The open modal dialog on top, or null. `showModal()` makes everything else inert, so it is
  * the only thing the user can act on.
- * ponytail: the last open dialog in document order; track the top layer if dialogs ever nest
- * out of document order.
+ * The last open dialog in document order; track the top layer if dialogs ever nest out of
+ * document order.
  * @returns {HTMLDialogElement | null}
  */
 function topDialog (): HTMLDialogElement | null {
@@ -115,6 +115,8 @@ export function startSwitchScanning (config: SwitchScanningConfigType): () => vo
   let toPaletteStart = false;
   let dialog: HTMLDialogElement | null = null;
   let dialogIndex = 0;
+  // The position in each dialog left open under the top one, to return to when the top one closes.
+  const underneath = new Map<HTMLDialogElement, number>();
 
   const overlay = document.createElement("div");
   overlay.id = OVERLAY_ID;
@@ -155,14 +157,19 @@ export function startSwitchScanning (config: SwitchScanningConfigType): () => vo
   }
 
   /**
-   * The dialog's stops, resetting the position when a different dialog is on top.
+   * The dialog's stops. When a different dialog is on top, the position moves to where the scan
+   * left that dialog, or to its first control when it has just opened.
    * @param {HTMLDialogElement} current - The dialog on top.
    * @returns {HTMLElement[]}
    */
   function dialogControls (current: HTMLDialogElement): HTMLElement[] {
     if (current !== dialog) {
+      if (dialog?.open) {
+        underneath.set(dialog, dialogIndex);
+      }
+      dialogIndex = underneath.get(current) ?? 0;
+      underneath.delete(current);
       dialog = current;
-      dialogIndex = 0;
     }
     return scannableControls(current);
   }
@@ -170,30 +177,42 @@ export function startSwitchScanning (config: SwitchScanningConfigType): () => vo
   /**
    * Draw the highlight where the scan is. Changes attributes only, so the observer below does
    * not see it.
+   * @param {boolean} reveal - Whether to scroll the highlight into view, as a switch user cannot
+   *   scroll to it.
    */
-  function paint (): void {
+  function paint (reveal = true): void {
     document.querySelectorAll(`.${CELL_CLASS}`).forEach((el) => el.classList.remove(CELL_CLASS));
-    overlay.hidden = true;
-    overlay.removeAttribute("data-exit");
+    // The overlay is hidden only where it is not drawn. Hiding it first would shorten the page
+    // for a moment when it is at the very bottom, and the browser would scroll up off it.
+    const highlight = (el: HTMLElement): void => {
+      overlay.hidden = true;
+      el.classList.add(CELL_CLASS);
+      if (reveal) {
+        el.scrollIntoView({ block: "nearest", inline: "nearest" });
+      }
+    };
 
     const current = topDialog();
     if (current) {
       const controls = dialogControls(current);
+      overlay.hidden = true;
       if (controls.length > 0) {
         dialogIndex %= controls.length;
-        controls[dialogIndex].classList.add(CELL_CLASS);
+        highlight(controls[dialogIndex]);
       }
       return;
     }
     dialog = null;
+    underneath.clear();
 
     const rows = pageRows();
     if (rows.length === 0) {
+      overlay.hidden = true;
       return;
     }
     const row = currentRow(rows);
     if (level === "cells" && cellIndex >= 0) {
-      row[cellIndex].classList.add(CELL_CLASS);
+      highlight(row[cellIndex]);
       return;
     }
     // The row outline: the union of the row's cells, in page coordinates.
@@ -211,6 +230,11 @@ export function startSwitchScanning (config: SwitchScanningConfigType): () => vo
     });
     overlay.toggleAttribute("data-exit", level === "cells");
     overlay.hidden = false;
+    // Scrolls the window only, as the overlay sits on the page; scroll the row's cells
+    // instead if palette rows ever sit in a scrolling area of their own.
+    if (reveal) {
+      overlay.scrollIntoView({ block: "nearest", inline: "nearest" });
+    }
   }
 
   /**
@@ -296,8 +320,10 @@ export function startSwitchScanning (config: SwitchScanningConfigType): () => vo
   let frame = 0;
   const schedulePaint = (): void => {
     cancelAnimationFrame(frame);
-    frame = requestAnimationFrame(paint);
+    frame = requestAnimationFrame(() => paint());
   };
+  // Redraw without scrolling back, so a support person can scroll the page by hand.
+  const onScroll = (): void => paint(false);
   // The open dialog whose focus was last checked, so each opening is checked once.
   let focusChecked: HTMLDialogElement | null = null;
   // Set by a scan selection, cleared by the next key or pointer press: focus landing in a text
@@ -369,7 +395,7 @@ export function startSwitchScanning (config: SwitchScanningConfigType): () => vo
   window.addEventListener("keydown", onKeyDown);
   window.addEventListener("resize", schedulePaint);
   // Capture, so scrolling an inner area counts too.
-  window.addEventListener("scroll", schedulePaint, true);
+  window.addEventListener("scroll", onScroll, true);
   window.addEventListener("focusin", onFocusIn);
   window.addEventListener("pointerdown", endSelecting, true);
   paint();
@@ -378,7 +404,7 @@ export function startSwitchScanning (config: SwitchScanningConfigType): () => vo
   return (): void => {
     window.removeEventListener("keydown", onKeyDown);
     window.removeEventListener("resize", schedulePaint);
-    window.removeEventListener("scroll", schedulePaint, true);
+    window.removeEventListener("scroll", onScroll, true);
     window.removeEventListener("focusin", onFocusIn);
     window.removeEventListener("pointerdown", endSelecting, true);
     observer.disconnect();

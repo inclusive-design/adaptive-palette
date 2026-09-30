@@ -397,6 +397,73 @@ describe("startSwitchScanning", (): void => {
     expect(highlightedCell()).toBeNull();
   });
 
+  test("returns to its place in a dialog when a dialog opened from it closes", async (): Promise<void> => {
+    const outer = document.createElement("dialog");
+    outer.innerHTML = "<button>Close</button><button>Erase</button>";
+    const inner = document.createElement("dialog");
+    inner.innerHTML = "<button>Cancel</button>";
+    page.append(outer, inner);
+    button("Erase").addEventListener("click", () => inner.showModal());
+    button("Cancel").addEventListener("click", () => inner.close());
+    outer.showModal();
+    await waitFor(() => expect(highlightedCell()?.textContent).toBe("Close"));
+
+    await move();
+    await select();
+    await waitFor(() => expect(highlightedCell()?.textContent).toBe("Cancel"));
+    await select();
+    await waitFor(() => expect(highlightedCell()?.textContent).toBe("Erase"));
+  });
+
+  test("a dialog opened again starts at its first control", async (): Promise<void> => {
+    const dialog = document.createElement("dialog");
+    dialog.innerHTML = "<button>First</button><button>Close</button>";
+    page.appendChild(dialog);
+    button("Close").addEventListener("click", () => dialog.close());
+    dialog.showModal();
+    await waitFor(() => expect(highlightedCell()?.textContent).toBe("First"));
+    await move();
+    await select();
+    await waitFor(() => expect(highlightedCell()).toBeNull());
+
+    dialog.showModal();
+    await waitFor(() => expect(highlightedCell()?.textContent).toBe("First"));
+  });
+
+  test("scrolls the page to a row below the window", async (): Promise<void> => {
+    byId("mainPaletteDisplayArea").insertAdjacentHTML("beforeend",
+      "<div style='height: 200vh'></div><button>far</button>");
+    await move();
+    await move();
+    await move();
+    expect(labels(outlinedRow())).toEqual(["far"]);
+    const box = byId("switchScanOverlay").getBoundingClientRect();
+    expect(box.top).toBeGreaterThanOrEqual(0);
+    // WebKit scrolls by whole pixels, so allow the part of a pixel left over.
+    expect(box.bottom).toBeLessThan(window.innerHeight + 1);
+  });
+
+  test("scrolls a dialog's list to the highlighted control", async (): Promise<void> => {
+    const dialog = document.createElement("dialog");
+    dialog.innerHTML = `
+      <div style="height: 6rem; overflow-y: auto">
+        <button style="display: block; height: 3rem">One</button>
+        <button style="display: block; height: 3rem">Filler</button>
+        <button style="display: block; height: 3rem">Two</button>
+      </div>`;
+    page.appendChild(dialog);
+    dialog.showModal();
+    await waitFor(() => expect(highlightedCell()?.textContent).toBe("One"));
+
+    await move();
+    await move();
+    expect(highlightedCell()?.textContent).toBe("Two");
+    const list = button("Two").parentElement as HTMLElement;
+    const box = button("Two").getBoundingClientRect();
+    expect(box.top).toBeGreaterThanOrEqual(list.getBoundingClientRect().top);
+    expect(box.bottom).toBeLessThanOrEqual(list.getBoundingClientRect().bottom);
+  });
+
   test("uses the configured keys", async (): Promise<void> => {
     stop();
     stop = startSwitchScanning({ enabled: true, moveKey: "KeyA", selectKey: "KeyB" });
