@@ -16,7 +16,7 @@ Implemented in [index.js:78](../src/client/index.js#L78).
 
 ## Switch Scanning
 
-Active only when "Use switch scanning (two switches)" is on. The keys are set in
+Active only when "Use two-switch row scanning" is on. The keys are set in
 `public/config.json`; see [Access Methods](AccessMethods.md#switches).
 
 | Key (default) | Action |

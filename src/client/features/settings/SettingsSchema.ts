@@ -53,7 +53,7 @@ export const SETTING_DESCRIPTORS: SettingDescriptorType[] = [
   },
   {
     path: ["switchScanning", "enabled"], kind: "boolean",
-    label: "Use switch scanning (two switches)", group: "General"
+    label: "Use two-switch row scanning", group: "General"
   },
   {
     path: ["maxRecalledRecords"], kind: "number", min: 0,
