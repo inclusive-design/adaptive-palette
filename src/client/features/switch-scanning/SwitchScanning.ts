@@ -27,7 +27,7 @@ import "./SwitchScanning.scss";
 export const CELL_CLASS = "switchScanCell";
 export const OVERLAY_ID = "switchScanOverlay";
 
-const CONTROL_SELECTOR = "button, [tabindex='0'], input[type='checkbox'], input[type='radio']";
+const CONTROL_SELECTOR = "button, a[href], [tabindex='0'], input[type='checkbox'], input[type='radio']";
 
 /**
  * The controls in `root` a scan stops on, in document order: visible, not disabled (including
@@ -111,6 +111,9 @@ export function startSwitchScanning (config: SwitchScanningConfigType): () => vo
   // The first cell of the current row. It finds the row again after rows above it appear or
   // go, which indexes alone cannot.
   let anchor: HTMLElement | null = null;
+  // The number of rows when last read. Unchanged while the anchor is gone means the row was
+  // redrawn in place, as word predictions are, so the user stays inside it.
+  let rowCount = 0;
   // Set when the palette changes: the next paint moves to the new palette's first row.
   let toPaletteStart = false;
   let dialog: HTMLDialogElement | null = null;
@@ -144,12 +147,13 @@ export function startSwitchScanning (config: SwitchScanningConfigType): () => vo
       const found = anchor ? rows.findIndex((row) => row.includes(anchor as HTMLElement)) : -1;
       if (found >= 0) {
         rowIndex = found;
-      } else {
+      } else if (rows.length !== rowCount) {
         rowIndex = rowIndex % rows.length;
         level = "rows";
       }
     }
     anchor = rows[rowIndex][0];
+    rowCount = rows.length;
     if (cellIndex >= rows[rowIndex].length) {
       cellIndex = -1;
     }

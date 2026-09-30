@@ -43,9 +43,9 @@ public website keeps no settings, so there it can be turned on only in `public/c
    the highlighted cell.
 4. **After a choice,** the highlight goes back to choosing rows, on the row just used, so the next
    symbol is a few presses away. If the palette changed, it starts at the new palette's first row.
-5. **Dialogs.** While a dialog is open, the highlight steps through its buttons and checkboxes
-   one at a time. Text and number fields, drop-down menus and links are skipped; a support person
-   fills those in.
+5. **Dialogs.** While a dialog is open, the highlight steps through its buttons, checkboxes
+   and links one at a time. Text and number fields and drop-down menus are skipped; a support
+   person fills those in.
    When a dialog opened from another dialog closes, the highlight returns to the control that
    opened it.
 6. **Scrolling.** The page, or the list inside a dialog, scrolls by itself to keep the highlight

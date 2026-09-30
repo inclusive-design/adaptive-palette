@@ -91,6 +91,13 @@ describe("collectRows", (): void => {
     expect(labels(scannableControls(byId("topBar")))).toEqual(["Settings", "Chip"]);
   });
 
+  test("keeps a link", (): void => {
+    const area = byId("mainPaletteDisplayArea");
+    area.insertAdjacentHTML("beforeend", "<a href='#'>link</a><a>no href</a>");
+
+    expect(labels(scannableControls(area))).toEqual(["a1", "a2", "a3", "b1", "b2", "link"]);
+  });
+
   test("leaves out a control inside a disabled fieldset", (): void => {
     const area = byId("mainPaletteDisplayArea");
     area.insertAdjacentHTML("beforeend", "<fieldset disabled><button>in fieldset</button></fieldset>");
@@ -219,6 +226,21 @@ describe("startSwitchScanning", (): void => {
     await move();
     await select();
     await waitFor(() => expect(labels(outlinedRow())).toEqual(["b1", "b2"]));
+  });
+
+  test("stays inside a row whose cells are redrawn", async (): Promise<void> => {
+    await move();
+    await select();
+    await move();
+    // Like word predictions arriving: the row's buttons are replaced by new ones.
+    ["a1", "a2", "a3"].forEach((label) => {
+      const fresh = document.createElement("button");
+      fresh.textContent = label;
+      button(label).replaceWith(fresh);
+    });
+    await waitFor(() => expect(highlightedCell()?.textContent).toBe("a1"));
+    await move();
+    expect(highlightedCell()?.textContent).toBe("a2");
   });
 
   test("scan keys do not activate the focused button", async (): Promise<void> => {
