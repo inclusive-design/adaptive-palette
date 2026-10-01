@@ -13,7 +13,7 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "../components/BlissSymbol";
-import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents, settingsSavedCount } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
 import { ContentEncodingType, SymbolEncodingType } from "../index.d";
 import { generateGridStyle } from "../utils/GridUtils";
@@ -152,6 +152,8 @@ function handleKeyDown(event: KeyboardEvent) {
 }
 
 export function ContentEncoding (props: ContentEncodingProps): VNode {
+  // Read so this draws again after a save. See `settingsSavedCount`.
+  void settingsSavedCount.value;
   const { id, options } = props;
   const { columnStart, columnSpan, rowStart, rowSpan } = options;
 

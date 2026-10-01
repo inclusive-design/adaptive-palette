@@ -32,8 +32,7 @@ import type { AboutMeType } from "../index.d";
  * What this backend means for the user, shown on the hosted site's status line. It lives here
  * rather than with the other status text because it states this backend's own consequence.
  */
-export const NOT_SAVED_MESSAGE =
-  "Nothing is saved on this computer. Reloading the page clears your messages, settings and About Me notes.";
+export const NOT_SAVED_MESSAGE = "Nothing is saved on this computer. Reloading the page clears your data.";
 
 export class MemoryStorage implements AdaptivePaletteStorage {
 

@@ -31,6 +31,8 @@ export type SettingDescriptorType = {
   min?: number,            // numbers only
   // Useless without a model Ollama can serve, and without prompts in its own section.
   requiresModel?: boolean,
+  // Greyed out without a model, like `requiresModel`, but needs no prompts of its own.
+  usesModelOutput?: boolean,
   enabledBy?: string       // the key of the switch that turns this setting off with it
 };
 
@@ -44,7 +46,7 @@ export const SETTING_DESCRIPTORS: SettingDescriptorType[] = [
     label: "Speak each symbol as I add it", group: "General"
   },
   {
-    path: ["markAiSuggestions"], kind: "boolean",
+    path: ["markAiSuggestions"], kind: "boolean", usesModelOutput: true,
     label: "Mark AI suggestions", group: "General"
   },
   {

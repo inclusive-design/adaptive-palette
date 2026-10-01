@@ -15,7 +15,7 @@ import { render, screen, cleanup, waitFor } from "@testing-library/preact";
 import { userEvent } from "vitest/browser";
 import { html } from "htm/preact";
 
-import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents, settingsSavedCount } from "../state/GlobalData";
 import { DISABLED_MODEL_QUERY } from "../core/Config";
 import { isLocalHost } from "../core/OllamaApi";
 import { DISMISS_LABEL } from "./ModalDialog";
@@ -61,6 +61,18 @@ describe("SymbolEntryToolbar", () => {
     cleanup();
     adaptivePaletteGlobals.config = originalConfig;
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+  });
+
+  test("draws again after the settings are saved", async () => {
+    withVisibility(true, false);
+    render(html`<${SymbolEntryToolbar} />`);
+    const searchButtons = (): number => screen.queryAllByRole("button", { name: SEARCH_TRIGGER_LABEL }).length;
+    expect(searchButtons()).toBeGreaterThan(0);
+
+    withVisibility(false, false);
+    settingsSavedCount.value++;
+
+    await waitFor(() => expect(searchButtons()).toBe(0));
   });
 
   test("shows both triggers when both features are enabled", () => {

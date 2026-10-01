@@ -18,9 +18,9 @@
  * always match what the user sees: a new palette, word predictions that arrive later, a row
  * that empties.
  */
-import { effect } from "@preact/signals";
+import { effect, untracked } from "@preact/signals";
 import type { SwitchScanningConfigType } from "../../index.d";
-import { adaptivePaletteGlobals } from "../../state/GlobalData";
+import { adaptivePaletteGlobals, settingsSavedCount } from "../../state/GlobalData";
 import { elementAllowsTextEntry } from "../../utils/TextEntryUtils";
 import "./SwitchScanning.scss";
 
@@ -98,8 +98,9 @@ export function isOwnPaletteCell (el: HTMLElement): boolean {
 }
 
 /**
- * Start scanning with `config`'s keys. Only called when scanning is enabled, so with it off
- * nothing here listens and keyboard access is untouched.
+ * Start scanning with `config`'s keys. Only called when scanning is enabled (see
+ * `followSwitchScanningSetting`), so with it off nothing here listens and keyboard access is
+ * untouched.
  * @param {SwitchScanningConfigType} config - The keys.
  * @returns {() => void} - Stops scanning and removes the highlight.
  */
@@ -416,5 +417,32 @@ export function startSwitchScanning (config: SwitchScanningConfigType): () => vo
     cancelAnimationFrame(frame);
     document.querySelectorAll(`.${CELL_CLASS}`).forEach((el) => el.classList.remove(CELL_CLASS));
     overlay.remove();
+  };
+}
+
+/**
+ * Scan while the settings have scanning on: start now if they do, and start or stop after
+ * each save that changes it. Scanning that is already running keeps its keys until it is
+ * turned off and on again.
+ * @returns {() => void} - Stops following the setting, and stops scanning.
+ */
+export function followSwitchScanningSetting (): () => void {
+  let stop: (() => void) | undefined;
+  const unfollow = effect(() => {
+    // Read so this runs again after a save. See `settingsSavedCount`.
+    void settingsSavedCount.value;
+    const config = adaptivePaletteGlobals.config.switchScanning;
+    if (config.enabled && !stop) {
+      // Untracked, so a signal read while scanning starts does not rerun this effect.
+      stop = untracked(() => startSwitchScanning(config));
+    } else if (!config.enabled && stop) {
+      stop();
+      stop = undefined;
+    }
+  });
+  return (): void => {
+    unfollow();
+    stop?.();
+    stop = undefined;
   };
 }

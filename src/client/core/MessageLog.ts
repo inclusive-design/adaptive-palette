@@ -96,8 +96,8 @@ export function isMessageRecord (entry: unknown): entry is StoredMessage {
 }
 
 /**
- * Read the stored messages into this session's log. Called once from
- * `initAdaptivePaletteGlobals()`, before anything renders, and by tests that seed a log.
+ * Read the stored messages into this session's log. Called from `initAdaptivePaletteGlobals()`,
+ * before anything renders, again after settings are saved, and by tests that seed a log.
  *
  * A store that cannot be read leaves an empty log, which is how the app starts anyway.
  * @returns {Promise<void>}

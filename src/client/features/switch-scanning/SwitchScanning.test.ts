@@ -14,8 +14,10 @@ import { vi } from "vitest";
 import { userEvent } from "vitest/browser";
 import { fireEvent, waitFor } from "@testing-library/preact";
 import type { JsonPaletteType } from "../../index.d";
-import { adaptivePaletteGlobals } from "../../state/GlobalData";
-import { collectRows, scannableControls, startSwitchScanning } from "./SwitchScanning";
+import { adaptivePaletteGlobals, settingsSavedCount } from "../../state/GlobalData";
+import {
+  OVERLAY_ID, collectRows, followSwitchScanningSetting, scannableControls, startSwitchScanning
+} from "./SwitchScanning";
 import { outlinedRow, onExitStop, highlightedCell } from "../../testUtils/SwitchScanTestUtils";
 
 // `userEvent` comes from `vitest/browser`, not `@testing-library/user-event`: its events are
@@ -503,5 +505,46 @@ describe("startSwitchScanning", (): void => {
     await move();
     expect(clicked).toHaveBeenCalledTimes(1);
     expect(document.getElementById("switchScanOverlay")).toBeNull();
+  });
+});
+
+describe("followSwitchScanningSetting", (): void => {
+  const original = adaptivePaletteGlobals.config;
+  let page: HTMLElement;
+  let unfollow: () => void = () => undefined;
+
+  const setEnabled = (enabled: boolean): void => {
+    adaptivePaletteGlobals.config = { ...original, switchScanning: { ...KEYS, enabled } };
+  };
+  const isScanning = (): boolean => document.getElementById(OVERLAY_ID) !== null;
+
+  beforeEach((): void => {
+    page = buildPage();
+  });
+
+  afterEach((): void => {
+    unfollow();
+    page.remove();
+    adaptivePaletteGlobals.config = original;
+  });
+
+  test("scans at once when the setting is on", (): void => {
+    setEnabled(true);
+    unfollow = followSwitchScanningSetting();
+    expect(isScanning()).toBe(true);
+  });
+
+  test("starts and stops scanning when a save changes the setting", (): void => {
+    setEnabled(false);
+    unfollow = followSwitchScanningSetting();
+    expect(isScanning()).toBe(false);
+
+    setEnabled(true);
+    settingsSavedCount.value++;
+    expect(isScanning()).toBe(true);
+
+    setEnabled(false);
+    settingsSavedCount.value++;
+    expect(isScanning()).toBe(false);
   });
 });

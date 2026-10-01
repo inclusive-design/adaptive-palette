@@ -30,7 +30,7 @@ import { DiscardEditDialog } from "./features/telegraphic-translation/DiscardEdi
 import { SymbolEntryToolbar } from "./components/SymbolEntryToolbar";
 import { MessageAttributesBar } from "./features/message-attributes/MessageAttributesBar";
 import { FirstRunSetup } from "./features/setup/FirstRunSetup";
-import { startSwitchScanning } from "./features/switch-scanning/SwitchScanning";
+import { followSwitchScanningSetting } from "./features/switch-scanning/SwitchScanning";
 
 // Each palette draws the whole screen below the top bar, so the start palette and the palettes
 // it includes are all that must load before the first render. `?set=<folder>` in the page URL
@@ -96,11 +96,9 @@ window.addEventListener("keydown", (event) => {
   }
 });
 
-// Two-switch scanning, when the user has turned it on. Off, nothing listens, so keyboard access
-// is unchanged.
-if (adaptivePaletteGlobals.config.switchScanning.enabled) {
-  startSwitchScanning(adaptivePaletteGlobals.config.switchScanning);
-}
+// Two-switch scanning, while the user has it turned on. Off, nothing listens, so keyboard
+// access is unchanged.
+followSwitchScanningSetting();
 
 /**
  * @param {string} id

@@ -15,14 +15,14 @@ import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/pr
 import { userEvent } from "vitest/browser";
 import { html } from "htm/preact";
 
-import { adaptivePaletteGlobals } from "../../state/GlobalData";
+import { adaptivePaletteGlobals, settingsSavedCount } from "../../state/GlobalData";
 import { loadConfig } from "../../core/Config";
 import type { AdaptivePaletteConfigType } from "../../index.d";
-import { setStorage } from "../../core/StorageBackend";
+import { type AdaptivePaletteStorage, setStorage } from "../../core/StorageBackend";
 import { MemoryStorage } from "../../core/MemoryStorage";
+import { IndexedDbStorage } from "../../core/IndexedDbStorage";
 import {
-  SettingsDialog, SAVE_LABEL, CLOSE_LABEL, CONFIRM_LABEL, DECLINE_LABEL,
-  MODEL_NOTE, WARNING_TEXT, FAILURE_MESSAGE, dependentNote
+  SettingsDialog, SAVE_LABEL, CLOSE_LABEL, MODEL_NOTE, FAILURE_MESSAGE, dependentNote
 } from "./SettingsDialog";
 import { ERASE_CONFIRM_LABEL, ERASE_DONE_TEXT, ERASE_LABEL } from "./EraseAllData";
 import { HOSTED_MESSAGE, isLocalHost } from "../../core/OllamaApi";
@@ -34,9 +34,8 @@ vi.mock("../../core/OllamaApi", async (importOriginal) => {
   return { ...actual, isLocalHost: vi.fn(actual.isLocalHost) };
 });
 
-// Saving reloads the page, which would restart the test runner. Making the store's write
-// reject keeps every test on the failure path, where the dialog stays put; what the dialog
-// asked to write is what these tests are about.
+// A spy that passes the write through to the store, so a test can check what was written.
+// A test of the failure path makes it reject.
 let writeSettingsSpy: MockInstance;
 
 const originalConfig = adaptivePaletteGlobals.config;
@@ -51,6 +50,7 @@ const MODEL_WORDS_LABEL = "Ask the AI model for suggestions";
 const SUGGESTIONS_LABEL = "Suggestions to show";
 const SENTENCES_LABEL = "Sentence choices to offer";
 const WORDS_LABEL = "Enable word suggestion";
+const MARK_AI_LABEL = "Mark AI suggestions";
 const LABEL_FALLBACK_LABEL = "Ask the AI model when no label is found";
 
 /**
@@ -76,7 +76,7 @@ describe("SettingsDialog", () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
     const storage = new MemoryStorage();
     setStorage(storage);
-    writeSettingsSpy = vi.spyOn(storage, "writeSettings").mockRejectedValue(new Error("storage is not available"));
+    writeSettingsSpy = vi.spyOn(storage, "writeSettings");
   });
 
   afterEach(() => {
@@ -132,7 +132,9 @@ describe("SettingsDialog", () => {
     // Reachable, unlike a natively disabled control, so the note explaining it can be read.
     expect(control).not.toHaveAttribute("disabled");
     expect(control).toHaveAccessibleDescription(MODEL_NOTE);
-    expect(screen.getAllByText(MODEL_NOTE)).toHaveLength(4);
+    // The four model settings, and "Mark AI suggestions", which has nothing to mark without one.
+    expect(screen.getAllByText(MODEL_NOTE)).toHaveLength(5);
+    expect(screen.getByLabelText(MARK_AI_LABEL)).toHaveAccessibleDescription(MODEL_NOTE);
 
     // Clicked directly: `userEvent` refuses an `aria-disabled` control, which is the
     // point of the attribute. The control's own handler is what keeps the box unchanged.
@@ -150,7 +152,8 @@ describe("SettingsDialog", () => {
     const control = screen.getByLabelText(MODEL_WORDS_LABEL);
     expect(control).toHaveAttribute("aria-disabled", "true");
     expect(control).toHaveAccessibleDescription(HOSTED_MESSAGE);
-    expect(screen.getAllByText(HOSTED_MESSAGE)).toHaveLength(4);
+    expect(screen.getAllByText(HOSTED_MESSAGE)).toHaveLength(5);
+    expect(screen.getByLabelText(MARK_AI_LABEL)).toHaveAccessibleDescription(HOSTED_MESSAGE);
     expect(screen.queryByText(MODEL_NOTE)).not.toBeInTheDocument();
   });
 
@@ -160,6 +163,7 @@ describe("SettingsDialog", () => {
 
     const control = screen.getByLabelText(MODEL_WORDS_LABEL);
     expect(control).not.toHaveAttribute("aria-disabled");
+    expect(screen.getByLabelText(MARK_AI_LABEL)).not.toHaveAttribute("aria-disabled");
     expect(screen.queryByText(MODEL_NOTE)).not.toBeInTheDocument();
 
     const wasChecked = (control as HTMLInputElement).checked;
@@ -219,7 +223,7 @@ describe("SettingsDialog", () => {
     // Marked unavailable rather than disabled, so the click has to be refused as well.
     // `fireEvent` because the button is still clickable: only the handler turns it away.
     fireEvent.click(save);
-    expect(screen.queryByRole("button", { name: CONFIRM_LABEL })).not.toBeInTheDocument();
+    expect(writeSettingsSpy).not.toHaveBeenCalled();
   });
 
   // Nothing is left to save, but the user still has to get out of the dialog.
@@ -249,36 +253,12 @@ describe("SettingsDialog", () => {
     expect(writeSettingsSpy).not.toHaveBeenCalled();
   });
 
-  test("warns before saving, and saves nothing while the warning is up", async () => {
-    withConfig({});
-    renderDialog();
-
-    await userEvent.click(screen.getByRole("button", { name: SAVE_LABEL }));
-
-    expect(await screen.findByText(WARNING_TEXT)).toBeInTheDocument();
-    expect(writeSettingsSpy).not.toHaveBeenCalled();
-  });
-
-  test("declining the warning returns to the form with the edits still there", async () => {
+  test("saves the changed settings alone", async () => {
     withConfig({});
     renderDialog();
 
     await userEvent.click(screen.getByLabelText(SPEAK_LABEL));
     await userEvent.click(screen.getByRole("button", { name: SAVE_LABEL }));
-    await userEvent.click(await screen.findByRole("button", { name: DECLINE_LABEL }));
-
-    const control = await screen.findByLabelText(SPEAK_LABEL);
-    expect(control).toHaveProperty("checked", !fileConfig.announceSymbolOnInput);
-    expect(writeSettingsSpy).not.toHaveBeenCalled();
-  });
-
-  test("saves the changed settings alone once the warning is confirmed", async () => {
-    withConfig({});
-    renderDialog();
-
-    await userEvent.click(screen.getByLabelText(SPEAK_LABEL));
-    await userEvent.click(screen.getByRole("button", { name: SAVE_LABEL }));
-    await userEvent.click(await screen.findByRole("button", { name: CONFIRM_LABEL }));
 
     await waitFor(() => {
       expect(writeSettingsSpy).toHaveBeenCalledWith(
@@ -296,7 +276,6 @@ describe("SettingsDialog", () => {
     await userEvent.clear(screen.getByLabelText(SUGGESTIONS_LABEL));
     await userEvent.click(screen.getByLabelText(WORDS_LABEL));
     await userEvent.click(screen.getByRole("button", { name: SAVE_LABEL }));
-    await userEvent.click(await screen.findByRole("button", { name: CONFIRM_LABEL }));
 
     await waitFor(() => {
       expect(writeSettingsSpy).toHaveBeenCalledWith(
@@ -305,33 +284,62 @@ describe("SettingsDialog", () => {
     });
   });
 
-  // Reloading after a failed write would look like the settings had taken.
-  test("reports a storage failure instead of closing", async () => {
+  // Closing after a failed write would look like the settings had taken.
+  test("reports a storage failure and keeps the dialog open", async () => {
     withConfig({});
-    renderDialog();
+    writeSettingsSpy.mockRejectedValue(new Error("storage is not available"));
+    const onRequestClose = vi.fn();
+    const savedCount = settingsSavedCount.value;
+    renderDialog(onRequestClose);
 
     await userEvent.click(screen.getByLabelText(SPEAK_LABEL));
     await userEvent.click(screen.getByRole("button", { name: SAVE_LABEL }));
-    await userEvent.click(await screen.findByRole("button", { name: CONFIRM_LABEL }));
 
     expect(await screen.findByRole("alert")).toHaveTextContent(FAILURE_MESSAGE);
+    expect(onRequestClose).not.toHaveBeenCalled();
+    expect(settingsSavedCount.value).toBe(savedCount);
+    expect(adaptivePaletteGlobals.config.announceSymbolOnInput).toBe(fileConfig.announceSymbolOnInput);
+  });
+});
+
+// The same save path runs on both versions: IndexedDB on the desktop version, memory on the
+// public website. A reload here would restart the test runner, so a test that finishes also
+// shows the page was not reloaded.
+describe.each([
+  ["MemoryStorage", (): Promise<AdaptivePaletteStorage> => Promise.resolve(new MemoryStorage())],
+  ["IndexedDbStorage", async (): Promise<AdaptivePaletteStorage> => {
+    const storage = new IndexedDbStorage(`SettingsDialogTest-${Date.now()}`);
+    await storage.open();
+    return storage;
+  }]
+])("saving the settings with %s", (_name, makeStorage) => {
+
+  beforeAll(async () => {
+    fileConfig = await loadConfig();
   });
 
-  // Nothing has been written yet on the next attempt, so the last failure must not be
-  // announced again as if it had.
-  test("drops the failure message when the warning is declined", async () => {
+  beforeEach(async () => {
+    setStorage(await makeStorage());
+  });
+
+  afterEach(() => {
+    cleanup();
+    adaptivePaletteGlobals.config = originalConfig;
+    adaptivePaletteGlobals.fileConfig = originalFileConfig;
+    adaptivePaletteGlobals.models = originalModels;
+  });
+
+  test("applies the settings, tells the page and closes", async () => {
     withConfig({});
-    renderDialog();
+    const onRequestClose = vi.fn();
+    const savedCount = settingsSavedCount.value;
+    renderDialog(onRequestClose);
 
     await userEvent.click(screen.getByLabelText(SPEAK_LABEL));
     await userEvent.click(screen.getByRole("button", { name: SAVE_LABEL }));
-    await userEvent.click(await screen.findByRole("button", { name: CONFIRM_LABEL }));
-    expect(await screen.findByRole("alert")).toBeInTheDocument();
 
-    await userEvent.click(screen.getByRole("button", { name: DECLINE_LABEL }));
-    await userEvent.click(screen.getByRole("button", { name: SAVE_LABEL }));
-
-    expect(await screen.findByText(WARNING_TEXT)).toBeInTheDocument();
-    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    await waitFor(() => expect(onRequestClose).toHaveBeenCalled());
+    expect(adaptivePaletteGlobals.config.announceSymbolOnInput).toBe(!fileConfig.announceSymbolOnInput);
+    expect(settingsSavedCount.value).toBe(savedCount + 1);
   });
 });

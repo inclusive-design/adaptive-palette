@@ -35,6 +35,21 @@ such: `clearMessageAndChoices()`, which has already cleared the state the guard 
 and `confirmDiscardEdit()`, which applies an edit the guard itself held. A raw
 `changeEncodingContents.value = …` anywhere else is a bug.
 
+## Settings
+
+`adaptivePaletteGlobals.config` is replaced when the user saves settings. Code that reads it when
+the user acts gets the new value with no extra work. A component that reads it while drawing
+also reads `settingsSavedCount`, a signal in the same module that goes up by one on every save,
+so it draws again:
+
+```ts
+// Read so this draws again after a save. See `settingsSavedCount`.
+void settingsSavedCount.value;
+```
+
+Switch scanning follows the setting through `followSwitchScanningSetting()` in
+`features/switch-scanning/SwitchScanning.ts`.
+
 ## Navigation state
 
 [`core/NavigationStack.ts`](../../src/client/core/NavigationStack.ts) keeps two signals of its own

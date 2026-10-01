@@ -13,14 +13,16 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 
-import { adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal } from "../../state/GlobalData";
+import {
+  adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal, settingsSavedCount
+} from "../../state/GlobalData";
 import { messageText } from "../../core/MessageLog";
 import { editMessage } from "../../core/MessageEdit";
 import { AiBadge, aiSuggestionLabel } from "../../components/AiBadge";
 import { BlissSymbol } from "../../components/BlissSymbol";
 import { insertWordAtCaret } from "../../utils/SymbolEncodingUtils";
 import { announceIfEnabled } from "../../utils/SpeechUtils";
-import { predictNext } from "./WordPredictionUtils";
+import { isModelTierActive, predictNext } from "./WordPredictionUtils";
 import { messageUpToCaret, queryContextKeyOf, modelWordsSignal } from "./WordPredictionState";
 import { ContentPredictedWordsType, SymbolEncodingType } from "../../index.d";
 import { generateGridStyle } from "../../utils/GridUtils";
@@ -64,6 +66,8 @@ type PredictedWordsPropsType = {
  * @returns {VNode | null}
  */
 export function PredictedWords (props: PredictedWordsPropsType): VNode | null {
+  // Read so this draws again after a save. See `settingsSavedCount`.
+  void settingsSavedCount.value;
   const { payloads, caretPosition } = changeEncodingContents.value;
   const { show, maxSuggestions } = adaptivePaletteGlobals.config.wordPrediction;
   const { columnStart, columnSpan, rowStart, rowSpan, numColumns } = props.options;
@@ -82,9 +86,11 @@ export function PredictedWords (props: PredictedWordsPropsType): VNode | null {
   // Stop showing the status message when the user changes the message or its attributes -- the
   // model was asked under the combined key, so the row has to compare against that same key.
   const contextKey = queryContextKeyOf(messageUpToCaret(payloads, caretPosition));
-  const modelSuggestions = modelWords.status === "ready" && modelWords.contextKey === contextKey
-    ? modelWords.payloads
-    : [];
+  // Checked here too: model words already shown stay in the signal after a save turns the model off.
+  const modelSuggestions =
+    isModelTierActive() && modelWords.status === "ready" && modelWords.contextKey === contextKey
+      ? modelWords.payloads
+      : [];
   const isQuerying = modelWords.status === "working" && modelWords.contextKey === contextKey;
   const suggestions = [...historySuggestions, ...modelSuggestions];
 

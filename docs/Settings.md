@@ -1,8 +1,8 @@
 # Adjust Settings
 
 The **Adjust Settings** button, at the right of the row above the input area, opens a dialog for
-changing how the palette behaves. The choices are saved in the browser and are used the next time
-the page loads, so nothing has to be rebuilt or edited by hand.
+changing how the palette behaves. The choices take effect as soon as they are saved, so nothing
+has to be rebuilt or edited by hand.
 
 ## What can be changed
 
@@ -12,7 +12,7 @@ Settings defined in `public/config.json` except these fields: `model`, `systemPr
 | Group | Setting | Needs Ollama |
 | ----- | ------- | ------------ |
 | General | Speak each symbol as I add it | |
-| General | Mark AI suggestions | |
+| General | Mark AI suggestions | yes |
 | General | Go back with the backquote (`` ` ``) key | |
 | General | Use two-switch row scanning | |
 | General | Messages to remember | |
@@ -22,6 +22,7 @@ Settings defined in `public/config.json` except these fields: `model`, `systemPr
 | Word prediction | Suggestions to show | |
 | Word prediction | Ask the AI model for suggestions | yes |
 | Sentences | Sentence choices to offer | yes |
+| Sentences | Show Bliss symbols above each sentence | yes |
 | Indicator labels | Ask the AI model when no label is found | yes |
 
 The prompts sent to the model, and which model is asked, are not adjustable here. They stay in
@@ -36,19 +37,20 @@ turned back on.
 
 ## Settings that need a model
 
-The three marked above do nothing without a model Ollama can serve. When Ollama is not up and running,
+The five marked above do nothing without a model Ollama can serve. When Ollama is not up and running,
 they are still shown but in a disabled state, and carry the note "Start Ollama to use this."
 On the public website they carry "AI features are available only in the desktop version." instead.
 Their saved values are kept, so starting Ollama later brings them back as they were.
 
-They are left out of the dialog altogether when their section of `public/config.json` carries no
-prompts, since there would be nothing to ask the model with.
+The model settings other than "Mark AI suggestions" are left out of the dialog altogether when
+their section of `public/config.json` carries no prompts, since there would be nothing to ask the
+model with.
 
 ## Saving
 
-**Save and close** first warns that saving reloads the page, which loses the message being written.
-Messages already saved are kept. Answering **No** returns to the dialog with the changes still
-there; **Yes, save** saves and reloads.
+**Save and close** saves the choices and applies them at once. The page is not reloaded, so the
+message being written and the messages already sent stay as they are. On the public website the
+choices last until the page is reloaded or closed.
 
 **Close**, the ✕, and Escape all leave without saving.
 

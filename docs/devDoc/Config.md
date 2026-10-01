@@ -8,7 +8,7 @@ every section falls back.
 
 Some of these fields can also be changed from within the app, through the **Adjust Settings**
 dialog: everything except `model`, `systemPrompt`, `userPrompt`, and `aboutMe.messagesPerRun`.
-Those choices are kept in the storage layer and applied over the file at start-up by
+Those choices are kept in the storage layer and applied over the file at start-up and on each save by
 `applyStoredSettings()` in
 [`src/client/features/settings/SettingsSchema.ts`](../../src/client/features/settings/SettingsSchema.ts),
 which re-validates every value it reads back. See [Settings.md](../Settings.md) and

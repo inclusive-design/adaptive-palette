@@ -18,7 +18,9 @@
  * Note: `WordPredictionUtils.ts` holds the side-effect-free utility functions.
  */
 import { effect, signal } from "@preact/signals";
-import { adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal } from "../../state/GlobalData";
+import {
+  adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal, settingsSavedCount
+} from "../../state/GlobalData";
 import { messageText } from "../../core/MessageLog";
 import { isModelTierActive, predictNext, rankModelWords, requestModelWords } from "./WordPredictionUtils";
 import { attributesPromptText } from "../message-attributes/MessageAttributesState";
@@ -60,6 +62,13 @@ let pendingTimer: number | undefined;
  * message the row is showing.
  */
 let previousContextKey = "";
+
+/**
+ * The settings save the word suggestions on screen were asked under. A save asks again even
+ * when the message is unchanged: the model may have been turned on or off, or the number of
+ * slots changed.
+ */
+let previousSavedCount = 0;
 
 /**
  * The message text up to the caret, built from symbol labels: what the model is asked about.
@@ -166,6 +175,8 @@ effect((): void => {
   // Read before any early return, so the effect stays subscribed to the attributes however
   // this run ends.
   const contextKey = queryContextKeyOf(messageSoFar);
+  // Read before any early return, so this runs again after a save. See `settingsSavedCount`.
+  const savedCount = settingsSavedCount.value;
   // The user has finished this message. Stop any query still working on it; the words already
   // on the row stay usable -- restamped with the current key so an attribute change afterward
   // does not make `PredictedWords` stop recognizing them as an answer to this message.
@@ -186,10 +197,11 @@ effect((): void => {
     }
     return;
   }
-  if (contextKey === previousContextKey) {
+  if (contextKey === previousContextKey && savedCount === previousSavedCount) {
     return;
   }
   previousContextKey = contextKey;
+  previousSavedCount = savedCount;
   cancelModelQuery();
   // The words on the row answered the message that is gone.
   modelWordsSignal.value = { status: "idle" };

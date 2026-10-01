@@ -29,7 +29,7 @@ wrap rather than widen a row.
 Switch scanning lets someone use the palette with two switches: one moves a highlight, the other
 selects what it is on. Row scanning is the only kind supported: the user picks a row first, then
 a cell in it. Turn it on in **Adjust Settings** → General → "Use two-switch row scanning". The
-public website keeps no settings, so there it can be turned on only in `public/config.json`.
+public website keeps the setting until the page is reloaded.
 
 ### How scanning works
 
