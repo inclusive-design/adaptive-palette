@@ -11,7 +11,9 @@
  */
 
 import { vi } from "vitest";
-import { adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal } from "../../state/GlobalData";
+import {
+  adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal, settingsSavedCount
+} from "../../state/GlobalData";
 import { DISABLED_MODEL_QUERY } from "../../core/Config";
 import { saveMessageRecord } from "../../core/MessageLog";
 import { editMessage, setEditGuard } from "../../core/MessageEdit";
@@ -172,6 +174,31 @@ describe("wordPrediction model query", (): void => {
     replyWith("Here are some words:");
     compose("I");
     await waitForQuery();
+    expect(modelWordsSignal.peek().status).toBe("idle");
+  });
+
+  // Settings take effect without a page reload, so a save must ask again about the message
+  // already on screen.
+  test("saving settings asks again about an unchanged message", async (): Promise<void> => {
+    adaptivePaletteGlobals.config.wordPrediction.enableModelQuery = false;
+    compose("I");
+    await waitForQuery();
+    expect(mockedQueryChat).not.toHaveBeenCalled();
+
+    adaptivePaletteGlobals.config.wordPrediction.enableModelQuery = true;
+    settingsSavedCount.value++;
+    await waitForQuery();
+    expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+    expect(modelWordsSignal.peek().status).toBe("ready");
+  });
+
+  test("saving settings that turn the model off clears its words", async (): Promise<void> => {
+    compose("I");
+    await waitForQuery();
+    expect(modelWordsSignal.peek().status).toBe("ready");
+
+    adaptivePaletteGlobals.config.wordPrediction.enableModelQuery = false;
+    settingsSavedCount.value++;
     expect(modelWordsSignal.peek().status).toBe("idle");
   });
 
