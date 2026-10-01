@@ -12,7 +12,7 @@
 
 import { vi } from "vitest";
 import { userEvent } from "vitest/browser";
-import { render, screen, cleanup, waitFor } from "@testing-library/preact";
+import { render, cleanup, waitFor } from "@testing-library/preact";
 import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals } from "../../core/InitGlobals";
 import { queryChat } from "../../core/OllamaApi";
@@ -25,7 +25,7 @@ import { mockedSpeak } from "../../testUtils/SpeechUtilsMock";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 import { CurrentPalette } from "../../components/CurrentPalette";
 import { SymbolEntryToolbar, SETTINGS_TRIGGER_LABEL } from "../../components/SymbolEntryToolbar";
-import { SAVE_LABEL, CONFIRM_LABEL, FAILURE_MESSAGE } from "../settings/SettingsDialog";
+import { SAVE_LABEL } from "../settings/SettingsDialog";
 import {
   sentenceCompletionsSignal, IDLE_SENTENCE_STATE, typedSentenceSignal, focusedMessageSignal
 } from "../telegraphic-translation/TelegraphicTranslationState";
@@ -223,11 +223,8 @@ describe("Switch scanning on the standard Bliss chart", (): void => {
   test("opens, changes and saves the settings", async (): Promise<void> => {
     const { fileConfig } = adaptivePaletteGlobals;
     adaptivePaletteGlobals.config = { ...fileConfig };
-    // A successful save reloads the page, which would restart the test runner, and
-    // `location.reload` cannot be stubbed in every engine. A rejected write stops short of the
-    // reload, as in SettingsDialog.test.ts.
-    vi.spyOn(console, "error").mockImplementation(() => undefined);
-    const writeSettings = vi.spyOn(getStorage(), "writeSettings").mockRejectedValue(new Error("no storage"));
+    // Resolved without writing, so the saved choice does not reach the tests after this one.
+    const writeSettings = vi.spyOn(getStorage(), "writeSettings").mockResolvedValue(undefined);
     const topBar = document.createElement("div");
     topBar.id = "topBar";
     document.body.insertBefore(topBar, area);
@@ -237,11 +234,10 @@ describe("Switch scanning on the standard Bliss chart", (): void => {
     await waitFor(() => expect(document.querySelector("dialog[open]")).not.toBeNull());
     await pickInDialog((el) => el.id === "setting-announceSymbolOnInput", "the speak-each-symbol box");
     await pickInDialog(byText(SAVE_LABEL), "Save and close");
-    await pickInDialog(byText(CONFIRM_LABEL), "Yes, save");
 
     await waitFor(() => expect(writeSettings).toHaveBeenCalledWith(
       { "announceSymbolOnInput": !fileConfig.announceSymbolOnInput }
     ));
-    expect(await screen.findByRole("alert")).toHaveTextContent(FAILURE_MESSAGE);
+    await waitFor(() => expect(document.querySelector("dialog[open]")).toBeNull());
   });
 });

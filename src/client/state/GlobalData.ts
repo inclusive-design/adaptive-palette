@@ -77,3 +77,10 @@ export const changeEncodingContents = signal<ContentSignalDataType>({
  * status message for finished messages.
  */
 export const finishedMessageSignal = signal<string>("");
+
+/**
+ * How many times the user has saved settings since the page loaded. Nothing uses the number
+ * itself: a component that reads settings while drawing reads this signal so it draws again
+ * after a save.
+ */
+export const settingsSavedCount = signal(0);

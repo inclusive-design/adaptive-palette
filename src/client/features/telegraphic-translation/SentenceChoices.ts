@@ -22,7 +22,7 @@ import { announceIfEnabled, speak, speakUnavailable } from "../../utils/SpeechUt
 import { saveTranslation, SentenceSourceType } from "../../core/MessageLog";
 import { generateGridStyle } from "../../utils/GridUtils";
 import { ContentSentenceChoicesType } from "../../index.d";
-import { adaptivePaletteGlobals } from "../../state/GlobalData";
+import { adaptivePaletteGlobals, settingsSavedCount } from "../../state/GlobalData";
 import { AiBadge, aiSuggestionLabel } from "../../components/AiBadge";
 import { BlissSentence } from "./BlissSentence";
 import "./SentenceChoices.scss";
@@ -54,6 +54,8 @@ type SentenceChoicesPropsType = {
  * @returns {VNode}
  */
 export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
+  // Read so this draws again after a save. See `settingsSavedCount`.
+  void settingsSavedCount.value;
   const state = sentenceCompletionsSignal.value;
   const discardPrompt = discardEditPromptSignal.value;
   const { columnStart, columnSpan, rowStart, rowSpan } = props.options;

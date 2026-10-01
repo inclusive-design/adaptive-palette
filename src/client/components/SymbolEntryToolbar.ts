@@ -14,7 +14,7 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { useState } from "preact/hooks";
 
-import { adaptivePaletteGlobals } from "../state/GlobalData";
+import { adaptivePaletteGlobals, settingsSavedCount } from "../state/GlobalData";
 import { isLocalHost } from "../core/OllamaApi";
 import { ModalDialog } from "./ModalDialog";
 import { ActionSearchGloss } from "../cells/ActionSearchGloss";
@@ -48,6 +48,8 @@ type OpenDialogType = "search" | "svg" | "settings" | "aboutMe" | null;
  * @returns {VNode}
  */
 export function SymbolEntryToolbar (): VNode {
+  // Read so this draws again after a save. See `settingsSavedCount`.
+  void settingsSavedCount.value;
   const [openDialog, setOpenDialog] = useState<OpenDialogType>(null);
   const { symbolSearch, svgBuilderString } = adaptivePaletteGlobals.config;
   // About Me is only of use where a model reads it: the hosted site has none, so notes

@@ -14,24 +14,20 @@ import { Fragment, VNode } from "preact";
 import { html } from "htm/preact";
 import { useState } from "preact/hooks";
 
-import { adaptivePaletteGlobals } from "../../state/GlobalData";
+import { adaptivePaletteGlobals, settingsSavedCount } from "../../state/GlobalData";
 import {
   SETTING_DESCRIPTORS, SettingDescriptorType, SettingValueType,
-  currentValue, isOffered, saveSettings, settingKey
+  applyStoredSettings, currentValue, isOffered, saveSettings, settingKey
 } from "./SettingsSchema";
 import { EraseAllData } from "./EraseAllData";
 import { HOSTED_MESSAGE, isLocalHost } from "../../core/OllamaApi";
+import { hydrateMessageLog } from "../../core/MessageLog";
 import "./SettingsDialog.scss";
 
 export const SETTINGS_FORM_ID = "adjustSettingsForm";
 export const SAVE_LABEL = "Save and close";
 export const CLOSE_LABEL = "Close";
-export const CONFIRM_LABEL = "Yes, save";
-export const DECLINE_LABEL = "No";
 export const MODEL_NOTE = "Start Ollama to use this.";
-export const WARNING_TEXT = "Saving reloads the page. The message you are writing now will be lost.";
-// Deliberately unlike the warning on "clear all saved data", which destroys them.
-export const WARNING_KEPT_TEXT = "Messages you have already saved are kept.";
 export const FAILURE_MESSAGE = "The settings could not be saved. This browser is not letting the app use its storage.";
 
 /**
@@ -50,10 +46,7 @@ type SettingsDialogProps = {
 };
 
 /**
- * The body of the "Adjust Settings" dialog: the form, and the warning shown before saving.
- *
- * Both views live in this one component so that the form's values survive a warning the
- * user declines.
+ * The body of the "Adjust Settings" dialog: the form and its footer.
  * @param {SettingsDialogProps} props - How to close the dialog around this body.
  * @returns {VNode}
  */
@@ -70,7 +63,6 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
     });
     return initial;
   });
-  const [isConfirming, setIsConfirming] = useState(false);
   const [hasFailed, setHasFailed] = useState(false);
   // Set once the erase has finished. The store is gone by then, so every later write fails
   // where only the console sees it; the footer must stop offering a save that cannot happen.
@@ -100,42 +92,46 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
       return dependentNote(master?.label ?? "");
     }
     // On the hosted site there is no Ollama to start.
-    if (descriptor.requiresModel === true && models.length === 0) {
+    const needsModel = descriptor.requiresModel === true || descriptor.usesModelOutput === true;
+    if (needsModel && models.length === 0) {
       return isLocalHost() ? MODEL_NOTE : HOSTED_MESSAGE;
     }
     return undefined;
   };
 
   /**
-   * Save the choices and reload. The comparison is against `fileConfig`, `config.json` as it
-   * was read at start-up: the globals' `config` is the merged one, which is no use as a
-   * baseline.
+   * Save the choices, apply them and close. The comparison is against `fileConfig`,
+   * `config.json` as it was read at start-up: the globals' `config` is the merged one, which
+   * is no use as a baseline.
+   *
+   * The page is not reloaded. On the public website the store is memory, which a reload
+   * would empty.
+   * @param {Event} event - The form's submit event.
    */
-  const confirm = async (): Promise<void> => {
+  const save = async (event: Event): Promise<void> => {
+    event.preventDefault();
+    // `aria-disabled` does not stop a submit, so an erased store is refused here rather than
+    // by the button.
+    if (isErased) {
+      return;
+    }
+    setHasFailed(false);
     const toSave: Record<string, SettingValueType> = {};
     shown.forEach((descriptor) => {
       const key = settingKey(descriptor);
       toSave[key] = descriptor.kind === "number" ? Number(values[key]) : values[key] as boolean;
     });
-    // A failed write leaves the dialog open with its reason shown. Reloading anyway would
-    // look like the settings had taken.
-    if (await saveSettings(toSave, fileConfig)) {
-      window.location.reload();
-    } else {
+    // A failed write leaves the dialog open with its reason shown. Closing anyway would look
+    // like the settings had taken.
+    if (!await saveSettings(toSave, fileConfig)) {
       setHasFailed(true);
+      return;
     }
-  };
-
-  /**
-   * Move on to the warning. `aria-disabled` does not stop a submit, so an erased store is
-   * refused here rather than by the button.
-   * @param {Event} event - The form's submit event.
-   */
-  const askToSave = (event: Event): void => {
-    event.preventDefault();
-    if (!isErased) {
-      setIsConfirming(true);
-    }
+    adaptivePaletteGlobals.config = await applyStoredSettings(fileConfig);
+    // "Messages to remember" may have changed.
+    await hydrateMessageLog();
+    settingsSavedCount.value++;
+    props.onRequestClose();
   };
 
   /**
@@ -201,7 +197,7 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
     <form
       id=${SETTINGS_FORM_ID}
       class="settingsForm"
-      onSubmit=${askToSave}>
+      onSubmit=${(event: Event) => void save(event)}>
       ${groups.map((group) => html`
         <fieldset class="settingsGroup" key=${group}>
           <legend>${group}</legend>
@@ -211,47 +207,27 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
     </form>
   `;
 
-  const warning = html`
-    <div class="settingsWarning">
-      <p>${WARNING_TEXT}</p>
-      <p>${WARNING_KEPT_TEXT}</p>
-      ${hasFailed && html`<p class="settingsFailure" role="alert">${FAILURE_MESSAGE}</p>`}
-    </div>
-  `;
-
   // The footer sits outside the form, which is the dialog's only scrolling part, so
   // "Save and close" stays where the user left it. It submits the form by id.
-  const footer = isConfirming
-    ? html`
-      <div class="dialogFooter">
-        <button type="button" class="settingsSave" onClick=${() => void confirm()}>${CONFIRM_LABEL}</button>
-        <button
-          type="button"
-          onClick=${() => { setIsConfirming(false); setHasFailed(false); }}>${DECLINE_LABEL}</button>
-      </div>
-    `
-    : html`
-      <div class="dialogFooter">
-        <button
-          type="submit"
-          class="settingsSave"
-          aria-disabled=${isErased ? "true" : undefined}
-          form=${SETTINGS_FORM_ID}>${SAVE_LABEL}</button>
-        <button type="button" onClick=${props.onRequestClose}>${CLOSE_LABEL}</button>
-      </div>
-    `;
+  const footer = html`
+    <div class="dialogFooter">
+      <button
+        type="submit"
+        class="settingsSave"
+        aria-disabled=${isErased ? "true" : undefined}
+        form=${SETTINGS_FORM_ID}>${SAVE_LABEL}</button>
+      <button type="button" onClick=${props.onRequestClose}>${CLOSE_LABEL}</button>
+    </div>
+  `;
 
   // "Erase all app data and quit" is the uninstall path, so it is shown only where there is
   // an app to uninstall. On the hosted site nothing was installed and a reload clears the
   // data anyway.
   return html`
     <${Fragment}>
-      ${isConfirming ? warning : html`
-        <${Fragment}>
-          ${form}
-          ${isLocalHost() && html`<${EraseAllData} onErased=${() => setIsErased(true)} />`}
-        <//>
-      `}
+      ${form}
+      ${isLocalHost() && html`<${EraseAllData} onErased=${() => setIsErased(true)} />`}
+      ${hasFailed && html`<p class="settingsFailure" role="alert">${FAILURE_MESSAGE}</p>`}
       ${footer}
     <//>
   `;

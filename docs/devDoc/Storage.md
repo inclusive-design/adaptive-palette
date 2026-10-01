@@ -60,6 +60,11 @@ installs [`core/MemoryStorage.ts`](../../src/client/core/MemoryStorage.ts) and p
 browser at all: messages, settings and About Me facts live for as long as the tab does, and a reload
 clears them. The status line says so.
 
+Saving settings does not reload the page, on either version. The settings dialog rebuilds
+`adaptivePaletteGlobals.config` from `config.json` and the stored settings, then bumps
+`settingsSavedCount` so the components that read settings draw again. A reload here would empty
+`MemoryStorage` and undo the save.
+
 Settings go into memory along with the messages. They carry nothing personal, but keeping them would
 mean a backend that is half one thing and half the other, and a database created on a public computer
 anyway.
@@ -99,7 +104,8 @@ and
 IndexedDB has no synchronous read, so [`MessageLog.ts`](../../src/client/core/MessageLog.ts)
 keeps a module-level cache and reads off that instead:
 
-- `hydrateMessageLog()` fills the cache from storage before the first render.
+- `hydrateMessageLog()` fills the cache from storage before the first render, and again after
+  settings are saved.
 - `saveMessageRecord()` and `saveTranslation()` update the cache immediately, then persist
   behind it with a fire-and-forget write (`persistNew(record)` /
   `void persistChange(record)`). A read straight after a save always sees the change, whether
