@@ -16,6 +16,7 @@ src/client/
   cells/            Components registered in the cell type registry
   components/       Preact components that are not registry cells
   core/             Services and start-up wiring
+  i18n/             UI text per language and `t()`
   state/            Signals and the globals singleton
   testUtils/        Helpers shared between test files
   utils/            Stateless helper functions
@@ -31,6 +32,7 @@ src/client/
 | `cells/` | Components named in `cellTypeRegistry`, one per palette cell type | `ActionCodeCell.ts`, `CommandGoBackCell.ts` |
 | `components/` | Preact components a palette JSON never names | `Palette.ts`, `ModalDialog.ts`, `BlissSymbol.ts` |
 | `core/` | Services with their own state or I/O, and start-up | `Config.ts`, `PaletteStore.ts`, `OllamaApi.ts`, `InitGlobals.ts`, `StorageBackend.ts`, `IndexedDbStorage.ts` |
+| `i18n/` | The UI language signal, `t()`, and one strings file per language. To add text: put a key in `en.ts` and `sv.ts`, and call `t("key")` while rendering so the component redraws on a language change. Tests read `en.key` | `I18n.ts`, `en.ts`, `sv.ts` |
 | `state/` | The globals singleton and the signals shared across features | `GlobalData.ts` |
 | `testUtils/` | Helpers shared between test files. Test-only, never imported by production code. Files here carry no `.test.ts` suffix, so Vitest does not collect them as suites | `CellTestUtils.ts`, `StorageContract.ts`, `MessageLogTestUtils.ts` |
 | `utils/` | Functions with no state of their own | `SpeechUtils.ts`, `GridUtils.ts`, `SvgUtils.ts`, `GlossLookupUtils.ts` |

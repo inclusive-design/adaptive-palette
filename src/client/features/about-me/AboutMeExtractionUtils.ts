@@ -24,8 +24,7 @@ import {
   FACT_CATEGORIES, FactSuggestionType, isKnownText, aboutMePromptText, aboutMeSignal, recordLearning
 } from "./AboutMeState";
 import type { AboutMeConfigType } from "../../index.d";
-
-export const NOT_CONFIGURED_MESSAGE = "About Me suggestions are not configured. Check the aboutMe section of config.json.";
+import { t } from "../../i18n/I18n";
 
 /**
  * Split a model reply into suggested facts, one per `Category: text` line. List numbering
@@ -104,7 +103,7 @@ export function requestFactSuggestions (): Promise<LearningResultType> {
 async function learn (): Promise<LearningResultType> {
   const config = adaptivePaletteGlobals.config.aboutMe;
   if (!config) {
-    throw new Error(NOT_CONFIGURED_MESSAGE);
+    throw new Error(t("aboutMeNotConfigured"));
   }
   const aboutMe = aboutMeSignal.peek();
   const records = await getStorage().readMessagesAfter(aboutMe.learntUpTo?.id, config.messagesPerRun);

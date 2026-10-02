@@ -10,14 +10,15 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 import { adaptivePaletteGlobals } from "../state/GlobalData";
+import { SPEECH_LANGS, languageSignal, t } from "../i18n/I18n";
 
 /**
  * Text-to-speech functions
  */
 
 /**
- * Use the text-to-speech to announce the given text. If the previous announcement is still going
- * on, cancel it.
+ * Use the text-to-speech to announce the given text, in the voice for the current language. If
+ * the previous announcement is still going on, cancel it.
  * @param {String} text - The text to be announced.
  */
 export function speak(text: string): void {
@@ -32,6 +33,7 @@ export function speak(text: string): void {
   }
   // Announce the current text
   const utterThis = new SpeechSynthesisUtterance(text);
+  utterThis.lang = SPEECH_LANGS[languageSignal.value];
   window.speechSynthesis.speak(utterThis);
 }
 
@@ -41,7 +43,7 @@ export function speak(text: string): void {
  * @param {String} label - The label of the cell that was activated.
  */
 export function speakUnavailable(label: string): void {
-  speak(`${label} unavailable`);
+  speak(t("unavailable", { label }));
 }
 
 /**

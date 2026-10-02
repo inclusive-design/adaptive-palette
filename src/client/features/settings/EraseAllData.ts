@@ -16,17 +16,10 @@ import { useEffect, useRef, useState } from "preact/hooks";
 
 import { ModalDialog } from "../../components/ModalDialog";
 import { getStorage } from "../../core/StorageBackend";
+import { t } from "../../i18n/I18n";
 import "./EraseAllData.scss";
 
 export const ERASE_DIALOG_ID = "eraseAllDataDialog";
-export const ERASE_LABEL = "Erase all app data and quit";
-export const ERASE_QUESTION = "This deletes every message, setting and About Me note you have saved, and then quits. It cannot be undone.";
-export const ERASE_NOTE = "Do this before deleting the app: once the app is gone there is no way left to reach this data.";
-export const ERASE_CONFIRM_LABEL = "Erase and quit";
-export const ERASE_CANCEL_LABEL = "Cancel";
-export const ERASE_FAILED_TEXT = "The data could not be erased. Close any other tab showing Adaptive Palette, then try again.";
-export const ERASE_DONE_TEXT = "Everything has been erased. You can close this window and delete the app.";
-export const ERASE_PENDING_TEXT = "Erasing everything now. This cannot be stopped once it has started.";
 
 /**
  * Ask the launcher to shut down.
@@ -129,7 +122,7 @@ export function EraseAllData (props: EraseAllDataProps): VNode {
 
   if (isDone) {
     return html`
-      <p class="eraseAllDataDone" role="status" tabindex="-1" ref=${doneRef}>${ERASE_DONE_TEXT}</p>
+      <p class="eraseAllDataDone" role="status" tabindex="-1" ref=${doneRef}>${t("eraseDone")}</p>
     `;
   }
 
@@ -137,28 +130,28 @@ export function EraseAllData (props: EraseAllDataProps): VNode {
     <${Fragment}>
       <div class="eraseAllData">
         <button type="button" class="eraseAllDataTrigger" aria-haspopup="dialog" onClick=${ask}>
-          ${ERASE_LABEL}
+          ${t("eraseLabel")}
         </button>
-        <p class="eraseAllDataNote">${ERASE_NOTE}</p>
+        <p class="eraseAllDataNote">${t("eraseNote")}</p>
       </div>
       <${ModalDialog}
         id=${ERASE_DIALOG_ID}
-        title=${ERASE_LABEL}
+        title=${t("eraseLabel")}
         isOpen=${isConfirming}
         isDismissible=${!isPending}
         onClose=${cancel}>
-        <p>${ERASE_QUESTION}</p>
+        <p>${t("eraseQuestion")}</p>
         ${isPending && html`
-          <p class="eraseAllDataPending" role="status" tabindex="-1" ref=${pendingRef}>${ERASE_PENDING_TEXT}</p>
+          <p class="eraseAllDataPending" role="status" tabindex="-1" ref=${pendingRef}>${t("erasePending")}</p>
         `}
-        ${hasFailed && html`<p class="eraseAllDataFailure" role="alert" tabindex="-1" ref=${failureRef}>${ERASE_FAILED_TEXT}</p>`}
+        ${hasFailed && html`<p class="eraseAllDataFailure" role="alert" tabindex="-1" ref=${failureRef}>${t("eraseFailed")}</p>`}
         <div class="eraseAllDataChoices">
           <button
             type="button"
             class="eraseAllDataConfirm"
             disabled=${isPending}
-            onClick=${confirm}>${ERASE_CONFIRM_LABEL}</button>
-          <button type="button" disabled=${isPending} onClick=${cancel}>${ERASE_CANCEL_LABEL}</button>
+            onClick=${confirm}>${t("eraseConfirm")}</button>
+          <button type="button" disabled=${isPending} onClick=${cancel}>${t("cancel")}</button>
         </div>
       <//>
     <//>

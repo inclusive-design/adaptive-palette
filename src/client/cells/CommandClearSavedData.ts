@@ -21,13 +21,10 @@ import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
 import { hydrateMessageLog } from "../core/MessageLog";
 import { getStorage } from "../core/StorageBackend";
+import { t } from "../i18n/I18n";
 import "./CommandClearSavedData.scss";
 
 export const CLEAR_SAVED_DATA_DIALOG_ID = "clearSavedDataDialog";
-export const CONFIRM_LABEL = "Clear";
-export const CANCEL_LABEL = "Cancel";
-export const CONFIRM_QUESTION = "This deletes every message and About Me note you have saved, and the message you are writing now. It cannot be undone.";
-export const FAILURE_MESSAGE = "The saved data could not be cleared. This browser is not letting the app use its storage.";
 
 /**
  * Discard everything the app has saved.
@@ -112,11 +109,11 @@ export function CommandClearSavedData (props: CommandClearSavedDataProps): VNode
       title=${label}
       isOpen=${isConfirming}
       onClose=${() => setIsConfirming(false)}>
-      <p>${CONFIRM_QUESTION}</p>
-      ${hasFailed && html`<p class="clearSavedDataFailure" role="alert">${FAILURE_MESSAGE}</p>`}
+      <p>${t("clearQuestion")}</p>
+      ${hasFailed && html`<p class="clearSavedDataFailure" role="alert">${t("clearFailed")}</p>`}
       <div class="clearSavedDataChoices">
-        <button type="button" class="clearSavedDataConfirm" onClick=${confirm}>${CONFIRM_LABEL}</button>
-        <button type="button" onClick=${() => setIsConfirming(false)}>${CANCEL_LABEL}</button>
+        <button type="button" class="clearSavedDataConfirm" onClick=${confirm}>${t("clearConfirm")}</button>
+        <button type="button" onClick=${() => setIsConfirming(false)}>${t("cancel")}</button>
       </div>
     <//>
     <//>

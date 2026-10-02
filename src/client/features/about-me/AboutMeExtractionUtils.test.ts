@@ -12,13 +12,12 @@
 
 import { vi } from "vitest";
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
-import { queryChat, NO_MODELS_MESSAGE } from "../../core/OllamaApi";
+import { queryChat } from "../../core/OllamaApi";
 import { setTestConfig } from "../../testUtils/TestConfig";
 import { seedMessageLog, resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 import { aboutMeSignal } from "./AboutMeState";
-import {
-  parseFactSuggestions, requestFactSuggestions, NOT_CONFIGURED_MESSAGE
-} from "./AboutMeExtractionUtils";
+import { parseFactSuggestions, requestFactSuggestions } from "./AboutMeExtractionUtils";
+import { en } from "../../i18n/en";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../core/OllamaApi")>();
@@ -175,13 +174,13 @@ describe("requestFactSuggestions", (): void => {
 
   test("rejects when the section is not configured", async (): Promise<void> => {
     setTestConfig({});
-    await expect(requestFactSuggestions()).rejects.toThrow(NOT_CONFIGURED_MESSAGE);
+    await expect(requestFactSuggestions()).rejects.toThrow(en.aboutMeNotConfigured);
     expect(mockedQueryChat).not.toHaveBeenCalled();
   });
 
   test("rejects when there is no model to ask", async (): Promise<void> => {
     adaptivePaletteGlobals.models = [];
-    await expect(requestFactSuggestions()).rejects.toThrow(NO_MODELS_MESSAGE);
+    await expect(requestFactSuggestions()).rejects.toThrow(en.noModels);
     expect(aboutMeSignal.value.learntUpTo).toBeUndefined();
   });
 });

@@ -16,7 +16,8 @@ import { AttributeCellType } from "../../index.d";
 import { BlissSymbol } from "../../components/BlissSymbol";
 import { generateGridStyle } from "../../utils/GridUtils";
 import { announceIfEnabled } from "../../utils/SpeechUtils";
-import { isAttributeSelected, toggleAttribute } from "./MessageAttributesState";
+import { t } from "../../i18n/I18n";
+import { categoryName, isAttributeSelected, toggleAttribute } from "./MessageAttributesState";
 import "./ActionAttributeCell.scss";
 
 type ActionAttributeCellPropsType = {
@@ -47,14 +48,14 @@ export function ActionAttributeCell (props: ActionAttributeCellPropsType): VNode
   const isSelected = isAttributeSelected(attribute);
   // The category is in the name because the symbol and the label alone do not say which row
   // the button came from, and two rows may one day share a label.
-  const accessibleName = `${category}: ${label}`;
+  const accessibleName = `${categoryName(category)}: ${label}`;
 
   const cellClicked = (): void => {
     toggleAttribute(attribute);
     // Read after the toggle rather than closing over `isSelected`: reading `.value` in an
     // event handler creates no subscription, so this is safe, and it says what actually
     // happened instead of relying on a re-render having already landed.
-    announceIfEnabled(`${accessibleName}, ${isAttributeSelected(attribute) ? "on" : "off"}`);
+    announceIfEnabled(t(isAttributeSelected(attribute) ? "attributeOn" : "attributeOff", { name: accessibleName }));
   };
 
   return html`

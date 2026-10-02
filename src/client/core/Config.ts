@@ -13,14 +13,16 @@
 /**
  * Read and validate `public/config.json`.
  *
- * This module imports nothing but types.  Keeping it a leaf is deliberate: it is what lets
- * `GlobalData` hold the parsed config without acquiring a dependency that points back at it.
+ * This module imports nothing but types and the leaf `I18n` module.  Keeping it a leaf is
+ * deliberate: it is what lets `GlobalData` hold the parsed config without acquiring a
+ * dependency that points back at it.
  */
 import type {
   AdaptivePaletteConfigType, IndicatorLabelLookupConfigType,
   TelegraphicTranslationConfigType, FeatureVisibilityConfigType, WordPredictionConfigType,
   AboutMeConfigType, SwitchScanningConfigType
 } from "../index.d";
+import { parseLanguage } from "../i18n/I18n";
 
 // Used when `maxRecalledRecords` or `wordPrediction.maxSuggestions` is missing or malformed.
 // 500 is a working-set size, not a storage limit: reading further back costs time on every
@@ -50,6 +52,7 @@ const isKeyCode = (value: unknown): boolean => typeof value === "string" && /^[A
  */
 export function makeDefaultConfig (): AdaptivePaletteConfigType {
   return {
+    language: "en",
     maxRecalledRecords: DEFAULT_MAX_RECALLED_RECORDS,
     announceSymbolOnInput: true,
     markAiSuggestions: true,
@@ -244,7 +247,7 @@ function parseSwitchScanning (section: unknown): SwitchScanningConfigType {
 }
 
 /**
- * Fetch and validate `public/config.json`: the top-level `maxRecalledRecords` and the
+ * Fetch and validate `public/config.json`: the top-level `language` and `maxRecalledRecords`, and the
  * `indicatorLabelLookup`, `telegraphicTranslation`, `symbolSearch`, `svgBuilderString`,
  * `wordPrediction`, `aboutMe` and `switchScanning` sections.
  * @returns {Promise<AdaptivePaletteConfigType>}
@@ -258,6 +261,7 @@ export async function loadConfig (): Promise<AdaptivePaletteConfigType> {
     const parsed = await response.json() as Record<string, unknown>;
     const indicatorLabelLookup = parseIndicatorLabelLookup(parsed?.indicatorLabelLookup);
     return {
+      language: parseLanguage(parsed?.language) ?? "en",
       maxRecalledRecords: parseMaxRecalledRecords(parsed?.maxRecalledRecords),
       // Anything other than `false` leaves announcements on: a mistyped config must not
       // silently mute the palette.

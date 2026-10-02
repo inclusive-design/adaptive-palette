@@ -18,19 +18,14 @@ import { html } from "htm/preact";
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { setStorage } from "../../core/StorageBackend";
 import { MemoryStorage } from "../../core/MemoryStorage";
-import { NO_MODELS_MESSAGE } from "../../core/OllamaApi";
 import { setTestConfig } from "../../testUtils/TestConfig";
 import { mockedSpeakUnavailable } from "../../testUtils/SpeechUtilsMock";
 import type { DismissedFactType, AboutMeFactType } from "../../index.d";
 import { aboutMeSignal, FactSuggestionType } from "./AboutMeState";
 import { requestFactSuggestions, LearningResultType } from "./AboutMeExtractionUtils";
-import {
-  AboutMeDialog, NOTES_HEADING, LEARNT_HEADING, SUGGEST_LABEL, CATEGORY_LABEL, NOTE_LABEL,
-  ADD_LABEL, EDIT_LABEL, EDIT_NOTE_LABEL, DELETE_LABEL, SAVE_LABEL, CANCEL_LABEL, ACCEPT_LABEL,
-  REJECT_LABEL, RESTORE_LABEL, CLOSE_LABEL, NO_NOTES_TEXT, NOTHING_DISMISSED_TEXT,
-  NOTHING_NEW_TEXT, DISMISSED_HEADING, suggestionsReadyText, factDateText, ADDED_LABEL,
-  learntUpToText, MORE_WAITING_TEXT, NO_NEW_MESSAGES_TEXT
-} from "./AboutMeDialog";
+import { AboutMeDialog, suggestionsReadyText, factDateText, learntUpToText } from "./AboutMeDialog";
+import { en } from "../../i18n/en";
+import { languageSignal } from "../../i18n/I18n";
 
 vi.mock("../../utils/SpeechUtils");
 
@@ -52,9 +47,9 @@ const fact = (overrides: Partial<AboutMeFactType> = {}): AboutMeFactType => ({
 const renderDialog = (onRequestClose = (): void => undefined) =>
   render(html`<${AboutMeDialog} onRequestClose=${onRequestClose} />`);
 
-const learntSection = (): HTMLElement => screen.getByRole("region", { name: LEARNT_HEADING });
+const learntSection = (): HTMLElement => screen.getByRole("region", { name: en.aboutMeLearntHeading });
 
-const dismissedSection = (): HTMLElement => screen.getByRole("region", { name: DISMISSED_HEADING });
+const dismissedSection = (): HTMLElement => screen.getByRole("region", { name: en.aboutMeDismissedHeading });
 
 const turnedDown = (text: string): DismissedFactType => ({ category: "Preferences", text });
 
@@ -119,21 +114,29 @@ describe("AboutMeDialog", (): void => {
   afterEach((): void => {
     cleanup();
     adaptivePaletteGlobals.config = originalConfig;
+    languageSignal.value = "en";
+  });
+
+  test("shows category names in the current language", (): void => {
+    aboutMeSignal.value = { facts: [fact()], dismissed: [], pending: [] };
+    languageSignal.value = "sv";
+    renderDialog();
+    expect(screen.getByRole("heading", { name: "Familj" })).toBeInTheDocument();
   });
 
   test("shows all three sections", (): void => {
     renderDialog();
-    expect(screen.getByRole("region", { name: NOTES_HEADING })).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: en.aboutMeNotesHeading })).toBeInTheDocument();
     expect(learntSection()).toBeInTheDocument();
     expect(dismissedSection()).toBeInTheDocument();
-    expect(screen.getByText(NO_NOTES_TEXT)).toBeInTheDocument();
-    expect(screen.getByText(NOTHING_DISMISSED_TEXT)).toBeInTheDocument();
+    expect(screen.getByText(en.aboutMeNoNotes)).toBeInTheDocument();
+    expect(screen.getByText(en.aboutMeNothingDismissed)).toBeInTheDocument();
   });
 
   test("the add-note form comes before the notes", (): void => {
     aboutMeSignal.value = { facts: [fact()], dismissed: [], pending: [] };
     renderDialog();
-    const addButton = screen.getByRole("button", { name: ADD_LABEL });
+    const addButton = screen.getByRole("button", { name: en.aboutMeAddNote });
     const firstNote = cardFor("has a dog named Rex") as HTMLElement;
     expect(addButton.compareDocumentPosition(firstNote) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
@@ -145,8 +148,8 @@ describe("AboutMeDialog", (): void => {
       facts: [fact(), fact({ id: "fact-2", text: "likes tea", addedAt: "" })],
       dismissed: [], pending: [] };
     renderDialog();
-    expect(cardFor("has a dog named Rex")?.textContent).toContain(ADDED_LABEL);
-    expect(cardFor("likes tea")?.textContent).not.toContain(ADDED_LABEL);
+    expect(cardFor("has a dog named Rex")?.textContent).toContain(en.aboutMeAdded);
+    expect(cardFor("likes tea")?.textContent).not.toContain(en.aboutMeAdded);
   });
 
   test("lists what was turned down, so it can be added back later", (): void => {
@@ -160,7 +163,7 @@ describe("AboutMeDialog", (): void => {
   test("adding back a dismissed suggestion moves it to what has been learnt", async (): Promise<void> => {
     aboutMeSignal.value = { facts: [], dismissed: [turnedDown("likes tea")], pending: [] };
     renderDialog();
-    await userEvent.click(screen.getByRole("button", { name: `${RESTORE_LABEL}: likes tea` }));
+    await userEvent.click(screen.getByRole("button", { name: `${en.aboutMeRestore}: likes tea` }));
 
     await waitFor(() => expect(aboutMeSignal.value.dismissed).toEqual([]));
     expect(within(learntSection()).getByText("likes tea")).toBeInTheDocument();
@@ -172,40 +175,40 @@ describe("AboutMeDialog", (): void => {
   test("adding one back moves focus to the next one", async (): Promise<void> => {
     aboutMeSignal.value = { facts: [], dismissed: [turnedDown("likes tea"), turnedDown("likes cats")], pending: [] };
     renderDialog();
-    await userEvent.click(screen.getByRole("button", { name: `${RESTORE_LABEL}: likes tea` }));
+    await userEvent.click(screen.getByRole("button", { name: `${en.aboutMeRestore}: likes tea` }));
 
     await waitFor(() => expect(
-      screen.getByRole("button", { name: `${RESTORE_LABEL}: likes cats` })
+      screen.getByRole("button", { name: `${en.aboutMeRestore}: likes cats` })
     ).toHaveFocus());
   });
 
   test("adding the last one back moves focus to Add note", async (): Promise<void> => {
     aboutMeSignal.value = { facts: [], dismissed: [turnedDown("likes tea")], pending: [] };
     renderDialog();
-    await userEvent.click(screen.getByRole("button", { name: `${RESTORE_LABEL}: likes tea` }));
+    await userEvent.click(screen.getByRole("button", { name: `${en.aboutMeRestore}: likes tea` }));
 
-    await waitFor(() => expect(screen.getByRole("button", { name: ADD_LABEL })).toHaveFocus());
+    await waitFor(() => expect(screen.getByRole("button", { name: en.aboutMeAddNote })).toHaveFocus());
   });
 
   test("adds a note", async (): Promise<void> => {
     renderDialog();
-    await userEvent.selectOptions(screen.getByLabelText(CATEGORY_LABEL), "Preferences");
-    await userEvent.fill(screen.getByLabelText(NOTE_LABEL), "likes tea");
-    await userEvent.click(screen.getByRole("button", { name: ADD_LABEL }));
+    await userEvent.selectOptions(screen.getByLabelText(en.aboutMeCategory), "Preferences");
+    await userEvent.fill(screen.getByLabelText(en.aboutMeNote), "likes tea");
+    await userEvent.click(screen.getByRole("button", { name: en.aboutMeAddNote }));
 
     expect(await screen.findByText("likes tea")).toBeInTheDocument();
     expect(aboutMeSignal.value.facts[0]).toMatchObject({
       category: "Preferences", text: "likes tea", source: "manual"
     });
-    expect(screen.getByLabelText(NOTE_LABEL)).toHaveValue("");
+    expect(screen.getByLabelText(en.aboutMeNote)).toHaveValue("");
   });
 
   test("edits a note", async (): Promise<void> => {
     aboutMeSignal.value = { facts: [fact()], dismissed: [], pending: [] };
     renderDialog();
-    await userEvent.click(screen.getByRole("button", { name: `${EDIT_LABEL}: has a dog named Rex` }));
-    await userEvent.fill(screen.getByLabelText(EDIT_NOTE_LABEL), "has a dog named Max");
-    await userEvent.click(screen.getByRole("button", { name: SAVE_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: `${en.aboutMeEdit}: has a dog named Rex` }));
+    await userEvent.fill(screen.getByLabelText(en.aboutMeEditNote), "has a dog named Max");
+    await userEvent.click(screen.getByRole("button", { name: en.aboutMeSave }));
 
     expect(await screen.findByText("has a dog named Max")).toBeInTheDocument();
     expect(aboutMeSignal.value.facts[0].text).toBe("has a dog named Max");
@@ -214,7 +217,7 @@ describe("AboutMeDialog", (): void => {
   test("deletes a note", async (): Promise<void> => {
     aboutMeSignal.value = { facts: [fact()], dismissed: [], pending: [] };
     renderDialog();
-    await userEvent.click(screen.getByRole("button", { name: `${DELETE_LABEL}: has a dog named Rex` }));
+    await userEvent.click(screen.getByRole("button", { name: `${en.aboutMeDelete}: has a dog named Rex` }));
 
     await waitFor(() => expect(screen.queryByText("has a dog named Rex")).not.toBeInTheDocument());
     expect(aboutMeSignal.value.dismissed).toEqual([]);
@@ -225,9 +228,9 @@ describe("AboutMeDialog", (): void => {
     renderDialog();
     const learnt = within(learntSection());
     expect(learnt.getByText("has a dog named Rex")).toBeInTheDocument();
-    expect(learnt.queryByRole("button", { name: `${EDIT_LABEL}: has a dog named Rex` })).not.toBeInTheDocument();
+    expect(learnt.queryByRole("button", { name: `${en.aboutMeEdit}: has a dog named Rex` })).not.toBeInTheDocument();
 
-    await userEvent.click(learnt.getByRole("button", { name: `${DELETE_LABEL}: has a dog named Rex` }));
+    await userEvent.click(learnt.getByRole("button", { name: `${en.aboutMeDelete}: has a dog named Rex` }));
 
     await waitFor(() => expect(aboutMeSignal.value.dismissed)
       .toEqual([{ category: "Family", text: "has a dog named Rex" }]));
@@ -236,7 +239,7 @@ describe("AboutMeDialog", (): void => {
   test("hides Suggest updates when the section is not configured", (): void => {
     setTestConfig({});
     renderDialog();
-    expect(screen.queryByRole("button", { name: SUGGEST_LABEL })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: en.aboutMeSuggest })).not.toBeInTheDocument();
   });
 
   test("accepting a suggestion adds it to what has been learnt", async (): Promise<void> => {
@@ -245,22 +248,22 @@ describe("AboutMeDialog", (): void => {
       { category: "Preferences", text: "likes tea" }
     ]);
     renderDialog();
-    await userEvent.click(screen.getByRole("button", { name: SUGGEST_LABEL }));
-    await userEvent.click(await screen.findByRole("button", { name: `${ACCEPT_LABEL}: sister Ana` }));
+    await userEvent.click(screen.getByRole("button", { name: en.aboutMeSuggest }));
+    await userEvent.click(await screen.findByRole("button", { name: `${en.aboutMeAccept}: sister Ana` }));
 
     await waitFor(() => expect(
-      screen.queryByRole("button", { name: `${ACCEPT_LABEL}: sister Ana` })
+      screen.queryByRole("button", { name: `${en.aboutMeAccept}: sister Ana` })
     ).not.toBeInTheDocument());
     expect(within(learntSection()).getByText("sister Ana")).toBeInTheDocument();
     expect(aboutMeSignal.value.facts[0]).toMatchObject({ text: "sister Ana", source: "suggested" });
-    expect(screen.getByRole("button", { name: `${ACCEPT_LABEL}: likes tea` })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: `${en.aboutMeAccept}: likes tea` })).toBeInTheDocument();
   });
 
   test("rejecting a suggestion dismisses it", async (): Promise<void> => {
     suggestWith([{ category: "Preferences", text: "likes tea" }]);
     renderDialog();
-    await userEvent.click(screen.getByRole("button", { name: SUGGEST_LABEL }));
-    await userEvent.click(await screen.findByRole("button", { name: `${REJECT_LABEL}: likes tea` }));
+    await userEvent.click(screen.getByRole("button", { name: en.aboutMeSuggest }));
+    await userEvent.click(await screen.findByRole("button", { name: `${en.aboutMeReject}: likes tea` }));
 
     await waitFor(() => expect(aboutMeSignal.value.dismissed)
       .toEqual([{ category: "Preferences", text: "likes tea" }]));
@@ -274,15 +277,15 @@ describe("AboutMeDialog", (): void => {
   test("says so when there is nothing new", async (): Promise<void> => {
     suggestWith([]);
     renderDialog();
-    await userEvent.click(screen.getByRole("button", { name: SUGGEST_LABEL }));
-    expect(await screen.findByText(NOTHING_NEW_TEXT)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: en.aboutMeSuggest }));
+    expect(await screen.findByText(en.aboutMeNothingNew)).toBeInTheDocument();
   });
 
   test("shows why a suggestion request failed", async (): Promise<void> => {
-    mockedRequest.mockRejectedValue(new Error(NO_MODELS_MESSAGE));
+    mockedRequest.mockRejectedValue(new Error(en.noModels));
     renderDialog();
-    await userEvent.click(screen.getByRole("button", { name: SUGGEST_LABEL }));
-    expect(await screen.findByText(NO_MODELS_MESSAGE)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: en.aboutMeSuggest }));
+    expect(await screen.findByText(en.noModels)).toBeInTheDocument();
   });
 
   test("announces how many suggestions arrived and moves focus to the first Accept", async (): Promise<void> => {
@@ -291,42 +294,42 @@ describe("AboutMeDialog", (): void => {
       { category: "Preferences", text: "likes tea" }
     ]);
     renderDialog();
-    await userEvent.click(screen.getByRole("button", { name: SUGGEST_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.aboutMeSuggest }));
 
     expect(await screen.findByText(suggestionsReadyText(2))).toBeInTheDocument();
     await waitFor(() => expect(
-      screen.getByRole("button", { name: `${ACCEPT_LABEL}: sister Ana` })
+      screen.getByRole("button", { name: `${en.aboutMeAccept}: sister Ana` })
     ).toHaveFocus());
   });
 
   test("editing a note moves focus to its text box", async (): Promise<void> => {
     aboutMeSignal.value = { facts: [fact()], dismissed: [], pending: [] };
     renderDialog();
-    await userEvent.click(screen.getByRole("button", { name: `${EDIT_LABEL}: has a dog named Rex` }));
+    await userEvent.click(screen.getByRole("button", { name: `${en.aboutMeEdit}: has a dog named Rex` }));
 
-    await waitFor(() => expect(screen.getByLabelText(EDIT_NOTE_LABEL)).toHaveFocus());
+    await waitFor(() => expect(screen.getByLabelText(en.aboutMeEditNote)).toHaveFocus());
   });
 
   test("saving an edit puts focus back on that note's Edit button", async (): Promise<void> => {
     aboutMeSignal.value = { facts: [fact()], dismissed: [], pending: [] };
     renderDialog();
-    await userEvent.click(screen.getByRole("button", { name: `${EDIT_LABEL}: has a dog named Rex` }));
-    await userEvent.fill(screen.getByLabelText(EDIT_NOTE_LABEL), "has a dog named Max");
-    await userEvent.click(screen.getByRole("button", { name: SAVE_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: `${en.aboutMeEdit}: has a dog named Rex` }));
+    await userEvent.fill(screen.getByLabelText(en.aboutMeEditNote), "has a dog named Max");
+    await userEvent.click(screen.getByRole("button", { name: en.aboutMeSave }));
 
     await waitFor(() => expect(
-      screen.getByRole("button", { name: `${EDIT_LABEL}: has a dog named Max` })
+      screen.getByRole("button", { name: `${en.aboutMeEdit}: has a dog named Max` })
     ).toHaveFocus());
   });
 
   test("cancelling an edit puts focus back on that note's Edit button", async (): Promise<void> => {
     aboutMeSignal.value = { facts: [fact()], dismissed: [], pending: [] };
     renderDialog();
-    await userEvent.click(screen.getByRole("button", { name: `${EDIT_LABEL}: has a dog named Rex` }));
-    await userEvent.click(screen.getByRole("button", { name: CANCEL_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: `${en.aboutMeEdit}: has a dog named Rex` }));
+    await userEvent.click(screen.getByRole("button", { name: en.cancel }));
 
     await waitFor(() => expect(
-      screen.getByRole("button", { name: `${EDIT_LABEL}: has a dog named Rex` })
+      screen.getByRole("button", { name: `${en.aboutMeEdit}: has a dog named Rex` })
     ).toHaveFocus());
   });
 
@@ -335,28 +338,28 @@ describe("AboutMeDialog", (): void => {
       facts: [fact(), fact({ id: "fact-2", text: "likes tea", category: "Preferences" })],
       dismissed: [], pending: [] };
     renderDialog();
-    await userEvent.click(screen.getByRole("button", { name: `${DELETE_LABEL}: has a dog named Rex` }));
+    await userEvent.click(screen.getByRole("button", { name: `${en.aboutMeDelete}: has a dog named Rex` }));
 
     await waitFor(() => expect(
-      screen.getByRole("button", { name: `${DELETE_LABEL}: likes tea` })
+      screen.getByRole("button", { name: `${en.aboutMeDelete}: likes tea` })
     ).toHaveFocus());
   });
 
   test("deleting the last note moves focus to Add note", async (): Promise<void> => {
     aboutMeSignal.value = { facts: [fact()], dismissed: [], pending: [] };
     renderDialog();
-    await userEvent.click(screen.getByRole("button", { name: `${DELETE_LABEL}: has a dog named Rex` }));
+    await userEvent.click(screen.getByRole("button", { name: `${en.aboutMeDelete}: has a dog named Rex` }));
 
-    await waitFor(() => expect(screen.getByRole("button", { name: ADD_LABEL })).toHaveFocus());
+    await waitFor(() => expect(screen.getByRole("button", { name: en.aboutMeAddNote })).toHaveFocus());
   });
 
   test("deleting the last learnt fact moves focus to Suggest updates", async (): Promise<void> => {
     aboutMeSignal.value = { facts: [fact({ source: "suggested" })], dismissed: [], pending: [] };
     renderDialog();
     await userEvent.click(within(learntSection())
-      .getByRole("button", { name: `${DELETE_LABEL}: has a dog named Rex` }));
+      .getByRole("button", { name: `${en.aboutMeDelete}: has a dog named Rex` }));
 
-    await waitFor(() => expect(screen.getByRole("button", { name: SUGGEST_LABEL })).toHaveFocus());
+    await waitFor(() => expect(screen.getByRole("button", { name: en.aboutMeSuggest })).toHaveFocus());
   });
 
   test("accepting a suggestion moves focus to the next one", async (): Promise<void> => {
@@ -365,27 +368,27 @@ describe("AboutMeDialog", (): void => {
       { category: "Preferences", text: "likes tea" }
     ]);
     renderDialog();
-    await userEvent.click(screen.getByRole("button", { name: SUGGEST_LABEL }));
-    await userEvent.click(await screen.findByRole("button", { name: `${ACCEPT_LABEL}: sister Ana` }));
+    await userEvent.click(screen.getByRole("button", { name: en.aboutMeSuggest }));
+    await userEvent.click(await screen.findByRole("button", { name: `${en.aboutMeAccept}: sister Ana` }));
 
     await waitFor(() => expect(
-      screen.getByRole("button", { name: `${ACCEPT_LABEL}: likes tea` })
+      screen.getByRole("button", { name: `${en.aboutMeAccept}: likes tea` })
     ).toHaveFocus());
   });
 
   test("rejecting the last suggestion moves focus to Suggest updates", async (): Promise<void> => {
     suggestWith([{ category: "Preferences", text: "likes tea" }]);
     renderDialog();
-    await userEvent.click(screen.getByRole("button", { name: SUGGEST_LABEL }));
-    await userEvent.click(await screen.findByRole("button", { name: `${REJECT_LABEL}: likes tea` }));
+    await userEvent.click(screen.getByRole("button", { name: en.aboutMeSuggest }));
+    await userEvent.click(await screen.findByRole("button", { name: `${en.aboutMeReject}: likes tea` }));
 
-    await waitFor(() => expect(screen.getByRole("button", { name: SUGGEST_LABEL })).toHaveFocus());
+    await waitFor(() => expect(screen.getByRole("button", { name: en.aboutMeSuggest })).toHaveFocus());
   });
 
   test("shows pending suggestions without asking again", (): void => {
     aboutMeSignal.value = { facts: [], dismissed: [], pending: [turnedDown("likes tea")] };
     renderDialog();
-    expect(screen.getByRole("button", { name: `${ACCEPT_LABEL}: likes tea` })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: `${en.aboutMeAccept}: likes tea` })).toBeInTheDocument();
     expect(mockedRequest).not.toHaveBeenCalled();
   });
 
@@ -400,59 +403,59 @@ describe("AboutMeDialog", (): void => {
   test("says when more messages are waiting", async (): Promise<void> => {
     suggestWith([], true);
     renderDialog();
-    await userEvent.click(screen.getByRole("button", { name: SUGGEST_LABEL }));
-    expect(await screen.findByText(MORE_WAITING_TEXT)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: en.aboutMeSuggest }));
+    expect(await screen.findByText(en.aboutMeMoreWaiting)).toBeInTheDocument();
   });
 
   test("says when the last batch read the rest", async (): Promise<void> => {
     suggestWith([], false);
     renderDialog();
-    await userEvent.click(screen.getByRole("button", { name: SUGGEST_LABEL }));
-    expect(await screen.findByText(NO_NEW_MESSAGES_TEXT)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: en.aboutMeSuggest }));
+    expect(await screen.findByText(en.aboutMeNoNewMessages)).toBeInTheDocument();
   });
 
   test("says when there are no new messages at all", async (): Promise<void> => {
     mockedRequest.mockResolvedValue({ status: "upToDate" });
     renderDialog();
-    await userEvent.click(screen.getByRole("button", { name: SUGGEST_LABEL }));
-    expect(await screen.findByText(NO_NEW_MESSAGES_TEXT)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: en.aboutMeSuggest }));
+    expect(await screen.findByText(en.aboutMeNoNewMessages)).toBeInTheDocument();
   });
 
   test("moves focus to the first new suggestion, after ones already pending", async (): Promise<void> => {
     aboutMeSignal.value = { facts: [], dismissed: [], pending: [turnedDown("likes tea")] };
     suggestWith([{ category: "Family", text: "sister Ana" }]);
     renderDialog();
-    await userEvent.click(screen.getByRole("button", { name: SUGGEST_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.aboutMeSuggest }));
     await waitFor(() => expect(
-      screen.getByRole("button", { name: `${ACCEPT_LABEL}: sister Ana` })
+      screen.getByRole("button", { name: `${en.aboutMeAccept}: sister Ana` })
     ).toHaveFocus());
   });
 
   test("the new note needs text", (): void => {
     renderDialog();
-    expect(screen.getByLabelText(NOTE_LABEL)).toBeRequired();
+    expect(screen.getByLabelText(en.aboutMeNote)).toBeRequired();
   });
 
   test("asks the model once however often Suggest updates is activated", async (): Promise<void> => {
     let finishRequest = (result: LearningResultType): void => { void result; };
     mockedRequest.mockReturnValue(new Promise((resolve) => { finishRequest = resolve; }));
     renderDialog();
-    const suggestButton = screen.getByRole("button", { name: SUGGEST_LABEL });
+    const suggestButton = screen.getByRole("button", { name: en.aboutMeSuggest });
 
     // Both activations land before Preact re-renders, which is what a second switch hit does.
     suggestButton.click();
     suggestButton.click();
 
     expect(mockedRequest).toHaveBeenCalledTimes(1);
-    expect(mockedSpeakUnavailable).toHaveBeenCalledWith(SUGGEST_LABEL);
+    expect(mockedSpeakUnavailable).toHaveBeenCalledWith(en.aboutMeSuggest);
     finishRequest({ status: "learnt", found: 0, hasMore: false });
-    expect(await screen.findByText(NOTHING_NEW_TEXT)).toBeInTheDocument();
+    expect(await screen.findByText(en.aboutMeNothingNew)).toBeInTheDocument();
   });
 
   test("Close asks to close the dialog", async (): Promise<void> => {
     const onRequestClose = vi.fn();
     renderDialog(onRequestClose);
-    await userEvent.click(screen.getByRole("button", { name: CLOSE_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.close }));
     expect(onRequestClose).toHaveBeenCalled();
   });
 });

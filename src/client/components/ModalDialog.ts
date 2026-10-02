@@ -13,12 +13,9 @@
 import { VNode, ComponentChildren } from "preact";
 import { html } from "htm/preact";
 import { useEffect, useRef } from "preact/hooks";
+import { t } from "../i18n/I18n";
 
 import "./ModalDialog.scss";
-
-// Distinct from the footer "Close" each dialog body renders, so the two controls do not
-// share an accessible name.
-export const DISMISS_LABEL = "Close dialog";
 
 type ModalDialogProps = {
   id: string,
@@ -129,7 +126,7 @@ export function ModalDialog (props: ModalDialogProps): VNode {
         <button
           type="button"
           class="modalDialogDismiss"
-          aria-label=${DISMISS_LABEL}
+          aria-label=${t("dialogDismiss")}
           disabled=${!isDismissible}
           onClick=${dismiss}>✕</button>
       </div>

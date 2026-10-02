@@ -15,13 +15,10 @@ import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 import { vi, type MockInstance } from "vitest";
 
-import { DISMISS_LABEL } from "../../components/ModalDialog";
 import { setStorage } from "../../core/StorageBackend";
 import { MemoryStorage } from "../../core/MemoryStorage";
-import {
-  ERASE_CANCEL_LABEL, ERASE_CONFIRM_LABEL, ERASE_DONE_TEXT, ERASE_FAILED_TEXT, ERASE_LABEL,
-  ERASE_PENDING_TEXT, EraseAllData
-} from "./EraseAllData";
+import { EraseAllData } from "./EraseAllData";
+import { en } from "../../i18n/en";
 
 describe("EraseAllData", (): void => {
 
@@ -43,7 +40,7 @@ describe("EraseAllData", (): void => {
     const destroy = vi.spyOn(storage, "destroy");
     render(html`<${EraseAllData} />`);
 
-    await userEvent.click(screen.getByRole("button", { name: ERASE_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.eraseLabel }));
 
     // The dialog opens via a `useEffect` in `ModalDialog`, which does not settle within
     // the same tick as the click that triggers it, hence `findByRole` over `getByRole`.
@@ -55,8 +52,8 @@ describe("EraseAllData", (): void => {
     const destroy = vi.spyOn(storage, "destroy");
     render(html`<${EraseAllData} />`);
 
-    await userEvent.click(screen.getByRole("button", { name: ERASE_LABEL }));
-    await userEvent.click(await screen.findByRole("button", { name: ERASE_CANCEL_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.eraseLabel }));
+    await userEvent.click(await screen.findByRole("button", { name: en.cancel }));
 
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
     expect(destroy).not.toHaveBeenCalled();
@@ -69,38 +66,38 @@ describe("EraseAllData", (): void => {
     vi.spyOn(storage, "destroy").mockReturnValue(new Promise((resolve) => { resolveDestroy = resolve; }));
     render(html`<${EraseAllData} />`);
 
-    await userEvent.click(screen.getByRole("button", { name: ERASE_LABEL }));
-    await userEvent.click(await screen.findByRole("button", { name: ERASE_CONFIRM_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.eraseLabel }));
+    await userEvent.click(await screen.findByRole("button", { name: en.eraseConfirm }));
 
-    await waitFor(() => expect(screen.getByText(ERASE_PENDING_TEXT)).toBeInTheDocument());
-    expect(screen.getByRole("button", { name: ERASE_CONFIRM_LABEL })).toBeDisabled();
-    expect(screen.getByRole("button", { name: ERASE_CANCEL_LABEL })).toBeDisabled();
+    await waitFor(() => expect(screen.getByText(en.erasePending)).toBeInTheDocument());
+    expect(screen.getByRole("button", { name: en.eraseConfirm })).toBeDisabled();
+    expect(screen.getByRole("button", { name: en.cancel })).toBeDisabled();
     // The dialog is still the one place the tester can be: nothing has told them otherwise.
     // Its header button goes too, so no route out of the dialog implies a cancellation that
     // is no longer available. Escape is refused by `ModalDialog`, which covers it in its own
     // tests: it needs a trusted keypress, which this file's synthetic input cannot produce.
     expect(screen.getByRole("dialog")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: DISMISS_LABEL })).toBeDisabled();
+    expect(screen.getByRole("button", { name: en.dialogDismiss })).toBeDisabled();
     // With every control disabled, the pending text is the only thing left to hold focus.
     // Without it a switch or eye-gaze user would be left on `<body>` with nothing to scan.
     // `useEffect` runs after the paint, so the move is a tick behind the text appearing.
-    await waitFor(() => expect(screen.getByText(ERASE_PENDING_TEXT)).toHaveFocus());
+    await waitFor(() => expect(screen.getByText(en.erasePending)).toHaveFocus());
 
     resolveDestroy();
-    await waitFor(() => expect(screen.getByText(ERASE_DONE_TEXT)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(en.eraseDone)).toBeInTheDocument());
   });
 
   test("confirming erases the store, then asks the app to quit", async (): Promise<void> => {
     await storage.writeSettings({ "maxRecalledRecords": 12 });
     render(html`<${EraseAllData} />`);
 
-    await userEvent.click(screen.getByRole("button", { name: ERASE_LABEL }));
-    await userEvent.click(await screen.findByRole("button", { name: ERASE_CONFIRM_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.eraseLabel }));
+    await userEvent.click(await screen.findByRole("button", { name: en.eraseConfirm }));
 
-    await waitFor(() => expect(screen.getByText(ERASE_DONE_TEXT)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(en.eraseDone)).toBeInTheDocument());
     // The dialog and the button that opened it are both gone, so focus is put on the
     // message: it is also what has it announced.
-    await waitFor(() => expect(screen.getByText(ERASE_DONE_TEXT)).toHaveFocus());
+    await waitFor(() => expect(screen.getByText(en.eraseDone)).toHaveFocus());
     expect(fetchSpy).toHaveBeenCalledWith("/quit", { method: "POST" });
     await storage.open();
     expect(await storage.readSettings()).toEqual({});
@@ -111,17 +108,17 @@ describe("EraseAllData", (): void => {
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     render(html`<${EraseAllData} />`);
 
-    await userEvent.click(screen.getByRole("button", { name: ERASE_LABEL }));
-    await userEvent.click(await screen.findByRole("button", { name: ERASE_CONFIRM_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.eraseLabel }));
+    await userEvent.click(await screen.findByRole("button", { name: en.eraseConfirm }));
 
-    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(ERASE_FAILED_TEXT));
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(en.eraseFailed));
     expect(fetchSpy).not.toHaveBeenCalled();
     // A failed erase is not an in-flight one: the tester must be able to try again or back out.
-    expect(screen.getByRole("button", { name: ERASE_CONFIRM_LABEL })).not.toBeDisabled();
-    expect(screen.getByRole("button", { name: ERASE_CANCEL_LABEL })).not.toBeDisabled();
+    expect(screen.getByRole("button", { name: en.eraseConfirm })).not.toBeDisabled();
+    expect(screen.getByRole("button", { name: en.cancel })).not.toBeDisabled();
     // The pending text that held focus is gone with the failure, so focus moves to the
     // failure message rather than dropping to `<body>` in the still-open dialog.
-    await waitFor(() => expect(screen.getByText(ERASE_FAILED_TEXT)).toHaveFocus());
+    await waitFor(() => expect(screen.getByText(en.eraseFailed)).toHaveFocus());
     consoleErrorSpy.mockRestore();
   });
 
@@ -130,10 +127,10 @@ describe("EraseAllData", (): void => {
     fetchSpy.mockRejectedValue(new TypeError("Failed to fetch"));
     render(html`<${EraseAllData} />`);
 
-    await userEvent.click(screen.getByRole("button", { name: ERASE_LABEL }));
-    await userEvent.click(await screen.findByRole("button", { name: ERASE_CONFIRM_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.eraseLabel }));
+    await userEvent.click(await screen.findByRole("button", { name: en.eraseConfirm }));
 
-    await waitFor(() => expect(screen.getByText(ERASE_DONE_TEXT)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(en.eraseDone)).toBeInTheDocument());
     expect(screen.queryByRole("alert")).toBeNull();
   });
 });

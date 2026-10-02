@@ -17,11 +17,10 @@ import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { expectCellRendered } from "../testUtils/CellTestUtils";
-import {
-  CommandClearSavedData, CANCEL_LABEL, CONFIRM_LABEL, clearSavedData
-} from "./CommandClearSavedData";
+import { CommandClearSavedData, clearSavedData } from "./CommandClearSavedData";
 import { MemoryStorage } from "../core/MemoryStorage";
 import { setStorage } from "../core/StorageBackend";
+import { en } from "../i18n/en";
 
 // `userEvent` is the provider-backed instance from `vitest/browser`, not the one from
 // `@testing-library/user-event`: these tests drive a native `<dialog>`, whose default
@@ -92,7 +91,7 @@ describe("CommandClearSavedData", () => {
       expect(screen.getByRole("dialog", { name: testOptions.label })).toBeVisible();
     });
 
-    await userEvent.click(screen.getByRole("button", { name: CANCEL_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.cancel }));
 
     await waitFor(() => {
       expect(screen.queryByRole("dialog", { name: testOptions.label })).not.toBeInTheDocument();
@@ -107,7 +106,7 @@ describe("CommandClearSavedData", () => {
       expect(screen.getByRole("dialog", { name: testOptions.label })).toBeVisible();
     });
 
-    await userEvent.click(screen.getByRole("button", { name: CONFIRM_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.clearConfirm }));
 
     // The reload happens a tick later, on the promise returned by the now-async clearSavedData().
     await waitFor(() => {

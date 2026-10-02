@@ -19,6 +19,7 @@ import {
   OVERLAY_ID, collectRows, followSwitchScanningSetting, scannableControls, startSwitchScanning
 } from "./SwitchScanning";
 import { outlinedRow, onExitStop, highlightedCell } from "../../testUtils/SwitchScanTestUtils";
+import { en } from "../../i18n/en";
 
 // `userEvent` comes from `vitest/browser`, not `@testing-library/user-event`: its events are
 // trusted, so the browser's default actions run, such as Space clicking the focused button.
@@ -165,6 +166,7 @@ describe("startSwitchScanning", (): void => {
     await move();
     expect(onExitStop()).toBe(true);
     expect(highlightedCell()).toBeNull();
+    expect(byId(OVERLAY_ID).dataset.exitLabel).toBe(en.scanExitRow);
     expect(labels(outlinedRow())).toEqual(["a1", "a2", "a3"]);
     await select();
     expect(onExitStop()).toBe(false);

@@ -40,6 +40,7 @@ import { MemoryStorage } from "./MemoryStorage";
 import { AdaptivePaletteStorage, setStorage } from "./StorageBackend";
 import { hydrateMessageLog } from "./MessageLog";
 import { hydrateAboutMe } from "../features/about-me/AboutMeState";
+import { languageSignal, startLanguage } from "../i18n/I18n";
 
 /**
  * Delete the app's IndexedDB database.
@@ -117,6 +118,11 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
   adaptivePaletteGlobals.fileConfig = config;
   // The user's saved settings are applied.
   adaptivePaletteGlobals.config = await applyStoredSettings(config);
+  // `?lang=` in the page URL beats the saved choice: it is how the public website, which
+  // saves nothing, is opened in another language.
+  adaptivePaletteGlobals.config.language =
+    startLanguage(window.location.search, adaptivePaletteGlobals.config.language);
+  languageSignal.value = adaptivePaletteGlobals.config.language;
 
   // After the settings, because how much of the log is read back is one of them.
   await Promise.all([hydrateMessageLog(), hydrateAboutMe()]);

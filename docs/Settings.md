@@ -11,6 +11,7 @@ Settings defined in `public/config.json` except these fields: `model`, `systemPr
 
 | Group | Setting | Needs Ollama |
 | ----- | ------- | ------------ |
+| General | Language | |
 | General | Speak each symbol as I add it | |
 | General | Mark AI suggestions | yes |
 | General | Go back with the backquote (`` ` ``) key | |
@@ -27,6 +28,13 @@ Settings defined in `public/config.json` except these fields: `model`, `systemPr
 
 The prompts sent to the model, and which model is asked, are not adjustable here. They stay in
 `public/config.json`.
+
+**Language** switches the app's text and speech between English and Svenska as soon as it is
+saved. To open the app in Swedish without the dialog, add `?lang=sv` to the page address, for
+example <https://adaptive-palette.pages.dev/?lang=sv>. The public website saves nothing, so this
+is how it is kept in Swedish across reloads. On the desktop version, saving the settings while the
+page was opened with `?lang=` also saves that language, since the dialog shows it as the one
+chosen. Symbol labels in the palettes stay English until Swedish labels are added.
 
 See [Access Methods](AccessMethods.md#switches) for switch scanning. Row scanning with two
 switches is the only kind supported. Its keys are set in `public/config.json` only.

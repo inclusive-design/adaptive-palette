@@ -15,9 +15,8 @@ import { html } from "htm/preact";
 
 import { MatchType } from "../index.d";
 import { BlissSymbol } from "./BlissSymbol";
+import { t } from "../i18n/I18n";
 import "./GlossSearchResults.scss";
-
-export const SELECTED_TEXT = "✓ selected";
 
 type GlossSearchResultsProps = {
   matches: MatchType[],
@@ -54,7 +53,7 @@ function resultCell (
         label=${match.label}
         isPresentation="true"
       />
-      <span class="glossSearchResultSelected">${SELECTED_TEXT}</span>
+      <span class="glossSearchResultSelected">${t("searchSelected")}</span>
     </button>
   `;
 }

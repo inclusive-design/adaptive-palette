@@ -21,17 +21,11 @@ import { editMessage } from "../core/MessageEdit";
 import { insertWordAtCaret } from "../utils/SymbolEncodingUtils";
 import { GlossSearchResults } from "../components/GlossSearchResults";
 import { MessagePreview } from "../components/MessagePreview";
+import { t } from "../i18n/I18n";
 import "./ActionSearchGloss.scss";
 
 export const GLOSS_ENTRY_FIELD_ID = "glossSearchField";
 export const LABEL_FIELD_ID = "glossSearchLabelField";
-export const SEARCH_FIELD_LABEL = "Find a word:";
-export const LABEL_FIELD_LABEL = "Label:";
-export const SUBMIT_LABEL = "Search";
-export const CLEAR_LABEL = "Clear";
-export const ADD_LABEL = "Add to message";
-export const CLOSE_LABEL = "Close";
-export const NO_SELECTION_STATUS = "Select a symbol first";
 
 // Every result is a tab stop inside the dialog's focus trap, so an unbounded result set
 // puts the "Add to message" and "Close" buttons out of reach of a forward-only switch
@@ -51,12 +45,12 @@ type ActionSearchGlossProps = {
  */
 function searchStatus (total: number, text: string): string {
   if (total === 0) {
-    return `No symbols found for "${text}"`;
+    return t("searchNoneFound", { text });
   }
   if (total > MAX_RESULTS) {
-    return `${total} symbols found for "${text}". Showing the first ${MAX_RESULTS}; refine your search.`;
+    return t("searchTooMany", { total, text, max: MAX_RESULTS });
   }
-  return `${total} symbol${total === 1 ? "" : "s"} found for "${text}"`;
+  return total === 1 ? t("searchFoundOne", { text }) : t("searchFoundMany", { total, text });
 }
 
 /**
@@ -107,7 +101,7 @@ export function ActionSearchGloss (props: ActionSearchGlossProps): VNode {
     // The button stays focusable via `aria-disabled`, so the unavailable case is
     // rejected here rather than by the browser. Meanwhile, report the status.
     if (!selected) {
-      setStatus(NO_SELECTION_STATUS);
+      setStatus(t("searchNoSelection"));
       return;
     }
 
@@ -133,7 +127,7 @@ export function ActionSearchGloss (props: ActionSearchGlossProps): VNode {
     // The status region is the only confirmation channel here. Calling `speak()` as the
     // palette cells do would put device speech and the screen reader over each other.
     // An emptied label falls back to a generic noun.
-    setStatus(`${label || "Symbol"} added to message`);
+    setStatus(t("symbolAdded", { label: label || t("symbolFallback") }));
     // `selected` and `labelDraft` are a pair: every reset path clears both, or the label
     // field is left editable with no selection behind it.
     setSelected(null);
@@ -152,7 +146,7 @@ export function ActionSearchGloss (props: ActionSearchGlossProps): VNode {
   return html`
     <div class="actionSearchGloss">
       <form onSubmit=${searchGloss} class="glossSearchForm">
-        <label for=${GLOSS_ENTRY_FIELD_ID}>${SEARCH_FIELD_LABEL}</label>
+        <label for=${GLOSS_ENTRY_FIELD_ID}>${t("searchFindWord")}</label>
         <input
           ref=${searchInputRef}
           id=${GLOSS_ENTRY_FIELD_ID}
@@ -160,12 +154,12 @@ export function ActionSearchGloss (props: ActionSearchGlossProps): VNode {
           type="text"
           value=${searchTerm}
           onInput=${onSearchInput}
-          placeholder="Search by gloss"
+          placeholder=${t("searchPlaceholder")}
           size="25"
           autofocus
         />
-        <button type="submit">${SUBMIT_LABEL}</button>
-        <button type="button" onClick=${clearResults}>${CLEAR_LABEL}</button>
+        <button type="submit">${t("searchSubmit")}</button>
+        <button type="button" onClick=${clearResults}>${t("searchClear")}</button>
       </form>
 
       <!-- One region carries both the result count and the add confirmation, so two
@@ -181,7 +175,7 @@ export function ActionSearchGloss (props: ActionSearchGlossProps): VNode {
       <${MessagePreview} />
 
       <div class="dialogFooter">
-        <label for=${LABEL_FIELD_ID}>${LABEL_FIELD_LABEL}</label>
+        <label for=${LABEL_FIELD_ID}>${t("labelField")}</label>
         <input
           id=${LABEL_FIELD_ID}
           type="text"
@@ -193,8 +187,8 @@ export function ActionSearchGloss (props: ActionSearchGlossProps): VNode {
           type="button"
           class="btn-addToMessage"
           aria-disabled=${selected === null}
-          onClick=${addToMessage}>${ADD_LABEL}</button>
-        <button type="button" onClick=${onRequestClose}>${CLOSE_LABEL}</button>
+          onClick=${addToMessage}>${t("addToMessage")}</button>
+        <button type="button" onClick=${onRequestClose}>${t("close")}</button>
       </div>
     </div>
   `;

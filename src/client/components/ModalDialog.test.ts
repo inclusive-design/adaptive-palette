@@ -15,7 +15,8 @@ import { render, screen, cleanup, waitFor } from "@testing-library/preact";
 import { userEvent } from "vitest/browser";
 import { html } from "htm/preact";
 
-import { ModalDialog, DISMISS_LABEL } from "./ModalDialog";
+import { ModalDialog } from "./ModalDialog";
+import { en } from "../i18n/en";
 
 // The header dismiss control is named "Close dialog", not "Close", so that it does not
 // collide with the footer "Close" button each dialog body renders.
@@ -74,7 +75,7 @@ describe("ModalDialog", () => {
       <//>
     `);
 
-    await userEvent.click(screen.getByRole("button", { name: DISMISS_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.dialogDismiss }));
     await waitFor(() => expect(onClose).toHaveBeenCalled());
   });
 
@@ -102,7 +103,7 @@ describe("ModalDialog", () => {
       <//>
     `);
 
-    expect(screen.getByRole("button", { name: DISMISS_LABEL })).toBeDisabled();
+    expect(screen.getByRole("button", { name: en.dialogDismiss })).toBeDisabled();
     expect(screen.getByText("body")).toBeVisible();
     expect(onClose).not.toHaveBeenCalled();
   });

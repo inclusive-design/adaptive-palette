@@ -26,14 +26,8 @@ import { isModelTierActive, predictNext } from "./WordPredictionUtils";
 import { messageUpToCaret, queryContextKeyOf, modelWordsSignal } from "./WordPredictionState";
 import { ContentPredictedWordsType, SymbolEncodingType } from "../../index.d";
 import { generateGridStyle } from "../../utils/GridUtils";
+import { t } from "../../i18n/I18n";
 import "./PredictedWords.scss";
-
-export const PREDICTED_WORDS_LABEL = "Suggested next words";
-
-/**
- * What the status region says while the model is being asked for words.
- */
-export const QUERYING_MESSAGE = "\u23f3 Querying more word suggestions\u2026";
 
 /**
  * What the status region says when words from the model reach the row.
@@ -41,7 +35,7 @@ export const QUERYING_MESSAGE = "\u23f3 Querying more word suggestions\u2026";
  * @returns {string}
  */
 export function moreSuggestionsMessage (count: number): string {
-  return `${count} more word suggestion${count === 1 ? "" : "s"}`;
+  return count === 1 ? t("predictionMoreOne") : t("predictionMoreMany", { count });
 }
 
 type PredictedWordsPropsType = {
@@ -136,7 +130,7 @@ export function PredictedWords (props: PredictedWordsPropsType): VNode | null {
   const finishedMessage = finishedMessageSignal.value;
   const isFinished = finishedMessage.length > 0 && messageText(payloads) === finishedMessage;
   const statusText = isFinished ? ""
-    : isQuerying ? QUERYING_MESSAGE
+    : isQuerying ? t("predictionQuerying")
       : modelSuggestions.length > 0 ? moreSuggestionsMessage(modelSuggestions.length) : "";
 
   return html`
@@ -148,7 +142,7 @@ export function PredictedWords (props: PredictedWordsPropsType): VNode | null {
       <div
         class="predictedWords"
         role="group"
-        aria-label=${PREDICTED_WORDS_LABEL}
+        aria-label=${t("predictedWords")}
         style="grid-template-columns: repeat(${numColumns ?? maxSuggestions}, minmax(0, 1fr));">
         ${cells}
       </div>

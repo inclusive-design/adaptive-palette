@@ -20,6 +20,7 @@ import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { applyModifiersToLabel, replaceAtCaret } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
+import { t } from "../i18n/I18n";
 import { findIndicators, findClassifierFromLeft } from "../utils/SvgUtils";
 import { getStaticNewLabel, getNewLabelViaModelQuery } from "../utils/IndicatorLabelsUtils";
 import "./ActionIndicatorCell.scss";
@@ -150,7 +151,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       return;
     }
 
-    announceIfEnabled(`${unchangedMessage} loading new label`);
+    announceIfEnabled(t("indicatorLoading", { label: unchangedMessage }));
     const newLabel = await modelResult.promise;
     if (!isStillCurrent()) {
       return;

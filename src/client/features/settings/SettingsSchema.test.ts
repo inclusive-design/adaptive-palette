@@ -161,6 +161,14 @@ describe("SettingsSchema", () => {
       expect(config.switchScanning.enabled).toBe(true);
     });
 
+    test("applies a saved language, and skips one the app does not support", async (): Promise<void> => {
+      await store({ "language": "sv" });
+      expect((await applyStoredSettings(makeDefaultConfig())).language).toBe("sv");
+
+      await store({ "language": "de" });
+      expect((await applyStoredSettings(makeDefaultConfig())).language).toBe("en");
+    });
+
     test("a store that cannot be read leaves the file's values standing", async (): Promise<void> => {
       const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
       vi.spyOn(storage, "readSettings").mockRejectedValue(new Error("the store is not available"));

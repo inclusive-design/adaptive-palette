@@ -13,9 +13,9 @@
 import { vi } from "vitest";
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { saveMessageRecord } from "../../core/MessageLog";
-import { queryChat, NO_MODELS_MESSAGE } from "../../core/OllamaApi";
+import { queryChat } from "../../core/OllamaApi";
 import {
-  isModelTierActive, NOT_CONFIGURED_MESSAGE, parseModelWords, predictNext, rankModelWords,
+  isModelTierActive, parseModelWords, predictNext, rankModelWords,
   requestModelWords, SEED_STARTERS, wordPredictionStats
 } from "./WordPredictionUtils";
 import { resolveWordPayload } from "../../utils/GlossLookupUtils";
@@ -25,6 +25,7 @@ import {
 import { aboutMeSignal } from "../about-me/AboutMeState";
 import { SymbolEncodingType } from "../../index.d";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
+import { en } from "../../i18n/en";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../core/OllamaApi")>();
@@ -347,13 +348,13 @@ describe("wordPrediction with a model answering as well", (): void => {
 
     test("refuses to query when the section is not configured for it", async (): Promise<void> => {
       adaptivePaletteGlobals.config.wordPrediction.enableModelQuery = false;
-      await expect(requestModelWords("I want", 6)).rejects.toThrow(NOT_CONFIGURED_MESSAGE);
+      await expect(requestModelWords("I want", 6)).rejects.toThrow(en.predictionNotConfigured);
       expect(mockedQueryChat).not.toHaveBeenCalled();
     });
 
     test("reports that there is no model to ask", async (): Promise<void> => {
       adaptivePaletteGlobals.models = [];
-      await expect(requestModelWords("I want", 6)).rejects.toThrow(NO_MODELS_MESSAGE);
+      await expect(requestModelWords("I want", 6)).rejects.toThrow(en.noModels);
     });
   });
 

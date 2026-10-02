@@ -18,39 +18,12 @@ import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { speakUnavailable } from "../../utils/SpeechUtils";
 import type { DismissedFactType, FactCategoryType, AboutMeFactType } from "../../index.d";
 import {
-  FACT_CATEGORIES, FactSuggestionType, aboutMeSignal,
+  FACT_CATEGORIES, FACT_CATEGORY_KEYS, FactSuggestionType, aboutMeSignal,
   addFact, editFact, removeFact, acceptSuggestion, rejectSuggestion, restoreDismissed
 } from "./AboutMeState";
 import { requestFactSuggestions, LearningResultType } from "./AboutMeExtractionUtils";
+import { t } from "../../i18n/I18n";
 import "./AboutMeDialog.scss";
-
-export const NOTES_HEADING = "Your notes";
-export const LEARNT_HEADING = "What the system has learnt";
-export const DISMISSED_HEADING = "Suggestions you turned down";
-export const SUGGEST_LABEL = "Suggest updates";
-export const CATEGORY_LABEL = "Category";
-export const NOTE_LABEL = "Note";
-export const ADD_LABEL = "Add note";
-export const EDIT_LABEL = "Edit";
-export const EDIT_CATEGORY_LABEL = "Change category";
-export const EDIT_NOTE_LABEL = "Change note";
-export const DELETE_LABEL = "Delete";
-export const SAVE_LABEL = "Save";
-export const CANCEL_LABEL = "Cancel";
-export const ACCEPT_LABEL = "Accept";
-export const REJECT_LABEL = "Reject";
-export const RESTORE_LABEL = "Add back";
-export const CLOSE_LABEL = "Close";
-export const SUBTITLE_TEXT = "What Adaptive Palette knows about you.";
-export const ADDED_LABEL = "Added";
-export const NO_NOTES_TEXT = "No notes yet.";
-export const NOTHING_LEARNT_TEXT = "Nothing learnt yet.";
-export const NOTHING_DISMISSED_TEXT = "Nothing turned down yet.";
-export const WORKING_TEXT = "Reading your messages…";
-export const NOTHING_NEW_TEXT = "Nothing new to suggest.";
-export const LEARNT_UP_TO_TEXT = "Learnt from your messages up to";
-export const MORE_WAITING_TEXT = "More messages are waiting. Choose Suggest updates again.";
-export const NO_NEW_MESSAGES_TEXT = "There are no new messages to learn from.";
 
 type AboutMeDialogProps = {
   onRequestClose: () => void
@@ -72,8 +45,8 @@ type EditingType = { id: string, category: FactCategoryType, text: string };
  * @returns {string}
  */
 export function suggestionsReadyText (count: number): string {
-  return count === 0 ? NOTHING_NEW_TEXT
-    : count === 1 ? "1 suggestion to review." : `${count} suggestions to review.`;
+  return count === 0 ? t("aboutMeNothingNew")
+    : count === 1 ? t("aboutMeReviewOne") : t("aboutMeReviewMany", { count });
 }
 
 /**
@@ -105,7 +78,7 @@ export function learntUpToText (timestamp: unknown): string {
     return "";
   }
   const date = new Date(timestamp);
-  return Number.isNaN(date.getTime()) ? "" : `${LEARNT_UP_TO_TEXT} ${date.toLocaleString()}.`;
+  return Number.isNaN(date.getTime()) ? "" : t("aboutMeLearntUpTo", { date: date.toLocaleString() });
 }
 
 /**
@@ -224,7 +197,7 @@ export function AboutMeDialog (props: AboutMeDialogProps): VNode {
 
   const askForSuggestions = async (): Promise<void> => {
     if (isAskingRef.current) {
-      speakUnavailable(SUGGEST_LABEL);
+      speakUnavailable(t("aboutMeSuggest"));
       return;
     }
     isAskingRef.current = true;
@@ -262,7 +235,7 @@ export function AboutMeDialog (props: AboutMeDialogProps): VNode {
       id=${id}
       value=${value}
       onChange=${(event: Event) => onChange((event.currentTarget as HTMLSelectElement).value as FactCategoryType)}>
-      ${FACT_CATEGORIES.map((category) => html`<option key=${category} value=${category}>${category}</option>`)}
+      ${FACT_CATEGORIES.map((category) => html`<option key=${category} value=${category}>${t(FACT_CATEGORY_KEYS[category])}</option>`)}
     </select>
   `;
 
@@ -274,7 +247,7 @@ export function AboutMeDialog (props: AboutMeDialogProps): VNode {
    */
   const dateLine = (fact: AboutMeFactType): VNode | null => {
     const text = factDateText(fact.addedAt);
-    return text === "" ? null : html`<p class="aboutMeFactMeta">${ADDED_LABEL} ${text}</p>`;
+    return text === "" ? null : html`<p class="aboutMeFactMeta">${t("aboutMeAdded")} ${text}</p>`;
   };
 
   /**
@@ -288,7 +261,7 @@ export function AboutMeDialog (props: AboutMeDialogProps): VNode {
       .filter((category) => list.some((fact) => fact.category === category))
       .map((category) => html`
         <${Fragment} key=${category}>
-          <h4>${category}</h4>
+          <h4>${t(FACT_CATEGORY_KEYS[category])}</h4>
           <ul class="aboutMeFactList" role="list">${list.filter((fact) => fact.category === category).map(renderFact)}</ul>
         <//>
       `);
@@ -311,8 +284,8 @@ export function AboutMeDialog (props: AboutMeDialogProps): VNode {
       <button
         type="button"
         data-delete-fact=${fact.id}
-        aria-label=${`${DELETE_LABEL}: ${fact.text}`}
-        onClick=${remove}>${DELETE_LABEL}</button>
+        aria-label=${`${t("aboutMeDelete")}: ${fact.text}`}
+        onClick=${remove}>${t("aboutMeDelete")}</button>
     `;
   };
 
@@ -320,17 +293,17 @@ export function AboutMeDialog (props: AboutMeDialogProps): VNode {
     ? html`
       <li key=${fact.id} class="aboutMeCard">
         <form class="aboutMeFactForm" onSubmit=${saveEdit}>
-          <label for="about-me-edit-category">${EDIT_CATEGORY_LABEL}</label>
+          <label for="about-me-edit-category">${t("aboutMeEditCategory")}</label>
           ${categorySelect("about-me-edit-category", editing.category, (category) => setEditing({ ...editing, category }))}
-          <label for="about-me-edit-text">${EDIT_NOTE_LABEL}</label>
+          <label for="about-me-edit-text">${t("aboutMeEditNote")}</label>
           <input
             id="about-me-edit-text"
             type="text"
             required
             value=${editing.text}
             onInput=${(event: Event) => setEditing({ ...editing, text: (event.currentTarget as HTMLInputElement).value })} />
-          <button type="submit">${SAVE_LABEL}</button>
-          <button type="button" onClick=${() => leaveEdit(fact.id)}>${CANCEL_LABEL}</button>
+          <button type="submit">${t("aboutMeSave")}</button>
+          <button type="button" onClick=${() => leaveEdit(fact.id)}>${t("cancel")}</button>
         </form>
       </li>
     `
@@ -344,8 +317,8 @@ export function AboutMeDialog (props: AboutMeDialogProps): VNode {
           <button
             type="button"
             data-edit-fact=${fact.id}
-            aria-label=${`${EDIT_LABEL}: ${fact.text}`}
-            onClick=${() => startEdit(fact)}>${EDIT_LABEL}</button>
+            aria-label=${`${t("aboutMeEdit")}: ${fact.text}`}
+            onClick=${() => startEdit(fact)}>${t("aboutMeEdit")}</button>
           ${deleteButton(fact, orderedNotes, ".aboutMeAddNote")}
         </div>
       </li>
@@ -366,14 +339,14 @@ export function AboutMeDialog (props: AboutMeDialogProps): VNode {
       <li key=${`${entry.category}:${entry.text}`} class="aboutMeCard">
         <div class="aboutMeFactBody">
           <p class="aboutMeFactText">${entry.text}</p>
-          <p class="aboutMeFactMeta">${entry.category}</p>
+          <p class="aboutMeFactMeta">${t(FACT_CATEGORY_KEYS[entry.category])}</p>
         </div>
         <div class="aboutMeFactActions">
           <button
             type="button"
             class="aboutMeRestore"
-            aria-label=${`${RESTORE_LABEL}: ${entry.text}`}
-            onClick=${restore}>${RESTORE_LABEL}</button>
+            aria-label=${`${t("aboutMeRestore")}: ${entry.text}`}
+            onClick=${restore}>${t("aboutMeRestore")}</button>
         </div>
       </li>
     `;
@@ -391,7 +364,7 @@ export function AboutMeDialog (props: AboutMeDialogProps): VNode {
     </li>
   `;
 
-  const statusText = suggest.status === "working" ? WORKING_TEXT
+  const statusText = suggest.status === "working" ? t("aboutMeWorking")
     : suggest.status === "error" ? suggest.message
       : suggest.status === "done" && suggest.result.status === "learnt"
         ? suggestionsReadyText(suggest.result.found)
@@ -399,8 +372,8 @@ export function AboutMeDialog (props: AboutMeDialogProps): VNode {
 
   // Only after a run in this dialog session: reopening the dialog shows the date line alone.
   const progressText = suggest.status !== "done" ? ""
-    : suggest.result.status === "learnt" && suggest.result.hasMore ? MORE_WAITING_TEXT
-      : NO_NEW_MESSAGES_TEXT;
+    : suggest.result.status === "learnt" && suggest.result.hasMore ? t("aboutMeMoreWaiting")
+      : t("aboutMeNoNewMessages");
 
   const learntUpToLine = learntUpToText(learntUpTo?.timestamp);
 
@@ -411,18 +384,18 @@ export function AboutMeDialog (props: AboutMeDialogProps): VNode {
           <li key=${`${suggestion.category}:${suggestion.text}`} class="aboutMeCard">
             <div class="aboutMeFactBody">
               <p class="aboutMeFactText">${suggestion.text}</p>
-              <p class="aboutMeFactMeta">${suggestion.category}</p>
+              <p class="aboutMeFactMeta">${t(FACT_CATEGORY_KEYS[suggestion.category])}</p>
             </div>
             <div class="aboutMeFactActions">
               <button
                 type="button"
                 class="aboutMeAccept"
-                aria-label=${`${ACCEPT_LABEL}: ${suggestion.text}`}
-                onClick=${() => settle(suggestion, index, acceptSuggestion)}>${ACCEPT_LABEL}</button>
+                aria-label=${`${t("aboutMeAccept")}: ${suggestion.text}`}
+                onClick=${() => settle(suggestion, index, acceptSuggestion)}>${t("aboutMeAccept")}</button>
               <button
                 type="button"
-                aria-label=${`${REJECT_LABEL}: ${suggestion.text}`}
-                onClick=${() => settle(suggestion, index, rejectSuggestion)}>${REJECT_LABEL}</button>
+                aria-label=${`${t("aboutMeReject")}: ${suggestion.text}`}
+                onClick=${() => settle(suggestion, index, rejectSuggestion)}>${t("aboutMeReject")}</button>
             </div>
           </li>
         `)}
@@ -433,48 +406,48 @@ export function AboutMeDialog (props: AboutMeDialogProps): VNode {
   return html`
     <${Fragment}>
       <div class="aboutMeBody" ref=${bodyRef}>
-        <p class="aboutMeSubtitle">${SUBTITLE_TEXT}</p>
+        <p class="aboutMeSubtitle">${t("aboutMeSubtitle")}</p>
         <section class="aboutMeSection" aria-labelledby="about-me-notes-heading">
-          <h3 id="about-me-notes-heading">${NOTES_HEADING}</h3>
+          <h3 id="about-me-notes-heading">${t("aboutMeNotesHeading")}</h3>
           <form class="aboutMeFactForm aboutMeFormCard" onSubmit=${add}>
-            <label for="about-me-add-category">${CATEGORY_LABEL}</label>
+            <label for="about-me-add-category">${t("aboutMeCategory")}</label>
             ${categorySelect("about-me-add-category", newCategory, setNewCategory)}
-            <label for="about-me-add-text">${NOTE_LABEL}</label>
+            <label for="about-me-add-text">${t("aboutMeNote")}</label>
             <input
               id="about-me-add-text"
               type="text"
               required
               value=${newText}
               onInput=${(event: Event) => setNewText((event.currentTarget as HTMLInputElement).value)} />
-            <button type="submit" class="aboutMeAddNote">${ADD_LABEL}</button>
+            <button type="submit" class="aboutMeAddNote">${t("aboutMeAddNote")}</button>
           </form>
-          ${notes.length === 0 ? html`<p>${NO_NOTES_TEXT}</p>` : byCategory(notes, renderNote)}
+          ${notes.length === 0 ? html`<p>${t("aboutMeNoNotes")}</p>` : byCategory(notes, renderNote)}
         </section>
 
         <section class="aboutMeSection" aria-labelledby="about-me-learnt-heading">
-          <h3 id="about-me-learnt-heading">${LEARNT_HEADING}</h3>
+          <h3 id="about-me-learnt-heading">${t("aboutMeLearntHeading")}</h3>
           ${canSuggest && html`
             <button
               type="button"
               class="aboutMeSuggest"
               aria-disabled=${suggest.status === "working" ? "true" : undefined}
-              onClick=${() => void askForSuggestions()}>${SUGGEST_LABEL}</button>
+              onClick=${() => void askForSuggestions()}>${t("aboutMeSuggest")}</button>
             ${learntUpToLine !== "" && html`<p class="aboutMeFactMeta">${learntUpToLine}</p>`}
             <p class="statusMessage" role="status">${statusText}</p>
             <p class="statusMessage" role="status">${progressText}</p>
             ${pendingList}
           `}
-          ${learnt.length === 0 ? html`<p>${NOTHING_LEARNT_TEXT}</p>` : byCategory(learnt, renderLearnt)}
+          ${learnt.length === 0 ? html`<p>${t("aboutMeNothingLearnt")}</p>` : byCategory(learnt, renderLearnt)}
         </section>
 
         <section class="aboutMeSection" aria-labelledby="about-me-dismissed-heading">
-          <h3 id="about-me-dismissed-heading">${DISMISSED_HEADING}</h3>
-          ${dismissed.length === 0 ? html`<p>${NOTHING_DISMISSED_TEXT}</p>`
+          <h3 id="about-me-dismissed-heading">${t("aboutMeDismissedHeading")}</h3>
+          ${dismissed.length === 0 ? html`<p>${t("aboutMeNothingDismissed")}</p>`
     : html`<ul class="aboutMeFactList" role="list">${dismissed.map(renderDismissed)}</ul>`}
         </section>
       </div>
       <div class="dialogFooter">
-        <button type="button" onClick=${props.onRequestClose}>${CLOSE_LABEL}</button>
+        <button type="button" onClick=${props.onRequestClose}>${t("close")}</button>
       </div>
     <//>
   `;

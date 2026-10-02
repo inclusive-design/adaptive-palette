@@ -20,15 +20,17 @@
  */
 import type { AdaptivePaletteConfigType } from "../../index.d";
 import { getStorage } from "../../core/StorageBackend";
+import { LANGUAGES, LANGUAGE_NAMES, type StringKey } from "../../i18n/I18n";
 
-export type SettingValueType = boolean | number;
+export type SettingValueType = boolean | number | string;
 
 export type SettingDescriptorType = {
   path: string[],          // where the value lives in the config object
-  kind: "boolean" | "number",
-  label: string,           // plain language, shown in the dialog
-  group: string,           // the heading it sits under
+  kind: "boolean" | "number" | "choice",
+  label: StringKey,        // the text shown in the dialog
+  group: StringKey,        // the heading it sits under
   min?: number,            // numbers only
+  choices?: { value: string, text: string }[],  // choices only: each value and its text
   // Useless without a model Ollama can serve, and without prompts in its own section.
   requiresModel?: boolean,
   // Greyed out without a model, like `requiresModel`, but needs no prompts of its own.
@@ -42,60 +44,72 @@ export type SettingDescriptorType = {
  */
 export const SETTING_DESCRIPTORS: SettingDescriptorType[] = [
   {
+    path: ["language"], kind: "choice", label: "settingLanguage", group: "settingGroupGeneral",
+    choices: LANGUAGES.map((code) => ({ value: code, text: LANGUAGE_NAMES[code] }))
+  },
+  {
     path: ["announceSymbolOnInput"], kind: "boolean",
-    label: "Speak each symbol as I add it", group: "General"
+    label: "settingSpeakEachSymbol", group: "settingGroupGeneral"
   },
   {
     path: ["markAiSuggestions"], kind: "boolean", usesModelOutput: true,
-    label: "Mark AI suggestions", group: "General"
+    label: "settingMarkAi", group: "settingGroupGeneral"
   },
   {
     path: ["backquoteGoesBack"], kind: "boolean",
-    label: "Go back with the backquote (`) key", group: "General"
+    label: "settingBackquote", group: "settingGroupGeneral"
   },
   {
     path: ["switchScanning", "enabled"], kind: "boolean",
-    label: "Use two-switch row scanning", group: "General"
+    label: "settingSwitchScanning", group: "settingGroupGeneral"
   },
   {
     path: ["maxRecalledRecords"], kind: "number", min: 0,
-    label: "Messages to remember", group: "General"
+    label: "settingMessagesToRemember", group: "settingGroupGeneral"
   },
   {
     path: ["symbolSearch", "show"], kind: "boolean",
-    label: "Show \"Add Symbol to Message\"", group: "Symbol entry"
+    label: "settingShowSearch", group: "settingGroupSymbolEntry"
   },
   {
     path: ["svgBuilderString", "show"], kind: "boolean",
-    label: "Show SVG-builder string entry", group: "Symbol entry"
+    label: "settingShowSvg", group: "settingGroupSymbolEntry"
   },
   {
     path: ["wordPrediction", "show"], kind: "boolean",
-    label: "Enable word suggestion", group: "Word prediction"
+    label: "settingWordSuggestion", group: "settingGroupWordPrediction"
   },
   {
     path: ["wordPrediction", "maxSuggestions"], kind: "number", min: 1,
     enabledBy: "wordPrediction.show",
-    label: "Suggestions to show", group: "Word prediction"
+    label: "settingSuggestionsToShow", group: "settingGroupWordPrediction"
   },
   {
     path: ["wordPrediction", "enableModelQuery"], kind: "boolean", requiresModel: true,
     enabledBy: "wordPrediction.show",
-    label: "Ask the AI model for suggestions", group: "Word prediction"
+    label: "settingAskModelWords", group: "settingGroupWordPrediction"
   },
   {
     path: ["telegraphicTranslation", "numSentences"], kind: "number", min: 1, requiresModel: true,
-    label: "Sentence choices to offer", group: "Sentences"
+    label: "settingSentenceChoices", group: "settingGroupSentences"
   },
   {
     path: ["telegraphicTranslation", "showBlissSentence"], kind: "boolean", requiresModel: true,
-    label: "Show Bliss symbols above each sentence", group: "Sentences"
+    label: "settingShowBlissSentence", group: "settingGroupSentences"
   },
   {
     path: ["indicatorLabelLookup", "useModelQueryFallback"], kind: "boolean", requiresModel: true,
-    label: "Ask the AI model when no label is found", group: "Indicator labels"
+    label: "settingAskModelIndicator", group: "settingGroupIndicatorLabels"
   }
 ];
+
+/**
+ * The JavaScript type of a setting's value.
+ * @param {SettingDescriptorType} descriptor - The setting.
+ * @returns {string}
+ */
+const valueType = (descriptor: SettingDescriptorType): string =>
+  descriptor.kind === "choice" ? "string" : descriptor.kind;
 
 /**
  * The key a setting is stored under, and the key the dialog's form state uses.
@@ -137,7 +151,7 @@ export function currentValue (
 ): SettingValueType | undefined {
   const parent = parentOf(config, descriptor.path);
   const value = parent?.[descriptor.path[descriptor.path.length - 1]];
-  return typeof value === descriptor.kind ? value as SettingValueType : undefined;
+  return typeof value === valueType(descriptor) ? value as SettingValueType : undefined;
 }
 
 const isFilledPrompt = (value: unknown): boolean => typeof value === "string" && value.trim().length > 0;
@@ -175,11 +189,14 @@ export function isOffered (
  * @returns {boolean}
  */
 function isValidValue (descriptor: SettingDescriptorType, value: unknown): boolean {
-  if (typeof value !== descriptor.kind) {
+  if (typeof value !== valueType(descriptor)) {
     return false;
   }
   if (descriptor.kind === "number") {
     return Number.isInteger(value) && (value as number) >= (descriptor.min ?? 0);
+  }
+  if (descriptor.kind === "choice") {
+    return descriptor.choices?.some((choice) => choice.value === value) === true;
   }
   return true;
 }

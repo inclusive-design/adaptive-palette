@@ -12,12 +12,8 @@
 
 import { VNode } from "preact";
 import { html } from "htm/preact";
+import { t } from "../i18n/I18n";
 import "./AiBadge.scss";
-
-/**
- * The badge's visible text. Short, because it sits in a palette-sized cell.
- */
-export const AI_BADGE_TEXT = "AI";
 
 /**
  * The accessible name for a suggestion a model made. The badge is hidden from screen readers
@@ -26,7 +22,7 @@ export const AI_BADGE_TEXT = "AI";
  * @returns {string}
  */
 export function aiSuggestionLabel (text: string): string {
-  return `AI suggestion, ${text}`;
+  return t("aiSuggestion", { text });
 }
 
 /**
@@ -38,5 +34,5 @@ export function aiSuggestionLabel (text: string): string {
  * @returns {VNode}
  */
 export function AiBadge (): VNode {
-  return html`<span class="aiBadge" aria-hidden="true">${AI_BADGE_TEXT}</span>`;
+  return html`<span class="aiBadge" aria-hidden="true">${t("aiBadge")}</span>`;
 }

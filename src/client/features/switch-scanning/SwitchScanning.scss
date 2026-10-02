@@ -41,7 +41,7 @@ $scan-yellow: #ffd400;
 
   /* The arrow is a cue that needs no reading. On short rows the sign may stick out of the row. */
   &[data-exit]::after {
-    content: "\21A9\FE0E  Exit row";
+    content: "\21A9\FE0E  " attr(data-exit-label);
     position: absolute;
     top: 50%;
     left: 50%;

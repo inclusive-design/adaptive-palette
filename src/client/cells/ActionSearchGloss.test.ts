@@ -17,11 +17,9 @@ import { html } from "htm/preact";
 
 import { changeEncodingContents } from "../state/GlobalData";
 import { setEditGuard } from "../core/MessageEdit";
-import {
-  ActionSearchGloss, SEARCH_FIELD_LABEL, SUBMIT_LABEL, CLEAR_LABEL,
-  LABEL_FIELD_LABEL, ADD_LABEL, CLOSE_LABEL, NO_SELECTION_STATUS, MAX_RESULTS
-} from "./ActionSearchGloss";
+import { ActionSearchGloss, MAX_RESULTS } from "./ActionSearchGloss";
 import { mockedAnnounceIfEnabled, mockedSpeak } from "../testUtils/SpeechUtilsMock";
+import { en } from "../i18n/en";
 
 vi.mock("../utils/SpeechUtils");
 
@@ -32,9 +30,9 @@ vi.mock("../utils/SpeechUtils");
  * Several tests index results positionally, so the term must match at least two symbols.
  */
 const searchFor = async (user: ReturnType<typeof userEvent.setup>, term: string) => {
-  const searchInput = screen.getByRole("textbox", { name: SEARCH_FIELD_LABEL });
+  const searchInput = screen.getByRole("textbox", { name: en.searchFindWord });
   await user.type(searchInput, term);
-  await user.click(screen.getByRole("button", { name: SUBMIT_LABEL }));
+  await user.click(screen.getByRole("button", { name: en.searchSubmit }));
   return searchInput;
 };
 
@@ -49,17 +47,17 @@ describe("ActionSearchGloss", () => {
   test("renders the search form and footer controls", () => {
     render(html`<${ActionSearchGloss} onRequestClose=${() => {}} />`);
 
-    expect(screen.getByRole("textbox", { name: SEARCH_FIELD_LABEL })).toHaveValue("");
-    expect(screen.getByRole("button", { name: SUBMIT_LABEL })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: CLEAR_LABEL })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: ADD_LABEL })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: CLOSE_LABEL })).toBeInTheDocument();
-    expect(screen.getByRole("textbox", { name: LABEL_FIELD_LABEL })).toBeInTheDocument();
+    expect(screen.getByRole("textbox", { name: en.searchFindWord })).toHaveValue("");
+    expect(screen.getByRole("button", { name: en.searchSubmit })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: en.searchClear })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: en.addToMessage })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: en.close })).toBeInTheDocument();
+    expect(screen.getByRole("textbox", { name: en.labelField })).toBeInTheDocument();
   });
 
   test("Add to message is unavailable until something is selected", () => {
     render(html`<${ActionSearchGloss} onRequestClose=${() => {}} />`);
-    expect(screen.getByRole("button", { name: ADD_LABEL })).toHaveAttribute("aria-disabled", "true");
+    expect(screen.getByRole("button", { name: en.addToMessage })).toHaveAttribute("aria-disabled", "true");
   });
 
   test("announces how many symbols were found", async () => {
@@ -112,9 +110,9 @@ describe("ActionSearchGloss", () => {
     await user.click(firstResult);
 
     expect(firstResult).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByRole("button", { name: ADD_LABEL })).toHaveAttribute("aria-disabled", "false");
+    expect(screen.getByRole("button", { name: en.addToMessage })).toHaveAttribute("aria-disabled", "false");
 
-    const labelField = screen.getByRole<HTMLInputElement>("textbox", { name: LABEL_FIELD_LABEL });
+    const labelField = screen.getByRole<HTMLInputElement>("textbox", { name: en.labelField });
     expect(resultText).toContain(labelField.value);
   }, 20000);
 
@@ -124,7 +122,7 @@ describe("ActionSearchGloss", () => {
 
     await searchFor(user, "fish");
     const results = screen.getAllByRole("button", { pressed: false });
-    const labelField = screen.getByRole<HTMLInputElement>("textbox", { name: LABEL_FIELD_LABEL });
+    const labelField = screen.getByRole<HTMLInputElement>("textbox", { name: en.labelField });
 
     await user.click(results[0]);
     const firstDraft = labelField.value;
@@ -142,10 +140,10 @@ describe("ActionSearchGloss", () => {
     await searchFor(user, "fish");
     await user.click(screen.getAllByRole("button", { pressed: false })[0]);
 
-    const labelField = screen.getByRole<HTMLInputElement>("textbox", { name: LABEL_FIELD_LABEL });
+    const labelField = screen.getByRole<HTMLInputElement>("textbox", { name: en.labelField });
     const expectedLabel = labelField.value;
 
-    await user.click(screen.getByRole("button", { name: ADD_LABEL }));
+    await user.click(screen.getByRole("button", { name: en.addToMessage }));
 
     expect(changeEncodingContents.value.payloads).toHaveLength(1);
     expect(changeEncodingContents.value.payloads[0].label).toEqual(expectedLabel);
@@ -166,10 +164,10 @@ describe("ActionSearchGloss", () => {
     await searchFor(user, "fish");
     await user.click(screen.getAllByRole("button", { pressed: false })[0]);
 
-    const labelField = screen.getByRole("textbox", { name: LABEL_FIELD_LABEL });
+    const labelField = screen.getByRole("textbox", { name: en.labelField });
     await user.clear(labelField);
     await user.type(labelField, "my fish");
-    await user.click(screen.getByRole("button", { name: ADD_LABEL }));
+    await user.click(screen.getByRole("button", { name: en.addToMessage }));
 
     expect(changeEncodingContents.value.payloads[0].label).toEqual("my fish");
   }, 20000);
@@ -182,10 +180,10 @@ describe("ActionSearchGloss", () => {
     await searchFor(user, "fish");
     await user.click(screen.getAllByRole("button", { pressed: false })[0]);
 
-    const labelField = screen.getByRole("textbox", { name: LABEL_FIELD_LABEL });
+    const labelField = screen.getByRole("textbox", { name: en.labelField });
     await user.clear(labelField);
     await user.type(labelField, "  my fish  ");
-    await user.click(screen.getByRole("button", { name: ADD_LABEL }));
+    await user.click(screen.getByRole("button", { name: en.addToMessage }));
 
     expect(changeEncodingContents.value.payloads[0].label).toEqual("my fish");
   }, 20000);
@@ -199,8 +197,8 @@ describe("ActionSearchGloss", () => {
     await searchFor(user, "fish");
     await user.click(screen.getAllByRole("button", { pressed: false })[0]);
 
-    await user.clear(screen.getByRole("textbox", { name: LABEL_FIELD_LABEL }));
-    await user.click(screen.getByRole("button", { name: ADD_LABEL }));
+    await user.clear(screen.getByRole("textbox", { name: en.labelField }));
+    await user.click(screen.getByRole("button", { name: en.addToMessage }));
 
     expect(changeEncodingContents.value.payloads[0].label).toEqual("");
     expect(await screen.findByRole("status")).toMatchTextContent(/^Symbol added to message$/);
@@ -214,14 +212,14 @@ describe("ActionSearchGloss", () => {
     const searchInput = await searchFor(user, "fish");
     const resultCount = screen.getAllByRole("button", { pressed: false }).length;
     await user.click(screen.getAllByRole("button", { pressed: false })[0]);
-    await user.click(screen.getByRole("button", { name: ADD_LABEL }));
+    await user.click(screen.getByRole("button", { name: en.addToMessage }));
 
     // Results survive, because adding two symbols from one search is a normal sequence.
     expect(screen.getAllByRole("button", { pressed: false })).toHaveLength(resultCount);
     // Selection cleared, so a slow switch release cannot add the same symbol twice.
     expect(screen.queryAllByRole("button", { pressed: true })).toHaveLength(0);
-    expect(screen.getByRole("button", { name: ADD_LABEL })).toHaveAttribute("aria-disabled", "true");
-    expect(screen.getByRole<HTMLInputElement>("textbox", { name: LABEL_FIELD_LABEL })).toHaveValue("");
+    expect(screen.getByRole("button", { name: en.addToMessage })).toHaveAttribute("aria-disabled", "true");
+    expect(screen.getByRole<HTMLInputElement>("textbox", { name: en.labelField })).toHaveValue("");
     // Focus must not rest on a control that just became unavailable.
     expect(searchInput).toHaveFocus();
     expect(await screen.findByRole("status")).toMatchTextContent(/added to message/);
@@ -236,13 +234,13 @@ describe("ActionSearchGloss", () => {
     await searchFor(user, "fish");
     await user.click(screen.getAllByRole("button", { pressed: false })[0]);
     setEditGuard(() => true);
-    await user.click(screen.getByRole("button", { name: ADD_LABEL }));
+    await user.click(screen.getByRole("button", { name: en.addToMessage }));
 
     expect(changeEncodingContents.value.payloads).toHaveLength(0);
     expect(screen.getByRole("status")).toHaveTextContent("");
     // The symbol is still selected, so the user can add it again if the edit is lost.
     expect(screen.queryAllByRole("button", { pressed: true })).toHaveLength(1);
-    expect(screen.getByRole<HTMLInputElement>("textbox", { name: LABEL_FIELD_LABEL })).not.toHaveValue("");
+    expect(screen.getByRole<HTMLInputElement>("textbox", { name: en.labelField })).not.toHaveValue("");
   }, 20000);
 
   test("a second search result appends rather than replacing", async () => {
@@ -251,9 +249,9 @@ describe("ActionSearchGloss", () => {
 
     await searchFor(user, "fish");
     await user.click(screen.getAllByRole("button", { pressed: false })[0]);
-    await user.click(screen.getByRole("button", { name: ADD_LABEL }));
+    await user.click(screen.getByRole("button", { name: en.addToMessage }));
     await user.click(screen.getAllByRole("button", { pressed: false })[1]);
-    await user.click(screen.getByRole("button", { name: ADD_LABEL }));
+    await user.click(screen.getByRole("button", { name: en.addToMessage }));
 
     expect(changeEncodingContents.value.payloads).toHaveLength(2);
   }, 20000);
@@ -262,13 +260,13 @@ describe("ActionSearchGloss", () => {
     const user = userEvent.setup();
     render(html`<${ActionSearchGloss} onRequestClose=${() => {}} />`);
 
-    await user.click(screen.getByRole("button", { name: ADD_LABEL }));
+    await user.click(screen.getByRole("button", { name: en.addToMessage }));
 
     expect(changeEncodingContents.value.payloads).toHaveLength(0);
     expect(mockedSpeak).not.toHaveBeenCalled();
     expect(mockedAnnounceIfEnabled).not.toHaveBeenCalled();
     // The button keeps focus via `aria-disabled`, so pressing it must not be silent.
-    expect(await screen.findByRole("status")).toHaveTextContent(NO_SELECTION_STATUS);
+    expect(await screen.findByRole("status")).toHaveTextContent(en.searchNoSelection);
   });
 
   test("Clear resets the search, results, and selection", async () => {
@@ -277,12 +275,12 @@ describe("ActionSearchGloss", () => {
 
     const searchInput = await searchFor(user, "fish");
     await user.click(screen.getAllByRole("button", { pressed: false })[0]);
-    await user.click(screen.getByRole("button", { name: CLEAR_LABEL }));
+    await user.click(screen.getByRole("button", { name: en.searchClear }));
 
     expect(searchInput).toHaveValue("");
     expect(screen.queryAllByRole("button", { pressed: false })).toHaveLength(0);
-    expect(screen.getByRole("button", { name: ADD_LABEL })).toHaveAttribute("aria-disabled", "true");
-    expect(screen.getByRole("textbox", { name: LABEL_FIELD_LABEL })).toHaveValue("");
+    expect(screen.getByRole("button", { name: en.addToMessage })).toHaveAttribute("aria-disabled", "true");
+    expect(screen.getByRole("textbox", { name: en.labelField })).toHaveValue("");
   }, 20000);
 
   test("Close asks the dialog to dismiss", async () => {
@@ -290,7 +288,7 @@ describe("ActionSearchGloss", () => {
     const user = userEvent.setup();
     render(html`<${ActionSearchGloss} onRequestClose=${onRequestClose} />`);
 
-    await user.click(screen.getByRole("button", { name: CLOSE_LABEL }));
+    await user.click(screen.getByRole("button", { name: en.close }));
     expect(onRequestClose).toHaveBeenCalled();
   });
 });

@@ -20,6 +20,7 @@ import { queryChat } from "../../core/OllamaApi";
 import { attributesPromptText } from "../message-attributes/MessageAttributesState";
 import { aboutMePromptText } from "../about-me/AboutMeState";
 import { ResolutionRungType, SymbolCompositionType, SymbolEncodingType } from "../../index.d";
+import { t } from "../../i18n/I18n";
 
 /*
  * Common sentence starters, offered for the first word until the user has saved a message of
@@ -51,8 +52,6 @@ export const W_MODEL = 1 - W_HISTORY;
 // and so on to a floor of 0. A plain chat reply carries no probabilities, so rank stands in
 // for them.
 const MODEL_RANK_DECAY = 0.1;
-
-export const NOT_CONFIGURED_MESSAGE = "Model-backed word prediction is not configured. Check the wordPrediction section of config.json.";
 
 /*
  * How often a label was used, and the position of its most recent use. Recency breaks ties
@@ -376,7 +375,7 @@ export function rankModelWords (words: string[], excludedLabels: string[], limit
 export async function requestModelWords (message: string, numWords: number, abortSignal?: AbortSignal): Promise<string[]> {
   const config = adaptivePaletteGlobals.config.wordPrediction;
   if (!config.enableModelQuery) {
-    throw new Error(NOT_CONFIGURED_MESSAGE);
+    throw new Error(t("predictionNotConfigured"));
   }
   const model = pickModel(config.model);
   const values = {

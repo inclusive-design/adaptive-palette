@@ -10,6 +10,8 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+import type { Language } from "./i18n/I18n";
+
 // Symbol composition can be either a symbol ID defined in bliss_symbol_explanations.json,
 // for example 1433, or an array of symbol IDs and/or strings that represent the composition
 // of a symbol, for example [1433, "/", 1234].
@@ -185,6 +187,8 @@ export type SwitchScanningConfigType = {
 };
 
 export type AdaptivePaletteConfigType = {
+  // The UI language. `?lang=` in the page URL overrides it at start-up.
+  language: Language,
   // How many of the newest stored messages are read back for word prediction and for
   // recalling a sentence. Nothing is ever deleted; this caps what is read, not what is kept.
   // Zero turns the history off: nothing is read and nothing is written.

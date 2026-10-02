@@ -18,11 +18,9 @@ import { vi } from "vitest";
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { makeDefaultConfig } from "../../core/Config";
 import { getModelNames, pullModel } from "../../core/OllamaApi";
-import {
-  CANCEL_LABEL, CONTINUE_LABEL, DOWNLOAD_LABEL, FirstRunSetup, INSTALL_LABEL,
-  MISSING_MODEL_TEXT, RETRY_LABEL
-} from "./FirstRunSetup";
+import { FirstRunSetup, MISSING_MODEL_TEXT } from "./FirstRunSetup";
 import { reloadPage, setupDismissedSignal } from "./SetupState";
+import { en } from "../../i18n/en";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../../core/OllamaApi")>()),
@@ -71,17 +69,17 @@ describe("FirstRunSetup", (): void => {
     render(html`<${FirstRunSetup} />`);
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: INSTALL_LABEL })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: en.setupInstall })).toHaveAttribute(
       "href", "https://ollama.com/download"
     );
-    expect(screen.getByRole("button", { name: RETRY_LABEL })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: en.setupRetry })).toBeInTheDocument();
   });
 
   test("continuing without AI features closes it and leaves the app usable", async (): Promise<void> => {
     adaptivePaletteGlobals.models = [];
     render(html`<${FirstRunSetup} />`);
 
-    await userEvent.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.setupContinue }));
 
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
     expect(mockedReloadPage).not.toHaveBeenCalled();
@@ -92,7 +90,7 @@ describe("FirstRunSetup", (): void => {
     mockedGetModelNames.mockResolvedValue(["gemma4:12b"]);
     render(html`<${FirstRunSetup} />`);
 
-    await userEvent.click(screen.getByRole("button", { name: RETRY_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.setupRetry }));
 
     await waitFor(() => expect(mockedReloadPage).toHaveBeenCalledTimes(1));
   });
@@ -102,7 +100,7 @@ describe("FirstRunSetup", (): void => {
     mockedGetModelNames.mockResolvedValue([]);
     render(html`<${FirstRunSetup} />`);
 
-    await userEvent.click(screen.getByRole("button", { name: RETRY_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.setupRetry }));
 
     await waitFor(() => expect(mockedGetModelNames).toHaveBeenCalled());
     expect(screen.getByRole("dialog")).toBeInTheDocument();
@@ -114,12 +112,12 @@ describe("FirstRunSetup", (): void => {
     mockedGetModelNames.mockResolvedValue(["llama3:8b"]);
     render(html`<${FirstRunSetup} />`);
 
-    await userEvent.click(screen.getByRole("button", { name: RETRY_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.setupRetry }));
 
     await waitFor(() =>
       expect(screen.getByRole("dialog")).toMatchTextContent(MISSING_MODEL_TEXT(["gemma4:12b"]))
     );
-    expect(screen.getByRole("button", { name: DOWNLOAD_LABEL })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: en.setupDownload })).toBeInTheDocument();
     expect(mockedReloadPage).not.toHaveBeenCalled();
   });
 
@@ -128,7 +126,7 @@ describe("FirstRunSetup", (): void => {
     render(html`<${FirstRunSetup} />`);
 
     expect(screen.getByRole("dialog")).toMatchTextContent("gemma4:12b");
-    expect(screen.getByRole("button", { name: DOWNLOAD_LABEL })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: en.setupDownload })).toBeInTheDocument();
   });
 
   test("shows how far the download has got, then reloads", async (): Promise<void> => {
@@ -141,7 +139,7 @@ describe("FirstRunSetup", (): void => {
     mockedGetModelNames.mockResolvedValue(["gemma4:12b"]);
     render(html`<${FirstRunSetup} />`);
 
-    await userEvent.click(screen.getByRole("button", { name: DOWNLOAD_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.setupDownload }));
 
     await waitFor(() => expect(screen.getByRole("progressbar")).toHaveValue(25));
     await waitFor(() => expect(mockedReloadPage).toHaveBeenCalledTimes(1));
@@ -153,7 +151,7 @@ describe("FirstRunSetup", (): void => {
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     render(html`<${FirstRunSetup} />`);
 
-    await userEvent.click(screen.getByRole("button", { name: DOWNLOAD_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.setupDownload }));
 
     await waitFor(() => expect(screen.getByRole("alert")).toBeInTheDocument());
     expect(screen.getByRole("dialog")).toBeInTheDocument();
@@ -170,12 +168,12 @@ describe("FirstRunSetup", (): void => {
     mockedPullModel.mockImplementation(() => new Promise<void>(() => {}));
     render(html`<${FirstRunSetup} />`);
 
-    await userEvent.click(screen.getByRole("button", { name: DOWNLOAD_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.setupDownload }));
 
     await waitFor(() =>
-      expect(screen.getByRole("button", { name: CANCEL_LABEL })).toBeInTheDocument()
+      expect(screen.getByRole("button", { name: en.cancel })).toBeInTheDocument()
     );
-    expect(screen.getByRole("button", { name: CONTINUE_LABEL })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: en.setupContinue })).toBeInTheDocument();
   });
 
   test("still offers to continue without AI features after a failed download", async (): Promise<void> => {
@@ -184,10 +182,10 @@ describe("FirstRunSetup", (): void => {
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     render(html`<${FirstRunSetup} />`);
 
-    await userEvent.click(screen.getByRole("button", { name: DOWNLOAD_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.setupDownload }));
 
     await waitFor(() => expect(screen.getByRole("alert")).toBeInTheDocument());
-    expect(screen.getByRole("button", { name: CONTINUE_LABEL })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: en.setupContinue })).toBeInTheDocument();
     consoleErrorSpy.mockRestore();
   });
 
@@ -198,10 +196,10 @@ describe("FirstRunSetup", (): void => {
     );
     render(html`<${FirstRunSetup} />`);
 
-    await userEvent.click(screen.getByRole("button", { name: DOWNLOAD_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.setupDownload }));
 
     await waitFor(() =>
-      expect(screen.getByRole("button", { name: DOWNLOAD_LABEL })).toBeInTheDocument()
+      expect(screen.getByRole("button", { name: en.setupDownload })).toBeInTheDocument()
     );
     expect(screen.queryByRole("alert")).toBeNull();
   });

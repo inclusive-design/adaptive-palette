@@ -17,9 +17,8 @@ import { html } from "htm/preact";
 
 import { changeEncodingContents } from "../state/GlobalData";
 import { setEditGuard } from "../core/MessageEdit";
-import {
-  ActionSvgEntryField, SUBMIT_VALUE, CLOSE_LABEL
-} from "./ActionSvgEntryField";
+import { ActionSvgEntryField } from "./ActionSvgEntryField";
+import { en } from "../i18n/en";
 
 // `B124` satisfies the `B\d+` token in the `bstrToComposition` validator and parses to
 // `[124]`, so the success path is genuinely exercised.
@@ -44,8 +43,8 @@ describe("ActionSvgEntryField", () => {
     expect(labelInput).toBeInTheDocument();
     expect(labelInput).toHaveValue("");
 
-    expect(screen.getByRole("button", { name: SUBMIT_VALUE })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: CLOSE_LABEL })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: en.addToMessage })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: en.close })).toBeInTheDocument();
   });
 
   test("Displays error message when an invalid builder string is submitted", async () => {
@@ -55,7 +54,7 @@ describe("ActionSvgEntryField", () => {
     const builderInput = screen.getByLabelText(/Builder string:/i);
 
     await user.type(builderInput, "invalid-string");
-    await user.click(screen.getByRole("button", { name: SUBMIT_VALUE }));
+    await user.click(screen.getByRole("button", { name: en.addToMessage }));
 
     expect(await screen.findByText("Invalid builder string")).toBeInTheDocument();
     expect(builderInput).toHaveAttribute("aria-invalid", "true");
@@ -72,7 +71,7 @@ describe("ActionSvgEntryField", () => {
 
     await user.type(builderInput, VALID_BUILDER_STRING);
     await user.type(labelInput, "dog");
-    await user.click(screen.getByRole("button", { name: SUBMIT_VALUE }));
+    await user.click(screen.getByRole("button", { name: en.addToMessage }));
 
     expect(changeEncodingContents.value.payloads).toHaveLength(1);
     expect(changeEncodingContents.value.payloads[0].label).toEqual("dog");
@@ -90,9 +89,9 @@ describe("ActionSvgEntryField", () => {
     const builderInput = screen.getByLabelText(/Builder string:/i);
 
     await user.type(builderInput, VALID_BUILDER_STRING);
-    await user.click(screen.getByRole("button", { name: SUBMIT_VALUE }));
+    await user.click(screen.getByRole("button", { name: en.addToMessage }));
     await user.type(builderInput, VALID_BUILDER_STRING);
-    await user.click(screen.getByRole("button", { name: SUBMIT_VALUE }));
+    await user.click(screen.getByRole("button", { name: en.addToMessage }));
 
     expect(changeEncodingContents.value.payloads).toHaveLength(2);
   });
@@ -106,7 +105,7 @@ describe("ActionSvgEntryField", () => {
     const builderInput = screen.getByLabelText(/Builder string:/i);
     await user.type(builderInput, VALID_BUILDER_STRING);
     setEditGuard(() => true);
-    await user.click(screen.getByRole("button", { name: SUBMIT_VALUE }));
+    await user.click(screen.getByRole("button", { name: en.addToMessage }));
 
     expect(changeEncodingContents.value.payloads).toHaveLength(0);
     expect(screen.getByRole("status")).toHaveTextContent("");
@@ -121,7 +120,7 @@ describe("ActionSvgEntryField", () => {
 
     await user.type(screen.getByLabelText(/Builder string:/i), VALID_BUILDER_STRING);
     await user.type(screen.getByLabelText(/^Label:/i), "  dog  ");
-    await user.click(screen.getByRole("button", { name: SUBMIT_VALUE }));
+    await user.click(screen.getByRole("button", { name: en.addToMessage }));
 
     expect(changeEncodingContents.value.payloads[0].label).toEqual("dog");
   });
@@ -132,7 +131,7 @@ describe("ActionSvgEntryField", () => {
     render(html`<${ActionSvgEntryField} onRequestClose=${() => {}} />`);
 
     await user.type(screen.getByLabelText(/Builder string:/i), VALID_BUILDER_STRING);
-    await user.click(screen.getByRole("button", { name: SUBMIT_VALUE }));
+    await user.click(screen.getByRole("button", { name: en.addToMessage }));
 
     expect(await screen.findByRole("status")).toMatchTextContent(/Symbol added to message/);
   });
@@ -142,7 +141,7 @@ describe("ActionSvgEntryField", () => {
     const user = userEvent.setup();
     render(html`<${ActionSvgEntryField} onRequestClose=${onRequestClose} />`);
 
-    await user.click(screen.getByRole("button", { name: CLOSE_LABEL }));
+    await user.click(screen.getByRole("button", { name: en.close }));
     expect(onRequestClose).toHaveBeenCalled();
   });
 });

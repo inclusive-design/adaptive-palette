@@ -20,22 +20,19 @@ import {
   applyStoredSettings, currentValue, isOffered, saveSettings, settingKey
 } from "./SettingsSchema";
 import { EraseAllData } from "./EraseAllData";
-import { HOSTED_MESSAGE, isLocalHost } from "../../core/OllamaApi";
+import { isLocalHost } from "../../core/OllamaApi";
 import { hydrateMessageLog } from "../../core/MessageLog";
+import { languageSignal, t } from "../../i18n/I18n";
 import "./SettingsDialog.scss";
 
 export const SETTINGS_FORM_ID = "adjustSettingsForm";
-export const SAVE_LABEL = "Save and close";
-export const CLOSE_LABEL = "Close";
-export const MODEL_NOTE = "Start Ollama to use this.";
-export const FAILURE_MESSAGE = "The settings could not be saved. This browser is not letting the app use its storage.";
 
 /**
  * The note on a setting its section's switch has turned off.
  * @param {string} label - The label of the switch that turns it off.
  * @returns {string}
  */
-export const dependentNote = (label: string): string => `Turn on "${label}" to use this.`;
+export const dependentNote = (label: string): string => t("settingsDependentNote", { label });
 
 // A number is held as the text the user typed, so a half-typed or emptied field is not
 // silently turned into a number. The form's own validation is what rejects those.
@@ -59,7 +56,7 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
     const initial: Record<string, FormValueType> = {};
     shown.forEach((descriptor) => {
       const value = currentValue(config, descriptor);
-      initial[settingKey(descriptor)] = descriptor.kind === "number" ? String(value) : value as boolean;
+      initial[settingKey(descriptor)] = descriptor.kind === "number" ? String(value) : value as boolean | string;
     });
     return initial;
   });
@@ -89,12 +86,12 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
       const master = SETTING_DESCRIPTORS.find(
         (candidate) => settingKey(candidate) === descriptor.enabledBy
       );
-      return dependentNote(master?.label ?? "");
+      return dependentNote(master ? t(master.label) : "");
     }
     // On the hosted site there is no Ollama to start.
     const needsModel = descriptor.requiresModel === true || descriptor.usesModelOutput === true;
     if (needsModel && models.length === 0) {
-      return isLocalHost() ? MODEL_NOTE : HOSTED_MESSAGE;
+      return isLocalHost() ? t("settingsModelNote") : t("hosted");
     }
     return undefined;
   };
@@ -119,7 +116,7 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
     const toSave: Record<string, SettingValueType> = {};
     shown.forEach((descriptor) => {
       const key = settingKey(descriptor);
-      toSave[key] = descriptor.kind === "number" ? Number(values[key]) : values[key] as boolean;
+      toSave[key] = descriptor.kind === "number" ? Number(values[key]) : values[key];
     });
     // A failed write leaves the dialog open with its reason shown. Closing anyway would look
     // like the settings had taken.
@@ -128,6 +125,7 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
       return;
     }
     adaptivePaletteGlobals.config = await applyStoredSettings(fileConfig);
+    languageSignal.value = adaptivePaletteGlobals.config.language;
     // "Messages to remember" may have changed.
     await hydrateMessageLog();
     settingsSavedCount.value++;
@@ -146,7 +144,7 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
     const note = noteFor(descriptor);
     const unavailable = note !== undefined;
     const rowClass = unavailable ? "settingsRow settingsRowUnavailable" : "settingsRow";
-    const label = html`<label for=${controlId}>${descriptor.label}</label>`;
+    const label = html`<label for=${controlId}>${t(descriptor.label)}</label>`;
 
     // `aria-disabled` rather than `disabled`: a disabled control drops out of the tab
     // order, which costs a switch or eye-gaze user their scan position and puts the note
@@ -166,7 +164,18 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
           onClick=${unavailable ? (event: Event) => event.preventDefault() : undefined}
           onChange=${(event: Event) => setValue(key, (event.currentTarget as HTMLInputElement).checked)} />
       `
-      : html`
+      : descriptor.kind === "choice"
+        ? html`
+        <select
+          ...${shared}
+          value=${values[key] as string}
+          onChange=${(event: Event) => setValue(key, (event.currentTarget as HTMLSelectElement).value)}>
+          ${descriptor.choices?.map((choice) => html`
+            <option key=${choice.value} value=${choice.value} lang=${choice.value}>${choice.text}</option>
+          `)}
+        </select>
+      `
+        : html`
         <input
           ...${shared}
           type="number"
@@ -200,7 +209,7 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
       onSubmit=${(event: Event) => void save(event)}>
       ${groups.map((group) => html`
         <fieldset class="settingsGroup" key=${group}>
-          <legend>${group}</legend>
+          <legend>${t(group)}</legend>
           ${shown.filter((descriptor) => descriptor.group === group).map(renderSetting)}
         </fieldset>
       `)}
@@ -215,8 +224,8 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
         type="submit"
         class="settingsSave"
         aria-disabled=${isErased ? "true" : undefined}
-        form=${SETTINGS_FORM_ID}>${SAVE_LABEL}</button>
-      <button type="button" onClick=${props.onRequestClose}>${CLOSE_LABEL}</button>
+        form=${SETTINGS_FORM_ID}>${t("settingsSave")}</button>
+      <button type="button" onClick=${props.onRequestClose}>${t("close")}</button>
     </div>
   `;
 
@@ -227,7 +236,7 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
     <${Fragment}>
       ${form}
       ${isLocalHost() && html`<${EraseAllData} onErased=${() => setIsErased(true)} />`}
-      ${hasFailed && html`<p class="settingsFailure" role="alert">${FAILURE_MESSAGE}</p>`}
+      ${hasFailed && html`<p class="settingsFailure" role="alert">${t("settingsFailed")}</p>`}
       ${footer}
     <//>
   `;
