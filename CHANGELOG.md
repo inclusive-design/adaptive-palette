@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.3.0](https://github.com/inclusive-design/adaptive-palette/compare/v0.2.1...v0.3.0) (2026-10-02)
+
+
+### Features
+
+* add the language setting and support both English and Swedish for UI texts (resolves [#252](https://github.com/inclusive-design/adaptive-palette/issues/252)) ([#255](https://github.com/inclusive-design/adaptive-palette/issues/255)) ([d602bef](https://github.com/inclusive-design/adaptive-palette/commit/d602bef0de1890865f32cbc3730afe9ccf9045ee))
+* implement the flexible palette layout ([#228](https://github.com/inclusive-design/adaptive-palette/issues/228)) ([e6b62fb](https://github.com/inclusive-design/adaptive-palette/commit/e6b62fbba0d8504cc4498fd4a83fa512d5634224))
+* learn about the user over time (resolves [#237](https://github.com/inclusive-design/adaptive-palette/issues/237)) ([#238](https://github.com/inclusive-design/adaptive-palette/issues/238)) ([d1434cc](https://github.com/inclusive-design/adaptive-palette/commit/d1434cc4cade9ab417605114a5466d12af2a8730))
+* move "exit row" to the last item in a row ([7940270](https://github.com/inclusive-design/adaptive-palette/commit/7940270538ade0d75fb4938f42d3294a47b0f3c6))
+* move "exit row" to the last item in a row (resolves [#250](https://github.com/inclusive-design/adaptive-palette/issues/250)) ([#251](https://github.com/inclusive-design/adaptive-palette/issues/251)) ([7940270](https://github.com/inclusive-design/adaptive-palette/commit/7940270538ade0d75fb4938f42d3294a47b0f3c6))
+* support two switch row scanning (resolves [#244](https://github.com/inclusive-design/adaptive-palette/issues/244)) ([#246](https://github.com/inclusive-design/adaptive-palette/issues/246)) ([93dc348](https://github.com/inclusive-design/adaptive-palette/commit/93dc34829b7c1f31026cf4ad4270215bc48fcc7c))
+* update bliss_symbol_explanations.json and palette labels with swedish gloss ([714bf21](https://github.com/inclusive-design/adaptive-palette/commit/714bf2153d013e222736550b39e325c2cb9162aa))
+* update bliss_symbol_explanations.json and palette labels with swedish gloss (resolves [#253](https://github.com/inclusive-design/adaptive-palette/issues/253)) ([#256](https://github.com/inclusive-design/adaptive-palette/issues/256)) ([714bf21](https://github.com/inclusive-design/adaptive-palette/commit/714bf2153d013e222736550b39e325c2cb9162aa))
+* verify and fix keyboard, pointer and touch access (resolves [#241](https://github.com/inclusive-design/adaptive-palette/issues/241)) ([#242](https://github.com/inclusive-design/adaptive-palette/issues/242)) ([feec621](https://github.com/inclusive-design/adaptive-palette/commit/feec62177dd828328b8c74448814df0b13996feb))
+
+
+### Bug Fixes
+
+* fix the issue that settings cannot be changed on the public website (resolves [#248](https://github.com/inclusive-design/adaptive-palette/issues/248)) ([#249](https://github.com/inclusive-design/adaptive-palette/issues/249)) ([01d7b1d](https://github.com/inclusive-design/adaptive-palette/commit/01d7b1d8914cb405a7eda980dcbfa665710b3e14))
+* not to save user data on the public website version ([#233](https://github.com/inclusive-design/adaptive-palette/issues/233)) ([f64a4c6](https://github.com/inclusive-design/adaptive-palette/commit/f64a4c6057d354e91fc96f9797a95566307ad9e3))
+
 ## [0.2.1](https://github.com/inclusive-design/adaptive-palette/compare/v0.2.0...v0.2.1) (2026-09-11)
 
 
