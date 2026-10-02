@@ -19,14 +19,13 @@ import { adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal }
 import { initAdaptivePaletteGlobals } from "../../core/InitGlobals";
 import { DISABLED_MODEL_QUERY } from "../../core/Config";
 import { saveMessageRecord } from "../../core/MessageLog";
-import {
-  moreSuggestionsMessage, PredictedWords, PREDICTED_WORDS_LABEL, QUERYING_MESSAGE
-} from "./PredictedWords";
+import { moreSuggestionsMessage, PredictedWords } from "./PredictedWords";
 import { cancelModelQuery, modelWordsSignal, queryContextKeyOf } from "./WordPredictionState";
 import { SymbolEncodingType } from "../../index.d";
-import { AI_BADGE_TEXT, aiSuggestionLabel } from "../../components/AiBadge";
+import { aiSuggestionLabel } from "../../components/AiBadge";
 import { selectedAttributesSignal, clearAttributes } from "../message-attributes/MessageAttributesState";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
+import { en } from "../../i18n/en";
 
 // The row is driven from `modelWordsSignal` directly here, so a query left waiting is all
 // that is wanted of Ollama.
@@ -74,14 +73,14 @@ describe("PredictedWords", (): void => {
 
   test("renders one button per suggestion", (): void => {
     render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
-    const suggestions = screen.getByRole("group", { name: PREDICTED_WORDS_LABEL });
+    const suggestions = screen.getByRole("group", { name: en.predictedWords });
     expect(suggestions.querySelectorAll("button")).toHaveLength(2);
   });
 
   // The row is a fixed set of slots, so a word keeps its place as the message grows.
   test("draws every slot the configuration asks for, filled or not", (): void => {
     render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
-    const suggestions = screen.getByRole("group", { name: PREDICTED_WORDS_LABEL });
+    const suggestions = screen.getByRole("group", { name: en.predictedWords });
     expect(suggestions.querySelectorAll(".predictedWord")).toHaveLength(4);
     expect(suggestions.querySelectorAll(".predictedWordEmpty")).toHaveLength(2);
   });
@@ -143,7 +142,7 @@ describe("PredictedWords", (): void => {
     setMessage("unknown");
     render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
-    const suggestions = screen.getByRole("group", { name: PREDICTED_WORDS_LABEL });
+    const suggestions = screen.getByRole("group", { name: en.predictedWords });
     expect(suggestions.querySelectorAll("button")).toHaveLength(0);
     expect(suggestions.querySelectorAll(".predictedWordEmpty")).toHaveLength(4);
   });
@@ -184,7 +183,7 @@ describe("PredictedWords", (): void => {
       showModelWords("I want", "food", "tea");
       render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
-      const suggestions = screen.getByRole("group", { name: PREDICTED_WORDS_LABEL });
+      const suggestions = screen.getByRole("group", { name: en.predictedWords });
       const labels = [...suggestions.querySelectorAll("button")].map((button) => button.textContent);
       // "juice" is what the history predicts after "I want"; the model's words follow it.
       expect(labels[0]).toContain("juice");
@@ -216,7 +215,7 @@ describe("PredictedWords", (): void => {
       render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
       modelWordsSignal.value = { status: "working", contextKey: queryContextKeyOf("I want") };
-      await waitFor(() => expect(screen.getByRole("status").textContent?.trim()).toBe(QUERYING_MESSAGE));
+      await waitFor(() => expect(screen.getByRole("status").textContent?.trim()).toBe(en.predictionQuerying));
     });
 
     // Moving a button out from under someone reaching for it is worse than suggesting less.
@@ -246,7 +245,7 @@ describe("PredictedWords", (): void => {
       expect(screen.getByRole("status").textContent?.trim()).toBe("");
 
       modelWordsSignal.value = { status: "working", contextKey: "I want" };
-      await waitFor(() => expect(screen.getByRole("status").textContent?.trim()).toBe(QUERYING_MESSAGE));
+      await waitFor(() => expect(screen.getByRole("status").textContent?.trim()).toBe(en.predictionQuerying));
 
       showModelWords("I want", "food", "tea");
       await waitFor(() => expect(screen.getByRole("status").textContent?.trim())
@@ -340,7 +339,7 @@ describe("PredictedWords", (): void => {
       const topWhileEmpty = row.getBoundingClientRect().top;
 
       modelWordsSignal.value = { status: "working", contextKey: "I want" };
-      await waitFor(() => expect(screen.getByRole("status").textContent?.trim()).toBe(QUERYING_MESSAGE));
+      await waitFor(() => expect(screen.getByRole("status").textContent?.trim()).toBe(en.predictionQuerying));
       expect(row.getBoundingClientRect().top).toBe(topWhileEmpty);
     });
 
@@ -355,7 +354,7 @@ describe("PredictedWords", (): void => {
       showModelWords("I want", "food", "tea");
       render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
-      const suggestions = screen.getByRole("group", { name: PREDICTED_WORDS_LABEL });
+      const suggestions = screen.getByRole("group", { name: en.predictedWords });
       const buttons = [...suggestions.querySelectorAll("button")];
 
       expect(buttons[0]).not.toHaveClass("aiSuggestion");
@@ -363,7 +362,7 @@ describe("PredictedWords", (): void => {
       expect(buttons[0]).not.toHaveAttribute("aria-label");
 
       expect(buttons[1]).toHaveClass("aiSuggestion");
-      expect(buttons[1].querySelector(".aiBadge")?.textContent).toBe(AI_BADGE_TEXT);
+      expect(buttons[1].querySelector(".aiBadge")?.textContent).toBe(en.aiBadge);
       expect(buttons[1]).toHaveAttribute("aria-label", aiSuggestionLabel("food"));
     });
 
@@ -386,7 +385,7 @@ describe("PredictedWords", (): void => {
       showModelWords("I want", "food", "tea");
       render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
-      const suggestions = screen.getByRole("group", { name: PREDICTED_WORDS_LABEL });
+      const suggestions = screen.getByRole("group", { name: en.predictedWords });
       expect(suggestions.querySelectorAll(".aiSuggestion")).toHaveLength(0);
       expect(suggestions.querySelectorAll(".aiBadge")).toHaveLength(0);
       expect(suggestions.querySelector("button")).not.toHaveAttribute("aria-label");

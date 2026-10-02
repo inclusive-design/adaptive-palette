@@ -20,7 +20,7 @@ import { editMessage, setEditGuard } from "../../core/MessageEdit";
 import {
   abortActiveSentenceRequest, cancelDiscardEdit, clearMessageAndChoices, confirmDiscardEdit,
   currentTelegraphicMessage, discardEditPromptSignal, guardEdit, IDLE_SENTENCE_STATE,
-  makeSentences, sentenceCompletionsSignal, READY_DISCARD_PROMPT, WORKING_DISCARD_PROMPT
+  makeSentences, sentenceCompletionsSignal
 } from "./TelegraphicTranslationState";
 import { readMessageLog, saveMessageRecord, saveTranslation } from "../../core/MessageLog";
 import { queryChat } from "../../core/OllamaApi";
@@ -29,6 +29,7 @@ import {
   selectedAttributesSignal, clearAttributes
 } from "../message-attributes/MessageAttributesState";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
+import { en } from "../../i18n/en";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../core/OllamaApi")>();
@@ -466,7 +467,7 @@ describe("telegraphicTranslationState", (): void => {
 
     editMessage(EDITED_CONTENTS);
 
-    expect(prompts).toEqual([WORKING_DISCARD_PROMPT]);
+    expect(prompts).toEqual([en.discardWorking]);
   });
 
   // `ActionIndicatorCell` writes a second time when a model resolves a new label, after an
@@ -485,7 +486,7 @@ describe("telegraphicTranslationState", (): void => {
     // across the write below.
     stopAnswering();
     editMessage(EDITED_CONTENTS);
-    expect(discardEditPromptSignal.value).toBe(WORKING_DISCARD_PROMPT);
+    expect(discardEditPromptSignal.value).toBe(en.discardWorking);
 
     // The resolved label, built from the message as it stood before the held edit.
     editMessage({
@@ -542,7 +543,7 @@ describe("telegraphicTranslationState", (): void => {
     // open across the reply.
     stopAnswering();
     editMessage(EDITED_CONTENTS);
-    expect(discardEditPromptSignal.value).toBe(WORKING_DISCARD_PROMPT);
+    expect(discardEditPromptSignal.value).toBe(en.discardWorking);
 
     settle({ message: { content: "1. I am hungry." } });
     await waitFor(() => {
@@ -558,7 +559,7 @@ describe("telegraphicTranslationState", (): void => {
 
     // Editing again asks about the sentences now on screen; changing anyway applies the edit.
     editMessage(EDITED_CONTENTS);
-    expect(discardEditPromptSignal.value).toBe(READY_DISCARD_PROMPT);
+    expect(discardEditPromptSignal.value).toBe(en.discardReady);
     confirmDiscardEdit();
 
     expect(mockedSpeak).not.toHaveBeenCalled();
@@ -578,7 +579,7 @@ describe("telegraphicTranslationState", (): void => {
     answerDiscard = false;
     editMessage(EDITED_CONTENTS);
 
-    expect(prompts).toEqual([READY_DISCARD_PROMPT]);
+    expect(prompts).toEqual([en.discardReady]);
     expect(changeEncodingContents.value).toEqual(INPUT_CONTENTS);
     expect(sentenceCompletionsSignal.value).toMatchObject({
       status: "ready",
@@ -850,7 +851,7 @@ describe("telegraphicTranslationState", (): void => {
     answerDiscard = false;
     editMessage(EDITED_CONTENTS);
 
-    expect(prompts).toEqual([READY_DISCARD_PROMPT]);
+    expect(prompts).toEqual([en.discardReady]);
     expect(changeEncodingContents.value).toEqual(INPUT_CONTENTS);
     expect(sentenceCompletionsSignal.value).toMatchObject({
       status: "error", sentences: ["I am hungry."]

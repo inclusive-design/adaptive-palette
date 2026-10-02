@@ -15,7 +15,7 @@ import { ContentEncoding, clamp } from "./ContentEncoding";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { renderCell } from "../testUtils/CellTestUtils";
 import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
-import { AI_BADGE_TEXT } from "../components/AiBadge";
+import { en } from "../i18n/en";
 
 test("The content encoding area is rendered correctly", async (): Promise<void> => {
   await initAdaptivePaletteGlobals();
@@ -101,9 +101,9 @@ describe("marking a label the model produced", (): void => {
     renderCell(ContentEncoding, cellId, cellOptions);
     const inputArea = await screen.findByLabelText("Input Area");
 
-    expect(inputArea.querySelector(".aiBadge")?.textContent).toBe(AI_BADGE_TEXT);
+    expect(inputArea.querySelector(".aiBadge")?.textContent).toBe(en.aiBadge);
     // The badge comes first, and the label itself is unchanged.
-    expect(inputArea.querySelector(".aiLabel")?.textContent).toBe(`${AI_BADGE_TEXT}walked`);
+    expect(inputArea.querySelector(".aiLabel")?.textContent).toBe(`${en.aiBadge}walked`);
   });
 
   // Each caret branch renders its own `BlissSymbol`; a caret of -1 covers the two the test

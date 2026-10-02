@@ -10,17 +10,19 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 import { adaptivePaletteGlobals } from "../state/GlobalData";
+import { Language, SPEECH_LANGS, languageSignal, t } from "../i18n/I18n";
 
 /**
  * Text-to-speech functions
  */
 
 /**
- * Use the text-to-speech to announce the given text. If the previous announcement is still going
- * on, cancel it.
+ * Use the text-to-speech to announce the given text, in the voice for its language. If
+ * the previous announcement is still going on, cancel it.
  * @param {String} text - The text to be announced.
+ * @param {Language} language - The language of the text: the UI language unless given.
  */
-export function speak(text: string): void {
+export function speak(text: string, language: Language = languageSignal.value): void {
   // If the text-to-speech feature is unavailable, do nothing. This happens when running node tests.
   if (!window.speechSynthesis) {
     return;
@@ -32,6 +34,7 @@ export function speak(text: string): void {
   }
   // Announce the current text
   const utterThis = new SpeechSynthesisUtterance(text);
+  utterThis.lang = SPEECH_LANGS[language];
   window.speechSynthesis.speak(utterThis);
 }
 
@@ -41,16 +44,17 @@ export function speak(text: string): void {
  * @param {String} label - The label of the cell that was activated.
  */
 export function speakUnavailable(label: string): void {
-  speak(`${label} unavailable`);
+  speak(t("unavailable", { label }));
 }
 
 /**
  * Announce the given text only when `announceSymbolOnInput` is on. The labels spoken as the
  * user acts call this. Failures and the Speak button call `speak()` so they are always heard.
  * @param {String} text - The text to be announced.
+ * @param {Language} language - The language of the text: the UI language unless given.
  */
-export function announceIfEnabled(text: string): void {
+export function announceIfEnabled(text: string, language: Language = languageSignal.value): void {
   if (adaptivePaletteGlobals.config.announceSymbolOnInput) {
-    speak(text);
+    speak(text, language);
   }
 }

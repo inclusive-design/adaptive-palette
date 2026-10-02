@@ -16,9 +16,8 @@ import { useId } from "preact/hooks";
 
 import { changeEncodingContents } from "../state/GlobalData";
 import { generateMarkupArray } from "../cells/ContentEncoding";
+import { t } from "../i18n/I18n";
 import "./MessagePreview.scss";
-
-export const MESSAGE_PREVIEW_LABEL = "Message so far";
 
 /**
  * A read-only view of the message being composed, shown inside the symbol-entry
@@ -41,7 +40,7 @@ export function MessagePreview (): VNode {
 
   return html`
     <div class="messagePreview">
-      <span id=${labelId} class="messagePreviewLabel">${MESSAGE_PREVIEW_LABEL}:</span>
+      <span id=${labelId} class="messagePreviewLabel">${t("messagePreview")}:</span>
       <div
         class="contentEncodingArea messagePreviewArea"
         role="group"

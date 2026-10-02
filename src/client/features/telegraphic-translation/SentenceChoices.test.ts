@@ -16,19 +16,17 @@ import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
-import { AI_BADGE_TEXT, aiSuggestionLabel } from "../../components/AiBadge";
+import { aiSuggestionLabel } from "../../components/AiBadge";
 import { setTestConfig } from "../../testUtils/TestConfig";
 import {
   discardEditPromptSignal, focusedMessageSignal, IDLE_SENTENCE_STATE,
   sentenceCompletionsSignal, typedSentenceSignal
 } from "./TelegraphicTranslationState";
 import { readMessageLog } from "../../core/MessageLog";
-import {
-  SentenceChoices, WORKING_MESSAGE, MAKING_MORE_MESSAGE, CANNOT_COMPLETE_MESSAGE,
-  TYPE_YOUR_OWN_HINT, SPEAK_BUTTON_LABEL, DONE_BUTTON_LABEL
-} from "./SentenceChoices";
+import { SentenceChoices } from "./SentenceChoices";
 import { mockedSpeak, mockedSpeakUnavailable } from "../../testUtils/SpeechUtilsMock";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
+import { en } from "../../i18n/en";
 
 vi.mock("../../utils/SpeechUtils");
 
@@ -112,12 +110,12 @@ describe("SentenceChoices", (): void => {
       telegraphicMessage: "me hungry"
     };
 
-    expect(await screen.findByText(WORKING_MESSAGE)).toBeVisible();
+    expect(await screen.findByText(en.sentenceWorking)).toBeVisible();
 
     // Same element as before the update -- the text arrived in a region the screen
     // reader was already watching, rather than the region appearing with the text in it.
     expect(container.querySelector("[role=\"status\"]")).toBe(liveRegion);
-    expect(screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT)).toBeVisible();
+    expect(screen.getByPlaceholderText(en.sentenceTypeYours)).toBeVisible();
   });
 
   test("the error message lands in the live region that was already there", async (): Promise<void> => {
@@ -127,9 +125,9 @@ describe("SentenceChoices", (): void => {
 
     sentenceCompletionsSignal.value = { ...IDLE_SENTENCE_STATE, status: "error" };
 
-    expect(await screen.findByText(CANNOT_COMPLETE_MESSAGE)).toBeVisible();
+    expect(await screen.findByText(en.sentenceCannotComplete)).toBeVisible();
     expect(container.querySelector("[role=\"status\"]")).toBe(liveRegion);
-    expect(liveRegion?.textContent).toBe(CANNOT_COMPLETE_MESSAGE);
+    expect(liveRegion?.textContent).toBe(en.sentenceCannotComplete);
   });
 
   test("renders one button per sentence plus the text box", (): void => {
@@ -138,7 +136,7 @@ describe("SentenceChoices", (): void => {
     for (const sentence of SENTENCES) {
       expect(screen.getByRole("button", { name: sentence })).toBeVisible();
     }
-    expect(screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT)).toBeVisible();
+    expect(screen.getByPlaceholderText(en.sentenceTypeYours)).toBeVisible();
   });
 
   test("is drawn at its grid position, under its cell id", (): void => {
@@ -213,7 +211,7 @@ describe("SentenceChoices", (): void => {
       sentence: SENTENCES[1],
       source: "chosen"
     });
-    expect(mockedSpeak).toHaveBeenCalledWith(SENTENCES[1]);
+    expect(mockedSpeak).toHaveBeenCalledWith(SENTENCES[1], "en");
     expect(screen.getByRole("button", { name: SENTENCES[1] })).toBeVisible();
   });
 
@@ -235,12 +233,12 @@ describe("SentenceChoices", (): void => {
   test("typed text survives the sentence area being drawn again", async (): Promise<void> => {
     sentenceCompletionsSignal.value = READY_STATE;
     const { unmount } = render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
-    await userEvent.type(screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT), "I would like a snack.");
+    await userEvent.type(screen.getByPlaceholderText(en.sentenceTypeYours), "I would like a snack.");
 
     unmount();
     render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
-    expect(screen.getByPlaceholderText<HTMLInputElement>(TYPE_YOUR_OWN_HINT).value).toBe("I would like a snack.");
+    expect(screen.getByPlaceholderText<HTMLInputElement>(en.sentenceTypeYours).value).toBe("I would like a snack.");
   });
 
   test("drawing the sentence area again does not move focus to the first sentence again", async (): Promise<void> => {
@@ -295,9 +293,9 @@ describe("SentenceChoices", (): void => {
 
     await userEvent.click(screen.getByRole("button", { name: SENTENCES[0] }));
     await userEvent.type(
-      screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT), "I would like a snack."
+      screen.getByPlaceholderText(en.sentenceTypeYours), "I would like a snack."
     );
-    await userEvent.click(screen.getByRole("button", { name: SPEAK_BUTTON_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.sentenceSpeak }));
 
     const log = readMessageLog();
     expect(log).toHaveLength(1);
@@ -311,9 +309,9 @@ describe("SentenceChoices", (): void => {
     };
     sentenceCompletionsSignal.value = READY_STATE;
     render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
-    await userEvent.type(screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT), "leftover text");
+    await userEvent.type(screen.getByPlaceholderText(en.sentenceTypeYours), "leftover text");
 
-    await userEvent.click(screen.getByRole("button", { name: DONE_BUTTON_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.sentenceDone }));
 
     expect(sentenceCompletionsSignal.value).toEqual(IDLE_SENTENCE_STATE);
     expect(changeEncodingContents.value.payloads).toEqual([]);
@@ -326,7 +324,7 @@ describe("SentenceChoices", (): void => {
     render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     await userEvent.click(screen.getByRole("button", { name: SENTENCES[0] }));
-    await userEvent.click(screen.getByRole("button", { name: DONE_BUTTON_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.sentenceDone }));
 
     const log = readMessageLog();
     expect(log).toHaveLength(1);
@@ -350,14 +348,14 @@ describe("SentenceChoices", (): void => {
     sentenceCompletionsSignal.value = READY_STATE;
     render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
-    const textBox = screen.getByPlaceholderText<HTMLInputElement>(TYPE_YOUR_OWN_HINT);
+    const textBox = screen.getByPlaceholderText<HTMLInputElement>(en.sentenceTypeYours);
     await userEvent.type(textBox, "I would like a snack.");
-    await userEvent.click(screen.getByRole("button", { name: SPEAK_BUTTON_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.sentenceSpeak }));
 
     const log = readMessageLog();
     expect(log).toHaveLength(1);
     expect(log[0].translation).toMatchObject({ sentence: "I would like a snack.", source: "typed" });
-    expect(mockedSpeak).toHaveBeenCalledWith("I would like a snack.");
+    expect(mockedSpeak).toHaveBeenCalledWith("I would like a snack.", "en");
 
     // Kept, not cleared: typing is expensive for these users, so the text stays available
     // to speak again or to edit into a second attempt.
@@ -368,8 +366,8 @@ describe("SentenceChoices", (): void => {
     sentenceCompletionsSignal.value = READY_STATE;
     render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
-    const textBox = screen.getByPlaceholderText<HTMLInputElement>(TYPE_YOUR_OWN_HINT);
-    const speakButton = screen.getByRole("button", { name: SPEAK_BUTTON_LABEL });
+    const textBox = screen.getByPlaceholderText<HTMLInputElement>(en.sentenceTypeYours);
+    const speakButton = screen.getByRole("button", { name: en.sentenceSpeak });
 
     await userEvent.type(textBox, "I want a snack");
     await userEvent.click(speakButton);
@@ -386,7 +384,7 @@ describe("SentenceChoices", (): void => {
     sentenceCompletionsSignal.value = READY_STATE;
     render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
-    await userEvent.click(screen.getByRole("button", { name: SPEAK_BUTTON_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.sentenceSpeak }));
 
     expect(readMessageLog()).toEqual([]);
   });
@@ -395,25 +393,25 @@ describe("SentenceChoices", (): void => {
     sentenceCompletionsSignal.value = WORKING_STATE;
     render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
-    expect(screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT)).toBeVisible();
-    expect(screen.getByRole("button", { name: SPEAK_BUTTON_LABEL })).toBeVisible();
-    expect(screen.getByRole("button", { name: DONE_BUTTON_LABEL })).toBeVisible();
+    expect(screen.getByPlaceholderText(en.sentenceTypeYours)).toBeVisible();
+    expect(screen.getByRole("button", { name: en.sentenceSpeak })).toBeVisible();
+    expect(screen.getByRole("button", { name: en.sentenceDone })).toBeVisible();
   });
 
   test("the typing area is there after a failure", (): void => {
     sentenceCompletionsSignal.value = { ...WORKING_STATE, status: "error" };
     render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
-    expect(screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT)).toBeVisible();
-    expect(screen.getByRole("button", { name: SPEAK_BUTTON_LABEL })).toBeVisible();
+    expect(screen.getByPlaceholderText(en.sentenceTypeYours)).toBeVisible();
+    expect(screen.getByRole("button", { name: en.sentenceSpeak })).toBeVisible();
   });
 
   test("a recalled sentence being topped up says more are coming", async (): Promise<void> => {
     sentenceCompletionsSignal.value = FILLING_STATE;
     const { container } = render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
-    expect(await screen.findByText(MAKING_MORE_MESSAGE)).toBeVisible();
-    expect(container.querySelector("[role=\"status\"]")?.textContent).toBe(MAKING_MORE_MESSAGE);
+    expect(await screen.findByText(en.sentenceMakingMore)).toBeVisible();
+    expect(container.querySelector("[role=\"status\"]")?.textContent).toBe(en.sentenceMakingMore);
     // The recalled sentence is tappable while the rest are being made.
     expect(screen.getByRole("button", { name: SENTENCES[0] })).toBeVisible();
   });
@@ -422,7 +420,7 @@ describe("SentenceChoices", (): void => {
     sentenceCompletionsSignal.value = WORKING_STATE;
     render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
-    expect(await screen.findByText(WORKING_MESSAGE)).toBeVisible();
+    expect(await screen.findByText(en.sentenceWorking)).toBeVisible();
   });
 
   test("the fill lands below the recalled sentence and above the typing area", async (): Promise<void> => {
@@ -445,8 +443,8 @@ describe("SentenceChoices", (): void => {
     sentenceCompletionsSignal.value = FILLING_STATE;
     render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
-    await userEvent.type(screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT), "I want a snack.");
-    await userEvent.click(screen.getByRole("button", { name: SPEAK_BUTTON_LABEL }));
+    await userEvent.type(screen.getByPlaceholderText(en.sentenceTypeYours), "I want a snack.");
+    await userEvent.click(screen.getByRole("button", { name: en.sentenceSpeak }));
 
     // No more sentences are wanted, so the progress line stops.
     expect(sentenceCompletionsSignal.value.status).toBe("ready");
@@ -464,8 +462,8 @@ describe("SentenceChoices", (): void => {
     sentenceCompletionsSignal.value = WORKING_STATE;
     render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
-    await userEvent.type(screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT), "I want a snack.");
-    await userEvent.click(screen.getByRole("button", { name: SPEAK_BUTTON_LABEL }));
+    await userEvent.type(screen.getByPlaceholderText(en.sentenceTypeYours), "I want a snack.");
+    await userEvent.click(screen.getByRole("button", { name: en.sentenceSpeak }));
 
     const log = readMessageLog();
     expect(log[0].translation).toMatchObject({
@@ -480,13 +478,13 @@ describe("SentenceChoices", (): void => {
     await userEvent.click(screen.getByRole("button", { name: SENTENCES[0] }));
 
     expect(sentenceCompletionsSignal.value.status).toBe("ready");
-    expect(mockedSpeak).toHaveBeenCalledWith(SENTENCES[0]);
+    expect(mockedSpeak).toHaveBeenCalledWith(SENTENCES[0], "en");
   });
 
   test("Speak is unavailable while the box is empty", async (): Promise<void> => {
     sentenceCompletionsSignal.value = READY_STATE;
     render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
-    const speakButton = screen.getByRole("button", { name: SPEAK_BUTTON_LABEL });
+    const speakButton = screen.getByRole("button", { name: en.sentenceSpeak });
 
     expect(speakButton).toHaveAttribute("aria-disabled", "true");
 
@@ -496,7 +494,7 @@ describe("SentenceChoices", (): void => {
     speakButton.focus();
     expect(document.activeElement).toBe(speakButton);
 
-    await userEvent.type(screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT), "hi");
+    await userEvent.type(screen.getByPlaceholderText(en.sentenceTypeYours), "hi");
     await waitFor(() => {
       expect(speakButton).toHaveAttribute("aria-disabled", "false");
     });
@@ -506,10 +504,10 @@ describe("SentenceChoices", (): void => {
     sentenceCompletionsSignal.value = READY_STATE;
     render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
-    await userEvent.type(screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT), "   ");
+    await userEvent.type(screen.getByPlaceholderText(en.sentenceTypeYours), "   ");
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: SPEAK_BUTTON_LABEL }))
+      expect(screen.getByRole("button", { name: en.sentenceSpeak }))
         .toHaveAttribute("aria-disabled", "true");
     });
   });
@@ -518,9 +516,9 @@ describe("SentenceChoices", (): void => {
     sentenceCompletionsSignal.value = READY_STATE;
     render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
-    await userEvent.click(screen.getByRole("button", { name: SPEAK_BUTTON_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.sentenceSpeak }));
 
-    expect(mockedSpeakUnavailable).toHaveBeenCalledWith(SPEAK_BUTTON_LABEL);
+    expect(mockedSpeakUnavailable).toHaveBeenCalledWith(en.sentenceSpeak);
     expect(readMessageLog()).toEqual([]);
   });
 
@@ -534,7 +532,7 @@ describe("SentenceChoices", (): void => {
     });
 
     // The user has scanned past the recalled sentence by the time the rest arrive.
-    const doneButton = screen.getByRole("button", { name: DONE_BUTTON_LABEL });
+    const doneButton = screen.getByRole("button", { name: en.sentenceDone });
     doneButton.focus();
     sentenceCompletionsSignal.value = { ...READY_STATE, sentences: SENTENCES };
 
@@ -546,7 +544,7 @@ describe("SentenceChoices", (): void => {
     sentenceCompletionsSignal.value = WORKING_STATE;
     render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
-    const textBox = screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT);
+    const textBox = screen.getByPlaceholderText(en.sentenceTypeYours);
     await userEvent.type(textBox, "I want");
     sentenceCompletionsSignal.value = READY_STATE;
 
@@ -584,7 +582,7 @@ describe("SentenceChoices", (): void => {
       expect(recalled).toHaveAttribute("aria-label", SENTENCES[0]);
 
       expect(fromModel).toHaveClass("aiSuggestion");
-      expect(fromModel.querySelector(".aiBadge")?.textContent).toBe(AI_BADGE_TEXT);
+      expect(fromModel.querySelector(".aiBadge")?.textContent).toBe(en.aiBadge);
       expect(fromModel).toHaveAttribute("aria-label", aiSuggestionLabel(SENTENCES[1]));
     });
 
@@ -625,7 +623,7 @@ describe("SentenceChoices", (): void => {
 
       await userEvent.click(screen.getByRole("button", { name: aiSuggestionLabel(SENTENCES[1]) }));
 
-      expect(mockedSpeak).toHaveBeenCalledWith(SENTENCES[1]);
+      expect(mockedSpeak).toHaveBeenCalledWith(SENTENCES[1], "en");
       const log = readMessageLog();
       expect(log).toHaveLength(1);
       expect(log[0].translation).toMatchObject({ sentence: SENTENCES[1], source: "chosen" });

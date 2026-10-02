@@ -23,7 +23,7 @@ import { goBackImpl } from "../cells/CommandGoBackCell";
 import {
   sentenceCompletionsSignal, IDLE_SENTENCE_STATE, typedSentenceSignal, focusedMessageSignal
 } from "../features/telegraphic-translation/TelegraphicTranslationState";
-import { TYPE_YOUR_OWN_HINT } from "../features/telegraphic-translation/SentenceChoices";
+import { en } from "../i18n/en";
 
 vi.mock("../utils/SpeechUtils");
 
@@ -62,7 +62,7 @@ describe("Navigating between screens that share the Standard Header", (): void =
     };
     const { container } = render(html`<${CurrentPalette} />`);
 
-    const textBox = await screen.findByPlaceholderText<HTMLInputElement>(TYPE_YOUR_OWN_HINT);
+    const textBox = await screen.findByPlaceholderText<HTMLInputElement>(en.sentenceTypeYours);
     await userEvent.type(textBox, "I want lunch.");
     expect(textBox).toHaveFocus();
 
@@ -77,7 +77,7 @@ describe("Navigating between screens that share the Standard Header", (): void =
       expect(container.querySelector(`[data-palettename='${target}']`)).not.toBeNull();
     });
 
-    expect(screen.getByPlaceholderText(TYPE_YOUR_OWN_HINT)).toBe(textBox);
+    expect(screen.getByPlaceholderText(en.sentenceTypeYours)).toBe(textBox);
     expect(textBox).toHaveFocus();
     expect(textBox.value).toBe("I want lunch.");
   });

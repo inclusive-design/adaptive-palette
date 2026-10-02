@@ -12,6 +12,7 @@
 
 import { vi } from "vitest";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
+import { languageSignal } from "../i18n/I18n";
 import { announceIfEnabled, speak, speakUnavailable } from "./SpeechUtils";
 
 /**
@@ -23,11 +24,17 @@ const captureSpeech = (): string[] => {
     speaking: false,
     pending: false,
     cancel: () => {},
-    speak: (utterance: SpeechSynthesisUtterance) => spoken.push(utterance.text)
+    speak: (utterance: SpeechSynthesisUtterance) => {
+      spoken.push(utterance.text);
+      spokenLangs.push(utterance.lang);
+    }
   });
-  vi.stubGlobal("SpeechSynthesisUtterance", class { constructor (public text: string) {} });
+  vi.stubGlobal("SpeechSynthesisUtterance", class { lang = ""; constructor (public text: string) {} });
   return spoken;
 };
+
+// The voice language of each utterance `captureSpeech()` recorded, in order.
+let spokenLangs: string[] = [];
 
 describe("SpeechUtils", (): void => {
 
@@ -35,6 +42,8 @@ describe("SpeechUtils", (): void => {
 
   afterEach((): void => {
     adaptivePaletteGlobals.config.announceSymbolOnInput = originalSetting;
+    languageSignal.value = "en";
+    spokenLangs = [];
     vi.unstubAllGlobals();
   });
 
@@ -42,6 +51,28 @@ describe("SpeechUtils", (): void => {
     const spoken = captureSpeech();
     speak("hello");
     expect(spoken).toEqual(["hello"]);
+  });
+
+  test("speak() uses the voice for the current language", (): void => {
+    captureSpeech();
+    speak("hello");
+    languageSignal.value = "sv";
+    speak("hej");
+    expect(spokenLangs).toEqual(["en-US", "sv-SE"]);
+  });
+
+  test("speak() uses the voice for the language it is given", (): void => {
+    captureSpeech();
+    languageSignal.value = "sv";
+    speak("bread", "en");
+    expect(spokenLangs).toEqual(["en-US"]);
+  });
+
+  test("speakUnavailable() says it in the current language", (): void => {
+    const spoken = captureSpeech();
+    languageSignal.value = "sv";
+    speakUnavailable("Läs upp");
+    expect(spoken).toEqual(["Läs upp är inte tillgänglig"]);
   });
 
   test("speakUnavailable() marks the label unavailable", (): void => {

@@ -11,9 +11,7 @@
  */
 
 import ollama, { ChatResponse, Ollama } from "ollama/browser";
-
-export const NO_MODELS_MESSAGE = "No models available. Start Ollama to enable AI features.";
-export const HOSTED_MESSAGE = "AI features are available only in the desktop version.";
+import { t } from "../i18n/I18n";
 
 const LOCAL_HOSTNAMES = ["localhost", "127.0.0.1", "[::1]"];
 
@@ -98,7 +96,7 @@ export async function queryChat (query: string, modelName: string, streamResp: b
   // Indicator label lookup queries a named model without checking the model list, so the
   // model list alone does not keep a hosted page from reaching Ollama.
   if (!isLocalHost()) {
-    throw new Error(HOSTED_MESSAGE);
+    throw new Error(t("hosted"));
   }
   const messageArray = [];
   if (systemPrompt && systemPrompt.length !== 0) {
@@ -162,7 +160,7 @@ export async function pullModel (
   abortSignal?: AbortSignal
 ): Promise<void> {
   if (!isLocalHost()) {
-    throw new Error(HOSTED_MESSAGE);
+    throw new Error(t("hosted"));
   }
   const client = clientFor(abortSignal);
 

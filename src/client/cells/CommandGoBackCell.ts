@@ -15,6 +15,7 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
+import { CONTENT_LANGUAGE } from "../i18n/I18n";
 import { BlissSymbol } from "../components/BlissSymbol";
 import "./ActionCodeCell.scss";
 
@@ -50,7 +51,7 @@ const goBackToPalette = (event: Event): void => {
     speakUnavailable(button.innerText);
     return;
   }
-  announceIfEnabled(button.innerText);
+  announceIfEnabled(button.innerText, CONTENT_LANGUAGE);
   goBackImpl();
 };
 

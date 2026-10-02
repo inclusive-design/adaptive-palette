@@ -20,15 +20,14 @@ import { changeEncodingContents } from "../../state/GlobalData";
 import { setTestConfig } from "../../testUtils/TestConfig";
 import { editMessage, setEditGuard } from "../../core/MessageEdit";
 import {
-  discardEditPromptSignal, focusedMessageSignal, guardEdit, IDLE_SENTENCE_STATE, READY_DISCARD_PROMPT,
+  discardEditPromptSignal, focusedMessageSignal, guardEdit, IDLE_SENTENCE_STATE,
   sentenceCompletionsSignal, typedSentenceSignal
 } from "./TelegraphicTranslationState";
 import { INPUT_AREA_ID } from "../../cells/ContentEncoding";
 import { SentenceChoices } from "./SentenceChoices";
-import {
-  DiscardEditDialog, CHANGE_ANYWAY_LABEL, DISCARD_DIALOG_TITLE, KEEP_SENTENCES_LABEL
-} from "./DiscardEditDialog";
+import { DiscardEditDialog } from "./DiscardEditDialog";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
+import { en } from "../../i18n/en";
 
 vi.mock("../../utils/SpeechUtils");
 
@@ -107,14 +106,14 @@ describe("DiscardEditDialog", (): void => {
     sentenceCompletionsSignal.value = READY_STATE;
     renderPage();
     editMessage(EDITED_CONTENTS);
-    await screen.findByRole("dialog", { name: DISCARD_DIALOG_TITLE });
+    await screen.findByRole("dialog", { name: en.discardTitle });
   };
 
   test("an edit that would discard the sentences asks first", async (): Promise<void> => {
     await editTheMessage();
 
-    expect(screen.getByRole("dialog", { name: DISCARD_DIALOG_TITLE })).toBeVisible();
-    expect(screen.getByText(READY_DISCARD_PROMPT)).toBeVisible();
+    expect(screen.getByRole("dialog", { name: en.discardTitle })).toBeVisible();
+    expect(screen.getByText(en.discardReady)).toBeVisible();
   });
 
   // The edit never reaches the signal while the question is up, so the message on screen is the
@@ -128,7 +127,7 @@ describe("DiscardEditDialog", (): void => {
   test("Change anyway applies the edit and drops the sentences", async (): Promise<void> => {
     await editTheMessage();
 
-    await userEvent.click(screen.getByRole("button", { name: CHANGE_ANYWAY_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.discardChangeAnyway }));
 
     expect(changeEncodingContents.value).toEqual(EDITED_CONTENTS);
     expect(sentenceCompletionsSignal.value).toEqual(IDLE_SENTENCE_STATE);
@@ -140,7 +139,7 @@ describe("DiscardEditDialog", (): void => {
   test("Keep sentences leaves the message as it was", async (): Promise<void> => {
     await editTheMessage();
 
-    await userEvent.click(screen.getByRole("button", { name: KEEP_SENTENCES_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.discardKeep }));
 
     expect(changeEncodingContents.value).toEqual(MESSAGE_CONTENTS);
     expect(sentenceCompletionsSignal.value).toMatchObject({ status: "ready", sentences: SENTENCES });
@@ -166,10 +165,10 @@ describe("DiscardEditDialog", (): void => {
     sentenceCompletionsSignal.value = WORKING_STATE;
     renderPage();
     editMessage(EDITED_CONTENTS);
-    await screen.findByRole("dialog", { name: DISCARD_DIALOG_TITLE });
+    await screen.findByRole("dialog", { name: en.discardTitle });
 
     sentenceCompletionsSignal.value = READY_STATE;
-    await userEvent.click(screen.getByRole("button", { name: KEEP_SENTENCES_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.discardKeep }));
 
     await waitFor(() => {
       expect(screen.getByRole("button", { name: SENTENCES[0] })).toHaveFocus();
@@ -188,9 +187,9 @@ describe("DiscardEditDialog", (): void => {
       </div>
     `);
     editMessage(EDITED_CONTENTS);
-    await screen.findByRole("dialog", { name: DISCARD_DIALOG_TITLE });
+    await screen.findByRole("dialog", { name: en.discardTitle });
 
-    await userEvent.click(screen.getByRole("button", { name: KEEP_SENTENCES_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.discardKeep }));
 
     await waitFor(() => {
       expect(document.getElementById(INPUT_AREA_ID)).toHaveFocus();
@@ -201,7 +200,7 @@ describe("DiscardEditDialog", (): void => {
   test("closing the dialog puts focus on the input area", async (): Promise<void> => {
     await editTheMessage();
 
-    await userEvent.click(screen.getByRole("button", { name: KEEP_SENTENCES_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.discardKeep }));
 
     await waitFor(() => {
       expect(document.getElementById(INPUT_AREA_ID)).toHaveFocus();

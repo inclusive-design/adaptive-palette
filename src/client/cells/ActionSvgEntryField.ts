@@ -19,13 +19,11 @@ import { editMessage } from "../core/MessageEdit";
 import { bstrToComposition } from "../utils/SvgUtils";
 import { insertWordAtCaret } from "../utils/SymbolEncodingUtils";
 import { MessagePreview } from "../components/MessagePreview";
+import { t } from "../i18n/I18n";
 import "./ActionSvgEntryField.scss";
 
 export const SVG_ENTRY_FIELD_ID    = "svgEntryField";
 export const SYMBOL_LABEL_FIELD_ID = "symbolLabel";
-export const SUBMIT_VALUE          = "Add to message";
-export const CLOSE_LABEL           = "Close";
-const MALFORMED                    = "Invalid builder string";
 
 type ActionSvgEntryFieldProps = {
   onRequestClose: () => void
@@ -92,7 +90,7 @@ export function ActionSvgEntryField (props: ActionSvgEntryFieldProps): VNode {
     // The status region is the only confirmation channel here, for the same reason as in
     // the search dialog: device speech and the screen reader would talk over each other.
     // The label is optional, so fall back to a generic noun for the announcement.
-    setStatus(`${labelString || "Symbol"} added to message`);
+    setStatus(t("symbolAdded", { label: labelString || t("symbolFallback") }));
     form.reset(); // Clear the form for the next entry
     // Several builder strings are typically entered in a row; without this, focus is
     // left on the Add button and every later entry needs manual navigation back.
@@ -103,7 +101,7 @@ export function ActionSvgEntryField (props: ActionSvgEntryFieldProps): VNode {
     <div class="actionSvgEntryField">
       <form onSubmit=${svgToSymbol}>
         <p>
-          <label for=${SVG_ENTRY_FIELD_ID}>Builder string:</label><br />
+          <label for=${SVG_ENTRY_FIELD_ID}>${t("svgBuilderString")}</label><br />
           <input
             ref=${builderInputRef}
             id=${SVG_ENTRY_FIELD_ID}
@@ -115,10 +113,10 @@ export function ActionSvgEntryField (props: ActionSvgEntryFieldProps): VNode {
             autofocus
           /><br />
           <!-- conditional rendering -->
-          ${malformed && html`<span role="alert" class="error-text">${MALFORMED}</span>`}
+          ${malformed && html`<span role="alert" class="error-text">${t("svgInvalid")}</span>`}
         </p>
         <p>
-          <label for=${SYMBOL_LABEL_FIELD_ID}>Label:</label><br />
+          <label for=${SYMBOL_LABEL_FIELD_ID}>${t("labelField")}</label><br />
           <input
             id=${SYMBOL_LABEL_FIELD_ID}
             name=${SYMBOL_LABEL_FIELD_ID}
@@ -132,8 +130,8 @@ export function ActionSvgEntryField (props: ActionSvgEntryFieldProps): VNode {
         <${MessagePreview} />
 
         <div class="dialogFooter">
-          <button type="submit" class="btn-addToMessage">${SUBMIT_VALUE}</button>
-          <button type="button" onClick=${onRequestClose}>${CLOSE_LABEL}</button>
+          <button type="submit" class="btn-addToMessage">${t("addToMessage")}</button>
+          <button type="button" onClick=${onRequestClose}>${t("close")}</button>
         </div>
       </form>
     </div>

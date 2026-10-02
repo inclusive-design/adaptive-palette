@@ -20,6 +20,7 @@
  */
 import { signal } from "@preact/signals";
 import { getStorage } from "../../core/StorageBackend";
+import type { StringKey } from "../../i18n/I18n";
 import type {
   DismissedFactType, FactCategoryType, LearntUpToType, AboutMeFactType, AboutMeType
 } from "../../index.d";
@@ -28,6 +29,16 @@ import type {
 export const FACT_CATEGORIES: readonly FactCategoryType[] = [
   "Family", "Background", "Preferences", "Communication style", "Other"
 ];
+
+// The name shown for each category. The stored category and the one in the prompt stay
+// English, so facts and model replies keep matching whatever the UI language.
+export const FACT_CATEGORY_KEYS: Record<FactCategoryType, StringKey> = {
+  "Family": "factFamily",
+  "Background": "factBackground",
+  "Preferences": "factPreferences",
+  "Communication style": "factCommunicationStyle",
+  "Other": "factOther"
+};
 
 // A fact the model suggested that the user has not accepted or rejected yet. The same shape
 // as a dismissed one, because rejecting a suggestion is what makes one.

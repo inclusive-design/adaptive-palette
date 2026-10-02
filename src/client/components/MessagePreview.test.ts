@@ -14,7 +14,8 @@ import { render, screen, cleanup } from "@testing-library/preact";
 import { html } from "htm/preact";
 
 import { changeEncodingContents } from "../state/GlobalData";
-import { MessagePreview, MESSAGE_PREVIEW_LABEL } from "./MessagePreview";
+import { MessagePreview } from "./MessagePreview";
+import { en } from "../i18n/en";
 
 describe("MessagePreview", () => {
 
@@ -41,7 +42,7 @@ describe("MessagePreview", () => {
   // carries a trailing colon.
   test("is labelled so assistive technology can identify it", () => {
     render(html`<${MessagePreview} />`);
-    expect(screen.getByRole("group", { name: new RegExp(MESSAGE_PREVIEW_LABEL) })).toBeInTheDocument();
+    expect(screen.getByRole("group", { name: new RegExp(en.messagePreview) })).toBeInTheDocument();
   });
 
   // The caret marks where the next added symbol lands, so it has to be visible here too.

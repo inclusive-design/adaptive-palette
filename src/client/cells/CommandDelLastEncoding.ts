@@ -18,6 +18,7 @@ import { editMessage } from "../core/MessageEdit";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
+import { CONTENT_LANGUAGE } from "../i18n/I18n";
 
 type CommandDelLastEncodingProps = {
   id: string,
@@ -47,7 +48,7 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNo
         caretPosition: caretPosition - 1
       });
     }
-    announceIfEnabled(label);
+    announceIfEnabled(label, CONTENT_LANGUAGE);
   };
 
   return html`

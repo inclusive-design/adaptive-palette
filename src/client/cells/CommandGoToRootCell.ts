@@ -16,6 +16,7 @@ import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
+import { CONTENT_LANGUAGE } from "../i18n/I18n";
 import { BlissSymbol } from "../components/BlissSymbol";
 import "./ActionCodeCell.scss";
 
@@ -57,7 +58,7 @@ export function CommandGoToRootCell (props: CommandGoToRootCellPropsType): VNode
       speakUnavailable(label);
       return;
     }
-    announceIfEnabled(label);
+    announceIfEnabled(label, CONTENT_LANGUAGE);
     goToRootImpl();
   };
 

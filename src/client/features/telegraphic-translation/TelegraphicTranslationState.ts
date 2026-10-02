@@ -23,6 +23,7 @@ import { requestSentences, pickModel } from "./TelegraphicTranslationUtils";
 import { findLatestTranslation, messageText } from "../../core/MessageLog";
 import { clearAttributes, selectedAttributesSignal } from "../message-attributes/MessageAttributesState";
 import type { ContentSignalDataType, SentenceCompletionsStateType } from "../../index.d";
+import { t } from "../../i18n/I18n";
 
 /**
  * Nothing to show. Shared rather than rewritten at each use so the idle shape stays in one
@@ -37,16 +38,6 @@ export const IDLE_SENTENCE_STATE: SentenceCompletionsStateType = {
  * is rendered; the message and model that produced the sentences travel with them.
  */
 export const sentenceCompletionsSignal = signal<SentenceCompletionsStateType>(IDLE_SENTENCE_STATE);
-
-/**
- * Asked before an edit throws away a request that is still running.
- */
-export const WORKING_DISCARD_PROMPT = "Still making a sentence. Changing your message will stop it. Change anyway?";
-
-/**
- * Asked before an edit throws away sentences that are already on screen.
- */
-export const READY_DISCARD_PROMPT = "Changing your message will remove the sentences. Change anyway?";
 
 /**
  * The question the discard dialog is showing, or `null` when nothing is being asked.
@@ -240,7 +231,7 @@ export function guardEdit (next: ContentSignalDataType): boolean {
     // word prediction on it.
     pendingContents = next;
     discardEditPromptSignal.value =
-      state.status === "working" ? WORKING_DISCARD_PROMPT : READY_DISCARD_PROMPT;
+      state.status === "working" ? t("discardWorking") : t("discardReady");
     return true;
   }
   if (finished && state.sentences.length === 0) {

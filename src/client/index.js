@@ -10,16 +10,15 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 import { render } from "preact";
+import { effect } from "@preact/signals";
 import { html } from "htm/preact";
 import { adaptivePaletteGlobals } from "./state/GlobalData";
 import { initAdaptivePaletteGlobals } from "./core/InitGlobals";
 import { paletteSetPath } from "./core/PaletteStore";
-import { HOSTED_MESSAGE, NO_MODELS_MESSAGE, isLocalHost } from "./core/OllamaApi";
-import { NOT_SAVED_MESSAGE } from "./core/MemoryStorage";
+import { isLocalHost } from "./core/OllamaApi";
 import { announceIfEnabled, speakUnavailable } from "./utils/SpeechUtils";
 import { goBackImpl } from "./cells/CommandGoBackCell";
 import { elementAllowsTextEntry } from "./utils/TextEntryUtils";
-import { NOT_CONFIGURED_MESSAGE } from "./features/telegraphic-translation/TelegraphicTranslationUtils";
 import "./index.scss";
 
 // Initialize any globals used elsewhere in the code.
@@ -31,6 +30,7 @@ import { SymbolEntryToolbar } from "./components/SymbolEntryToolbar";
 import { MessageAttributesBar } from "./features/message-attributes/MessageAttributesBar";
 import { FirstRunSetup } from "./features/setup/FirstRunSetup";
 import { followSwitchScanningSetting } from "./features/switch-scanning/SwitchScanning";
+import { languageSignal, t } from "./i18n/I18n";
 
 // Each palette draws the whole screen below the top bar, so the start palette and the palettes
 // it includes are all that must load before the first render. `?set=<folder>` in the page URL
@@ -40,6 +40,12 @@ const { paletteStore, navigationStack } = adaptivePaletteGlobals;
 const startPaletteName = await paletteStore.loadPaletteSet(paletteSetPath(window.location.search));
 const startPalette = await paletteStore.getNamedPalette(startPaletteName, true);
 if (!startPalette) { throw new Error(`Failed to load the start palette "${startPaletteName}"`); }
+
+// Screen readers pick their pronunciation from `lang`. The page is in the UI language; the
+// palettes mark their own text with `CONTENT_LANGUAGE`.
+effect(() => {
+  document.documentElement.lang = languageSignal.value;
+});
 
 navigationStack.currentPalette = startPalette;
 render(html`<${CurrentPalette} />`, getRequiredElement("mainPaletteDisplayArea"));
@@ -54,15 +60,19 @@ if (isLocalHost()) {
   render(html`<${FirstRunSetup} />`, getRequiredElement("firstRunSetup"));
 }
 
+// Which status line applies is settled at start-up. Its text follows the language.
 const aiStatus = getRequiredElement("aiStatus");
-if (!isLocalHost()) {
+const aiStatusText = !isLocalHost()
   // Two sentences in the element that is already there: what the AI features do here, and
   // what happens to what the user writes.
-  aiStatus.textContent = `${HOSTED_MESSAGE} ${NOT_SAVED_MESSAGE}`;
-} else if (adaptivePaletteGlobals.models.length === 0) {
-  aiStatus.textContent = NO_MODELS_MESSAGE;
-} else if (!adaptivePaletteGlobals.config.telegraphicTranslation) {
-  aiStatus.textContent = NOT_CONFIGURED_MESSAGE;
+  ? () => `${t("hosted")} ${t("notSaved")}`
+  : adaptivePaletteGlobals.models.length === 0 ? () => t("noModels")
+    : !adaptivePaletteGlobals.config.telegraphicTranslation ? () => t("sentenceNotConfigured")
+      : undefined;
+if (aiStatusText) {
+  effect(() => {
+    aiStatus.textContent = aiStatusText();
+  });
 } else {
   // Nothing to report. The element is removed rather than hidden with CSS: an empty grid
   // item still consumes a row-gap, and a live region that is `display: none` when its
@@ -84,13 +94,13 @@ window.addEventListener("keydown", (event) => {
     }
     // Depth zero means there is nowhere to go back to.
     if (adaptivePaletteGlobals.navigationStack.depth === 0) {
-      speakUnavailable("Back");
+      speakUnavailable(t("back"));
       return;
     }
     // If focus was not on a textual input element, go back up one layer in the
     // palette navigation
     if (!elementAllowsTextEntry(event.target)) {
-      announceIfEnabled("Back");
+      announceIfEnabled(t("back"));
       void goBackImpl();
     }
   }

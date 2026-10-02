@@ -18,18 +18,11 @@ import { ModalDialog } from "../../components/ModalDialog";
 import { PullProgressType, getModelNames, pullModel } from "../../core/OllamaApi";
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { missingModels, reloadPage, setupDismissedSignal, setupStatus } from "./SetupState";
+import { t } from "../../i18n/I18n";
 import "./FirstRunSetup.scss";
 
 export const SETUP_DIALOG_ID = "firstRunSetupDialog";
 export const OLLAMA_DOWNLOAD_URL = "https://ollama.com/download";
-export const SETUP_TITLE = "Set up the AI features";
-export const NO_OLLAMA_TEXT = "The AI features need Ollama, which is not running on this computer. Install it, start it, then choose Try again.";
-export const INSTALL_LABEL = "Install Ollama";
-export const RETRY_LABEL = "Try again";
-export const DOWNLOAD_LABEL = "Download";
-export const CANCEL_LABEL = "Cancel";
-export const CONTINUE_LABEL = "Continue without AI features";
-export const PULL_FAILED_TEXT = "The download did not finish. Check that Ollama is still running, then try again.";
 
 /**
  * The accessible name of the progress bar: an unnamed one is announced as nothing but
@@ -38,7 +31,7 @@ export const PULL_FAILED_TEXT = "The download did not finish. Check that Ollama 
  * @returns {string}
  */
 export const PROGRESS_LABEL = (models: string[]): string =>
-  `Downloading ${models.join(" and ")}`;
+  t("setupProgress", { models: models.join(` ${t("and")} `) });
 
 /**
  * What the dialog says about the models that have to be downloaded.
@@ -46,8 +39,7 @@ export const PROGRESS_LABEL = (models: string[]): string =>
  * @returns {string}
  */
 export const MISSING_MODEL_TEXT = (models: string[]): string =>
-  `The AI features need ${models.join(" and ")}, which Ollama has not got yet. ` +
-  "It is a large download and only has to be done once.";
+  t("setupMissingModel", { models: models.join(` ${t("and")} `) });
 
 /**
  * The first-run dialog: install Ollama, or download the model the configuration asks for.
@@ -147,11 +139,11 @@ export function FirstRunSetup (): VNode {
 
   const body = status === "noOllama"
     ? html`
-      <p>${NO_OLLAMA_TEXT}</p>
+      <p>${t("setupNoOllama")}</p>
       <div class="firstRunSetupChoices">
-        <a class="firstRunSetupInstall" href=${OLLAMA_DOWNLOAD_URL} target="_blank" rel="noreferrer">${INSTALL_LABEL}</a>
-        <button type="button" onClick=${retry}>${RETRY_LABEL}</button>
-        <button type="button" onClick=${dismiss}>${CONTINUE_LABEL}</button>
+        <a class="firstRunSetupInstall" href=${OLLAMA_DOWNLOAD_URL} target="_blank" rel="noreferrer">${t("setupInstall")}</a>
+        <button type="button" onClick=${retry}>${t("setupRetry")}</button>
+        <button type="button" onClick=${dismiss}>${t("setupContinue")}</button>
       </div>
     `
     : html`
@@ -160,25 +152,25 @@ export function FirstRunSetup (): VNode {
         <div class="firstRunSetupProgress">
           <progress
             aria-label=${PROGRESS_LABEL(missing)}
-            aria-valuetext=${`${percent}% downloaded`}
+            aria-valuetext=${t("setupPercent", { percent })}
             max=${progress?.total ?? 1}
             value=${progress?.completed ?? 0}></progress>
-          <p>${percent}% downloaded</p>
+          <p>${t("setupPercent", { percent })}</p>
         </div>
       `}
-      ${hasFailed && html`<p class="firstRunSetupFailure" role="alert">${PULL_FAILED_TEXT}</p>`}
+      ${hasFailed && html`<p class="firstRunSetupFailure" role="alert">${t("setupPullFailed")}</p>`}
       <div class="firstRunSetupChoices">
         ${isPulling
-    ? html`<button type="button" onClick=${cancel}>${CANCEL_LABEL}</button>`
-    : html`<button type="button" class="firstRunSetupDownload" onClick=${download}>${DOWNLOAD_LABEL}</button>`}
-        <button type="button" onClick=${dismiss}>${CONTINUE_LABEL}</button>
+    ? html`<button type="button" onClick=${cancel}>${t("cancel")}</button>`
+    : html`<button type="button" class="firstRunSetupDownload" onClick=${download}>${t("setupDownload")}</button>`}
+        <button type="button" onClick=${dismiss}>${t("setupContinue")}</button>
       </div>
     `;
 
   return html`
     <${ModalDialog}
       id=${SETUP_DIALOG_ID}
-      title=${SETUP_TITLE}
+      title=${t("setupTitle")}
       isOpen=${isOpen}
       onClose=${dismiss}>
       ${body}

@@ -18,12 +18,9 @@ import { html } from "htm/preact";
 import { adaptivePaletteGlobals, changeEncodingContents, settingsSavedCount } from "../state/GlobalData";
 import { DISABLED_MODEL_QUERY } from "../core/Config";
 import { isLocalHost } from "../core/OllamaApi";
-import { DISMISS_LABEL } from "./ModalDialog";
-import { SEARCH_FIELD_LABEL } from "../cells/ActionSearchGloss";
-import {
-  SymbolEntryToolbar, SEARCH_TRIGGER_LABEL, SVG_TRIGGER_LABEL, SETTINGS_TRIGGER_LABEL,
-  ABOUT_ME_TRIGGER_LABEL
-} from "./SymbolEntryToolbar";
+import { SymbolEntryToolbar } from "./SymbolEntryToolbar";
+import { en } from "../i18n/en";
+import { languageSignal } from "../i18n/I18n";
 
 // `userEvent` is the provider-backed instance from `vitest/browser`, not the one from
 // `@testing-library/user-event`. These tests drive a native `<dialog>`, whose
@@ -61,12 +58,22 @@ describe("SymbolEntryToolbar", () => {
     cleanup();
     adaptivePaletteGlobals.config = originalConfig;
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+    languageSignal.value = "en";
+  });
+
+  test("draws again in the new language when the language changes", async () => {
+    withVisibility(true, false);
+    render(html`<${SymbolEntryToolbar} />`);
+
+    languageSignal.value = "sv";
+
+    expect(await screen.findAllByRole("button", { name: "Inställningar" })).not.toHaveLength(0);
   });
 
   test("draws again after the settings are saved", async () => {
     withVisibility(true, false);
     render(html`<${SymbolEntryToolbar} />`);
-    const searchButtons = (): number => screen.queryAllByRole("button", { name: SEARCH_TRIGGER_LABEL }).length;
+    const searchButtons = (): number => screen.queryAllByRole("button", { name: en.toolbarSearch }).length;
     expect(searchButtons()).toBeGreaterThan(0);
 
     withVisibility(false, false);
@@ -79,24 +86,24 @@ describe("SymbolEntryToolbar", () => {
     withVisibility(true, true);
     render(html`<${SymbolEntryToolbar} />`);
 
-    expect(screen.getByRole("button", { name: SEARCH_TRIGGER_LABEL })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: SVG_TRIGGER_LABEL })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: en.toolbarSearch })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: en.toolbarSvg })).toBeInTheDocument();
   });
 
   test("shows only the search trigger when the builder string is disabled", () => {
     withVisibility(true, false);
     render(html`<${SymbolEntryToolbar} />`);
 
-    expect(screen.getByRole("button", { name: SEARCH_TRIGGER_LABEL })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: SVG_TRIGGER_LABEL })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: en.toolbarSearch })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: en.toolbarSvg })).not.toBeInTheDocument();
   });
 
   test("shows only the builder-string trigger when search is disabled", () => {
     withVisibility(false, true);
     render(html`<${SymbolEntryToolbar} />`);
 
-    expect(screen.queryByRole("button", { name: SEARCH_TRIGGER_LABEL })).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: SVG_TRIGGER_LABEL })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: en.toolbarSearch })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: en.toolbarSvg })).toBeInTheDocument();
   });
 
   // The settings are how a user turns the other two back on, so this trigger has no
@@ -105,19 +112,19 @@ describe("SymbolEntryToolbar", () => {
     withVisibility(false, false);
     render(html`<${SymbolEntryToolbar} />`);
 
-    expect(screen.queryByRole("button", { name: SEARCH_TRIGGER_LABEL })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: SVG_TRIGGER_LABEL })).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: SETTINGS_TRIGGER_LABEL })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: en.toolbarSearch })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: en.toolbarSvg })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: en.toolbarSettings })).toBeInTheDocument();
   });
 
   test("clicking the settings trigger opens its dialog", async () => {
     withVisibility(true, true);
     render(html`<${SymbolEntryToolbar} />`);
 
-    await userEvent.click(screen.getByRole("button", { name: SETTINGS_TRIGGER_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.toolbarSettings }));
 
     await waitFor(() => {
-      expect(screen.getByRole("dialog", { name: SETTINGS_TRIGGER_LABEL })).toBeVisible();
+      expect(screen.getByRole("dialog", { name: en.toolbarSettings })).toBeVisible();
     });
   });
 
@@ -125,7 +132,7 @@ describe("SymbolEntryToolbar", () => {
     withVisibility(false, false);
     render(html`<${SymbolEntryToolbar} />`);
 
-    expect(screen.getByRole("button", { name: ABOUT_ME_TRIGGER_LABEL })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: en.toolbarAboutMe })).toBeInTheDocument();
   });
 
   // About Me is only used to fill prompts, and the hosted site sends none.
@@ -134,18 +141,18 @@ describe("SymbolEntryToolbar", () => {
     withVisibility(true, true);
     render(html`<${SymbolEntryToolbar} />`);
 
-    expect(screen.queryByRole("button", { name: ABOUT_ME_TRIGGER_LABEL })).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: SETTINGS_TRIGGER_LABEL })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: en.toolbarAboutMe })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: en.toolbarSettings })).toBeInTheDocument();
   });
 
   test("clicking the About Me trigger opens its dialog", async () => {
     withVisibility(true, true);
     render(html`<${SymbolEntryToolbar} />`);
 
-    await userEvent.click(screen.getByRole("button", { name: ABOUT_ME_TRIGGER_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.toolbarAboutMe }));
 
     await waitFor(() => {
-      expect(screen.getByRole("dialog", { name: ABOUT_ME_TRIGGER_LABEL })).toBeVisible();
+      expect(screen.getByRole("dialog", { name: en.toolbarAboutMe })).toBeVisible();
     });
   });
 
@@ -153,7 +160,7 @@ describe("SymbolEntryToolbar", () => {
     withVisibility(true, true);
     render(html`<${SymbolEntryToolbar} />`);
 
-    expect(screen.getByRole("button", { name: SEARCH_TRIGGER_LABEL }))
+    expect(screen.getByRole("button", { name: en.toolbarSearch }))
       .toHaveAttribute("aria-haspopup", "dialog");
   });
 
@@ -161,10 +168,10 @@ describe("SymbolEntryToolbar", () => {
     withVisibility(true, true);
     render(html`<${SymbolEntryToolbar} />`);
 
-    await userEvent.click(screen.getByRole("button", { name: SEARCH_TRIGGER_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.toolbarSearch }));
 
     await waitFor(() => {
-      expect(screen.getByRole("dialog", { name: SEARCH_TRIGGER_LABEL })).toBeVisible();
+      expect(screen.getByRole("dialog", { name: en.toolbarSearch })).toBeVisible();
     });
   });
 
@@ -172,10 +179,10 @@ describe("SymbolEntryToolbar", () => {
     withVisibility(true, true);
     render(html`<${SymbolEntryToolbar} />`);
 
-    await userEvent.click(screen.getByRole("button", { name: SVG_TRIGGER_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.toolbarSvg }));
 
     await waitFor(() => {
-      expect(screen.getByRole("dialog", { name: SVG_TRIGGER_LABEL })).toBeVisible();
+      expect(screen.getByRole("dialog", { name: en.toolbarSvg })).toBeVisible();
     });
   });
 
@@ -183,12 +190,12 @@ describe("SymbolEntryToolbar", () => {
     withVisibility(true, true);
     render(html`<${SymbolEntryToolbar} />`);
 
-    await userEvent.click(screen.getByRole("button", { name: SEARCH_TRIGGER_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.toolbarSearch }));
 
     await waitFor(() => {
-      expect(screen.getByRole("textbox", { name: SEARCH_FIELD_LABEL })).toHaveFocus();
+      expect(screen.getByRole("textbox", { name: en.searchFindWord })).toHaveFocus();
     });
-    expect(screen.getByRole("button", { name: DISMISS_LABEL })).not.toHaveFocus();
+    expect(screen.getByRole("button", { name: en.dialogDismiss })).not.toHaveFocus();
   });
 
   // Native `<dialog>` restores focus to the opener; this guards that the wiring keeps it.
@@ -196,10 +203,10 @@ describe("SymbolEntryToolbar", () => {
     withVisibility(true, true);
     render(html`<${SymbolEntryToolbar} />`);
 
-    const trigger = screen.getByRole("button", { name: SEARCH_TRIGGER_LABEL });
+    const trigger = screen.getByRole("button", { name: en.toolbarSearch });
     await userEvent.click(trigger);
     await waitFor(() => {
-      expect(screen.getByRole("dialog", { name: SEARCH_TRIGGER_LABEL })).toBeVisible();
+      expect(screen.getByRole("dialog", { name: en.toolbarSearch })).toBeVisible();
     });
 
     await userEvent.keyboard("{Escape}");
@@ -208,7 +215,7 @@ describe("SymbolEntryToolbar", () => {
     // even though the element itself is still in the DOM. Awaited because the dialog's
     // `close` event is queued as a browser task.
     await waitFor(() => {
-      expect(screen.queryByRole("dialog", { name: SEARCH_TRIGGER_LABEL })).not.toBeInTheDocument();
+      expect(screen.queryByRole("dialog", { name: en.toolbarSearch })).not.toBeInTheDocument();
     });
     expect(trigger).toHaveFocus();
   });

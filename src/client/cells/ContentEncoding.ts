@@ -18,6 +18,7 @@ import { editMessage } from "../core/MessageEdit";
 import { ContentEncodingType, SymbolEncodingType } from "../index.d";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
+import { t } from "../i18n/I18n";
 import "./ContentEncoding.scss";
 
 export const INPUT_AREA_ID = "content-encoding-area";   // better way?
@@ -122,12 +123,12 @@ export function moveCursorToEnd () {
 function handleKeyDown(event: KeyboardEvent) {
   if ((!(isApplePlatform && event.metaKey) && event.key === "ArrowLeft") || event.key === "ArrowDown") {
     decrementCursor();
-    announceIfEnabled("backward");
+    announceIfEnabled(t("cursorBackward"));
   }
 
   if ((!(isApplePlatform && event.metaKey) && event.key === "ArrowRight") || event.key === "ArrowUp") {
     incrementCursor();
-    announceIfEnabled("forward");
+    announceIfEnabled(t("cursorForward"));
   }
 
   if (
@@ -137,7 +138,7 @@ function handleKeyDown(event: KeyboardEvent) {
   ) {
     event.preventDefault();
     moveCursorToHome();
-    announceIfEnabled("move cursor to start");
+    announceIfEnabled(t("cursorStart"));
   }
 
   if (
@@ -147,7 +148,7 @@ function handleKeyDown(event: KeyboardEvent) {
   ) {
     event.preventDefault();
     moveCursorToEnd();
-    announceIfEnabled("move cursor to end");
+    announceIfEnabled(t("cursorEnd"));
   }
 }
 
@@ -167,7 +168,7 @@ export function ContentEncoding (props: ContentEncodingProps): VNode {
       id="${id}"
       class="contentEncodingArea"
       role="textbox"
-      aria-label="Input Area"
+      aria-label=${t("inputArea")}
       aria-readonly="true"
       style="${gridStyles}"
       tabindex="0"

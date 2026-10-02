@@ -21,11 +21,10 @@ import type { AdaptivePaletteConfigType } from "../../index.d";
 import { type AdaptivePaletteStorage, setStorage } from "../../core/StorageBackend";
 import { MemoryStorage } from "../../core/MemoryStorage";
 import { IndexedDbStorage } from "../../core/IndexedDbStorage";
-import {
-  SettingsDialog, SAVE_LABEL, CLOSE_LABEL, MODEL_NOTE, FAILURE_MESSAGE, dependentNote
-} from "./SettingsDialog";
-import { ERASE_CONFIRM_LABEL, ERASE_DONE_TEXT, ERASE_LABEL } from "./EraseAllData";
-import { HOSTED_MESSAGE, isLocalHost } from "../../core/OllamaApi";
+import { SettingsDialog, dependentNote } from "./SettingsDialog";
+import { isLocalHost } from "../../core/OllamaApi";
+import { en } from "../../i18n/en";
+import { languageSignal } from "../../i18n/I18n";
 
 // Under the test runner the hostname is always `localhost`. The real function stays in place
 // so every test sees the local page unless it asks for the hosted one.
@@ -86,6 +85,7 @@ describe("SettingsDialog", () => {
     adaptivePaletteGlobals.config = originalConfig;
     adaptivePaletteGlobals.fileConfig = originalFileConfig;
     adaptivePaletteGlobals.models = originalModels;
+    languageSignal.value = "en";
   });
 
   test("groups the settings under their headings, in the order of the schema", () => {
@@ -131,10 +131,10 @@ describe("SettingsDialog", () => {
     expect(control).toHaveAttribute("aria-disabled", "true");
     // Reachable, unlike a natively disabled control, so the note explaining it can be read.
     expect(control).not.toHaveAttribute("disabled");
-    expect(control).toHaveAccessibleDescription(MODEL_NOTE);
+    expect(control).toHaveAccessibleDescription(en.settingsModelNote);
     // The four model settings, and "Mark AI suggestions", which has nothing to mark without one.
-    expect(screen.getAllByText(MODEL_NOTE)).toHaveLength(5);
-    expect(screen.getByLabelText(MARK_AI_LABEL)).toHaveAccessibleDescription(MODEL_NOTE);
+    expect(screen.getAllByText(en.settingsModelNote)).toHaveLength(5);
+    expect(screen.getByLabelText(MARK_AI_LABEL)).toHaveAccessibleDescription(en.settingsModelNote);
 
     // Clicked directly: `userEvent` refuses an `aria-disabled` control, which is the
     // point of the attribute. The control's own handler is what keeps the box unchanged.
@@ -151,10 +151,10 @@ describe("SettingsDialog", () => {
 
     const control = screen.getByLabelText(MODEL_WORDS_LABEL);
     expect(control).toHaveAttribute("aria-disabled", "true");
-    expect(control).toHaveAccessibleDescription(HOSTED_MESSAGE);
-    expect(screen.getAllByText(HOSTED_MESSAGE)).toHaveLength(5);
-    expect(screen.getByLabelText(MARK_AI_LABEL)).toHaveAccessibleDescription(HOSTED_MESSAGE);
-    expect(screen.queryByText(MODEL_NOTE)).not.toBeInTheDocument();
+    expect(control).toHaveAccessibleDescription(en.hosted);
+    expect(screen.getAllByText(en.hosted)).toHaveLength(5);
+    expect(screen.getByLabelText(MARK_AI_LABEL)).toHaveAccessibleDescription(en.hosted);
+    expect(screen.queryByText(en.settingsModelNote)).not.toBeInTheDocument();
   });
 
   test("leaves those settings editable when Ollama has a model", async () => {
@@ -164,7 +164,7 @@ describe("SettingsDialog", () => {
     const control = screen.getByLabelText(MODEL_WORDS_LABEL);
     expect(control).not.toHaveAttribute("aria-disabled");
     expect(screen.getByLabelText(MARK_AI_LABEL)).not.toHaveAttribute("aria-disabled");
-    expect(screen.queryByText(MODEL_NOTE)).not.toBeInTheDocument();
+    expect(screen.queryByText(en.settingsModelNote)).not.toBeInTheDocument();
 
     const wasChecked = (control as HTMLInputElement).checked;
     await userEvent.click(control);
@@ -213,11 +213,11 @@ describe("SettingsDialog", () => {
     vi.spyOn(window, "fetch").mockResolvedValue(new Response(null, { status: 204 }));
     renderDialog();
 
-    await userEvent.click(screen.getByRole("button", { name: ERASE_LABEL }));
-    await userEvent.click(await screen.findByRole("button", { name: ERASE_CONFIRM_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.eraseLabel }));
+    await userEvent.click(await screen.findByRole("button", { name: en.eraseConfirm }));
 
-    await waitFor(() => expect(screen.getByText(ERASE_DONE_TEXT)).toBeInTheDocument());
-    const save = screen.getByRole("button", { name: SAVE_LABEL });
+    await waitFor(() => expect(screen.getByText(en.eraseDone)).toBeInTheDocument());
+    const save = screen.getByRole("button", { name: en.settingsSave });
     expect(save).toHaveAttribute("aria-disabled", "true");
 
     // Marked unavailable rather than disabled, so the click has to be refused as well.
@@ -233,11 +233,11 @@ describe("SettingsDialog", () => {
     const onRequestClose = vi.fn();
     renderDialog(onRequestClose);
 
-    await userEvent.click(screen.getByRole("button", { name: ERASE_LABEL }));
-    await userEvent.click(await screen.findByRole("button", { name: ERASE_CONFIRM_LABEL }));
-    await waitFor(() => expect(screen.getByText(ERASE_DONE_TEXT)).toBeInTheDocument());
+    await userEvent.click(screen.getByRole("button", { name: en.eraseLabel }));
+    await userEvent.click(await screen.findByRole("button", { name: en.eraseConfirm }));
+    await waitFor(() => expect(screen.getByText(en.eraseDone)).toBeInTheDocument());
 
-    await userEvent.click(screen.getByRole("button", { name: CLOSE_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.close }));
     expect(onRequestClose).toHaveBeenCalled();
   });
 
@@ -247,7 +247,7 @@ describe("SettingsDialog", () => {
     renderDialog(onRequestClose);
 
     await userEvent.click(screen.getByLabelText(SPEAK_LABEL));
-    await userEvent.click(screen.getByRole("button", { name: CLOSE_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.close }));
 
     expect(onRequestClose).toHaveBeenCalled();
     expect(writeSettingsSpy).not.toHaveBeenCalled();
@@ -258,13 +258,46 @@ describe("SettingsDialog", () => {
     renderDialog();
 
     await userEvent.click(screen.getByLabelText(SPEAK_LABEL));
-    await userEvent.click(screen.getByRole("button", { name: SAVE_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.settingsSave }));
 
     await waitFor(() => {
       expect(writeSettingsSpy).toHaveBeenCalledWith(
         { "announceSymbolOnInput": !fileConfig.announceSymbolOnInput }
       );
     });
+  });
+
+  test("saving a language switches the UI to it at once", async () => {
+    withConfig({});
+    renderDialog();
+
+    await userEvent.selectOptions(screen.getByLabelText(en.settingLanguage), "Svenska");
+    await userEvent.click(screen.getByRole("button", { name: en.settingsSave }));
+
+    await waitFor(() => expect(languageSignal.value).toBe("sv"));
+    expect(writeSettingsSpy).toHaveBeenCalledWith({ "language": "sv" });
+  });
+
+  // `?lang=` sets the page's language but not `config.language`, which holds the saved choice.
+  test("saving with the language untouched keeps the saved choice, not the URL's", async () => {
+    withConfig({ language: "sv" });
+    languageSignal.value = "en";
+    renderDialog();
+
+    expect(screen.getByLabelText(en.settingLanguage)).toHaveValue("en");
+    await userEvent.click(screen.getByRole("button", { name: en.settingsSave }));
+
+    await waitFor(() => expect(writeSettingsSpy).toHaveBeenCalledWith({ "language": "sv" }));
+    expect(languageSignal.value).toBe("en");
+  });
+
+  test("shows its text in the current language", () => {
+    withConfig({});
+    languageSignal.value = "sv";
+    renderDialog();
+
+    expect(screen.getByRole("button", { name: "Spara och stäng" })).toBeInTheDocument();
+    expect(screen.getByText("Allmänt")).toBeInTheDocument();
   });
 
   // A field emptied before its row was switched off skips the form's own validation, a
@@ -275,7 +308,7 @@ describe("SettingsDialog", () => {
 
     await userEvent.clear(screen.getByLabelText(SUGGESTIONS_LABEL));
     await userEvent.click(screen.getByLabelText(WORDS_LABEL));
-    await userEvent.click(screen.getByRole("button", { name: SAVE_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.settingsSave }));
 
     await waitFor(() => {
       expect(writeSettingsSpy).toHaveBeenCalledWith(
@@ -293,9 +326,9 @@ describe("SettingsDialog", () => {
     renderDialog(onRequestClose);
 
     await userEvent.click(screen.getByLabelText(SPEAK_LABEL));
-    await userEvent.click(screen.getByRole("button", { name: SAVE_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.settingsSave }));
 
-    expect(await screen.findByRole("alert")).toHaveTextContent(FAILURE_MESSAGE);
+    expect(await screen.findByRole("alert")).toHaveTextContent(en.settingsFailed);
     expect(onRequestClose).not.toHaveBeenCalled();
     expect(settingsSavedCount.value).toBe(savedCount);
     expect(adaptivePaletteGlobals.config.announceSymbolOnInput).toBe(fileConfig.announceSymbolOnInput);
@@ -336,7 +369,7 @@ describe.each([
     renderDialog(onRequestClose);
 
     await userEvent.click(screen.getByLabelText(SPEAK_LABEL));
-    await userEvent.click(screen.getByRole("button", { name: SAVE_LABEL }));
+    await userEvent.click(screen.getByRole("button", { name: en.settingsSave }));
 
     await waitFor(() => expect(onRequestClose).toHaveBeenCalled());
     expect(adaptivePaletteGlobals.config.announceSymbolOnInput).toBe(!fileConfig.announceSymbolOnInput);

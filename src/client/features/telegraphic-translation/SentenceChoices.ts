@@ -25,14 +25,8 @@ import { ContentSentenceChoicesType } from "../../index.d";
 import { adaptivePaletteGlobals, settingsSavedCount } from "../../state/GlobalData";
 import { AiBadge, aiSuggestionLabel } from "../../components/AiBadge";
 import { BlissSentence } from "./BlissSentence";
+import { CONTENT_LANGUAGE, languageSignal, t } from "../../i18n/I18n";
 import "./SentenceChoices.scss";
-
-export const WORKING_MESSAGE = "⏳ Making sentences…";
-export const MAKING_MORE_MESSAGE = "⏳ Making more sentences…";
-export const CANNOT_COMPLETE_MESSAGE = "⚠ Could not make sentences. Try again.";
-export const TYPE_YOUR_OWN_HINT = "None fit? Type yours";
-export const SPEAK_BUTTON_LABEL = "Speak";
-export const DONE_BUTTON_LABEL = "✓ Done";
 
 type SentenceChoicesPropsType = {
   id: string,
@@ -97,7 +91,7 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
 
   const logAndSpeak = (sentence: string, source: SentenceSourceType): void => {
     abortActiveSentenceRequest();
-    speak(sentence);
+    speak(sentence, CONTENT_LANGUAGE);
     saveTranslation(state.telegraphicMessage, {
       model: state.model,
       candidates: state.sentences,
@@ -110,7 +104,7 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
     event.preventDefault();
     const sentence = typedSentence.trim();
     if (sentence.length === 0) {
-      speakUnavailable(SPEAK_BUTTON_LABEL);
+      speakUnavailable(t("sentenceSpeak"));
       return;
     }
     // The text stays in the box on purpose, so it can be spoken again or edited into a
@@ -120,7 +114,7 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
 
   // "Done" button clears up the input area and sentences.
   const finish = (): void => {
-    announceIfEnabled("Done");
+    announceIfEnabled(t("sentenceDoneSpoken"));
     clearMessageAndChoices();
     typedSentenceSignal.value = "";
   };
@@ -155,22 +149,22 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
 
   const choices = state.status === "idle" ? null : html`
     ${state.sentences.map(sentenceButton)}
-    <form class="sentenceTypeYourOwn" onSubmit=${submitTypedSentence}>
+    <form class="sentenceTypeYourOwn" lang=${languageSignal.value} onSubmit=${submitTypedSentence}>
       <input
         type="text"
-        aria-label=${TYPE_YOUR_OWN_HINT}
-        placeholder=${TYPE_YOUR_OWN_HINT}
+        aria-label=${t("sentenceTypeYours")}
+        placeholder=${t("sentenceTypeYours")}
         value=${typedSentence}
         onInput=${(event: Event) => { typedSentenceSignal.value = (event.target as HTMLInputElement).value; }}
       />
-      <button type="submit" aria-disabled=${nothingTyped}>${SPEAK_BUTTON_LABEL}</button>
-      <button type="button" class="sentenceDone" onClick=${finish}>${DONE_BUTTON_LABEL}</button>
+      <button type="submit" aria-disabled=${nothingTyped}>${t("sentenceSpeak")}</button>
+      <button type="button" class="sentenceDone" onClick=${finish}>${t("sentenceDone")}</button>
     </form>
   `;
 
   const statusText = state.status === "working"
-    ? (state.sentences.length > 0 ? MAKING_MORE_MESSAGE : WORKING_MESSAGE)
-    : state.status === "error" ? CANNOT_COMPLETE_MESSAGE : "";
+    ? (state.sentences.length > 0 ? t("sentenceMakingMore") : t("sentenceWorking"))
+    : state.status === "error" ? t("sentenceCannotComplete") : "";
 
   return html`
     <div
@@ -178,7 +172,7 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
       class="sentenceChoices"
       style="${generateGridStyle(columnStart, columnSpan, rowStart, rowSpan)}"
       ref=${choicesRef}>
-      <p class=${state.status === "error" ? "statusMessage sentenceError" : "statusMessage"} role="status">${statusText}</p>
+      <p class=${state.status === "error" ? "statusMessage sentenceError" : "statusMessage"} lang=${languageSignal.value} role="status">${statusText}</p>
       ${choices}
     </div>
   `;

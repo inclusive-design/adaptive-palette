@@ -19,6 +19,7 @@ whatever this file says. See `isLocalHost()` in [`src/client/core/OllamaApi.ts`]
 
 | Section | Controls |
 | ------- | -------- |
+| `language` | Top-level, not a section. The UI language: `"en"` or `"sv"`. |
 | `maxRecalledRecords` | Top-level, not a section. How many of the newest stored messages the app reads back for word prediction and sentence recall. |
 | `announceSymbolOnInput` | Top-level, not a section. Whether labels are spoken as the user inputs. |
 | `markAiSuggestions` | Top-level, not a section. Whether suggestions a model made are marked as such. |
@@ -45,6 +46,14 @@ The `systemPrompt` fields of `telegraphicTranslation` and `wordPrediction` are p
 per line, so they keep plain substitution (`renderTemplate()`) instead, and no line of theirs is ever
 dropped. `indicatorLabelLookup.systemPrompt` is the exception: it is sent verbatim, so a placeholder
 written there reaches the model as literal text.
+
+## `language`
+
+The language of the UI text and the speech voice: `"en"` (the default) or `"sv"`. A missing or
+unsupported value falls back to `"en"`. The user's choice in the settings dialog overrides it,
+and `?lang=` in the page URL overrides both for that page, without changing `config.language`
+or the saved choice. All three are read through
+`parseLanguage()` in [`src/client/i18n/I18n.ts`](../../src/client/i18n/I18n.ts).
 
 ## `maxRecalledRecords`
 

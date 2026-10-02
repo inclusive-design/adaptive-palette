@@ -552,3 +552,23 @@ describe("loadConfig switchScanning", (): void => {
     expect(makeDefaultConfig().switchScanning).toEqual({ enabled: false, moveKey: "Space", selectKey: "Enter" });
   });
 });
+
+describe("loadConfig language", (): void => {
+
+  test("a supported code is kept", async (): Promise<void> => {
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, language: "sv" });
+    const config = await loadConfig();
+    expect(config.language).toBe("sv");
+  });
+
+  test("a missing or unsupported code falls back to English", async (): Promise<void> => {
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, language: "de" });
+    expect((await loadConfig()).language).toBe("en");
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
+    expect((await loadConfig()).language).toBe("en");
+  });
+
+  test("the default config is English", (): void => {
+    expect(makeDefaultConfig().language).toBe("en");
+  });
+});

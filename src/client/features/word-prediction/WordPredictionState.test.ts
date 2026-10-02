@@ -21,13 +21,14 @@ import { queryChat } from "../../core/OllamaApi";
 import { DEBOUNCE_MS, messageUpToCaret, queryContextKeyOf, modelWordsSignal } from "./WordPredictionState";
 import {
   cancelDiscardEdit, confirmDiscardEdit, discardEditPromptSignal, guardEdit,
-  IDLE_SENTENCE_STATE, READY_DISCARD_PROMPT, sentenceCompletionsSignal
+  IDLE_SENTENCE_STATE, sentenceCompletionsSignal
 } from "../telegraphic-translation/TelegraphicTranslationState";
 import {
   selectedAttributesSignal, clearAttributes
 } from "../message-attributes/MessageAttributesState";
 import { SymbolEncodingType } from "../../index.d";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
+import { en } from "../../i18n/en";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../core/OllamaApi")>();
@@ -350,7 +351,7 @@ describe("wordPrediction model query", (): void => {
       mockedQueryChat.mockClear();
 
       raiseQuestion();
-      expect(discardEditPromptSignal.value).toBe(READY_DISCARD_PROMPT);
+      expect(discardEditPromptSignal.value).toBe(en.discardReady);
 
       await waitForQuery();
       expect(mockedQueryChat).not.toHaveBeenCalled();
@@ -398,7 +399,7 @@ describe("wordPrediction model query", (): void => {
 
       for (let question = 0; question < 2; question++) {
         raiseQuestion();
-        expect(discardEditPromptSignal.value).toBe(READY_DISCARD_PROMPT);
+        expect(discardEditPromptSignal.value).toBe(en.discardReady);
         cancelDiscardEdit();
       }
 

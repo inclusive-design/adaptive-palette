@@ -11,9 +11,10 @@
  */
 
 import { effect } from "@preact/signals";
+import { languageSignal } from "../../i18n/I18n";
 import {
   selectedAttributesSignal, toggleAttribute, clearAttributes, attributesPromptText,
-  isAttributeSelected
+  isAttributeSelected, categoryName
 } from "./MessageAttributesState";
 
 describe("MessageAttributesState", (): void => {
@@ -24,6 +25,17 @@ describe("MessageAttributesState", (): void => {
 
   beforeEach((): void => {
     clearAttributes();
+  });
+
+  afterEach((): void => {
+    languageSignal.value = "en";
+  });
+
+  test("categoryName() names a category in the current language", (): void => {
+    expect(categoryName("Feeling")).toBe("Feeling");
+    languageSignal.value = "sv";
+    expect(categoryName("Feeling")).toBe("Känsla");
+    expect(categoryName("Mood")).toBe("Mood");
   });
 
   test("nothing is selected to begin with", (): void => {

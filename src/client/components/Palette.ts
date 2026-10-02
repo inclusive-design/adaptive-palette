@@ -17,6 +17,7 @@ import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { cellTypeRegistry } from "../core/CellTypeRegistry";
 import { PALETTE_INCLUDE_TYPE, PaletteStore } from "../core/PaletteStore";
 import { generateGridStyle } from "../utils/GridUtils";
+import { CONTENT_LANGUAGE } from "../i18n/I18n";
 import "./Palette.scss";
 
 type PalettePropsType = {
@@ -193,6 +194,7 @@ export function Palette (props: PalettePropsType): VNode {
     <div
       data-palettename="${paletteDefinition.name}"
       class="paletteContainer"
+      lang=${CONTENT_LANGUAGE}
       style="grid-template-columns: ${gridTemplateColumns(rowsCols.numColumns, emptyColumns)};">
         ${cells}
     </div>

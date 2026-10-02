@@ -14,7 +14,8 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "../../components/BlissSymbol";
 import { announceIfEnabled } from "../../utils/SpeechUtils";
-import { selectedAttributesSignal, toggleAttribute } from "./MessageAttributesState";
+import { t } from "../../i18n/I18n";
+import { categoryName, selectedAttributesSignal, toggleAttribute } from "./MessageAttributesState";
 import "./MessageAttributesBar.scss";
 
 /**
@@ -37,6 +38,7 @@ export function MessageAttributesBar (): VNode | null {
   }
 
   const chips = attributes.map((attribute) => {
+    const name = `${categoryName(attribute.category)}: ${attribute.label}`;
     // A chip only exists for an attribute that is currently set, and a click on it removes it,
     // so the announcement is always "off" -- no state read needed.
     const chipClicked = (event: Event): void => {
@@ -46,7 +48,7 @@ export function MessageAttributesBar (): VNode | null {
       // the toggle, so focusing it afterwards is reliable.
       const next = (chip.nextElementSibling ?? chip.previousElementSibling) as HTMLElement | null;
       toggleAttribute(attribute);
-      announceIfEnabled(`${attribute.category}: ${attribute.label}, off`);
+      announceIfEnabled(t("attributeOff", { name }));
       // Removing the last chip leaves no sibling and the bar unmounts, so focus
       // falls back to document.body as there is no obviously right target.
       next?.focus();
@@ -55,7 +57,7 @@ export function MessageAttributesBar (): VNode | null {
       <button
         key=${`${attribute.category}:${attribute.label}`}
         class="messageAttributeChip"
-        aria-label="Remove ${attribute.category}: ${attribute.label}"
+        aria-label=${t("attributeRemove", { name })}
         onClick=${chipClicked}>
         <${BlissSymbol}
           composition=${attribute.composition}

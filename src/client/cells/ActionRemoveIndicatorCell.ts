@@ -19,6 +19,7 @@ import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { applyModifiersToLabel, replaceAtCaret } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
+import { CONTENT_LANGUAGE } from "../i18n/I18n";
 import { findIndicators } from "../utils/SvgUtils";
 
 type ActionIndicatorCodeCellPropsType = {
@@ -96,7 +97,7 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
       // goes with the indicator -- and the mark is only ever set alongside a `baseLabel`, never without.
     });
     editMessage({ payloads: edited, caretPosition: caretPosition });
-    announceIfEnabled(`${restoredLabel}`);
+    announceIfEnabled(`${restoredLabel}`, CONTENT_LANGUAGE);
   };
 
   return html`

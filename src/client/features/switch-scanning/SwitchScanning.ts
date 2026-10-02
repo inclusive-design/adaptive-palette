@@ -22,6 +22,7 @@ import { effect, untracked } from "@preact/signals";
 import type { SwitchScanningConfigType } from "../../index.d";
 import { adaptivePaletteGlobals, settingsSavedCount } from "../../state/GlobalData";
 import { elementAllowsTextEntry } from "../../utils/TextEntryUtils";
+import { t } from "../../i18n/I18n";
 import "./SwitchScanning.scss";
 
 export const CELL_CLASS = "switchScanCell";
@@ -234,6 +235,7 @@ export function startSwitchScanning (config: SwitchScanningConfigType): () => vo
       height: `${bottom - top + 2 * pad}px`
     });
     overlay.toggleAttribute("data-exit", level === "cells");
+    overlay.dataset.exitLabel = t("scanExitRow");
     overlay.hidden = false;
     // Scrolls the window only, as the overlay sits on the page; scroll the row's cells
     // instead if palette rows ever sit in a scrolling area of their own.

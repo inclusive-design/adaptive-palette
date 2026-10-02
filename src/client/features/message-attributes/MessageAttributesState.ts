@@ -19,6 +19,7 @@
  */
 import { signal } from "@preact/signals";
 import type { MessageAttributeType } from "../../index.d";
+import { t, type StringKey } from "../../i18n/I18n";
 
 /**
  * The order the categories are reported to the model in. It matches the row order of
@@ -28,6 +29,21 @@ import type { MessageAttributeType } from "../../index.d";
  * new category means adding it here too if it should be reported in position.
  */
 const CATEGORY_ORDER = ["Intent", "Tone", "Feeling", "Priority"];
+
+// The name shown for each category. The palette and the prompt keep the English one.
+const CATEGORY_KEYS: Record<string, StringKey> = {
+  Intent: "attributeIntent", Tone: "attributeTone", Feeling: "attributeFeeling", Priority: "attributePriority"
+};
+
+/**
+ * A category's name in the current language. A category with no translation is shown as
+ * the palette has it.
+ * @param {string} category - The category as the palette names it.
+ * @returns {string}
+ */
+export function categoryName (category: string): string {
+  return Object.hasOwn(CATEGORY_KEYS, category) ? t(CATEGORY_KEYS[category]) : category;
+}
 
 /**
  * Nothing selected. Shared rather than rewritten at each use, so `clearAttributes()` on an

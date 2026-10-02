@@ -17,7 +17,9 @@
  * `installStorage()` takes the answer rather than reading the hostname, because under the test
  * runner the hostname is always `localhost` and the hosted branch could never be reached.
  */
-import { installStorage, removeLegacyDatabase } from "./InitGlobals";
+import { initAdaptivePaletteGlobals, installStorage, removeLegacyDatabase } from "./InitGlobals";
+import { adaptivePaletteGlobals } from "../state/GlobalData";
+import { languageSignal } from "../i18n/I18n";
 import { IndexedDbStorage } from "./IndexedDbStorage";
 import { MemoryStorage } from "./MemoryStorage";
 import { getStorage } from "./StorageBackend";
@@ -67,5 +69,43 @@ describe("removeLegacyDatabase", (): void => {
     // Opening it again re-created it. Deleting it a second time leaves nothing behind for the
     // next run, and shows that deleting a database twice is harmless.
     await removeLegacyDatabase(name);
+  });
+});
+
+describe("initAdaptivePaletteGlobals language", (): void => {
+
+  afterEach((): void => {
+    history.replaceState(null, "", window.location.pathname);
+    languageSignal.value = "en";
+  });
+
+  test("`?lang=` in the page URL picks the language", async (): Promise<void> => {
+    history.replaceState(null, "", "?lang=sv");
+    await initAdaptivePaletteGlobals();
+    expect(languageSignal.value).toBe("sv");
+    expect(adaptivePaletteGlobals.config.language).toBe("en");
+  });
+
+  test("a saved language beats the file, and `?lang=` beats the saved language", async (): Promise<void> => {
+    // `initAdaptivePaletteGlobals()` installs and opens the same database, so seed it first.
+    const seed = installStorage(true);
+    await seed.open();
+    await seed.writeSettings({ language: "sv" });
+    try {
+      await initAdaptivePaletteGlobals();
+      expect(languageSignal.value).toBe("sv");
+
+      history.replaceState(null, "", "?lang=en");
+      await initAdaptivePaletteGlobals();
+      expect(languageSignal.value).toBe("en");
+    } finally {
+      await getStorage().writeSettings({});
+    }
+  });
+
+  test("an unsupported `?lang=` leaves the configured language", async (): Promise<void> => {
+    history.replaceState(null, "", "?lang=xx");
+    await initAdaptivePaletteGlobals();
+    expect(languageSignal.value).toBe("en");
   });
 });

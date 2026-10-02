@@ -18,6 +18,7 @@ import { BlissSymbol } from "../components/BlissSymbol";
 import { generateGridStyle } from "../utils/GridUtils";
 import { normalizeComposition } from "../utils/SymbolEncodingUtils";
 import { speak, speakUnavailable } from "../utils/SpeechUtils";
+import { CONTENT_LANGUAGE } from "../i18n/I18n";
 import { messageText, saveMessageRecord } from "../core/MessageLog";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import "./ActionSpeakCell.scss";
@@ -57,7 +58,7 @@ export function ActionSpeakCell (props: ActionSpeakCellPropsType): VNode {
       return;
     }
     const message = messageText(payloads);
-    speak(message);
+    speak(message, CONTENT_LANGUAGE);
     saveMessageRecord(payloads);
     // The message is said and finished, so the row stops reporting on it. Its words stay usable.
     finishedMessageSignal.value = message;

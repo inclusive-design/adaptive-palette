@@ -19,11 +19,9 @@ import {
 } from "./TelegraphicTranslationState";
 import { ModalDialog } from "../../components/ModalDialog";
 import { INPUT_AREA_ID } from "../../cells/ContentEncoding";
+import { t } from "../../i18n/I18n";
 
 export const DISCARD_EDIT_DIALOG_ID = "discardEditDialog";
-export const DISCARD_DIALOG_TITLE = "Change your message?";
-export const CHANGE_ANYWAY_LABEL = "Change anyway";
-export const KEEP_SENTENCES_LABEL = "Keep sentences";
 
 /**
  * Where focus goes when the dialog closes. Normally the input area, where the edit was made.
@@ -57,14 +55,14 @@ export function DiscardEditDialog (): VNode {
   return html`
     <${ModalDialog}
       id=${DISCARD_EDIT_DIALOG_ID}
-      title=${DISCARD_DIALOG_TITLE}
+      title=${t("discardTitle")}
       isOpen=${discardPrompt !== null}
       onClose=${cancelDiscardEdit}
       restoreFocusTo=${restoreDialogFocus}>
       <p>${discardPrompt}</p>
       <div class="dialogFooter">
-        <button type="button" onClick=${confirmDiscardEdit}>${CHANGE_ANYWAY_LABEL}</button>
-        <button type="button" onClick=${cancelDiscardEdit}>${KEEP_SENTENCES_LABEL}</button>
+        <button type="button" onClick=${confirmDiscardEdit}>${t("discardChangeAnyway")}</button>
+        <button type="button" onClick=${cancelDiscardEdit}>${t("discardKeep")}</button>
       </div>
     <//>
   `;

@@ -21,15 +21,12 @@ import { ActionSearchGloss } from "../cells/ActionSearchGloss";
 import { ActionSvgEntryField } from "../cells/ActionSvgEntryField";
 import { SettingsDialog } from "../features/settings/SettingsDialog";
 import { AboutMeDialog } from "../features/about-me/AboutMeDialog";
+import { t } from "../i18n/I18n";
 import "./SymbolEntryToolbar.scss";
 
-export const SEARCH_TRIGGER_LABEL = "Add Symbol to Message";
-export const SVG_TRIGGER_LABEL = "Add Symbol by SVG-Builder String";
 export const SEARCH_DIALOG_ID = "searchSymbolDialog";
 export const SVG_DIALOG_ID = "svgBuilderStringDialog";
-export const SETTINGS_TRIGGER_LABEL = "Adjust Settings";
 export const SETTINGS_DIALOG_ID = "adjustSettingsDialog";
-export const ABOUT_ME_TRIGGER_LABEL = "About Me";
 export const ABOUT_ME_DIALOG_ID = "aboutMeDialog";
 
 type OpenDialogType = "search" | "svg" | "settings" | "aboutMe" | null;
@@ -73,32 +70,32 @@ export function SymbolEntryToolbar (): VNode {
           type="button"
           class="btn-command"
           aria-haspopup="dialog"
-          onClick=${open("search")}>${SEARCH_TRIGGER_LABEL}</button>
+          onClick=${open("search")}>${t("toolbarSearch")}</button>
       `}
       ${svgBuilderString.show && html`
         <button
           type="button"
           class="symbolEntryToolbarDevTrigger"
           aria-haspopup="dialog"
-          onClick=${open("svg")}>${SVG_TRIGGER_LABEL}</button>
+          onClick=${open("svg")}>${t("toolbarSvg")}</button>
       `}
       <button
         type="button"
         class="btn-command"
         aria-haspopup="dialog"
-        onClick=${open("settings")}>${SETTINGS_TRIGGER_LABEL}</button>
+        onClick=${open("settings")}>${t("toolbarSettings")}</button>
       ${showAboutMe && html`
         <button
           type="button"
           class="btn-command"
           aria-haspopup="dialog"
-          onClick=${open("aboutMe")}>${ABOUT_ME_TRIGGER_LABEL}</button>
+          onClick=${open("aboutMe")}>${t("toolbarAboutMe")}</button>
       `}
 
       ${symbolSearch.show && html`
         <${ModalDialog}
           id=${SEARCH_DIALOG_ID}
-          title=${SEARCH_TRIGGER_LABEL}
+          title=${t("toolbarSearch")}
           isOpen=${openDialog === "search"}
           onClose=${close}>
           ${openDialog === "search" && html`<${ActionSearchGloss} onRequestClose=${close} />`}
@@ -107,7 +104,7 @@ export function SymbolEntryToolbar (): VNode {
       ${svgBuilderString.show && html`
         <${ModalDialog}
           id=${SVG_DIALOG_ID}
-          title=${SVG_TRIGGER_LABEL}
+          title=${t("toolbarSvg")}
           isOpen=${openDialog === "svg"}
           onClose=${close}>
           ${openDialog === "svg" && html`<${ActionSvgEntryField} onRequestClose=${close} />`}
@@ -115,7 +112,7 @@ export function SymbolEntryToolbar (): VNode {
       `}
       <${ModalDialog}
         id=${SETTINGS_DIALOG_ID}
-        title=${SETTINGS_TRIGGER_LABEL}
+        title=${t("toolbarSettings")}
         isOpen=${openDialog === "settings"}
         onClose=${close}>
         ${openDialog === "settings" && html`<${SettingsDialog} onRequestClose=${close} />`}
@@ -123,7 +120,7 @@ export function SymbolEntryToolbar (): VNode {
       ${showAboutMe && html`
         <${ModalDialog}
           id=${ABOUT_ME_DIALOG_ID}
-          title=${ABOUT_ME_TRIGGER_LABEL}
+          title=${t("toolbarAboutMe")}
           isOpen=${openDialog === "aboutMe"}
           onClose=${close}>
           ${openDialog === "aboutMe" && html`<${AboutMeDialog} onRequestClose=${close} />`}

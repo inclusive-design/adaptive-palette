@@ -24,12 +24,12 @@ import { outlinedRow, highlightedCell } from "../../testUtils/SwitchScanTestUtil
 import { mockedSpeak } from "../../testUtils/SpeechUtilsMock";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 import { CurrentPalette } from "../../components/CurrentPalette";
-import { SymbolEntryToolbar, SETTINGS_TRIGGER_LABEL } from "../../components/SymbolEntryToolbar";
-import { SAVE_LABEL } from "../settings/SettingsDialog";
+import { SymbolEntryToolbar } from "../../components/SymbolEntryToolbar";
 import {
   sentenceCompletionsSignal, IDLE_SENTENCE_STATE, typedSentenceSignal, focusedMessageSignal
 } from "../telegraphic-translation/TelegraphicTranslationState";
 import { startSwitchScanning, isOwnPaletteCell as isOwnCell } from "./SwitchScanning";
+import { en } from "../../i18n/en";
 
 vi.mock("../../utils/SpeechUtils");
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
@@ -209,12 +209,12 @@ describe("Switch scanning on the standard Bliss chart", (): void => {
     await pick(byId("command-make-sentence"), "Make Sentences");
     await waitFor(() => expect(area.querySelector(".sentenceChoice")).not.toBeNull());
     await pick((el) => el.classList.contains("sentenceChoice"), "the sentence");
-    await waitFor(() => expect(mockedSpeak).toHaveBeenCalledWith("I am hungry."));
+    await waitFor(() => expect(mockedSpeak).toHaveBeenCalledWith("I am hungry.", "en"));
 
     // 3. Speak the composed message.
     await pick(byId("action-speak"), "Speak");
     await waitFor(() => expect(mockedSpeak).toHaveBeenLastCalledWith(
-      messageText(changeEncodingContents.value.payloads)
+      messageText(changeEncodingContents.value.payloads), "en"
     ));
   });
 
@@ -228,10 +228,10 @@ describe("Switch scanning on the standard Bliss chart", (): void => {
     document.body.insertBefore(topBar, area);
     render(html`<${SymbolEntryToolbar} />`, { container: topBar });
 
-    await pick(byText(SETTINGS_TRIGGER_LABEL), "Adjust Settings");
+    await pick(byText(en.toolbarSettings), "Adjust Settings");
     await waitFor(() => expect(document.querySelector("dialog[open]")).not.toBeNull());
     await pickInDialog((el) => el.id === "setting-announceSymbolOnInput", "the speak-each-symbol box");
-    await pickInDialog(byText(SAVE_LABEL), "Save and close");
+    await pickInDialog(byText(en.settingsSave), "Save and close");
 
     await waitFor(() => expect(writeSettings).toHaveBeenCalledWith(
       { "announceSymbolOnInput": !fileConfig.announceSymbolOnInput }

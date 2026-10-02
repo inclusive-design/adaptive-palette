@@ -12,7 +12,7 @@
 
 import { vi } from "vitest";
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
-import { queryChat, NO_MODELS_MESSAGE } from "../../core/OllamaApi";
+import { queryChat } from "../../core/OllamaApi";
 import { setTestConfig } from "../../testUtils/TestConfig";
 import {
   pickModel, parseSentences, requestSentences
@@ -21,6 +21,7 @@ import {
   selectedAttributesSignal, clearAttributes
 } from "../message-attributes/MessageAttributesState";
 import { aboutMeSignal } from "../about-me/AboutMeState";
+import { en } from "../../i18n/en";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../core/OllamaApi")>();
@@ -63,7 +64,7 @@ describe("telegraphicTranslation", (): void => {
 
     test("throws when no model is available", (): void => {
       adaptivePaletteGlobals.models = [];
-      expect((): string => pickModel("phony-model:12b")).toThrow(NO_MODELS_MESSAGE);
+      expect((): string => pickModel("phony-model:12b")).toThrow(en.noModels);
     });
   });
 
@@ -145,7 +146,7 @@ describe("telegraphicTranslation", (): void => {
 
     test("rejects when the feature is unavailable", async (): Promise<void> => {
       adaptivePaletteGlobals.models = [];
-      await expect(requestSentences("me hungry")).rejects.toThrow(NO_MODELS_MESSAGE);
+      await expect(requestSentences("me hungry")).rejects.toThrow(en.noModels);
     });
   });
 

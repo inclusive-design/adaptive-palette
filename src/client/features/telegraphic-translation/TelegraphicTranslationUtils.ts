@@ -12,12 +12,10 @@
 
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { renderTemplate, renderPromptLines } from "../../utils/PromptUtils";
-import { queryChat, NO_MODELS_MESSAGE } from "../../core/OllamaApi";
+import { queryChat } from "../../core/OllamaApi";
 import { attributesPromptText } from "../message-attributes/MessageAttributesState";
 import { aboutMePromptText } from "../about-me/AboutMeState";
-
-export const NOT_CONFIGURED_MESSAGE = "Sentence translation is not configured. Check the telegraphicTranslation section of config.json.";
-export const NO_SENTENCES_MESSAGE = "The model returned no usable sentences.";
+import { t } from "../../i18n/I18n";
 
 export type TranslationResultType = {
   sentences: string[],
@@ -34,7 +32,7 @@ export type TranslationResultType = {
 export function pickModel (configuredModel: string): string {
   const { models } = adaptivePaletteGlobals;
   if (models.length === 0) {
-    throw new Error(NO_MODELS_MESSAGE);
+    throw new Error(t("noModels"));
   }
   if (models.includes(configuredModel)) {
     return configuredModel;
@@ -68,7 +66,7 @@ export function parseSentences (content: string): string[] {
 export async function requestSentences (telegraphicMessage: string, abortSignal?: AbortSignal): Promise<TranslationResultType> {
   const config = adaptivePaletteGlobals.config.telegraphicTranslation;
   if (!config) {
-    throw new Error(NOT_CONFIGURED_MESSAGE);
+    throw new Error(t("sentenceNotConfigured"));
   }
   const model = pickModel(config.model);
   const values = {
@@ -88,7 +86,7 @@ export async function requestSentences (telegraphicMessage: string, abortSignal?
   const content = "message" in response ? (response.message?.content || "") : "";
   const sentences = parseSentences(content);
   if (sentences.length === 0) {
-    throw new Error(NO_SENTENCES_MESSAGE);
+    throw new Error(t("sentenceNoSentences"));
   }
   return { sentences, model };
 }
