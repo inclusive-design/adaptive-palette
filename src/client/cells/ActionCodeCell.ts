@@ -19,7 +19,6 @@ import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { insertWordAtCaret, normalizeComposition } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
-import { CONTENT_LANGUAGE } from "../i18n/I18n";
 import "./ActionCodeCell.scss";
 
 type ActionCodeCellPropsType = {
@@ -49,7 +48,7 @@ export function ActionCodeCell (props: ActionCodeCellPropsType): VNode {
     };
     const{ caretPosition, payloads } = changeEncodingContents.value;
     editMessage(insertWordAtCaret(payload, payloads, caretPosition));
-    announceIfEnabled(props.options.label, CONTENT_LANGUAGE);
+    announceIfEnabled(props.options.label, props.options.labelLanguage);
   };
 
   return html`

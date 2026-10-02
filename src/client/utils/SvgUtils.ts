@@ -11,7 +11,8 @@
  */
 
 import { BlissSVGBuilder, BlissOptions } from "bliss-svg-builder";
-import { SymbolCompositionType, MatchType } from "../index.d";
+import { BlissSymbolEntry, SymbolCompositionType, MatchType } from "../index.d";
+import type { Language } from "../i18n/I18n";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 
 // Ranges and list for all the indicator symbols.  The range values are the
@@ -244,35 +245,47 @@ export function findSymbolByBciAvId (bciAvId: number) {
 }
 
 /**
+ * An entry's gloss in a language. An entry with no gloss in that language gives its English one.
+ * @param {BlissSymbolEntry} entry - The dictionary entry.
+ * @param {Language} language - The language wanted.
+ * @returns {string}
+ */
+export function glossFor (entry: BlissSymbolEntry, language: Language): string {
+  return language === "sv" ? entry.glossSv ?? entry.gloss : entry.gloss;
+}
+
+/**
  * Finds symbols for a given label/gloss. The data structure searched is the
  * global symbol structure in `adaptivePaletteGlobals.symbols`.
  *
- * The label is compared to each of the glosses where a match is defined as
- * either an exact match, or a "word" match using the regular expression
- * /\bword\b/, where "word" is the same as the given label and "\b" is white
- * space on either side of the "word".
+ * The label is compared to each gloss in the given language, where a match is either an exact
+ * match, or the label as a whole word: no letter, digit or underscore just before or after it.
+ * `\b` is not used because it treats "å", "ä" and "ö" as non-letters.
  *
  * Note: this was based on a similar function used in
  * `./apps/palette-generator/paletteJsonGenerator.ts`
  *
  * @param {string} label - The label to use to search for matches in the gloss.
+ * @param {Language} language - The language of the glosses to search.
  * @returns {Array} An array of objects whose gloss matches the given label:
  *                  { id, label, composition }, or an empty
  *                  array if no symbol is found for the label.
  */
-export function findSymbolByGloss(label: string): MatchType[] {
+export function findSymbolByGloss(label: string, language: Language): MatchType[] {
   const matches: MatchType[] = [];
   // Search only if there is text to base the search on.
   if (label.trim().length !== 0) {
-    // Search for the label in the Bliss gloss. Escape special characters in the label.
-    const wordMatch = new RegExp("\\b" + label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b");
+    // Escape special characters in the label.
+    const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const wordMatch = new RegExp(`(?<![\\p{L}\\p{N}_])${escaped}(?![\\p{L}\\p{N}_])`, "u");
     for (const oneSymbolEntry of adaptivePaletteGlobals.symbols) {
+      const gloss = glossFor(oneSymbolEntry, language);
       // Try an exact match or a word match
-      if ((label === oneSymbolEntry.gloss) || wordMatch.test(oneSymbolEntry.gloss)) {
+      if (label === gloss || wordMatch.test(gloss)) {
         matches.push({
           id: oneSymbolEntry.id,
           bciAvId: oneSymbolEntry.bciAvId,
-          label: oneSymbolEntry.gloss,
+          label: gloss,
           composition: oneSymbolEntry.composition
         });
       }

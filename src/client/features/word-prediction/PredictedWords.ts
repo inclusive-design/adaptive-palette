@@ -26,7 +26,7 @@ import { isModelTierActive, predictNext } from "./WordPredictionUtils";
 import { messageUpToCaret, queryContextKeyOf, modelWordsSignal } from "./WordPredictionState";
 import { ContentPredictedWordsType, SymbolEncodingType } from "../../index.d";
 import { generateGridStyle } from "../../utils/GridUtils";
-import { CONTENT_LANGUAGE, languageSignal, t } from "../../i18n/I18n";
+import { Language, MODEL_LANGUAGE, languageSignal, t } from "../../i18n/I18n";
 import "./PredictedWords.scss";
 
 /**
@@ -88,11 +88,13 @@ export function PredictedWords (props: PredictedWordsPropsType): VNode | null {
   const isQuerying = modelWords.status === "working" && modelWords.contextKey === contextKey;
   const suggestions = [...historySuggestions, ...modelSuggestions];
 
-  const chooseWord = (suggestion: SymbolEncodingType): void => {
+  // A model word is English (`MODEL_LANGUAGE`); a word from the history is in the user's own
+  // language, so it takes the UI language.
+  const chooseWord = (suggestion: SymbolEncodingType, language?: Language): void => {
     const { payloads: currentPayloads, caretPosition: currentCaret } = changeEncodingContents.value;
     // A fresh copy each time.
     editMessage(insertWordAtCaret(structuredClone(suggestion), currentPayloads, currentCaret));
-    announceIfEnabled(suggestion.label, CONTENT_LANGUAGE);
+    announceIfEnabled(suggestion.label, language);
   };
 
   // Every slot is drawn, whether or not there is a word for it, so the row keeps one shape and
@@ -106,13 +108,16 @@ export function PredictedWords (props: PredictedWordsPropsType): VNode | null {
     if (!suggestion) {
       return html`<div key=${index} class="predictedWord predictedWordEmpty" aria-hidden="true"></div>`;
     }
-    const isMarked = markAiSuggestions && index >= historySuggestions.length;
+    const isModelWord = index >= historySuggestions.length;
+    const isMarked = markAiSuggestions && isModelWord;
+    const language = isModelWord ? MODEL_LANGUAGE : undefined;
     return html`
       <button
         key=${index}
+        lang=${language}
         class=${isMarked ? "predictedWord aiSuggestion" : "predictedWord"}
         aria-label=${isMarked ? aiSuggestionLabel(suggestion.label) : undefined}
-        onClick=${() => chooseWord(suggestion)}>
+        onClick=${() => chooseWord(suggestion, language)}>
         ${isMarked ? html`<${AiBadge} />` : null}
         <${BlissSymbol}
           composition=${suggestion.composition}

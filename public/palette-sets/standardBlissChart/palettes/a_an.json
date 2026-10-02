@@ -14,7 +14,10 @@
     "12321-316f5f66-fefb-42cf-a3be-ecd740e89952": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "a, an",
+        "label": {
+          "en": "a, an",
+          "sv": "en, ett"
+        },
         "composition": 100,
         "rowStart": 2,
         "rowSpan": 1,
@@ -25,7 +28,10 @@
     "the-d505dbee-8548-4fa9-bcea-307e1fe13bcd": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "the",
+        "label": {
+          "en": "the",
+          "sv": "den, det"
+        },
         "composition": 647,
         "rowStart": 2,
         "rowSpan": 1,
@@ -36,7 +42,10 @@
     "all-12d8cad0-e240-4fa4-9b09-2094645d41c5": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "all",
+        "label": {
+          "en": "all",
+          "sv": "allt"
+        },
         "composition": 117,
         "rowStart": 2,
         "rowSpan": 1,
@@ -47,7 +56,10 @@
     "nothing-3a0eaecb-adfd-4fd5-abbd-40233afd7b48": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "nothing",
+        "label": {
+          "en": "nothing",
+          "sv": "ingenting"
+        },
         "composition": 4078,
         "rowStart": 2,
         "rowSpan": 1,
@@ -58,7 +70,10 @@
     "16482-768ea9ad-ef63-4e50-88a8-eae0a33db127": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "who, which, that",
+        "label": {
+          "en": "who, which, that",
+          "sv": "som"
+        },
         "composition": 561,
         "rowStart": 2,
         "rowSpan": 1,
@@ -69,7 +84,10 @@
     "in-a8ff5e03-6d85-4537-850e-7d9bb21a87ca": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "in",
+        "label": {
+          "en": "in",
+          "sv": "i"
+        },
         "composition": 398,
         "rowStart": 3,
         "rowSpan": 1,
@@ -80,7 +98,10 @@
     "12656-35b560fc-3eae-4390-994b-175b965ba9f9": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "before, in front of",
+        "label": {
+          "en": "before, in front of",
+          "sv": "före, framför"
+        },
         "composition": 158,
         "rowStart": 3,
         "rowSpan": 1,
@@ -91,7 +112,10 @@
     "15948-71b9661e-70f6-4100-9b5c-d728ce075c98": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "over, above",
+        "label": {
+          "en": "over, above",
+          "sv": "över"
+        },
         "composition": 493,
         "rowStart": 3,
         "rowSpan": 1,
@@ -102,7 +126,10 @@
     "between-b3ba4bd5-251b-49e2-81d1-0d16ead45761": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "between",
+        "label": {
+          "en": "between",
+          "sv": "mellan"
+        },
         "composition": 162,
         "rowStart": 3,
         "rowSpan": 1,
@@ -113,7 +140,10 @@
     "15943-1c63ce3f-fc7a-4bf1-a621-3efe2e8bcdde": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "out",
+        "label": {
+          "en": "out",
+          "sv": "ut"
+        },
         "composition": 491,
         "rowStart": 3,
         "rowSpan": 1,
@@ -124,7 +154,10 @@
     "about-073cee15-3749-400a-969f-03e488f488c9": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "about, of",
+        "label": {
+          "en": "about, of",
+          "sv": "om, på"
+        },
         "composition": 102,
         "rowStart": 4,
         "rowSpan": 1,
@@ -135,7 +168,10 @@
     "by-33947b54-2d00-427f-a601-c1d3fafc9cfd": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "by, of",
+        "label": {
+          "en": "by, of",
+          "sv": "av"
+        },
         "composition": 195,
         "rowStart": 4,
         "rowSpan": 1,
@@ -146,7 +182,10 @@
     "14382-ae206296-eda4-498c-999c-a0bdc927cfea": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "for",
+        "label": {
+          "en": "for",
+          "sv": "för"
+        },
         "composition": 332,
         "rowStart": 4,
         "rowSpan": 1,
@@ -157,7 +196,10 @@
     "against-db15d1e0-f5d4-42a2-a318-02ccb85fb55c": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "against",
+        "label": {
+          "en": "against",
+          "sv": "mot"
+        },
         "composition": 111,
         "rowStart": 4,
         "rowSpan": 1,
@@ -168,7 +210,10 @@
     "at-80549e83-1f39-4b0d-9f12-7a6b41e90a89": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "at",
+        "label": {
+          "en": "at",
+          "sv": "vid"
+        },
         "composition": 135,
         "rowStart": 4,
         "rowSpan": 1,
@@ -179,7 +224,10 @@
     "up-cb5a1412-be40-4b4a-9a12-500854277567": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "up",
+        "label": {
+          "en": "up",
+          "sv": "upp"
+        },
         "composition": 678,
         "rowStart": 5,
         "rowSpan": 1,
@@ -190,7 +238,10 @@
     "14390-45600488-a86a-4c10-8b4e-bee254647803": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "forward",
+        "label": {
+          "en": "forward",
+          "sv": "fram"
+        },
         "composition": 335,
         "rowStart": 5,
         "rowSpan": 1,
@@ -201,7 +252,10 @@
     "17739-b745a7e2-b209-4ca7-a172-745565518163": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "to",
+        "label": {
+          "en": "to",
+          "sv": "till"
+        },
         "composition": 657,
         "rowStart": 5,
         "rowSpan": 1,
@@ -212,7 +266,10 @@
     "from-15583bf8-a936-407c-8295-6816ccbe593b": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "from",
+        "label": {
+          "en": "from",
+          "sv": "från"
+        },
         "composition": 337,
         "rowStart": 5,
         "rowSpan": 1,
@@ -223,7 +280,10 @@
     "15918-06a4a3c8-efd2-4c8d-9554-b5a299aebdc1": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "on",
+        "label": {
+          "en": "on",
+          "sv": "på"
+        },
         "composition": 482,
         "rowStart": 5,
         "rowSpan": 1,

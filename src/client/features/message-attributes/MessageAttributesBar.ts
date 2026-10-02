@@ -38,7 +38,9 @@ export function MessageAttributesBar (): VNode | null {
   }
 
   const chips = attributes.map((attribute) => {
-    const name = `${categoryName(attribute.category)}: ${attribute.label}`;
+    // ponytail: shows the label in the language it was picked in until the attribute is set again.
+    const shown = attribute.displayLabel ?? attribute.label;
+    const name = `${categoryName(attribute.category)}: ${shown}`;
     // A chip only exists for an attribute that is currently set, and a click on it removes it,
     // so the announcement is always "off" -- no state read needed.
     const chipClicked = (event: Event): void => {
@@ -61,7 +63,7 @@ export function MessageAttributesBar (): VNode | null {
         onClick=${chipClicked}>
         <${BlissSymbol}
           composition=${attribute.composition}
-          label=${attribute.label}
+          label=${shown}
           isPresentation="true"
         />
       </button>

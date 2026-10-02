@@ -10,7 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { languageSignal, parseLanguage, startLanguage, t } from "./I18n";
+import { languageSignal, parseLanguage, resolveLabel, startLanguage, t } from "./I18n";
 import { en } from "./en";
 import { sv } from "./sv";
 
@@ -50,5 +50,20 @@ describe("I18n", () => {
     expect(startLanguage("?set=mine&lang=en", "sv")).toBe("en");
     expect(startLanguage("?lang=xx", "sv")).toBe("sv");
     expect(startLanguage("", "sv")).toBe("sv");
+  });
+
+  test("resolveLabel() picks the UI language, then the palette's, then the first label", () => {
+    const bread = { en: "bread", sv: "bröd" };
+    expect(resolveLabel(bread, "en")).toEqual({ text: "bread", language: "en" });
+    languageSignal.value = "sv";
+    expect(resolveLabel(bread, "en")).toEqual({ text: "bröd", language: "sv" });
+    // No Swedish: the palette's language.
+    expect(resolveLabel({ en: "bread" }, "en")).toEqual({ text: "bread", language: "en" });
+    // Neither: the first label.
+    expect(resolveLabel({ en: "bread" }, "sv")).toEqual({ text: "bread", language: "en" });
+  });
+
+  test("resolveLabel() reads a plain string as the palette's language", () => {
+    expect(resolveLabel("bröd", "sv")).toEqual({ text: "bröd", language: "sv" });
   });
 });

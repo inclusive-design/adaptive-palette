@@ -17,7 +17,7 @@ import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { cellTypeRegistry } from "../core/CellTypeRegistry";
 import { PALETTE_INCLUDE_TYPE, PaletteStore } from "../core/PaletteStore";
 import { generateGridStyle } from "../utils/GridUtils";
-import { CONTENT_LANGUAGE } from "../i18n/I18n";
+import { Language, LabelType, MODEL_LANGUAGE, parseLanguage, resolveLabel } from "../i18n/I18n";
 import "./Palette.scss";
 
 type PalettePropsType = {
@@ -31,7 +31,9 @@ type PaletteCellsType = {
   // The columns a drawn cell occupies.
   renderedColumns: Set<number>,
   // The columns an unavailable cell would have occupied.
-  skippedColumns: Set<number>
+  skippedColumns: Set<number>,
+  // The languages the drawn cells' labels are shown in.
+  labelLanguages: Set<Language>
 };
 
 /**
@@ -119,7 +121,9 @@ function isAvailable (options: LayoutInfoType): boolean {
  * @return {PaletteCellsType} - The cells, and the columns rendered and skipped.
  */
 function renderCells (paletteDefinition: JsonPaletteType, includeChain: JsonPaletteType[]): PaletteCellsType {
-  const result: PaletteCellsType = { cells: [], renderedColumns: new Set(), skippedColumns: new Set() };
+  // A language the app does not know falls back to English.
+  const paletteLanguage = parseLanguage(paletteDefinition.language) ?? "en";
+  const result: PaletteCellsType = { cells: [], renderedColumns: new Set(), skippedColumns: new Set(), labelLanguages: new Set() };
   Object.keys(paletteDefinition.cells).forEach((id) => {
     const aCell = paletteDefinition.cells[id];
     const cellOptions = aCell.options;
@@ -140,8 +144,20 @@ function renderCells (paletteDefinition: JsonPaletteType, includeChain: JsonPale
     if (!cellComponent) {
       console.error(`Error at rendering the cell type "${aCell.type}". Fix it by defining the render component for this cell type at CellTypeRegistry.ts -> cellTypeRegistry.`);
     } else {
+      // The cell gets its label as a string in one language, that language to speak it in, and
+      // the label in the model's language for the cells whose label reaches a prompt.
+      let options = cellOptions;
+      const label = (cellOptions as { label?: LabelType }).label;
+      if (label !== undefined) {
+        const resolved = resolveLabel(label, paletteLanguage);
+        options = {
+          ...cellOptions, label: resolved.text, labelLanguage: resolved.language,
+          modelLabel: resolveLabel(label, paletteLanguage, MODEL_LANGUAGE).text
+        };
+        result.labelLanguages.add(resolved.language);
+      }
       result.cells.push(html`
-        <${cellComponent} key=${id} id="${id}" options=${cellOptions} />
+        <${cellComponent} key=${id} id="${id}" options=${options} />
       `);
     }
   });
@@ -184,17 +200,23 @@ export function Palette (props: PalettePropsType): VNode {
 
   const paletteDefinition = props.json;
   const rowsCols = countRowsColumns(paletteDefinition);
-  const { cells, renderedColumns, skippedColumns } = renderCells(paletteDefinition, props.includeChain ?? []);
+  const { cells, renderedColumns, skippedColumns, labelLanguages } = renderCells(paletteDefinition, props.includeChain ?? []);
 
   const emptyColumns = new Set(
     [...skippedColumns].filter((column) => !renderedColumns.has(column))
   );
 
+  // A screen reader reads the labels in their own language. A palette whose labels are in more
+  // than one language, or that has none, takes the page's.
+  // ponytail: a palette with labels in two languages leaves its fallback labels in the page's
+  // language for a screen reader; give each cell its own lang (e.g. on BlissSymbol) if that matters.
+  const paletteLang = labelLanguages.size === 1 ? [...labelLanguages][0] : undefined;
+
   return html`
     <div
       data-palettename="${paletteDefinition.name}"
       class="paletteContainer"
-      lang=${CONTENT_LANGUAGE}
+      lang=${paletteLang}
       style="grid-template-columns: ${gridTemplateColumns(rowsCols.numColumns, emptyColumns)};">
         ${cells}
     </div>

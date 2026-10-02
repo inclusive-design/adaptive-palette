@@ -26,6 +26,9 @@ import { aiSuggestionLabel } from "../../components/AiBadge";
 import { selectedAttributesSignal, clearAttributes } from "../message-attributes/MessageAttributesState";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 import { en } from "../../i18n/en";
+import { mockedAnnounceIfEnabled } from "../../testUtils/SpeechUtilsMock";
+
+vi.mock("../../utils/SpeechUtils");
 
 // The row is driven from `modelWordsSignal` directly here, so a query left waiting is all
 // that is wanted of Ollama.
@@ -364,6 +367,27 @@ describe("PredictedWords", (): void => {
       expect(buttons[1]).toHaveClass("aiSuggestion");
       expect(buttons[1].querySelector(".aiBadge")?.textContent).toBe(en.aiBadge);
       expect(buttons[1]).toHaveAttribute("aria-label", aiSuggestionLabel("food"));
+    });
+
+    // The model's words are English; the history's are the user's own, in the UI language.
+    test("marks and speaks the model's words as English, and leaves the history's to the page", async (): Promise<void> => {
+      const user = userEvent.setup();
+      setMessage("I", "want");
+      showModelWords("I want", "food", "tea");
+      render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+
+      const buttons = [...screen.getByRole("group", { name: en.predictedWords }).querySelectorAll("button")];
+      expect(buttons[0]).not.toHaveAttribute("lang");
+      expect(buttons[1]).toHaveAttribute("lang", "en");
+
+      // One click each: a chosen word changes the message, and with it the row.
+      await user.click(buttons[1]);
+      expect(mockedAnnounceIfEnabled).toHaveBeenLastCalledWith("food", "en");
+      cleanup();
+      setMessage("I", "want");
+      render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+      await user.click(screen.getByRole("button", { name: "juice" }));
+      expect(mockedAnnounceIfEnabled).toHaveBeenLastCalledWith("juice", undefined);
     });
 
     // The cell's accessible name carries the prefix; the word added to the message must not.

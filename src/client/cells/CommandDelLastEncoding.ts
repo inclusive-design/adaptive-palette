@@ -18,7 +18,6 @@ import { editMessage } from "../core/MessageEdit";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
-import { CONTENT_LANGUAGE } from "../i18n/I18n";
 
 type CommandDelLastEncodingProps = {
   id: string,
@@ -29,7 +28,7 @@ type CommandDelLastEncodingProps = {
 
 export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNode {
   const { id, options } = props;
-  const { label, composition, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
+  const { label, labelLanguage, composition, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
@@ -48,7 +47,7 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNo
         caretPosition: caretPosition - 1
       });
     }
-    announceIfEnabled(label, CONTENT_LANGUAGE);
+    announceIfEnabled(label, labelLanguage);
   };
 
   return html`

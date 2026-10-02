@@ -14,7 +14,10 @@
     "14377-d2c75912-d868-43ea-be41-fb6ee4d9815e": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "food",
+        "label": {
+          "en": "food",
+          "sv": "mat"
+        },
         "composition": 329,
         "rowStart": 2,
         "rowSpan": 1,
@@ -25,7 +28,10 @@
     "dessert-69eafd82-e6cb-46ff-a828-59600145ff7e": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "dessert",
+        "label": {
+          "en": "dessert",
+          "sv": "efterrätt"
+        },
         "composition": 1531,
         "rowStart": 2,
         "rowSpan": 1,
@@ -36,7 +42,10 @@
     "bread-57200e00-2e6c-4e45-8c93-045bccacb5df": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "bread",
+        "label": {
+          "en": "bread",
+          "sv": "bröd"
+        },
         "composition": 180,
         "rowStart": 2,
         "rowSpan": 1,
@@ -47,7 +56,10 @@
     "bun-680b3263-539c-4943-8c28-5aefe0971985": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "bun",
+        "label": {
+          "en": "bun",
+          "sv": "bulle"
+        },
         "composition": 570,
         "rowStart": 2,
         "rowSpan": 1,
@@ -58,7 +70,10 @@
     "cookie-9d0b4a84-b741-4208-8573-8dddaaea1d2a": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "cookie",
+        "label": {
+          "en": "cookie",
+          "sv": "kaka"
+        },
         "composition": 1459,
         "rowStart": 2,
         "rowSpan": 1,
@@ -69,7 +84,10 @@
     "sandwich-e145d140-ad91-4659-b40f-f300910d419a": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "sandwich",
+        "label": {
+          "en": "sandwich",
+          "sv": "sandwich"
+        },
         "composition": 2316,
         "rowStart": 3,
         "rowSpan": 1,
@@ -80,7 +98,10 @@
     "17238-b7f218e1-487e-4caa-b01b-f4ed3553ea3c": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "spread",
+        "label": {
+          "en": "spread",
+          "sv": "pålägg"
+        },
         "composition": 617,
         "rowStart": 3,
         "rowSpan": 1,
@@ -91,7 +112,10 @@
     "20522-83d9f747-360e-42fc-8ee4-f5222054ef56": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "sauce",
+        "label": {
+          "en": "sauce",
+          "sv": "sås"
+        },
         "composition": 722,
         "rowStart": 3,
         "rowSpan": 1,
@@ -102,7 +126,10 @@
     "marmalade-a1795a63-476f-4227-837e-500de5917003": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "marmalade",
+        "label": {
+          "en": "marmalade",
+          "sv": "marmelad"
+        },
         "composition": 1876,
         "rowStart": 3,
         "rowSpan": 1,
@@ -113,7 +140,10 @@
     "cheese-f1e9cf3b-9e58-45bb-a2ba-fbba8020a6fd": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "cheese",
+        "label": {
+          "en": "cheese",
+          "sv": "ost"
+        },
         "composition": 215,
         "rowStart": 3,
         "rowSpan": 1,
@@ -124,7 +154,10 @@
     "meat-6cc338e6-5b31-49f8-a81c-ba6b01a4043c": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "meat",
+        "label": {
+          "en": "meat",
+          "sv": "kött"
+        },
         "composition": 1992,
         "rowStart": 4,
         "rowSpan": 1,
@@ -135,7 +168,10 @@
     "sausage-d57d6d2f-8f63-424e-9c82-71a7d86e5cbd": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "sausage",
+        "label": {
+          "en": "sausage",
+          "sv": "korv"
+        },
         "composition": 2324,
         "rowStart": 4,
         "rowSpan": 1,
@@ -146,7 +182,10 @@
     "hamburger-fd492e2b-86e4-437b-8263-849e3bf1c968": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "hamburger",
+        "label": {
+          "en": "hamburger",
+          "sv": "hamburgare"
+        },
         "composition": 2844,
         "rowStart": 4,
         "rowSpan": 1,
@@ -157,7 +196,10 @@
     "pizza-10c83e60-142a-4a33-b920-b4cf79ec6a48": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "pizza",
+        "label": {
+          "en": "pizza",
+          "sv": "pizza"
+        },
         "composition": 2166,
         "rowStart": 4,
         "rowSpan": 1,
@@ -168,7 +210,10 @@
     "pasta-708fd14d-cbc0-4f50-a7a3-6a45cd244865": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "pasta",
+        "label": {
+          "en": "pasta",
+          "sv": "pasta"
+        },
         "composition": 3255,
         "rowStart": 4,
         "rowSpan": 1,
@@ -179,7 +224,10 @@
     "pie-8539876e-84a8-4ebb-8bc8-4330ee5b3290": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "pie",
+        "label": {
+          "en": "pie",
+          "sv": "paj"
+        },
         "composition": 2158,
         "rowStart": 5,
         "rowSpan": 1,
@@ -190,7 +238,10 @@
     "13912-a113a7c7-2c86-4a23-815c-82c09a484e13": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "egg",
+        "label": {
+          "en": "egg",
+          "sv": "ägg"
+        },
         "composition": 285,
         "rowStart": 5,
         "rowSpan": 1,
@@ -201,7 +252,10 @@
     "salad-84cdbdc6-5186-45cc-ae5c-042e1c34f565": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "salad",
+        "label": {
+          "en": "salad",
+          "sv": "sallad"
+        },
         "composition": 577,
         "rowStart": 5,
         "rowSpan": 1,
@@ -212,7 +266,10 @@
     "soup-c520508c-a890-4b4b-8bc7-71360b9e0131": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "soup",
+        "label": {
+          "en": "soup",
+          "sv": "soppa"
+        },
         "composition": 609,
         "rowStart": 5,
         "rowSpan": 1,
@@ -223,7 +280,10 @@
     "25681-d972bb3b-5978-479a-b0e5-b32f61bfc499": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "shellfish",
+        "label": {
+          "en": "shellfish",
+          "sv": "skaldjur"
+        },
         "composition": 1111,
         "rowStart": 5,
         "rowSpan": 1,

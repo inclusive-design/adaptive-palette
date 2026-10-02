@@ -138,8 +138,9 @@ cost about 8 ms per sentence. Every span of every candidate sentence is looked u
 before the choices are first drawn, so that time lands on the first paint. Building both indexes
 costs about 15 ms, once.
 
-`findGlossEntry(key)` tries the index of senses as written, and the normalized one only if that
-missed. The order matters:
+`findGlossEntry(key, MODEL_LANGUAGE)` tries the index of senses as written, and the normalized one
+only if that missed. It reads the English gloss because the sentences are English (`MODEL_LANGUAGE`,
+`"en"`); the lookup takes a language so Swedish can be added later. The order matters:
 
 1. **senses as written**, lowercased and trimmed but otherwise untouched, with `preferSingleSense`
    on;
@@ -165,7 +166,7 @@ ordered by id and a strict comparison keeps the first entry seen.
 
 1. **the user's own history** — a payload from the message log carries the indicators, modifiers and
    symbol they chose for that word themselves, so it beats anything the dictionary offers;
-2. **`findGlossEntry(span.key)`**;
+2. **`findGlossEntry(span.key, MODEL_LANGUAGE)`**;
 3. **nothing** — the span is rendered as text.
 
 History is consulted three ways, because a span's key is not what the user's label looks like:

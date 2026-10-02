@@ -16,7 +16,7 @@ import { BlissSymbolCellType } from "../index.d";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { announceIfEnabled } from "../utils/SpeechUtils";
-import { CONTENT_LANGUAGE } from "../i18n/I18n";
+import type { Language } from "../i18n/I18n";
 import "./ActionBranchToPaletteCell.scss";
 
 type ActionBranchToPalettePropsType = {
@@ -28,10 +28,10 @@ type ActionBranchToPalettePropsType = {
  * Event handler for an ActionBranchToPaletteCell button/cell that, when clicked,
  * makes the palette referenced by this cell the current one.
  */
-const navigateToPalette = async (event: Event): Promise<void> => {
+const navigateToPalette = async (event: Event, language?: Language): Promise<void> => {
   const { paletteStore, navigationStack } = adaptivePaletteGlobals;
   const button = event.currentTarget as HTMLElement;
-  announceIfEnabled(button.innerText, CONTENT_LANGUAGE);
+  announceIfEnabled(button.innerText, language);
 
   const branchToPaletteName = button.getAttribute("data-branchto");
   if (!branchToPaletteName) {
@@ -65,7 +65,7 @@ const navigateToPalette = async (event: Event): Promise<void> => {
  * @returns {VNode}
  */
 export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType): VNode {
-  const { columnStart, columnSpan, rowStart, rowSpan, branchTo, composition, label } = props.options;
+  const { columnStart, columnSpan, rowStart, rowSpan, branchTo, composition, label, labelLanguage } = props.options;
 
   const gridStyles = `
     grid-column: ${columnStart} / span ${columnSpan};
@@ -75,7 +75,7 @@ export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType
   return html`
     <button
       id="${props.id}" class="actionBranchToPaletteCell foldedCorner" style="${gridStyles}"
-      data-branchto="${branchTo}" onClick=${navigateToPalette}>
+      data-branchto="${branchTo}" onClick=${(event: Event) => navigateToPalette(event, labelLanguage)}>
       <${BlissSymbol} composition=${composition} label=${label} />
     </button>
   `;

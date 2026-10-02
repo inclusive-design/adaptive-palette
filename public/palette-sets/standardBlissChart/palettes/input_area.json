@@ -4,7 +4,7 @@
     "command-go-back": {
       "type": "CommandGoBackCell",
       "options": {
-        "label": "Back",
+        "label": { "en": "Back", "sv": "Tillbaka" },
         "composition": [145, ";", 907],
         "rowStart": 1,
         "rowSpan": 1,
@@ -15,7 +15,7 @@
     "command-go-to-root": {
       "type": "CommandGoToRootCell",
       "options": {
-        "label": "Home",
+        "label": { "en": "Home", "sv": "Hem" },
         "composition": 392,
         "rowStart": 1,
         "rowSpan": 1,
@@ -35,7 +35,7 @@
     "command-make-sentence": {
       "type": "CommandMakeSentence",
       "options": {
-        "label": "Make Sentences",
+        "label": { "en": "Make Sentences", "sv": "Skapa meningar" },
         "composition": [1968, "//", 2351, ";;", 99],
         "requiresModel": true,
         "requiresConfig": "telegraphicTranslation",
@@ -49,7 +49,7 @@
     "action-speak": {
       "type": "ActionSpeakCell",
       "options": {
-        "label": "Speak",
+        "label": { "en": "Speak", "sv": "Tala" },
         "composition": 2325,
         "rowStart": 1,
         "rowSpan": 1,

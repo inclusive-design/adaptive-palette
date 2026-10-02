@@ -213,6 +213,8 @@ describe("SentenceChoices", (): void => {
     });
     expect(mockedSpeak).toHaveBeenCalledWith(SENTENCES[1], "en");
     expect(screen.getByRole("button", { name: SENTENCES[1] })).toBeVisible();
+    // The model's sentences are English whatever the UI language.
+    expect(screen.getByRole("button", { name: SENTENCES[1] })).toHaveAttribute("lang", "en");
   });
 
   test("focus moves to the first choice when the sentences arrive", async (): Promise<void> => {

@@ -14,7 +14,10 @@
     "thing-87dfaf6c-00c2-4d25-bb70-44130268f75e": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "thing",
+        "label": {
+          "en": "thing",
+          "sv": "sak"
+        },
         "composition": 97,
         "rowStart": 2,
         "rowSpan": 1,
@@ -25,7 +28,10 @@
     "paper-b56e5f8c-2a38-4772-9b8a-f69ad2112dbc": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "paper",
+        "label": {
+          "en": "paper",
+          "sv": "papper"
+        },
         "composition": 497,
         "rowStart": 2,
         "rowSpan": 1,
@@ -36,7 +42,10 @@
     "book-3abbc492-6940-4b43-9b65-8c937a62174e": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "book",
+        "label": {
+          "en": "book",
+          "sv": "bok"
+        },
         "composition": 173,
         "rowStart": 2,
         "rowSpan": 1,
@@ -47,7 +56,10 @@
     "SVG:12875/14647/17732:SVG-015962b8-1c34-484d-b883-66fd36a365f1": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "magazine",
+        "label": {
+          "en": "magazine",
+          "sv": "tidskrift"
+        },
         "composition": 1965,
         "rowStart": 2,
         "rowSpan": 1,
@@ -58,7 +70,10 @@
     "SVG:15962/13639/15649:SVG-adba4502-d713-43d8-b3a3-eff59788fb1c": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "calendar",
+        "label": {
+          "en": "calendar",
+          "sv": "almanacka"
+        },
         "composition": 1368,
         "rowStart": 2,
         "rowSpan": 1,
@@ -69,7 +84,10 @@
     "letter-57477ea8-1e43-4bf9-8b3b-2ff8a7653fc7": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "letter",
+        "label": {
+          "en": "letter",
+          "sv": "brev"
+        },
         "composition": 421,
         "rowStart": 3,
         "rowSpan": 1,
@@ -80,7 +98,10 @@
     "SVG:15198/23476:SVG-20c2a37d-e412-4272-8c00-e7e28bdc001f": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "e-mail",
+        "label": {
+          "en": "e-mail",
+          "sv": "e-post"
+        },
         "composition": 3776,
         "rowStart": 3,
         "rowSpan": 1,
@@ -91,7 +112,10 @@
     "parcel-2281cda6-db01-4e31-80e0-2c815d24fe59": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "parcel",
+        "label": {
+          "en": "parcel",
+          "sv": "paket"
+        },
         "composition": 499,
         "rowStart": 3,
         "rowSpan": 1,
@@ -102,7 +126,10 @@
     "SVG:25601/13894:SVG-9ad0c9b8-88d5-438d-baf8-9d41ad490a8b": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "CD",
+        "label": {
+          "en": "CD",
+          "sv": "CD-skiva"
+        },
         "composition": 2252,
         "rowStart": 3,
         "rowSpan": 1,
@@ -113,7 +140,10 @@
     "SVG:25601/14133/13894:SVG-e2e9f5fb-5ef2-4839-b764-dfe546e8de2e": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "movie disc",
+        "label": {
+          "en": "movie disc",
+          "sv": "DVD-film"
+        },
         "composition": 4624,
         "rowStart": 3,
         "rowSpan": 1,
@@ -124,7 +154,10 @@
     "SVG:13934/13894/13918:SVG-3ad4eda1-d43e-444a-a65e-32dad4dda132": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "radio",
+        "label": {
+          "en": "radio",
+          "sv": "radio"
+        },
         "composition": 2237,
         "rowStart": 4,
         "rowSpan": 1,
@@ -135,7 +168,10 @@
     "SVG:13934/14133/13894/13918:SVG-640fad25-e934-4295-9f95-293d16a31d8c": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "TV",
+        "label": {
+          "en": "TV",
+          "sv": "TV"
+        },
         "composition": 2563,
         "rowStart": 4,
         "rowSpan": 1,
@@ -146,7 +182,10 @@
     "SVG:15406/25601/14133/13894:SVG-decd9415-830a-4a7a-907b-f3048dc77ade": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "DVD player",
+        "label": {
+          "en": "DVD player",
+          "sv": "DVD-spelare"
+        },
         "composition": 4625,
         "rowStart": 4,
         "rowSpan": 1,
@@ -157,7 +196,10 @@
     "SVG:15406/25601/13894:SVG-7ada816f-d77b-42d8-99d6-95319df6155b": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "stereo",
+        "label": {
+          "en": "stereo",
+          "sv": "stereo"
+        },
         "composition": 2253,
         "rowStart": 4,
         "rowSpan": 1,
@@ -168,7 +210,10 @@
     "SVG:15406/23476:SVG-0e498bbe-0698-4b9d-8452-715bf8bc62d9": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "computer",
+        "label": {
+          "en": "computer",
+          "sv": "dator"
+        },
         "composition": 3742,
         "rowStart": 4,
         "rowSpan": 1,
@@ -179,7 +224,10 @@
     "SVG:15172/13918:SVG-11ae539a-48f7-4dfb-9171-c13d7050fa38": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "telephone",
+        "label": {
+          "en": "telephone",
+          "sv": "telefon"
+        },
         "composition": 2562,
         "rowStart": 5,
         "rowSpan": 1,
@@ -190,7 +238,10 @@
     "key-3ca4b6c5-984b-4e69-9978-b51bb0d57822": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "key",
+        "label": {
+          "en": "key",
+          "sv": "nyckel"
+        },
         "composition": 407,
         "rowStart": 5,
         "rowSpan": 1,
@@ -201,7 +252,10 @@
     "container-9068e9ed-1482-4261-a300-973bad0c7de1": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "container",
+        "label": {
+          "en": "container",
+          "sv": "behållare"
+        },
         "composition": 239,
         "rowStart": 5,
         "rowSpan": 1,
@@ -212,7 +266,10 @@
     "tool-bb7b7b86-8be1-483d-8de9-0a550374917b": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "tool",
+        "label": {
+          "en": "tool",
+          "sv": "verktyg"
+        },
         "composition": 660,
         "rowStart": 5,
         "rowSpan": 1,
@@ -223,7 +280,10 @@
     "machine-02a625bd-c447-4833-b7fb-912d1b3d2310": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "machine",
+        "label": {
+          "en": "machine",
+          "sv": "maskin"
+        },
         "composition": 432,
         "rowStart": 5,
         "rowSpan": 1,

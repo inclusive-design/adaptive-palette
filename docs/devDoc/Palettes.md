@@ -125,11 +125,12 @@ Each palette JSON file has the following shape:
 ```json
 {
   "name": "palette_name",
+  "language": "en",
   "cells": {
     "<cell-id>": {
       "type": "<CellTypeName>",
       "options": {
-        "label": "displayed text",
+        "label": { "en": "displayed text", "sv": "visad text" },
         "composition": 1234,
         "rowStart": 1,
         "rowSpan": 1,
@@ -144,6 +145,16 @@ Each palette JSON file has the following shape:
 **Cell keys** follow the pattern `<slug>-<uuid>` (e.g.,
 `"against-db15d1e0-f5d4-42a2-a318-02ccb85fb55c"`). The slug is a human-readable
 hint; the UUID makes the key unique.
+
+**`language`** is optional: `"en"` (the default) or `"sv"`. It is the language of the palette's
+plain-string labels. Any other value is read as `"en"`.
+
+**`label`** is either one string, in the palette's language, or one label per language:
+`{ "en": "bread", "sv": "bröd" }`. `resolveLabel()` in `src/client/i18n/I18n.ts` picks the
+UI language, then the palette's language, then the first label given, so a palette written in
+one language always shows its own labels. A cell speaks its label in the language it was shown
+in. When all of a palette's labels are in one language, the palette marks it with `lang`. Every
+label in the standard chart has both; `scripts/draft_swedish_labels.js` drafted the Swedish ones.
 
 **Layout options** are shared by every cell type:
 

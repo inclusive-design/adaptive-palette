@@ -14,7 +14,10 @@
     "SVG:24875;8998:SVG-bf6e7461-b927-408e-8a02-f1d894f1acaf": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "big, large",
+        "label": {
+          "en": "big, large",
+          "sv": "stor"
+        },
         "composition": 1291,
         "rowStart": 2,
         "rowSpan": 1,
@@ -25,7 +28,10 @@
     "SVG:24917;8998:SVG-5972457b-2c91-4933-933e-caed01eb461c": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "little, small",
+        "label": {
+          "en": "little, small",
+          "sv": "liten"
+        },
         "composition": 1945,
         "rowStart": 2,
         "rowSpan": 1,
@@ -36,7 +42,10 @@
     "SVG:15193;8998:SVG-3df9e5c4-31f6-46e6-9f0e-378597388fd2": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "long",
+        "label": {
+          "en": "long",
+          "sv": "lång"
+        },
         "composition": 1951,
         "rowStart": 2,
         "rowSpan": 1,
@@ -47,7 +56,10 @@
     "SVG:24909;8998:SVG-8343df72-0353-48a2-9f10-d887fa178e46": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "high",
+        "label": {
+          "en": "high",
+          "sv": "hög"
+        },
         "composition": 1807,
         "rowStart": 2,
         "rowSpan": 1,
@@ -58,7 +70,10 @@
     "SVG:15214;8998:SVG-d6d7cc43-55fe-429c-b698-c5b4258ed640": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "linear",
+        "label": {
+          "en": "linear",
+          "sv": "rak"
+        },
         "composition": 1940,
         "rowStart": 2,
         "rowSpan": 1,
@@ -69,7 +84,10 @@
     "SVG:18209;8998:SVG-1ef7e8de-9950-4fc1-9cc8-5c5e561b4841": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "wet",
+        "label": {
+          "en": "wet",
+          "sv": "våt"
+        },
         "composition": 2728,
         "rowStart": 3,
         "rowSpan": 1,
@@ -80,7 +98,10 @@
     "SVG:14647/14133;8998/13867:SVG-e6b4b340-deed-4717-b48f-24a838d10884": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "dirty",
+        "label": {
+          "en": "dirty",
+          "sv": "smutsig"
+        },
         "composition": 1548,
         "rowStart": 3,
         "rowSpan": 1,
@@ -91,7 +112,10 @@
     "SVG:24852;8996:SVG-188e0056-5b9e-4d8b-931d-aba41d69bcf7": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "broken",
+        "label": {
+          "en": "broken",
+          "sv": "trasig"
+        },
         "composition": 1343,
         "rowStart": 3,
         "rowSpan": 1,
@@ -102,7 +126,10 @@
     "SVG:17506;8998/15474/14947/14947:SVG-fe106830-81b1-4d79-81b4-b18936b65a61": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "disgusting",
+        "label": {
+          "en": "disgusting",
+          "sv": "äcklig"
+        },
         "composition": 3316,
         "rowStart": 3,
         "rowSpan": 1,
@@ -113,7 +140,10 @@
     "SVG:15484;8998/14381/17717/24875:SVG-2bbe41fd-8ead-49da-94bd-82652f7fac5c": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "expensive",
+        "label": {
+          "en": "expensive",
+          "sv": "dyr"
+        },
         "composition": 3545,
         "rowStart": 3,
         "rowSpan": 1,
@@ -124,7 +154,10 @@
     "SVG:17506;8998/14183:SVG-a118a08a-ffc5-4a7e-b909-e4ef815d1ec1": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "hot",
+        "label": {
+          "en": "hot",
+          "sv": "het"
+        },
         "composition": 1827,
         "rowStart": 4,
         "rowSpan": 1,
@@ -135,7 +168,10 @@
     "SVG:14667;8998/25575:SVG-c2144bc9-b638-4907-9ae7-74097c51fefa": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "soft",
+        "label": {
+          "en": "soft",
+          "sv": "mjuk"
+        },
         "composition": 2450,
         "rowStart": 4,
         "rowSpan": 1,
@@ -146,7 +182,10 @@
     "SVG:25560;8998:SVG-57ce3b3a-ab38-4c0e-bb7f-38c09f9d5c47": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "thick",
+        "label": {
+          "en": "thick",
+          "sv": "tjock"
+        },
         "composition": 5594,
         "rowStart": 4,
         "rowSpan": 1,
@@ -157,7 +196,10 @@
     "SVG:14133;8998/17717/17462:SVG-74d1f679-3286-4681-be79-a3cceec78b72": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "round,circular",
+        "label": {
+          "en": "round,circular",
+          "sv": "rund, cirkelformad"
+        },
         "composition": 2297,
         "rowStart": 4,
         "rowSpan": 1,
@@ -168,7 +210,10 @@
     "SVG:14133;8998/17717/13934:SVG-4d6d3e5d-067f-4f32-a876-efc9dce18e00": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "square",
+        "label": {
+          "en": "square",
+          "sv": "fyrkantig"
+        },
         "composition": 2478,
         "rowStart": 4,
         "rowSpan": 1,
@@ -179,7 +224,10 @@
     "SVG:24884;8998:SVG-5c5707bf-a0b9-4ae7-a1b5-a8dbc1336bb1": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "difficult",
+        "label": {
+          "en": "difficult",
+          "sv": "svår"
+        },
         "composition": 1541,
         "rowStart": 5,
         "rowSpan": 1,
@@ -190,7 +238,10 @@
     "SVG:14390;8998/14947:SVG-7478bee8-4b78-4d90-bfdf-1a47e2ba2b68": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "quick",
+        "label": {
+          "en": "quick",
+          "sv": "snabb"
+        },
         "composition": 2232,
         "rowStart": 5,
         "rowSpan": 1,
@@ -201,7 +252,10 @@
     "SVG:18221;8998/13869:SVG-e1ad97dd-f5e4-4c2d-a328-6442f8265760": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "heavy",
+        "label": {
+          "en": "heavy",
+          "sv": "tung"
+        },
         "composition": 1799,
         "rowStart": 5,
         "rowSpan": 1,
@@ -212,7 +266,10 @@
     "SVG:24897;8998:SVG-21a88a18-b0eb-4221-b78d-4d3a2c579920": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "full",
+        "label": {
+          "en": "full",
+          "sv": "full"
+        },
         "composition": 1714,
         "rowStart": 5,
         "rowSpan": 1,
@@ -223,7 +280,10 @@
     "SVG:24941;8998:SVG-4d394b2f-5cac-4d06-a140-52dd5689ac6f": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "strong",
+        "label": {
+          "en": "strong",
+          "sv": "stark"
+        },
         "composition": 2502,
         "rowStart": 5,
         "rowSpan": 1,

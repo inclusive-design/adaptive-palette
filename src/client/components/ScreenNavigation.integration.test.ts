@@ -24,6 +24,8 @@ import {
   sentenceCompletionsSignal, IDLE_SENTENCE_STATE, typedSentenceSignal, focusedMessageSignal
 } from "../features/telegraphic-translation/TelegraphicTranslationState";
 import { en } from "../i18n/en";
+import { languageSignal, type LabelType } from "../i18n/I18n";
+import { PaletteStore } from "../core/PaletteStore";
 
 vi.mock("../utils/SpeechUtils");
 
@@ -45,6 +47,7 @@ describe("Navigating between screens that share the Standard Header", (): void =
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
     typedSentenceSignal.value = "";
     focusedMessageSignal.value = null;
+    languageSignal.value = "en";
     adaptivePaletteGlobals.navigationStack.flushReset(null);
   });
 
@@ -148,5 +151,42 @@ describe("Navigating between screens that share the Standard Header", (): void =
       expect(startPalette?.contains(document.activeElement)).toBe(true);
     });
     expect(document.activeElement?.closest(".paletteInclude")).toBeNull();
+  });
+
+  test("switching to Swedish relabels the start palette and the command bar", async (): Promise<void> => {
+    const { paletteStore, navigationStack } = adaptivePaletteGlobals;
+    const startName = await paletteStore.loadPaletteSet("/palette-sets/standardBlissChart/palette_set.json");
+    const startPalette = await paletteStore.getNamedPalette(startName, true);
+    if (!startPalette) {
+      throw new Error(`Start palette "${startName}" did not load`);
+    }
+    navigationStack.flushReset(startPalette);
+    render(html`<${CurrentPalette} />`);
+
+    // The first labelled cell of each, read from the JSON so the test follows the drafts.
+    const firstLabel = (paletteName: string): { en: string, sv: string } => {
+      const cell = Object.values(PaletteStore.paletteMap[paletteName].cells)
+        .find((candidate) => {
+          const label = (candidate.options as { label?: LabelType }).label;
+          return typeof label === "object" && label.en !== label.sv;
+        });
+      if (!cell) {
+        throw new Error(`"${paletteName}" has no labelled cell`);
+      }
+      return (cell.options as unknown as { label: { en: string, sv: string } }).label;
+    };
+    const labels = [firstLabel(startName), firstLabel("Command Bar")];
+
+    for (const label of labels) {
+      expect((await screen.findAllByText(label.en)).length).toBeGreaterThan(0);
+      expect(screen.queryByText(label.sv)).toBeNull();
+    }
+    languageSignal.value = "sv";
+    for (const label of labels) {
+      await waitFor(() => {
+        expect(screen.queryAllByText(label.sv).length).toBeGreaterThan(0);
+      });
+      expect(screen.queryByText(label.en)).toBeNull();
+    }
   });
 });

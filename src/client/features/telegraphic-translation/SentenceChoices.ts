@@ -25,7 +25,7 @@ import { ContentSentenceChoicesType } from "../../index.d";
 import { adaptivePaletteGlobals, settingsSavedCount } from "../../state/GlobalData";
 import { AiBadge, aiSuggestionLabel } from "../../components/AiBadge";
 import { BlissSentence } from "./BlissSentence";
-import { CONTENT_LANGUAGE, languageSignal, t } from "../../i18n/I18n";
+import { MODEL_LANGUAGE, languageSignal, t } from "../../i18n/I18n";
 import "./SentenceChoices.scss";
 
 type SentenceChoicesPropsType = {
@@ -91,7 +91,7 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
 
   const logAndSpeak = (sentence: string, source: SentenceSourceType): void => {
     abortActiveSentenceRequest();
-    speak(sentence, CONTENT_LANGUAGE);
+    speak(sentence, MODEL_LANGUAGE);
     saveTranslation(state.telegraphicMessage, {
       model: state.model,
       candidates: state.sentences,
@@ -138,6 +138,7 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
     return html`
       <button
         key=${index}
+        lang=${MODEL_LANGUAGE}
         class=${isMarked ? "sentenceChoice aiSuggestion" : "sentenceChoice"}
         aria-label=${ariaLabel}
         onClick=${() => logAndSpeak(sentence, "chosen")}>

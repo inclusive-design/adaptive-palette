@@ -41,8 +41,8 @@ const startPaletteName = await paletteStore.loadPaletteSet(paletteSetPath(window
 const startPalette = await paletteStore.getNamedPalette(startPaletteName, true);
 if (!startPalette) { throw new Error(`Failed to load the start palette "${startPaletteName}"`); }
 
-// Screen readers pick their pronunciation from `lang`. The page is in the UI language; the
-// palettes mark their own text with `CONTENT_LANGUAGE`.
+// Screen readers pick their pronunciation from `lang`. The page is in the UI language; a
+// palette whose labels are in another language marks itself with that one.
 effect(() => {
   document.documentElement.lang = languageSignal.value;
 });

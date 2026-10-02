@@ -29,11 +29,15 @@
  */
 import { loadPaletteFromJsonFile } from "../../core/PaletteStore";
 import { AttributeCellType, ContentLabelType, JsonPaletteType } from "../../index.d";
+import { type LabelType, resolveLabel } from "../../i18n/I18n";
 import { clearAttributes, toggleAttribute, attributesPromptText } from "./MessageAttributesState";
 
 describe("attributes.json agrees with MessageAttributesState on category names and order", (): void => {
 
   let palette: JsonPaletteType;
+
+  // The palette's labels as English text: the categories are keyed by their English names.
+  const english = (label: LabelType): string => resolveLabel(label, "en").text;
 
   beforeAll(async (): Promise<void> => {
     const loaded = await loadPaletteFromJsonFile("/palette-sets/standardBlissChart/palettes/attributes.json");
@@ -55,7 +59,7 @@ describe("attributes.json agrees with MessageAttributesState on category names a
       .filter((cell) => cell.type === "ContentLabel")
       .forEach((cell) => {
         const options = cell.options as ContentLabelType;
-        rowLabel[options.rowStart] = options.label;
+        rowLabel[options.rowStart] = english(options.label);
       });
 
     const attributeCells = cells.filter((cell) => cell.type === "ActionAttributeCell");
@@ -78,10 +82,10 @@ describe("attributes.json agrees with MessageAttributesState on category names a
     const oneAttributePerCategory = rowsInOrder.map((row) => {
       const cell = cells.find((candidate) =>
         candidate.type === "ActionAttributeCell" &&
-        (candidate.options as AttributeCellType).category === row.label
+        (candidate.options as AttributeCellType).category === english(row.label)
       );
       if (!cell) {
-        throw new Error(`No attribute cell found for category "${row.label}"`);
+        throw new Error(`No attribute cell found for category "${english(row.label)}"`);
       }
       return cell.options as AttributeCellType;
     });
@@ -90,12 +94,12 @@ describe("attributes.json agrees with MessageAttributesState on category names a
     // agreeing with the palette, not from selection order.
     [...oneAttributePerCategory].reverse().forEach((attribute) => {
       toggleAttribute({
-        category: attribute.category, label: attribute.label, composition: attribute.composition
+        category: attribute.category, label: english(attribute.label), composition: attribute.composition
       });
     });
 
     const expected = oneAttributePerCategory
-      .map((attribute) => `${attribute.category}: ${attribute.label}`)
+      .map((attribute) => `${attribute.category}: ${english(attribute.label)}`)
       .join("; ");
     expect(attributesPromptText()).toBe(expected);
   });

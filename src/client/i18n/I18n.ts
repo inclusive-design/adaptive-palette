@@ -33,13 +33,11 @@ export const SPEECH_LANGS: Record<Language, string> = { en: "en-US", sv: "sv-SE"
 const STRINGS: Record<Language, Record<StringKey, string>> = { en, sv };
 
 /**
- * The language of the palette labels and of the text made from them: the composed message,
- * word suggestions and the model's sentences. It is marked on the palettes and passed to
- * `speak()`, so a screen reader and the voice read that text as English whatever the UI
- * language is.
+ * The language of the model's text: word suggestions and the sentences. The prompts ask for
+ * English, so that text is looked up, marked and spoken as English whatever the UI language is.
  */
-// ponytail: one fixed language until palettes carry a language of their own.
-export const CONTENT_LANGUAGE: Language = "en";
+// ponytail: fixed until the prompts come in each language.
+export const MODEL_LANGUAGE: Language = "en";
 
 /**
  * The language the UI is shown in. A component that calls `t()` while rendering reads this
@@ -54,6 +52,34 @@ export const languageSignal = signal<Language>("en");
  */
 export function parseLanguage (value: unknown): Language | undefined {
   return LANGUAGES.includes(value as Language) ? value as Language : undefined;
+}
+
+// A cell label in a palette: one string, in the palette's language, or one per language.
+export type LabelType = string | Partial<Record<Language, string>>;
+
+/**
+ * The text to show for a cell label, and its language: the wanted language (the UI's unless
+ * given) when the label has it, then the palette's language, then the first label given. A
+ * palette in one language therefore always shows its own labels.
+ * @param {LabelType} label - The `label` from the palette JSON.
+ * @param {Language} paletteLanguage - The palette's `language`, `"en"` when it has none.
+ * @param {Language} wanted - The language to pick first.
+ * @returns {{ text: string, language: Language }}
+ */
+export function resolveLabel (
+  label: LabelType, paletteLanguage: Language, wanted: Language = languageSignal.value
+): { text: string, language: Language } {
+  if (typeof label === "string") {
+    return { text: label, language: paletteLanguage };
+  }
+  for (const language of [wanted, paletteLanguage]) {
+    const text = label[language];
+    if (text !== undefined) {
+      return { text, language };
+    }
+  }
+  const [language, text] = Object.entries(label)[0] ?? [paletteLanguage, ""];
+  return { text: text ?? "", language: parseLanguage(language) ?? paletteLanguage };
 }
 
 /**

@@ -41,10 +41,14 @@ type ActionAttributeCellPropsType = {
  */
 export function ActionAttributeCell (props: ActionAttributeCellPropsType): VNode {
   const { id, options } = props;
-  const { label, category, composition, columnStart, columnSpan, rowStart, rowSpan } = options;
+  const { label, modelLabel, category, composition, columnStart, columnSpan, rowStart, rowSpan } = options;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
-  const attribute = { category, label, composition };
+  // Stored by its label in the model's language, so the prompt reads one language and the
+  // selection survives a change of UI language.
+  const attribute = modelLabel === undefined || modelLabel === label
+    ? { category, label, composition }
+    : { category, label: modelLabel, displayLabel: label, composition };
   const isSelected = isAttributeSelected(attribute);
   // The category is in the name because the symbol and the label alone do not say which row
   // the button came from, and two rows may one day share a label.
