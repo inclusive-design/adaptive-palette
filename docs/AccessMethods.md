@@ -36,19 +36,20 @@ public website keeps the setting until the page is reloaded.
 1. **Rows.** The highlight outlines one row of controls at a time, top to bottom: the top bar,
    the input area, sentence choices, word predictions, the command bar, then each row of the
    palette. Empty rows are skipped. After the last row it goes back to the first.
-2. **Enter a row.** Select enters the outlined row. The first stop is "Exit row": the row goes
-   dark with a "↩ Exit row" sign in its middle. Select there goes back to choosing rows, so a
-   wrong row is left with one press.
-3. **Pick a cell.** Move steps through the row's cells, then back to "Exit row". Select presses
-   the highlighted cell.
-4. **After a choice,** the highlight goes back to choosing rows, on the row just used, so the next
+2. **Enter a row.** Select enters the outlined row and highlights its first cell, so the first
+   cell is two presses away.
+3. **Pick a cell.** Move steps through the row's cells, then to "Exit row", then back to the
+   first cell. Select presses the highlighted cell.
+4. **Leave a row.** "Exit row" is the last stop: the row goes dark with a "↩ Exit row" sign in
+   its middle. Select there goes back to choosing rows, on the same row.
+5. **After a choice,** the highlight goes back to choosing rows, on the row just used, so the next
    symbol is a few presses away. If the palette changed, it starts at the new palette's first row.
-5. **Dialogs.** While a dialog is open, the highlight steps through its buttons, checkboxes
+6. **Dialogs.** While a dialog is open, the highlight steps through its buttons, checkboxes
    and links one at a time. Text and number fields and drop-down menus are skipped; a support
    person fills those in.
    When a dialog opened from another dialog closes, the highlight returns to the control that
    opened it.
-6. **Scrolling.** The page, or the list inside a dialog, scrolls by itself to keep the highlight
+7. **Scrolling.** The page, or the list inside a dialog, scrolls by itself to keep the highlight
    in view.
 
 The highlight is yellow inside black: an outline around the whole row when choosing rows, the

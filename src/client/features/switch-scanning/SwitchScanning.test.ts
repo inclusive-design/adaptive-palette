@@ -150,26 +150,30 @@ describe("startSwitchScanning", (): void => {
     expect(labels(outlinedRow())).toEqual(["Settings", "Chip"]);
   });
 
-  test("entering a row lands on its exit stop first", async (): Promise<void> => {
+  test("entering a row highlights its first cell", async (): Promise<void> => {
     await move();
     await select();
-    expect(onExitStop()).toBe(true);
-    expect(labels(outlinedRow())).toEqual(["a1", "a2", "a3"]);
-    expect(highlightedCell()).toBeNull();
+    expect(highlightedCell()).toBe(button("a1"));
+    expect(onExitStop()).toBe(false);
   });
 
-  test("the exit stop goes back to row level on the same row", async (): Promise<void> => {
+  test("the exit stop is last and goes back to row level on the same row", async (): Promise<void> => {
     await move();
     await select();
+    await move();
+    await move();
+    await move();
+    expect(onExitStop()).toBe(true);
+    expect(highlightedCell()).toBeNull();
+    expect(labels(outlinedRow())).toEqual(["a1", "a2", "a3"]);
     await select();
     expect(onExitStop()).toBe(false);
     expect(labels(outlinedRow())).toEqual(["a1", "a2", "a3"]);
   });
 
-  test("move steps through the cells and wraps to the exit stop", async (): Promise<void> => {
+  test("move steps through the cells, the exit stop, then the first cell", async (): Promise<void> => {
     await move();
     await select();
-    await move();
     expect(highlightedCell()).toBe(button("a1"));
     await move();
     await move();
@@ -177,6 +181,32 @@ describe("startSwitchScanning", (): void => {
     await move();
     expect(highlightedCell()).toBeNull();
     expect(onExitStop()).toBe(true);
+    await move();
+    expect(highlightedCell()).toBe(button("a1"));
+  });
+
+  test("a one-cell row has the cell, then the exit stop", async (): Promise<void> => {
+    button("b2").remove();
+    await move();
+    await move();
+    await waitFor(() => expect(labels(outlinedRow())).toEqual(["b1"]));
+    await select();
+    expect(highlightedCell()).toBe(button("b1"));
+    await move();
+    expect(onExitStop()).toBe(true);
+    await move();
+    expect(highlightedCell()).toBe(button("b1"));
+  });
+
+  test("moves to the exit stop when the row shrinks below the highlighted cell", async (): Promise<void> => {
+    await move();
+    await select();
+    await move();
+    await move();
+    expect(highlightedCell()).toBe(button("a3"));
+    ["a3", "b1", "b2"].forEach((label) => button(label).remove());
+    await waitFor(() => expect(onExitStop()).toBe(true));
+    expect(labels(outlinedRow())).toEqual(["a1", "a2"]);
   });
 
   test("select clicks the cell and returns to the same row", async (): Promise<void> => {
@@ -184,7 +214,6 @@ describe("startSwitchScanning", (): void => {
     button("a2").addEventListener("click", clicked);
     await move();
     await select();
-    await move();
     await move();
     await select();
     expect(clicked).toHaveBeenCalledTimes(1);
@@ -201,7 +230,6 @@ describe("startSwitchScanning", (): void => {
     await move();
     await move();
     await select();
-    await move();
     await select();
     await waitFor(() => expect(labels(outlinedRow())).toEqual(["b1", "b2"]));
   });
@@ -225,7 +253,6 @@ describe("startSwitchScanning", (): void => {
     });
     await move();
     await select();
-    await move();
     await select();
     await waitFor(() => expect(labels(outlinedRow())).toEqual(["b1", "b2"]));
   });
@@ -240,9 +267,9 @@ describe("startSwitchScanning", (): void => {
       fresh.textContent = label;
       button(label).replaceWith(fresh);
     });
-    await waitFor(() => expect(highlightedCell()?.textContent).toBe("a1"));
+    await waitFor(() => expect(highlightedCell()?.textContent).toBe("a2"));
     await move();
-    expect(highlightedCell()?.textContent).toBe("a2");
+    expect(highlightedCell()?.textContent).toBe("a3");
   });
 
   test("scan keys do not activate the focused button", async (): Promise<void> => {
@@ -273,7 +300,6 @@ describe("startSwitchScanning", (): void => {
     }
     await move();
     await select();
-    await move();
     await select();
     await userEvent.click(field);
     expect(field).toHaveFocus();
@@ -281,7 +307,6 @@ describe("startSwitchScanning", (): void => {
     field.blur();
     await move();
     await select();
-    await move();
     await select();
     button("b2").focus();
     await userEvent.keyboard("{Tab}");
@@ -396,7 +421,6 @@ describe("startSwitchScanning", (): void => {
     button("a1").addEventListener("click", () => field.focus());
     await move();
     await select();
-    await move();
     await select();
     expect(field).not.toHaveFocus();
     await move();
@@ -413,7 +437,6 @@ describe("startSwitchScanning", (): void => {
 
     await move();
     await select();
-    await move();
     await select();
     await waitFor(() => expect(highlightedCell()?.textContent).toBe("Close"));
     await select();

@@ -147,7 +147,6 @@ describe("Switch scanning on the standard Bliss chart", (): void => {
     await moveToPaletteRow();
     await move();
     await select();
-    await move();
     const target = highlightedCell()?.dataset.branchto;
     expect(target).toBeTruthy();
     await select();
@@ -163,7 +162,6 @@ describe("Switch scanning on the standard Bliss chart", (): void => {
 
     // 3. Pick the row's first symbol: it is added to the message and the row stays outlined.
     await select();
-    await move();
     await select();
     await waitFor(() => expect(changeEncodingContents.value.payloads.length).toBe(1));
     await waitFor(() => expect(outlinedRow()).toEqual(row));

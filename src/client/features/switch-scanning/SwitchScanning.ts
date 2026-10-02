@@ -286,7 +286,7 @@ export function startSwitchScanning (config: SwitchScanningConfigType): () => vo
     const row = currentRow(rows);
     if (level === "rows") {
       level = "cells";
-      cellIndex = -1;
+      cellIndex = 0;
       return;
     }
     // Leave the row before clicking: the click may open a dialog or change the palette.
