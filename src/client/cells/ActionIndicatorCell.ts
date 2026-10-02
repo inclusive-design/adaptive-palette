@@ -20,7 +20,7 @@ import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { applyModifiersToLabel, replaceAtCaret } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
-import { t } from "../i18n/I18n";
+import { CONTENT_LANGUAGE, t } from "../i18n/I18n";
 import { findIndicators, findClassifierFromLeft } from "../utils/SvgUtils";
 import { getStaticNewLabel, getNewLabelViaModelQuery } from "../utils/IndicatorLabelsUtils";
 import "./ActionIndicatorCell.scss";
@@ -124,9 +124,9 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       // the label lands, is the only audible sign that the label is the model's.
       if (editMessage({ payloads: relabelled, caretPosition: latest.caretPosition })) {
         const isMarked = isAiLabel && adaptivePaletteGlobals.config.markAiSuggestions;
-        announceIfEnabled(isMarked ? aiSuggestionLabel(finalLabel) : finalLabel);
+        announceIfEnabled(isMarked ? aiSuggestionLabel(finalLabel) : finalLabel, CONTENT_LANGUAGE);
       } else {
-        announceIfEnabled(unchangedMessage);
+        announceIfEnabled(unchangedMessage, CONTENT_LANGUAGE);
       }
     };
 
@@ -147,7 +147,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       return;
     }
     if (modelResult.status !== "pending") {
-      announceIfEnabled(unchangedMessage);
+      announceIfEnabled(unchangedMessage, CONTENT_LANGUAGE);
       return;
     }
 
@@ -159,7 +159,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
     if (newLabel !== undefined) {
       applyLabel(newLabel, true);
     } else {
-      announceIfEnabled(unchangedMessage);
+      announceIfEnabled(unchangedMessage, CONTENT_LANGUAGE);
     }
   };
 

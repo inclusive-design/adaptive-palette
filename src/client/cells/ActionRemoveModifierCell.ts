@@ -18,6 +18,7 @@ import { changeEncodingContents } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
+import { CONTENT_LANGUAGE } from "../i18n/I18n";
 import { replaceAtCaret } from "../utils/SymbolEncodingUtils";
 
 type ActionRemoveModifierPropsType = {
@@ -107,7 +108,7 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
       "isAiLabel": symbolToEdit.isAiLabel
     });
     editMessage({ payloads: edited, caretPosition: caretPosition });
-    announceIfEnabled(newLabel);
+    announceIfEnabled(newLabel, CONTENT_LANGUAGE);
   };
 
   return html`

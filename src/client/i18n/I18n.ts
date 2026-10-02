@@ -33,6 +33,15 @@ export const SPEECH_LANGS: Record<Language, string> = { en: "en-US", sv: "sv-SE"
 const STRINGS: Record<Language, Record<StringKey, string>> = { en, sv };
 
 /**
+ * The language of the palette labels and of the text made from them: the composed message,
+ * word suggestions and the model's sentences. It is marked on the palettes and passed to
+ * `speak()`, so a screen reader and the voice read that text as English whatever the UI
+ * language is.
+ */
+// ponytail: one fixed language until palettes carry a language of their own.
+export const CONTENT_LANGUAGE: Language = "en";
+
+/**
  * The language the UI is shown in. A component that calls `t()` while rendering reads this
  * signal, so it draws again when the language changes.
  */

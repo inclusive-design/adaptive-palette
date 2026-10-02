@@ -25,7 +25,7 @@ import { ContentSentenceChoicesType } from "../../index.d";
 import { adaptivePaletteGlobals, settingsSavedCount } from "../../state/GlobalData";
 import { AiBadge, aiSuggestionLabel } from "../../components/AiBadge";
 import { BlissSentence } from "./BlissSentence";
-import { t } from "../../i18n/I18n";
+import { CONTENT_LANGUAGE, languageSignal, t } from "../../i18n/I18n";
 import "./SentenceChoices.scss";
 
 type SentenceChoicesPropsType = {
@@ -91,7 +91,7 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
 
   const logAndSpeak = (sentence: string, source: SentenceSourceType): void => {
     abortActiveSentenceRequest();
-    speak(sentence);
+    speak(sentence, CONTENT_LANGUAGE);
     saveTranslation(state.telegraphicMessage, {
       model: state.model,
       candidates: state.sentences,
@@ -149,7 +149,7 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
 
   const choices = state.status === "idle" ? null : html`
     ${state.sentences.map(sentenceButton)}
-    <form class="sentenceTypeYourOwn" onSubmit=${submitTypedSentence}>
+    <form class="sentenceTypeYourOwn" lang=${languageSignal.value} onSubmit=${submitTypedSentence}>
       <input
         type="text"
         aria-label=${t("sentenceTypeYours")}
@@ -172,7 +172,7 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
       class="sentenceChoices"
       style="${generateGridStyle(columnStart, columnSpan, rowStart, rowSpan)}"
       ref=${choicesRef}>
-      <p class=${state.status === "error" ? "statusMessage sentenceError" : "statusMessage"} role="status">${statusText}</p>
+      <p class=${state.status === "error" ? "statusMessage sentenceError" : "statusMessage"} lang=${languageSignal.value} role="status">${statusText}</p>
       ${choices}
     </div>
   `;

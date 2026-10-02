@@ -17,6 +17,7 @@ import { clearMessageAndChoices } from "../features/telegraphic-translation/Tele
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
+import { CONTENT_LANGUAGE } from "../i18n/I18n";
 
 type CommandClearEncodingProps = {
   id: string,
@@ -33,7 +34,7 @@ export function CommandClearEncoding (props: CommandClearEncodingProps): VNode {
 
   const cellClicked = (): void => {
     clearMessageAndChoices();
-    announceIfEnabled(label);
+    announceIfEnabled(label, CONTENT_LANGUAGE);
   };
 
   return html`

@@ -26,7 +26,7 @@ import { isModelTierActive, predictNext } from "./WordPredictionUtils";
 import { messageUpToCaret, queryContextKeyOf, modelWordsSignal } from "./WordPredictionState";
 import { ContentPredictedWordsType, SymbolEncodingType } from "../../index.d";
 import { generateGridStyle } from "../../utils/GridUtils";
-import { t } from "../../i18n/I18n";
+import { CONTENT_LANGUAGE, languageSignal, t } from "../../i18n/I18n";
 import "./PredictedWords.scss";
 
 /**
@@ -92,7 +92,7 @@ export function PredictedWords (props: PredictedWordsPropsType): VNode | null {
     const { payloads: currentPayloads, caretPosition: currentCaret } = changeEncodingContents.value;
     // A fresh copy each time.
     editMessage(insertWordAtCaret(structuredClone(suggestion), currentPayloads, currentCaret));
-    announceIfEnabled(suggestion.label);
+    announceIfEnabled(suggestion.label, CONTENT_LANGUAGE);
   };
 
   // Every slot is drawn, whether or not there is a word for it, so the row keeps one shape and
@@ -138,7 +138,7 @@ export function PredictedWords (props: PredictedWordsPropsType): VNode | null {
       id="${props.id}"
       class="predictedWordsArea"
       style="${generateGridStyle(columnStart, columnSpan, rowStart, rowSpan)}">
-      <p class="statusMessage" role="status">${statusText}</p>
+      <p class="statusMessage" lang=${languageSignal.value} role="status">${statusText}</p>
       <div
         class="predictedWords"
         role="group"

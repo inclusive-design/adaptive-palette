@@ -16,6 +16,7 @@ import { BlissSymbolCellType } from "../index.d";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { announceIfEnabled } from "../utils/SpeechUtils";
+import { CONTENT_LANGUAGE } from "../i18n/I18n";
 import "./ActionBranchToPaletteCell.scss";
 
 type ActionBranchToPalettePropsType = {
@@ -30,7 +31,7 @@ type ActionBranchToPalettePropsType = {
 const navigateToPalette = async (event: Event): Promise<void> => {
   const { paletteStore, navigationStack } = adaptivePaletteGlobals;
   const button = event.currentTarget as HTMLElement;
-  announceIfEnabled(button.innerText);
+  announceIfEnabled(button.innerText, CONTENT_LANGUAGE);
 
   const branchToPaletteName = button.getAttribute("data-branchto");
   if (!branchToPaletteName) {

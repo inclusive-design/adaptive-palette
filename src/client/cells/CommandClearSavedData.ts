@@ -21,7 +21,7 @@ import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
 import { hydrateMessageLog } from "../core/MessageLog";
 import { getStorage } from "../core/StorageBackend";
-import { t } from "../i18n/I18n";
+import { CONTENT_LANGUAGE, t } from "../i18n/I18n";
 import "./CommandClearSavedData.scss";
 
 export const CLEAR_SAVED_DATA_DIALOG_ID = "clearSavedDataDialog";
@@ -74,7 +74,7 @@ export function CommandClearSavedData (props: CommandClearSavedDataProps): VNode
   // capture the wrong opener to restore focus to when the dialog closes.
   const askToConfirm = (event: Event): void => {
     (event.currentTarget as HTMLElement).focus();
-    announceIfEnabled(label);
+    announceIfEnabled(label, CONTENT_LANGUAGE);
     setHasFailed(false);
     setIsConfirming(true);
   };

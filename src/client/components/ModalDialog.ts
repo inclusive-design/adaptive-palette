@@ -13,7 +13,7 @@
 import { VNode, ComponentChildren } from "preact";
 import { html } from "htm/preact";
 import { useEffect, useRef } from "preact/hooks";
-import { t } from "../i18n/I18n";
+import { languageSignal, t } from "../i18n/I18n";
 
 import "./ModalDialog.scss";
 
@@ -118,6 +118,7 @@ export function ModalDialog (props: ModalDialogProps): VNode {
       id=${id}
       ref=${dialogRef}
       class="modalDialog"
+      lang=${languageSignal.value}
       aria-labelledby=${headingId}
       onCancel=${refuseCancel}
       onClose=${handleClose}>
