@@ -21,6 +21,8 @@ export type BlissSymbolEntry = {
   id: number,
   bciAvId?: number,
   gloss: string,
+  // The Swedish gloss from BCI-AV. Missing on some entries; read it through `glossFor()`.
+  glossSv?: string,
   pos?: string,
   explanation?: string,
   isCharacter: boolean,
@@ -43,7 +45,13 @@ export type LayoutInfoType = {
   requiresModel?: boolean,
   // The `config.json` section the cell's feature needs. The palette leaves the cell out, and
   // closes the row up, when that section is missing.
-  requiresConfig?: keyof AdaptivePaletteConfigType
+  requiresConfig?: keyof AdaptivePaletteConfigType,
+  // The language of the cell's `label`. Set by `Palette.ts` when it picks the label; not
+  // written in the palette JSON.
+  labelLanguage?: Language,
+  // The cell's `label` in `MODEL_LANGUAGE`, for a label that reaches a prompt. Set by
+  // `Palette.ts`, like `labelLanguage`.
+  modelLabel?: string
 };
 
 export type BranchToInfoType = {
@@ -55,6 +63,10 @@ export type BlissSymbolCellType = LayoutInfoType & BranchToInfoType & BlissSymbo
 
 export type JsonPaletteType = {
   name: string,
+  // The language of the palette's plain-string labels. Defaults to "en".
+  language?: Language,
+  // A cell's `label` in the JSON may be a `LabelType` (`i18n/I18n.ts`). `Palette.ts` turns it
+  // into the string the cell types below declare.
   cells: {
     [key: string]: {
       type: string,
@@ -264,7 +276,10 @@ export type SentenceCompletionsStateType = {
  */
 export type MessageAttributeType = {
   category: string,
+  // In `MODEL_LANGUAGE`: what the prompt gets and what two attributes are matched on.
   label: string,
+  // The label as the user saw it, when it differs from `label`.
+  displayLabel?: string,
   composition: SymbolCompositionType
 };
 

@@ -250,13 +250,13 @@ describe("wordPrediction with a model answering as well", (): void => {
     const payloadByLabel = new Map<string, SymbolEncodingType>([["juice", historyPayload]]);
 
     test("a word the user has used keeps the form they used it in", (): void => {
-      const { payload, rung } = resolveWordPayload("juice", payloadByLabel);
+      const { payload, rung } = resolveWordPayload("juice", payloadByLabel, "en");
       expect(rung).toBe("history");
       expect(payload?.indicatorId).toBe(99);
     });
 
     test("a word matching a whole gloss takes that symbol", (): void => {
-      const { payload, rung } = resolveWordPayload("food", payloadByLabel);
+      const { payload, rung } = resolveWordPayload("food", payloadByLabel, "en");
       expect(rung).toBe("exactGloss");
       expect(payload?.userSelectedSymbolId).toBe(329);
       expect(payload?.label).toBe("food");
@@ -264,7 +264,7 @@ describe("wordPrediction with a model answering as well", (): void => {
 
     // "drink" is one sense of "drink, beverage", not the verb "to drink".
     test("a word listed as one sense of a gloss takes that symbol", (): void => {
-      const { payload, rung } = resolveWordPayload("drink", payloadByLabel);
+      const { payload, rung } = resolveWordPayload("drink", payloadByLabel, "en");
       expect(rung).toBe("exactGloss");
       expect(payload?.userSelectedSymbolId).toBe(275);
       expect(payload?.label).toBe("drink");
@@ -272,19 +272,19 @@ describe("wordPrediction with a model answering as well", (): void => {
 
     // "water" is the first sense of "water, fluid, liquid" and the last of a coarser gloss.
     test("the gloss the word is the earliest sense of wins", (): void => {
-      expect(resolveWordPayload("water", payloadByLabel).payload?.userSelectedSymbolId).toBe(695);
+      expect(resolveWordPayload("water", payloadByLabel, "en").payload?.userSelectedSymbolId).toBe(695);
     });
 
     // "eat" is no gloss's own sense; "to eat" is the shortest gloss holding it.
     test("a word inside a longer gloss takes the shortest such gloss", (): void => {
-      const { payload, rung } = resolveWordPayload("eat", payloadByLabel);
+      const { payload, rung } = resolveWordPayload("eat", payloadByLabel, "en");
       expect(rung).toBe("wordInGloss");
       expect(payload?.userSelectedSymbolId).toBe(1588);
       expect(payload?.label).toBe("eat");
     });
 
     test("a word with no symbol at all is dropped", (): void => {
-      const { payload, rung } = resolveWordPayload("zzzq", payloadByLabel);
+      const { payload, rung } = resolveWordPayload("zzzq", payloadByLabel, "en");
       expect(rung).toBe("dropped");
       expect(payload).toBeUndefined();
     });

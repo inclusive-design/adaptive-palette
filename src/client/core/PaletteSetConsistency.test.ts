@@ -12,6 +12,7 @@
 
 import { BranchToInfoType, JsonPaletteType, PaletteIncludeType } from "../index.d";
 import { PALETTE_INCLUDE_TYPE, PaletteStore } from "./PaletteStore";
+import type { LabelType } from "../i18n/I18n";
 
 const PALETTE_SET_PATH = "/palette-sets/standardBlissChart/palette_set.json";
 
@@ -77,5 +78,18 @@ describe("the shipped palette set", (): void => {
           expect(options.rowStart, `${palette.name} > ${id}`).toBeGreaterThanOrEqual(2);
         });
       });
+  });
+
+  test("every labelled cell has an English and a Swedish label", (): void => {
+    Object.entries(palettes).forEach(([name, palette]) => {
+      Object.entries(palette.cells).forEach(([id, cell]) => {
+        const { label } = cell.options as { label?: LabelType };
+        if (label !== undefined) {
+          expect(label, `${name} > ${id}`).toMatchObject({
+            en: expect.stringMatching(/\S/) as string, sv: expect.stringMatching(/\S/) as string
+          });
+        }
+      });
+    });
   });
 });

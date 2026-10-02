@@ -18,6 +18,7 @@
  */
 import nlp from "compromise";
 import { findGlossEntry, glossPayload } from "../../utils/GlossLookupUtils";
+import { MODEL_LANGUAGE } from "../../i18n/I18n";
 import { readMessageLog } from "../../core/MessageLog";
 import { BlissSentenceSlotType, SymbolEncodingType } from "../../index.d";
 
@@ -285,7 +286,7 @@ function scanForGloss (
     const singularized = [...words.slice(0, -1), toSingular(words[words.length - 1])]
       .join(" ").toLowerCase();
     for (const key of written === singularized ? [written] : [written, singularized]) {
-      if (findGlossEntry(key)) {
+      if (findGlossEntry(key, MODEL_LANGUAGE)) {
         return {
           text, key, length,
           indicatorId: key === singularized && key !== written ? PLURAL_INDICATOR_ID : undefined
@@ -436,7 +437,7 @@ function spanPayload (
   const base = fromHistory
     ? { ...fromHistory }
     : (() => {
-      const entry = findGlossEntry(span.key);
+      const entry = findGlossEntry(span.key, MODEL_LANGUAGE);
       return entry ? glossPayload(entry.id, entry.composition, span.text) : undefined;
     })();
   if (!base) {

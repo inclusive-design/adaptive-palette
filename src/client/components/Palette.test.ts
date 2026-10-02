@@ -11,14 +11,18 @@
  */
 
 import { vi } from "vitest";
-import { render, screen } from "@testing-library/preact";
+import { cleanup, render, screen } from "@testing-library/preact";
 import { html } from "htm/preact";
 
 import { JsonPaletteType } from "../index.d";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { setTestConfig } from "../testUtils/TestConfig";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
+import { languageSignal } from "../i18n/I18n";
+import { mockedAnnounceIfEnabled } from "../testUtils/SpeechUtilsMock";
 import { Palette } from "./Palette";
+
+vi.mock("../utils/SpeechUtils");
 
 describe("Palette", (): void => {
 
@@ -91,7 +95,7 @@ describe("Palette", (): void => {
 
     expect(paletteElement).toBeVisible();
     expect(paletteElement).toBeValid();
-    // Palette labels are English whatever the UI language, so a screen reader reads them so.
+    // The labels are English, so a screen reader reads them so.
     expect(paletteElement.lang).toBe("en");
 
     // There should be 6 columns in the grid and NUM_CELLS children.
@@ -310,6 +314,53 @@ describe("Palette", (): void => {
       await screen.findByText("Two");
 
       expect(buttonFor("Shared")).toBe(sharedBefore);
+    });
+  });
+
+  describe("labels in more than one language", (): void => {
+    const breadPalette = (label: unknown, language?: string) => ({
+      name: "Bread", language,
+      cells: {
+        bread: {
+          type: "ActionCodeCell",
+          options: { label, composition: 180, rowStart: 1, rowSpan: 1, columnStart: 1, columnSpan: 1 }
+        }
+      }
+    });
+
+    afterEach((): void => {
+      cleanup();
+      languageSignal.value = "en";
+    });
+
+    test("shows the label in the UI language and marks the palette with it", async (): Promise<void> => {
+      languageSignal.value = "sv";
+      render(html`<${Palette} json=${breadPalette({ en: "bread", sv: "bröd" })} />`);
+      const button = await screen.findByRole("button", { name: "bröd" });
+      expect(button.closest(".paletteContainer")?.getAttribute("lang")).toBe("sv");
+    });
+
+    test("relabels when the UI language changes", async (): Promise<void> => {
+      render(html`<${Palette} json=${breadPalette({ en: "bread", sv: "bröd" })} />`);
+      await screen.findByRole("button", { name: "bread" });
+      languageSignal.value = "sv";
+      expect(await screen.findByRole("button", { name: "bröd" })).toBeVisible();
+    });
+
+    test("a palette in its own language keeps its labels, and speaks them in that language", async (): Promise<void> => {
+      render(html`<${Palette} json=${breadPalette("bröd", "sv")} />`);
+      const button = await screen.findByRole("button", { name: "bröd" });
+      expect(button.closest(".paletteContainer")?.getAttribute("lang")).toBe("sv");
+      button.click();
+      expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith("bröd", "sv");
+    });
+
+    test("a palette language the app does not know falls back to English", async (): Promise<void> => {
+      render(html`<${Palette} json=${breadPalette("pain", "fr")} />`);
+      const button = await screen.findByRole("button", { name: "pain" });
+      expect(button.closest(".paletteContainer")?.getAttribute("lang")).toBe("en");
+      button.click();
+      expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith("pain", "en");
     });
   });
 });

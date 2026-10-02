@@ -214,7 +214,7 @@ describe("Switch scanning on the standard Bliss chart", (): void => {
     // 3. Speak the composed message.
     await pick(byId("action-speak"), "Speak");
     await waitFor(() => expect(mockedSpeak).toHaveBeenLastCalledWith(
-      messageText(changeEncodingContents.value.payloads), "en"
+      messageText(changeEncodingContents.value.payloads)
     ));
   });
 

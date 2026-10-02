@@ -14,7 +14,10 @@
     "blissymbol-406066ca-8db2-4681-9d24-038c7fa68418": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "blissymbol",
+        "label": {
+          "en": "blissymbol",
+          "sv": "blissymbol"
+        },
         "composition": 167,
         "rowStart": 2,
         "rowSpan": 1,
@@ -25,7 +28,10 @@
     "SVG:15972/15172:SVG-e26a1c36-69ef-4ef1-94b8-80395e16ef52": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "word",
+        "label": {
+          "en": "word",
+          "sv": "ord"
+        },
         "composition": 2761,
         "rowStart": 2,
         "rowSpan": 1,
@@ -36,7 +42,10 @@
     "SVG:13365/25552:SVG-53e6e7ab-8493-41fd-a21e-6ce6c158f47f": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "internet",
+        "label": {
+          "en": "internet",
+          "sv": "internet"
+        },
         "composition": 3829,
         "rowStart": 2,
         "rowSpan": 1,
@@ -47,7 +56,10 @@
     "SVG:16445/24884:SVG-ca3eb63a-b38f-485f-ae82-21cc7137bbb9": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "problem",
+        "label": {
+          "en": "problem",
+          "sv": "problem"
+        },
         "composition": 2209,
         "rowStart": 2,
         "rowSpan": 1,
@@ -58,7 +70,10 @@
     "idea-ca8e04ef-6cb7-4d03-860a-38504c9be04c": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "idea",
+        "label": {
+          "en": "idea",
+          "sv": "idé"
+        },
         "composition": 397,
         "rowStart": 2,
         "rowSpan": 1,
@@ -69,7 +84,10 @@
     "secret-09a34cd6-467e-4c19-bc26-bb1d0b06ef1d": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "secret",
+        "label": {
+          "en": "secret",
+          "sv": "hemlighet"
+        },
         "composition": 583,
         "rowStart": 3,
         "rowSpan": 1,
@@ -80,7 +98,10 @@
     "gathering-68b2fb14-490b-4b9f-87e5-3046c04334e8": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "gathering",
+        "label": {
+          "en": "gathering",
+          "sv": "samling"
+        },
         "composition": 346,
         "rowStart": 3,
         "rowSpan": 1,
@@ -91,7 +112,10 @@
     "SVG:14427/14164/17983:SVG-a4e9db80-a438-40d2-a311-b2745425879a": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "party",
+        "label": {
+          "en": "party",
+          "sv": "fest"
+        },
         "composition": 2137,
         "rowStart": 3,
         "rowSpan": 1,
@@ -102,7 +126,10 @@
     "SVG:14427/24916:SVG-14e6eba0-4d99-44ab-bb54-76953716120a": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "club",
+        "label": {
+          "en": "club",
+          "sv": "förening"
+        },
         "composition": 1430,
         "rowStart": 3,
         "rowSpan": 1,
@@ -113,7 +140,10 @@
     "SVG:12335/24916:SVG-4a350a02-8124-43f7-9dac-f6b83b649566": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "hobby",
+        "label": {
+          "en": "hobby",
+          "sv": "hobby"
+        },
         "composition": 1812,
         "rowStart": 3,
         "rowSpan": 1,
@@ -124,7 +154,10 @@
     "SVG:17717/24903:SVG-387930ba-f1a4-468b-8eef-2acb338be88c": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "gift",
+        "label": {
+          "en": "gift",
+          "sv": "gåva"
+        },
         "composition": 1728,
         "rowStart": 4,
         "rowSpan": 1,
@@ -135,7 +168,10 @@
     "SVG:17717/12335/RK:-2/14164/17983:SVG-fec5dd2c-a626-4614-a50a-34d097447391": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "toy",
+        "label": {
+          "en": "toy",
+          "sv": "leksak"
+        },
         "composition": 2626,
         "rowStart": 4,
         "rowSpan": 1,
@@ -146,7 +182,10 @@
     "SVG:12335/RK:-2/14164:SVG-455a003c-8e4f-44c3-84f9-bfcdfa2feb10": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "play, game",
+        "label": {
+          "en": "play, game",
+          "sv": "leka, spela"
+        },
         "composition": 3896,
         "rowStart": 4,
         "rowSpan": 1,
@@ -157,7 +196,10 @@
     "ball-b221c79f-b19a-4d7b-9d97-7e4f381b97e8": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "ball",
+        "label": {
+          "en": "ball",
+          "sv": "boll"
+        },
         "composition": 148,
         "rowStart": 4,
         "rowSpan": 1,
@@ -168,7 +210,10 @@
     "camera-f88a8ea9-e30c-4748-883a-dee4173f4478": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "camera",
+        "label": {
+          "en": "camera",
+          "sv": "kamera"
+        },
         "composition": 198,
         "rowStart": 4,
         "rowSpan": 1,
@@ -179,7 +224,10 @@
     "SVG:14133/13934:SVG-0975cedb-1fbd-4663-9836-20ad7be95f42": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "picture",
+        "label": {
+          "en": "picture",
+          "sv": "bild"
+        },
         "composition": 2157,
         "rowStart": 5,
         "rowSpan": 1,
@@ -190,7 +238,10 @@
     "SVG:13894/15682:SVG-7b5f0b8b-7b44-4b30-9d1c-02387141411a": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "music",
+        "label": {
+          "en": "music",
+          "sv": "musik"
+        },
         "composition": 2046,
         "rowStart": 5,
         "rowSpan": 1,
@@ -201,7 +252,10 @@
     "SVG:20518/20517/16194:SVG-e1f710ee-a34d-4c12-97f1-ad4c6bcebf8e": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "gymnastics",
+        "label": {
+          "en": "gymnastics",
+          "sv": "gymnastik"
+        },
         "composition": 3109,
         "rowStart": 5,
         "rowSpan": 1,
@@ -212,7 +266,10 @@
     "20518-fcb10429-90fe-4e2e-85f4-6641acf9611f": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "sport",
+        "label": {
+          "en": "sport",
+          "sv": "sport"
+        },
         "composition": 719,
         "rowStart": 5,
         "rowSpan": 1,
@@ -223,7 +280,10 @@
     "16451-2a4a259e-f275-4034-a0f2-2c77b9b96314": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "race",
+        "label": {
+          "en": "race",
+          "sv": "tävling"
+        },
         "composition": 554,
         "rowStart": 5,
         "rowSpan": 1,

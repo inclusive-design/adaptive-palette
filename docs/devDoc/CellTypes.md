@@ -49,6 +49,8 @@ import cycle. See [Including a palette](Palettes.md#including-a-palette).
 | ------ | ----------- |
 | `palette` | The name of the palette to draw |
 
+A `label` may be one string or one label per language. See [Palettes](Palettes.md#palette-json-structure).
+
 ## Adding a new cell type
 
 When a new `type` value is introduced, developers need to:

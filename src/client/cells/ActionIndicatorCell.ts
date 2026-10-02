@@ -20,7 +20,7 @@ import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { applyModifiersToLabel, replaceAtCaret } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
-import { CONTENT_LANGUAGE, t } from "../i18n/I18n";
+import { MODEL_LANGUAGE, languageSignal, t } from "../i18n/I18n";
 import { findIndicators, findClassifierFromLeft } from "../utils/SvgUtils";
 import { getStaticNewLabel, getNewLabelViaModelQuery } from "../utils/IndicatorLabelsUtils";
 import "./ActionIndicatorCell.scss";
@@ -124,9 +124,9 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       // the label lands, is the only audible sign that the label is the model's.
       if (editMessage({ payloads: relabelled, caretPosition: latest.caretPosition })) {
         const isMarked = isAiLabel && adaptivePaletteGlobals.config.markAiSuggestions;
-        announceIfEnabled(isMarked ? aiSuggestionLabel(finalLabel) : finalLabel, CONTENT_LANGUAGE);
+        announceIfEnabled(isMarked ? aiSuggestionLabel(finalLabel) : finalLabel);
       } else {
-        announceIfEnabled(unchangedMessage, CONTENT_LANGUAGE);
+        announceIfEnabled(unchangedMessage);
       }
     };
 
@@ -134,6 +134,13 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
     // async wait -- so a click always gets audio feedback even if a later click supersedes it
     // first. Only the resolution after a genuinely in-flight model query (the "pending" branch)
     // is gated on `isStillCurrent()`.
+    // The lookup and the model give English words, so a label in another UI language is kept.
+    // ponytail: assumes the message's labels are in the UI language; a model word added in
+    // Swedish keeps its label too. Store each payload's language if that matters.
+    if (languageSignal.value !== MODEL_LANGUAGE) {
+      announceIfEnabled(unchangedMessage);
+      return;
+    }
     const staticLabel = getStaticNewLabel(symbolToEdit.userSelectedSymbolId, indicatorId);
     if (staticLabel !== undefined) {
       applyLabel(staticLabel, false);
@@ -147,7 +154,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       return;
     }
     if (modelResult.status !== "pending") {
-      announceIfEnabled(unchangedMessage, CONTENT_LANGUAGE);
+      announceIfEnabled(unchangedMessage);
       return;
     }
 
@@ -159,7 +166,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
     if (newLabel !== undefined) {
       applyLabel(newLabel, true);
     } else {
-      announceIfEnabled(unchangedMessage, CONTENT_LANGUAGE);
+      announceIfEnabled(unchangedMessage);
     }
   };
 

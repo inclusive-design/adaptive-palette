@@ -17,7 +17,6 @@ import { incrementCursor } from "./ContentEncoding";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
-import { CONTENT_LANGUAGE } from "../i18n/I18n";
 
 type CommandCursorForwardProps = {
   id: string,
@@ -28,13 +27,13 @@ type CommandCursorForwardProps = {
 
 export function CommandCursorForward (props: CommandCursorForwardProps): VNode {
   const { id, options } = props;
-  const { label, composition, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
+  const { label, labelLanguage, composition, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
     incrementCursor();
-    announceIfEnabled(label, CONTENT_LANGUAGE);
+    announceIfEnabled(label, labelLanguage);
   };
 
   return html`

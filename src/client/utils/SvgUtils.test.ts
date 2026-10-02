@@ -258,24 +258,34 @@ describe("findSymbolByGloss()", (): void => {
   });
 
   test("Find multiple 'bark'", (): void => {
-    expect(findSymbolByGloss(BARK)).toStrictEqual(expectedBarkResults);
+    expect(findSymbolByGloss(BARK, "en")).toStrictEqual(expectedBarkResults);
   });
 
   test("Find single male cousin", (): void => {
-    expect(findSymbolByGloss(MALE_COUSIN)).toStrictEqual(expectedCousionResults);
+    expect(findSymbolByGloss(MALE_COUSIN, "en")).toStrictEqual(expectedCousionResults);
   });
 
   test("Search when no matching gloss", (): void => {
-    expect(findSymbolByGloss(NO_SUCH_GLOSS)).toStrictEqual([]);
+    expect(findSymbolByGloss(NO_SUCH_GLOSS, "en")).toStrictEqual([]);
   });
 
   // Regex metacharacters in the search term used to throw a SyntaxError.
   test("Search with regular expression metacharacters", (): void => {
-    expect(findSymbolByGloss("bark (")).toStrictEqual([]);
-    expect(findSymbolByGloss("bark [")).toStrictEqual([]);
-    expect(findSymbolByGloss("bark \\")).toStrictEqual([]);
+    expect(findSymbolByGloss("bark (", "en")).toStrictEqual([]);
+    expect(findSymbolByGloss("bark [", "en")).toStrictEqual([]);
+    expect(findSymbolByGloss("bark \\", "en")).toStrictEqual([]);
     // "." is matched as a literal, not as "any character".
-    expect(findSymbolByGloss("bar.")).toStrictEqual([]);
+    expect(findSymbolByGloss("bar.", "en")).toStrictEqual([]);
+  });
+
+  test("searches the Swedish glosses, and finds a word that starts with a non-ASCII letter", (): void => {
+    expect(findSymbolByGloss("äpple", "sv").map((match) => match.id)).toContain(131);
+    expect(findSymbolByGloss("vatten", "sv").find((match) => match.id === 695)?.label).toBe("vatten, vätska");
+    expect(findSymbolByGloss("vatten", "en")).toStrictEqual([]);
+  });
+
+  test("an entry with no Swedish gloss is searched by its English one", (): void => {
+    expect(findSymbolByGloss("apostrophe", "sv").map((match) => match.id)).toContain(7);
   });
 
 });

@@ -15,7 +15,7 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
-import { CONTENT_LANGUAGE } from "../i18n/I18n";
+import type { Language } from "../i18n/I18n";
 import { BlissSymbol } from "../components/BlissSymbol";
 import "./ActionCodeCell.scss";
 
@@ -45,20 +45,20 @@ export function goBackImpl (): void {
  * Event handler for an CommandGoBackCellPropsType button/cell that, when
  * clicked, goes back one palette.
  */
-const goBackToPalette = (event: Event): void => {
+const goBackToPalette = (event: Event, language?: Language): void => {
   const button = event.currentTarget as HTMLElement;
   if (adaptivePaletteGlobals.navigationStack.depth === 0) {
     speakUnavailable(button.innerText);
     return;
   }
-  announceIfEnabled(button.innerText, CONTENT_LANGUAGE);
+  announceIfEnabled(button.innerText, language);
   goBackImpl();
 };
 
 export function CommandGoBackCell (props: CommandGoBackCellPropsType): VNode {
 
   const {
-    columnStart, columnSpan, rowStart, rowSpan, composition, label
+    columnStart, columnSpan, rowStart, rowSpan, composition, label, labelLanguage
   } = props.options;
   const ariaControlsId = adaptivePaletteGlobals.mainPaletteContainerId;
 
@@ -76,7 +76,7 @@ export function CommandGoBackCell (props: CommandGoBackCellPropsType): VNode {
     <button
       id="${props.id}" class="btn-command" style="${gridStyles}"
       aria-controls="${ariaControlsId}" aria-disabled=${unavailable}
-      onClick=${goBackToPalette}>
+      onClick=${(event: Event) => goBackToPalette(event, labelLanguage)}>
       <${BlissSymbol} composition=${composition} label=${label} />
     </button>
   `;

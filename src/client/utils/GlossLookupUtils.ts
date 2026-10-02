@@ -11,7 +11,7 @@
  */
 
 /**
- * Find the Bliss dictionary entry for an English word or phrase.
+ * Find the Bliss dictionary entry for a word or phrase in English or Swedish.
  *
  * A gloss is a comma separated list of synonym senses ("water, fluid, liquid"), sometimes
  * qualified by a trailing parenthetical ("side (body)"). Both the word prediction row and the
@@ -19,7 +19,8 @@
  * than inside either feature.
  */
 import { adaptivePaletteGlobals } from "../state/GlobalData";
-import { findSymbolByGloss } from "./SvgUtils";
+import { findSymbolByGloss, glossFor } from "./SvgUtils";
+import type { Language } from "../i18n/I18n";
 import {
   BlissSymbolEntry, ResolutionRungType, SymbolCompositionType, SymbolEncodingType
 } from "../index.d";
@@ -38,12 +39,13 @@ export function normalizeSense (sense: string): string {
 }
 
 /**
- * The senses of one entry, lowercased and trimmed but otherwise as written.
+ * The senses of one entry in a language, lowercased and trimmed but otherwise as written.
  * @param {BlissSymbolEntry} entry - The dictionary entry.
+ * @param {Language} language - The language of the gloss to read.
  * @returns {string[]}
  */
-function writtenSenses (entry: BlissSymbolEntry): string[] {
-  return entry.gloss.toLowerCase().split(",").map((sense) => sense.trim());
+function writtenSenses (entry: BlissSymbolEntry, language: Language): string[] {
+  return glossFor(entry, language).toLowerCase().split(",").map((sense) => sense.trim());
 }
 
 // The entry that answers for each sense of the dictionary.
@@ -85,33 +87,40 @@ function indexSenses (
   return new Map([...best].map(([sense, { entry }]) => [sense, entry]));
 }
 
-// The dictionary indexed once, rather than scanned per lookup: every span of every sentence
-// choice is looked up, and a miss used to walk all 6420 entries twice. Rebuilt if the
-// dictionary itself is ever replaced.
-let senseIndexes: {
+type SenseIndexesType = {
   symbols: BlissSymbolEntry[], written: SenseIndexType, normalized: SenseIndexType
-} | undefined;
+};
+
+// The dictionary indexed once per language, rather than scanned per lookup: every span of
+// every sentence choice is looked up, and a miss used to walk all 6420 entries twice. Rebuilt
+// if the dictionary itself is ever replaced.
+const senseIndexes = new Map<Language, SenseIndexesType>();
 
 /**
- * Build two separate indexes, built on first use.
+ * Build two separate indexes for a language, built on first use.
  * 1. written: Maps exactly what is written in the dictionary (e.g., "a (lowercase)" -> Symbol ID 52).
  * 2. normalized: Maps the cleaned versions (e.g., "a" -> Symbol ID 52).
- * @returns {{ written: SenseIndexType, normalized: SenseIndexType }}
+ * @param {Language} language - The language of the glosses.
+ * @returns {SenseIndexesType}
  */
-function indexes (): { written: SenseIndexType, normalized: SenseIndexType } {
+function indexes (language: Language): SenseIndexesType {
   const symbols = adaptivePaletteGlobals.symbols;
-  if (senseIndexes?.symbols !== symbols) {
-    senseIndexes = {
+  let built = senseIndexes.get(language);
+  if (built?.symbols !== symbols) {
+    built = {
       symbols,
-      written: indexSenses(symbols, writtenSenses, true),
-      normalized: indexSenses(symbols, (entry) => writtenSenses(entry).map(normalizeSense), false)
+      written: indexSenses(symbols, (entry) => writtenSenses(entry, language), true),
+      normalized: indexSenses(
+        symbols, (entry) => writtenSenses(entry, language).map(normalizeSense), false
+      )
     };
+    senseIndexes.set(language, built);
   }
-  return senseIndexes;
+  return built;
 }
 
 /**
- * The dictionary entry for an English word or phrase, or `undefined`.
+ * The dictionary entry for a word or phrase in a language, or `undefined`.
  *
  * The gloss as written is tried across the whole dictionary before any normalizing. 1192 of
  * the 6420 entries carry a trailing parenthetical and most of them disambiguate rather than
@@ -121,10 +130,11 @@ function indexes (): { written: SenseIndexType, normalized: SenseIndexType } {
  * id 100. Only a key whose every candidate is qualified reaches the normalized index, which is
  * exactly what normalization is for.
  * @param {string} key - The word or phrase, lowercased.
+ * @param {Language} language - The language of the glosses to search.
  * @returns {BlissSymbolEntry | undefined}
  */
-export function findGlossEntry (key: string): BlissSymbolEntry | undefined {
-  const { written, normalized } = indexes();
+export function findGlossEntry (key: string, language: Language): BlissSymbolEntry | undefined {
+  const { written, normalized } = indexes(language);
   return written.get(key) ?? normalized.get(key);
 }
 
@@ -166,22 +176,23 @@ export function glossPayload (
  * user is about to speak.
  * @param {string} word - The word, lowercased.
  * @param {Map<string, SymbolEncodingType>} payloadByLabel - Past payloads by lowercased label.
+ * @param {Language} language - The language of the word.
  * @returns {{ payload?: SymbolEncodingType, rung: ResolutionRungType }}
  */
 export function resolveWordPayload (
-  word: string, payloadByLabel: Map<string, SymbolEncodingType>
+  word: string, payloadByLabel: Map<string, SymbolEncodingType>, language: Language
 ): { payload?: SymbolEncodingType, rung: ResolutionRungType } {
   const fromHistory = payloadByLabel.get(word);
   if (fromHistory) {
     return { payload: { ...fromHistory }, rung: "history" };
   }
-  const senseMatch = findGlossEntry(word);
+  const senseMatch = findGlossEntry(word, language);
   if (senseMatch) {
     return {
       payload: glossPayload(senseMatch.id, senseMatch.composition, word), rung: "exactGloss"
     };
   }
-  const matches = findSymbolByGloss(word);
+  const matches = findSymbolByGloss(word, language);
   if (matches.length > 0) {
     const best = matches.reduce((shortest, match) =>
       match.label.length < shortest.label.length ||

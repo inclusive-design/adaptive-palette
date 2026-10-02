@@ -14,7 +14,10 @@
     "angry-669439ba-51da-458e-a038-af07da9d6534": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "angry",
+        "label": {
+          "en": "angry",
+          "sv": "arg"
+        },
         "composition": 1198,
         "rowStart": 2,
         "rowSpan": 1,
@@ -25,7 +28,10 @@
     "frustrated-14d4298d-029d-44fd-9245-ccd22b052794": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "frustrated",
+        "label": {
+          "en": "frustrated",
+          "sv": "frustrerad"
+        },
         "composition": 1710,
         "rowStart": 2,
         "rowSpan": 1,
@@ -36,7 +42,10 @@
     "mean-25f86b70-2c80-4d84-8d83-a3245b59c281": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "mean",
+        "label": {
+          "en": "mean",
+          "sv": "elak"
+        },
         "composition": 1989,
         "rowStart": 2,
         "rowSpan": 1,
@@ -47,7 +56,10 @@
     "painful-57dd2a90-af40-425b-b0fd-de418d011bb9": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "painful",
+        "label": {
+          "en": "painful",
+          "sv": "smärtsam"
+        },
         "composition": 2126,
         "rowStart": 2,
         "rowSpan": 1,
@@ -58,7 +70,10 @@
     "sick-6af182e9-8f1d-4bac-a958-c908137541ca": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "sick",
+        "label": {
+          "en": "sick",
+          "sv": "sjuk"
+        },
         "composition": 2396,
         "rowStart": 2,
         "rowSpan": 1,
@@ -69,7 +84,10 @@
     "tired-da03c54b-21d8-427c-a54a-6c50f9d82f33": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "tired",
+        "label": {
+          "en": "tired",
+          "sv": "trött"
+        },
         "composition": 2605,
         "rowStart": 3,
         "rowSpan": 1,
@@ -80,7 +98,10 @@
     "hungry-a2f56b75-ac34-4cdb-b6a1-55dffbadc29c": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "hungry",
+        "label": {
+          "en": "hungry",
+          "sv": "hungrig"
+        },
         "composition": 1837,
         "rowStart": 3,
         "rowSpan": 1,
@@ -91,7 +112,10 @@
     "thirsty-ceb465a1-c2b3-4893-a042-c884e0024456": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "thirsty",
+        "label": {
+          "en": "thirsty",
+          "sv": "törstig"
+        },
         "composition": 2594,
         "rowStart": 3,
         "rowSpan": 1,
@@ -102,7 +126,10 @@
     "lonely-4da25bf1-f863-49e4-a8cc-1efb94a49639": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "lonely",
+        "label": {
+          "en": "lonely",
+          "sv": "ensam"
+        },
         "composition": 1950,
         "rowStart": 3,
         "rowSpan": 1,
@@ -113,7 +140,10 @@
     "strange-6ace27c1-b42d-4732-92a3-58cf6da5eebd": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "strange",
+        "label": {
+          "en": "strange",
+          "sv": "konstig"
+        },
         "composition": 2496,
         "rowStart": 3,
         "rowSpan": 1,
@@ -124,7 +154,10 @@
     "wrong-3ec1be9b-e48c-4266-ac5a-8931afb48296": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "wrong",
+        "label": {
+          "en": "wrong",
+          "sv": "fel"
+        },
         "composition": 1250,
         "rowStart": 4,
         "rowSpan": 1,
@@ -135,7 +168,10 @@
     "smart-e11e9e88-9988-44be-8127-5ba50968559b": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "smart",
+        "label": {
+          "en": "smart",
+          "sv": "smart"
+        },
         "composition": 2430,
         "rowStart": 4,
         "rowSpan": 1,
@@ -146,7 +182,10 @@
     "stupid-06c0f109-414d-48c3-abcb-39737660fec8": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "stupid",
+        "label": {
+          "en": "stupid",
+          "sv": "dum"
+        },
         "composition": 2504,
         "rowStart": 4,
         "rowSpan": 1,
@@ -157,7 +196,10 @@
     "interesting-1fe32ccc-3aa6-430b-b517-84dd8dd576ac": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "interesting",
+        "label": {
+          "en": "interesting",
+          "sv": "intressant"
+        },
         "composition": 1863,
         "rowStart": 4,
         "rowSpan": 1,
@@ -168,7 +210,10 @@
     "important-365a2f25-7aeb-4120-8546-d41922576f41": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "important",
+        "label": {
+          "en": "important",
+          "sv": "viktig"
+        },
         "composition": 1849,
         "rowStart": 4,
         "rowSpan": 1,
@@ -179,7 +224,10 @@
     "certain-dbbb60e0-8ae6-4626-ae14-f141d833b7dc": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "certain",
+        "label": {
+          "en": "certain",
+          "sv": "säker"
+        },
         "composition": 4195,
         "rowStart": 5,
         "rowSpan": 1,
@@ -190,7 +238,10 @@
     "careful-1a6a3c90-fed2-4364-83b4-d68fbdcadffe": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "careful",
+        "label": {
+          "en": "careful",
+          "sv": "försiktig"
+        },
         "composition": 1376,
         "rowStart": 5,
         "rowSpan": 1,
@@ -201,7 +252,10 @@
     "dangerous-342a6c2f-e4ad-4635-aedc-0d987e77e674": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "dangerous",
+        "label": {
+          "en": "dangerous",
+          "sv": "farlig"
+        },
         "composition": 1504,
         "rowStart": 5,
         "rowSpan": 1,
@@ -212,7 +266,10 @@
     "together-8407f998-bce8-4286-b55f-e755be605f2c": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "together",
+        "label": {
+          "en": "together",
+          "sv": "tillsammans"
+        },
         "composition": 2614,
         "rowStart": 5,
         "rowSpan": 1,
@@ -223,7 +280,10 @@
     "dead-9df35a98-7266-4a40-ac10-12ad6ee7eb94": {
       "type": "ActionCodeCell",
       "options": {
-        "label": "dead",
+        "label": {
+          "en": "dead",
+          "sv": "död"
+        },
         "composition": 1511,
         "rowStart": 5,
         "rowSpan": 1,

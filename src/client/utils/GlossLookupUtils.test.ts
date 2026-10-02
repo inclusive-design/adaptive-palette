@@ -31,7 +31,7 @@ describe("GlossLookupUtils", (): void => {
   });
 
   describe("findGlossEntry", (): void => {
-    const idFor = (key: string): number | undefined => findGlossEntry(key)?.id;
+    const idFor = (key: string): number | undefined => findGlossEntry(key, "en")?.id;
 
     it("matches an exact sense", (): void => {
       expect(idFor("home")).toBe(1816);
@@ -78,8 +78,14 @@ describe("GlossLookupUtils", (): void => {
       expect(idFor("valentine's day")).toBe(2680);
     });
 
+    test("finds an entry by a Swedish sense", (): void => {
+      expect(findGlossEntry("vatten", "sv")?.id).toBe(695);
+      expect(findGlossEntry("bröd", "sv")?.id).toBe(180);
+      expect(findGlossEntry("water", "sv")).toBeUndefined();
+    });
+
     it("returns undefined for a word with no sense", (): void => {
-      expect(findGlossEntry("zzzq")).toBeUndefined();
+      expect(findGlossEntry("zzzq", "en")).toBeUndefined();
     });
   });
 
@@ -87,19 +93,19 @@ describe("GlossLookupUtils", (): void => {
     const payloadByLabel = new Map<string, SymbolEncodingType>();
 
     it("reports the rung it resolved on", (): void => {
-      expect(resolveWordPayload("water", payloadByLabel).rung).toBe("exactGloss");
-      expect(resolveWordPayload("zzzq", payloadByLabel).rung).toBe("dropped");
+      expect(resolveWordPayload("water", payloadByLabel, "en").rung).toBe("exactGloss");
+      expect(resolveWordPayload("zzzq", payloadByLabel, "en").rung).toBe("dropped");
     });
 
     it("prefers the user's own payload over the dictionary", (): void => {
       const own = { label: "water", composition: 1234, modifierInfo: [] };
-      const { payload, rung } = resolveWordPayload("water", new Map([["water", own]]));
+      const { payload, rung } = resolveWordPayload("water", new Map([["water", own]]), "en");
       expect(rung).toBe("history");
       expect(payload?.composition).toBe(1234);
     });
 
     it("labels a dictionary match with the word looked up, not the whole gloss", (): void => {
-      expect(resolveWordPayload("water", payloadByLabel).payload?.label).toBe("water");
+      expect(resolveWordPayload("water", payloadByLabel, "en").payload?.label).toBe("water");
     });
   });
 });

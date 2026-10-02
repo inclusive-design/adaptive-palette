@@ -20,7 +20,7 @@ import { queryChat } from "../../core/OllamaApi";
 import { attributesPromptText } from "../message-attributes/MessageAttributesState";
 import { aboutMePromptText } from "../about-me/AboutMeState";
 import { ResolutionRungType, SymbolCompositionType, SymbolEncodingType } from "../../index.d";
-import { t } from "../../i18n/I18n";
+import { MODEL_LANGUAGE, t } from "../../i18n/I18n";
 
 /*
  * Common sentence starters, offered for the first word until the user has saved a message of
@@ -352,7 +352,7 @@ export function rankModelWords (words: string[], excludedLabels: string[], limit
       break;
     }
     attempted.push(word);
-    const { payload, rung } = resolveWordPayload(word, payloadByLabel);
+    const { payload, rung } = resolveWordPayload(word, payloadByLabel, MODEL_LANGUAGE);
     rungs[rung] += 1;
     if (payload) {
       payloads.push(payload);

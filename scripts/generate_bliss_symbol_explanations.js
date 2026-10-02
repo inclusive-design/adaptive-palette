@@ -1,9 +1,9 @@
 /*
  * Usage:
- * node generate_bliss_symbol_explanations.js <inputFile.json> <outputFile.json> [--verbose]
+ * node generate_bliss_symbol_explanations.js <inputFile.json> <outputFile.json> [bciAv.csv] [--verbose]
  *
  * Example:
- * node generate_bliss_symbol_explanations.js data/bliss_dictionary_20260827.json ../public/data/bliss_symbol_explanations.json
+ * node generate_bliss_symbol_explanations.js data/bliss_dictionary_20260827.json ../public/data/bliss_symbol_explanations.json ../docs/design/BCI-AV.csv
  *
  * This script processes a JSON file containing linguistic derivation data and
  * maps it into a new hierarchical structure used by this project. The original
@@ -20,14 +20,16 @@
  * 2. Composition Generation: Parses `item.code` directly for non-character items
  *    (`isChar === false`) — `B`-prefixed IDs are resolved to character IDs.
  *    Separators (`/` and `;`) are preserved as strings.
+ * 3. Swedish gloss: with a BCI-AV CSV file, each item whose `bciAvId` has a Swedish entry
+ *    gets `glossSv`, cleaned like `gloss` (underscores to spaces, ", " between senses).
  *
- * 3. Output: rewrites only the `data` array of the existing output file. Its `license` and
+ * 4. Output: rewrites only the `data` array of the existing output file. Its `license` and
  *    `attribution` sections are preserved untouched.
  *
  * Reporting (use --verbose for full output):
  * - Errors (always shown): null required fields, missing code, missing ID references,
  *     non-character references
- * - Warnings (always shown): missing bciAvId, missing pos
+ * - Warnings (always shown): missing bciAvId, missing pos, items with no Swedish gloss (with a CSV)
  * - Verbose-only (--verbose): special code segments, missing isChar, missing explanation
  */
 
@@ -54,7 +56,8 @@ const errors = {
 };
 const warnings = {
   missingBciAvId: new Set(),
-  missingPos: new Set()
+  missingPos: new Set(),
+  missingSwedish: new Set()
 };
 const verboseWarnings = {
   specialCodeSegment: new Set(),
@@ -65,18 +68,18 @@ const verboseWarnings = {
 /**
  * Parse input arguments and return structured parameters.
  * @param {string[]} argv
- * @returns {{ inputFile: string, outputFile: string, verbose: boolean }}
+ * @returns {{ inputFile: string, outputFile: string, bciAvFile?: string, verbose: boolean }}
  */
 function parseArgs(argv) {
   const verbose = argv.includes("--verbose");
   const positional = argv.filter(a => a !== "--verbose");
-  if (positional.length !== 2) {
+  if (positional.length < 2 || positional.length > 3) {
     console.error("Error: Invalid arguments.");
-    console.error("Usage: node generate_bliss_symbol_explanations.js <inputFile.json> <outputFile.json> [--verbose]");
+    console.error("Usage: node generate_bliss_symbol_explanations.js <inputFile.json> <outputFile.json> [bciAv.csv] [--verbose]");
     process.exit(1);
   }
-  const [inputFile, outputFile] = positional;
-  return { inputFile, outputFile, verbose };
+  const [inputFile, outputFile, bciAvFile] = positional;
+  return { inputFile, outputFile, bciAvFile, verbose };
 }
 
 /**
@@ -100,6 +103,97 @@ function readInput(fileName) {
     console.error(`Error: Failed to parse "${fileName}". Make sure the file is valid JSON.`);
     process.exit(1);
   }
+}
+
+/**
+ * Split CSV text into rows of fields. A quoted field may hold commas, line breaks and
+ * doubled quotes.
+ * @param {string} text
+ * @returns {string[][]}
+ */
+export function parseCsv(text) {
+  const rows = [];
+  let row = [];
+  let field = "";
+  let inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    if (inQuotes) {
+      if (char === "\"" && text[i + 1] === "\"") {
+        field += "\"";
+        i++;
+      } else if (char === "\"") {
+        inQuotes = false;
+      } else {
+        field += char;
+      }
+    } else if (char === "\"") {
+      inQuotes = true;
+    } else if (char === ",") {
+      row.push(field);
+      field = "";
+    } else if (char === "\n") {
+      row.push(field.replace(/\r$/, ""));
+      rows.push(row);
+      row = [];
+      field = "";
+    } else {
+      field += char;
+    }
+  }
+  if (field !== "" || row.length > 0) {
+    row.push(field);
+    rows.push(row);
+  }
+  return rows;
+}
+
+/**
+ * A Swedish gloss written like the English ones: underscores to spaces, one space after each
+ * comma. `undefined` when nothing is left.
+ * @param {string} raw - The CSV cell.
+ * @returns {string | undefined}
+ */
+export function cleanSwedishGloss(raw) {
+  const senses = raw.replace(/_/g, " ").split(",")
+    .map(sense => sense.trim().replace(/\s+/g, " "))
+    .filter(sense => sense.length > 0);
+  const gloss = senses.join(", ");
+  return /[\p{L}\p{N}]/u.test(gloss) ? gloss : undefined;
+}
+
+/**
+ * The Swedish gloss for each BCI-AV id in the CSV. Rows with an empty Swedish cell are left out.
+ * @param {string} csvText
+ * @returns {Map<number, string>}
+ */
+export function swedishGlossesById(csvText) {
+  const [header, ...rows] = parseCsv(csvText.replace(/^\uFEFF/, ""));
+  const idColumn = header.indexOf("BCI-AV#");
+  const swedishColumn = header.indexOf("Swedish");
+  if (idColumn === -1 || swedishColumn === -1) {
+    throw new Error("The BCI-AV file needs \"BCI-AV#\" and \"Swedish\" columns.");
+  }
+  const glosses = new Map();
+  for (const row of rows) {
+    const gloss = cleanSwedishGloss(row[swedishColumn] ?? "");
+    if (gloss) {
+      glosses.set(Number(row[idColumn]), gloss);
+    }
+  }
+  return glosses;
+}
+
+/**
+ * The item with `glossSv` right after `gloss`, when its `bciAvId` has a Swedish gloss.
+ * @param {{ id: number, bciAvId?: number, gloss: string }} item
+ * @param {Map<number, string>} swedishById
+ * @returns {object}
+ */
+export function withSwedishGloss(item, swedishById) {
+  const { id, bciAvId, gloss, ...rest } = item;
+  const glossSv = bciAvId ? swedishById.get(bciAvId) : undefined;
+  return glossSv ? { id, bciAvId, gloss, glossSv, ...rest } : { id, bciAvId, gloss, ...rest };
 }
 
 /**
@@ -192,16 +286,17 @@ function checkRequiredFields(item) {
  * Transform the input data array into the desired output structure, while performing error and warning checks.
  * @param {BlissItem[]} data
  * @param {Map<number, BlissItem>} lookupMap
- * @returns {{ id: number, bciAvId?: number, gloss: string, pos?: string, explanation?: string, isCharacter: boolean, isIndicator?: boolean, composition?: (string | number)[] }[]}
+ * @param {Map<number, string>} [swedishById]
+ * @returns {{ id: number, bciAvId?: number, gloss: string, glossSv?: string, pos?: string, explanation?: string, isCharacter: boolean, isIndicator?: boolean, composition?: (string | number)[] }[]}
  */
-function transformItems(data, lookupMap) {
+function transformItems(data, lookupMap, swedishById) {
   return data.map(item => {
     checkRequiredFields(item);
     if (!item.bciAvId) warnings.missingBciAvId.add(item.id);
     if (!item.pos) warnings.missingPos.add(item.id);
     if (!item.explanation) verboseWarnings.missingExplanation.add(item.id);
 
-    /** @type {{ id: number, bciAvId?: number, gloss: string, pos?: string, explanation?: string, isCharacter: boolean, isIndicator?: boolean, composition?: (string | number)[] }} */
+    /** @type {{ id: number, bciAvId?: number, gloss: string, glossSv?: string, pos?: string, explanation?: string, isCharacter: boolean, isIndicator?: boolean, composition?: (string | number)[] }} */
     const outItem = {
       id: item.id,
       bciAvId: item.bciAvId ?? undefined,
@@ -217,7 +312,8 @@ function transformItems(data, lookupMap) {
       outItem.composition = buildComposition(item, lookupMap);
     }
 
-    return outItem;
+    if (swedishById && !swedishById.has(item.bciAvId)) warnings.missingSwedish.add(item.id);
+    return swedishById ? withSwedishGloss(outItem, swedishById) : outItem;
   });
 }
 
@@ -288,6 +384,10 @@ function printReport(outputFile, count, verbose) {
     console.log(`\nWarning: Items missing "pos" value: ${warnings.missingPos.size} items: ${[...warnings.missingPos].join(", ")}`);
   }
 
+  if (warnings.missingSwedish.size > 0) {
+    console.log(`\nWarning: Items with no Swedish gloss: ${warnings.missingSwedish.size} items: ${[...warnings.missingSwedish].join(", ")}`);
+  }
+
   if (verbose) {
     if (verboseWarnings.missingIsChar.size > 0) {
       console.log(`\nWarning: Items missing "isChar" key (defaulted to false): ${verboseWarnings.missingIsChar.size} items.`);
@@ -304,10 +404,26 @@ function printReport(outputFile, count, verbose) {
   }
 }
 
-// Main execution
-const { inputFile, outputFile, verbose } = parseArgs(process.argv.slice(2));
-const data = readInput(inputFile);
-const lookupMap = buildLookupMap(data);
-const outputData = transformItems(data, lookupMap);
-writeOutput(outputFile, outputData);
-printReport(outputFile, data.length, verbose);
+/**
+ * Read the BCI-AV CSV and index its Swedish glosses, or exit with a message.
+ * @param {string} fileName
+ * @returns {Map<number, string>}
+ */
+function readSwedishGlosses(fileName) {
+  try {
+    return swedishGlossesById(fs.readFileSync(fileName, "utf8"));
+  } catch (error) {
+    console.error(`Error: Failed to read "${fileName}": ${error.message}`);
+    process.exit(1);
+  }
+}
+
+if (import.meta.main) {
+  const { inputFile, outputFile, bciAvFile, verbose } = parseArgs(process.argv.slice(2));
+  const data = readInput(inputFile);
+  const lookupMap = buildLookupMap(data);
+  const swedishById = bciAvFile ? readSwedishGlosses(bciAvFile) : undefined;
+  const outputData = transformItems(data, lookupMap, swedishById);
+  writeOutput(outputFile, outputData);
+  printReport(outputFile, data.length, verbose);
+}

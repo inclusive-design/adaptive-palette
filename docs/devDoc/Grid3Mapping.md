@@ -255,8 +255,8 @@ it.
 
 1. **Symbols without an ID.** 513 of the 600 text cells show an embedded picture with no symbol ID. Adaptive
    Palette draws every symbol from its BCI-AV ID. Options:
-   - Match pictures to BCI-AV symbols, by caption or by comparing images. Our symbol data has English glosses
-     only, so matching Swedish captions needs a Swedish gloss list.
+   - Match pictures to BCI-AV symbols, by caption or by comparing images. Swedish captions can be matched
+     against the Swedish glosses (`glossSv`) in our symbol data.
    - Show the picture as it is (see gap 2). The symbol then cannot take indicators or modifiers, and word
      prediction and sentence making cannot read it.
 2. **No picture cells.** No cell type draws a picture file, so photos and multi-symbol pictures have nowhere to

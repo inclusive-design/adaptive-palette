@@ -4,7 +4,10 @@
     "command-move-caret-backwards": {
       "type": "CommandCursorBackward",
       "options": {
-        "label": "Backward",
+        "label": {
+          "en": "Backward",
+          "sv": "Bakåt"
+        },
         "composition": [
           145,
           ";",
@@ -20,7 +23,10 @@
     "command-move-caret-forwards": {
       "type": "CommandCursorForward",
       "options": {
-        "label": "Forward",
+        "label": {
+          "en": "Forward",
+          "sv": "Framåt"
+        },
         "composition": [
           335,
           ";",
@@ -36,7 +42,10 @@
     "command-del-last-encoding": {
       "type": "CommandDelLastEncoding",
       "options": {
-        "label": "Delete",
+        "label": {
+          "en": "Delete",
+          "sv": "Radera"
+        },
         "composition": [
           939,
           ";",
@@ -52,7 +61,10 @@
     "command-clear-encoding": {
       "type": "CommandClearEncoding",
       "options": {
-        "label": "Delete all",
+        "label": {
+          "en": "Delete all",
+          "sv": "Radera alla"
+        },
         "composition": [
           939,
           ";",
@@ -70,7 +82,10 @@
     "indicator-action": {
       "type": "ActionIndicatorCell",
       "options": {
-        "label": "action",
+        "label": {
+          "en": "action",
+          "sv": "handling"
+        },
         "composition": 81,
         "rowStart": 1,
         "rowSpan": 1,
@@ -81,7 +96,10 @@
     "indicator-past": {
       "type": "ActionIndicatorCell",
       "options": {
-        "label": "past",
+        "label": {
+          "en": "past",
+          "sv": "förr"
+        },
         "composition": 92,
         "rowStart": 1,
         "rowSpan": 1,
@@ -92,7 +110,10 @@
     "indicator-present": {
       "type": "ActionIndicatorCell",
       "options": {
-        "label": "present",
+        "label": {
+          "en": "present",
+          "sv": "nu"
+        },
         "composition": 928,
         "rowStart": 1,
         "rowSpan": 1,
@@ -103,7 +124,10 @@
     "indicator-future": {
       "type": "ActionIndicatorCell",
       "options": {
-        "label": "future",
+        "label": {
+          "en": "future",
+          "sv": "framtida"
+        },
         "composition": 87,
         "rowStart": 1,
         "rowSpan": 1,
@@ -114,7 +138,10 @@
     "indicator-plural": {
       "type": "ActionIndicatorCell",
       "options": {
-        "label": "plural",
+        "label": {
+          "en": "plural",
+          "sv": "flertal"
+        },
         "composition": 99,
         "rowStart": 1,
         "rowSpan": 1,
@@ -125,7 +152,10 @@
     "modifier-very": {
       "type": "ActionPostModifierCell",
       "options": {
-        "label": "very",
+        "label": {
+          "en": "very",
+          "sv": "väldigt"
+        },
         "composition": 401,
         "rowStart": 1,
         "rowSpan": 1,
@@ -136,7 +166,10 @@
     "modifier-without": {
       "type": "ActionPreModifierCell",
       "options": {
-        "label": "without",
+        "label": {
+          "en": "without",
+          "sv": "utan"
+        },
         "composition": 449,
         "rowStart": 1,
         "rowSpan": 1,
@@ -147,7 +180,10 @@
     "modifier-opposite-of": {
       "type": "ActionPreModifierCell",
       "options": {
-        "label": "opposite of",
+        "label": {
+          "en": "opposite of",
+          "sv": "motsats"
+        },
         "composition": 486,
         "rowStart": 1,
         "rowSpan": 1,
@@ -158,7 +194,10 @@
     "modifier-more": {
       "type": "ActionPreModifierCell",
       "options": {
-        "label": "more",
+        "label": {
+          "en": "more",
+          "sv": "mer"
+        },
         "composition": 937,
         "rowStart": 1,
         "rowSpan": 1,
@@ -169,7 +208,10 @@
     "modifier-most": {
       "type": "ActionPreModifierCell",
       "options": {
-        "label": "most",
+        "label": {
+          "en": "most",
+          "sv": "mest"
+        },
         "composition": 968,
         "rowStart": 1,
         "rowSpan": 1,
@@ -180,7 +222,10 @@
     "remove-indicator": {
       "type": "ActionRemoveIndicatorCell",
       "options": {
-        "label": "remove indicator",
+        "label": {
+          "en": "remove indicator",
+          "sv": "ta bort indikator"
+        },
         "composition": [
           634,
           ";",
@@ -201,7 +246,10 @@
     "undo-modifier": {
       "type": "ActionRemoveModifierCell",
       "options": {
-        "label": "undo modifier",
+        "label": {
+          "en": "undo modifier",
+          "sv": "ångra modifierare"
+        },
         "composition": [
           634,
           ";",
@@ -220,7 +268,10 @@
     "command-message-attributes": {
       "type": "ActionBranchToPaletteCell",
       "options": {
-        "label": "Msg Style",
+        "label": {
+          "en": "Msg Style",
+          "sv": "Meddelandestil"
+        },
         "branchTo": "attributes",
         "requiresModel": true,
         "composition": [
@@ -237,7 +288,10 @@
     "command-clear-saved-data": {
       "type": "CommandClearSavedData",
       "options": {
-        "label": "clear all saved data",
+        "label": {
+          "en": "clear all saved data",
+          "sv": "radera all sparad data"
+        },
         "composition": [
           939,
           ";",

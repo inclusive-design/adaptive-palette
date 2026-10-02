@@ -21,7 +21,7 @@ import { editMessage } from "../core/MessageEdit";
 import { insertWordAtCaret } from "../utils/SymbolEncodingUtils";
 import { GlossSearchResults } from "../components/GlossSearchResults";
 import { MessagePreview } from "../components/MessagePreview";
-import { t } from "../i18n/I18n";
+import { languageSignal, t } from "../i18n/I18n";
 import "./ActionSearchGloss.scss";
 
 export const GLOSS_ENTRY_FIELD_ID = "glossSearchField";
@@ -76,7 +76,7 @@ export function ActionSearchGloss (props: ActionSearchGlossProps): VNode {
     event.preventDefault();
 
     const text = searchTerm.trim();
-    const found: MatchType[] = text.length > 0 ? findSymbolByGloss(text) : [];
+    const found: MatchType[] = text.length > 0 ? findSymbolByGloss(text, languageSignal.value) : [];
 
     setMatches(found.slice(0, MAX_RESULTS));
     setSelected(null);
