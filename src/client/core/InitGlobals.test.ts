@@ -83,7 +83,7 @@ describe("initAdaptivePaletteGlobals language", (): void => {
     history.replaceState(null, "", "?lang=sv");
     await initAdaptivePaletteGlobals();
     expect(languageSignal.value).toBe("sv");
-    expect(adaptivePaletteGlobals.config.language).toBe("sv");
+    expect(adaptivePaletteGlobals.config.language).toBe("en");
   });
 
   test("a saved language beats the file, and `?lang=` beats the saved language", async (): Promise<void> => {

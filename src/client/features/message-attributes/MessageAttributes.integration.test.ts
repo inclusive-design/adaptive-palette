@@ -245,7 +245,7 @@ describe("Message attributes: whole-feature walkthrough", (): void => {
     const sentenceButton = await screen.findByRole("button", { name: "I am hungry." });
 
     await userEvent.click(sentenceButton);
-    expect(mockedSpeak).toHaveBeenCalledWith("I am hungry.");
+    expect(mockedSpeak).toHaveBeenCalledWith("I am hungry.", "en");
     // The message and the chips stay: tapping a sentence is not "Done".
     expect(changeEncodingContents.value.payloads.length).toBe(1);
     expect(selectedAttributesSignal.value.length).toBe(1);

@@ -127,7 +127,7 @@ describe("ActionIndicatorCell", (): void => {
     expect(updated.baseLabel).toBe("help");
     expect(updated.userSelectedSymbolId).toBe(382);
     expect(mockedGetNewLabelViaModelQuery).not.toHaveBeenCalled();
-    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith("helper");
+    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith("helper", "en");
   });
 
   test("Replacing an indicator derives the prompt from baseLabel, not the swapped label", async (): Promise<void> => {
@@ -176,7 +176,7 @@ describe("ActionIndicatorCell", (): void => {
       expect(mockedGetNewLabelViaModelQuery).toHaveBeenCalledTimes(1);
     });
     expect(changeEncodingContents.value.payloads[0].label).toBe("hand-built");
-    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(`hand-built, ${testCell.options.label}`);
+    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(`hand-built, ${testCell.options.label}`, "en");
   });
 
   test("Cached model-query result with a label: speaks and applies it immediately, no loading message", async (): Promise<void> => {
@@ -199,7 +199,7 @@ describe("ActionIndicatorCell", (): void => {
       expect(changeEncodingContents.value.payloads[0].label).toBe("cells");
     });
     expect(mockedAnnounceIfEnabled).toHaveBeenCalledTimes(1);   // no loading message
-    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(aiSuggestionLabel("cells"));
+    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(aiSuggestionLabel("cells"), "en");
   });
 
   test("Cached model-query result with no label: speaks the unchanged message immediately, label stays", async (): Promise<void> => {
@@ -219,7 +219,7 @@ describe("ActionIndicatorCell", (): void => {
     fireEvent.click(button);
 
     await waitFor(() => {
-      expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(`cell, ${testCell.options.label}`);
+      expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(`cell, ${testCell.options.label}`, "en");
     });
     expect(changeEncodingContents.value.payloads[0].label).toBe("cell");
   });
@@ -254,7 +254,7 @@ describe("ActionIndicatorCell", (): void => {
     await waitFor(() => {
       expect(changeEncodingContents.value.payloads[0].label).toBe("walked");
     });
-    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(aiSuggestionLabel("walked"));
+    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(aiSuggestionLabel("walked"), "en");
   });
 
   test("Pending model query that fails: speaks the loading message, then the unchanged message as closure", async (): Promise<void> => {
@@ -283,7 +283,7 @@ describe("ActionIndicatorCell", (): void => {
 
     resolveQuery!(undefined);
     await waitFor(() => {
-      expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(`walk, ${testCell.options.label}`);
+      expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(`walk, ${testCell.options.label}`, "en");
     });
     expect(changeEncodingContents.value.payloads[0].label).toBe("walk");
   });
@@ -369,7 +369,7 @@ describe("ActionIndicatorCell", (): void => {
     // the original label, so nothing here came from the model.
     expect(changeEncodingContents.value.payloads[0].isAiLabel).toBeFalsy();
     expect(changeEncodingContents.value.payloads[0].composition).toStrictEqual(compositionAfterB);
-    expect(mockedAnnounceIfEnabled).not.toHaveBeenCalledWith(expect.stringContaining("A-result"));
+    expect(mockedAnnounceIfEnabled).not.toHaveBeenCalledWith(expect.stringContaining("A-result"), "en");
 
     resolveSecond!("B-result");
     await waitFor(() => {
@@ -471,9 +471,9 @@ describe("ActionIndicatorCell", (): void => {
     fireEvent.click(button);
 
     await waitFor(() => {
-      expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(`cell, ${testCell.options.label}`);
+      expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(`cell, ${testCell.options.label}`, "en");
     });
-    expect(mockedAnnounceIfEnabled).not.toHaveBeenCalledWith("cells");
+    expect(mockedAnnounceIfEnabled).not.toHaveBeenCalledWith("cells", "en");
     expect(changeEncodingContents.value.payloads[0].label).toBe("cell");
   });
 
@@ -606,7 +606,7 @@ describe("ActionIndicatorCell", (): void => {
       fireEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
 
       await waitFor(() => {
-        expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(aiSuggestionLabel("cells"));
+        expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(aiSuggestionLabel("cells"), "en");
       });
     });
 
@@ -624,7 +624,7 @@ describe("ActionIndicatorCell", (): void => {
       fireEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
 
       await waitFor(() => {
-        expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith("cells");
+        expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith("cells", "en");
       });
       expect(changeEncodingContents.value.payloads[0].isAiLabel).toBe(true);
     });

@@ -209,12 +209,12 @@ describe("Switch scanning on the standard Bliss chart", (): void => {
     await pick(byId("command-make-sentence"), "Make Sentences");
     await waitFor(() => expect(area.querySelector(".sentenceChoice")).not.toBeNull());
     await pick((el) => el.classList.contains("sentenceChoice"), "the sentence");
-    await waitFor(() => expect(mockedSpeak).toHaveBeenCalledWith("I am hungry."));
+    await waitFor(() => expect(mockedSpeak).toHaveBeenCalledWith("I am hungry.", "en"));
 
     // 3. Speak the composed message.
     await pick(byId("action-speak"), "Speak");
     await waitFor(() => expect(mockedSpeak).toHaveBeenLastCalledWith(
-      messageText(changeEncodingContents.value.payloads)
+      messageText(changeEncodingContents.value.payloads), "en"
     ));
   });
 

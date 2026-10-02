@@ -52,10 +52,14 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
 
   const shown = SETTING_DESCRIPTORS.filter((descriptor) => isOffered(config, descriptor));
 
+  // The language field shows the page's language, which `?lang=` may have set rather than
+  // the saved choice in `config.language`.
+  const [pageLanguage] = useState(languageSignal.value);
+
   const [values, setValues] = useState<Record<string, FormValueType>>(() => {
     const initial: Record<string, FormValueType> = {};
     shown.forEach((descriptor) => {
-      const value = currentValue(config, descriptor);
+      const value = settingKey(descriptor) === "language" ? pageLanguage : currentValue(config, descriptor);
       initial[settingKey(descriptor)] = descriptor.kind === "number" ? String(value) : value as boolean | string;
     });
     return initial;
@@ -118,6 +122,12 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
       const key = settingKey(descriptor);
       toSave[key] = descriptor.kind === "number" ? Number(values[key]) : values[key];
     });
+    // A language left as it was keeps the saved choice, so a page opened with `?lang=` does
+    // not save the URL's language.
+    const isLanguageChanged = values.language !== pageLanguage;
+    if (!isLanguageChanged) {
+      toSave.language = config.language;
+    }
     // A failed write leaves the dialog open with its reason shown. Closing anyway would look
     // like the settings had taken.
     if (!await saveSettings(toSave, fileConfig)) {
@@ -125,7 +135,9 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
       return;
     }
     adaptivePaletteGlobals.config = await applyStoredSettings(fileConfig);
-    languageSignal.value = adaptivePaletteGlobals.config.language;
+    if (isLanguageChanged) {
+      languageSignal.value = adaptivePaletteGlobals.config.language;
+    }
     // "Messages to remember" may have changed.
     await hydrateMessageLog();
     settingsSavedCount.value++;

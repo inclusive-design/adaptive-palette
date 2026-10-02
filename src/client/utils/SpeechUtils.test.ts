@@ -61,6 +61,13 @@ describe("SpeechUtils", (): void => {
     expect(spokenLangs).toEqual(["en-US", "sv-SE"]);
   });
 
+  test("speak() uses the voice for the language it is given", (): void => {
+    captureSpeech();
+    languageSignal.value = "sv";
+    speak("bread", "en");
+    expect(spokenLangs).toEqual(["en-US"]);
+  });
+
   test("speakUnavailable() says it in the current language", (): void => {
     const spoken = captureSpeech();
     languageSignal.value = "sv";

@@ -91,6 +91,8 @@ describe("Palette", (): void => {
 
     expect(paletteElement).toBeVisible();
     expect(paletteElement).toBeValid();
+    // Palette labels are English whatever the UI language, so a screen reader reads them so.
+    expect(paletteElement.lang).toBe("en");
 
     // There should be 6 columns in the grid and NUM_CELLS children.
     expect(paletteElement.style["grid-template-columns" as keyof typeof paletteElement.style]).toBe("repeat(5, minmax(0px, 1fr))");

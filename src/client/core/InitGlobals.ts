@@ -119,10 +119,9 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
   // The user's saved settings are applied.
   adaptivePaletteGlobals.config = await applyStoredSettings(config);
   // `?lang=` in the page URL beats the saved choice: it is how the public website, which
-  // saves nothing, is opened in another language.
-  adaptivePaletteGlobals.config.language =
-    startLanguage(window.location.search, adaptivePaletteGlobals.config.language);
-  languageSignal.value = adaptivePaletteGlobals.config.language;
+  // saves nothing, is opened in another language. It sets only the page's language;
+  // `config.language` keeps the saved choice, so saving the settings does not store the URL's.
+  languageSignal.value = startLanguage(window.location.search, adaptivePaletteGlobals.config.language);
 
   // After the settings, because how much of the log is read back is one of them.
   await Promise.all([hydrateMessageLog(), hydrateAboutMe()]);

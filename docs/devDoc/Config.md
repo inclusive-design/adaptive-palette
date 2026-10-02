@@ -51,7 +51,8 @@ written there reaches the model as literal text.
 
 The language of the UI text and the speech voice: `"en"` (the default) or `"sv"`. A missing or
 unsupported value falls back to `"en"`. The user's choice in the settings dialog overrides it,
-and `?lang=` in the page URL overrides both at start-up. All three are read through
+and `?lang=` in the page URL overrides both for that page, without changing `config.language`
+or the saved choice. All three are read through
 `parseLanguage()` in [`src/client/i18n/I18n.ts`](../../src/client/i18n/I18n.ts).
 
 ## `maxRecalledRecords`

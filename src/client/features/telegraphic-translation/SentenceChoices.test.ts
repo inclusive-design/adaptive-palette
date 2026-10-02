@@ -211,7 +211,7 @@ describe("SentenceChoices", (): void => {
       sentence: SENTENCES[1],
       source: "chosen"
     });
-    expect(mockedSpeak).toHaveBeenCalledWith(SENTENCES[1]);
+    expect(mockedSpeak).toHaveBeenCalledWith(SENTENCES[1], "en");
     expect(screen.getByRole("button", { name: SENTENCES[1] })).toBeVisible();
   });
 
@@ -355,7 +355,7 @@ describe("SentenceChoices", (): void => {
     const log = readMessageLog();
     expect(log).toHaveLength(1);
     expect(log[0].translation).toMatchObject({ sentence: "I would like a snack.", source: "typed" });
-    expect(mockedSpeak).toHaveBeenCalledWith("I would like a snack.");
+    expect(mockedSpeak).toHaveBeenCalledWith("I would like a snack.", "en");
 
     // Kept, not cleared: typing is expensive for these users, so the text stays available
     // to speak again or to edit into a second attempt.
@@ -478,7 +478,7 @@ describe("SentenceChoices", (): void => {
     await userEvent.click(screen.getByRole("button", { name: SENTENCES[0] }));
 
     expect(sentenceCompletionsSignal.value.status).toBe("ready");
-    expect(mockedSpeak).toHaveBeenCalledWith(SENTENCES[0]);
+    expect(mockedSpeak).toHaveBeenCalledWith(SENTENCES[0], "en");
   });
 
   test("Speak is unavailable while the box is empty", async (): Promise<void> => {
@@ -623,7 +623,7 @@ describe("SentenceChoices", (): void => {
 
       await userEvent.click(screen.getByRole("button", { name: aiSuggestionLabel(SENTENCES[1]) }));
 
-      expect(mockedSpeak).toHaveBeenCalledWith(SENTENCES[1]);
+      expect(mockedSpeak).toHaveBeenCalledWith(SENTENCES[1], "en");
       const log = readMessageLog();
       expect(log).toHaveLength(1);
       expect(log[0].translation).toMatchObject({ sentence: SENTENCES[1], source: "chosen" });

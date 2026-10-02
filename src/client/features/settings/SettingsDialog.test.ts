@@ -278,6 +278,19 @@ describe("SettingsDialog", () => {
     expect(writeSettingsSpy).toHaveBeenCalledWith({ "language": "sv" });
   });
 
+  // `?lang=` sets the page's language but not `config.language`, which holds the saved choice.
+  test("saving with the language untouched keeps the saved choice, not the URL's", async () => {
+    withConfig({ language: "sv" });
+    languageSignal.value = "en";
+    renderDialog();
+
+    expect(screen.getByLabelText(en.settingLanguage)).toHaveValue("en");
+    await userEvent.click(screen.getByRole("button", { name: en.settingsSave }));
+
+    await waitFor(() => expect(writeSettingsSpy).toHaveBeenCalledWith({ "language": "sv" }));
+    expect(languageSignal.value).toBe("en");
+  });
+
   test("shows its text in the current language", () => {
     withConfig({});
     languageSignal.value = "sv";

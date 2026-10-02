@@ -68,7 +68,7 @@ describe("ActionSpeakCell", (): void => {
     renderCell();
 
     await user.click(screen.getByRole("button"));
-    expect(mockedSpeak).toHaveBeenCalledWith("I want");
+    expect(mockedSpeak).toHaveBeenCalledWith("I want", "en");
 
     const log = readMessageLog();
     expect(log).toHaveLength(1);
