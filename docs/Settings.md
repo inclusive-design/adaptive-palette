@@ -35,7 +35,7 @@ example <https://adaptive-palette.pages.dev/?lang=sv>. The public website saves 
 is how it is kept in Swedish across reloads. `?lang=` changes only that page: saving the settings
 keeps the saved language unless **Language** itself was changed. Symbol labels and symbol search
 follow the language too. A palette with no labels in the chosen language shows its own, read in
-their own voice. Word suggestions and sentences stay English until Swedish prompts are added.
+their own voice. Model features answer in the selected language when `config.json` has prompts for it.
 
 See [Access Methods](AccessMethods.md#switches) for switch scanning. Row scanning with two
 switches is the only kind supported. Its keys are set in `public/config.json` only.

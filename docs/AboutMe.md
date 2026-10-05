@@ -30,6 +30,8 @@ first, so every message is read once. When more are waiting, the dialog says so;
 **Suggest updates** again to read the next ones. The line under the button shows the date of
 the last message read.
 
+Facts are suggested in the UI language. The categories stay English in the model's reply.
+
 Each suggestion has two buttons:
 
 1. **Accept** adds it to "What the system has learnt".

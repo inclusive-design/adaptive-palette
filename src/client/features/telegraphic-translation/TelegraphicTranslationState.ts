@@ -23,7 +23,7 @@ import { requestSentences, pickModel } from "./TelegraphicTranslationUtils";
 import { findLatestTranslation, messageText } from "../../core/MessageLog";
 import { clearAttributes, selectedAttributesSignal } from "../message-attributes/MessageAttributesState";
 import type { ContentSignalDataType, SentenceCompletionsStateType } from "../../index.d";
-import { t } from "../../i18n/I18n";
+import { languageSignal, t } from "../../i18n/I18n";
 
 /**
  * Nothing to show. Shared rather than rewritten at each use so the idle shape stays in one
@@ -131,7 +131,7 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
   if (recalled && numSentences === 1 && selectedAttributesSignal.peek().length === 0) {
     sentenceCompletionsSignal.value = {
       status: "ready", sentences: [recalled.sentence], recalledSentence: recalled.sentence,
-      model: recalled.model, telegraphicMessage
+      model: recalled.model, telegraphicMessage, language: languageSignal.value
     };
     return;
   }
@@ -145,7 +145,8 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
     const model = pickModel(config?.model ?? "");
     sentenceCompletionsSignal.value = {
       status: "working", sentences: recalledSentences,
-      recalledSentence: recalled?.sentence ?? null, model, telegraphicMessage
+      recalledSentence: recalled?.sentence ?? null, model, telegraphicMessage,
+      language: languageSignal.value
     };
     const result = await requestSentences(telegraphicMessage, controller.signal);
     // Sentences are only displayed if the user has not changed the message or moved on since
@@ -164,7 +165,7 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
       : result.sentences;
     sentenceCompletionsSignal.value = {
       status: "ready", sentences, recalledSentence: recalled?.sentence ?? null,
-      model: result.model, telegraphicMessage
+      model: result.model, telegraphicMessage, language: result.language, words: result.words
     };
   } catch (error) {
     // The user editing the message aborts the request. That is normal use, not a failure,

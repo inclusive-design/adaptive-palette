@@ -25,7 +25,8 @@ import { ContentSentenceChoicesType } from "../../index.d";
 import { adaptivePaletteGlobals, settingsSavedCount } from "../../state/GlobalData";
 import { AiBadge, aiSuggestionLabel } from "../../components/AiBadge";
 import { BlissSentence } from "./BlissSentence";
-import { MODEL_LANGUAGE, languageSignal, t } from "../../i18n/I18n";
+import { PARSE_LANGUAGE } from "./BlissSentenceUtils";
+import { languageSignal, t } from "../../i18n/I18n";
 import "./SentenceChoices.scss";
 
 type SentenceChoicesPropsType = {
@@ -89,9 +90,12 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
     firstChoice()?.focus();
   }, [state, discardPrompt]);
 
+  // The sentences' language: the one they were asked for in.
+  const sentenceLanguage = state.language ?? languageSignal.value;
+
   const logAndSpeak = (sentence: string, source: SentenceSourceType): void => {
     abortActiveSentenceRequest();
-    speak(sentence, MODEL_LANGUAGE);
+    speak(sentence, source === "typed" ? languageSignal.value : sentenceLanguage);
     saveTranslation(state.telegraphicMessage, {
       model: state.model,
       candidates: state.sentences,
@@ -131,19 +135,23 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
   const sentenceButton = (sentence: string, index: number): VNode => {
     // Everything but the sentence recalled from the log came from the model.
     const isMarked = markAiSuggestions && sentence !== state.recalledSentence;
+    const words = state.words?.get(sentence);
+    // `compromise` reads English only, so a sentence in another language has a Bliss row only
+    // when the model gave its words.
+    const hasRow = showBlissSentence && (words !== undefined || sentenceLanguage === PARSE_LANGUAGE);
     // A marked sentence says so first. An unmarked one keeps the name it had: the sentence
     // itself when the Bliss row would otherwise be all a screen reader found.
     const ariaLabel = isMarked ? aiSuggestionLabel(sentence)
-      : showBlissSentence ? sentence : undefined;
+      : hasRow ? sentence : undefined;
     return html`
       <button
         key=${index}
-        lang=${MODEL_LANGUAGE}
+        lang=${sentenceLanguage}
         class=${isMarked ? "sentenceChoice aiSuggestion" : "sentenceChoice"}
         aria-label=${ariaLabel}
         onClick=${() => logAndSpeak(sentence, "chosen")}>
         ${isMarked ? html`<${AiBadge} />` : null}
-        ${showBlissSentence ? html`<${BlissSentence} sentence=${sentence} />` : sentence}
+        ${hasRow ? html`<${BlissSentence} sentence=${sentence} words=${words} language=${sentenceLanguage} />` : sentence}
       </button>
     `;
   };

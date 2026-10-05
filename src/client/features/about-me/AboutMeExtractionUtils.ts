@@ -15,7 +15,7 @@
  * fact is added to About Me only after the user accepts it in the About Me dialog.
  */
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
-import { renderTemplate, renderPromptLines } from "../../utils/PromptUtils";
+import { renderTemplate, renderPromptLines, promptsFor } from "../../utils/PromptUtils";
 import { queryChat } from "../../core/OllamaApi";
 import { isMessageRecord, recordMessageText } from "../../core/MessageLog";
 import { getStorage, StoredMessage } from "../../core/StorageBackend";
@@ -24,7 +24,7 @@ import {
   FACT_CATEGORIES, FactSuggestionType, isKnownText, aboutMePromptText, aboutMeSignal, recordLearning
 } from "./AboutMeState";
 import type { AboutMeConfigType } from "../../index.d";
-import { t } from "../../i18n/I18n";
+import { languageSignal, t } from "../../i18n/I18n";
 
 /**
  * Split a model reply into suggested facts, one per `Category: text` line. List numbering
@@ -102,7 +102,8 @@ export function requestFactSuggestions (): Promise<LearningResultType> {
  */
 async function learn (): Promise<LearningResultType> {
   const config = adaptivePaletteGlobals.config.aboutMe;
-  if (!config) {
+  const prompts = promptsFor(config, languageSignal.value);
+  if (!config || !prompts) {
     throw new Error(t("aboutMeNotConfigured"));
   }
   const aboutMe = aboutMeSignal.peek();
@@ -111,7 +112,7 @@ async function learn (): Promise<LearningResultType> {
     return { status: "upToDate" };
   }
   const messages = messageLines(records);
-  const suggestions = messages.length === 0 ? [] : await askModel(config, messages);
+  const suggestions = messages.length === 0 ? [] : await askModel(config, prompts, messages);
   // Past every record read, malformed ones too, so none of them is read again.
   const last = records[records.length - 1];
   await recordLearning(suggestions, { id: last.id, timestamp: last.timestamp });
@@ -121,10 +122,13 @@ async function learn (): Promise<LearningResultType> {
 /**
  * Ask the model for facts in these messages that About Me does not hold yet.
  * @param {AboutMeConfigType} config - The `aboutMe` config section.
+ * @param {{ systemPrompt: string, userPrompt: string }} prompts - The prompts for the UI language.
  * @param {string} messages - The messages, one per line.
  * @returns {Promise<FactSuggestionType[]>}
  */
-async function askModel (config: AboutMeConfigType, messages: string): Promise<FactSuggestionType[]> {
+async function askModel (
+  config: AboutMeConfigType, prompts: { systemPrompt: string, userPrompt: string }, messages: string
+): Promise<FactSuggestionType[]> {
   const model = pickModel(config.model);
   const values = {
     messages,
@@ -133,10 +137,10 @@ async function askModel (config: AboutMeConfigType, messages: string): Promise<F
   };
   const response = await queryChat(
     // Line-per-field: with no facts or no dismissals, that line is dropped.
-    renderPromptLines(config.userPrompt, values),
+    renderPromptLines(prompts.userPrompt, values),
     model,
     false,
-    renderTemplate(config.systemPrompt, values)
+    renderTemplate(prompts.systemPrompt, values)
   );
   const content = "message" in response ? (response.message?.content || "") : "";
   const seen = new Set<string>();

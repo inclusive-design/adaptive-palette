@@ -11,30 +11,20 @@
  */
 
 /**
- * Turn one English sentence into the Bliss symbols.
+ * Turn one sentence into the Bliss symbols.
  *
- * Everything here is pure and synchronous: the sentence is parsed by `compromise` on the
- * client and looked up in the Bliss dictionary. No model is queried.
+ * Everything here is pure and synchronous. `blissSlots` parses an English sentence with
+ * `compromise` on the client; `spanSlots` takes spans already found (for example from the model's
+ * words line). Both look the spans up in the Bliss dictionary. No model is queried.
  */
 import nlp from "compromise";
 import { findGlossEntry, glossPayload } from "../../utils/GlossLookupUtils";
-import { MODEL_LANGUAGE } from "../../i18n/I18n";
+import type { Language } from "../../i18n/I18n";
 import { readMessageLog } from "../../core/MessageLog";
-import { BlissSentenceSlotType, SymbolEncodingType } from "../../index.d";
+import { BlissSentenceSlotType, SentenceSpanType, SymbolEncodingType } from "../../index.d";
 
-/**
- * One run of words treated as a unit, and the key it is looked up under. The key differs from
- * the text because the Bliss dictionary glosses actions with a "to" prefix and nouns in the
- * singular: the span "want to" is looked up as "to want", and "apples" as "apple".
- */
-export type SentenceSpanType = {
-  text: string,
-  key: string,
-  // The Bliss indicator to overlay, if the span calls for one.
-  indicatorId?: number,
-  // A punctuation mark rather than a word: resolved by mark, never by gloss.
-  isPunctuation?: boolean
-};
+// The language `compromise` parses. A sentence in any other needs its words from the model.
+export const PARSE_LANGUAGE: Language = "en";
 
 /**
  * One term as compromise tagged it.
@@ -286,7 +276,7 @@ function scanForGloss (
     const singularized = [...words.slice(0, -1), toSingular(words[words.length - 1])]
       .join(" ").toLowerCase();
     for (const key of written === singularized ? [written] : [written, singularized]) {
-      if (findGlossEntry(key, MODEL_LANGUAGE)) {
+      if (findGlossEntry(key, PARSE_LANGUAGE)) {
         return {
           text, key, length,
           indicatorId: key === singularized && key !== written ? PLURAL_INDICATOR_ID : undefined
@@ -418,10 +408,11 @@ function historyPayloads (): Map<string, SymbolEncodingType> {
  * sentence the user is about to speak is not.
  * @param {SentenceSpanType} span - The span.
  * @param {Map<string, SymbolEncodingType>} history - Past payloads by lowercased label.
+ * @param {Language} language - The language of the span's key.
  * @returns {SymbolEncodingType | undefined}
  */
 function spanPayload (
-  span: SentenceSpanType, history: Map<string, SymbolEncodingType>
+  span: SentenceSpanType, history: Map<string, SymbolEncodingType>, language: Language
 ): SymbolEncodingType | undefined {
   if (span.isPunctuation) {
     const symbolId = PUNCTUATION_IDS[span.key];
@@ -437,7 +428,7 @@ function spanPayload (
   const base = fromHistory
     ? { ...fromHistory }
     : (() => {
-      const entry = findGlossEntry(span.key, MODEL_LANGUAGE);
+      const entry = findGlossEntry(span.key, language);
       return entry ? glossPayload(entry.id, entry.composition, span.text) : undefined;
     })();
   if (!base) {
@@ -460,7 +451,23 @@ function spanPayload (
 }
 
 /**
- * The Bliss row for one English sentence: one slot per span, each with the symbol found for
+ * The Bliss row for spans already found: one slot per span, each with the symbol found
+ * for it or nothing, in which case the span is drawn as text.
+ * @param {SentenceSpanType[]} spans - The spans, in order.
+ * @param {Language} language - The language of the spans' keys.
+ * @returns {BlissSentenceSlotType[]}
+ */
+export function spanSlots (spans: SentenceSpanType[], language: Language): BlissSentenceSlotType[] {
+  const history = historyPayloads();
+  return spans.map((span) => {
+    const payload = spanPayload(span, history, language);
+    return payload ? { text: span.text, payload } : { text: span.text };
+  });
+}
+
+/**
+ * The Bliss row for one English sentence, parsed with `compromise` (for spans found some other
+ * way, use `spanSlots`): one slot per span, each with the symbol found for
  * it or nothing, in which case the span is rendered as text.
  *
  * The pipeline makes no network call and cannot fail as a unit. A span that resolves to
@@ -471,11 +478,7 @@ function spanPayload (
  */
 export function blissSlots (sentence: string): BlissSentenceSlotType[] {
   try {
-    const history = historyPayloads();
-    return sentenceSpans(sentence).map((span) => {
-      const payload = spanPayload(span, history);
-      return payload ? { text: span.text, payload } : { text: span.text };
-    });
+    return spanSlots(sentenceSpans(sentence), PARSE_LANGUAGE);
   } catch (error) {
     console.error(`Could not build a Bliss sentence: ${String(error)}`);
     return sentence.trim().length > 0 ? [{ text: sentence }] : [];

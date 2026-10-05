@@ -48,10 +48,7 @@ export type LayoutInfoType = {
   requiresConfig?: keyof AdaptivePaletteConfigType,
   // The language of the cell's `label`. Set by `Palette.ts` when it picks the label; not
   // written in the palette JSON.
-  labelLanguage?: Language,
-  // The cell's `label` in `MODEL_LANGUAGE`, for a label that reaches a prompt. Set by
-  // `Palette.ts`, like `labelLanguage`.
-  modelLabel?: string
+  labelLanguage?: Language
 };
 
 export type BranchToInfoType = {
@@ -132,18 +129,21 @@ export type SymbolEncodingType = BlissSymbolInfoType & {
   isAiLabel?: boolean
 }
 
+// A prompt in `config.json`: one text for every language, or one per language.
+export type PromptType = string | Partial<Record<Language, string>>;
+
 export type IndicatorLabelLookupConfigType = {
   useModelQueryFallback: boolean,
   model: string,
-  systemPrompt: string,
-  userPrompt: string
+  systemPrompt: PromptType,
+  userPrompt: PromptType
 };
 
 export type TelegraphicTranslationConfigType = {
   model: string,
   numSentences: number,
-  systemPrompt: string,
-  userPrompt: string,
+  systemPrompt: PromptType,
+  userPrompt: PromptType,
   // Whether a row of Bliss symbols is drawn above each sentence choice. Defaults to `true`.
   showBlissSentence: boolean
 };
@@ -154,14 +154,14 @@ export type WordPredictionConfigType = {
   // Whether a model is asked for suggestions on top of the ones found in the message history.
   enableModelQuery: boolean,
   model: string,
-  systemPrompt: string,
-  userPrompt: string
+  systemPrompt: PromptType,
+  userPrompt: PromptType
 };
 
 export type AboutMeConfigType = {
   model: string,
-  systemPrompt: string,
-  userPrompt: string,
+  systemPrompt: PromptType,
+  userPrompt: PromptType,
   // How many messages each "Suggest updates" run reads, oldest first, after the last one read.
   messagesPerRun: number
 };
@@ -230,7 +230,7 @@ export type ContentSignalDataType = {
   caretPosition: number
 };
 
-// One slot in a Bliss sentence row: the English span it covers, and the symbol found for it.
+// One slot in a Bliss sentence row: the span it covers, and the symbol found for it.
 // No payload means the span is rendered as text.
 export type BlissSentenceSlotType = {
   text: string,
@@ -265,7 +265,25 @@ export type SentenceCompletionsStateType = {
   // other sentence in `sentences` came from the model.
   recalledSentence: string | null,
   model: string,
-  telegraphicMessage: string
+  telegraphicMessage: string,
+  // The language the sentences were asked for in. Absent means the UI language.
+  language?: Language,
+  // Each sentence's words, as the model gave them, for a language `compromise` cannot parse.
+  words?: Map<string, SentenceSpanType[]>
+};
+
+/**
+ * One run of words treated as a unit, and the key it is looked up under. The key differs from
+ * the text because the Bliss dictionary glosses actions with a "to" prefix and nouns in the
+ * singular: the span "want to" is looked up as "to want", and "apples" as "apple".
+ */
+export type SentenceSpanType = {
+  text: string,
+  key: string,
+  // The Bliss indicator to overlay, if the span calls for one.
+  indicatorId?: number,
+  // A punctuation mark rather than a word: resolved by mark, never by gloss.
+  isPunctuation?: boolean
 };
 
 /*
@@ -276,10 +294,8 @@ export type SentenceCompletionsStateType = {
  */
 export type MessageAttributeType = {
   category: string,
-  // In `MODEL_LANGUAGE`: what the prompt gets and what two attributes are matched on.
+  // As the user saw it when they set it; what the prompt gets.
   label: string,
-  // The label as the user saw it, when it differs from `label`.
-  displayLabel?: string,
   composition: SymbolCompositionType
 };
 

@@ -17,7 +17,7 @@ import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { cellTypeRegistry } from "../core/CellTypeRegistry";
 import { PALETTE_INCLUDE_TYPE, PaletteStore } from "../core/PaletteStore";
 import { generateGridStyle } from "../utils/GridUtils";
-import { Language, LabelType, MODEL_LANGUAGE, parseLanguage, resolveLabel } from "../i18n/I18n";
+import { Language, LabelType, parseLanguage, resolveLabel } from "../i18n/I18n";
 import "./Palette.scss";
 
 type PalettePropsType = {
@@ -144,15 +144,13 @@ function renderCells (paletteDefinition: JsonPaletteType, includeChain: JsonPale
     if (!cellComponent) {
       console.error(`Error at rendering the cell type "${aCell.type}". Fix it by defining the render component for this cell type at CellTypeRegistry.ts -> cellTypeRegistry.`);
     } else {
-      // The cell gets its label as a string in one language, that language to speak it in, and
-      // the label in the model's language for the cells whose label reaches a prompt.
+      // The cell gets its label as a string in one language, and that language to speak it in.
       let options = cellOptions;
       const label = (cellOptions as { label?: LabelType }).label;
       if (label !== undefined) {
         const resolved = resolveLabel(label, paletteLanguage);
         options = {
-          ...cellOptions, label: resolved.text, labelLanguage: resolved.language,
-          modelLabel: resolveLabel(label, paletteLanguage, MODEL_LANGUAGE).text
+          ...cellOptions, label: resolved.text, labelLanguage: resolved.language
         };
         result.labelLanguages.add(resolved.language);
       }

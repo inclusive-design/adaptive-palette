@@ -59,14 +59,16 @@ const NO_ATTRIBUTES: readonly MessageAttributeType[] = Object.freeze([]);
 export const selectedAttributesSignal = signal<readonly MessageAttributeType[]>(NO_ATTRIBUTES);
 
 /**
- * Whether two attributes are the same one. Compared by category and label rather than by
- * identity: the cell builds a fresh object on every render.
+ * Whether two attributes are the same one. Compared by category and symbol, not label: the
+ * label changes with the UI language. Not by identity either: the cell builds a fresh object
+ * on every render.
  * @param {MessageAttributeType} first - One attribute.
  * @param {MessageAttributeType} second - The other.
  * @returns {boolean}
  */
 function isSameAttribute (first: MessageAttributeType, second: MessageAttributeType): boolean {
-  return first.category === second.category && first.label === second.label;
+  return first.category === second.category &&
+    JSON.stringify(first.composition) === JSON.stringify(second.composition);
 }
 
 /**

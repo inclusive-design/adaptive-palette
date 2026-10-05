@@ -27,6 +27,7 @@ import { SentenceChoices } from "./SentenceChoices";
 import { mockedSpeak, mockedSpeakUnavailable } from "../../testUtils/SpeechUtilsMock";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 import { en } from "../../i18n/en";
+import { parseWordsLine } from "./TelegraphicTranslationUtils";
 
 vi.mock("../../utils/SpeechUtils");
 
@@ -128,6 +129,29 @@ describe("SentenceChoices", (): void => {
     expect(await screen.findByText(en.sentenceCannotComplete)).toBeVisible();
     expect(container.querySelector("[role=\"status\"]")).toBe(liveRegion);
     expect(liveRegion?.textContent).toBe(en.sentenceCannotComplete);
+  });
+
+  test("draws a Swedish sentence's Bliss row from its words", async (): Promise<void> => {
+    sentenceCompletionsSignal.value = {
+      status: "ready", sentences: ["Jag åt."], recalledSentence: null, model: "phony-model:12b",
+      telegraphicMessage: "jag äta", language: "sv",
+      words: new Map([["Jag åt.", parseWordsLine("> Jag=jag | åt=äta+past | .")!]])
+    };
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+    const button = await screen.findByRole("button", { name: /Jag åt\./ });
+    expect(button.getAttribute("lang")).toBe("sv");
+    expect(button.querySelector(".blissSentence")).not.toBeNull();
+  });
+
+  test("shows a Swedish sentence with no words as text", async (): Promise<void> => {
+    sentenceCompletionsSignal.value = {
+      status: "ready", sentences: ["Jag åt."], recalledSentence: null, model: "phony-model:12b",
+      telegraphicMessage: "jag äta", language: "sv", words: new Map()
+    };
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+    const button = await screen.findByRole("button", { name: /Jag åt\./ });
+    expect(button.querySelector(".blissSentence")).toBeNull();
+    expect(button.textContent).toContain("Jag åt.");
   });
 
   test("renders one button per sentence plus the text box", (): void => {

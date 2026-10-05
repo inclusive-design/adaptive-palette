@@ -133,6 +133,16 @@ describe("SettingsSchema", () => {
       expect((await applyStoredSettings(configured)).wordPrediction.enableModelQuery).toBe(true);
     });
 
+    test("applies a model-backed value when the prompts are one per language", async (): Promise<void> => {
+      await store({ "wordPrediction.enableModelQuery": true });
+      const configured = makeDefaultConfig();
+      configured.wordPrediction = {
+        ...configured.wordPrediction, systemPrompt: { en: "system" }, userPrompt: { en: "user" }
+      };
+
+      expect((await applyStoredSettings(configured)).wordPrediction.enableModelQuery).toBe(true);
+    });
+
     test("falls back to the configuration when nothing is stored", async (): Promise<void> => {
       expect(await applyStoredSettings(makeDefaultConfig())).toEqual(makeDefaultConfig());
     });

@@ -10,7 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { renderTemplate, renderPromptLines } from "./PromptUtils";
+import { renderTemplate, renderPromptLines, promptsFor } from "./PromptUtils";
 
 describe("renderTemplate()", (): void => {
 
@@ -56,4 +56,24 @@ describe("renderPromptLines()", (): void => {
     expect(renderPromptLines("{{a}} and {{b}}\nEnd", { a: "", b: "  " })).toBe("End");
   });
 
+});
+
+describe("promptsFor()", (): void => {
+
+  test("serves a plain-string prompt to every language", (): void => {
+    const section = { systemPrompt: "system", userPrompt: "user" };
+    expect(promptsFor(section, "sv")).toEqual({ systemPrompt: "system", userPrompt: "user" });
+  });
+
+  test("picks the prompt for the language", (): void => {
+    const section = { systemPrompt: { en: "system", sv: "system sv" }, userPrompt: "user" };
+    expect(promptsFor(section, "sv")).toEqual({ systemPrompt: "system sv", userPrompt: "user" });
+  });
+
+  test("is undefined when either prompt has no text for the language", (): void => {
+    const section = { systemPrompt: { en: "system" }, userPrompt: "user" };
+    expect(promptsFor(section, "sv")).toBeUndefined();
+    expect(promptsFor({ systemPrompt: "", userPrompt: "user" }, "en")).toBeUndefined();
+    expect(promptsFor(undefined, "en")).toBeUndefined();
+  });
 });

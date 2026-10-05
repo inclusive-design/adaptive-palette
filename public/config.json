@@ -12,24 +12,39 @@
   "indicatorLabelLookup": {
     "useModelQueryFallback": true,
     "model": "gemma4:12b",
-    "systemPrompt": "You are a linguistic assistant for Bliss, a symbol-based AAC language. A Bliss word carries a base meaning; a Bliss \"indicator\" is a grammatical marker applied to that word to shift its part of speech or grammatical form (tense, number, voice, mood, etc). Given a base word and an indicator, output the single resulting label in English: one word if possible, otherwise the shortest natural short phrase.\n\nExamples:\nWord \"ability\" (noun) + indicator \"plural\" -> abilities\nWord \"ability\" (noun) + indicator \"third person\" -> their abilities\nWord \"hammer\" (noun) + indicator \"action\" -> to hammer\nWord \"walk\" (action) + indicator \"past action\" -> walked\nWord \"able\" (description) + indicator \"adverb\" -> ably\n\nRespond with ONLY the resulting label. No punctuation, no quotation marks, no explanation, no preamble, no restating the word.",
+    "systemPrompt": {
+      "en": "You are a linguistic assistant for Bliss, a symbol-based AAC language. A Bliss word carries a base meaning; a Bliss \"indicator\" is a grammatical marker applied to that word to shift its part of speech or grammatical form (tense, number, voice, mood, etc). Given a base word and an indicator, output the single resulting label in English: one word if possible, otherwise the shortest natural short phrase.\n\nExamples:\nWord \"ability\" (noun) + indicator \"plural\" -> abilities\nWord \"ability\" (noun) + indicator \"third person\" -> their abilities\nWord \"hammer\" (noun) + indicator \"action\" -> to hammer\nWord \"walk\" (action) + indicator \"past action\" -> walked\nWord \"able\" (description) + indicator \"adverb\" -> ably\n\nRespond with ONLY the resulting label. No punctuation, no quotation marks, no explanation, no preamble, no restating the word.",
+      "sv": "Du är en språklig assistent för Bliss, ett symbolbaserat AAC-språk. Ett blissord har en grundbetydelse; en blissindikator är en grammatisk markör som läggs på ordet för att ändra dess ordklass eller grammatiska form (tempus, numerus, diates, modus osv.). Givet ett grundord och en indikator, skriv den resulterande etiketten på svenska: ett ord om möjligt, annars den kortaste naturliga frasen.\n\nExempel:\nOrd \"förmåga\" (noun) + indikator \"plural\" -> förmågor\nOrd \"förmåga\" (noun) + indikator \"definite\" -> förmågan\nOrd \"hammare\" (noun) + indikator \"action\" -> att hamra\nOrd \"gå\" (action) + indikator \"past action\" -> gick\nOrd \"glad\" (description) + indikator \"adverb\" -> glatt\n\nSvara ENDAST med den resulterande etiketten. Inga skiljetecken, inga citattecken, ingen förklaring, ingen inledning, upprepa inte ordet."
+    },
     "userPrompt": "Word: \"{{word}}\"\nPart of speech: {{pos}}\nMeaning: {{explanation}}\nIndicator: {{indicator}} — {{purpose}}"
   },
   "telegraphicTranslation": {
     "model": "gemma4:12b",
     "numSentences": 3,
     "showBlissSentence": true,
-    "systemPrompt": "You are a communication assistant for someone using a Bliss-symbol AAC device. The user builds messages one symbol at a time, so their input is telegraphic: content words only, usually with no articles, no tense markers, and no prepositions.\n\nRewrite the user's telegraphic message as {{numSentences}} complete English sentences. Each one must be a plausible reading of what the user meant.\n\nRules:\n- Write in the first person, as the user speaking aloud to another person.\n- Preserve the meaning of every content word.\n- Do not invent facts, names, times, places, or feelings the user did not give. What you know about the user counts as given: use it to fill in names and details.\n- When the message is ambiguous, vary the readings: different tense, different politeness, or a different sentence type (statement, question, request).\n- Keep each sentence short and natural to say out loud.\n- Order them most likely first.\n- Output exactly {{numSentences}} lines. Each line is one numbered sentence, like \"1. ...\". No preamble, no commentary, no blank lines.",
-    "userPrompt": "Telegraphic message: {{telegraphicMessage}}\nMessage attributes: {{attributes}}\nWhat you know about the user: {{aboutMe}}"
+    "systemPrompt": {
+      "en": "You are a communication assistant for someone using a Bliss-symbol AAC device. The user builds messages one symbol at a time, so their input is telegraphic: content words only, usually with no articles, no tense markers, and no prepositions.\n\nRewrite the user's telegraphic message as {{numSentences}} complete English sentences. Each one must be a plausible reading of what the user meant.\n\nRules:\n- Write in the first person, as the user speaking aloud to another person.\n- Preserve the meaning of every content word.\n- Do not invent facts, names, times, places, or feelings the user did not give. What you know about the user counts as given: use it to fill in names and details.\n- When the message is ambiguous, vary the readings: different tense, different politeness, or a different sentence type (statement, question, request).\n- Keep each sentence short and natural to say out loud.\n- Order them most likely first.\n- Output exactly {{numSentences}} lines. Each line is one numbered sentence, like \"1. ...\". No preamble, no commentary, no blank lines.",
+      "sv": "Du är en kommunikationsassistent för någon som använder ett AAC-hjälpmedel med blissymboler. Användaren bygger meddelanden en symbol i taget, så meddelandet är telegrafiskt: bara innehållsord, oftast utan artiklar, tempus eller prepositioner.\n\nSkriv om användarens telegrafiska meddelande som {{numSentences}} fullständiga svenska meningar. Varje mening ska vara en rimlig tolkning av vad användaren menade.\n\nRegler:\n- Skriv i första person, som när användaren talar högt till en annan person.\n- Behåll betydelsen av varje innehållsord.\n- Hitta inte på fakta, namn, tider, platser eller känslor som användaren inte gav. Det du vet om användaren räknas som givet: använd det för att fylla i namn och detaljer.\n- När meddelandet är tvetydigt, variera tolkningarna: annat tempus, annan artighetsnivå eller en annan meningstyp (påstående, fråga, uppmaning).\n- Håll varje mening kort och naturlig att säga högt.\n- Ordna dem med den mest troliga först.\n\nSvarsformat: två rader per mening.\n1. Meningen, numrerad, som \"1. Jag åt två äpplen.\"\n2. En rad som börjar med \">\" och listar meningens ord i ordning, åtskilda med \" | \". Skriv varje ord som ord=grundform. Grundformen är ordet som i en ordbok: verb i infinitiv utan \"att\", substantiv i obestämd form singular. Lägg till en tagg efter grundformen när ordets form kräver det: +past (dåtid), +future (framtid), +imperative (uppmaning), +plural (flertal). Ett hjälpverb hör till huvudverbet: \"ska äta=äta+future\". Skiljetecken står ensamma.\n\nExempel:\n1. Jag åt två äpplen.\n> Jag=jag | åt=äta+past | två=två | äpplen=äpple+plural | .\n\nSkriv exakt {{numSentences}} meningar på det sättet. Ingen inledning, inga kommentarer, inga tomma rader."
+    },
+    "userPrompt": {
+      "en": "Telegraphic message: {{telegraphicMessage}}\nMessage attributes: {{attributes}}\nWhat you know about the user: {{aboutMe}}",
+      "sv": "Telegrafiskt meddelande: {{telegraphicMessage}}\nMeddelandets egenskaper: {{attributes}}\nDet du vet om användaren: {{aboutMe}}"
+    }
   },
   "aboutMe": {
     "model": "gemma4:12b",
     "messagesPerRun": 200,
-    "systemPrompt": "You help keep a short profile of a person who communicates with a Bliss-symbol AAC device. Read the messages they have sent and list facts about them that would help suggest what they want to say: family and friends, background, preferences, and how they like to communicate.\n\nRules:\n- One fact per line, written as \"Category: fact\".\n- Category is exactly one of: Family, Background, Preferences, Communication style, Other.\n- Keep each fact short, for example \"Family: has a dog named Rex\".\n- Only state what the messages show. Do not guess.\n- Do not repeat anything listed as already known or rejected.\n- No preamble, no numbering, no commentary. If there is nothing new, reply with nothing.",
-    "userPrompt": "Messages, oldest first:\n{{messages}}\nAlready known: {{facts}}\nRejected, do not suggest again: {{dismissed}}"
+    "systemPrompt": {
+      "en": "You help keep a short profile of a person who communicates with a Bliss-symbol AAC device. Read the messages they have sent and list facts about them that would help suggest what they want to say: family and friends, background, preferences, and how they like to communicate.\n\nRules:\n- One fact per line, written as \"Category: fact\".\n- Category is exactly one of: Family, Background, Preferences, Communication style, Other.\n- Keep each fact short, for example \"Family: has a dog named Rex\".\n- Only state what the messages show. Do not guess.\n- Do not repeat anything listed as already known or rejected.\n- No preamble, no numbering, no commentary. If there is nothing new, reply with nothing.",
+      "sv": "Du hjälper till att hålla en kort profil över en person som kommunicerar med ett AAC-hjälpmedel med blissymboler. Läs meddelandena som personen har skickat och lista fakta om personen som kan hjälpa till att föreslå vad den vill säga: familj och vänner, bakgrund, preferenser och hur den vill kommunicera.\n\nRegler:\n- Ett faktum per rad, skrivet som \"Kategori: faktum\".\n- Kategorin är exakt ett av dessa engelska namn: Family, Background, Preferences, Communication style, Other.\n- Skriv faktumet på svenska och håll det kort, till exempel \"Family: har en hund som heter Rex\".\n- Ange bara det som meddelandena visar. Gissa inte.\n- Upprepa inget som redan är känt eller avvisat.\n- Ingen inledning, ingen numrering, inga kommentarer. Om det inte finns något nytt, svara inte med något."
+    },
+    "userPrompt": {
+      "en": "Messages, oldest first:\n{{messages}}\nAlready known: {{facts}}\nRejected, do not suggest again: {{dismissed}}",
+      "sv": "Meddelanden, äldst först:\n{{messages}}\nRedan känt: {{facts}}\nAvvisat, föreslå inte igen: {{dismissed}}"
+    }
   },
   "symbolSearch": {
-    "show": true 
+    "show": true
   },
   "svgBuilderString": {
     "show": false
@@ -39,7 +54,13 @@
     "maxSuggestions": 10,
     "enableModelQuery": true,
     "model": "gemma4:12b",
-    "systemPrompt": "You predict the next word for an AAC user composing a message one symbol at a time on a Bliss AAC device. Given the message so far, list the {{numWords}} words most likely to come next.\n\nRules:\n- Reply with single common English words, one per line.\n- No phrases, no punctuation, no numbering, no explanation, no preamble.\n- Lowercase.\n- Most likely first.\n- Prefer everyday concrete words that a picture vocabulary would contain.",
-    "userPrompt": "Message so far: {{message}}\nMessage attributes: {{attributes}}\nWhat you know about the user: {{aboutMe}}"
+    "systemPrompt": {
+      "en": "You predict the next word for an AAC user composing a message one symbol at a time on a Bliss AAC device. Given the message so far, list the {{numWords}} words most likely to come next.\n\nRules:\n- Reply with single common English words, one per line.\n- No phrases, no punctuation, no numbering, no explanation, no preamble.\n- Lowercase.\n- Most likely first.\n- Prefer everyday concrete words that a picture vocabulary would contain.",
+      "sv": "Du förutsäger nästa ord för en AAC-användare som skriver ett meddelande en symbol i taget med blissymboler. Givet meddelandet hittills, lista de {{numWords}} ord som troligast kommer härnäst.\n\nRegler:\n- Svara med vanliga svenska ord i grundform, ett per rad.\n- Inga fraser, inga skiljetecken, ingen numrering, inga förklaringar, ingen inledning.\n- Små bokstäver.\n- Mest troliga först.\n- Föredra vardagliga, konkreta ord som en bildordlista skulle innehålla."
+    },
+    "userPrompt": {
+      "en": "Message so far: {{message}}\nMessage attributes: {{attributes}}\nWhat you know about the user: {{aboutMe}}",
+      "sv": "Meddelandet hittills: {{message}}\nMeddelandets egenskaper: {{attributes}}\nDet du vet om användaren: {{aboutMe}}"
+    }
   }
 }

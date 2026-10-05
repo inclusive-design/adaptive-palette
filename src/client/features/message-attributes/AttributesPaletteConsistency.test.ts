@@ -71,6 +71,14 @@ describe("attributes.json agrees with MessageAttributesState on category names a
     });
   });
 
+  test("no two attribute cells in a category share a symbol", (): void => {
+    const keys = Object.values(palette.cells)
+      .filter((cell) => cell.type === "ActionAttributeCell")
+      .map((cell) => cell.options as AttributeCellType)
+      .map((options) => `${options.category}:${JSON.stringify(options.composition)}`);
+    expect(new Set(keys).size).toBe(keys.length);
+  });
+
   test("selecting one attribute per category reports them in the palette's row order", (): void => {
     const cells = Object.values(palette.cells);
 

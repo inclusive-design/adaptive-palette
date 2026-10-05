@@ -70,20 +70,9 @@ describe("ActionAttributeCell", (): void => {
     expect(mockedAnnounceIfEnabled).toHaveBeenLastCalledWith("Feeling: angry, on");
   });
 
-  test("a translated label is stored in the model's language and shown in the UI's", async (): Promise<void> => {
-    renderCell(ActionAttributeCell, TEST_CELL_ID, { ...testCell.options, label: "arg", modelLabel: "angry" });
-
-    const button = await screen.findByRole("button", { name: "Feeling: arg" });
-    await userEvent.click(button);
-
-    expect(selectedAttributesSignal.value)
-      .toEqual([{ category: "Feeling", label: "angry", displayLabel: "arg", composition: 1198 }]);
-    expect(button.getAttribute("aria-pressed")).toBe("true");
-  });
-
   test("an attribute set in another language still shows as pressed", async (): Promise<void> => {
-    selectedAttributesSignal.value = [{ category: "Feeling", label: "angry", displayLabel: "arg", composition: 1198 }];
-    renderCell(ActionAttributeCell, TEST_CELL_ID, { ...testCell.options, modelLabel: "angry" });
+    selectedAttributesSignal.value = [{ category: "Feeling", label: "arg", composition: 1198 }];
+    renderCell(ActionAttributeCell, TEST_CELL_ID, testCell.options);
 
     const button = await screen.findByRole("button", { name: "Feeling: angry" });
     expect(button.getAttribute("aria-pressed")).toBe("true");

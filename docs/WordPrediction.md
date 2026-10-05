@@ -72,6 +72,9 @@ Words from the model are marked apart from the ones the history found, unless th
 cell's corner. The badge is hidden from screen readers, and the cell names itself
 "AI suggestion, `<word>`" instead.
 
+The model is asked in the UI language, and the words it returns are looked up in that language's
+glosses.
+
 ### Request Optimization (Debouncing)
 
 To minimize API calls, requests to the model are debounced by 400ms.
