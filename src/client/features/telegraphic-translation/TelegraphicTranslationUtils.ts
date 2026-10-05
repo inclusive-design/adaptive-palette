@@ -89,14 +89,18 @@ export function parseSentences (content: string): string[] {
 
 /**
  * Read one words line, such as `> Jag=jag | åt=äta+past | .`. Each part is `text=base`, with
- * an optional `+tag`, or a punctuation mark alone. `undefined` when any part is malformed,
- * so the sentence is offered without a Bliss row rather than with a wrong one.
+ * an optional `+tag`, or a punctuation mark alone. Empty parts, from a stray `|`, are skipped.
+ * `undefined` when any other part is malformed, so the sentence is offered without a Bliss row
+ * rather than with a wrong one.
  * @param {string} line - The line, with its leading `>`.
  * @returns {SentenceSpanType[] | undefined}
  */
 export function parseWordsLine (line: string): SentenceSpanType[] | undefined {
   const spans: SentenceSpanType[] = [];
   for (const part of line.trim().replace(/^>\s*/, "").split("|").map((piece) => piece.trim())) {
+    if (part === "") {
+      continue;
+    }
     if (/^[^\p{L}\p{N}]+$/u.test(part)) {
       spans.push({ text: part, key: part, isPunctuation: true });
       continue;

@@ -70,6 +70,15 @@ describe("ActionAttributeCell", (): void => {
     expect(mockedAnnounceIfEnabled).toHaveBeenLastCalledWith("Feeling: angry, on");
   });
 
+  test("stores the label in every language", async (): Promise<void> => {
+    const labels = { en: "angry", sv: "arg" };
+    renderCell(ActionAttributeCell, TEST_CELL_ID, { ...testCell.options, labels });
+
+    await userEvent.click(await screen.findByRole("button", { name: "Feeling: angry" }));
+
+    expect(selectedAttributesSignal.value).toEqual([{ category: "Feeling", label: labels, composition: 1198 }]);
+  });
+
   test("an attribute set in another language still shows as pressed", async (): Promise<void> => {
     selectedAttributesSignal.value = [{ category: "Feeling", label: "arg", composition: 1198 }];
     renderCell(ActionAttributeCell, TEST_CELL_ID, testCell.options);

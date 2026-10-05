@@ -122,8 +122,14 @@ describe("telegraphicTranslation", (): void => {
     test("rejects the line when a part is malformed", (): void => {
       expect(parseWordsLine("> Jag=jag | åt")).toBeUndefined();
       expect(parseWordsLine("> åt=äta+yesterday")).toBeUndefined();
-      expect(parseWordsLine("> Jag=jag || åt=äta")).toBeUndefined();
       expect(parseWordsLine(">")).toBeUndefined();
+    });
+
+    test("skips empty parts left by a stray bar", (): void => {
+      expect(parseWordsLine("> Jag=jag || åt=äta |")).toEqual([
+        { text: "Jag", key: "jag", indicatorId: undefined },
+        { text: "åt", key: "äta", indicatorId: undefined }
+      ]);
     });
   });
 

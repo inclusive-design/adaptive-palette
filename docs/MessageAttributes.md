@@ -73,7 +73,7 @@ to leave the cell out and to close the command bar up over its column. The rest 
 untouched, so restoring a model brings the button back with no other change.
 
 An attribute is matched by its category and symbol, so it stays set when the language changes. The
-prompt gets the label in the language the attribute was set in.
+bar and the prompt show its label in the current language.
 
 ## Adding an attribute
 

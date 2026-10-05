@@ -15,7 +15,7 @@ import { html } from "htm/preact";
 import { BlissSymbol } from "../../components/BlissSymbol";
 import { announceIfEnabled } from "../../utils/SpeechUtils";
 import { t } from "../../i18n/I18n";
-import { categoryName, selectedAttributesSignal, toggleAttribute } from "./MessageAttributesState";
+import { attributeLabel, categoryName, selectedAttributesSignal, toggleAttribute } from "./MessageAttributesState";
 import "./MessageAttributesBar.scss";
 
 /**
@@ -38,7 +38,8 @@ export function MessageAttributesBar (): VNode | null {
   }
 
   const chips = attributes.map((attribute) => {
-    const name = `${categoryName(attribute.category)}: ${attribute.label}`;
+    const label = attributeLabel(attribute);
+    const name = `${categoryName(attribute.category)}: ${label}`;
     // A chip only exists for an attribute that is currently set, and a click on it removes it,
     // so the announcement is always "off" -- no state read needed.
     const chipClicked = (event: Event): void => {
@@ -55,13 +56,13 @@ export function MessageAttributesBar (): VNode | null {
     };
     return html`
       <button
-        key=${`${attribute.category}:${attribute.label}`}
+        key=${`${attribute.category}:${JSON.stringify(attribute.composition)}`}
         class="messageAttributeChip"
         aria-label=${t("attributeRemove", { name })}
         onClick=${chipClicked}>
         <${BlissSymbol}
           composition=${attribute.composition}
-          label=${attribute.label}
+          label=${label}
           isPresentation="true"
         />
       </button>

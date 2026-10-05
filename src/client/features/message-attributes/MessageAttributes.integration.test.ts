@@ -40,7 +40,7 @@ import { queryChat } from "../../core/OllamaApi";
 import { CurrentPalette } from "../../components/CurrentPalette";
 import { DEBOUNCE_MS } from "../word-prediction/WordPredictionState";
 import {
-  selectedAttributesSignal, clearAttributes
+  attributeLabel, selectedAttributesSignal, clearAttributes
 } from "./MessageAttributesState";
 import {
   sentenceCompletionsSignal, IDLE_SENTENCE_STATE, discardEditPromptSignal, typedSentenceSignal,
@@ -142,7 +142,7 @@ describe("Message attributes: whole-feature walkthrough", (): void => {
     // that was displayed (the root, not the command bar the button sits in).
     fireEvent.click(await screen.findByRole("button", { name: "Intent: question" }));
     fireEvent.click(await screen.findByRole("button", { name: "Priority: urgent" }));
-    expect(selectedAttributesSignal.value.map((attribute) => attribute.label))
+    expect(selectedAttributesSignal.value.map(attributeLabel))
       .toEqual(["question", "urgent"]);
 
     fireEvent.click(await screen.findByRole("button", { name: "Back" }));
@@ -159,7 +159,7 @@ describe("Message attributes: whole-feature walkthrough", (): void => {
     expect(urgentChip).toBeVisible();
 
     await userEvent.click(questionChip);
-    expect(selectedAttributesSignal.value.map((attribute) => attribute.label)).toEqual(["urgent"]);
+    expect(selectedAttributesSignal.value.map(attributeLabel)).toEqual(["urgent"]);
     expect(screen.queryByRole("button", { name: "Remove Intent: question" })).toBeNull();
     expect(await screen.findByRole("button", { name: "Remove Priority: urgent" })).toBeVisible();
 

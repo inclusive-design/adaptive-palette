@@ -62,6 +62,13 @@ describe("MessageAttributesState", (): void => {
     expect(selectedAttributesSignal.value).toEqual([]);
   });
 
+  test("the prompt text follows a change of language", (): void => {
+    toggleAttribute({ category: "Intent", label: { en: "question", sv: "fråga" }, composition: 553 });
+    expect(attributesPromptText()).toBe("Intent: question");
+    languageSignal.value = "sv";
+    expect(attributesPromptText()).toBe("Intent: fråga");
+  });
+
   test("several attributes from one category are allowed", (): void => {
     toggleAttribute(angry);
     toggleAttribute({ category: "Feeling", label: "tired", composition: 2605 });

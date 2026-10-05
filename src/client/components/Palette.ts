@@ -144,13 +144,14 @@ function renderCells (paletteDefinition: JsonPaletteType, includeChain: JsonPale
     if (!cellComponent) {
       console.error(`Error at rendering the cell type "${aCell.type}". Fix it by defining the render component for this cell type at CellTypeRegistry.ts -> cellTypeRegistry.`);
     } else {
-      // The cell gets its label as a string in one language, and that language to speak it in.
+      // The cell gets its label as a string in one language, that language to speak it in,
+      // and the label in every language.
       let options = cellOptions;
       const label = (cellOptions as { label?: LabelType }).label;
       if (label !== undefined) {
         const resolved = resolveLabel(label, paletteLanguage);
         options = {
-          ...cellOptions, label: resolved.text, labelLanguage: resolved.language
+          ...cellOptions, label: resolved.text, labelLanguage: resolved.language, labels: label
         };
         result.labelLanguages.add(resolved.language);
       }

@@ -10,7 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import type { Language } from "./i18n/I18n";
+import type { Language, LabelType } from "./i18n/I18n";
 
 // Symbol composition can be either a symbol ID defined in bliss_symbol_explanations.json,
 // for example 1433, or an array of symbol IDs and/or strings that represent the composition
@@ -48,7 +48,10 @@ export type LayoutInfoType = {
   requiresConfig?: keyof AdaptivePaletteConfigType,
   // The language of the cell's `label`. Set by `Palette.ts` when it picks the label; not
   // written in the palette JSON.
-  labelLanguage?: Language
+  labelLanguage?: Language,
+  // The cell's `label` as the palette JSON gives it, in every language it has. Set by
+  // `Palette.ts`, like `labelLanguage`, for a cell that must follow a change of language.
+  labels?: LabelType
 };
 
 export type BranchToInfoType = {
@@ -294,8 +297,8 @@ export type SentenceSpanType = {
  */
 export type MessageAttributeType = {
   category: string,
-  // As the user saw it when they set it; what the prompt gets.
-  label: string,
+  // In every language the palette gives; `attributeLabel()` picks the current one.
+  label: LabelType,
   composition: SymbolCompositionType
 };
 
