@@ -24,6 +24,7 @@ import { IndexedDbStorage } from "../../core/IndexedDbStorage";
 import { SettingsDialog, dependentNote } from "./SettingsDialog";
 import { isLocalHost } from "../../core/OllamaApi";
 import { en } from "../../i18n/en";
+import { sv } from "../../i18n/sv";
 import { languageSignal } from "../../i18n/I18n";
 
 // Under the test runner the hostname is always `localhost`. The real function stays in place
@@ -276,6 +277,26 @@ describe("SettingsDialog", () => {
 
     await waitFor(() => expect(languageSignal.value).toBe("sv"));
     expect(writeSettingsSpy).toHaveBeenCalledWith({ "language": "sv" });
+  });
+
+  test("saving a language updates `?lang=` in the address to match", async () => {
+    const originalUrl = window.location.href;
+    const url = new URL(originalUrl);
+    url.searchParams.set("lang", "sv");
+    history.replaceState(history.state, "", url);
+    withConfig({});
+    languageSignal.value = "sv";
+    renderDialog();
+
+    try {
+      await userEvent.selectOptions(screen.getByLabelText(sv.settingLanguage), "English");
+      await userEvent.click(screen.getByRole("button", { name: sv.settingsSave }));
+
+      await waitFor(() => expect(languageSignal.value).toBe("en"));
+      expect(new URLSearchParams(window.location.search).get("lang")).toBe("en");
+    } finally {
+      history.replaceState(history.state, "", originalUrl);
+    }
   });
 
   // `?lang=` sets the page's language but not `config.language`, which holds the saved choice.

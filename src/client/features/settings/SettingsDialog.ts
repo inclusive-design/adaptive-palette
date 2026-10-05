@@ -137,6 +137,13 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
     adaptivePaletteGlobals.config = await applyStoredSettings(fileConfig);
     if (isLanguageChanged) {
       languageSignal.value = adaptivePaletteGlobals.config.language;
+      // A `?lang=` left as it was would show the old language in the address, and bring it
+      // back on reload.
+      const url = new URL(window.location.href);
+      if (url.searchParams.has("lang")) {
+        url.searchParams.set("lang", languageSignal.value);
+        history.replaceState(history.state, "", url);
+      }
     }
     // "Messages to remember" may have changed.
     await hydrateMessageLog();

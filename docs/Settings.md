@@ -33,7 +33,8 @@ The prompts sent to the model, and which model is asked, are not adjustable here
 saved. To open the app in Swedish without the dialog, add `?lang=sv` to the page address, for
 example <https://adaptive-palette.pages.dev/?lang=sv>. The public website saves nothing, so this
 is how it is kept in Swedish across reloads. `?lang=` changes only that page: saving the settings
-keeps the saved language unless **Language** itself was changed. Symbol labels and symbol search
+keeps the saved language unless **Language** itself was changed. Changing it also changes
+`?lang=` in the address, so a reload opens in the new language. Symbol labels and symbol search
 follow the language too. A palette with no labels in the chosen language shows its own, read in
 their own voice. Model features answer in the selected language when `config.json` has prompts for it.
 
