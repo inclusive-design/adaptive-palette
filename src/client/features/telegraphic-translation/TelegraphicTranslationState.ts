@@ -122,7 +122,7 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
   }
   const config = adaptivePaletteGlobals.config.telegraphicTranslation;
   const numSentences = config?.numSentences ?? 1;
-  const recalled = findLatestTranslation(telegraphicMessage);
+  const recalled = findLatestTranslation(telegraphicMessage, languageSignal.value);
 
   // One sentence asked for and one already approved for this message: show it, and ask the
   // model nothing. Attributes are not part of what was recalled -- they are matched on message

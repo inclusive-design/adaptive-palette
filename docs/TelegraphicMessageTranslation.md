@@ -229,6 +229,8 @@ Every message is stored, and nothing is ever removed -- see [Storage.md](devDoc/
 sentence can be recalled from is narrower: `findLatestTranslation()` only looks at the newest
 `maxRecalledRecords` messages, the top-level setting in `public/config.json` that caps every log
 the application keeps. Setting it to `0` keeps the feature but stores and recalls nothing.
+A sentence is saved with its language and is only recalled in that language; one saved
+without a language is taken as English.
 
 Data can currently be inspected through browser developer tools. No in-application export is provided.
 

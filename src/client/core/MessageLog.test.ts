@@ -244,12 +244,12 @@ describe("messageLog", (): void => {
     });
 
     test("a message that was never said has no translation", (): void => {
-      expect(findLatestTranslation("me hungry")).toBeUndefined();
+      expect(findLatestTranslation("me hungry", "en")).toBeUndefined();
     });
 
     test("a message said but never translated has no translation", (): void => {
       saveMessageRecord(message("me"));
-      expect(findLatestTranslation("me")).toBeUndefined();
+      expect(findLatestTranslation("me", "en")).toBeUndefined();
     });
 
     test("the most recent translation of a message is the one found", (): void => {
@@ -259,7 +259,7 @@ describe("messageLog", (): void => {
       saveMessageRecord(message("me"));
       saveTranslation("me", translationFor("That is me again."));
 
-      expect(findLatestTranslation("me")?.sentence).toBe("That is me again.");
+      expect(findLatestTranslation("me", "en")?.sentence).toBe("That is me again.");
     });
 
     test("a newer untranslated record does not hide an older translation", (): void => {
@@ -271,14 +271,30 @@ describe("messageLog", (): void => {
       // untranslated record for the message being translated is normally the last one.
       saveMessageRecord(message("me"));
 
-      expect(findLatestTranslation("me")?.sentence).toBe("It is me.");
+      expect(findLatestTranslation("me", "en")?.sentence).toBe("It is me.");
     });
 
     test("another message's translation is not returned", (): void => {
       saveMessageRecord(message("you"));
       saveTranslation("you", translationFor("It is you."));
 
-      expect(findLatestTranslation("me")).toBeUndefined();
+      expect(findLatestTranslation("me", "en")).toBeUndefined();
+    });
+
+    test("a translation in another language is not returned", (): void => {
+      saveMessageRecord(message("me"));
+      saveTranslation("me", { ...translationFor("It is me."), language: "en" });
+
+      expect(findLatestTranslation("me", "sv")).toBeUndefined();
+      expect(findLatestTranslation("me", "en")?.sentence).toBe("It is me.");
+    });
+
+    test("a translation saved without a language is English", (): void => {
+      saveMessageRecord(message("me"));
+      saveTranslation("me", translationFor("It is me."));
+
+      expect(findLatestTranslation("me", "en")?.sentence).toBe("It is me.");
+      expect(findLatestTranslation("me", "sv")).toBeUndefined();
     });
   });
 });

@@ -95,12 +95,14 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
 
   const logAndSpeak = (sentence: string, source: SentenceSourceType): void => {
     abortActiveSentenceRequest();
-    speak(sentence, source === "typed" ? languageSignal.value : sentenceLanguage);
+    const language = source === "typed" ? languageSignal.value : sentenceLanguage;
+    speak(sentence, language);
     saveTranslation(state.telegraphicMessage, {
       model: state.model,
       candidates: state.sentences,
       sentence,
-      source
+      source,
+      language
     });
   };
 
