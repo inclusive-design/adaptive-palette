@@ -20,7 +20,7 @@
 import type {
   AdaptivePaletteConfigType, IndicatorLabelLookupConfigType,
   TelegraphicTranslationConfigType, FeatureVisibilityConfigType, WordPredictionConfigType,
-  AboutMeConfigType, SwitchScanningConfigType
+  AboutMeConfigType, SwitchScanningConfigType, PromptType
 } from "../index.d";
 import { parseLanguage } from "../i18n/I18n";
 
@@ -40,6 +40,25 @@ export const DISABLED_MODEL_QUERY = { enableModelQuery: false, model: "", system
 const isPositiveInteger = (value: unknown): boolean => Number.isInteger(value) && (value as number) > 0;
 
 const isFilledString = (value: unknown): boolean => typeof value === "string" && value.trim().length > 0;
+
+/**
+ * Whether a value is a usable prompt: a filled string, sent whatever the language, or an
+ * object of filled strings keyed by supported language, with at least one.
+ * @param {unknown} value - The raw parsed value.
+ * @returns {boolean}
+ */
+export function isPrompt (value: unknown): value is PromptType {
+  if (isFilledString(value)) {
+    return true;
+  }
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return false;
+  }
+  const entries = Object.entries(value);
+  return entries.length > 0 &&
+    entries.every(([language, text]) => parseLanguage(language) !== undefined && isFilledString(text));
+}
+
 // The shape of a `KeyboardEvent.code` value: "Space", "KeyA", "Digit1", "F1".
 const isKeyCode = (value: unknown): boolean => typeof value === "string" && /^[A-Z][A-Za-z0-9]*$/.test(value);
 
@@ -80,14 +99,14 @@ function parseIndicatorLabelLookup (section: unknown): IndicatorLabelLookupConfi
     return undefined;
   }
   const { systemPrompt, userPrompt } = candidate;
-  if (!isFilledString(systemPrompt) || !isFilledString(userPrompt)) {
+  if (!isPrompt(systemPrompt) || !isPrompt(userPrompt)) {
     return undefined;
   }
   return {
     useModelQueryFallback: candidate.useModelQueryFallback,
     model: typeof candidate.model === "string" ? candidate.model : "",
-    systemPrompt: systemPrompt as string,
-    userPrompt: userPrompt as string
+    systemPrompt: systemPrompt,
+    userPrompt: userPrompt
   };
 }
 
@@ -114,14 +133,14 @@ function parseTelegraphicTranslation (section: unknown): TelegraphicTranslationC
   const { model, numSentences, systemPrompt, userPrompt } = candidate;
   // `numSentences: 0` is invalid because a query cannot return nothing.
   if (typeof model !== "string" || !isPositiveInteger(numSentences) ||
-      !isFilledString(systemPrompt) || !isFilledString(userPrompt)) {
+      !isPrompt(systemPrompt) || !isPrompt(userPrompt)) {
     return undefined;
   }
   return {
     model,
     numSentences: numSentences as number,
-    systemPrompt: systemPrompt as string,
-    userPrompt: userPrompt as string,
+    systemPrompt: systemPrompt,
+    userPrompt: userPrompt,
     // Deliberately not required: an existing `config.json` written before this setting
     // existed must keep working, and a missing field here would discard the whole section.
     showBlissSentence: candidate.showBlissSentence !== false
@@ -145,13 +164,13 @@ function parseAboutMe (section: unknown): AboutMeConfigType | undefined {
   }
   const { model, systemPrompt, userPrompt, messagesPerRun } = candidate;
   // An empty `model` is valid and means the first model Ollama reports.
-  if (typeof model !== "string" || !isFilledString(systemPrompt) || !isFilledString(userPrompt)) {
+  if (typeof model !== "string" || !isPrompt(systemPrompt) || !isPrompt(userPrompt)) {
     return undefined;
   }
   return {
     model,
-    systemPrompt: systemPrompt as string,
-    userPrompt: userPrompt as string,
+    systemPrompt: systemPrompt,
+    userPrompt: userPrompt,
     messagesPerRun: isPositiveInteger(messagesPerRun) ? messagesPerRun as number : DEFAULT_MESSAGES_PER_RUN
   };
 }
@@ -194,12 +213,12 @@ function parseWordPrediction (section: unknown): WordPredictionConfigType {
   const { model, systemPrompt, userPrompt } = candidate;
   // An empty `model` is valid and means the first model Ollama reports.
   const modelQuery = typeof model === "string" &&
-    isFilledString(systemPrompt) && isFilledString(userPrompt)
+    isPrompt(systemPrompt) && isPrompt(userPrompt)
     ? {
       enableModelQuery: candidate.enableModelQuery === true,
       model,
-      systemPrompt: systemPrompt as string,
-      userPrompt: userPrompt as string
+      systemPrompt: systemPrompt,
+      userPrompt: userPrompt
     }
     : DISABLED_MODEL_QUERY;
   return {

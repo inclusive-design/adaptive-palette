@@ -33,13 +33,6 @@ export const SPEECH_LANGS: Record<Language, string> = { en: "en-US", sv: "sv-SE"
 const STRINGS: Record<Language, Record<StringKey, string>> = { en, sv };
 
 /**
- * The language of the model's text: word suggestions and the sentences. The prompts ask for
- * English, so that text is looked up, marked and spoken as English whatever the UI language is.
- */
-// ponytail: fixed until the prompts come in each language.
-export const MODEL_LANGUAGE: Language = "en";
-
-/**
  * The language the UI is shown in. A component that calls `t()` while rendering reads this
  * signal, so it draws again when the language changes.
  */

@@ -34,6 +34,10 @@ whatever this file says. See `isLocalHost()` in [`src/client/core/OllamaApi.ts`]
 
 ## Prompt placeholders
 
+A prompt is a string or an object `{ "en": ..., "sv": ... }`. A plain string is sent whatever the
+language. With an object, the feature asks with the text for the UI language (`promptsFor()` in
+`utils/PromptUtils.ts`); a feature with no prompt for that language is off, as if unconfigured.
+
 `systemPrompt` and `userPrompt` fields below are templates with `{{name}}` placeholders, filled in at
 query time. A placeholder with no matching value is left as is. Nothing validates the names in either
 prompt: remove one and that data silently stops reaching the model; misspell one and the literal
@@ -117,8 +121,8 @@ both are the same, both keys fall back to the defaults. `enabled` is still read.
 | ----- | ---- | ----------- |
 | `useModelQueryFallback` | boolean | Required. Whether to ask a model when the local label lookup finds nothing. |
 | `model` | string | Ollama model name. Defaults to the empty string, which means Ollama's first available model. |
-| `systemPrompt` | string | Required, non-empty. Tells the model to answer with the resulting label alone. |
-| `userPrompt` | string | Required, non-empty. See [Prompt placeholders](#prompt-placeholders). |
+| `systemPrompt` | string or object | Required, non-empty. Tells the model to answer with the resulting label alone. |
+| `userPrompt` | string or object | Required, non-empty. See [Prompt placeholders](#prompt-placeholders). |
 
 `userPrompt` placeholders: `{{word}}`, `{{pos}}`, `{{explanation}}`, `{{indicator}}`, `{{purpose}}` --
 one template covers a symbol with an explanation, one without, and a hand-built symbol that has
@@ -138,8 +142,8 @@ working: anything other than `false` reads as `true`.
 | ----- | ---- | ----------- |
 | `model` | string | Ollama model name. The empty string means Ollama's first available model. |
 | `numSentences` | number | Positive integer. How many candidate sentences to request. |
-| `systemPrompt` | string | Non-empty. Supports the `{{numSentences}}` placeholder. |
-| `userPrompt` | string | Non-empty. See [Prompt placeholders](#prompt-placeholders). |
+| `systemPrompt` | string or object | Non-empty. Supports the `{{numSentences}}` placeholder. |
+| `userPrompt` | string or object | Non-empty. See [Prompt placeholders](#prompt-placeholders). |
 | `showBlissSentence` | boolean | Optional. Draws Bliss symbols above each sentence choice. Only `false` turns it off. |
 
 `userPrompt` placeholders: `{{telegraphicMessage}}`; `{{attributes}}` -- the message attributes
@@ -159,8 +163,8 @@ needs no model.
 | Field | Type | Description |
 | ----- | ---- | ----------- |
 | `model` | string | Required. Ollama model name. The empty string means Ollama's first available model. |
-| `systemPrompt` | string | Required, non-empty. Tells the model to answer with one `Category: fact` per line. |
-| `userPrompt` | string | Required, non-empty. See [Prompt placeholders](#prompt-placeholders). |
+| `systemPrompt` | string or object | Required, non-empty. Tells the model to answer with one `Category: fact` per line. |
+| `userPrompt` | string or object | Required, non-empty. See [Prompt placeholders](#prompt-placeholders). |
 | `messagesPerRun` | number | Optional. Positive integer. How many messages each "Suggest updates" run reads, oldest first, after the last one read. Defaults to 200. |
 
 `userPrompt` placeholders: `{{messages}}` -- the messages this run reads, one per line, a
@@ -187,8 +191,8 @@ to ask.
 | `maxSuggestions` | number | Positive integer. How many suggestions to offer at once. Defaults to 10. |
 | `enableModelQuery` | boolean | Whether a model is asked for words as well as the message history. Defaults to `false`. |
 | `model` | string | Ollama model name. The empty string means Ollama's first available model. |
-| `systemPrompt` | string | Non-empty when the query is enabled. Supports the `{{numWords}}` placeholder. |
-| `userPrompt` | string | Non-empty when the query is enabled. See [Prompt placeholders](#prompt-placeholders). |
+| `systemPrompt` | string or object | Non-empty when the query is enabled. Supports the `{{numWords}}` placeholder. |
+| `userPrompt` | string or object | Non-empty when the query is enabled. See [Prompt placeholders](#prompt-placeholders). |
 
 `userPrompt` placeholders: `{{message}}` -- the labels of the message up to the caret;
 `{{attributes}}` -- the message attributes the user set, as `Intent: question; Feeling: angry`, see

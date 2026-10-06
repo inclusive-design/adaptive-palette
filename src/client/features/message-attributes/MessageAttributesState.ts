@@ -19,7 +19,7 @@
  */
 import { signal } from "@preact/signals";
 import type { MessageAttributeType } from "../../index.d";
-import { t, type StringKey } from "../../i18n/I18n";
+import { resolveLabel, t, type StringKey } from "../../i18n/I18n";
 
 /**
  * The order the categories are reported to the model in. It matches the row order of
@@ -46,6 +46,15 @@ export function categoryName (category: string): string {
 }
 
 /**
+ * An attribute's label in the current language.
+ * @param {MessageAttributeType} attribute - The attribute.
+ * @returns {string}
+ */
+export function attributeLabel (attribute: MessageAttributeType): string {
+  return resolveLabel(attribute.label, "en").text;
+}
+
+/**
  * Nothing selected. Shared rather than rewritten at each use, so `clearAttributes()` on an
  * already-empty selection does not publish a new array and wake every reader. Frozen so a
  * consumer mutating what it reads (e.g. `.push()`) cannot poison this shared empty state.
@@ -59,14 +68,16 @@ const NO_ATTRIBUTES: readonly MessageAttributeType[] = Object.freeze([]);
 export const selectedAttributesSignal = signal<readonly MessageAttributeType[]>(NO_ATTRIBUTES);
 
 /**
- * Whether two attributes are the same one. Compared by category and label rather than by
- * identity: the cell builds a fresh object on every render.
+ * Whether two attributes are the same one. Compared by category and symbol, not label: the
+ * label changes with the UI language. Not by identity either: the cell builds a fresh object
+ * on every render.
  * @param {MessageAttributeType} first - One attribute.
  * @param {MessageAttributeType} second - The other.
  * @returns {boolean}
  */
 function isSameAttribute (first: MessageAttributeType, second: MessageAttributeType): boolean {
-  return first.category === second.category && first.label === second.label;
+  return first.category === second.category &&
+    JSON.stringify(first.composition) === JSON.stringify(second.composition);
 }
 
 /**
@@ -121,7 +132,7 @@ export function attributesPromptText (): string {
     .map((category) => {
       const labels = selected
         .filter((attribute) => attribute.category === category)
-        .map((attribute) => attribute.label)
+        .map(attributeLabel)
         .join(", ");
       return `${category}: ${labels}`;
     })

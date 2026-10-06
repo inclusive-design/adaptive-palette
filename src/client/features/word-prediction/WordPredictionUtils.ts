@@ -14,13 +14,13 @@ import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { readMessageLog } from "../../core/MessageLog";
 import { resolveWordPayload } from "../../utils/GlossLookupUtils";
 import { normalizeComposition } from "../../utils/SymbolEncodingUtils";
-import { renderTemplate, renderPromptLines } from "../../utils/PromptUtils";
+import { renderTemplate, renderPromptLines, promptsFor } from "../../utils/PromptUtils";
 import { pickModel } from "../telegraphic-translation/TelegraphicTranslationUtils";
 import { queryChat } from "../../core/OllamaApi";
 import { attributesPromptText } from "../message-attributes/MessageAttributesState";
 import { aboutMePromptText } from "../about-me/AboutMeState";
 import { ResolutionRungType, SymbolCompositionType, SymbolEncodingType } from "../../index.d";
-import { MODEL_LANGUAGE, t } from "../../i18n/I18n";
+import { languageSignal, t } from "../../i18n/I18n";
 
 /*
  * Common sentence starters, offered for the first word until the user has saved a message of
@@ -170,11 +170,13 @@ function loggedMessages (): SymbolEncodingType[][] {
  * Whether query model for word suggestions. Return true when both of these are true:
  * 1. `enableModelQuery` is enabled.
  * 2. There is at least one model available.
+ * 3. The config has prompts for the UI language.
  * @returns {boolean}
  */
 export function isModelTierActive (): boolean {
-  return adaptivePaletteGlobals.config.wordPrediction.enableModelQuery &&
-    adaptivePaletteGlobals.models.length > 0;
+  const config = adaptivePaletteGlobals.config.wordPrediction;
+  return config.enableModelQuery && adaptivePaletteGlobals.models.length > 0 &&
+    promptsFor(config, languageSignal.value) !== undefined;
 }
 
 /**
@@ -352,7 +354,7 @@ export function rankModelWords (words: string[], excludedLabels: string[], limit
       break;
     }
     attempted.push(word);
-    const { payload, rung } = resolveWordPayload(word, payloadByLabel, MODEL_LANGUAGE);
+    const { payload, rung } = resolveWordPayload(word, payloadByLabel, languageSignal.value);
     rungs[rung] += 1;
     if (payload) {
       payloads.push(payload);
@@ -374,7 +376,8 @@ export function rankModelWords (words: string[], excludedLabels: string[], limit
  */
 export async function requestModelWords (message: string, numWords: number, abortSignal?: AbortSignal): Promise<string[]> {
   const config = adaptivePaletteGlobals.config.wordPrediction;
-  if (!config.enableModelQuery) {
+  const prompts = promptsFor(config, languageSignal.value);
+  if (!config.enableModelQuery || !prompts) {
     throw new Error(t("predictionNotConfigured"));
   }
   const model = pickModel(config.model);
@@ -383,10 +386,10 @@ export async function requestModelWords (message: string, numWords: number, abor
   };
   const response = await queryChat(
     // Line-per-field: an empty `attributes` or `aboutMe` drops its line.
-    renderPromptLines(config.userPrompt, values),
+    renderPromptLines(prompts.userPrompt, values),
     model,
     false,
-    renderTemplate(config.systemPrompt, values),
+    renderTemplate(prompts.systemPrompt, values),
     abortSignal
   );
   const content = "message" in response ? (response.message?.content || "") : "";

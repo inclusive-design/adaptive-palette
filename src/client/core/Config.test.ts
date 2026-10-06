@@ -15,6 +15,8 @@ import {
   loadConfig, makeDefaultConfig, DISABLED_MODEL_QUERY, DEFAULT_MAX_RECALLED_RECORDS, DEFAULT_MAX_SUGGESTIONS,
   DEFAULT_MESSAGES_PER_RUN
 } from "./Config";
+import { promptsFor } from "../utils/PromptUtils";
+import { LANGUAGES } from "../i18n/I18n";
 
 /**
  * Stub `fetch` so that "/config.json" resolves to `configBody`.
@@ -404,10 +406,24 @@ describe("loadConfig with the shipped config.json", (): void => {
 
   test("the shipped config sends the attributes and About Me", async (): Promise<void> => {
     const config = await loadConfig();
-    expect(config.telegraphicTranslation?.userPrompt).toContain("{{attributes}}");
-    expect(config.wordPrediction?.userPrompt).toContain("{{attributes}}");
-    expect(config.telegraphicTranslation?.userPrompt).toContain("{{aboutMe}}");
-    expect(config.wordPrediction?.userPrompt).toContain("{{aboutMe}}");
+    for (const language of LANGUAGES) {
+      const translation = promptsFor(config.telegraphicTranslation, language);
+      const prediction = promptsFor(config.wordPrediction, language);
+      expect(translation?.userPrompt).toContain("{{attributes}}");
+      expect(prediction?.userPrompt).toContain("{{attributes}}");
+      expect(translation?.userPrompt).toContain("{{aboutMe}}");
+      expect(prediction?.userPrompt).toContain("{{aboutMe}}");
+    }
+  });
+
+  test("the shipped config has a prompt in every language for every model feature", async (): Promise<void> => {
+    const config = await loadConfig();
+    for (const language of LANGUAGES) {
+      expect(promptsFor(config.telegraphicTranslation, language)).toBeDefined();
+      expect(promptsFor(config.wordPrediction, language)).toBeDefined();
+      expect(promptsFor(config.aboutMe, language)).toBeDefined();
+      expect(promptsFor(config.indicatorLabelLookup, language)).toBeDefined();
+    }
   });
 });
 
@@ -570,5 +586,22 @@ describe("loadConfig language", (): void => {
 
   test("the default config is English", (): void => {
     expect(makeDefaultConfig().language).toBe("en");
+  });
+});
+
+describe("loadConfig prompt per language", (): void => {
+  test("accepts a prompt per language", async (): Promise<void> => {
+    stubConfigFetch({ aboutMe: { model: "", systemPrompt: { en: "s", sv: "s sv" }, userPrompt: "u" } });
+    const config = await loadConfig();
+    expect(config.aboutMe?.systemPrompt).toEqual({ en: "s", sv: "s sv" });
+  });
+
+  test("rejects a prompt object with an unknown language or a blank text", async (): Promise<void> => {
+    stubConfigFetch({ aboutMe: { model: "", systemPrompt: { fr: "s" }, userPrompt: "u" } });
+    expect((await loadConfig()).aboutMe).toBeUndefined();
+    stubConfigFetch({ aboutMe: { model: "", systemPrompt: { en: " " }, userPrompt: "u" } });
+    expect((await loadConfig()).aboutMe).toBeUndefined();
+    stubConfigFetch({ aboutMe: { model: "", systemPrompt: {}, userPrompt: "u" } });
+    expect((await loadConfig()).aboutMe).toBeUndefined();
   });
 });

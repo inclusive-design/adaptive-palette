@@ -72,6 +72,9 @@ Style** is hidden as well: `"requiresModel": true` on its cell in
 to leave the cell out and to close the command bar up over its column. The rest of the feature is
 untouched, so restoring a model brings the button back with no other change.
 
+An attribute is matched by its category and symbol, so it stays set when the language changes. The
+bar and the prompt show its label in the current language.
+
 ## Adding an attribute
 
 Edit `public/palette-sets/standardBlissChart/palettes/attributes.json`. Add a cell of type

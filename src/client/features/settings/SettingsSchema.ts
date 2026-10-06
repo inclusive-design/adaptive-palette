@@ -20,6 +20,7 @@
  */
 import type { AdaptivePaletteConfigType } from "../../index.d";
 import { getStorage } from "../../core/StorageBackend";
+import { isPrompt } from "../../core/Config";
 import { LANGUAGES, LANGUAGE_NAMES, type StringKey } from "../../i18n/I18n";
 
 export type SettingValueType = boolean | number | string;
@@ -154,7 +155,6 @@ export function currentValue (
   return typeof value === valueType(descriptor) ? value as SettingValueType : undefined;
 }
 
-const isFilledPrompt = (value: unknown): boolean => typeof value === "string" && value.trim().length > 0;
 
 /**
  * Whether a setting is one to offer in the dialog, and one a stored override may set.
@@ -178,7 +178,7 @@ export function isOffered (
     return true;
   }
   const section = parentOf(config, descriptor.path);
-  return isFilledPrompt(section?.systemPrompt) && isFilledPrompt(section?.userPrompt);
+  return isPrompt(section?.systemPrompt) && isPrompt(section?.userPrompt);
 }
 
 /**

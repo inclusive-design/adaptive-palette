@@ -10,6 +10,9 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+import type { Language } from "../i18n/I18n";
+import type { PromptType } from "../index.d";
+
 /**
  * Substitute `{{name}}` placeholders in a prompt template. Placeholders with no matching
  * value are left in place.
@@ -45,4 +48,22 @@ export function renderPromptLines (template: string, values: Record<string, stri
     })
     .map((line) => renderTemplate(line, values))
     .join("\n");
+}
+
+/**
+ * A feature's two prompts in a language. A plain-string prompt serves every language; a
+ * prompt per language serves only the languages it names. `undefined` when either has no
+ * text for the language: the feature is then off, as if it were not configured.
+ * @param {object | undefined} section - The feature's config section.
+ * @param {Language} language - The language to ask in.
+ * @returns {{ systemPrompt: string, userPrompt: string } | undefined}
+ */
+export function promptsFor (
+  section: { systemPrompt: PromptType, userPrompt: PromptType } | undefined, language: Language
+): { systemPrompt: string, userPrompt: string } | undefined {
+  const pick = (prompt: PromptType | undefined): string =>
+    (typeof prompt === "string" ? prompt : prompt?.[language]) ?? "";
+  const systemPrompt = pick(section?.systemPrompt);
+  const userPrompt = pick(section?.userPrompt);
+  return systemPrompt.trim() && userPrompt.trim() ? { systemPrompt, userPrompt } : undefined;
 }

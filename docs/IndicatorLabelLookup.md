@@ -63,12 +63,19 @@ selected. Once the model responds, it announces `"AI suggestion, {new label}"`, 
 Users can add modifiers before or after applying an indicator. The system tracks any modifiers applied *before* the
 indicator and automatically reapplies them to the newly resolved label.
 
+## Languages
+
+There is one table per language: `new_labels_with_indicator.json` (English) and
+`new_labels_with_indicator_sv.json` (Swedish). The model fallback uses the UI language's prompt and
+gloss, and the cached model result is keyed by language as well as symbol and indicator.
+
 ## Files Involved
 
 | File | Role |
 | :--- | :--- |
 | `src/client/utils/IndicatorLabelsUtils.ts` | Client module: loads the table, metadata, and implements the resolution logic. |
 | `public/data/new_labels_with_indicator.json` | Pre-generated lookup table (`{symbolId}_{indicatorId} -> label`). |
+| `public/data/new_labels_with_indicator_sv.json` | Swedish lookup table, same format. Generated off-line; not shipped yet. |
 | `public/data/indicators.json` | Indicator metadata (id, group, name, purpose). |
 | `public/data/bliss_symbol_explanations.json` | Bliss vocabulary (gloss, POS, explanation) used to build model prompts. |
 | `public/config.json` | Runtime config (enables/disables Ollama fallback, selects model, `markAiSuggestions`). |
@@ -131,6 +138,9 @@ node scripts/new_labels_with_indicator/generate_indicator_label_prompts.js \
   public/data/indicators.json \
   scripts/new_labels_with_indicator/data/new_labels_with_indicator_prompts.jsonl
 ```
+
+Add `--language sv` to ask with the Swedish gloss and the Swedish system prompt. For the Swedish run,
+use the same job script in Step 2 with `--prompts` and `--output` pointing at Swedish files.
 
 **Output:** A JSONL file starting with a `_meta` row (system prompt), followed by rows for each pair containing
 `targetId`, `wordId`, `gloss`, `pos`, `indicatorId`, `indicatorName`, and `prompt`.

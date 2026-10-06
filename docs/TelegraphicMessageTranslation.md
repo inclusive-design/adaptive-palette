@@ -28,27 +28,27 @@ currently in use.
 
 ### Prompts
 
-The system prompt:
+The system prompt (English; the Swedish one is under `sv` in `config.json`):
 
 ```text
-You are a communication assistant for someone using a Bliss-symbol AAC device. The user
-builds messages one symbol at a time, so their input is telegraphic: content words only,
-usually with no articles, no tense markers, and no prepositions.
+You are a communication assistant for someone using a Bliss-symbol AAC device. The user builds
+messages one symbol at a time, so their input is telegraphic: content words only, usually with no
+articles, no tense markers, and no prepositions.
 
-Rewrite the user's telegraphic message as {{numSentences}} complete English sentences.
-Each one must be a plausible reading of what the user meant.
+Rewrite the user's telegraphic message as {{numSentences}} complete English sentences. Each one must
+be a plausible reading of what the user meant.
 
 Rules:
 - Write in the first person, as the user speaking aloud to another person.
 - Preserve the meaning of every content word.
-- Do not invent facts, names, times, places, or feelings the user did not give. What you know
-  about the user counts as given: use it to fill in names and details.
-- When the message is ambiguous, vary the readings: different tense, different politeness,
-  or a different sentence type (statement, question, request).
+- Do not invent facts, names, times, places, or feelings the user did not give. What you know about
+  the user counts as given: use it to fill in names and details.
+- When the message is ambiguous, vary the readings: different tense, different politeness, or a
+  different sentence type (statement, question, request).
 - Keep each sentence short and natural to say out loud.
 - Order them most likely first.
-- Output exactly {{numSentences}} lines. Each line is one numbered sentence, like
-  "1. ...". No preamble, no commentary, no blank lines.
+- Output exactly {{numSentences}} lines. Each line is one numbered sentence, like "1. ...". No
+  preamble, no commentary, no blank lines.
 ```
 
 The user prompt:
@@ -63,6 +63,14 @@ What you know about the user: {{aboutMe}}
 palette, for example `Intent: question; Feeling: angry`. `{{aboutMe}}` carries the user's [About Me](AboutMe.md)
 facts, for example `Family: has a dog named Rex`. Either line is dropped
 when there is nothing to fill it with.
+
+### Swedish replies
+
+In Swedish the model writes two lines per sentence: the numbered sentence, then a line starting with
+`>` that lists the sentence's words as `word=base form`, separated by ` | `. A tag after the base form
+marks the form: `+past`, `+future`, `+imperative`, `+plural`. If the words line is missing or
+malformed, the sentence is shown without its Bliss row. A sentence recalled from history in Swedish
+has no Bliss row either, since it has no words line.
 
 ## Model selection
 
@@ -173,12 +181,12 @@ approved it themselves, and so is anything they type.
 
 ## Bliss sentence rows
 
-Each sentence choice is drawn as a row of Bliss symbols, each labelled with the English words it covers,
+Each sentence choice is drawn as a row of Bliss symbols, each labelled with the words it covers,
 so a user who reads Bliss rather than English can choose between the candidates. The row carries the
-English itself; the sentence is not repeated below it. `showBlissSentence` in `config.json` turns the row
-off, leaving the plain English sentence.
+words themselves; the sentence is not repeated below it. `showBlissSentence` in `config.json` turns the row
+off, leaving the plain sentence.
 
-The row is `aria-hidden`, so the button's accessible name comes from its `aria-label`: the plain English
+The row is `aria-hidden`, so the button's accessible name comes from its `aria-label`: the plain
 sentence, unchanged by any of this.
 
 The row is built on the client with no extra model call. How a sentence is parsed, split into spans and
@@ -221,6 +229,8 @@ Every message is stored, and nothing is ever removed -- see [Storage.md](devDoc/
 sentence can be recalled from is narrower: `findLatestTranslation()` only looks at the newest
 `maxRecalledRecords` messages, the top-level setting in `public/config.json` that caps every log
 the application keeps. Setting it to `0` keeps the feature but stores and recalls nothing.
+A sentence is saved with its language and is only recalled in that language; one saved
+without a language is taken as English.
 
 Data can currently be inspected through browser developer tools. No in-application export is provided.
 

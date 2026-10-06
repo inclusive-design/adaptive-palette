@@ -30,6 +30,7 @@ import {
 } from "../message-attributes/MessageAttributesState";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 import { en } from "../../i18n/en";
+import { languageSignal } from "../../i18n/I18n";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../core/OllamaApi")>();
@@ -190,12 +191,28 @@ describe("telegraphicTranslationState", (): void => {
       sentences: ["I am hungry.", "I want food."],
       recalledSentence: null,
       model: "phony-model:12b",
-      telegraphicMessage: "me hungry"
+      telegraphicMessage: "me hungry",
+      language: "en",
+      words: new Map()
     });
     expect(mockedQueryChat).toHaveBeenCalledWith(
       "Telegraphic message: me hungry", "phony-model:12b", false, "Give 3 sentences.",
       expect.any(AbortSignal)
     );
+  });
+
+  test("a ready state carries the sentences' language and their words", async (): Promise<void> => {
+    editMessage(INPUT_CONTENTS);
+    mockedQueryChat.mockResolvedValue({
+      message: { content: "1. Jag är hungrig.\n> Jag=jag | är=vara | hungrig=hungrig | ." }
+    } as never);
+
+    await requestForCurrentMessage();
+
+    const state = sentenceCompletionsSignal.value;
+    expect(state.status).toBe("ready");
+    expect(state.language).toBe(languageSignal.value);
+    expect(state.words?.get("Jag är hungrig.")).toBeDefined();
   });
 
   test("a failed query publishes the error state", async (): Promise<void> => {
@@ -710,7 +727,8 @@ describe("telegraphicTranslationState", (): void => {
       sentences: ["I am hungry."],
       recalledSentence: "I am hungry.",
       model: "old-model:12b",
-      telegraphicMessage: "me hungry"
+      telegraphicMessage: "me hungry",
+      language: "en"
     });
     // Recall reads the log; it writes nothing until the user picks the sentence.
     expect(readMessageLog()).toEqual(loggedBefore);
@@ -804,7 +822,9 @@ describe("telegraphicTranslationState", (): void => {
       sentences: ["I am hungry.", "I want food.", "Can I eat now?"],
       recalledSentence: "I am hungry.",
       model: "phony-model:12b",
-      telegraphicMessage: "me hungry"
+      telegraphicMessage: "me hungry",
+      language: "en",
+      words: new Map()
     });
   });
 

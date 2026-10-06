@@ -132,9 +132,9 @@ describe("ActionIndicatorCell", (): void => {
     expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith("helper");
   });
 
-  test("In a UI language other than the model's, keeps the label and asks nothing", async (): Promise<void> => {
-    mockedGetStaticNewLabel.mockReturnValue("ate");
+  test("looks the label up with the UI in Swedish too", async (): Promise<void> => {
     languageSignal.value = "sv";
+    mockedGetStaticNewLabel.mockReturnValue("åt");
 
     changeEncodingContents.value = {
       payloads: [{ label: "äta", composition: 382, userSelectedSymbolId: 382 }],
@@ -146,12 +146,10 @@ describe("ActionIndicatorCell", (): void => {
     fireEvent.click(button);
 
     await waitFor(() => {
-      expect(changeEncodingContents.value.payloads[0].indicatorId).toBe(testCell.options.composition);
+      expect(changeEncodingContents.value.payloads[0].label).toBe("åt");
     });
-    expect(changeEncodingContents.value.payloads[0].label).toBe("äta");
-    expect(mockedGetStaticNewLabel).not.toHaveBeenCalled();
-    expect(mockedGetNewLabelViaModelQuery).not.toHaveBeenCalled();
-    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(`äta, ${testCell.options.label}`);
+    expect(mockedGetStaticNewLabel).toHaveBeenCalled();
+    expect(mockedAnnounceIfEnabled).toHaveBeenLastCalledWith("åt");
   });
 
   test("Replacing an indicator derives the prompt from baseLabel, not the swapped label", async (): Promise<void> => {

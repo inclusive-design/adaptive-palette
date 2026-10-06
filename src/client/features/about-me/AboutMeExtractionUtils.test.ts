@@ -18,6 +18,8 @@ import { seedMessageLog, resetMessageLog } from "../../testUtils/MessageLogTestU
 import { aboutMeSignal } from "./AboutMeState";
 import { parseFactSuggestions, requestFactSuggestions } from "./AboutMeExtractionUtils";
 import { en } from "../../i18n/en";
+import { sv } from "../../i18n/sv";
+import { languageSignal } from "../../i18n/I18n";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../core/OllamaApi")>();
@@ -86,6 +88,10 @@ describe("requestFactSuggestions", (): void => {
     setTestConfig({ aboutMe: { ...CONFIG } });
     await seedMessageLog([record("old"), record("dog", "I walk my dog Rex."), record("tea")]);
     aboutMeSignal.value = { facts: [], dismissed: [], pending: [] };
+  });
+
+  afterEach((): void => {
+    languageSignal.value = "en";
   });
 
   test("sends the oldest batch, using the chosen sentence when there is one", async (): Promise<void> => {
@@ -170,6 +176,13 @@ describe("requestFactSuggestions", (): void => {
     expect(mockedQueryChat).toHaveBeenCalledTimes(1);
     expect(second).toEqual(first);
     expect(aboutMeSignal.value.pending).toEqual([{ category: "Preferences", text: "likes tea" }]);
+  });
+
+  test("rejects when there is no prompt for the UI language", async (): Promise<void> => {
+    setTestConfig({ aboutMe: { ...CONFIG, systemPrompt: { en: "Find facts." } } });
+    languageSignal.value = "sv";
+    await expect(requestFactSuggestions()).rejects.toThrow(sv.aboutMeNotConfigured);
+    expect(mockedQueryChat).not.toHaveBeenCalled();
   });
 
   test("rejects when the section is not configured", async (): Promise<void> => {

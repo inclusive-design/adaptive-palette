@@ -16,6 +16,7 @@ import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { setTestConfig } from "../testUtils/TestConfig";
 import { getStaticNewLabel, getNewLabelViaModelQuery, initIndicatorLabels, resetOllamaCacheForTests } from "./IndicatorLabelsUtils";
 import { queryChat } from "../core/OllamaApi";
+import { languageSignal } from "../i18n/I18n";
 
 vi.mock("../core/OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../core/OllamaApi")>();
@@ -25,6 +26,7 @@ vi.mock("../core/OllamaApi", async (importOriginal) => {
 const mockedQueryChat = vi.mocked(queryChat);
 
 const FAKE_LABELS = { "382_97": "helper", "1184_97": "aid" };
+const FAKE_LABELS_SV = { "382_97": "hjälparen" };
 const FAKE_INDICATORS = [
   { id: 97, group: "Nominal", name: "INDICATOR THING", purpose: "Marks concrete sense" }
 ];
@@ -53,7 +55,8 @@ describe("IndicatorLabels", (): void => {
   beforeEach(async (): Promise<void> => {
     mockedQueryChat.mockReset();
     vi.stubGlobal("fetch", vi.fn((url: string) => {
-      const body = url.includes("indicators.json") ? FAKE_INDICATORS : FAKE_LABELS;
+      const body = url.includes("indicators.json") ? FAKE_INDICATORS
+        : url.includes("_sv") ? FAKE_LABELS_SV : FAKE_LABELS;
       return Promise.resolve({
         ok: true,
         json: () => Promise.resolve(body)
@@ -69,7 +72,58 @@ describe("IndicatorLabels", (): void => {
   });
 
   afterEach((): void => {
+    languageSignal.value = "en";
     vi.unstubAllGlobals();
+  });
+
+  test("reads the table for the UI language", async (): Promise<void> => {
+    await initIndicatorLabels();
+    expect(getStaticNewLabel(382, 97)).toBe("helper");
+    languageSignal.value = "sv";
+    expect(getStaticNewLabel(382, 97)).toBe("hjälparen");
+  });
+
+  test("a missing table leaves its language empty", async (): Promise<void> => {
+    vi.stubGlobal("fetch", vi.fn((url: string) => Promise.resolve(url.includes("_sv")
+      ? { ok: false, status: 404, json: () => Promise.reject(new Error("not JSON")) }
+      : { ok: true, json: () => Promise.resolve(url.includes("indicators.json") ? FAKE_INDICATORS : FAKE_LABELS) })));
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    await initIndicatorLabels();
+    languageSignal.value = "sv";
+    expect(getStaticNewLabel(382, 97)).toBeUndefined();
+    languageSignal.value = "en";
+    expect(getStaticNewLabel(382, 97)).toBe("helper");
+  });
+
+  test("asks the model with the Swedish prompt and gloss", (): void => {
+    setTestConfig({ indicatorLabelLookup: {
+      useModelQueryFallback: true, model: "gemma4:12b",
+      systemPrompt: { en: SYSTEM_PROMPT, sv: "Svenska." }, userPrompt: USER_PROMPT
+    } });
+    languageSignal.value = "sv";
+    mockedQueryChat.mockResolvedValue({ message: { content: "äpplen" } } as never);
+
+    const result = getNewLabelViaModelQuery(131, "äpple", undefined, 97);
+
+    expect(result.status).toBe("pending");
+    expect(mockedQueryChat.mock.calls[0][0]).toContain("Word: \"äpple\"");
+    expect(mockedQueryChat.mock.calls[0][3]).toBe("Svenska.");
+  });
+
+  test("is not viable without a prompt for the UI language", (): void => {
+    setTestConfig({ indicatorLabelLookup: {
+      useModelQueryFallback: true, model: "gemma4:12b", systemPrompt: { en: SYSTEM_PROMPT }, userPrompt: USER_PROMPT
+    } });
+    languageSignal.value = "sv";
+    expect(getNewLabelViaModelQuery(131, "äpple", undefined, 97).status).toBe("not-viable");
+  });
+
+  test("caches each language apart", async (): Promise<void> => {
+    enableModelQuery();
+    mockedQueryChat.mockResolvedValue({ message: { content: "apples" } } as never);
+    await (getNewLabelViaModelQuery(131, "apple", undefined, 97) as { promise: Promise<unknown> }).promise;
+    languageSignal.value = "sv";
+    expect(getNewLabelViaModelQuery(131, "äpple", undefined, 97).status).toBe("pending");
   });
 
   describe("getStaticNewLabel", (): void => {

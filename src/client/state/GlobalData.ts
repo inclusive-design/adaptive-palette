@@ -33,6 +33,7 @@ import bliss_symbols from "../../../public/data/bliss_symbol_explanations.json";
 // Those are imported in `cellTypeRegistry.ts`
 import { PaletteStore } from "../core/PaletteStore";
 import { NavigationStack } from "../core/NavigationStack";
+import type { Language } from "../i18n/I18n";
 
 /**
  * Load the map between the BCI-AV IDs and the code consumed by the Bliss SVG
@@ -47,7 +48,7 @@ export const adaptivePaletteGlobals = {
   // `config.json` as it was read, before the user's saved settings were applied. The settings
   // dialog compares against it to work out which of its values are overrides.
   fileConfig: makeDefaultConfig(),
-  indicatorLabels: {} as Record<string, string>,
+  indicatorLabels: {} as Partial<Record<Language, Record<string, string>>>,
   // `id` attribute of the HTML element area where the main palette is
   // displayed, set by initAdaptivePaletteGlobals().  It defaults to the empty
   // string and that identifies the `<body>` elements as a default.

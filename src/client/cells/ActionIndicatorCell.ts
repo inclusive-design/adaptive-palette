@@ -20,7 +20,7 @@ import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { applyModifiersToLabel, replaceAtCaret } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
-import { MODEL_LANGUAGE, languageSignal, t } from "../i18n/I18n";
+import { t } from "../i18n/I18n";
 import { findIndicators, findClassifierFromLeft } from "../utils/SvgUtils";
 import { getStaticNewLabel, getNewLabelViaModelQuery } from "../utils/IndicatorLabelsUtils";
 import "./ActionIndicatorCell.scss";
@@ -134,13 +134,6 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
     // async wait -- so a click always gets audio feedback even if a later click supersedes it
     // first. Only the resolution after a genuinely in-flight model query (the "pending" branch)
     // is gated on `isStillCurrent()`.
-    // The lookup and the model give English words, so a label in another UI language is kept.
-    // ponytail: assumes the message's labels are in the UI language; a model word added in
-    // Swedish keeps its label too. Store each payload's language if that matters.
-    if (languageSignal.value !== MODEL_LANGUAGE) {
-      announceIfEnabled(unchangedMessage);
-      return;
-    }
     const staticLabel = getStaticNewLabel(symbolToEdit.userSelectedSymbolId, indicatorId);
     if (staticLabel !== undefined) {
       applyLabel(staticLabel, false);

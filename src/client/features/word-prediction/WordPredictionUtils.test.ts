@@ -26,6 +26,7 @@ import { aboutMeSignal } from "../about-me/AboutMeState";
 import { SymbolEncodingType } from "../../index.d";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 import { en } from "../../i18n/en";
+import { languageSignal } from "../../i18n/I18n";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../core/OllamaApi")>();
@@ -182,6 +183,7 @@ describe("wordPrediction with a model answering as well", (): void => {
   });
 
   afterEach(async (): Promise<void> => {
+    languageSignal.value = "en";
     await resetMessageLog();
     adaptivePaletteGlobals.config.wordPrediction = {
       show: false, maxSuggestions: 10, enableModelQuery: false, model: "", systemPrompt: "", userPrompt: ""
@@ -197,6 +199,18 @@ describe("wordPrediction with a model answering as well", (): void => {
     test("is inactive when the query is turned off", (): void => {
       adaptivePaletteGlobals.config.wordPrediction.enableModelQuery = false;
       expect(isModelTierActive()).toBe(false);
+    });
+
+    test("is inactive when there is no prompt for the UI language", (): void => {
+      adaptivePaletteGlobals.config.wordPrediction.systemPrompt = { en: "List {{numWords}} words." };
+      languageSignal.value = "sv";
+      expect(isModelTierActive()).toBe(false);
+    });
+
+    test("is active when the prompts cover the UI language", (): void => {
+      adaptivePaletteGlobals.config.wordPrediction.systemPrompt = { en: "e", sv: "s" };
+      languageSignal.value = "sv";
+      expect(isModelTierActive()).toBe(true);
     });
 
     // Ollama not running is the ordinary case, not a fault worth reporting.
@@ -314,6 +328,11 @@ describe("wordPrediction with a model answering as well", (): void => {
 
     test("no more than the empty slots are filled", (): void => {
       expect(rankedLabels(["food", "tea", "coffee"], [], 2)).toHaveLength(2);
+    });
+
+    test("resolves a model word by its gloss in the UI language", (): void => {
+      languageSignal.value = "sv";
+      expect(rankModelWords(["äpple"], [], 4)[0].userSelectedSymbolId).toBe(131);
     });
 
     test("words with no symbol are left out", (): void => {

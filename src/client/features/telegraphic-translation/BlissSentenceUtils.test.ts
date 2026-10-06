@@ -12,8 +12,9 @@
 
 import {
   blissSlots, FUTURE_INDICATOR_ID, IMPERATIVE_INDICATOR_ID, PAST_INDICATOR_ID,
-  PLURAL_INDICATOR_ID, sentenceSpans
+  PLURAL_INDICATOR_ID, sentenceSpans, spanSlots
 } from "./BlissSentenceUtils";
+import { parseWordsLine } from "./TelegraphicTranslationUtils";
 import { saveMessageRecord } from "../../core/MessageLog";
 import { SymbolCompositionType, SymbolEncodingType } from "../../index.d";
 import { compositionToBstr, getSvgElement, initSvgCompositeDefinitions } from "../../utils/SvgUtils";
@@ -200,6 +201,17 @@ describe("BlissSentenceUtils", (): void => {
 
     beforeEach(async (): Promise<void> => {
       await resetMessageLog();
+    });
+
+    describe("spanSlots", (): void => {
+      it("finds Swedish words by their Swedish gloss and overlays their indicator", (): void => {
+        const slots = spanSlots(parseWordsLine("> Jag=jag | åt=äta+past | äpplen=äpple+plural | .")!, "sv");
+        expect(slots.map((slot) => slot.text)).toEqual(["Jag", "åt", "äpplen", "."]);
+        expect(slots[0].payload?.userSelectedSymbolId).toBe(1840);
+        expect(slots[1].payload?.composition).toEqual([1588, ";;", 92]);
+        expect(slots[2].payload?.composition).toEqual([131, ";;", 99]);
+        expect(slots[3].payload?.userSelectedSymbolId).toBe(4);
+      });
     });
 
     const compositions = (sentence: string): (SymbolCompositionType | undefined)[] =>

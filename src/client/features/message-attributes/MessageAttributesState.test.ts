@@ -51,10 +51,22 @@ describe("MessageAttributesState", (): void => {
     expect(selectedAttributesSignal.value).toEqual([]);
   });
 
-  test("an attribute is matched by category and label, not by object identity", (): void => {
+  test("an attribute is the same one in any language", (): void => {
+    toggleAttribute({ category: "Feeling", label: "arg", composition: 1198 });
+    expect(isAttributeSelected({ category: "Feeling", label: "angry", composition: 1198 })).toBe(true);
+  });
+
+  test("an attribute is matched by category and symbol, not by object identity", (): void => {
     toggleAttribute(question);
     toggleAttribute({ category: "Intent", label: "question", composition: 553 });
     expect(selectedAttributesSignal.value).toEqual([]);
+  });
+
+  test("the prompt text follows a change of language", (): void => {
+    toggleAttribute({ category: "Intent", label: { en: "question", sv: "fråga" }, composition: 553 });
+    expect(attributesPromptText()).toBe("Intent: question");
+    languageSignal.value = "sv";
+    expect(attributesPromptText()).toBe("Intent: fråga");
   });
 
   test("several attributes from one category are allowed", (): void => {

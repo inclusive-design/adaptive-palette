@@ -13,6 +13,7 @@
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { StoredMessage, getStorage } from "./StorageBackend";
 import { SymbolEncodingType } from "../index.d";
+import type { Language } from "../i18n/I18n";
 
 /*
  * How the preferred sentence was arrived at:
@@ -30,7 +31,9 @@ export type TranslationInfoType = {
   model: string,
   candidates: string[],
   sentence: string,
-  source: SentenceSourceType
+  source: SentenceSourceType,
+  // The language of `sentence`. Absent on records saved before Swedish was added: English.
+  language?: Language
 };
 
 /*
@@ -253,17 +256,20 @@ export function saveTranslation (telegraphicMessage: string, translation: Transl
 /**
  * Find the most recent translation for a message, if there is one.
  *
- * Matches on message text alone -- ignores attributes; see `saveTranslation()`.
+ * Matches on message text and language -- ignores attributes; see `saveTranslation()`. The
+ * language matters because a palette label can read the same in every language.
  * @param {string} telegraphicMessage - The message to look up.
+ * @param {Language} language - The language the sentence must be in.
  * @returns {TranslationInfoType | undefined}
  */
-export function findLatestTranslation (telegraphicMessage: string): TranslationInfoType | undefined {
+export function findLatestTranslation (telegraphicMessage: string, language: Language): TranslationInfoType | undefined {
   if (!adaptivePaletteGlobals.config.maxRecalledRecords) {
     return undefined;
   }
   for (let index = log.length - 1; index >= 0; index--) {
     const entry = log[index];
-    if (entry.translation && recordMessageText(entry) === telegraphicMessage) {
+    if (entry.translation && (entry.translation.language ?? "en") === language &&
+        recordMessageText(entry) === telegraphicMessage) {
       return entry.translation;
     }
   }

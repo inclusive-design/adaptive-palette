@@ -15,13 +15,16 @@ import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { queryChat } from "../../core/OllamaApi";
 import { setTestConfig } from "../../testUtils/TestConfig";
 import {
-  pickModel, parseSentences, requestSentences
+  pickModel, parseSentences, parseSentenceWords, parseWordsLine, requestSentences
 } from "./TelegraphicTranslationUtils";
+import { FUTURE_INDICATOR_ID, PAST_INDICATOR_ID, PLURAL_INDICATOR_ID } from "./BlissSentenceUtils";
 import {
   selectedAttributesSignal, clearAttributes
 } from "../message-attributes/MessageAttributesState";
 import { aboutMeSignal } from "../about-me/AboutMeState";
 import { en } from "../../i18n/en";
+import { sv } from "../../i18n/sv";
+import { languageSignal } from "../../i18n/I18n";
 
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../core/OllamaApi")>();
@@ -46,6 +49,10 @@ describe("telegraphicTranslation", (): void => {
     setTestConfig({ telegraphicTranslation: { ...CONFIG } });
     clearAttributes();
     aboutMeSignal.value = { facts: [], dismissed: [], pending: [] };
+  });
+
+  afterEach((): void => {
+    languageSignal.value = "en";
   });
 
   describe("pickModel", (): void => {
@@ -89,9 +96,80 @@ describe("telegraphicTranslation", (): void => {
     test("returns an empty array for an empty reply", (): void => {
       expect(parseSentences("\n  \n")).toEqual([]);
     });
+
+    test("drops the words lines", (): void => {
+      expect(parseSentences("1. Jag åt.\n> Jag=jag | åt=äta+past")).toEqual(["Jag åt."]);
+    });
+  });
+
+  describe("parseWordsLine", (): void => {
+
+    test("reads each word, its base form and its tag", (): void => {
+      expect(parseWordsLine("> Jag=jag | åt=äta+past | äpplen=äpple+plural | .")).toEqual([
+        { text: "Jag", key: "jag", indicatorId: undefined },
+        { text: "åt", key: "äta", indicatorId: PAST_INDICATOR_ID },
+        { text: "äpplen", key: "äpple", indicatorId: PLURAL_INDICATOR_ID },
+        { text: ".", key: ".", isPunctuation: true }
+      ]);
+    });
+
+    test("keeps a word of several written words", (): void => {
+      expect(parseWordsLine("> ska äta=äta+future")).toEqual([
+        { text: "ska äta", key: "äta", indicatorId: FUTURE_INDICATOR_ID }
+      ]);
+    });
+
+    test("rejects the line when a part is malformed", (): void => {
+      expect(parseWordsLine("> Jag=jag | åt")).toBeUndefined();
+      expect(parseWordsLine("> åt=äta+yesterday")).toBeUndefined();
+      expect(parseWordsLine(">")).toBeUndefined();
+    });
+
+    test("skips empty parts left by a stray bar", (): void => {
+      expect(parseWordsLine("> Jag=jag || åt=äta |")).toEqual([
+        { text: "Jag", key: "jag", indicatorId: undefined },
+        { text: "åt", key: "äta", indicatorId: undefined }
+      ]);
+    });
+  });
+
+  describe("parseSentenceWords", (): void => {
+
+    test("ties each words line to the sentence above it", (): void => {
+      const words = parseSentenceWords("1. Jag åt.\n> Jag=jag | åt=äta+past | .\n2. Jag äter.\n> Jag=jag | äter=äta | .");
+      expect(words.get("Jag åt.")?.[1].indicatorId).toBe(PAST_INDICATOR_ID);
+      expect(words.get("Jag äter.")?.[1].indicatorId).toBeUndefined();
+    });
+
+    test("leaves a sentence with a malformed or missing words line out", (): void => {
+      const words = parseSentenceWords("1. Jag åt.\n> trasig\n2. Jag äter.");
+      expect(words.size).toBe(0);
+    });
   });
 
   describe("requestSentences", (): void => {
+
+    test("asks with the prompts for the UI language", async (): Promise<void> => {
+      setTestConfig({ telegraphicTranslation: {
+        model: "", numSentences: 1, showBlissSentence: true,
+        systemPrompt: { en: "en system", sv: "sv system" }, userPrompt: "Message: {{telegraphicMessage}}"
+      } });
+      languageSignal.value = "sv";
+      mockedQueryChat.mockResolvedValue({ message: { content: "1. Jag är hungrig." } } as never);
+
+      const result = await requestSentences("jag hungrig");
+
+      expect(mockedQueryChat).toHaveBeenCalledWith("Message: jag hungrig", expect.any(String), false, "sv system", undefined);
+      expect(result.language).toBe("sv");
+    });
+
+    test("is not configured when there is no prompt for the UI language", async (): Promise<void> => {
+      setTestConfig({ telegraphicTranslation: {
+        model: "", numSentences: 1, showBlissSentence: true, systemPrompt: { en: "en system" }, userPrompt: "u"
+      } });
+      languageSignal.value = "sv";
+      await expect(requestSentences("jag hungrig")).rejects.toThrow(sv.sentenceNotConfigured);
+    });
 
     test("renders both prompts and returns the parsed sentences", async (): Promise<void> => {
       mockedQueryChat.mockResolvedValue({
@@ -102,7 +180,9 @@ describe("telegraphicTranslation", (): void => {
 
       expect(result).toEqual({
         sentences: ["I am hungry.", "I want food."],
-        model: "phony-model:12b"
+        model: "phony-model:12b",
+        language: "en",
+        words: new Map()
       });
       expect(mockedQueryChat).toHaveBeenCalledWith(
         "Telegraphic message: me hungry",
