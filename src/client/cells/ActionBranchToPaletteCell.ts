@@ -13,9 +13,9 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolCellType } from "../index.d";
-import { adaptivePaletteGlobals } from "../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
 import { BlissSymbol } from "../components/BlissSymbol";
-import { announceIfEnabled } from "../utils/SpeechUtils";
+import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import type { Language } from "../i18n/I18n";
 import "./ActionBranchToPaletteCell.scss";
 
@@ -65,17 +65,28 @@ const navigateToPalette = async (event: Event, language?: Language): Promise<voi
  * @returns {VNode}
  */
 export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType): VNode {
-  const { columnStart, columnSpan, rowStart, rowSpan, branchTo, composition, label, labelLanguage } = props.options;
+  const {
+    columnStart, columnSpan, rowStart, rowSpan, branchTo, composition, label, labelLanguage, needsCaretSymbol
+  } = props.options;
 
   const gridStyles = `
     grid-column: ${columnStart} / span ${columnSpan};
     grid-row: ${rowStart} / span ${rowSpan};
   `;
 
+  // Marked unavailable rather than `disabled` so the button keeps its place in the tab
+  // order for switch and eye-gaze users.
+  const unavailable = !!needsCaretSymbol && changeEncodingContents.value.caretPosition === -1;
+  const cellClicked = (event: Event) => {
+    if (unavailable) { speakUnavailable(label); return; }
+    void navigateToPalette(event, labelLanguage);
+  };
+  const className = `actionBranchToPaletteCell foldedCorner${needsCaretSymbol ? " btn-command" : ""}`;
+
   return html`
     <button
-      id="${props.id}" class="actionBranchToPaletteCell foldedCorner" style="${gridStyles}"
-      data-branchto="${branchTo}" onClick=${(event: Event) => navigateToPalette(event, labelLanguage)}>
+      id="${props.id}" class="${className}" style="${gridStyles}"
+      data-branchto="${branchTo}" onClick=${cellClicked} aria-disabled=${needsCaretSymbol ? unavailable : undefined}>
       <${BlissSymbol} composition=${composition} label=${label} />
     </button>
   `;

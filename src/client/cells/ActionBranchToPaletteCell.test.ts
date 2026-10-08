@@ -15,7 +15,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/preact";
 import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
-import { adaptivePaletteGlobals } from "../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
 import { ActionBranchToPaletteCell } from "./ActionBranchToPaletteCell";
 import { goBackImpl } from "./CommandGoBackCell";
 import { goToRootImpl } from "./CommandGoToRootCell";
@@ -49,6 +49,21 @@ describe("ActionBranchToPaletteCell", (): void => {
 
     // Check disabled state (should be enabled)
     expect(button.getAttribute("disabled")).toBe(null);
+  });
+
+  test("with needsCaretSymbol, is a command that is unavailable without a symbol at the caret", async (): Promise<void> => {
+    const options = { ...goToPaletteCell.options, needsCaretSymbol: true };
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+
+    renderCell(ActionBranchToPaletteCell, TEST_CELL_ID, options);
+    const button = await expectCellRendered(
+      TEST_CELL_ID, options, "actionBranchToPaletteCell foldedCorner btn-command"
+    );
+    expect(button).toHaveAttribute("aria-disabled", "true");
+
+    changeEncodingContents.value = { payloads: [{ label: "opposite", composition: 486 }], caretPosition: 0 };
+    await waitFor(() => expect(button).toHaveAttribute("aria-disabled", "false"));
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
   });
 
   // Regression coverage for the bug where navigateToPalette() read the go-back palette off

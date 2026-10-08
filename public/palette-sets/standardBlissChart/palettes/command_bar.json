@@ -87,6 +87,7 @@
           "sv": "lägg till indikator"
         },
         "branchTo": "indicators",
+        "needsCaretSymbol": true,
         "composition": [
           1174,
           "//",

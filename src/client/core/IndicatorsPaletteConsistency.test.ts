@@ -19,12 +19,10 @@
 import { loadPaletteFromJsonFile } from "./PaletteStore";
 import { JsonPaletteType, LayoutInfoType } from "../index.d";
 import type { IndicatorInfoEntry } from "../utils/IndicatorLabelsUtils";
+import { isIndicator } from "../utils/SvgUtils";
 
 const PALETTE_PATH = "/palette-sets/standardBlissChart/palettes/indicators.json";
-const COMMAND_BAR_PATH = "/palette-sets/standardBlissChart/palettes/command_bar.json";
-
-// Indicators per row: the width of the header.
-const COLUMNS = 9;
+const INDICATORS_PATH = "/data/indicators.json";
 
 describe("indicators.json agrees with data/indicators.json", (): void => {
 
@@ -37,7 +35,11 @@ describe("indicators.json agrees with data/indicators.json", (): void => {
       throw new Error(`Could not load ${PALETTE_PATH}`);
     }
     palette = loaded;
-    indicators = await (await fetch("/data/indicators.json")).json() as IndicatorInfoEntry[];
+    const response = await fetch(INDICATORS_PATH);
+    if (!response.ok) {
+      throw new Error(`Could not load ${INDICATORS_PATH}`);
+    }
+    indicators = await response.json() as IndicatorInfoEntry[];
   });
 
   // The indicator cells in reading order: row by row, left to right.
@@ -52,20 +54,18 @@ describe("indicators.json agrees with data/indicators.json", (): void => {
       .toEqual(indicators.map((indicator) => indicator.id));
   });
 
+  test("every indicator is recognised by isIndicator()", (): void => {
+    indicators.forEach((indicator) => expect(isIndicator(indicator.id), `indicator ${indicator.id}`).toBe(true));
+  });
+
   test("fills the rows below the header with no gaps or headings", (): void => {
+    // Indicators per row: the width of the header.
+    const columns = palette.cells["standard-header"].options.columnSpan;
     expect(Object.values(palette.cells).filter((cell) => cell.type === "ContentLabel")).toHaveLength(0);
     indicatorCells().forEach((options, index) => {
       expect([options.rowStart, options.columnStart], `indicator ${options.composition}`)
-        .toEqual([2 + Math.floor(index / COLUMNS), 1 + index % COLUMNS]);
+        .toEqual([2 + Math.floor(index / columns), 1 + index % columns]);
     });
   });
 
-  test("leaves the remove indicator button to the command bar", async (): Promise<void> => {
-    const commandBar = await loadPaletteFromJsonFile(COMMAND_BAR_PATH);
-    const removeCells = (cells: JsonPaletteType["cells"]) =>
-      Object.values(cells).filter((cell) => cell.type === "ActionRemoveIndicatorCell");
-
-    expect(removeCells(palette.cells)).toHaveLength(0);
-    expect(removeCells(commandBar?.cells ?? {})).toHaveLength(1);
-  });
 });

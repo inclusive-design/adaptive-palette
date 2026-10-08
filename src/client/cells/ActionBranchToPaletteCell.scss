@@ -12,9 +12,13 @@
 
 .actionBranchToPaletteCell {
   border: 3px solid blue;
-  background-color: white;
   padding-inline: 0.5rem;
   text-align: center;
+
+  /* A branch that edits the message (`needsCaretSymbol`) takes `.btn-command`'s colours instead. */
+  &:not(.btn-command) {
+    background-color: white;
+  }
 }
 
 /*
@@ -44,9 +48,4 @@
     //  Firefox 3.0 damage limitation
     display: block; width: 0;
   }
-}
-
-/* "add indicator" on the command bar edits the message, so it takes the command colour. */
-#command-indicators {
-  background-color: lightsalmon;
 }

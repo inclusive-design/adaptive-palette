@@ -70,7 +70,8 @@ describe("Navigating between screens that share the Standard Header", (): void =
     expect(textBox).toHaveFocus();
 
     // `fireEvent` leaves focus where it is, as a keyboard shortcut or a switch scan can.
-    const branch = container.querySelector<HTMLElement>(".actionBranchToPaletteCell");
+    // Skip "add indicator", which is unavailable with no symbol at the caret.
+    const branch = container.querySelector<HTMLElement>(".actionBranchToPaletteCell:not([aria-disabled='true'])");
     if (!branch) {
       throw new Error("The start palette has no branch cell");
     }
