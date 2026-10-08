@@ -56,7 +56,9 @@ export type LayoutInfoType = {
 
 export type BranchToInfoType = {
   branchTo: string,
-  ariaControls?: string
+  ariaControls?: string,
+  // The palette edits the symbol at the caret, so the button is unavailable without one.
+  needsCaretSymbol?: boolean
 };
 
 export type BlissSymbolCellType = LayoutInfoType & BranchToInfoType & BlissSymbolInfoType;

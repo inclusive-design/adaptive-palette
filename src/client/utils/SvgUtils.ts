@@ -21,7 +21,7 @@ const indicatorIds = {
   range1: [81, 99],       // bciAvId 8993-9011
   range2: [904, 916],     // bciAvId 24667-24679
   range3: [5996, 5998],   // bciAvId 28044-28046
-  list: [902, 903, 928, 992]  // bciAvId 24665, 28043, 24807, 25458
+  list: [902, 903, 928, 992, 6436, 6439]  // bciAvId 24665, 28043, 24807, 25458, 16436, 16439
 };
 
 // Lists of modifier symbols

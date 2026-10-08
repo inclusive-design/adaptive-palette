@@ -7,6 +7,7 @@
     "Input Area": "palettes/input_area.json",
     "Command Bar": "palettes/command_bar.json",
     "attributes": "palettes/attributes.json",
+    "indicators": "palettes/indicators.json",
     "questions": "palettes/questions.json",
     "to_be": "palettes/to_be.json",
     "much_many": "palettes/much_many.json",
