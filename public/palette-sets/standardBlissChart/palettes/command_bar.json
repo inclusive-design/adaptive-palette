@@ -79,143 +79,24 @@
         "ariaControls": "content-encoding-area"
       }
     },
-    "indicator-action": {
-      "type": "ActionIndicatorCell",
+    "command-indicators": {
+      "type": "ActionBranchToPaletteCell",
       "options": {
         "label": {
-          "en": "action",
-          "sv": "handling"
+          "en": "add indicator",
+          "sv": "lägg till indikator"
         },
-        "composition": 81,
+        "branchTo": "indicators",
+        "composition": [
+          1174,
+          "//",
+          348,
+          "/",
+          81
+        ],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
-        "columnSpan": 1
-      }
-    },
-    "indicator-past": {
-      "type": "ActionIndicatorCell",
-      "options": {
-        "label": {
-          "en": "past",
-          "sv": "förr"
-        },
-        "composition": 92,
-        "rowStart": 1,
-        "rowSpan": 1,
-        "columnStart": 6,
-        "columnSpan": 1
-      }
-    },
-    "indicator-present": {
-      "type": "ActionIndicatorCell",
-      "options": {
-        "label": {
-          "en": "present",
-          "sv": "nu"
-        },
-        "composition": 928,
-        "rowStart": 1,
-        "rowSpan": 1,
-        "columnStart": 7,
-        "columnSpan": 1
-      }
-    },
-    "indicator-future": {
-      "type": "ActionIndicatorCell",
-      "options": {
-        "label": {
-          "en": "future",
-          "sv": "framtida"
-        },
-        "composition": 87,
-        "rowStart": 1,
-        "rowSpan": 1,
-        "columnStart": 8,
-        "columnSpan": 1
-      }
-    },
-    "indicator-plural": {
-      "type": "ActionIndicatorCell",
-      "options": {
-        "label": {
-          "en": "plural",
-          "sv": "flertal"
-        },
-        "composition": 99,
-        "rowStart": 1,
-        "rowSpan": 1,
-        "columnStart": 9,
-        "columnSpan": 1
-      }
-    },
-    "modifier-very": {
-      "type": "ActionPostModifierCell",
-      "options": {
-        "label": {
-          "en": "very",
-          "sv": "väldigt"
-        },
-        "composition": 401,
-        "rowStart": 1,
-        "rowSpan": 1,
-        "columnStart": 10,
-        "columnSpan": 1
-      }
-    },
-    "modifier-without": {
-      "type": "ActionPreModifierCell",
-      "options": {
-        "label": {
-          "en": "without",
-          "sv": "utan"
-        },
-        "composition": 449,
-        "rowStart": 1,
-        "rowSpan": 1,
-        "columnStart": 11,
-        "columnSpan": 1
-      }
-    },
-    "modifier-opposite-of": {
-      "type": "ActionPreModifierCell",
-      "options": {
-        "label": {
-          "en": "opposite of",
-          "sv": "motsats"
-        },
-        "composition": 486,
-        "rowStart": 1,
-        "rowSpan": 1,
-        "columnStart": 12,
-        "columnSpan": 1
-      }
-    },
-    "modifier-more": {
-      "type": "ActionPreModifierCell",
-      "options": {
-        "label": {
-          "en": "more",
-          "sv": "mer"
-        },
-        "composition": 937,
-        "rowStart": 1,
-        "rowSpan": 1,
-        "columnStart": 13,
-        "columnSpan": 1
-      }
-    },
-    "modifier-most": {
-      "type": "ActionPreModifierCell",
-      "options": {
-        "label": {
-          "en": "most",
-          "sv": "mest"
-        },
-        "composition": 968,
-        "rowStart": 1,
-        "rowSpan": 1,
-        "columnStart": 14,
         "columnSpan": 1
       }
     },
@@ -233,13 +114,81 @@
           "//",
           348,
           "/",
-          81,
-          "/",
-          99
+          81
         ],
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 15,
+        "columnStart": 6,
+        "columnSpan": 1
+      }
+    },
+    "modifier-very": {
+      "type": "ActionPostModifierCell",
+      "options": {
+        "label": {
+          "en": "very",
+          "sv": "väldigt"
+        },
+        "composition": 401,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 7,
+        "columnSpan": 1
+      }
+    },
+    "modifier-without": {
+      "type": "ActionPreModifierCell",
+      "options": {
+        "label": {
+          "en": "without",
+          "sv": "utan"
+        },
+        "composition": 449,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 8,
+        "columnSpan": 1
+      }
+    },
+    "modifier-opposite-of": {
+      "type": "ActionPreModifierCell",
+      "options": {
+        "label": {
+          "en": "opposite of",
+          "sv": "motsats"
+        },
+        "composition": 486,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 9,
+        "columnSpan": 1
+      }
+    },
+    "modifier-more": {
+      "type": "ActionPreModifierCell",
+      "options": {
+        "label": {
+          "en": "more",
+          "sv": "mer"
+        },
+        "composition": 937,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 10,
+        "columnSpan": 1
+      }
+    },
+    "modifier-most": {
+      "type": "ActionPreModifierCell",
+      "options": {
+        "label": {
+          "en": "most",
+          "sv": "mest"
+        },
+        "composition": 968,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 11,
         "columnSpan": 1
       }
     },
@@ -261,7 +210,7 @@
         ],
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 16,
+        "columnStart": 12,
         "columnSpan": 1
       }
     },
@@ -281,7 +230,7 @@
         ],
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 17,
+        "columnStart": 13,
         "columnSpan": 1
       }
     },
@@ -301,7 +250,7 @@
         ],
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 18,
+        "columnStart": 14,
         "columnSpan": 1
       }
     }

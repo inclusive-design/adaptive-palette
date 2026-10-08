@@ -45,3 +45,8 @@
     display: block; width: 0;
   }
 }
+
+/* "add indicator" on the command bar edits the message, so it takes the command colour. */
+#command-indicators {
+  background-color: lightsalmon;
+}
