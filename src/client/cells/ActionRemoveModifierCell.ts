@@ -18,7 +18,7 @@ import { changeEncodingContents } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
-import { replaceAtCaret } from "../utils/SymbolEncodingUtils";
+import { removeModifierFromLabel, replaceAtCaret } from "../utils/SymbolEncodingUtils";
 
 type ActionRemoveModifierPropsType = {
   id: string,
@@ -84,14 +84,14 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
           0, newComposition.length - (removeInfo.modifierId as (string|number)[]).length - 1
         );
       }
-      newLabel = newLabel.replace(removeInfo.modifierGloss, "").trim();
+      newLabel = removeModifierFromLabel(newLabel, removeInfo.modifierGloss, removeInfo.isPrepended);
       // If the removed modifier predates `baseLabel`'s snapshot (i.e. it was
       // already folded into `baseLabel`'s text when an indicator was applied),
       // strip it from `baseLabel` too and shrink `baseModifierCount` to match --
       // otherwise a later indicator removal would reapply/resurrect a modifier
       // the user just explicitly removed.
       if (newBaseLabel !== undefined && modifierCountBeforeRemoval <= (newBaseModifierCount ?? 0)) {
-        newBaseLabel = newBaseLabel.replace(removeInfo.modifierGloss, "").trim();
+        newBaseLabel = removeModifierFromLabel(newBaseLabel, removeInfo.modifierGloss, removeInfo.isPrepended);
         newBaseModifierCount = (newBaseModifierCount ?? 0) - 1;
       }
     }

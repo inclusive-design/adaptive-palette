@@ -120,6 +120,11 @@ describe("SvgUtils", (): void => {
     expect(isModifier(nonModifierId)).toEqual(false);
   });
 
+  test("isModifier() recognises \"same\" and the concept-transforming modifiers", (): void => {
+    // same, similar, similar looking, similar sound
+    [578, 2404, 2405, 2406].forEach((id) => expect(isModifier(id), `id ${id}`).toBe(true));
+  });
+
   test("Find indicator positions", (): void => {
     // `expectedMixedSeparatorsComposition` contains an action indicator (id=81) over the first symbol.
     let indicatorPositions = findIndicators(expectedMixedSeparatorsComposition);
@@ -141,6 +146,10 @@ describe("SvgUtils", (): void => {
     // Prefix again with two modifiers and a modifier suffix.
     modifiedRevive = [modifierId, "/", modifierId, "/", ...expectedMixedSeparatorsComposition, "/", modifierId];
     expect(findClassifierFromLeft(modifiedRevive)).toEqual(4);
+
+    // A multi-symbol modifier, "similar feeling", is skipped whole, alone or after "without".
+    expect(findClassifierFromLeft([2404, "/", 374, "/", 382])).toEqual(4);
+    expect(findClassifierFromLeft([449, "/", 2404, "/", 374, "/", 382])).toEqual(6);
 
     // The original `expectedMixedSeparatorsComposition` has no modifiers; also a single id has no modifiers.
     expect(findClassifierFromLeft(expectedMixedSeparatorsComposition)).toEqual(0);

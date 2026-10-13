@@ -65,6 +65,27 @@ export function applyModifiersToLabel (baseLabel: string, modifierInfo?: Modifie
 }
 
 /**
+ * The reverse of `applyModifiersToLabel()` for one modifier: remove its text from the start
+ * for a prefix, from the end for a suffix, so a short gloss such as "one" does not cut into the
+ * word ("phone one" → "phone"). A label reworded since the modifier was added falls back to
+ * removing the first whole-word match.
+ * @param {string} label - The label holding the modifier's text.
+ * @param {string} gloss - The modifier's text.
+ * @param {boolean} isPrepended - Whether the modifier is a prefix.
+ * @returns {string} - The label without the modifier's text.
+ */
+export function removeModifierFromLabel (label: string, gloss: string, isPrepended: boolean): string {
+  if (isPrepended && label.startsWith(`${gloss} `)) {
+    return label.slice(gloss.length + 1);
+  }
+  if (!isPrepended && label.endsWith(` ${gloss}`)) {
+    return label.slice(0, -(gloss.length + 1));
+  }
+  const escaped = gloss.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return label.replace(new RegExp(`(^|\\s)${escaped}(?=\\s|$)`), "").replace(/\s+/g, " ").trim();
+}
+
+/**
  * Collapse a single-number composition array (e.g. `[1433]`) to the bare number `1433`.
  * Multi-element and string-containing arrays pass through unchanged.
  * @param {number|(number|string)[]} composition - The composition to normalize.

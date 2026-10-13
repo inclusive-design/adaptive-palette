@@ -253,6 +253,22 @@ describe("ActionRemoveModifierCell", (): void => {
     expect(mockedSpeakUnavailable).toHaveBeenCalledWith(testCell.options.label);
   });
 
+  test("removes a suffix modifier's text from the end of the label, not from inside the word", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [{
+        label: "phone one",
+        composition: [ 8484, "/", 8510 ],
+        modifierInfo: [{ modifierId: [8510], modifierGloss: "one", isPrepended: false }]
+      }],
+      caretPosition: 0
+    };
+    renderCell(ActionRemoveModifierCell, TEST_CELL_ID, testCell.options);
+    const removeModifierButton = await screen.findByRole("button", { name: testCell.options.label });
+    fireEvent.click(removeModifierButton);
+
+    expect(changeEncodingContents.value.payloads[0].label).toBe("phone");
+  });
+
   test("keeps the AI mark when a modifier is removed", async (): Promise<void> => {
     changeEncodingContents.value = {
       payloads: [{ ...blissWordIndicatorThenModifier, isAiLabel: true }],

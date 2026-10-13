@@ -8,6 +8,7 @@
     "Command Bar": "palettes/command_bar.json",
     "attributes": "palettes/attributes.json",
     "indicators": "palettes/indicators.json",
+    "modifiers": "palettes/modifiers.json",
     "questions": "palettes/questions.json",
     "to_be": "palettes/to_be.json",
     "much_many": "palettes/much_many.json",

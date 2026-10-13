@@ -123,73 +123,27 @@
         "columnSpan": 1
       }
     },
-    "modifier-very": {
-      "type": "ActionPostModifierCell",
+    "command-modifiers": {
+      "type": "ActionBranchToPaletteCell",
       "options": {
         "label": {
-          "en": "very",
-          "sv": "väldigt"
+          "en": "add modifier",
+          "sv": "lägg till modifierare"
         },
-        "composition": 401,
+        "branchTo": "modifiers",
+        "needsCaretSymbol": true,
+        "composition": [
+          1174,
+          "//",
+          348,
+          "/",
+          106,
+          "/",
+          158
+        ],
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 7,
-        "columnSpan": 1
-      }
-    },
-    "modifier-without": {
-      "type": "ActionPreModifierCell",
-      "options": {
-        "label": {
-          "en": "without",
-          "sv": "utan"
-        },
-        "composition": 449,
-        "rowStart": 1,
-        "rowSpan": 1,
-        "columnStart": 8,
-        "columnSpan": 1
-      }
-    },
-    "modifier-opposite-of": {
-      "type": "ActionPreModifierCell",
-      "options": {
-        "label": {
-          "en": "opposite of",
-          "sv": "motsats"
-        },
-        "composition": 486,
-        "rowStart": 1,
-        "rowSpan": 1,
-        "columnStart": 9,
-        "columnSpan": 1
-      }
-    },
-    "modifier-more": {
-      "type": "ActionPreModifierCell",
-      "options": {
-        "label": {
-          "en": "more",
-          "sv": "mer"
-        },
-        "composition": 937,
-        "rowStart": 1,
-        "rowSpan": 1,
-        "columnStart": 10,
-        "columnSpan": 1
-      }
-    },
-    "modifier-most": {
-      "type": "ActionPreModifierCell",
-      "options": {
-        "label": {
-          "en": "most",
-          "sv": "mest"
-        },
-        "composition": 968,
-        "rowStart": 1,
-        "rowSpan": 1,
-        "columnStart": 11,
         "columnSpan": 1
       }
     },
@@ -211,7 +165,7 @@
         ],
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 12,
+        "columnStart": 8,
         "columnSpan": 1
       }
     },
@@ -231,7 +185,7 @@
         ],
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 13,
+        "columnStart": 9,
         "columnSpan": 1
       }
     },
@@ -251,7 +205,7 @@
         ],
         "rowStart": 1,
         "rowSpan": 1,
-        "columnStart": 14,
+        "columnStart": 10,
         "columnSpan": 1
       }
     }

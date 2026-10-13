@@ -22,6 +22,9 @@
   { "composition": [2404, "/", 374], "group": "concept-transforming", "gloss": { "en": "similar feeling", "sv": "känns som" }, "position": "prefix" },
   { "composition": [2404, "/", 473], "group": "concept-transforming", "gloss": { "en": "similar smell", "sv": "luktar som" }, "position": "prefix" },
   { "composition": [2404, "/", 642], "group": "concept-transforming", "gloss": { "en": "similar taste", "sv": "smakar som" }, "position": "prefix" },
+  { "composition": 444, "group": "signalling", "gloss": { "en": "metaphor", "sv": "metafor" }, "position": "prefix" },
+  { "composition": 753, "group": "signalling", "gloss": { "en": "Bliss-name", "sv": "blissnamn" }, "position": "prefix" },
+  { "composition": 970, "group": "signalling", "gloss": { "en": "slang", "sv": "slang" }, "position": "prefix" },
   { "composition": 19, "group": "index-numeral", "gloss": { "en": "zero", "sv": "noll" }, "position": "suffix" },
   { "composition": 20, "group": "index-numeral", "gloss": { "en": "one", "sv": "ett" }, "position": "suffix" },
   { "composition": 21, "group": "index-numeral", "gloss": { "en": "two", "sv": "två" }, "position": "suffix" },
@@ -31,9 +34,5 @@
   { "composition": 25, "group": "index-numeral", "gloss": { "en": "six", "sv": "sex" }, "position": "suffix" },
   { "composition": 26, "group": "index-numeral", "gloss": { "en": "seven", "sv": "sju" }, "position": "suffix" },
   { "composition": 27, "group": "index-numeral", "gloss": { "en": "eight", "sv": "åtta" }, "position": "suffix" },
-  { "composition": 28, "group": "index-numeral", "gloss": { "en": "nine", "sv": "nio" }, "position": "suffix" },
-  { "composition": 444, "group": "signalling", "gloss": { "en": "metaphor", "sv": "metafor" }, "position": "prefix" },
-  { "composition": 753, "group": "signalling", "gloss": { "en": "Bliss-name", "sv": "blissnamn" }, "position": "prefix" },
-  { "composition": 970, "group": "signalling", "gloss": { "en": "slang", "sv": "slang" }, "position": "prefix" },
-  { "composition": 971, "group": "signalling", "gloss": { "en": "coarse slang", "sv": "svordom" }, "position": "prefix" }
+  { "composition": 28, "group": "index-numeral", "gloss": { "en": "nine", "sv": "nio" }, "position": "suffix" }
 ]

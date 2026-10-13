@@ -28,14 +28,18 @@ const indicatorIds = {
 // Note: These may be relevant to strategies since there is some overlap, e.g.,
 // Semantic and Grammatical strategies.
 const modifierIds = {
-  // much, intensity, without, opposite, generalization, part of, ago, now, future
-  semantic: [368, 401, 449, 486, 348, 502, 112, 474, 648],
+  // much, intensity, without, opposite, generalization, part of, ago, now, future, same
+  semantic: [368, 401, 449, 486, 348, 502, 112, 474, 648, 578],
   // more, most, belongs to
   grammatical: [937, 968, 160],
+  // similar, similar looking, similar sound
+  conceptTransforming: [2404, 2405, 2406],
   // range of the index numerals from 0 through 9. NOTE THIS IS A RANGE.
   numericRange: [19, 28],
   // metaphor, Blissname, slang, coarse slang
-  signalling: [444, 753, 970, 971]
+  signalling: [444, 753, 970, 971],
+  // similar feeling, similar smell, similar taste: modifiers made of more than one symbol
+  multiSymbol: [[2404, "/", 374], [2404, "/", 473], [2404, "/", 642]]
 };
 
 /**
@@ -193,6 +197,7 @@ export function isModifier (id: number): boolean {
   return (
     modifierIds.semantic.includes(id) ||
     modifierIds.grammatical.includes(id) ||
+    modifierIds.conceptTransforming.includes(id) ||
     (id >= modifierIds.numericRange[0] && id <= modifierIds.numericRange[1]) ||
     modifierIds.signalling.includes(id)
   );
@@ -212,10 +217,17 @@ export function findClassifierFromLeft (id: SymbolCompositionType): number {
   if (id.constructor === Array) {
     // Prefix modifiers are a sequence of an ID followed by the "/" separator.
     // Examine symbols until a non-modifer symbol is found, advancing the index
-    // by 2.
+    // by 2, or past the whole of a multi-symbol modifier.
     for (let index = 0; index < id.length; index += 2) {
       const item = id[index];
-      if (typeof item === "number") {
+      const sequence = modifierIds.multiSymbol.find(
+        (parts) => parts.every((part, offset) => id[index + offset] === part)
+      );
+      if (sequence) {
+        rightMost = index + sequence.length + 1;
+        index += sequence.length - 1;
+      }
+      else if (typeof item === "number") {
         if (isModifier(item)) {
           rightMost = index + 2;
         }
