@@ -87,7 +87,7 @@ gloss, and the cached model result is keyed by language as well as symbol and in
 | :--- | :--- |
 | `src/client/utils/IndicatorLabelsUtils.ts` | Client module: loads the table, metadata, and implements the resolution logic. |
 | `public/data/new_labels_with_indicator.json` | Pre-generated lookup table (`{symbolId}_{indicatorId} -> label`). |
-| `public/data/new_labels_with_indicator_sv.json` | Swedish lookup table, same format. Generated off-line; not shipped yet. |
+| `public/data/new_labels_with_indicator_sv.json` | Swedish lookup table, same format. |
 | `public/data/indicators.json` | Indicator metadata (id, group, name, purpose). |
 | `public/data/bliss_symbol_explanations.json` | Bliss vocabulary (gloss, POS, explanation) used to build model prompts. |
 | `public/config.json` | Runtime config (enables/disables Ollama fallback, selects model, `markAiSuggestions`). |

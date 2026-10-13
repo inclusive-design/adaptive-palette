@@ -28,6 +28,8 @@ Grids/
 A grid's name is its folder name, such as `Start` or `göra`. Names can contain spaces and non-ASCII letters.
 
 `settings.xml` names the first grid shown (`<StartGrid>`) and the language (`<Language>sv-SE</Language>`).
+`sv-SE` maps to a palette's `"language": "sv"`. Adaptive Palette supports English and Swedish. See
+[Palettes](Palettes.md#palette-json-structure).
 
 ## Grid
 
@@ -264,24 +266,21 @@ it.
 3. **Library pictures are missing.** 264 Grid 3 command icons, 41 Widgit and 1 SymbolStix pictures are not in the
    export. Command icons can be replaced with our own Bliss compositions. Widgit and SymbolStix are licensed and
    need a replacement or a caption-only cell. The 5 `[blissx]` references map straight to BCI-AV IDs.
-4. **Language.** Captions, speech and inserted text are Swedish. Adaptive Palette assumes English:
-   - labels and glosses are English
-   - speech sets no language, so the browser's default voice is used
-   - sentence making, Bliss sentences (`compromise`), word prediction and the indicator label lookup all work in
-     English
-5. **Text messages and phrases.** A Grid 3 message is text with pictures, and a phrase goes in as one unit.
+4. **Text messages and phrases.** A Grid 3 message is text with pictures, and a phrase goes in as one unit.
    Adaptive Palette's message is a list of Bliss symbols. The 64 phrases have no equivalent, and deleting a word
    is not the same as deleting a symbol.
-6. **One action per cell.** 52 cells combine commands, such as inserting a word and then going to another grid.
+5. **One action per cell.** 52 cells combine commands, such as inserting a word and then going to another grid.
    Each Adaptive Palette cell type does one thing.
-7. **Commands with no equivalent.** Computer control (32 cells) works outside the browser and is likely out of
-   scope. Also missing: clipboard (5), reading a cell aloud (7), rest (2), grid explorer (2), opening another grid
-   set (1) and spelling correction (1).
-8. **Per-cell styles.** Grid 3 sets background, border and text colour, font, font size and shape per cell.
+6. **Commands with no equivalent.** Computer control (32 cells) works outside the browser and is likely out of
+   scope. Also missing: clipboard (5), rest (2), grid explorer (2), opening another grid set (1) and spelling
+   correction (1). Reading a cell aloud (7) is close: with "announce symbol on input" on, a branch cell speaks
+   its label when pressed, but the setting covers every cell, not one.
+7. **Per-cell styles.** Grid 3 sets background, border and text colour, font, font size and shape per cell.
    Adaptive Palette styles cells by type in SCSS.
-9. **Switch scanning.** 1,541 cells belong to scan blocks, and 134 rows and columns have spoken
-   descriptions. One cell is hidden from switch users. Adaptive Palette has no scanning.
-10. **Grid size.** Adaptive Palette works out a palette's size from its cells, so trailing empty rows and
-    columns disappear. Grid 3 sets the size explicitly.
-11. **Auto-replacements.** Grid 3 corrects 8 misspellings while typing. Adaptive Palette has no typing and no
+8. **Switch scanning.** Adaptive Palette has two-switch row scanning only (see
+   [Access Methods](../AccessMethods.md#switches)). Missing: scan blocks (1,541 cells belong to one), spoken
+   descriptions (134 rows and columns have one) and hiding a cell from switch users (1 cell).
+9. **Grid size.** Adaptive Palette works out a palette's size from its cells, so trailing empty rows and
+   columns disappear. Grid 3 sets the size explicitly.
+10. **Auto-replacements.** Grid 3 corrects 8 misspellings while typing. Adaptive Palette has no typing and no
     corrections.
