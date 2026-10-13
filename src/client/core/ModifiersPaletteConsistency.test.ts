@@ -19,7 +19,7 @@
 import { loadPaletteFromJsonFile } from "./PaletteStore";
 import { BlissSymbolInfoType, JsonPaletteType, LayoutInfoType, SymbolCompositionType } from "../index.d";
 import type { LabelType } from "../i18n/I18n";
-import { isModifier } from "../utils/SvgUtils";
+import { findClassifierFromLeft } from "../utils/SvgUtils";
 
 const PALETTE_PATH = "/palette-sets/standardBlissChart/palettes/modifiers.json";
 const MODIFIERS_PATH = "/data/modifiers.json";
@@ -69,13 +69,15 @@ describe("modifiers.json agrees with data/modifiers.json", (): void => {
   });
 
   // A symbol with no `modifierInfo`, such as a typed composition, has its prefix modifiers
-  // skipped by `findClassifierFromLeft()`, which knows only the ids `isModifier()` lists.
-  test("the first symbol of every prefix modifier is recognised by isModifier()", (): void => {
+  // skipped by `findClassifierFromLeft()`, so an indicator lands on the base symbol.
+  test("findClassifierFromLeft() skips every prefix modifier whole", (): void => {
+    const baseId = 382;
     modifiers
       .filter((modifier) => modifier.position === "prefix")
       .forEach((modifier) => {
-        const firstId = Array.isArray(modifier.composition) ? modifier.composition[0] : modifier.composition;
-        expect(isModifier(firstId as number), JSON.stringify(modifier.gloss)).toBe(true);
+        const prefix = Array.isArray(modifier.composition) ? modifier.composition : [modifier.composition];
+        expect(findClassifierFromLeft([...prefix, "/", baseId]), JSON.stringify(modifier.gloss))
+          .toBe(prefix.length + 1);
       });
   });
 

@@ -147,6 +147,10 @@ describe("SvgUtils", (): void => {
     modifiedRevive = [modifierId, "/", modifierId, "/", ...expectedMixedSeparatorsComposition, "/", modifierId];
     expect(findClassifierFromLeft(modifiedRevive)).toEqual(4);
 
+    // A multi-symbol modifier, "similar feeling", is skipped whole, alone or after "without".
+    expect(findClassifierFromLeft([2404, "/", 374, "/", 382])).toEqual(4);
+    expect(findClassifierFromLeft([449, "/", 2404, "/", 374, "/", 382])).toEqual(6);
+
     // The original `expectedMixedSeparatorsComposition` has no modifiers; also a single id has no modifiers.
     expect(findClassifierFromLeft(expectedMixedSeparatorsComposition)).toEqual(0);
     expect(findClassifierFromLeft(singleId)).toEqual(0);

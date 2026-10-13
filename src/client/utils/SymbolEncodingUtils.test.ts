@@ -11,11 +11,25 @@
  */
 
 import {
-  applyModifiersToLabel, insertWordAtCaret, normalizeComposition, replaceAtCaret
+  applyModifiersToLabel, insertWordAtCaret, removeModifierFromLabel, normalizeComposition, replaceAtCaret
 } from "./SymbolEncodingUtils";
 
 // A minimal symbol payload; only the label distinguishes one from another in these tests.
 const symbol = (label: string) => ({ label, composition: [1], modifierInfo: [] });
+
+describe("removeModifierFromLabel()", (): void => {
+
+  test("removes a prefix from the start and a suffix from the end", (): void => {
+    expect(removeModifierFromLabel("one phone", "one", true)).toBe("phone");
+    expect(removeModifierFromLabel("phone one", "one", false)).toBe("phone");
+  });
+
+  test("a reworded label loses only a whole-word match", (): void => {
+    expect(removeModifierFromLabel("phones one more", "one", false)).toBe("phones more");
+    expect(removeModifierFromLabel("phones", "one", false)).toBe("phones");
+  });
+
+});
 
 describe("applyModifiersToLabel()", (): void => {
 

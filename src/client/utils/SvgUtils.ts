@@ -37,7 +37,9 @@ const modifierIds = {
   // range of the index numerals from 0 through 9. NOTE THIS IS A RANGE.
   numericRange: [19, 28],
   // metaphor, Blissname, slang, coarse slang
-  signalling: [444, 753, 970, 971]
+  signalling: [444, 753, 970, 971],
+  // similar feeling, similar smell, similar taste: modifiers made of more than one symbol
+  multiSymbol: [[2404, "/", 374], [2404, "/", 473], [2404, "/", 642]]
 };
 
 /**
@@ -215,10 +217,17 @@ export function findClassifierFromLeft (id: SymbolCompositionType): number {
   if (id.constructor === Array) {
     // Prefix modifiers are a sequence of an ID followed by the "/" separator.
     // Examine symbols until a non-modifer symbol is found, advancing the index
-    // by 2.
+    // by 2, or past the whole of a multi-symbol modifier.
     for (let index = 0; index < id.length; index += 2) {
       const item = id[index];
-      if (typeof item === "number") {
+      const sequence = modifierIds.multiSymbol.find(
+        (parts) => parts.every((part, offset) => id[index + offset] === part)
+      );
+      if (sequence) {
+        rightMost = index + sequence.length + 1;
+        index += sequence.length - 1;
+      }
+      else if (typeof item === "number") {
         if (isModifier(item)) {
           rightMost = index + 2;
         }

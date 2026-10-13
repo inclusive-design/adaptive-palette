@@ -18,31 +18,12 @@ import { changeEncodingContents } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
-import { replaceAtCaret } from "../utils/SymbolEncodingUtils";
+import { removeModifierFromLabel, replaceAtCaret } from "../utils/SymbolEncodingUtils";
 
 type ActionRemoveModifierPropsType = {
   id: string,
   options: BlissSymbolInfoType & LayoutInfoType
 };
-
-/**
- * Remove a modifier's text from a label: from the start for a prefix, from the end for a
- * suffix, so a short gloss such as "one" does not cut into the word ("phone one" → "phone").
- * A label reworded since the modifier was added falls back to removing the first match.
- * @param {string} label - The label holding the modifier's text.
- * @param {string} gloss - The modifier's text.
- * @param {boolean} isPrepended - Whether the modifier is a prefix.
- * @returns {string} - The label without the modifier's text.
- */
-function stripModifierGloss (label: string, gloss: string, isPrepended: boolean): string {
-  if (isPrepended && label.startsWith(`${gloss} `)) {
-    return label.slice(gloss.length + 1);
-  }
-  if (!isPrepended && label.endsWith(` ${gloss}`)) {
-    return label.slice(0, -(gloss.length + 1));
-  }
-  return label.replace(gloss, "").trim();
-}
 
 export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType): VNode {
   const {
@@ -103,14 +84,14 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
           0, newComposition.length - (removeInfo.modifierId as (string|number)[]).length - 1
         );
       }
-      newLabel = stripModifierGloss(newLabel, removeInfo.modifierGloss, removeInfo.isPrepended);
+      newLabel = removeModifierFromLabel(newLabel, removeInfo.modifierGloss, removeInfo.isPrepended);
       // If the removed modifier predates `baseLabel`'s snapshot (i.e. it was
       // already folded into `baseLabel`'s text when an indicator was applied),
       // strip it from `baseLabel` too and shrink `baseModifierCount` to match --
       // otherwise a later indicator removal would reapply/resurrect a modifier
       // the user just explicitly removed.
       if (newBaseLabel !== undefined && modifierCountBeforeRemoval <= (newBaseModifierCount ?? 0)) {
-        newBaseLabel = stripModifierGloss(newBaseLabel, removeInfo.modifierGloss, removeInfo.isPrepended);
+        newBaseLabel = removeModifierFromLabel(newBaseLabel, removeInfo.modifierGloss, removeInfo.isPrepended);
         newBaseModifierCount = (newBaseModifierCount ?? 0) - 1;
       }
     }

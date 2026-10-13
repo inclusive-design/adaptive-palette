@@ -17,5 +17,6 @@ An indicator added to a symbol with modifiers goes above the base symbol, not ab
 The palette is `public/palette-sets/standardBlissChart/palettes/modifiers.json`. When a modifier
 is added to or moved in `modifiers.json`, update the palette too;
 `ModifiersPaletteConsistency.test.ts` fails until they agree. It also fails until a new prefix
-modifier's first symbol is listed in `isModifier()` in `src/client/utils/SvgUtils.ts`, which
-places indicators on symbols whose modifiers were not added from the palette.
+modifier is listed in `modifierIds` in `src/client/utils/SvgUtils.ts`: a single symbol in one of
+the id lists, a multi-symbol one in `multiSymbol`. `findClassifierFromLeft()` uses these lists
+to place an indicator after the prefix modifiers.
