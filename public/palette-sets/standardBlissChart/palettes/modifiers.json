@@ -1,0 +1,153 @@
+{
+  "name": "modifiers",
+  "cells": {
+    "standard-header": {
+      "type": "PaletteInclude",
+      "options": {"palette": "Standard Header", "rowStart": 1, "rowSpan": 1, "columnStart": 1, "columnSpan": 9}
+    },
+    "modifier-much": {
+      "type": "ActionPreModifierCell",
+      "options": {"label": {"en": "much", "sv": "mycket"}, "composition": 368, "rowStart": 2, "rowSpan": 1, "columnStart": 1, "columnSpan": 1}
+    },
+    "modifier-very": {
+      "type": "ActionPostModifierCell",
+      "options": {"label": {"en": "very", "sv": "väldigt"}, "composition": 401, "rowStart": 2, "rowSpan": 1, "columnStart": 2, "columnSpan": 1}
+    },
+    "modifier-without": {
+      "type": "ActionPreModifierCell",
+      "options": {"label": {"en": "without", "sv": "utan"}, "composition": 449, "rowStart": 2, "rowSpan": 1, "columnStart": 3, "columnSpan": 1}
+    },
+    "modifier-opposite-of": {
+      "type": "ActionPreModifierCell",
+      "options": {"label": {"en": "opposite of", "sv": "motsats"}, "composition": 486, "rowStart": 2, "rowSpan": 1, "columnStart": 4, "columnSpan": 1}
+    },
+    "modifier-generalization": {
+      "type": "ActionPreModifierCell",
+      "options": {"label": {"en": "generalization", "sv": "generalisering"}, "composition": 348, "rowStart": 2, "rowSpan": 1, "columnStart": 5, "columnSpan": 1}
+    },
+    "modifier-part-of": {
+      "type": "ActionPreModifierCell",
+      "options": {"label": {"en": "part of", "sv": "del av"}, "composition": 502, "rowStart": 2, "rowSpan": 1, "columnStart": 6, "columnSpan": 1}
+    },
+    "modifier-ago": {
+      "type": "ActionPreModifierCell",
+      "options": {"label": {"en": "ago", "sv": "förut"}, "composition": 112, "rowStart": 2, "rowSpan": 1, "columnStart": 7, "columnSpan": 1}
+    },
+    "modifier-now": {
+      "type": "ActionPreModifierCell",
+      "options": {"label": {"en": "now", "sv": "nu"}, "composition": 474, "rowStart": 2, "rowSpan": 1, "columnStart": 8, "columnSpan": 1}
+    },
+    "modifier-later": {
+      "type": "ActionPreModifierCell",
+      "options": {"label": {"en": "later", "sv": "senare"}, "composition": 648, "rowStart": 2, "rowSpan": 1, "columnStart": 9, "columnSpan": 1}
+    },
+    "modifier-same": {
+      "type": "ActionPreModifierCell",
+      "options": {"label": {"en": "same", "sv": "samma"}, "composition": 578, "rowStart": 3, "rowSpan": 1, "columnStart": 1, "columnSpan": 1}
+    },
+    "modifier-more": {
+      "type": "ActionPreModifierCell",
+      "options": {"label": {"en": "more", "sv": "mer"}, "composition": 937, "rowStart": 3, "rowSpan": 1, "columnStart": 2, "columnSpan": 1}
+    },
+    "modifier-most": {
+      "type": "ActionPreModifierCell",
+      "options": {"label": {"en": "most", "sv": "mest"}, "composition": 968, "rowStart": 3, "rowSpan": 1, "columnStart": 3, "columnSpan": 1}
+    },
+    "modifier-belongs-to": {
+      "type": "ActionPostModifierCell",
+      "options": {"label": {"en": "belongs to", "sv": "tillhör"}, "composition": 160, "rowStart": 3, "rowSpan": 1, "columnStart": 4, "columnSpan": 1}
+    },
+    "modifier-diminutive": {
+      "type": "ActionPostModifierCell",
+      "options": {"label": {"en": "diminutive", "sv": "diminutiv"}, "composition": 5999, "rowStart": 3, "rowSpan": 1, "columnStart": 5, "columnSpan": 1}
+    },
+    "modifier-feminine": {
+      "type": "ActionPostModifierCell",
+      "options": {"label": {"en": "feminine", "sv": "feminin"}, "composition": 6000, "rowStart": 3, "rowSpan": 1, "columnStart": 6, "columnSpan": 1}
+    },
+    "modifier-neuter": {
+      "type": "ActionPostModifierCell",
+      "options": {"label": {"en": "neuter", "sv": "neutrum"}, "composition": 6001, "rowStart": 3, "rowSpan": 1, "columnStart": 7, "columnSpan": 1}
+    },
+    "modifier-masculine": {
+      "type": "ActionPostModifierCell",
+      "options": {"label": {"en": "masculine", "sv": "maskulin"}, "composition": 6002, "rowStart": 3, "rowSpan": 1, "columnStart": 8, "columnSpan": 1}
+    },
+    "modifier-similar": {
+      "type": "ActionPreModifierCell",
+      "options": {"label": {"en": "similar", "sv": "liknande"}, "composition": 2404, "rowStart": 3, "rowSpan": 1, "columnStart": 9, "columnSpan": 1}
+    },
+    "modifier-similar-looking": {
+      "type": "ActionPreModifierCell",
+      "options": {"label": {"en": "similar looking", "sv": "ser ut som"}, "composition": 2405, "rowStart": 4, "rowSpan": 1, "columnStart": 1, "columnSpan": 1}
+    },
+    "modifier-similar-sound": {
+      "type": "ActionPreModifierCell",
+      "options": {"label": {"en": "similar sound", "sv": "låter som"}, "composition": 2406, "rowStart": 4, "rowSpan": 1, "columnStart": 2, "columnSpan": 1}
+    },
+    "modifier-similar-feeling": {
+      "type": "ActionPreModifierCell",
+      "options": {"label": {"en": "similar feeling", "sv": "känns som"}, "composition": [2404, "/", 374], "rowStart": 4, "rowSpan": 1, "columnStart": 3, "columnSpan": 1}
+    },
+    "modifier-similar-smell": {
+      "type": "ActionPreModifierCell",
+      "options": {"label": {"en": "similar smell", "sv": "luktar som"}, "composition": [2404, "/", 473], "rowStart": 4, "rowSpan": 1, "columnStart": 4, "columnSpan": 1}
+    },
+    "modifier-similar-taste": {
+      "type": "ActionPreModifierCell",
+      "options": {"label": {"en": "similar taste", "sv": "smakar som"}, "composition": [2404, "/", 642], "rowStart": 4, "rowSpan": 1, "columnStart": 5, "columnSpan": 1}
+    },
+    "modifier-metaphor": {
+      "type": "ActionPreModifierCell",
+      "options": {"label": {"en": "metaphor", "sv": "metafor"}, "composition": 444, "rowStart": 4, "rowSpan": 1, "columnStart": 6, "columnSpan": 1}
+    },
+    "modifier-bliss-name": {
+      "type": "ActionPreModifierCell",
+      "options": {"label": {"en": "Bliss-name", "sv": "blissnamn"}, "composition": 753, "rowStart": 4, "rowSpan": 1, "columnStart": 7, "columnSpan": 1}
+    },
+    "modifier-slang": {
+      "type": "ActionPreModifierCell",
+      "options": {"label": {"en": "slang", "sv": "slang"}, "composition": 970, "rowStart": 4, "rowSpan": 1, "columnStart": 8, "columnSpan": 1}
+    },
+    "modifier-zero": {
+      "type": "ActionPostModifierCell",
+      "options": {"label": {"en": "zero", "sv": "noll"}, "composition": 19, "rowStart": 4, "rowSpan": 1, "columnStart": 9, "columnSpan": 1}
+    },
+    "modifier-one": {
+      "type": "ActionPostModifierCell",
+      "options": {"label": {"en": "one", "sv": "ett"}, "composition": 20, "rowStart": 5, "rowSpan": 1, "columnStart": 1, "columnSpan": 1}
+    },
+    "modifier-two": {
+      "type": "ActionPostModifierCell",
+      "options": {"label": {"en": "two", "sv": "två"}, "composition": 21, "rowStart": 5, "rowSpan": 1, "columnStart": 2, "columnSpan": 1}
+    },
+    "modifier-three": {
+      "type": "ActionPostModifierCell",
+      "options": {"label": {"en": "three", "sv": "tre"}, "composition": 22, "rowStart": 5, "rowSpan": 1, "columnStart": 3, "columnSpan": 1}
+    },
+    "modifier-four": {
+      "type": "ActionPostModifierCell",
+      "options": {"label": {"en": "four", "sv": "fyra"}, "composition": 23, "rowStart": 5, "rowSpan": 1, "columnStart": 4, "columnSpan": 1}
+    },
+    "modifier-five": {
+      "type": "ActionPostModifierCell",
+      "options": {"label": {"en": "five", "sv": "fem"}, "composition": 24, "rowStart": 5, "rowSpan": 1, "columnStart": 5, "columnSpan": 1}
+    },
+    "modifier-six": {
+      "type": "ActionPostModifierCell",
+      "options": {"label": {"en": "six", "sv": "sex"}, "composition": 25, "rowStart": 5, "rowSpan": 1, "columnStart": 6, "columnSpan": 1}
+    },
+    "modifier-seven": {
+      "type": "ActionPostModifierCell",
+      "options": {"label": {"en": "seven", "sv": "sju"}, "composition": 26, "rowStart": 5, "rowSpan": 1, "columnStart": 7, "columnSpan": 1}
+    },
+    "modifier-eight": {
+      "type": "ActionPostModifierCell",
+      "options": {"label": {"en": "eight", "sv": "åtta"}, "composition": 27, "rowStart": 5, "rowSpan": 1, "columnStart": 8, "columnSpan": 1}
+    },
+    "modifier-nine": {
+      "type": "ActionPostModifierCell",
+      "options": {"label": {"en": "nine", "sv": "nio"}, "composition": 28, "rowStart": 5, "rowSpan": 1, "columnStart": 9, "columnSpan": 1}
+    }
+  }
+}

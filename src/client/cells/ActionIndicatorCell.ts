@@ -51,16 +51,24 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
     if (Array.isArray(newComposition)) {
       newComposition = [...newComposition];
       const indicatorPositions = findIndicators(newComposition);
-      const classifierIndex = findClassifierFromLeft(newComposition);
       // If there are no indicators on the symbol, then place the indicator
-      // above the first symbol that is not a modifier.  Otherwise, replace the
-      // current indicator with the new one at the same position.
-      // 1. `classifierIndex` is the index of the classifier in the array,
-      // 2. the next index is the separator between the classifier and the next
+      // above the base symbol.  Otherwise, replace the current indicator with
+      // the new one at the same position.
+      // 1. `baseStart` is where the base symbol starts: past each prefix modifier
+      //    recorded in `modifierInfo` and its "/" separator. This skips
+      //    multi-symbol modifiers such as "similar feeling".
+      // 2. `classifierIndex` is the index of the classifier in the array, past
+      //    any modifiers that are part of the base symbol itself,
+      // 3. the next index is the separator between the classifier and the next
       //    symbol, e.g., "/": `classifierIndex+1`,
-      // 3. insert the ";" separator for indicators followed by the indicator id,
-      // 4. insert the rest of the array as it was.
+      // 4. insert the ";" separator for indicators followed by the indicator id,
+      // 5. insert the rest of the array as it was.
       if (indicatorPositions.length === 0) {
+        const baseStart = (symbolToEdit.modifierInfo ?? [])
+          .filter((modifier) => modifier.isPrepended)
+          .reduce((sum, modifier) => sum +
+            (Array.isArray(modifier.modifierId) ? modifier.modifierId.length : 1) + 1, 0);
+        const classifierIndex = baseStart + findClassifierFromLeft(newComposition.slice(baseStart));
         newComposition = [
           ...newComposition.slice(0, classifierIndex+1),
           ";", indicatorId,

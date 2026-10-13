@@ -120,6 +120,11 @@ describe("SvgUtils", (): void => {
     expect(isModifier(nonModifierId)).toEqual(false);
   });
 
+  test("isModifier() recognises \"same\" and the concept-transforming modifiers", (): void => {
+    // same, similar, similar looking, similar sound
+    [578, 2404, 2405, 2406].forEach((id) => expect(isModifier(id), `id ${id}`).toBe(true));
+  });
+
   test("Find indicator positions", (): void => {
     // `expectedMixedSeparatorsComposition` contains an action indicator (id=81) over the first symbol.
     let indicatorPositions = findIndicators(expectedMixedSeparatorsComposition);

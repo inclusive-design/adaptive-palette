@@ -472,6 +472,56 @@ describe("ActionIndicatorCell", (): void => {
     );
   });
 
+  test("An indicator lands on the base symbol after a multi-symbol prefix modifier", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [{
+        label: "similar feeling help",
+        composition: [2404, "/", 374, "/", 382],
+        userSelectedSymbolId: 382,
+        modifierInfo: [{ modifierId: [2404, "/", 374], modifierGloss: "similar feeling", isPrepended: true }]
+      }],
+      caretPosition: 0
+    };
+
+    renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
+    const button = await screen.findByRole("button", {name: testCell.options.label});
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(changeEncodingContents.value.payloads[0].indicatorId).toBe(testCell.options.composition);
+    });
+    expect(changeEncodingContents.value.payloads[0].composition).toStrictEqual(
+      [2404, "/", 374, "/", 382, ";", testCell.options.composition]
+    );
+  });
+
+  test("An indicator lands on the base symbol after stacked prefix modifiers", async (): Promise<void> => {
+    // "without" added after "similar feeling": the newest prefix comes first.
+    changeEncodingContents.value = {
+      payloads: [{
+        label: "without similar feeling help",
+        composition: [449, "/", 2404, "/", 374, "/", 382],
+        userSelectedSymbolId: 382,
+        modifierInfo: [
+          { modifierId: [2404, "/", 374], modifierGloss: "similar feeling", isPrepended: true },
+          { modifierId: [449], modifierGloss: "without", isPrepended: true }
+        ]
+      }],
+      caretPosition: 0
+    };
+
+    renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
+    const button = await screen.findByRole("button", {name: testCell.options.label});
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(changeEncodingContents.value.payloads[0].indicatorId).toBe(testCell.options.composition);
+    });
+    expect(changeEncodingContents.value.payloads[0].composition).toStrictEqual(
+      [449, "/", 2404, "/", 374, "/", 382, ";", testCell.options.composition]
+    );
+  });
+
   // The guard holds the indicator edit to ask whether it may discard the user's sentence
   // work, and drops the label that resolves behind that question. Announcing the label
   // anyway would name a word that is nowhere in the message, whichever way the user answers.
