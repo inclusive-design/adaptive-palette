@@ -71,21 +71,21 @@ export function generateMarkupArray (payloadArray: Array<SymbolEncodingType>, ca
     if (index === 0 && caretPos === -1) {
       return html`
         <div class="blissSymbol insertionCaret">
-          <${BlissSymbol} composition=${payload.composition} label=${payload.label} isPresentation="true" isMarked=${isMarked} />
+          <${BlissSymbol} composition=${payload.composition} picture=${payload.picture} label=${payload.label} isPresentation="true" isMarked=${isMarked} />
         </div>
       `;
     }
     else if (index === caretPos) {
       return html`
         <div class="blissSymbol cursorCaret">
-          <${BlissSymbol} composition=${payload.composition} label=${payload.label} isPresentation="true" isMarked=${isMarked} />
+          <${BlissSymbol} composition=${payload.composition} picture=${payload.picture} label=${payload.label} isPresentation="true" isMarked=${isMarked} />
         </div>
       `;
     }
     else {
       return html`
         <div class="blissSymbol">
-          <${BlissSymbol} composition=${payload.composition} label=${payload.label} isPresentation="true" isMarked=${isMarked} />
+          <${BlissSymbol} composition=${payload.composition} picture=${payload.picture} label=${payload.label} isPresentation="true" isMarked=${isMarked} />
         </div>
       `;
     }

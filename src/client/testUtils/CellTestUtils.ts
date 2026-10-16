@@ -13,7 +13,7 @@
 import { FunctionComponent } from "preact";
 import { render, screen, RenderResult } from "@testing-library/preact";
 import { html } from "htm/preact";
-import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
+import { PictureOrSymbolInfoType, LayoutInfoType } from "../index.d";
 
 /**
  * Render a palette cell the way the palette does: with its id and its options, and nothing else.
@@ -40,13 +40,13 @@ export function renderCell<PropsType extends { id: string, options: object }> (
  * calling test, not here.
  *
  * @param {String} id - The cell id the button is expected to carry.
- * @param {BlissSymbolInfoType & LayoutInfoType} options - The options the cell was rendered with.
+ * @param {PictureOrSymbolInfoType & LayoutInfoType} options - The options the cell was rendered with.
  * @param {String} className - The class the button is expected to carry.
  * @return {Promise<HTMLElement>} The button, for further assertions.
  */
 export async function expectCellRendered (
   id: string,
-  options: BlissSymbolInfoType & LayoutInfoType,
+  options: PictureOrSymbolInfoType & LayoutInfoType,
   className: string
 ): Promise<HTMLElement> {
   const button = await screen.findByRole("button", { name: options.label });
@@ -61,4 +61,14 @@ export async function expectCellRendered (
     .toBe(`${options.rowStart} / span ${options.rowSpan}`);
 
   return button;
+}
+
+/**
+ * The path of a test picture, which the test runner serves from the repository. There is one
+ * per supported format.
+ * @param {string} format - The file extension: png, jpg, gif, webp, avif, svg or bmp.
+ * @returns {string}
+ */
+export function testPicture (format = "png"): string {
+  return `/src/client/testUtils/pictures/picture.${format}`;
 }

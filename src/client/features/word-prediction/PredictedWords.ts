@@ -126,6 +126,7 @@ export function PredictedWords (props: PredictedWordsPropsType): VNode | null {
         ${isMarked ? html`<${AiBadge} />` : null}
         <${BlissSymbol}
           composition=${suggestion.composition}
+          picture=${suggestion.picture}
           label=${suggestion.label}
           isPresentation=true
         />

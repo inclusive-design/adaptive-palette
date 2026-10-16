@@ -12,7 +12,7 @@
 
 import { vi } from "vitest";
 import { JsonPaletteType } from "../index.d";
-import { PaletteStore, paletteSetPath } from "./PaletteStore";
+import { PaletteStore, paletteSetPath, resolvePicturePath } from "./PaletteStore";
 
 describe("PaletteStore", (): void => {
 
@@ -189,6 +189,19 @@ describe("PaletteStore palette sets and includes", (): void => {
     // store has to key it by the requested name, not by this field.
     "/sets/parts/loop.json": {
       name: "Loop palette", cells: { "back": cell("PaletteInclude", { palette: "Header" }) }
+    },
+    "/sets/picture_set.json": {
+      formatVersion: 1,
+      startPalette: "Pictures",
+      palettes: { "Pictures": "palettes/pictures.json" }
+    },
+    "/sets/palettes/pictures.json": {
+      name: "Pictures",
+      cells: {
+        "bread": cell("ActionCodeCell", { label: "bread", picture: "../pictures/bread.jpg" }),
+        "remote": cell("ActionCodeCell", { label: "remote", picture: "https://example.com/remote.jpg" }),
+        "number": cell("ActionCodeCell", { label: "number", picture: 5 })
+      }
     }
   };
 
@@ -247,6 +260,19 @@ describe("PaletteStore palette sets and includes", (): void => {
     const loopPalette = await paletteStore.getNamedPalette("Loop");
     expect(loopPalette?.name).toBe("Loop palette");
   });
+
+  test("loading a palette resolves its pictures, and drops one outside the set or not a path", async (): Promise<void> => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    await paletteStore.loadPaletteSet("/sets/picture_set.json");
+
+    const loaded = await paletteStore.getNamedPalette("Pictures", true);
+
+    expect(loaded?.cells["bread"].options).toMatchObject({ picture: "/sets/pictures/bread.jpg" });
+    expect(loaded?.cells["remote"].options).not.toHaveProperty("picture");
+    expect(loaded?.cells["number"].options).not.toHaveProperty("picture");
+    expect(errorSpy).toHaveBeenCalledTimes(2);
+    errorSpy.mockRestore();
+  });
 });
 
 describe("paletteSetPath", (): void => {
@@ -264,6 +290,37 @@ describe("paletteSetPath", (): void => {
   test("throws for a name that is not a plain folder name", (): void => {
     ["?set=../x", "?set=a/b", "?set=%2E%2E", "?set="].forEach((search) => {
       expect(() => paletteSetPath(search), search).toThrow("Invalid palette set name");
+    });
+  });
+});
+
+describe("resolvePicturePath", (): void => {
+
+  const paletteFileUrl = new URL("/palette-sets/demo/palettes/food.json", window.location.href);
+  const setFolder = "/palette-sets/demo/";
+
+  test("resolves a path relative to the palette file", (): void => {
+    expect(resolvePicturePath("pictures/bread.jpg", paletteFileUrl, setFolder))
+      .toBe("/palette-sets/demo/palettes/pictures/bread.jpg");
+    expect(resolvePicturePath("../pictures/bread.jpg", paletteFileUrl, setFolder))
+      .toBe("/palette-sets/demo/pictures/bread.jpg");
+  });
+
+  test("refuses a path that is absolute, names another site, or leaves the set's folder", (): void => {
+    [
+      "/palette-sets/demo/pictures/bread.jpg",
+      "//example.com/bread.jpg",
+      " //example.com/bread.jpg",
+      "\t//example.com/bread.jpg",
+      "https://example.com/bread.jpg",
+      "data:image/png;base64,AAAA",
+      "\\\\example.com\\bread.jpg",
+      "../../other/bread.jpg",
+      "%2e%2e/%2e%2e/other/bread.jpg",
+      "pictures/..%2f..%2f..%2fother/bread.jpg",
+      "pictures/..%5c..%5c..%5cother/bread.jpg"
+    ].forEach((picture) => {
+      expect(resolvePicturePath(picture, paletteFileUrl, setFolder), picture).toBeUndefined();
     });
   });
 });

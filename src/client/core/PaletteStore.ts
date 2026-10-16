@@ -10,7 +10,9 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { JsonPaletteType, PaletteFileMapType, PaletteIncludeType, PaletteSetType } from "../index.d";
+import {
+  JsonPaletteType, PaletteFileMapType, PaletteIncludeType, PaletteSetType, PictureOrSymbolInfoType
+} from "../index.d";
 
 // The cell type that draws another palette. `Palette.ts` handles it rather than the cell type
 // registry, which cannot import `Palette` without making an import cycle.
@@ -62,6 +64,57 @@ export async function loadPaletteFromJsonFile (jsonFilePath: string): Promise<Js
   }
 }
 
+/**
+ * The path a cell's `picture` names, or `undefined` when the app must not fetch it. A picture
+ * is a path relative to its palette file that stays inside the palette set's folder, so the
+ * desktop version never fetches anything from outside the computer.
+ * @param {String} picture     - The `picture` option as the palette file gives it.
+ * @param {URL} paletteFileUrl - Where the palette file is.
+ * @param {String} setFolder   - The palette set's folder, ending in "/".
+ * @return {String|undefined}  - The picture's path on this site, or `undefined` when it is
+ *                               absolute, on another site, or outside the set's folder.
+ */
+export function resolvePicturePath (picture: string, paletteFileUrl: URL, setFolder: string): string | undefined {
+  if (picture.startsWith("/") || URL.canParse(picture)) {
+    return undefined;
+  }
+  const resolved = new URL(picture, paletteFileUrl);
+  // The server decodes an encoded "/" or "\", which would let the path out of the folder.
+  const isInSet = resolved.pathname.startsWith(setFolder) && !/%2f|%5c/i.test(resolved.pathname);
+  return resolved.origin === window.location.origin && isInSet ? resolved.pathname : undefined;
+}
+
+/**
+ * Replace each cell's `picture` with the path it resolves to. A picture the app must not fetch
+ * is removed, and the cell shows its label only. Run it once, on a palette just fetched: a
+ * resolved path starts with "/", so a second run would refuse it.
+ * @param {JsonPaletteType} palette - The palette as loaded. Changed in place.
+ * @param {String} filePath         - Path of the palette file.
+ * @param {String} setFolder        - The palette set's folder, ending in "/".
+ */
+function resolvePictures (palette: JsonPaletteType, filePath: string, setFolder: string): void {
+  const paletteFileUrl = new URL(filePath, window.location.href);
+  for (const [cellId, cell] of Object.entries(palette.cells)) {
+    const options = cell.options as PictureOrSymbolInfoType | undefined;
+    if (options?.picture === undefined) {
+      continue;
+    }
+    // A palette file is data, so `picture` may not even be a string.
+    const resolved = typeof options.picture === "string"
+      ? resolvePicturePath(options.picture, paletteFileUrl, setFolder)
+      : undefined;
+    if (resolved === undefined) {
+      console.error(
+        `${filePath}: cell ${cellId}: picture "${options.picture}" refused. ` +
+        "A picture must be a relative path inside the palette set's folder."
+      );
+      delete options.picture;
+    } else {
+      options.picture = resolved;
+    }
+  }
+}
+
 export class PaletteStore {
 
   // Singleton storage for all palettes
@@ -71,6 +124,9 @@ export class PaletteStore {
 
   // Singleton map of palette names and their files.
   static paletteFileMap: PaletteFileMapType = {};
+
+  // The loaded palette set's folder, ending in "/". Pictures must be inside it.
+  static setFolder = "/";
 
   /**
    * Report if the PaletteStore is empty.
@@ -162,6 +218,7 @@ export class PaletteStore {
       fileMap[paletteName] = new URL(relativePath, baseUrl).pathname;
     });
     PaletteStore.paletteFileMap = fileMap;
+    PaletteStore.setFolder = new URL(".", baseUrl).pathname;
     return paletteSet.startPalette;
   }
 
@@ -189,6 +246,7 @@ export class PaletteStore {
     if (!loadedPalette) {
       return undefined;
     }
+    resolvePictures(loadedPalette, filePath, PaletteStore.setFolder);
     this.addPalette(loadedPalette, paletteName);
 
     // Included palettes are drawn with this one, so they are loaded now rather than on click.

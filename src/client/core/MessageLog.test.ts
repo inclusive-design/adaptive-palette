@@ -62,6 +62,15 @@ describe("messageLog", (): void => {
       expect(log[0].translation).toBeUndefined();
     });
 
+    test("a picture word is read back from storage, and its label is the message text", async (): Promise<void> => {
+      const bread = { label: "bread", picture: "/palette-sets/demo/pictures/bread.jpg", modifierInfo: [] };
+      await seedMessageLog([{ timestamp: "2026-10-16T00:00:00.000Z", payloads: [...message("I", "want"), bread] }]);
+
+      const [record] = readMessageLog();
+      expect(record.payloads[2]).toEqual(bread);
+      expect(messageText(record.payloads)).toBe("I want bread");
+    });
+
     test("the AI mark is dropped from a saved message", (): void => {
       const [payload] = message("walked");
       saveMessageRecord([{ ...payload, indicatorId: 1234, baseLabel: "walk", isAiLabel: true }]);

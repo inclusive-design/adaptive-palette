@@ -8,8 +8,8 @@ three categories by prefix.
 
 | Type | Purpose | Key options beyond layout |
 | ---- | ------- | ------------------------- |
-| `ActionCodeCell` | Appends a Bliss symbol to the encoding area when clicked | `label`, `composition` |
-| `ActionBranchToPaletteCell` | Navigates to another palette | `label`, `composition`, `branchTo` (the palette's name in [`palette_set.json`](../../public/palette-sets/standardBlissChart/palette_set.json)); `needsCaretSymbol` (optional) shows it as a command that is unavailable while no symbol is at the caret |
+| `ActionCodeCell` | Appends a Bliss symbol, or a picture, to the encoding area when clicked | `label`, and `composition` or `picture` (see [Palettes](Palettes.md#palette-json-structure)) |
+| `ActionBranchToPaletteCell` | Navigates to another palette | `label`, `composition` or `picture`, `branchTo` (the palette's name in [`palette_set.json`](../../public/palette-sets/standardBlissChart/palette_set.json)); `needsCaretSymbol` (optional) shows it as a command that is unavailable while no Bliss symbol is at the caret |
 | `ActionIndicatorCell` | Applies a Bliss indicator to the last symbol in the encoding area | `label`, `composition` |
 | `ActionPreModifierCell` | Prepends a modifier to the last symbol | `label`, `composition` |
 | `ActionPostModifierCell` | Appends a modifier to the last symbol | `label`, `composition` |

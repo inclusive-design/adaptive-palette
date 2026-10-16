@@ -12,7 +12,7 @@
 
 import { VNode } from "preact";
 import { html } from "htm/preact";
-import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
+import { BlissSymbolInfoType, LayoutInfoType, SymbolCompositionType } from "../index.d";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { changeEncodingContents } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
@@ -51,10 +51,12 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
     // `newBciAvId` and `newLabel`.
     const { caretPosition, payloads } = changeEncodingContents.value;
     const symbolToEdit = payloads[caretPosition];
+    // Never undefined here: a picture has no modifier, so the cell is unavailable for one.
+    const caretSymbolComposition = symbolToEdit.composition as SymbolCompositionType;
     let newComposition = (
-      typeof symbolToEdit.composition === "number" ?
-        [symbolToEdit.composition] :
-        symbolToEdit.composition
+      typeof caretSymbolComposition === "number" ?
+        [caretSymbolComposition] :
+        caretSymbolComposition
     );
     let newLabel = symbolToEdit.label;
     let newBaseLabel = symbolToEdit.baseLabel;

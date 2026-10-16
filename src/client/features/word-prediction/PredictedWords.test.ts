@@ -24,6 +24,7 @@ import { cancelModelQuery, modelWordsSignal, queryContextKeyOf } from "./WordPre
 import { SymbolEncodingType } from "../../index.d";
 import { aiSuggestionLabel } from "../../components/AiBadge";
 import { selectedAttributesSignal, clearAttributes } from "../message-attributes/MessageAttributesState";
+import { testPicture } from "../../testUtils/CellTestUtils";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 import { en } from "../../i18n/en";
 import { mockedAnnounceIfEnabled } from "../../testUtils/SpeechUtilsMock";
@@ -78,6 +79,17 @@ describe("PredictedWords", (): void => {
     render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
     const suggestions = screen.getByRole("group", { name: en.predictedWords });
     expect(suggestions.querySelectorAll("button")).toHaveLength(2);
+  });
+
+  test("a picture word from the history shows its picture", async (): Promise<void> => {
+    saveMessageRecord([...message("I"), { label: "bread", picture: testPicture(), modifierInfo: [] }]);
+    setMessage("I");
+
+    render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+
+    const bread = await screen.findByRole("button", { name: "bread" });
+    expect(bread.querySelector("img")?.getAttribute("src")).toBe(testPicture());
+    expect(bread.querySelector("svg")).toBe(null);
   });
 
   // The row is a fixed set of slots, so a word keeps its place as the message grows.

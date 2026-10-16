@@ -10,12 +10,16 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+import { vi } from "vitest";
 import { screen, fireEvent } from "@testing-library/preact";
 
 import { changeEncodingContents } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { ActionCodeCell } from "./ActionCodeCell";
-import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
+import { renderCell, expectCellRendered, testPicture } from "../testUtils/CellTestUtils";
+import { mockedAnnounceIfEnabled } from "../testUtils/SpeechUtilsMock";
+
+vi.mock("../utils/SpeechUtils");
 
 describe("ActionCodeCell", (): void => {
 
@@ -91,6 +95,27 @@ describe("ActionCodeCell", (): void => {
     fireEvent.click(button);
 
     expect(changeEncodingContents.value.payloads[0].userSelectedSymbolId).toBe(2);
+  });
+
+  test("a picture cell draws its picture, and a click inserts a picture word", async (): Promise<void> => {
+    const pictureCell = {
+      "label": "bread",
+      "picture": testPicture(),
+      "rowStart": 1, "rowSpan": 1, "columnStart": 1, "columnSpan": 1
+    };
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+
+    renderCell(ActionCodeCell, "picture-cell-uuid", pictureCell);
+    const button = await expectCellRendered("picture-cell-uuid", pictureCell, "ActionCodeCell");
+    expect(button.querySelector("img")?.getAttribute("src")).toBe(testPicture());
+    expect(button.querySelector("svg")).toBe(null);
+    fireEvent.click(button);
+
+    expect(changeEncodingContents.value.payloads).toEqual([
+      { label: "bread", picture: testPicture(), modifierInfo: [] }
+    ]);
+    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith("bread", undefined);
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
   });
 
 });
