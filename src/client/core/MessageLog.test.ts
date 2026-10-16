@@ -20,6 +20,7 @@ import { setStorage } from "./StorageBackend";
 import { MemoryStorage } from "./MemoryStorage";
 import { readStoredMessages, resetMessageLog, seedMessageLog } from "../testUtils/MessageLogTestUtils";
 import { SymbolEncodingType } from "../index.d";
+import { PaletteStore } from "./PaletteStore";
 
 describe("messageLog", (): void => {
 
@@ -63,12 +64,27 @@ describe("messageLog", (): void => {
     });
 
     test("a picture word is read back from storage, and its label is the message text", async (): Promise<void> => {
+      PaletteStore.setFolder = "/palette-sets/demo/";
       const bread = { label: "bread", picture: "/palette-sets/demo/pictures/bread.jpg", modifierInfo: [] };
       await seedMessageLog([{ timestamp: "2026-10-16T00:00:00.000Z", payloads: [...message("I", "want"), bread] }]);
 
       const [record] = readMessageLog();
       expect(record.payloads[2]).toEqual(bread);
       expect(messageText(record.payloads)).toBe("I want bread");
+      PaletteStore.setFolder = undefined;
+    });
+
+    test("a stored picture outside the loaded palette set is dropped, leaving its label", async (): Promise<void> => {
+      PaletteStore.setFolder = "/palette-sets/demo/";
+      const pictures = [
+        "https://example.com/bread.jpg", "/palette-sets/other/bread.jpg",
+        "/palette-sets/demo/../other/bread.jpg", "/palette-sets/demo/..%2fother/bread.jpg", 5
+      ];
+      const payloads = pictures.map((picture) => ({ label: "bread", picture } as unknown as SymbolEncodingType));
+      await seedMessageLog([{ timestamp: "2026-10-16T00:00:00.000Z", payloads }]);
+
+      readMessageLog()[0].payloads.forEach((payload) => expect(payload).not.toHaveProperty("picture"));
+      PaletteStore.setFolder = undefined;
     });
 
     test("the AI mark is dropped from a saved message", (): void => {

@@ -25,6 +25,7 @@ import { SymbolEncodingType } from "../../index.d";
 import { aiSuggestionLabel } from "../../components/AiBadge";
 import { selectedAttributesSignal, clearAttributes } from "../message-attributes/MessageAttributesState";
 import { testPicture } from "../../testUtils/CellTestUtils";
+import { PaletteStore } from "../../core/PaletteStore";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 import { en } from "../../i18n/en";
 import { mockedAnnounceIfEnabled } from "../../testUtils/SpeechUtilsMock";
@@ -82,6 +83,8 @@ describe("PredictedWords", (): void => {
   });
 
   test("a picture word from the history shows its picture", async (): Promise<void> => {
+    // A history picture is drawn only from inside the loaded palette set's folder.
+    PaletteStore.setFolder = "/src/client/testUtils/";
     saveMessageRecord([...message("I"), { label: "bread", picture: testPicture(), modifierInfo: [] }]);
     setMessage("I");
 
@@ -90,6 +93,7 @@ describe("PredictedWords", (): void => {
     const bread = await screen.findByRole("button", { name: "bread" });
     expect(bread.querySelector("img")?.getAttribute("src")).toBe(testPicture());
     expect(bread.querySelector("svg")).toBe(null);
+    PaletteStore.setFolder = undefined;
   });
 
   // The row is a fixed set of slots, so a word keeps its place as the message grows.

@@ -12,6 +12,7 @@
 
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { StoredMessage, getStorage } from "./StorageBackend";
+import { isSetPicturePath } from "./PaletteStore";
 import { SymbolEncodingType } from "../index.d";
 import type { Language } from "../i18n/I18n";
 
@@ -127,6 +128,13 @@ export function readMessageLog (): MessageRecordType[] {
   // is bookkeeping for `persistChange`, not part of the public record shape.
   return structuredClone(log).map((record) => {
     delete record.id;
+    // The store is hand-editable, and a picture may be from another palette set. Only a picture
+    // in the loaded set is drawn; any other is dropped, leaving the label.
+    record.payloads.forEach((payload) => {
+      if (payload.picture !== undefined && !isSetPicturePath(payload.picture)) {
+        delete payload.picture;
+      }
+    });
     return record;
   });
 }

@@ -85,28 +85,53 @@ export function resolvePicturePath (picture: string, paletteFileUrl: URL, setFol
 }
 
 /**
+ * Whether a path is one `resolvePicturePath()` could have returned for the loaded palette set:
+ * a normalized path on this site inside the set's folder. A message read back from storage
+ * holds resolved paths, and is checked with this before it is drawn.
+ * @param {unknown} picture - The stored `picture`.
+ * @return {Boolean}
+ */
+export function isSetPicturePath (picture: unknown): boolean {
+  const setFolder = PaletteStore.setFolder;
+  if (typeof picture !== "string" || setFolder === undefined || !picture.startsWith(setFolder)) {
+    return false;
+  }
+  const url = new URL(picture, window.location.origin);
+  return url.origin === window.location.origin && url.pathname === picture && !/%2f|%5c/i.test(picture);
+}
+
+// The cell types that draw a `picture`.
+const PICTURE_CELL_TYPES = ["ActionCodeCell", "ActionBranchToPaletteCell"];
+
+/**
  * Replace each cell's `picture` with the path it resolves to. A picture the app must not fetch
  * is removed, and the cell shows its label only. Run it once, on a palette just fetched: a
  * resolved path starts with "/", so a second run would refuse it.
  * @param {JsonPaletteType} palette - The palette as loaded. Changed in place.
  * @param {String} filePath         - Path of the palette file.
- * @param {String} setFolder        - The palette set's folder, ending in "/".
+ * @param {String} setFolder        - The palette set's folder, ending in "/", or `undefined`
+ *                                    when no set is loaded, in which case every picture is refused.
  */
-function resolvePictures (palette: JsonPaletteType, filePath: string, setFolder: string): void {
+function resolvePictures (palette: JsonPaletteType, filePath: string, setFolder: string | undefined): void {
   const paletteFileUrl = new URL(filePath, window.location.href);
   for (const [cellId, cell] of Object.entries(palette.cells)) {
     const options = cell.options as PictureOrSymbolInfoType | undefined;
     if (options?.picture === undefined) {
       continue;
     }
+    if (!PICTURE_CELL_TYPES.includes(cell.type)) {
+      console.error(`${filePath}: cell ${cellId}: a ${cell.type} cannot show a picture.`);
+      delete options.picture;
+      continue;
+    }
     // A palette file is data, so `picture` may not even be a string.
-    const resolved = typeof options.picture === "string"
+    const resolved = typeof options.picture === "string" && setFolder !== undefined
       ? resolvePicturePath(options.picture, paletteFileUrl, setFolder)
       : undefined;
     if (resolved === undefined) {
       console.error(
         `${filePath}: cell ${cellId}: picture "${options.picture}" refused. ` +
-        "A picture must be a relative path inside the palette set's folder."
+        "A picture must be a relative path inside the loaded palette set's folder."
       );
       delete options.picture;
     } else {
@@ -125,8 +150,9 @@ export class PaletteStore {
   // Singleton map of palette names and their files.
   static paletteFileMap: PaletteFileMapType = {};
 
-  // The loaded palette set's folder, ending in "/". Pictures must be inside it.
-  static setFolder = "/";
+  // The loaded palette set's folder, ending in "/". Pictures must be inside it, so with no set
+  // loaded every picture is refused.
+  static setFolder: string | undefined = undefined;
 
   /**
    * Report if the PaletteStore is empty.

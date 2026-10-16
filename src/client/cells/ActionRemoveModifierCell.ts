@@ -12,13 +12,13 @@
 
 import { VNode } from "preact";
 import { html } from "htm/preact";
-import { BlissSymbolInfoType, LayoutInfoType, SymbolCompositionType } from "../index.d";
+import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { changeEncodingContents } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
-import { removeModifierFromLabel, replaceAtCaret } from "../utils/SymbolEncodingUtils";
+import { caretComposition, removeModifierFromLabel, replaceAtCaret } from "../utils/SymbolEncodingUtils";
 
 type ActionRemoveModifierPropsType = {
   id: string,
@@ -38,21 +38,18 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   // the encoding.
   // Marked unavailable rather than `disabled` so the button keeps its place in the tab
   // order for switch and eye-gaze users.
-  let unavailable = true;
+  // A picture has no symbol to remove a modifier from.
+  const caretSymbolComposition = caretComposition(changeEncodingContents.value);
   const { payloads, caretPosition } = changeEncodingContents.value;
-  if (payloads.length !== 0 && caretPosition !== -1) {
-    const caretSymbol = payloads[caretPosition];
-    unavailable = !caretSymbol.modifierInfo || caretSymbol.modifierInfo.length === 0;
-  }
+  const unavailable = caretSymbolComposition === undefined ||
+    (payloads[caretPosition].modifierInfo?.length ?? 0) === 0;
   // Handle the request to remove the last placed modifier.
   const cellClicked = () => {
-    if (unavailable) { speakUnavailable(label); return; }
+    if (unavailable || caretSymbolComposition === undefined) { speakUnavailable(label); return; }
     // Get the last symbol in the editing area, and create an initial
     // `newBciAvId` and `newLabel`.
     const { caretPosition, payloads } = changeEncodingContents.value;
     const symbolToEdit = payloads[caretPosition];
-    // Never undefined here: a picture has no modifier, so the cell is unavailable for one.
-    const caretSymbolComposition = symbolToEdit.composition as SymbolCompositionType;
     let newComposition = (
       typeof caretSymbolComposition === "number" ?
         [caretSymbolComposition] :

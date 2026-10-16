@@ -67,28 +67,13 @@ export function generateMarkupArray (payloadArray: Array<SymbolEncodingType>, ca
   // to check for a length of zero within the mapping function.
   return payloadArray.map((payload, index) => {
     const isMarked = payload.isAiLabel && markAiSuggestions;
-    // Check inserting before first symbol
-    if (index === 0 && caretPos === -1) {
-      return html`
-        <div class="blissSymbol insertionCaret">
-          <${BlissSymbol} composition=${payload.composition} picture=${payload.picture} label=${payload.label} isPresentation="true" isMarked=${isMarked} />
-        </div>
-      `;
-    }
-    else if (index === caretPos) {
-      return html`
-        <div class="blissSymbol cursorCaret">
-          <${BlissSymbol} composition=${payload.composition} picture=${payload.picture} label=${payload.label} isPresentation="true" isMarked=${isMarked} />
-        </div>
-      `;
-    }
-    else {
-      return html`
-        <div class="blissSymbol">
-          <${BlissSymbol} composition=${payload.composition} picture=${payload.picture} label=${payload.label} isPresentation="true" isMarked=${isMarked} />
-        </div>
-      `;
-    }
+    // The caret before the first symbol, the caret on this symbol, or no caret.
+    const caretClass = index === 0 && caretPos === -1 ? " insertionCaret" : index === caretPos ? " cursorCaret" : "";
+    return html`
+      <div class=${`blissSymbol${caretClass}`}>
+        <${BlissSymbol} composition=${payload.composition} picture=${payload.picture} label=${payload.label} isPresentation="true" isMarked=${isMarked} />
+      </div>
+    `;
   });
 }
 

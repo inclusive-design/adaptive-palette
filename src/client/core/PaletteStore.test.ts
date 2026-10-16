@@ -200,7 +200,8 @@ describe("PaletteStore palette sets and includes", (): void => {
       cells: {
         "bread": cell("ActionCodeCell", { label: "bread", picture: "../pictures/bread.jpg" }),
         "remote": cell("ActionCodeCell", { label: "remote", picture: "https://example.com/remote.jpg" }),
-        "number": cell("ActionCodeCell", { label: "number", picture: 5 })
+        "number": cell("ActionCodeCell", { label: "number", picture: 5 }),
+        "back": cell("CommandGoBackCell", { label: "back", picture: "../pictures/back.jpg" })
       }
     }
   };
@@ -270,7 +271,8 @@ describe("PaletteStore palette sets and includes", (): void => {
     expect(loaded?.cells["bread"].options).toMatchObject({ picture: "/sets/pictures/bread.jpg" });
     expect(loaded?.cells["remote"].options).not.toHaveProperty("picture");
     expect(loaded?.cells["number"].options).not.toHaveProperty("picture");
-    expect(errorSpy).toHaveBeenCalledTimes(2);
+    expect(loaded?.cells["back"].options).not.toHaveProperty("picture");
+    expect(errorSpy).toHaveBeenCalledTimes(3);
     errorSpy.mockRestore();
   });
 });

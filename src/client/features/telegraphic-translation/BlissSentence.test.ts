@@ -17,6 +17,7 @@ import { saveMessageRecord } from "../../core/MessageLog";
 import { initSvgCompositeDefinitions } from "../../utils/SvgUtils";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 import { testPicture } from "../../testUtils/CellTestUtils";
+import { PaletteStore } from "../../core/PaletteStore";
 
 describe("BlissSentence", (): void => {
 
@@ -29,11 +30,14 @@ describe("BlissSentence", (): void => {
   });
 
   test("draws the picture of a picture word the user has used before", (): void => {
+    // A history picture is drawn only from inside the loaded palette set's folder.
+    PaletteStore.setFolder = "/src/client/testUtils/";
     saveMessageRecord([{ label: "bread", picture: testPicture(), modifierInfo: [] }]);
 
     const { container } = render(html`<${BlissSentence} sentence="I want bread" language="en" />`);
 
     const slot = [...container.querySelectorAll(".blissSentenceSlot")].find((s) => s.textContent === "bread");
     expect(slot?.querySelector("img")?.getAttribute("src")).toBe(testPicture());
+    PaletteStore.setFolder = undefined;
   });
 });
