@@ -15,7 +15,7 @@ The feature is controlled by the `wordPrediction` section of `public/config.json
 | Field | Meaning |
 | --- | --- |
 | `show` | Whether the suggestion row is displayed. `false` turns the feature off. |
-| `maxSuggestions` | How many suggestions to show at once. |
+| `numSuggestions` | How many suggestions to show at once. |
 | `enableModelQuery` | Whether to ask a model for words as well. |
 | `model` | Which Ollama model to ask. Empty means its first available model. |
 | `systemPrompt` | Tells the model to answer with single words, one per line. Supports `{{numWords}}`. |
@@ -36,10 +36,11 @@ The suggestion row updates every time the message changes.
 Each suggestion is a button showing a Bliss symbol and its label. Selecting one inserts that symbol
 at the caret and speaks its label, exactly as selecting the symbol from a palette does.
 
-The row is laid out like a palette row: full width, with one cell for each of the `maxSuggestions`
-slots. Every slot is drawn whether or not there is a word for it, so a word keeps the same place in
-the row as the message grows and the page below never shifts. An unfilled slot is an empty cell:
-there is nothing there to press, and nothing for a screen reader to announce.
+The row is laid out like a palette row: full width, with one cell for each of the `numSuggestions`
+slots, all in one row. `numSuggestions` is at most 13. Every slot is drawn whether or not there is a
+word for it, so a word keeps the same place in the row as the message grows and the page below never
+shifts. An unfilled slot is an empty cell: there is nothing there to press, and nothing for a
+screen reader to announce. While the model is answering, the empty cells show "…".
 
 ## How suggestions are chosen
 
@@ -92,13 +93,12 @@ after the user has already modified the message, the stale reply is discarded to
 
 ### Status Indicator & Accessibility
 
-A dynamic status line appears above the suggestion row to report the query state (e.g., "Querying more word
-suggestions," followed by the number of words received).
+A status line reports the query state (e.g., "Querying more word suggestions," followed by the
+number of words received) to screen readers. It is never shown on screen; the "…" in the empty
+cells shows the wait instead.
 
 * **Accessibility:** The status line is an ARIA live region, ensuring screen readers announce both active
 queries and results.
-* **Layout shifting:** The status element takes up no vertical space when empty. When active, it temporarily
-pushes the suggestion row and palette downward.
 * **Context-aware:** Like the model replies, status messages are tied to the specific input they belong to
 and disappear if the user continues typing.
 * **Finished messages:** Pressing **Speak** or **Sentence** records the message as finished. The
@@ -160,7 +160,7 @@ a cleverer way of matching a word to a symbol is worth building.
 Each suggestion is offered in the form it was last used. A symbol saved with an indicator or a
 modifier is suggested with them applied.
 
-Having fewer suggestions than `maxSuggestions` is normal, particularly early on. The row fills out
+Having fewer suggestions than `numSuggestions` is normal, particularly early on. The row fills out
 as the history grows.
 
 ## Saved Data
@@ -193,7 +193,7 @@ means no new predictions are learned.
 | No messages saved yet | The first word is suggested from the built-in starter list. A message in progress gets no suggestions. |
 | `config.wordPrediction` is missing or invalid | The feature is off and no suggestion row is rendered. |
 | `maxRecalledRecords` is `0` | No suggestions come from history: nothing is read back and no new messages are saved. |
-| Fewer matches than `maxSuggestions` | The row shows what it has; its remaining cells are empty. |
+| Fewer matches than `numSuggestions` | The row shows what it has; its remaining cells are empty. |
 | No matches at all | The row stays in place as a row of empty cells. |
 | Ollama is not running, or has no models | No query is sent. The history-based suggestions are unaffected and nothing is reported to the user. |
 | A model query fails or returns nothing usable | An error is logged to the console and the status line clears. The row keeps the suggestions the history gave it. |

@@ -40,8 +40,8 @@ describe("wordPrediction", (): void => {
   const message = (...labels: string[]): SymbolEncodingType[] =>
     labels.map((label) => ({ label, composition: 1840, modifierInfo: [] }));
 
-  const predictedLabels = (currentLabels: string[], maxSuggestions = 4): string[] =>
-    predictNext(currentLabels, maxSuggestions).map((payload) => payload.label);
+  const predictedLabels = (currentLabels: string[], numSuggestions = 4): string[] =>
+    predictNext(currentLabels, numSuggestions).map((payload) => payload.label);
 
   beforeEach(async (): Promise<void> => {
     await resetMessageLog();
@@ -129,7 +129,7 @@ describe("wordPrediction", (): void => {
       expect(new Set(labels).size).toBe(labels.length);
     });
 
-    test("no more than maxSuggestions are returned", (): void => {
+    test("no more than numSuggestions are returned", (): void => {
       expect(predictedLabels(["I", "want"], 2)).toHaveLength(2);
     });
 
@@ -160,7 +160,7 @@ describe("wordPrediction with a model answering as well", (): void => {
 
   const MODEL_CONFIG = {
     show: true,
-    maxSuggestions: 4,
+    numSuggestions: 4,
     enableModelQuery: true,
     model: "phony-model:12b",
     systemPrompt: "List {{numWords}} words.",
@@ -186,7 +186,7 @@ describe("wordPrediction with a model answering as well", (): void => {
     languageSignal.value = "en";
     await resetMessageLog();
     adaptivePaletteGlobals.config.wordPrediction = {
-      show: false, maxSuggestions: 10, enableModelQuery: false, model: "", systemPrompt: "", userPrompt: ""
+      show: false, numSuggestions: 10, enableModelQuery: false, model: "", systemPrompt: "", userPrompt: ""
     };
     adaptivePaletteGlobals.models = [];
   });

@@ -10,21 +10,103 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+/*
+ * Closed, the area holds only its live region and takes no space. Open, it is the sentence
+ * layer: an opaque panel over the vocabulary rows, where `Palette.ts` places it. From top to
+ * bottom: a 44px header, one slot per sentence, and the 56px form. The component sets the
+ * rows, since it knows how many slots there are.
+ *
+ * The padding, gaps and border are this small so that a one-line Bliss row fits a slot of
+ * three at 1024×650.
+ */
 .sentenceChoices {
+  display: contents;
+}
+
+.sentenceLayer {
+  background-color: #fffdf5;
+  border: 2px solid #333;
+  border-radius: 1rem;
+  box-sizing: border-box;
   display: grid;
-  margin-inline: 0.5rem;
-  row-gap: 0.5rem;
+  gap: 4px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  padding: 4px 6px;
+  /* Above the cells it covers, the positioned ones (`.foldedCorner`) included. */
+  z-index: 1;
+
+  /* The status line sits in the header, between the title and Edit message. Empty, it is
+     clipped by `.statusMessage`. */
+  > .statusMessage:not(:empty) {
+    align-self: center;
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: start;
+    margin: 0;
+    padding: 0.4rem 0.8rem;
+  }
+}
+
+.sentenceLayerTitle {
+  align-self: center;
+  font-size: 1.15rem;
+  font-weight: bold;
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.sentenceEditMessage {
+  grid-column: 3;
+  grid-row: 1;
+  padding: 0 1rem;
+}
+
+.sentenceChoice,
+.sentenceSlotEmpty,
+.sentenceTypeYourOwn {
+  grid-column: 1 / -1;
+  min-height: 0;
 }
 
 .sentenceChoice {
+  align-items: center;
   background-color: white;
   border: 0.15rem solid blue;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
   font-size: 1.1rem;
-  padding: 0.75rem 1rem;
+  gap: 0.6rem;
+  overflow: hidden;
+  padding: 0.15rem 0.8rem;
   text-align: left;
+
+  /* Smaller than elsewhere, so a one-line row fits a slot. */
+  .blissSentence {
+    margin-bottom: 0;
+  }
+
+  .blissSentenceSlot {
+    line-height: 1.1;
+
+    svg {
+      height: 2.25rem;
+    }
+  }
+}
+
+/* A sentence's text, cut off after 2 lines. Its button's name keeps the whole sentence. */
+.sentenceText {
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+/* A slot whose sentence has not arrived. */
+.sentenceSlotEmpty {
+  background-color: white;
+  border: 0.15rem dashed #999;
+  border-radius: 1rem;
 }
 
 /* The look, and the clip that hides it when empty, come from `.statusMessage`. */
@@ -41,12 +123,12 @@
     border-radius: 1rem;
     flex: 1;
     font-size: 1.1rem;
-    padding: 0.75rem 1rem;
+    padding: 0 1rem;
   }
 
   button {
     font-size: 1.1rem;
-    padding: 0.75rem 1.5rem;
+    padding: 0 1.5rem;
   }
 
   /* Clears the message as well as the choices, so it is kept visually distinct from
@@ -58,14 +140,15 @@
 
 /*
  * A sentence the model made: a warm fill, italic text and the badge, all three together, so
- * the mark never rests on colour alone. `AiBadge.scss` corners the badge itself.
- *
- * The extra top padding is the room that corner needs. The `0.75rem` this button otherwise
- * has is less than the badge is tall, so without it the badge would clip the first Bliss
- * symbol, or the first word's ascenders when the symbols are off.
+ * the mark never rests on colour alone. In a slot the badge sits to the left of the content,
+ * not in the corner `AiBadge.scss` gives it, so it covers nothing.
  */
 .sentenceChoice.aiSuggestion {
   background-color: #fdf1d0;
   font-style: italic;
-  padding-block-start: 1.1rem;
+
+  .aiBadge {
+    flex: none;
+    position: static;
+  }
 }

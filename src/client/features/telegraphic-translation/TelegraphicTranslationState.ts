@@ -59,6 +59,13 @@ export const typedSentenceSignal = signal("");
 export const focusedMessageSignal = signal<string | null>(null);
 
 /**
+ * The name of the palette Make Sentences was last pressed on, or `null` before it has been.
+ * The sentence layer opens on that palette only, so the user can go to another palette and come
+ * back to the sentences.
+ */
+export const sentencePaletteSignal = signal<string | null>(null);
+
+/**
  * The abort handle for the sentence request currently in flight, if any.
  */
 let activeSentenceAbort: AbortController | null = null;
@@ -97,6 +104,20 @@ export function clearMessageAndChoices (): void {
 }
 
 /**
+ * Edit message: close the sentence layer and keep the message. Stops the request, clears the
+ * typed text and returns to idle, so the next edit goes through without asking. The message
+ * and its attributes stay.
+ * @returns {void}
+ */
+export function closeSentences (): void {
+  batch((): void => {
+    abortActiveSentenceRequest();
+    typedSentenceSignal.value = "";
+    sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
+  });
+}
+
+/**
  * The message currently in the input area, as text.
  * @returns {string}
  */
@@ -120,6 +141,7 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
       telegraphicMessage.trim().length === 0) {
     return;
   }
+  sentencePaletteSignal.value = adaptivePaletteGlobals.navigationStack.currentPalette?.name ?? null;
   const config = adaptivePaletteGlobals.config.telegraphicTranslation;
   const numSentences = config?.numSentences ?? 1;
   const recalled = findLatestTranslation(telegraphicMessage, languageSignal.value);
@@ -162,7 +184,7 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
       ? [recalled.sentence, ...result.sentences
         .filter((sentence) => sentence !== recalled.sentence)
         .slice(0, numSentences - 1)]
-      : result.sentences;
+      : result.sentences.slice(0, numSentences);
     sentenceCompletionsSignal.value = {
       status: "ready", sentences, recalledSentence: recalled?.sentence ?? null,
       model: result.model, telegraphicMessage, language: result.language, words: result.words
@@ -219,14 +241,21 @@ export function guardEdit (next: ContentSignalDataType): boolean {
     return true;
   }
   const state = sentenceCompletionsSignal.peek();
+  const changed = state.telegraphicMessage !== messageText(next.payloads);
+  // Away from the palette they were made on, the sentences are not on screen, so there is nothing
+  // in view to ask about: the edit closes them, as Edit message would.
+  const currentPalette = adaptivePaletteGlobals.navigationStack.currentPalette?.name ?? null;
+  if (state.status !== "idle" && changed && sentencePaletteSignal.peek() !== currentPalette) {
+    closeSentences();
+    return false;
+  }
   // A failed fill can leave a recalled sentence on screen. It is as tappable as any other,
   // so losing it to an edit is worth a question, exactly like a full set of sentences.
   // A finished state can also hold no sentences at all -- a failed request, or one the user
   // moved past by speaking before it landed -- and there is nothing there to discard.
   const finished = state.status === "ready" || state.status === "error";
   const showsSentences = finished && state.sentences.length > 0;
-  if ((state.status === "working" || showsSentences) &&
-      state.telegraphicMessage !== messageText(next.payloads)) {
+  if ((state.status === "working" || showsSentences) && changed) {
     // The edit is held for as long as the question is up, and published only if the user
     // confirms. Publishing it would show a message the user has not agreed to, and start
     // word prediction on it.

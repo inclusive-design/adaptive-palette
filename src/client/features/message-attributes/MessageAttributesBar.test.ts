@@ -10,12 +10,13 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render, screen } from "@testing-library/preact";
+import { render, screen, waitFor } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 import { vi } from "vitest";
 
 import { initAdaptivePaletteGlobals } from "../../core/InitGlobals";
+import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { mockedAnnounceIfEnabled } from "../../testUtils/SpeechUtilsMock";
 import { selectedAttributesSignal, clearAttributes } from "./MessageAttributesState";
 import { MessageAttributesBar } from "./MessageAttributesBar";
@@ -28,6 +29,10 @@ describe("MessageAttributesBar", (): void => {
 
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
+  });
+
+  afterEach((): void => {
+    adaptivePaletteGlobals.navigationStack.flushReset(null);
   });
 
   beforeEach((): void => {
@@ -142,5 +147,60 @@ describe("MessageAttributesBar", (): void => {
 
     expect(await screen.findByRole("button", { name: "Remove Priority: urgent" }))
       .toBe(document.activeElement);
+  });
+
+  // Six attributes, each in a category of its own, so each chip has its own key.
+  const sixAttributes = Array.from({ length: 6 }, (unused, index) => ({
+    category: `Category${index}`, label: `label${index}`, composition: 553
+  }));
+
+  // The bar in a box `width` wide. A chip is 4rem (64px here) with a 0.25rem gap, so 300px holds 4.
+  const renderInWidth = (width: number) =>
+    render(html`<div style="width: ${width}px"><${MessageAttributesBar} /></div>`);
+
+  test("draws the chips that fit, then +N naming the rest", async (): Promise<void> => {
+    selectedAttributesSignal.value = sixAttributes;
+    renderInWidth(300);
+
+    const more = await screen.findByRole("button", {
+      name: "+3 more: Category3: label3, Category4: label4, Category5: label5"
+    });
+    expect(more.textContent?.trim()).toBe("+3");
+    expect(screen.getAllByRole("button", { name: /^Remove / })).toHaveLength(3);
+  });
+
+  test("removing the chip before +N focuses the chip that takes its place when +N goes", async (): Promise<void> => {
+    // Room for 4: five attributes draw 3 chips and "+2". Removing the third leaves 4, which fit.
+    selectedAttributesSignal.value = sixAttributes.slice(0, 5);
+    renderInWidth(300);
+    await userEvent.click(await screen.findByRole("button", { name: "Remove Category2: label2" }));
+
+    await waitFor(() => expect(screen.getByRole("button", { name: "Remove Category3: label3" })).toHaveFocus());
+    expect(screen.queryByRole("button", { name: /more:/ })).toBeNull();
+  });
+
+  test("counts again when the bar's width changes", async (): Promise<void> => {
+    selectedAttributesSignal.value = sixAttributes;
+    const { container } = renderInWidth(300);
+    await screen.findByRole("button", { name: /^\+3 more/ });
+
+    (container.firstElementChild as HTMLElement).style.width = "600px";
+
+    await waitFor(() => expect(screen.queryByRole("button", { name: /more:/ })).toBeNull());
+    expect(screen.getAllByRole("button", { name: /^Remove / })).toHaveLength(6);
+  });
+
+  test("+N opens the attributes palette, as Msg Style does", async (): Promise<void> => {
+    const { paletteStore, navigationStack } = adaptivePaletteGlobals;
+    await paletteStore.loadPaletteSet("/palette-sets/standardBlissChart/palette_set.json");
+    const start = { name: "Start", cells: {} };
+    navigationStack.flushReset(start);
+    selectedAttributesSignal.value = sixAttributes;
+    renderInWidth(300);
+
+    await userEvent.click(await screen.findByRole("button", { name: /^\+3 more/ }));
+
+    await waitFor(() => expect(navigationStack.currentPalette?.name).toBe("attributes"));
+    expect(navigationStack.peek()).toBe(start);
   });
 });

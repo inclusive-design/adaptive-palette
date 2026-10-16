@@ -46,6 +46,9 @@ export type LayoutInfoType = {
   // The `config.json` section the cell's feature needs. The palette leaves the cell out, and
   // closes the row up, when that section is missing.
   requiresConfig?: keyof AdaptivePaletteConfigType,
+  // When true, and the palette holding the cell is included by the screen palette, the screen
+  // draws the cell over every row below that include, across all columns. See `Palette.ts`.
+  layer?: boolean,
   // The language of the cell's `label`. Set by `Palette.ts` when it picks the label; not
   // written in the palette JSON.
   labelLanguage?: Language,
@@ -73,7 +76,7 @@ export type JsonPaletteType = {
     [key: string]: {
       type: string,
       options: BlissSymbolCellType | ContentEncodingType | ContentLabelType | AttributeCellType |
-        PaletteIncludeType | ContentPredictedWordsType
+        PaletteIncludeType
     }
   }
 };
@@ -82,10 +85,7 @@ export type ContentEncodingType = LayoutInfoType;
 
 export type ContentSentenceChoicesType = LayoutInfoType;
 
-export type ContentPredictedWordsType = LayoutInfoType & {
-  // How many columns the suggestion slots are set out in. Defaults to `maxSuggestions`: one row.
-  numColumns?: number
-};
+export type ContentPredictedWordsType = LayoutInfoType;
 
 export type PaletteIncludeType = LayoutInfoType & {
   // The name of the palette drawn in this cell's span.
@@ -155,7 +155,7 @@ export type TelegraphicTranslationConfigType = {
 
 export type WordPredictionConfigType = {
   show: boolean,
-  maxSuggestions: number,
+  numSuggestions: number,
   // Whether a model is asked for suggestions on top of the ones found in the message history.
   enableModelQuery: boolean,
   model: string,

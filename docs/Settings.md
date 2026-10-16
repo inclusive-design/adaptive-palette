@@ -20,9 +20,9 @@ Settings defined in `public/config.json` except these fields: `model`, `systemPr
 | Symbol entry | Show "Add Symbol to Message" | |
 | Symbol entry | Show SVG-builder string entry | |
 | Word prediction | Enable word suggestion | |
-| Word prediction | Suggestions to show | |
+| Word prediction | Suggestions to show (up to 13) | |
 | Word prediction | Ask the AI model for suggestions | yes |
-| Sentences | Sentence choices to offer | yes |
+| Sentences | Sentence choices to offer (up to 3) | yes |
 | Sentences | Show Bliss symbols above each sentence | yes |
 | Indicator labels | Ask the AI model when no label is found | yes |
 

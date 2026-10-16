@@ -47,7 +47,7 @@ let fileConfig: AdaptivePaletteConfigType;
 
 const SPEAK_LABEL = "Speak each symbol as I add it";
 const MODEL_WORDS_LABEL = "Ask the AI model for suggestions";
-const SUGGESTIONS_LABEL = "Suggestions to show";
+const SUGGESTIONS_LABEL = "Suggestions to show (max 13)";
 const SENTENCES_LABEL = "Sentence choices to offer";
 const WORDS_LABEL = "Enable word suggestion";
 const MARK_AI_LABEL = "Mark AI suggestions";
@@ -201,9 +201,19 @@ describe("SettingsDialog", () => {
 
     const suggestions = screen.getByLabelText(SUGGESTIONS_LABEL);
     expect(suggestions).toHaveAttribute("min", "1");
+    expect(suggestions).toHaveAttribute("max", "13");
     expect(suggestions).toHaveAttribute("step", "1");
     expect(suggestions).toBeRequired();
     expect(screen.getByLabelText("Messages to remember")).toHaveAttribute("min", "0");
+  });
+
+  test("names the maximum in the label of a number setting that has one", () => {
+    withConfig({});
+    renderDialog();
+
+    expect(screen.getByLabelText(SUGGESTIONS_LABEL)).toBeInTheDocument();
+    expect(screen.getByLabelText(`${en.settingSentenceChoices} (max 3)`)).toBeInTheDocument();
+    expect(screen.getByLabelText("Messages to remember")).toBeInTheDocument();
   });
 
   // The store is gone once the erase has finished, so every later write fails where only

@@ -24,11 +24,16 @@ import type {
 } from "../index.d";
 import { parseLanguage } from "../i18n/I18n";
 
-// Used when `maxRecalledRecords` or `wordPrediction.maxSuggestions` is missing or malformed.
+// Used when `maxRecalledRecords` or `wordPrediction.numSuggestions` is missing or malformed.
 // 500 is a working-set size, not a storage limit: reading further back costs time on every
 // keystroke, because word prediction walks the whole set each time it suggests.
 export const DEFAULT_MAX_RECALLED_RECORDS = 500;
-export const DEFAULT_MAX_SUGGESTIONS = 10;
+export const DEFAULT_NUM_SUGGESTIONS = 5;
+
+// The most the screen has room for: the suggestions share one row, and the sentence layer
+// holds three slots. A larger value is lowered to these.
+export const MAX_NUM_SUGGESTIONS = 13;
+export const MAX_NUM_SENTENCES = 3;
 
 // Used when `aboutMe.messagesPerRun` is missing or malformed: enough history to find facts
 // in, and few enough messages to fit a small local model's context.
@@ -80,7 +85,7 @@ export function makeDefaultConfig (): AdaptivePaletteConfigType {
     indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
     symbolSearch: { show: true },
     svgBuilderString: { show: false },
-    wordPrediction: { show: false, maxSuggestions: DEFAULT_MAX_SUGGESTIONS, ...DISABLED_MODEL_QUERY }
+    wordPrediction: { show: false, numSuggestions: DEFAULT_NUM_SUGGESTIONS, ...DISABLED_MODEL_QUERY }
   };
 }
 
@@ -138,7 +143,7 @@ function parseTelegraphicTranslation (section: unknown): TelegraphicTranslationC
   }
   return {
     model,
-    numSentences: numSentences as number,
+    numSentences: Math.min(numSentences as number, MAX_NUM_SENTENCES),
     systemPrompt: systemPrompt,
     userPrompt: userPrompt,
     // Deliberately not required: an existing `config.json` written before this setting
@@ -204,11 +209,11 @@ function parseMaxRecalledRecords (value: unknown): number {
  */
 function parseWordPrediction (section: unknown): WordPredictionConfigType {
   const candidate = section as {
-    show?: unknown, maxSuggestions?: unknown, enableModelQuery?: unknown,
+    show?: unknown, numSuggestions?: unknown, enableModelQuery?: unknown,
     model?: unknown, systemPrompt?: unknown, userPrompt?: unknown
   } | undefined;
   if (!candidate || typeof candidate.show !== "boolean") {
-    return { show: false, maxSuggestions: DEFAULT_MAX_SUGGESTIONS, ...DISABLED_MODEL_QUERY };
+    return { show: false, numSuggestions: DEFAULT_NUM_SUGGESTIONS, ...DISABLED_MODEL_QUERY };
   }
   const { model, systemPrompt, userPrompt } = candidate;
   // An empty `model` is valid and means the first model Ollama reports.
@@ -223,9 +228,9 @@ function parseWordPrediction (section: unknown): WordPredictionConfigType {
     : DISABLED_MODEL_QUERY;
   return {
     show: candidate.show,
-    maxSuggestions: isPositiveInteger(candidate.maxSuggestions)
-      ? candidate.maxSuggestions as number
-      : DEFAULT_MAX_SUGGESTIONS,
+    numSuggestions: isPositiveInteger(candidate.numSuggestions)
+      ? Math.min(candidate.numSuggestions as number, MAX_NUM_SUGGESTIONS)
+      : DEFAULT_NUM_SUGGESTIONS,
     ...modelQuery
   };
 }

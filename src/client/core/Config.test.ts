@@ -12,8 +12,8 @@
 
 import { vi } from "vitest";
 import {
-  loadConfig, makeDefaultConfig, DISABLED_MODEL_QUERY, DEFAULT_MAX_RECALLED_RECORDS, DEFAULT_MAX_SUGGESTIONS,
-  DEFAULT_MESSAGES_PER_RUN
+  loadConfig, makeDefaultConfig, DISABLED_MODEL_QUERY, DEFAULT_MAX_RECALLED_RECORDS, DEFAULT_NUM_SUGGESTIONS,
+  DEFAULT_MESSAGES_PER_RUN, MAX_NUM_SENTENCES, MAX_NUM_SUGGESTIONS
 } from "./Config";
 import { promptsFor } from "../utils/PromptUtils";
 import { LANGUAGES } from "../i18n/I18n";
@@ -41,6 +41,15 @@ const INDICATOR_SECTION = {
 };
 
 describe("loadConfig telegraphicTranslation section", (): void => {
+
+  test("a numSentences above the maximum is lowered to it", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      telegraphicTranslation: { ...TELEMSG_SECTION, numSentences: 7 }
+    });
+    const config = await loadConfig();
+    expect(config.telegraphicTranslation?.numSentences).toBe(MAX_NUM_SENTENCES);
+  });
 
   const TELEMSG_SECTION = {
     model: "phony-model:12b",
@@ -181,44 +190,57 @@ describe("loadConfig maxRecalledRecords", (): void => {
 
 describe("loadConfig wordPrediction section", (): void => {
 
+  test("a numSuggestions above the maximum is lowered to it", async (): Promise<void> => {
+    stubConfigFetch({
+      indicatorLabelLookup: INDICATOR_SECTION,
+      wordPrediction: { show: true, numSuggestions: 20 }
+    });
+    const config = await loadConfig();
+    expect(config.wordPrediction.numSuggestions).toBe(MAX_NUM_SUGGESTIONS);
+  });
+
+  test("numSuggestions defaults to 5", (): void => {
+    expect(makeDefaultConfig().wordPrediction.numSuggestions).toBe(5);
+  });
+
   test("a valid section is loaded as given", async (): Promise<void> => {
     stubConfigFetch({
       indicatorLabelLookup: INDICATOR_SECTION,
-      wordPrediction: { show: true, maxSuggestions: 6 }
+      wordPrediction: { show: true, numSuggestions: 6 }
     });
     const config = await loadConfig();
     expect(config.wordPrediction)
-      .toEqual({ show: true, maxSuggestions: 6, ...DISABLED_MODEL_QUERY });
+      .toEqual({ show: true, numSuggestions: 6, ...DISABLED_MODEL_QUERY });
   });
 
   test("a missing section turns the feature off", async (): Promise<void> => {
     stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
     const config = await loadConfig();
     expect(config.wordPrediction)
-      .toEqual({ show: false, maxSuggestions: DEFAULT_MAX_SUGGESTIONS, ...DISABLED_MODEL_QUERY });
+      .toEqual({ show: false, numSuggestions: DEFAULT_NUM_SUGGESTIONS, ...DISABLED_MODEL_QUERY });
   });
 
-  test("a malformed maxSuggestions falls back while the feature stays on", async (): Promise<void> => {
+  test("a malformed numSuggestions falls back while the feature stays on", async (): Promise<void> => {
     stubConfigFetch({
       indicatorLabelLookup: INDICATOR_SECTION,
-      wordPrediction: { show: true, maxSuggestions: 0 }
+      wordPrediction: { show: true, numSuggestions: 0 }
     });
     const config = await loadConfig();
     expect(config.wordPrediction)
-      .toEqual({ show: true, maxSuggestions: DEFAULT_MAX_SUGGESTIONS, ...DISABLED_MODEL_QUERY });
+      .toEqual({ show: true, numSuggestions: DEFAULT_NUM_SUGGESTIONS, ...DISABLED_MODEL_QUERY });
   });
 
   test("a fully configured model query is loaded as given", async (): Promise<void> => {
     stubConfigFetch({
       indicatorLabelLookup: INDICATOR_SECTION,
       wordPrediction: {
-        show: true, maxSuggestions: 6, enableModelQuery: true, model: "phony-model:12b",
+        show: true, numSuggestions: 6, enableModelQuery: true, model: "phony-model:12b",
         systemPrompt: "List {{numWords}} words.", userPrompt: "Message so far: {{message}}"
       }
     });
     const config = await loadConfig();
     expect(config.wordPrediction).toEqual({
-      show: true, maxSuggestions: 6, enableModelQuery: true, model: "phony-model:12b",
+      show: true, numSuggestions: 6, enableModelQuery: true, model: "phony-model:12b",
       systemPrompt: "List {{numWords}} words.", userPrompt: "Message so far: {{message}}"
     });
   });
@@ -228,7 +250,7 @@ describe("loadConfig wordPrediction section", (): void => {
     stubConfigFetch({
       indicatorLabelLookup: INDICATOR_SECTION,
       wordPrediction: {
-        show: true, maxSuggestions: 6, enableModelQuery: true, model: "",
+        show: true, numSuggestions: 6, enableModelQuery: true, model: "",
         systemPrompt: "List {{numWords}} words.", userPrompt: "Message so far: {{message}}"
       }
     });
@@ -241,15 +263,15 @@ describe("loadConfig wordPrediction section", (): void => {
   // leaves the history-based suggestions working on their own.
   test("an incomplete model query is turned off while the feature stays on", async (): Promise<void> => {
     const incompleteSections = [
-      { show: true, maxSuggestions: 6, enableModelQuery: true, model: "m", userPrompt: "u" },
-      { show: true, maxSuggestions: 6, enableModelQuery: true, model: "m", systemPrompt: "  ", userPrompt: "u" },
-      { show: true, maxSuggestions: 6, enableModelQuery: true, model: 7, systemPrompt: "s", userPrompt: "u" }
+      { show: true, numSuggestions: 6, enableModelQuery: true, model: "m", userPrompt: "u" },
+      { show: true, numSuggestions: 6, enableModelQuery: true, model: "m", systemPrompt: "  ", userPrompt: "u" },
+      { show: true, numSuggestions: 6, enableModelQuery: true, model: 7, systemPrompt: "s", userPrompt: "u" }
     ];
     for (const wordPrediction of incompleteSections) {
       stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, wordPrediction });
       const config = await loadConfig();
       expect(config.wordPrediction)
-        .toEqual({ show: true, maxSuggestions: 6, ...DISABLED_MODEL_QUERY });
+        .toEqual({ show: true, numSuggestions: 6, ...DISABLED_MODEL_QUERY });
     }
   });
 
@@ -257,15 +279,15 @@ describe("loadConfig wordPrediction section", (): void => {
   // Keeping them is what lets the settings dialog switch the query on and have it work.
   test("a complete model section keeps its prompts while the query is off", async (): Promise<void> => {
     const offSections = [
-      { show: true, maxSuggestions: 6, model: "m", systemPrompt: "s", userPrompt: "u" },
-      { show: true, maxSuggestions: 6, enableModelQuery: false, model: "m", systemPrompt: "s", userPrompt: "u" },
-      { show: true, maxSuggestions: 6, enableModelQuery: "yes", model: "m", systemPrompt: "s", userPrompt: "u" }
+      { show: true, numSuggestions: 6, model: "m", systemPrompt: "s", userPrompt: "u" },
+      { show: true, numSuggestions: 6, enableModelQuery: false, model: "m", systemPrompt: "s", userPrompt: "u" },
+      { show: true, numSuggestions: 6, enableModelQuery: "yes", model: "m", systemPrompt: "s", userPrompt: "u" }
     ];
     for (const wordPrediction of offSections) {
       stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, wordPrediction });
       const config = await loadConfig();
       expect(config.wordPrediction).toEqual({
-        show: true, maxSuggestions: 6, enableModelQuery: false,
+        show: true, numSuggestions: 6, enableModelQuery: false,
         model: "m", systemPrompt: "s", userPrompt: "u"
       });
     }

@@ -11,7 +11,7 @@
  */
 
 import { vi } from "vitest";
-import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/preact";
+import { render, screen, cleanup, waitFor } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
@@ -21,7 +21,8 @@ import { setTestConfig } from "../testUtils/TestConfig";
 import { CurrentPalette } from "./CurrentPalette";
 import { goBackImpl } from "../cells/CommandGoBackCell";
 import {
-  sentenceCompletionsSignal, IDLE_SENTENCE_STATE, typedSentenceSignal, focusedMessageSignal
+  sentenceCompletionsSignal, IDLE_SENTENCE_STATE, typedSentenceSignal, focusedMessageSignal,
+  sentencePaletteSignal
 } from "../features/telegraphic-translation/TelegraphicTranslationState";
 import { en } from "../i18n/en";
 import { languageSignal, type LabelType } from "../i18n/I18n";
@@ -47,43 +48,40 @@ describe("Navigating between screens that share the Standard Header", (): void =
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
     typedSentenceSignal.value = "";
     focusedMessageSignal.value = null;
+    sentencePaletteSignal.value = null;
     languageSignal.value = "en";
     adaptivePaletteGlobals.navigationStack.flushReset(null);
   });
 
-  test("keeps the sentence box, its text and its focus", async (): Promise<void> => {
+  // The layer shows on the palette the sentences were made on. On any other palette, all the
+  // cells work, and Back brings the layer back with what the user typed.
+  test("the sentence layer stays on its palette, and Back brings it back with its typed text", async (): Promise<void> => {
     const { paletteStore, navigationStack } = adaptivePaletteGlobals;
     const startName = await paletteStore.loadPaletteSet("/palette-sets/standardBlissChart/palette_set.json");
     const startPalette = await paletteStore.getNamedPalette(startName, true);
-    if (!startPalette) {
-      throw new Error(`Start palette "${startName}" did not load`);
+    const food = await paletteStore.getNamedPalette("food", true);
+    if (!startPalette || !food) {
+      throw new Error("The palettes did not load");
     }
     navigationStack.flushReset(startPalette);
+    sentencePaletteSignal.value = startPalette.name;
     sentenceCompletionsSignal.value = {
       status: "ready", sentences: ["I am hungry."], recalledSentence: null,
       model: "phony-model:12b", telegraphicMessage: "me hungry"
     };
     const { container } = render(html`<${CurrentPalette} />`);
-
     const textBox = await screen.findByPlaceholderText<HTMLInputElement>(en.sentenceTypeYours);
     await userEvent.type(textBox, "I want lunch.");
-    expect(textBox).toHaveFocus();
 
-    // `fireEvent` leaves focus where it is, as a keyboard shortcut or a switch scan can.
-    // Skip "add indicator", which is unavailable with no symbol at the caret.
-    const branch = container.querySelector<HTMLElement>(".actionBranchToPaletteCell:not([aria-disabled='true'])");
-    if (!branch) {
-      throw new Error("The start palette has no branch cell");
-    }
-    const target = branch.dataset.branchto;
-    fireEvent.click(branch);
-    await waitFor(() => {
-      expect(container.querySelector(`[data-palettename='${target}']`)).not.toBeNull();
-    });
+    navigationStack.push(startPalette);
+    navigationStack.currentPalette = food;
+    await waitFor(() => expect(screen.queryByPlaceholderText(en.sentenceTypeYours)).toBeNull());
+    expect(container.querySelector("[inert]")).toBeNull();
 
-    expect(screen.getByPlaceholderText(en.sentenceTypeYours)).toBe(textBox);
-    expect(textBox).toHaveFocus();
-    expect(textBox.value).toBe("I want lunch.");
+    goBackImpl();
+
+    const again = await screen.findByPlaceholderText<HTMLInputElement>(en.sentenceTypeYours);
+    expect(again.value).toBe("I want lunch.");
   });
 
   /**

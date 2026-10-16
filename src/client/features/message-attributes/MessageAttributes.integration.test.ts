@@ -178,7 +178,7 @@ describe("Message attributes: whole-feature walkthrough", (): void => {
     try {
       setTestConfig({
         wordPrediction: {
-          show: true, maxSuggestions: 5, enableModelQuery: true, model: "phony-model:12b",
+          show: true, numSuggestions: 5, enableModelQuery: true, model: "phony-model:12b",
           systemPrompt: "List words.",
           userPrompt: "Message so far: {{message}}\nMessage attributes: {{attributes}}"
         }
@@ -308,7 +308,7 @@ describe("Message attributes: whole-feature walkthrough", (): void => {
     try {
       setTestConfig({
         wordPrediction: {
-          show: true, maxSuggestions: 5, enableModelQuery: true, model: "phony-model:12b",
+          show: true, numSuggestions: 5, enableModelQuery: true, model: "phony-model:12b",
           systemPrompt: "List words.",
           userPrompt: "Message so far: {{message}}\nMessage attributes: {{attributes}}"
         }

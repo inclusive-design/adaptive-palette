@@ -60,23 +60,21 @@ if (isLocalHost()) {
   render(html`<${FirstRunSetup} />`, getRequiredElement("firstRunSetup"));
 }
 
-// Which status line applies is settled at start-up. Its text follows the language.
+// Which notice applies is settled at start-up. Its text follows the language. It is short, so
+// it fits the top bar's one line.
 const aiStatus = getRequiredElement("aiStatus");
-const aiStatusText = !isLocalHost()
-  // Two sentences in the element that is already there: what the AI features do here, and
-  // what happens to what the user writes.
-  ? () => `${t("hosted")} ${t("notSaved")}`
-  : adaptivePaletteGlobals.models.length === 0 ? () => t("noModels")
-    : !adaptivePaletteGlobals.config.telegraphicTranslation ? () => t("sentenceNotConfigured")
+const aiStatusText = !isLocalHost() ? () => t("aiStatusHosted")
+  : adaptivePaletteGlobals.models.length === 0 ? () => t("aiStatusNoModels")
+    : !adaptivePaletteGlobals.config.telegraphicTranslation ? () => t("aiStatusNoSentences")
       : undefined;
 if (aiStatusText) {
   effect(() => {
     aiStatus.textContent = aiStatusText();
   });
 } else {
-  // Nothing to report. The element is removed rather than hidden with CSS: an empty grid
-  // item still consumes a row-gap, and a live region that is `display: none` when its
-  // text arrives may not announce it.
+  // Nothing to report. The element is removed rather than hidden with CSS: an empty flex
+  // item still takes a gap, and a live region that is `display: none` when its text arrives
+  // may not announce it.
   aiStatus.remove();
 }
 

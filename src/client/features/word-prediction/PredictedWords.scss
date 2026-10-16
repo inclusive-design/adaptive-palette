@@ -11,49 +11,56 @@
  */
 
 /*
- * The status line's space is held whether or not it has text: words arriving from the model
- * must not push the row down while the user is aiming at it. The first track is one line of
- * `.statusMessage`: 1.5rem of padding, a 1.5rem line and 0.5rem of margin. Text long enough
- * to wrap grows the track rather than overflowing it.
+ * A 72px band with one row of slots. The status line is a live region only, always visually
+ * hidden, so its text never moves the row. While the model is answering, the empty slots show
+ * "…" instead.
  */
 .predictedWordsArea {
   display: grid;
-  grid-template-rows: minmax(3.5rem, auto) auto;
+  grid-template-rows: minmax(0, 1fr);
+  height: 72px;
 
   .statusMessage {
-    line-height: 1.5rem;
+    clip-path: inset(50%);
+    height: 1px;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
   }
 }
 
-/*
- * Laid out like palette rows: full width, with the columns the palette asks for (one per slot by
- * default). The columns come from the component, which knows how many slots there are.
- */
+/* Full width, one column per slot. The component sets the columns, since it knows how many
+   slots there are. */
 .predictedWords {
-  column-gap: 0.5rem;
-  row-gap: 0.5rem;
+  column-gap: 4px;
   display: grid;
-  /* Holds the row open while there is nothing to suggest, so the page below does not shift. */
-  min-height: 3.5rem;
+  min-height: 0;
   width: 100%;
 
-  /*
-   * Shorter than a palette symbol, but still big enough to recognise at a glance: this row
-   * sits between the message and the palette, and a full-height row would push the palette
-   * itself down the page.
-   */
   svg {
-    max-height: 3.5rem;
+    max-height: 34px;
     max-width: 100%;
   }
 }
 
 /* A palette cell in every way but colour, which marks it as a suggestion. */
 .predictedWord {
+  align-items: center;
   background-color: #d7f0d5;
   border: 3px solid blue;
   /* Matches the rule `<button>` gets in index.scss, so an empty cell is the same shape. */
   border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+  hyphens: auto;
+  justify-content: center;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
   overflow-wrap: break-word;
   padding-block: 0.15rem;
   padding-inline: 0.5rem;
@@ -63,6 +70,14 @@
 /* A slot with no word for it: the cell is there, with nothing in it. */
 .predictedWordEmpty {
   background-color: white;
+}
+
+/* An empty slot while the model is answering. */
+.predictedWordWaiting {
+  color: #777;
+  font-size: 1.6rem;
+  font-weight: bold;
+  letter-spacing: 0.15rem;
 }
 
 /*

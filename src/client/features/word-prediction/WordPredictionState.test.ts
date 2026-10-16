@@ -70,7 +70,7 @@ describe("wordPrediction model query", (): void => {
     adaptivePaletteGlobals.config.maxRecalledRecords = 100;
     adaptivePaletteGlobals.config.wordPrediction = {
       show: true,
-      maxSuggestions: 4,
+      numSuggestions: 4,
       enableModelQuery: true,
       model: "phony-model:12b",
       systemPrompt: "List {{numWords}} words.",
@@ -94,7 +94,7 @@ describe("wordPrediction model query", (): void => {
     vi.useRealTimers();
     await resetMessageLog();
     adaptivePaletteGlobals.config.wordPrediction = {
-      show: false, maxSuggestions: 10, ...DISABLED_MODEL_QUERY
+      show: false, numSuggestions: 10, ...DISABLED_MODEL_QUERY
     };
     adaptivePaletteGlobals.models = [];
     clearAttributes();
@@ -244,7 +244,7 @@ describe("wordPrediction model query", (): void => {
     });
 
     test("when the history filled every slot", async (): Promise<void> => {
-      adaptivePaletteGlobals.config.wordPrediction.maxSuggestions = 1;
+      adaptivePaletteGlobals.config.wordPrediction.numSuggestions = 1;
       compose("I");
       await waitForQuery();
       expect(mockedQueryChat).not.toHaveBeenCalled();

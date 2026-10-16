@@ -87,7 +87,9 @@ Each palette is a whole screen below the top bar. Navigation replaces the whole 
 
 Every shipped screen palette starts with a `PaletteInclude` of **Standard Header** (`standard_header.json`), in row 1
 across all its columns, with the cell id `standard-header`. The Standard Header holds, one per row: the Input Area
-palette, `ContentSentenceChoices`, `ContentPredictedWords` and the Command Bar palette.
+palette, `ContentSentenceChoices`, `ContentPredictedWords` and the Command Bar palette. `ContentSentenceChoices`
+has `"layer": true`, so the screen palette draws it as a layer, not in the header's row (see
+[Fitting the screen](#fitting-the-screen)).
 
 `src/client/index.scss` styles the Standard Header and Command Bar palettes by name, with `[data-palettename="..."]`
 selectors, so renaming either palette drops its styles.
@@ -117,6 +119,27 @@ A `PaletteInclude` cell draws another palette in its span:
 The included palette has its own rows and columns inside the span, so any size fits.
 
 The span stays empty, and an error is logged, when the palette is not loaded or would be drawn inside itself.
+
+## Fitting the screen
+
+The palette on screen fits the window, whatever its JSON says:
+
+1. A row holding only included palettes, such as the header, is as tall as its content. The bands
+   in the header have fixed heights.
+2. Every other row shares what is left, and never goes below 64px. At 1024×650, 4 rows are 89px
+   each and 5 rows 70px; 6 rows scroll.
+3. Columns shrink to fit the width, so the page never scrolls sideways. The body grid is
+   `grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr)`. Below 1024×650
+   the page scrolls vertically, never sideways.
+4. A cell clips what does not fit. Its symbol shrinks to the height its label leaves.
+
+A cell with `"layer": true` in its options, such as the header's `ContentSentenceChoices`, is not
+drawn in the header. The screen palette draws it over every row below the header, spanning all
+columns, as a layer. This happens only on the screen palette (the one `CurrentPalette` draws), only
+for a palette it includes directly, and only when rows are below that include. Anywhere else, such
+as one nested deeper or a palette drawn on its own by the palette generator, the cell draws in
+place. The header must have its rows to itself: a cell that shares the header's rows or spans
+beside it is not laid out correctly.
 
 ## Palette JSON structure
 
@@ -166,6 +189,7 @@ label in the standard chart has both; `scripts/draft_swedish_labels.js` drafted 
 | `columnSpan` | number | Number of grid columns the cell occupies |
 | `requiresModel` | boolean | Optional. When true the cell is left out unless a model is available |
 | `requiresConfig` | string | Optional. The `config.json` section the cell needs; the cell is left out when that section is missing |
+| `layer` | boolean | Optional. The screen palette draws the cell over the rows below the include that holds it (see [Fitting the screen](#fitting-the-screen)) |
 
 Both flags mark a cell whose feature can be unavailable: the command bar's "Msg Style" button
 carries `requiresModel`, and the input area's "Make Sentences" button carries both. `Palette.ts`

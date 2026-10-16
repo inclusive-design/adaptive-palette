@@ -13,7 +13,8 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolCellType } from "../index.d";
-import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
+import { changeEncodingContents } from "../state/GlobalData";
+import { goToPalette } from "../core/PaletteNavigation";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import type { Language } from "../i18n/I18n";
@@ -29,7 +30,6 @@ type ActionBranchToPalettePropsType = {
  * makes the palette referenced by this cell the current one.
  */
 const navigateToPalette = async (event: Event, language?: Language): Promise<void> => {
-  const { paletteStore, navigationStack } = adaptivePaletteGlobals;
   const button = event.currentTarget as HTMLElement;
   announceIfEnabled(button.innerText, language);
 
@@ -38,25 +38,7 @@ const navigateToPalette = async (event: Event, language?: Language): Promise<voi
     console.error(`navigateToPalette(): Missing routing attribute (data-branchto) for ${button.id}`);
     return;
   }
-
-  const paletteDefinition = await paletteStore.getNamedPalette(branchToPaletteName, true);
-  if (!paletteDefinition) {
-    console.error(`navigateToPalette(): Unable to locate palette definition for ${branchToPaletteName}`);
-    return;
-  }
-
-  // Already looking at it. A persistent cell such as the command bar's "Msg Style" stays
-  // tappable once its palette is current, and pushing that palette onto itself would leave
-  // the first `Back` press doing nothing.  The palettes are compared by reference because a
-  // palette may be stored under a key that differs from its `name`.
-  if (navigationStack.currentPalette === paletteDefinition) {
-    return;
-  }
-
-  // Push the palette the user is looking at, not the one this button happens to sit in:
-  // a cell in an included palette, such as the Command Bar, sits in a different one.
-  navigationStack.push(navigationStack.currentPalette);
-  navigationStack.currentPalette = paletteDefinition;
+  await goToPalette(branchToPaletteName);
 };
 
 /**

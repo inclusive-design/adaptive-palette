@@ -73,12 +73,16 @@ export const en = {
   // AI and storage status
   noModels: "No models available. Start Ollama to enable AI features.",
   hosted: "AI features are available only in the desktop version.",
-  notSaved: "Nothing is saved on this computer. Reloading the page clears your data.",
+  // The top bar's notice. Short, so it fits on the bar's one line.
+  aiStatusHosted: "Trial version: no AI, nothing saved",
+  aiStatusNoModels: "AI off: Ollama isn't running",
+  aiStatusNoSentences: "Sentences off: check config.json",
 
   // Settings dialog
   settingsSave: "Save and close",
   settingsModelNote: "Start Ollama to use this.",
   settingsFailed: "The settings could not be saved. This browser is not letting the app use its storage.",
+  settingMax: "max {{max}}",
   settingsDependentNote: "Turn on \"{{label}}\" to use this.",
   settingGroupGeneral: "General",
   settingGroupSymbolEntry: "Symbol entry",
@@ -173,6 +177,8 @@ export const en = {
   sentenceSpeak: "Speak",
   sentenceDone: "✓ Done",
   sentenceDoneSpoken: "Done",
+  sentenceChoose: "Choose a sentence",
+  sentenceEditMessage: "Edit message",
   discardWorking: "Still making a sentence. Changing your message will stop it. Change anyway?",
   discardReady: "Changing your message will remove the sentences. Change anyway?",
   discardTitle: "Change your message?",
@@ -186,5 +192,6 @@ export const en = {
   attributePriority: "Priority",
   attributeOn: "{{name}}, on",
   attributeOff: "{{name}}, off",
-  attributeRemove: "Remove {{name}}"
+  attributeRemove: "Remove {{name}}",
+  attributeMore: "+{{count}} more: {{names}}"
 };

@@ -20,7 +20,7 @@ import { aiSuggestionLabel } from "../../components/AiBadge";
 import { setTestConfig } from "../../testUtils/TestConfig";
 import {
   discardEditPromptSignal, focusedMessageSignal, IDLE_SENTENCE_STATE,
-  sentenceCompletionsSignal, typedSentenceSignal
+  sentenceCompletionsSignal, typedSentenceSignal, sentencePaletteSignal
 } from "./TelegraphicTranslationState";
 import { readMessageLog } from "../../core/MessageLog";
 import { SentenceChoices } from "./SentenceChoices";
@@ -84,6 +84,8 @@ describe("SentenceChoices", (): void => {
     discardEditPromptSignal.value = null;
     typedSentenceSignal.value = "";
     focusedMessageSignal.value = null;
+    sentencePaletteSignal.value = null;
+    adaptivePaletteGlobals.navigationStack.flushReset(null);
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
     await resetMessageLog();
   });
@@ -576,6 +578,181 @@ describe("SentenceChoices", (): void => {
 
     await screen.findByRole("button", { name: SENTENCES[0] });
     expect(document.activeElement).toBe(textBox);
+  });
+
+  describe("the layer", (): void => {
+
+    // A grid like the screen palette's: the header row, and a cell under the layer.
+    const renderInGrid = (height = 300) => render(html`
+      <div data-palettename="Screen" style="display: grid; grid-template-rows: 40px ${height}px">
+        <div class="paletteInclude" style="grid-row: 1"><button>header</button></div>
+        <button style="grid-row: 2; grid-column: 1">covered</button>
+        <${SentenceChoices} id=${CELL_ID} options=${{ rowStart: 2, rowSpan: 1, columnStart: 1, columnSpan: 1 }} />
+      </div>
+    `);
+
+    const button = (name: string): HTMLElement => screen.getByText(name).closest("button") as HTMLElement;
+
+    test("holds one slot per sentence asked for; the empty ones are hidden from screen readers", (): void => {
+      sentenceCompletionsSignal.value = FILLING_STATE;
+      const { container } = render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+
+      expect(container.querySelectorAll(".sentenceChoice")).toHaveLength(1);
+      const empty = container.querySelectorAll(".sentenceSlotEmpty");
+      expect(empty).toHaveLength(2);
+      empty.forEach((slot) => expect(slot).toHaveAttribute("aria-hidden", "true"));
+    });
+
+    test("holds at most three slots, and draws the first sentences only", (): void => {
+      sentenceCompletionsSignal.value = { ...READY_STATE, sentences: [...SENTENCES, "One more."] };
+      const { container } = render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+
+      expect(container.querySelectorAll(".sentenceChoice")).toHaveLength(3);
+      expect(screen.queryByRole("button", { name: "One more." })).toBeNull();
+    });
+
+    test("a sentence on screen keeps its slot when the setting goes down", (): void => {
+      setTestConfig({
+        markAiSuggestions: false,
+        telegraphicTranslation: {
+          model: "phony-model:12b", numSentences: 1, systemPrompt: "prompt", userPrompt: "prompt", showBlissSentence: true
+        }
+      });
+      sentenceCompletionsSignal.value = READY_STATE;
+      const { container } = render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+
+      expect(container.querySelectorAll(".sentenceChoice")).toHaveLength(3);
+      expect(container.querySelectorAll(".sentenceSlotEmpty")).toHaveLength(0);
+    });
+
+    test("the model's error shows in the layer's header", async (): Promise<void> => {
+      sentenceCompletionsSignal.value = { ...FILLING_STATE, status: "error" };
+      const { container } = render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+
+      expect(await screen.findByText(en.sentenceCannotComplete)).toBeVisible();
+      expect(container.querySelector(".sentenceLayer > [role='status']")?.className).toContain("sentenceError");
+      // The recalled sentence and the form still work.
+      expect(screen.getByRole("button", { name: SENTENCES[0] })).toBeVisible();
+      expect(screen.getByPlaceholderText(en.sentenceTypeYours)).toBeVisible();
+    });
+
+    test("a sentence whose Bliss row overflows its slot shows its text only, and keeps its whole name", async (): Promise<void> => {
+      const short = "I am hungry.";
+      const long = "I would really like to have a big warm bun sandwich with cheese and some tea, please.";
+      sentenceCompletionsSignal.value = { ...READY_STATE, sentences: [short, long] };
+      // Tall enough for a one-line row in each of the three slots.
+      renderInGrid(400);
+
+      const choice = await screen.findByRole("button", { name: long });
+      await waitFor(() => expect(choice.querySelector(".blissSentence")).toBeNull());
+      expect(choice.querySelector(".sentenceText")?.textContent).toBe(long);
+      // The short sentence's row fits, so it stays.
+      expect(screen.getByRole("button", { name: short }).querySelector(".blissSentence")).not.toBeNull();
+    });
+
+    test("is a group named by its title", (): void => {
+      sentenceCompletionsSignal.value = READY_STATE;
+      render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+
+      const group = screen.getByRole("group", { name: en.sentenceChoose });
+      expect(group).toContainElement(screen.getByRole("button", { name: SENTENCES[0] }));
+    });
+
+    test("sets inert on the cells it covers while open, and clears it on close", async (): Promise<void> => {
+      sentenceCompletionsSignal.value = READY_STATE;
+      renderInGrid();
+
+      await waitFor(() => expect(button("covered")).toHaveAttribute("inert"));
+      expect(button("header")).not.toHaveAttribute("inert");
+
+      sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
+      await waitFor(() => expect(button("covered")).not.toHaveAttribute("inert"));
+    });
+
+    test("Done moves focus to the first cell the layer uncovers", async (): Promise<void> => {
+      adaptivePaletteGlobals.navigationStack.flushReset({ name: "Screen", cells: {} });
+      sentencePaletteSignal.value = "Screen";
+      sentenceCompletionsSignal.value = READY_STATE;
+      renderInGrid();
+
+      await userEvent.click(await screen.findByRole("button", { name: en.sentenceDone }));
+
+      await waitFor(() => expect(button("covered")).toHaveFocus());
+    });
+
+    test("Edit message closes the layer and keeps the message", async (): Promise<void> => {
+      changeEncodingContents.value = { payloads: [{ label: "me", composition: 124, modifierInfo: [] }], caretPosition: 0 };
+      sentenceCompletionsSignal.value = READY_STATE;
+      typedSentenceSignal.value = "I want lunch.";
+      render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+
+      await userEvent.click(screen.getByRole("button", { name: en.sentenceEditMessage }));
+
+      expect(sentenceCompletionsSignal.value).toBe(IDLE_SENTENCE_STATE);
+      expect(typedSentenceSignal.value).toBe("");
+      expect(changeEncodingContents.value.payloads).toHaveLength(1);
+      expect(screen.queryByRole("button", { name: SENTENCES[0] })).toBeNull();
+    });
+
+    test("opens only on the palette where Make Sentences was pressed, and again on return", async (): Promise<void> => {
+      const { navigationStack } = adaptivePaletteGlobals;
+      const food = { name: "food", cells: {} };
+      navigationStack.flushReset(food);
+      sentencePaletteSignal.value = "food";
+      sentenceCompletionsSignal.value = READY_STATE;
+      render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+      expect(screen.getByRole("button", { name: SENTENCES[0] })).toBeVisible();
+
+      navigationStack.currentPalette = { name: "indicators", cells: {} };
+      await waitFor(() => expect(screen.queryByRole("button", { name: SENTENCES[0] })).toBeNull());
+      expect(sentenceCompletionsSignal.value).toBe(READY_STATE);
+
+      navigationStack.currentPalette = food;
+      expect(await screen.findByRole("button", { name: SENTENCES[0] })).toBeVisible();
+    });
+
+    test("sentences arriving on another palette move focus only once the user is back", async (): Promise<void> => {
+      const { navigationStack } = adaptivePaletteGlobals;
+      const food = { name: "food", cells: {} };
+      navigationStack.flushReset({ name: "indicators", cells: {} });
+      sentencePaletteSignal.value = "food";
+      sentenceCompletionsSignal.value = WORKING_STATE;
+      render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+
+      sentenceCompletionsSignal.value = READY_STATE;
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      expect(focusedMessageSignal.value).toBeNull();
+
+      navigationStack.currentPalette = food;
+      const first = await screen.findByRole("button", { name: SENTENCES[0] });
+      await waitFor(() => expect(first).toHaveFocus());
+    });
+
+    test("coming back to the sentences focuses the first one again", async (): Promise<void> => {
+      const { navigationStack } = adaptivePaletteGlobals;
+      const food = { name: "food", cells: {} };
+      navigationStack.flushReset(food);
+      sentencePaletteSignal.value = "food";
+      sentenceCompletionsSignal.value = READY_STATE;
+      render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+      await waitFor(() => expect(screen.getByRole("button", { name: SENTENCES[0] })).toHaveFocus());
+
+      navigationStack.currentPalette = { name: "indicators", cells: {} };
+      await waitFor(() => expect(screen.queryByRole("button", { name: SENTENCES[0] })).toBeNull());
+      navigationStack.currentPalette = food;
+
+      const first = await screen.findByRole("button", { name: SENTENCES[0] });
+      await waitFor(() => expect(first).toHaveFocus());
+    });
+
+    test("an error on another palette is still announced", (): void => {
+      adaptivePaletteGlobals.navigationStack.flushReset({ name: "indicators", cells: {} });
+      sentencePaletteSignal.value = "food";
+      sentenceCompletionsSignal.value = { ...WORKING_STATE, status: "error" };
+      render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+
+      expect(screen.getByRole("status").textContent).not.toBe("");
+    });
   });
 
   describe("marking the model's sentences", (): void => {

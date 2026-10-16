@@ -60,7 +60,7 @@ describe("PredictedWords", (): void => {
   beforeEach(async (): Promise<void> => {
     await resetMessageLog();
     adaptivePaletteGlobals.config.maxRecalledRecords = 100;
-    adaptivePaletteGlobals.config.wordPrediction = { show: true, maxSuggestions: 4, ...DISABLED_MODEL_QUERY };
+    adaptivePaletteGlobals.config.wordPrediction = { show: true, numSuggestions: 4, ...DISABLED_MODEL_QUERY };
     adaptivePaletteGlobals.config.markAiSuggestions = true;
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
     saveMessageRecord(message("I", "want", "juice"));
@@ -98,22 +98,15 @@ describe("PredictedWords", (): void => {
     expect(area.style.gridColumnEnd).toBe("span 2");
   });
 
-  test("sets the slots out in one row by default", (): void => {
+  test.each([5, 13])("sets %i slots out in one row", (count): void => {
+    adaptivePaletteGlobals.config.wordPrediction = { show: true, numSuggestions: count, ...DISABLED_MODEL_QUERY };
     const { container } = render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
 
     const row = container.querySelector(".predictedWords") as HTMLElement;
-    expect(row.style.gridTemplateColumns).toBe("repeat(4, minmax(0px, 1fr))");
-  });
-
-  test("sets the slots out in the number of columns the palette asks for", (): void => {
-    const options = { ...CELL_OPTIONS, numColumns: 2 };
-    const { container } = render(html`<${PredictedWords} id=${CELL_ID} options=${options} />`);
-
-    const row = container.querySelector(".predictedWords") as HTMLElement;
-    expect(row.style.gridTemplateColumns).toBe("repeat(2, minmax(0px, 1fr))");
-    const slots = container.querySelectorAll(".predictedWord");
-    expect(slots).toHaveLength(4);
-    expect(slots[2].getBoundingClientRect().top).toBeGreaterThan(slots[0].getBoundingClientRect().top);
+    expect(row.style.gridTemplateColumns).toBe(`repeat(${count}, minmax(0px, 1fr))`);
+    const tops = [...container.querySelectorAll(".predictedWord")].map((slot) => slot.getBoundingClientRect().top);
+    expect(tops).toHaveLength(count);
+    expect(new Set(tops).size).toBe(1);
   });
 
   test("suggests what usually follows the message so far", (): void => {
@@ -134,7 +127,7 @@ describe("PredictedWords", (): void => {
   });
 
   test("renders nothing when the feature is turned off", (): void => {
-    adaptivePaletteGlobals.config.wordPrediction = { show: false, maxSuggestions: 4, ...DISABLED_MODEL_QUERY };
+    adaptivePaletteGlobals.config.wordPrediction = { show: false, numSuggestions: 4, ...DISABLED_MODEL_QUERY };
     const { container } = render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
     expect(container.innerHTML).toBe("");
   });
@@ -165,7 +158,7 @@ describe("PredictedWords", (): void => {
       // which is what leaves room for the words below.
       adaptivePaletteGlobals.config.wordPrediction = {
         show: true,
-        maxSuggestions: 4,
+        numSuggestions: 4,
         enableModelQuery: true,
         model: "phony-model:12b",
         systemPrompt: "List {{numWords}} words.",
@@ -179,6 +172,30 @@ describe("PredictedWords", (): void => {
       finishedMessageSignal.value = "";
       adaptivePaletteGlobals.models = [];
       clearAttributes();
+    });
+
+    test("empty slots show … while the model answers, hidden from screen readers", async (): Promise<void> => {
+      setMessage("I", "want");
+      const { container } = render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+
+      modelWordsSignal.value = { status: "working", contextKey: "I want" };
+
+      await waitFor(() => expect(container.querySelectorAll(".predictedWordWaiting")).toHaveLength(3));
+      container.querySelectorAll(".predictedWordWaiting").forEach((slot) => {
+        expect(slot.textContent).toBe("…");
+        expect(slot).toHaveAttribute("aria-hidden", "true");
+      });
+    });
+
+    test("the status text is in the live region, which is never shown", async (): Promise<void> => {
+      setMessage("I", "want");
+      render(html`<${PredictedWords} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+
+      modelWordsSignal.value = { status: "working", contextKey: "I want" };
+
+      const status = screen.getByRole("status");
+      await waitFor(() => expect(status.textContent).toBe(en.predictionQuerying));
+      expect(status.getBoundingClientRect().height).toBeLessThanOrEqual(1);
     });
 
     test("model words fill the slots the history left empty", (): void => {

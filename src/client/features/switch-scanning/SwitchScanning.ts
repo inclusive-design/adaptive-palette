@@ -32,14 +32,16 @@ const CONTROL_SELECTOR = "button, a[href], [tabindex='0'], input[type='checkbox'
 
 /**
  * The controls in `root` a scan stops on, in document order: visible, not disabled (including
- * inside a disabled fieldset), and not the input area, whose caret the command bar moves.
- * `aria-disabled` controls stay, as they stay in the Tab order.
+ * inside a disabled fieldset), not inert (under the open sentence layer), and not the input
+ * area, whose caret the command bar moves. `aria-disabled` controls stay, as they stay in the
+ * Tab order.
  * @param {Element} root - Where to look.
  * @returns {HTMLElement[]}
  */
 export function scannableControls (root: Element): HTMLElement[] {
   return Array.from(root.querySelectorAll<HTMLElement>(CONTROL_SELECTOR)).filter((el) =>
     !el.matches(":disabled") &&
+    !el.closest("[inert]") &&
     el.getAttribute("role") !== "textbox" &&
     el.getClientRects().length > 0
   );

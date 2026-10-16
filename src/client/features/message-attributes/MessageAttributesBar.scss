@@ -10,24 +10,44 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+/*
+ * One line of 4rem chips, 44px tall. The bar takes the width the notice and the symbol-entry
+ * buttons leave (see `#messageAttributes` in index.scss). `MessageAttributesBar.ts` draws as
+ * many chips as fit, then "+N" for the rest.
+ */
 .messageAttributesBar {
-  display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
+  display: flex;
+  gap: 0.25rem;
+  height: 44px;
 }
 
 .messageAttributeChip {
-  border: 2px solid black;
+  align-items: center;
   background-color: #ffe14d;
-  /* Narrow symbols would otherwise make a chip a fraction of its neighbour's width. */
-  min-width: 4rem;
-  padding-inline: 0.5rem;
+  border: 2px solid black;
+  border-radius: 0.6rem;
+  box-sizing: border-box;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  font-size: 0.62rem;
+  height: 44px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 2px;
   text-align: center;
+  width: 4rem;
 
   /* A chip is a reminder, not a vocabulary cell: it sits smaller than the palette. */
   svg {
-    max-height: 2rem;
+    max-height: 20px;
     max-width: 100%;
   }
+}
+
+/* "+N": the chips left out. */
+.messageAttributeMore {
+  background-color: white;
+  font-size: 0.95rem;
 }

@@ -89,12 +89,13 @@ describe("DiscardEditDialog", (): void => {
   });
 
   // The page as the app draws it: the input area, where focus goes when the dialog closes, the
-  // sentence area, and the dialog mounted on its own.
+  // sentence area, and the dialog mounted on its own. The sentence area has a parent of its own,
+  // as in the screen palette, so the cells it sets `inert` while open are not the input area.
   const renderPage = (): void => {
     render(html`
       <div>
         <div id=${INPUT_AREA_ID} tabindex="0" role="textbox" aria-label="Input Area"></div>
-        <${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />
+        <div><${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} /></div>
         <${DiscardEditDialog} />
       </div>
     `);

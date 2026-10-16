@@ -12,47 +12,100 @@
 
 import { VNode } from "preact";
 import { html } from "htm/preact";
+import { useLayoutEffect, useRef, useState } from "preact/hooks";
 import { BlissSymbol } from "../../components/BlissSymbol";
+import { goToPalette } from "../../core/PaletteNavigation";
 import { announceIfEnabled } from "../../utils/SpeechUtils";
 import { t } from "../../i18n/I18n";
+import type { MessageAttributeType } from "../../index.d";
 import { attributeLabel, categoryName, selectedAttributesSignal, toggleAttribute } from "./MessageAttributesState";
 import "./MessageAttributesBar.scss";
+
+// The palette "+N" opens: the one the command bar's Msg Style opens.
+const ATTRIBUTES_PALETTE = "attributes";
+
+/**
+ * How many chips fit across the bar. Every chip is 4rem wide, so the bar's width is all this needs.
+ * @param {HTMLElement} bar - The bar.
+ * @returns {number}
+ */
+function chipsThatFit (bar: HTMLElement): number {
+  const chipWidth = 4 * parseFloat(getComputedStyle(document.documentElement).fontSize);
+  const gap = parseFloat(getComputedStyle(bar).columnGap) || 0;
+  return Math.floor((bar.clientWidth + gap) / (chipWidth + gap));
+}
+
+/**
+ * An attribute's name, as its chip announces it.
+ * @param {MessageAttributeType} attribute - The attribute.
+ * @returns {string}
+ */
+const attributeName = (attribute: MessageAttributeType): string =>
+  `${categoryName(attribute.category)}: ${attributeLabel(attribute)}`;
 
 /**
  * The attributes set on the message being composed: one chip each, and tapping a chip takes
  * that attribute off.
  *
- * It sits at the left of the top bar, opposite the symbol-entry triggers.
+ * It sits at the left of the top bar, on one 44px line. It draws the chips that fit. When they
+ * do not all fit, the last place holds "+N": it stands for the chips left out, and opens the
+ * attributes palette, which shows them all. A chip left out is not drawn, so Tab, scanning and
+ * screen readers skip it; the "+N" label names it.
  *
- * Nothing is rendered when no attribute is set. No space is reserved for them.
- *
- * A chip is a little taller than the buttons beside it, so setting the first attribute grows
- * the top bar and nudges everything below it down. Accepted rather than giving the bar a
- * fixed height to save space.
+ * Nothing is rendered when no attribute is set.
  * @returns {VNode | null}
  */
 export function MessageAttributesBar (): VNode | null {
   const attributes = selectedAttributesSignal.value;
-  if (attributes.length === 0) {
+  const isShown = attributes.length > 0;
+  const barRef = useRef<HTMLDivElement>(null);
+  // How many chips fit. Counted again when the bar's width changes: a window resize, or the
+  // notice beside it changing length with the language.
+  const [room, setRoom] = useState(Infinity);
+
+  useLayoutEffect(() => {
+    const bar = barRef.current;
+    if (!bar) {
+      return;
+    }
+    const count = (): void => setRoom(chipsThatFit(bar));
+    count();
+    const observer = new ResizeObserver(count);
+    observer.observe(bar);
+    return (): void => observer.disconnect();
+  }, [isShown]);
+
+  // After a chip is removed, focus the element now in its place, or the last one when it was
+  // last. Chosen after the render, since removing a chip can also remove "+N".
+  const focusIndexRef = useRef<number | null>(null);
+  useLayoutEffect(() => {
+    const index = focusIndexRef.current;
+    focusIndexRef.current = null;
+    const children = barRef.current?.children;
+    if (index !== null && children && children.length > 0) {
+      (children[Math.min(index, children.length - 1)] as HTMLElement).focus();
+    }
+  }, [attributes]);
+
+  if (!isShown) {
     return null;
   }
 
-  const chips = attributes.map((attribute) => {
+  const drawn = attributes.length <= room ? attributes : attributes.slice(0, Math.max(0, room - 1));
+  const hidden = attributes.slice(drawn.length);
+
+  const chips = drawn.map((attribute) => {
     const label = attributeLabel(attribute);
-    const name = `${categoryName(attribute.category)}: ${label}`;
+    const name = attributeName(attribute);
     // A chip only exists for an attribute that is currently set, and a click on it removes it,
     // so the announcement is always "off" -- no state read needed.
     const chipClicked = (event: Event): void => {
       const chip = event.currentTarget as HTMLElement;
-      // Captured before the toggle: `key`ing the chips by category/label (see the test for
-      // the middle-removal case) means a surviving sibling is the same live DOM node after
-      // the toggle, so focusing it afterwards is reliable.
-      const next = (chip.nextElementSibling ?? chip.previousElementSibling) as HTMLElement | null;
+      // Removing the last chip unmounts the bar, so focus falls back to document.body as there
+      // is no obviously right target.
+      focusIndexRef.current = Array.from(chip.parentElement?.children ?? []).indexOf(chip);
       toggleAttribute(attribute);
       announceIfEnabled(t("attributeOff", { name }));
-      // Removing the last chip leaves no sibling and the bar unmounts, so focus
-      // falls back to document.body as there is no obviously right target.
-      next?.focus();
     };
     return html`
       <button
@@ -69,5 +122,20 @@ export function MessageAttributesBar (): VNode | null {
     `;
   });
 
-  return html`<div class="messageAttributesBar">${chips}</div>`;
+  const moreLabel = t("attributeMore", { count: hidden.length, names: hidden.map(attributeName).join(", ") });
+  const moreClicked = (): void => {
+    announceIfEnabled(moreLabel);
+    void goToPalette(ATTRIBUTES_PALETTE);
+  };
+  const more = hidden.length === 0 ? null : html`
+    <button
+      key="more"
+      class="messageAttributeChip messageAttributeMore"
+      aria-label=${moreLabel}
+      onClick=${moreClicked}>
+      +${hidden.length}
+    </button>
+  `;
+
+  return html`<div class="messageAttributesBar" ref=${barRef}>${chips}${more}</div>`;
 }
