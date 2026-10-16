@@ -68,13 +68,20 @@ button {
   }
 }
 
-svg {
+svg,
+img.cellPicture {
   max-height: 4rem;
   width: auto;
 }
 
+/* A picture keeps its proportions when its box is a different shape. */
+img.cellPicture {
+  object-fit: contain;
+}
+
 /* A palette column can be narrower than a wide symbol, so the symbol scales down to fit. */
-button svg {
+button svg,
+button img.cellPicture {
   max-width: 100%;
 }
 
@@ -106,7 +113,8 @@ svg.inter-word-padding {
     padding: 2px 4px;
   }
 
-  svg {
+  svg,
+  img.cellPicture {
     max-height: 2.4rem;
   }
 }
@@ -115,7 +123,8 @@ svg.inter-word-padding {
   column-gap: 4px;
   height: 48px;
 
-  svg {
+  svg,
+  img.cellPicture {
     flex: none;
     max-height: 1.1rem;
     max-width: 100%;

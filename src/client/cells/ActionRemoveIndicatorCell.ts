@@ -17,7 +17,7 @@ import { BlissSymbol } from "../components/BlissSymbol";
 import { changeEncodingContents } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
-import { applyModifiersToLabel, replaceAtCaret } from "../utils/SymbolEncodingUtils";
+import { applyModifiersToLabel, caretComposition, replaceAtCaret } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { findIndicators } from "../utils/SvgUtils";
 
@@ -28,18 +28,14 @@ type ActionIndicatorCodeCellPropsType = {
 
 /*
  * Given an array of symbols examine the symbol at the caret position to find
- * its indicator, if any.
+ * its indicator, if any. A picture has none.
  * @param {ContentSignalDataType} symbols: Array of symbols and caret position.
  * @return {number} - The index of the indicator in the symbol's BciAvType, or
  *                    -1 if it has no indicator.
  */
 function caretSymbolIndicatorPosition (symbols: ContentSignalDataType): number {
-  let indicatorPositions: number[] = [];
-  const { payloads, caretPosition } = symbols;
-  if (payloads.length !== 0 && caretPosition !== -1) {
-    const caretSymbolComposition = payloads[caretPosition].composition;
-    indicatorPositions = findIndicators(caretSymbolComposition);
-  }
+  const composition = caretComposition(symbols);
+  const indicatorPositions = composition === undefined ? [] : findIndicators(composition);
   return ( indicatorPositions.length === 0 ? -1 : indicatorPositions[0]);
 }
 

@@ -9,7 +9,7 @@
  * You may obtain a copy of the License at
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
-import { SymbolEncodingType, ContentSignalDataType, ModifierInfoType } from "../index.d";
+import { SymbolEncodingType, ContentSignalDataType, ModifierInfoType, SymbolCompositionType } from "../index.d";
 
 /**
  * Operations on the symbols of a composed message: inserting one at the caret, rebuilding a
@@ -48,6 +48,16 @@ export function replaceAtCaret (
   payloads: SymbolEncodingType[], caretPos: number, payload: SymbolEncodingType
 ): SymbolEncodingType[] {
   return payloads.map((existing, index) => index === caretPos ? payload : existing);
+}
+
+/**
+ * The composition of the Bliss symbol at the caret, or `undefined` when there is none: the caret
+ * is before the first symbol, or on a picture. Indicators and modifiers need one to change.
+ * @param {ContentSignalDataType} contents - The message and its caret.
+ * @returns {SymbolCompositionType | undefined}
+ */
+export function caretComposition (contents: ContentSignalDataType): SymbolCompositionType | undefined {
+  return contents.payloads[contents.caretPosition]?.composition;
 }
 
 /**

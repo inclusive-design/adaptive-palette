@@ -10,10 +10,12 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { render, screen } from "@testing-library/preact";
+import { vi } from "vitest";
+import { render, screen, waitFor } from "@testing-library/preact";
 import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
+import { testPicture } from "../testUtils/CellTestUtils";
 import { BlissSymbol, GRAPHIC_ROLE } from "./BlissSymbol";
 
 describe("BlissSymbol", (): void => {
@@ -137,5 +139,41 @@ describe("BlissSymbol", (): void => {
     expect(svgElement.getAttribute("role")).toBe(GRAPHIC_ROLE);
     expect(svgElement.getAttribute("aria-labelledby")).toBe(MOCK_LABEL_ID);
     expect(svgElement.getAttribute("aria-hidden")).toBe(null);
+  });
+
+  test.each(["png", "jpg", "gif", "webp", "avif", "svg", "bmp"])(
+    "draws a %s picture in place of the symbol, hidden from assistive technology",
+    async (format): Promise<void> => {
+      render(html`<${BlissSymbol} picture=${testPicture(format)} label="bread" isPresentation=true />`);
+      const labelDiv = await screen.findByText("bread");
+      const parentNode = labelDiv.parentNode as HTMLElement;
+
+      expect(parentNode.childNodes.length).toBe(2);
+      expect(parentNode.querySelector("svg")).toBe(null);
+      const img = parentNode.querySelector("img")!;
+      expect(img.getAttribute("src")).toBe(testPicture(format));
+      expect(img.getAttribute("alt")).toBe("");
+      expect(img.getAttribute("aria-hidden")).toBe("true");
+      await img.decode();
+      expect(img.naturalWidth).toBe(4);
+    }
+  );
+
+  test("hides a picture that cannot be loaded, and keeps the label", async (): Promise<void> => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    render(html`<${BlissSymbol} picture="/src/client/testUtils/pictures/missing.png" label="bread" isPresentation=true />`);
+    const labelDiv = await screen.findByText("bread");
+    const img = (labelDiv.parentNode as HTMLElement).querySelector("img")!;
+
+    await waitFor(() => expect(img.hidden).toBe(true));
+    expect(labelDiv).toBeVisible();
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining("missing.png"));
+    errorSpy.mockRestore();
+  });
+
+  test("draws the label only when there is neither a picture nor a symbol", async (): Promise<void> => {
+    render(html`<${BlissSymbol} label="bread" isPresentation=true />`);
+    const labelDiv = await screen.findByText("bread");
+    expect((labelDiv.parentNode as HTMLElement).childNodes.length).toBe(1);
   });
 });

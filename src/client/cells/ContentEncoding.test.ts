@@ -13,7 +13,7 @@
 import { screen } from "@testing-library/preact";
 import { ContentEncoding, clamp } from "./ContentEncoding";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
-import { renderCell } from "../testUtils/CellTestUtils";
+import { renderCell, testPicture } from "../testUtils/CellTestUtils";
 import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
 import { en } from "../i18n/en";
 
@@ -144,5 +144,34 @@ describe("marking a label the model produced", (): void => {
 
     expect(inputArea.querySelectorAll(".aiBadge")).toHaveLength(0);
     expect(inputArea.querySelectorAll(".aiLabel")).toHaveLength(0);
+  });
+});
+
+describe("a picture word", (): void => {
+
+  const cellOptions = { columnStart: 1, columnSpan: 5, rowStart: 2, rowSpan: 3 };
+  const bread = { label: "bread", picture: testPicture(), modifierInfo: [] };
+
+  beforeAll(async (): Promise<void> => {
+    await initAdaptivePaletteGlobals();
+  });
+
+  afterEach((): void => {
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+  });
+
+  // A caret of -1 draws the insertion branch and the plain one; a caret of 1, the plain one and
+  // the caret one.
+  test.each([-1, 1])("is drawn as its picture above its label, with the caret at %i", async (caretPosition): Promise<void> => {
+    changeEncodingContents.value = { payloads: [bread, bread], caretPosition };
+
+    renderCell(ContentEncoding, "uuid-of-content-encoding-area", cellOptions);
+    const inputArea = await screen.findByLabelText("Input Area");
+
+    const pictures = inputArea.querySelectorAll("img");
+    expect(pictures).toHaveLength(2);
+    pictures.forEach((img) => expect(img.getAttribute("src")).toBe(testPicture()));
+    expect(inputArea.querySelector("svg")).toBe(null);
+    expect(inputArea.textContent).toBe("breadbread");
   });
 });

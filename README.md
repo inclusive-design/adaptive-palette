@@ -33,6 +33,16 @@ on your computer: nothing you write leaves it.
 - **Access methods:** keyboard, mouse, touch, and two-switch row scanning. See
   [Access Methods](./docs/AccessMethods.md).
 
+## Supported Browsers
+
+The current version of Chrome, Edge, Firefox or Safari. The oldest versions that work are Chrome and Edge
+120, Firefox 115 and Safari 17. Tests run in Chromium, Firefox and WebKit.
+
+## Supported Picture Formats
+
+A palette cell can show a picture in place of a Bliss symbol. The picture can be PNG, JPEG, GIF, WebP, AVIF,
+SVG or BMP. See [Palettes](./docs/devDoc/Palettes.md#palette-json-structure).
+
 ## Install
 
 To work on the project, you need to install [NodeJS and NPM](https://nodejs.org/en/download/)

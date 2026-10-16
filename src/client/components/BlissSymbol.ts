@@ -19,7 +19,10 @@ import { SymbolCompositionType } from "../index.d";
 export const GRAPHIC_ROLE = "graphic-symbol img";
 
 type BlissSymbolPropsType = {
-  composition: SymbolCompositionType,
+  // The symbol to draw. Absent for a picture, or for a cell that shows its label only.
+  composition?: SymbolCompositionType,
+  // The path of a picture file, drawn in place of the symbol.
+  picture?: string,
   label: string,
   // Aria markup information for svg part of the BlissSymbol.  The first is
   // really a boolean, but the html template function converts it to string
@@ -34,9 +37,20 @@ type BlissSymbolPropsType = {
   isMarked?: boolean
 }
 
+/**
+ * Hide a picture that could not be loaded, so no broken-image icon shows. The label stays.
+ * @param {Event} event - The picture's `error` event.
+ */
+function hidePicture (event: Event): void {
+  const img = event.currentTarget as HTMLImageElement;
+  img.hidden = true;
+  console.error(`Picture not loaded: ${img.src}`);
+}
+
 export function BlissSymbol (props: BlissSymbolPropsType): VNode {
-  const { composition, label, isPresentation, labelledBy, isMarked } = props;
-  const svgElement = getSvgElement(composition);
+  const { composition, picture, label, isPresentation, labelledBy, isMarked } = props;
+  // A picture is drawn in place of the symbol, so the symbol is not built.
+  const svgElement = picture === undefined && composition !== undefined ? getSvgElement(composition) : undefined;
 
   // Deal with aria markup, depending on whether the SVG is for presentation only or
   // associates with a labelled area.
@@ -65,8 +79,14 @@ export function BlissSymbol (props: BlissSymbolPropsType): VNode {
   const labelClass = isMarked ? "aiLabel" : undefined;
   const badge = isMarked ? html`<${AiBadge} />` : null;
 
+  // The picture is decorative: the label names the cell. Keyed by its path, so a new picture
+  // gets a new element rather than one an earlier failure hid.
+  const pictureElement = picture === undefined ? null : html`
+    <img key=${picture} class="cellPicture" src=${picture} alt="" aria-hidden="true" onError=${hidePicture} />
+  `;
+
   return html`
-    ${html(templateStringArray)}
+    ${pictureElement}${html(templateStringArray)}
     <div id="${labelledBy}" class=${labelClass}>${badge}${label}</div>
   `;
 }

@@ -394,7 +394,9 @@ export function sentenceSpans (sentence: string): SentenceSpanType[] {
 function historyPayloads (): Map<string, SymbolEncodingType> {
   const byLabel = new Map<string, SymbolEncodingType>();
   readMessageLog().forEach((record) => record.payloads.forEach((payload) => {
-    if (payload.label) {
+    // A word with neither a symbol nor a picture, such as one whose picture was dropped, would
+    // hide the dictionary's symbol for it.
+    if (payload.label && (payload.composition !== undefined || payload.picture !== undefined)) {
       byLabel.set(payload.label.toLowerCase(), payload);
     }
   }));

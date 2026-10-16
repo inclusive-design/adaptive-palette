@@ -18,7 +18,7 @@ import { aiSuggestionLabel } from "../components/AiBadge";
 import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
-import { applyModifiersToLabel, replaceAtCaret } from "../utils/SymbolEncodingUtils";
+import { applyModifiersToLabel, caretComposition, replaceAtCaret } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { t } from "../i18n/I18n";
 import { findIndicators, findClassifierFromLeft } from "../utils/SvgUtils";
@@ -38,16 +38,17 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
   // Marked unavailable rather than `disabled` so the button keeps its place in the tab
-  // order for switch and eye-gaze users.
-  const unavailable = changeEncodingContents.value.caretPosition === -1;
+  // order for switch and eye-gaze users. A picture at the caret takes no indicator.
+  const caretSymbolComposition = caretComposition(changeEncodingContents.value);
+  const unavailable = caretSymbolComposition === undefined;
 
   const cellClicked = async () => {
-    if (unavailable) { speakUnavailable(label); return; }
+    if (caretSymbolComposition === undefined) { speakUnavailable(label); return; }
     // Get the symbol at the caret position in the editing area and find the
     // locations within it to replace any existing indicator.
     const { caretPosition, payloads } = changeEncodingContents.value;
     const symbolToEdit = payloads[caretPosition];
-    let newComposition = symbolToEdit.composition;
+    let newComposition = caretSymbolComposition;
     if (Array.isArray(newComposition)) {
       newComposition = [...newComposition];
       const indicatorPositions = findIndicators(newComposition);

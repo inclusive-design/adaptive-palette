@@ -253,6 +253,26 @@ describe("ActionRemoveModifierCell", (): void => {
     expect(mockedSpeakUnavailable).toHaveBeenCalledWith(testCell.options.label);
   });
 
+  test("is unavailable with a picture at the caret, even one that claims a modifier", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [{
+        label: "bread", picture: "/pictures/bread.jpg",
+        modifierInfo: [{ modifierId: [14647], modifierGloss: "many", isPrepended: false }]
+      }],
+      caretPosition: 0
+    };
+    const before = JSON.stringify(changeEncodingContents.value);
+
+    renderCell(ActionRemoveModifierCell, TEST_CELL_ID, testCell.options);
+
+    const button = await screen.findByRole("button", { name: testCell.options.label });
+    expect(button).toHaveAttribute("aria-disabled", "true");
+    fireEvent.click(button);
+
+    expect(JSON.stringify(changeEncodingContents.value)).toBe(before);
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+  });
+
   test("removes a suffix modifier's text from the end of the label, not from inside the word", async (): Promise<void> => {
     changeEncodingContents.value = {
       payloads: [{

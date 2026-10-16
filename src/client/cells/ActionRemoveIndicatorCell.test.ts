@@ -103,6 +103,19 @@ describe("ActionRemoveIndicatorCell", (): void => {
     expect(removeIndicatorButton).toHaveAttribute("aria-disabled", "true");
   });
 
+  test("is unavailable with a picture at the caret", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [{ label: "bread", picture: "/pictures/bread.jpg", modifierInfo: [] }],
+      caretPosition: 0
+    };
+
+    renderCell(ActionRemoveIndicatorCell, TEST_CELL_ID, testCell.options);
+
+    const button = await screen.findByRole("button", { name: testCell.options.label });
+    expect(button).toHaveAttribute("aria-disabled", "true");
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+  });
+
   test("becomes available once the symbol has an indicator", async (): Promise<void> => {
 
     // Add a symbol *with* an indicator and render the ActionIndicatorCell.

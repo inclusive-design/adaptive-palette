@@ -45,14 +45,20 @@ const QUIT_ORIGINS = [`http://localhost:${PORT}`, `http://${HOST}:${PORT}`];
 const QUIT_HOSTS = [`localhost:${PORT}`, `${HOST}:${PORT}`];
 
 const CONTENT_TYPES = {
+  ".avif": "image/avif",
+  ".bmp": "image/bmp",
   ".css": "text/css; charset=utf-8",
+  ".gif": "image/gif",
   ".html": "text/html; charset=utf-8",
   ".ico": "image/x-icon",
+  ".jpeg": "image/jpeg",
+  ".jpg": "image/jpeg",
   ".js": "text/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8",
   ".map": "application/json; charset=utf-8",
   ".png": "image/png",
   ".svg": "image/svg+xml",
+  ".webp": "image/webp",
   ".woff2": "font/woff2"
 };
 

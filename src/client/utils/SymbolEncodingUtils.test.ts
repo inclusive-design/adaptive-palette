@@ -11,7 +11,8 @@
  */
 
 import {
-  applyModifiersToLabel, insertWordAtCaret, removeModifierFromLabel, normalizeComposition, replaceAtCaret
+  applyModifiersToLabel, insertWordAtCaret, removeModifierFromLabel, normalizeComposition, replaceAtCaret,
+  caretComposition
 } from "./SymbolEncodingUtils";
 
 // A minimal symbol payload; only the label distinguishes one from another in these tests.
@@ -131,5 +132,18 @@ describe("replaceAtCaret()", (): void => {
   test("A caret pointing at no symbol changes nothing", (): void => {
     const payloads = [symbol("me")];
     expect(replaceAtCaret(payloads, -1, symbol("you"))).toEqual([symbol("me")]);
+  });
+});
+
+describe("caretComposition()", (): void => {
+
+  test("is the composition of the symbol at the caret", (): void => {
+    const contents = { payloads: [symbol("a"), { label: "b", composition: 392 }], caretPosition: 1 };
+    expect(caretComposition(contents)).toBe(392);
+  });
+
+  test("is undefined before the first symbol, and on a picture", (): void => {
+    expect(caretComposition({ payloads: [symbol("a")], caretPosition: -1 })).toBeUndefined();
+    expect(caretComposition({ payloads: [{ label: "bread", picture: "/bread.jpg" }], caretPosition: 0 })).toBeUndefined();
   });
 });
