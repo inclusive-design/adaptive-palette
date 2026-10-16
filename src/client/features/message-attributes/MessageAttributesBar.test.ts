@@ -169,6 +169,16 @@ describe("MessageAttributesBar", (): void => {
     expect(screen.getAllByRole("button", { name: /^Remove / })).toHaveLength(3);
   });
 
+  test("removing the chip before +N focuses the chip that takes its place when +N goes", async (): Promise<void> => {
+    // Room for 4: five attributes draw 3 chips and "+2". Removing the third leaves 4, which fit.
+    selectedAttributesSignal.value = sixAttributes.slice(0, 5);
+    renderInWidth(300);
+    await userEvent.click(await screen.findByRole("button", { name: "Remove Category2: label2" }));
+
+    await waitFor(() => expect(screen.getByRole("button", { name: "Remove Category3: label3" })).toHaveFocus());
+    expect(screen.queryByRole("button", { name: /more:/ })).toBeNull();
+  });
+
   test("counts again when the bar's width changes", async (): Promise<void> => {
     selectedAttributesSignal.value = sixAttributes;
     const { container } = renderInWidth(300);

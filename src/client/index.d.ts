@@ -46,6 +46,9 @@ export type LayoutInfoType = {
   // The `config.json` section the cell's feature needs. The palette leaves the cell out, and
   // closes the row up, when that section is missing.
   requiresConfig?: keyof AdaptivePaletteConfigType,
+  // When true, and the palette holding the cell is included by the screen palette, the screen
+  // draws the cell over every row below that include, across all columns. See `Palette.ts`.
+  layer?: boolean,
   // The language of the cell's `label`. Set by `Palette.ts` when it picks the label; not
   // written in the palette JSON.
   labelLanguage?: Language,

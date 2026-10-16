@@ -401,6 +401,34 @@ describe("telegraphicTranslationState", (): void => {
     expect(sentenceCompletionsSignal.value.status).toBe("idle");
   });
 
+  test("an edit on another palette closes the sentences without asking", async (): Promise<void> => {
+    adaptivePaletteGlobals.navigationStack.flushReset({ name: "food", cells: {} });
+    editMessage(INPUT_CONTENTS);
+    mockedQueryChat.mockResolvedValue({
+      message: { content: "1. I am hungry.\n2. I want food." }
+    } as never);
+    await requestForCurrentMessage();
+
+    adaptivePaletteGlobals.navigationStack.currentPalette = { name: "indicators", cells: {} };
+    editMessage(EDITED_CONTENTS);
+
+    expect(prompts).toEqual([]);
+    expect(sentenceCompletionsSignal.value.status).toBe("idle");
+    expect(changeEncodingContents.value).toEqual(EDITED_CONTENTS);
+  });
+
+  test("a model writing more sentences than asked for is cut to numSentences", async (): Promise<void> => {
+    setConfig(2);
+    editMessage(INPUT_CONTENTS);
+    mockedQueryChat.mockResolvedValue({
+      message: { content: "1. I am hungry.\n2. I want food.\n3. Can I eat now?" }
+    } as never);
+
+    await requestForCurrentMessage();
+
+    expect(sentenceCompletionsSignal.value.sentences).toEqual(["I am hungry.", "I want food."]);
+  });
+
   test("editing the message aborts the request it was made for", async (): Promise<void> => {
     editMessage(INPUT_CONTENTS);
     // A query that never settles: the abort has to be what ends it.

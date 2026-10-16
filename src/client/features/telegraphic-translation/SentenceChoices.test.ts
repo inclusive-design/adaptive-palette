@@ -727,6 +727,32 @@ describe("SentenceChoices", (): void => {
       const first = await screen.findByRole("button", { name: SENTENCES[0] });
       await waitFor(() => expect(first).toHaveFocus());
     });
+
+    test("coming back to the sentences focuses the first one again", async (): Promise<void> => {
+      const { navigationStack } = adaptivePaletteGlobals;
+      const food = { name: "food", cells: {} };
+      navigationStack.flushReset(food);
+      sentencePaletteSignal.value = "food";
+      sentenceCompletionsSignal.value = READY_STATE;
+      render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+      await waitFor(() => expect(screen.getByRole("button", { name: SENTENCES[0] })).toHaveFocus());
+
+      navigationStack.currentPalette = { name: "indicators", cells: {} };
+      await waitFor(() => expect(screen.queryByRole("button", { name: SENTENCES[0] })).toBeNull());
+      navigationStack.currentPalette = food;
+
+      const first = await screen.findByRole("button", { name: SENTENCES[0] });
+      await waitFor(() => expect(first).toHaveFocus());
+    });
+
+    test("an error on another palette is still announced", (): void => {
+      adaptivePaletteGlobals.navigationStack.flushReset({ name: "indicators", cells: {} });
+      sentencePaletteSignal.value = "food";
+      sentenceCompletionsSignal.value = { ...WORKING_STATE, status: "error" };
+      render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+
+      expect(screen.getByRole("status").textContent).not.toBe("");
+    });
   });
 
   describe("marking the model's sentences", (): void => {

@@ -324,12 +324,12 @@ describe("Palette", (): void => {
       options: { label, composition: 823, rowStart, rowSpan: 1, columnStart: 1, columnSpan: 3 }
     });
 
-    // A header like the Standard Header: a band, and the sentence cell below it.
+    // A header like the Standard Header: a band, and the sentence cell below it, marked `layer`.
     const header = {
       name: "Header",
       cells: {
         "top": { type: "ActionCodeCell", options: { label: "Top", composition: 823, rowStart: 1, rowSpan: 1, columnStart: 1, columnSpan: 1 } },
-        "sentence-choices": { type: "ContentSentenceChoices", options: { rowStart: 2, rowSpan: 1, columnStart: 1, columnSpan: 1 } }
+        "sentence-choices": { type: "ContentSentenceChoices", options: { layer: true, rowStart: 2, rowSpan: 1, columnStart: 1, columnSpan: 1 } }
       }
     };
 
@@ -400,14 +400,12 @@ describe("Palette", (): void => {
       expect(layer.style.gridRowEnd).toBe("span 2");
     });
 
-    test("logs an error and draws no layer when no rows are below the header", async (): Promise<void> => {
-      const consoleError = vi.spyOn(console, "error").mockImplementation((): void => {});
-
-      render(html`<${Palette} json=${screenPalette(0)} isScreen=${true} />`);
+    test("draws the sentence cell in place when no rows are below the header", async (): Promise<void> => {
+      const { container } = render(html`<${Palette} json=${screenPalette(0)} isScreen=${true} />`);
       await screen.findByText("Top");
 
-      expect(document.querySelector(".sentenceChoices")).toBeNull();
-      expect(consoleError).toHaveBeenCalledWith(expect.stringContaining("Palette \"Screen\""));
+      const layer = container.querySelector(".sentenceChoices") as HTMLElement;
+      expect(layer.parentElement).toBe(paletteNamed(container, "Header"));
     });
   });
 

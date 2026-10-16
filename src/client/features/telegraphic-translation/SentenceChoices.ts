@@ -97,8 +97,9 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
       focusedMessageSignal.value = null;
       return;
     }
-    // On another palette the sentences wait. Focus moves once the user is back.
+    // On another palette the sentences wait. Focus moves to them again once the user is back.
     if (!isOpen) {
+      focusedMessageSignal.value = null;
       return;
     }
     // The discard dialog holds the page `inert`, so focusing a sentence behind it does nothing;
@@ -119,8 +120,8 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
   }, [state, discardPrompt, isOpen]);
 
   // While open, the cells under the layer are inert: out of the Tab order, the pointer and the
-  // accessibility tree, with their layout untouched. A cell is under it when it starts no higher
-  // than the layer does.
+  // accessibility tree, with their layout untouched. A cell is under it when any of it is below
+  // the layer's top, so a cell that starts above the layer and runs under it is covered too.
   useLayoutEffect(() => {
     const layer = choicesRef.current;
     if (!isOpen || !layer?.parentElement) {
@@ -128,7 +129,7 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
     }
     const top = layer.getBoundingClientRect().top;
     const covered = Array.from(layer.parentElement.children).filter((cell) =>
-      cell !== layer && cell.getBoundingClientRect().top >= top - 1);
+      cell !== layer && cell.getBoundingClientRect().bottom > top + 1);
     covered.forEach((cell) => cell.setAttribute("inert", ""));
     return (): void => {
       covered.forEach((cell) => cell.removeAttribute("inert"));
@@ -151,8 +152,13 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
     setTextOnly((previous) => previous.size === 0 ? previous : new Set());
   }, [isOpen, numSlots, state.telegraphicMessage]);
 
-  // A sentence whose Bliss row does not fit its slot shows its text only. Measured after every
-  // render; a text-only sentence has no row, so this settles.
+  // Read per render rather than at module load: the settings dialog can turn this off while
+  // sentences are on screen.
+  const showBlissSentence =
+    adaptivePaletteGlobals.config.telegraphicTranslation?.showBlissSentence === true;
+
+  // A sentence whose Bliss row does not fit its slot shows its text only. Measured when what is
+  // drawn in the slots changes; a text-only sentence has no row, so this settles.
   useLayoutEffect((): void => {
     if (!isOpen) {
       return;
@@ -163,16 +169,23 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
     if (overflowing.length > 0) {
       setTextOnly((previous) => new Set([...previous, ...overflowing]));
     }
-  });
+  }, [isOpen, state, textOnly, numSlots, showBlissSentence]);
 
-  // The slots change size with the window, so every Bliss row gets another try.
+  // The slots change size with the window, so every Bliss row gets another try. The first
+  // callback reports the size the rows were just measured at, so it is skipped.
   useEffect(() => {
     const layer = choicesRef.current;
     if (!isOpen || !layer) {
       return;
     }
-    const observer = new ResizeObserver(() => {
-      setTextOnly((previous) => previous.size === 0 ? previous : new Set());
+    let lastSize: string | null = null;
+    const observer = new ResizeObserver(([entry]) => {
+      const size = `${entry.contentRect.width}x${entry.contentRect.height}`;
+      if (lastSize !== null && size !== lastSize) {
+        // A new set even when empty: the render it causes measures the rows again.
+        setTextOnly(new Set());
+      }
+      lastSize = size;
     });
     observer.observe(layer);
     return (): void => observer.disconnect();
@@ -222,10 +235,6 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
   // Marked unavailable rather than `disabled` because a disabled control loses focus.
   const nothingTyped = typedSentence.trim().length === 0;
 
-  // Read per render rather than at module load: the settings dialog can turn this off while
-  // sentences are on screen.
-  const showBlissSentence =
-    adaptivePaletteGlobals.config.telegraphicTranslation?.showBlissSentence === true;
   const markAiSuggestions = adaptivePaletteGlobals.config.markAiSuggestions;
 
   const sentenceButton = (sentence: string, index: number): VNode => {
@@ -289,10 +298,13 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
     </form>
   ` : null;
 
-  const statusText = !isOpen ? ""
-    : state.status === "working"
-      ? (state.sentences.length > 0 ? t("sentenceMakingMore") : t("sentenceWorking"))
-      : state.status === "error" ? t("sentenceCannotComplete") : "";
+  // An error is announced on any palette, so a request that fails while the user is away is
+  // still heard. Progress is announced only where the sentences are.
+  const statusText = state.status === "error" ? t("sentenceCannotComplete")
+    : !isOpen ? ""
+      : state.status === "working"
+        ? (state.sentences.length > 0 ? t("sentenceMakingMore") : t("sentenceWorking"))
+        : "";
 
   // The header, one row per slot, and the form.
   const rowsStyle = isOpen ? `grid-template-rows: 44px repeat(${numSlots}, minmax(0, 1fr)) 56px;` : "";

@@ -26,12 +26,10 @@ type PalettePropsType = {
   includeChain?: JsonPaletteType[],
   // True for the palette `CurrentPalette` draws: the whole screen below the top bar.
   isScreen?: boolean,
-  // True for a palette the screen includes directly: the screen draws its sentence cell.
+  // True for a palette the screen includes directly, with rows below it: the screen draws its
+  // `layer` cell.
   inScreen?: boolean
 };
-
-// The cell the screen palette draws as the sentence layer.
-const SENTENCE_CHOICES_TYPE = "ContentSentenceChoices";
 
 type PaletteCellsType = {
   cells: VNode[],
@@ -146,11 +144,13 @@ function isAvailable (options: LayoutInfoType): boolean {
  * @param {JsonPaletteType} paletteDefinition - The palette whose cells to render.
  * @param {JsonPaletteType[]} includeChain - The palettes this one is drawn inside.
  * @param {boolean} isScreen - Whether this palette is the screen.
- * @param {boolean} inScreen - Whether the screen includes this palette directly.
+ * @param {boolean} inScreen - Whether the screen includes this palette directly, with rows below it.
+ * @param {number} numRows - The palette's number of rows.
  * @return {PaletteCellsType} - The cells, and the columns rendered and skipped.
  */
 function renderCells (
-  paletteDefinition: JsonPaletteType, includeChain: JsonPaletteType[], isScreen: boolean, inScreen: boolean
+  paletteDefinition: JsonPaletteType, includeChain: JsonPaletteType[], isScreen: boolean, inScreen: boolean,
+  numRows: number
 ): PaletteCellsType {
   // A language the app does not know falls back to English.
   const paletteLanguage = parseLanguage(paletteDefinition.language) ?? "en";
@@ -158,9 +158,9 @@ function renderCells (
   Object.keys(paletteDefinition.cells).forEach((id) => {
     const aCell = paletteDefinition.cells[id];
     const cellOptions = aCell.options;
-    // The screen palette draws this cell itself, as the sentence layer, when the palette holding
-    // it is included directly by the screen. Anywhere else it is drawn here as usual.
-    if (inScreen && aCell.type === SENTENCE_CHOICES_TYPE) {
+    // The screen palette draws a `layer` cell itself, over the rows below the include that holds
+    // it. Anywhere else it is drawn here as usual.
+    if (inScreen && cellOptions.layer) {
       return;
     }
     if (!isAvailable(cellOptions)) {
@@ -168,7 +168,10 @@ function renderCells (
       return;
     }
     if (aCell.type === PALETTE_INCLUDE_TYPE) {
-      const include = renderInclude(id, cellOptions as PaletteIncludeType, [...includeChain, paletteDefinition], isScreen);
+      const hasRowsBelow = cellOptions.rowStart + cellOptions.rowSpan <= numRows;
+      const include = renderInclude(
+        id, cellOptions as PaletteIncludeType, [...includeChain, paletteDefinition], isScreen && hasRowsBelow
+      );
       if (include) {
         columnsOf(cellOptions).forEach((column) => result.renderedColumns.add(column));
         result.cells.push(include);
@@ -208,7 +211,8 @@ function renderCells (
  * @param {PaletteIncludeType} options - The include cell's options.
  * @param {JsonPaletteType[]} includeChain - The palettes the included one is drawn inside, ending
  *                                          with the palette that holds this cell.
- * @param {boolean} inScreen - Whether the palette that holds this cell is the screen.
+ * @param {boolean} inScreen - Whether the palette that holds this cell is the screen, with rows
+ *                            below this cell.
  * @return {VNode | null} - The include cell, or `null` when it cannot be drawn.
  */
 function renderInclude (
@@ -235,41 +239,42 @@ function renderInclude (
 }
 
 /**
- * The sentence layer: the `ContentSentenceChoices` cell of a palette the screen includes, such
- * as the header, drawn in the screen's own grid over every row below that include. The grid
+ * The layer: the cell marked `layer` in a palette the screen includes, such as the header's
+ * sentence cell, drawn in the screen's own grid over every row below that include. The grid
  * sizes it, so it always matches the vocabulary area.
  *
- * Nothing is drawn when no included palette has the cell. Nothing is drawn, and an error is
- * logged, when no rows are below the include.
+ * Nothing is drawn when no included palette has such a cell. When no rows are below the
+ * include, the included palette draws the cell in place instead.
  *
  * @param {JsonPaletteType} paletteDefinition - The screen palette.
  * @param {Record<string, number>} rowsCols - Its row and column counts.
  * @return {VNode | null}
  */
-function renderSentenceLayer (paletteDefinition: JsonPaletteType, rowsCols: Record<string, number>): VNode | null {
+function renderLayer (paletteDefinition: JsonPaletteType, rowsCols: Record<string, number>): VNode | null {
   for (const cell of Object.values(paletteDefinition.cells)) {
     if (cell.type !== PALETTE_INCLUDE_TYPE || !isAvailable(cell.options)) {
       continue;
     }
     const include = cell.options as PaletteIncludeType;
     const entry = Object.entries(PaletteStore.paletteMap[include.palette]?.cells ?? {})
-      .find(([, includedCell]) => includedCell.type === SENTENCE_CHOICES_TYPE);
-    if (!entry) {
+      .find(([, includedCell]) => includedCell.options.layer);
+    const rowStart = include.rowStart + include.rowSpan;
+    if (!entry || rowStart > rowsCols.numRows) {
       continue;
     }
-    const [id, sentenceCell] = entry;
-    if (!isAvailable(sentenceCell.options)) {
+    const [id, layerCell] = entry;
+    if (!isAvailable(layerCell.options)) {
       return null;
     }
-    const rowStart = include.rowStart + include.rowSpan;
-    if (rowStart > rowsCols.numRows) {
-      console.error(`Palette "${paletteDefinition.name}": no rows below "${include.palette}" for the sentence layer.`);
+    const cellComponent = cellTypeRegistry[layerCell.type as keyof typeof cellTypeRegistry];
+    if (!cellComponent) {
+      console.error(`Error at rendering the cell type "${layerCell.type}". Fix it by defining the render component for this cell type at CellTypeRegistry.ts -> cellTypeRegistry.`);
       return null;
     }
     const options = {
       rowStart, rowSpan: rowsCols.numRows - rowStart + 1, columnStart: 1, columnSpan: rowsCols.numColumns
     };
-    return html`<${cellTypeRegistry[SENTENCE_CHOICES_TYPE]} key=${id} id=${id} options=${options} />`;
+    return html`<${cellComponent} key=${id} id=${id} options=${options} />`;
   }
   return null;
 }
@@ -279,7 +284,7 @@ export function Palette (props: PalettePropsType): VNode {
   const paletteDefinition = props.json;
   const rowsCols = countRowsColumns(paletteDefinition);
   const { cells, renderedColumns, skippedColumns, labelLanguages } = renderCells(
-    paletteDefinition, props.includeChain ?? [], !!props.isScreen, !!props.inScreen
+    paletteDefinition, props.includeChain ?? [], !!props.isScreen, !!props.inScreen, rowsCols.numRows
   );
 
   const emptyColumns = new Set(
@@ -292,7 +297,7 @@ export function Palette (props: PalettePropsType): VNode {
   // language for a screen reader; give each cell its own lang (e.g. on BlissSymbol) if that matters.
   const paletteLang = labelLanguages.size === 1 ? [...labelLanguages][0] : undefined;
 
-  const layer = props.isScreen ? renderSentenceLayer(paletteDefinition, rowsCols) : null;
+  const layer = props.isScreen ? renderLayer(paletteDefinition, rowsCols) : null;
   const rowsStyle = props.isScreen
     ? ` grid-template-rows: ${gridTemplateRows(paletteDefinition, rowsCols.numRows)};`
     : "";

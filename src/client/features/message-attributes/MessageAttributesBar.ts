@@ -75,6 +75,18 @@ export function MessageAttributesBar (): VNode | null {
     return (): void => observer.disconnect();
   }, [isShown]);
 
+  // After a chip is removed, focus the element now in its place, or the last one when it was
+  // last. Chosen after the render, since removing a chip can also remove "+N".
+  const focusIndexRef = useRef<number | null>(null);
+  useLayoutEffect(() => {
+    const index = focusIndexRef.current;
+    focusIndexRef.current = null;
+    const children = barRef.current?.children;
+    if (index !== null && children && children.length > 0) {
+      (children[Math.min(index, children.length - 1)] as HTMLElement).focus();
+    }
+  }, [attributes]);
+
   if (!isShown) {
     return null;
   }
@@ -89,15 +101,11 @@ export function MessageAttributesBar (): VNode | null {
     // so the announcement is always "off" -- no state read needed.
     const chipClicked = (event: Event): void => {
       const chip = event.currentTarget as HTMLElement;
-      // Captured before the toggle: `key`ing the chips by category/label (see the test for
-      // the middle-removal case) means a surviving sibling is the same live DOM node after
-      // the toggle, so focusing it afterwards is reliable.
-      const next = (chip.nextElementSibling ?? chip.previousElementSibling) as HTMLElement | null;
+      // Removing the last chip unmounts the bar, so focus falls back to document.body as there
+      // is no obviously right target.
+      focusIndexRef.current = Array.from(chip.parentElement?.children ?? []).indexOf(chip);
       toggleAttribute(attribute);
       announceIfEnabled(t("attributeOff", { name }));
-      // Removing the last chip leaves no sibling and the bar unmounts, so focus
-      // falls back to document.body as there is no obviously right target.
-      next?.focus();
     };
     return html`
       <button

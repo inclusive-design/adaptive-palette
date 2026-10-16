@@ -110,9 +110,8 @@ export function clearMessageAndChoices (): void {
  * @returns {void}
  */
 export function closeSentences (): void {
-  activeSentenceAbort?.abort();
-  activeSentenceAbort = null;
   batch((): void => {
+    abortActiveSentenceRequest();
     typedSentenceSignal.value = "";
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
   });
@@ -185,7 +184,7 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
       ? [recalled.sentence, ...result.sentences
         .filter((sentence) => sentence !== recalled.sentence)
         .slice(0, numSentences - 1)]
-      : result.sentences;
+      : result.sentences.slice(0, numSentences);
     sentenceCompletionsSignal.value = {
       status: "ready", sentences, recalledSentence: recalled?.sentence ?? null,
       model: result.model, telegraphicMessage, language: result.language, words: result.words
@@ -242,14 +241,21 @@ export function guardEdit (next: ContentSignalDataType): boolean {
     return true;
   }
   const state = sentenceCompletionsSignal.peek();
+  const changed = state.telegraphicMessage !== messageText(next.payloads);
+  // Away from the palette they were made on, the sentences are not on screen, so there is nothing
+  // in view to ask about: the edit closes them, as Edit message would.
+  const currentPalette = adaptivePaletteGlobals.navigationStack.currentPalette?.name ?? null;
+  if (state.status !== "idle" && changed && sentencePaletteSignal.peek() !== currentPalette) {
+    closeSentences();
+    return false;
+  }
   // A failed fill can leave a recalled sentence on screen. It is as tappable as any other,
   // so losing it to an edit is worth a question, exactly like a full set of sentences.
   // A finished state can also hold no sentences at all -- a failed request, or one the user
   // moved past by speaking before it landed -- and there is nothing there to discard.
   const finished = state.status === "ready" || state.status === "error";
   const showsSentences = finished && state.sentences.length > 0;
-  if ((state.status === "working" || showsSentences) &&
-      state.telegraphicMessage !== messageText(next.payloads)) {
+  if ((state.status === "working" || showsSentences) && changed) {
     // The edit is held for as long as the question is up, and published only if the user
     // confirms. Publishing it would show a message the user has not agreed to, and start
     // word prediction on it.
