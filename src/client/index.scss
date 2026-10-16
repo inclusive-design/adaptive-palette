@@ -163,11 +163,14 @@ svg.inter-word-padding {
   min-width: 4rem;
 }
 
-/* The notice shrinks before the triggers do. Its full text stays in the live region. */
+/*
+ * The notice shrinks before the triggers do: its large shrink factor takes the shortfall
+ * until it is gone. Its full text stays in the live region.
+ */
 #aiStatus:not(:empty) {
   background-color: #ffecec;
   border-radius: 1rem;
-  flex: 0 1 auto;
+  flex: 0 1000 auto;
   font-weight: bold;
   min-width: 0;
   overflow: hidden;

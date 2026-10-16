@@ -10,7 +10,11 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-/* On one line from 1024px up, so the top bar stays 44px tall. Narrower, the buttons wrap. */
+/*
+ * On one line from 1024px up, so the top bar stays 44px tall. Narrower, the buttons wrap.
+ * A label wraps inside its 44px button when the line is short of room, so the width the
+ * buttons need does not depend on the font the system draws them in.
+ */
 .symbolEntryToolbar {
   display: flex;
   flex-wrap: wrap;
@@ -22,8 +26,8 @@
 
   > button {
     height: 44px;
+    line-height: 1.1;
     padding: 0 1rem;
-    white-space: nowrap;
   }
 }
 
