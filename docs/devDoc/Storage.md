@@ -58,7 +58,7 @@ reload.
 Anywhere else is the hosted site, which may be running on a public or shared computer. There the app
 installs [`core/MemoryStorage.ts`](../../src/client/core/MemoryStorage.ts) and puts nothing in the
 browser at all: messages, settings and About Me facts live for as long as the tab does, and a reload
-clears them. The status line says so.
+clears them. The notice in the top bar says so.
 
 Saving settings does not reload the page, on either version. The settings dialog rebuilds
 `adaptivePaletteGlobals.config` from `config.json` and the stored settings, then bumps

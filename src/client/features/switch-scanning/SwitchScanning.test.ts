@@ -107,6 +107,14 @@ describe("collectRows", (): void => {
 
     expect(labels(scannableControls(area))).toEqual(["a1", "a2", "a3", "b1", "b2"]);
   });
+
+  // A cell under the open sentence layer.
+  test("leaves out a control inside an inert element", (): void => {
+    const area = byId("mainPaletteDisplayArea");
+    area.insertAdjacentHTML("beforeend", "<div inert><button>covered</button></div>");
+
+    expect(labels(scannableControls(area))).toEqual(["a1", "a2", "a3", "b1", "b2"]);
+  });
 });
 
 const KEYS = { enabled: true, moveKey: "Space", selectKey: "Enter" };

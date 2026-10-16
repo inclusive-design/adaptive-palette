@@ -152,7 +152,8 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
   };
 
   /**
-   * One setting: its control, and the note explaining why it is unavailable.
+   * One setting: its control, a label naming its maximum when it has one, and the note
+   * explaining why it is unavailable.
    * @param {SettingDescriptorType} descriptor - The setting to render.
    * @returns {VNode}
    */
@@ -160,10 +161,12 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
     const key = settingKey(descriptor);
     const controlId = `setting-${key.replaceAll(".", "-")}`;
     const noteId = `${controlId}-note`;
+    const max = descriptor.kind === "number" ? descriptor.max : undefined;
     const note = noteFor(descriptor);
     const unavailable = note !== undefined;
     const rowClass = unavailable ? "settingsRow settingsRowUnavailable" : "settingsRow";
-    const label = html`<label for=${controlId}>${t(descriptor.label)}</label>`;
+    const labelText = max === undefined ? t(descriptor.label) : `${t(descriptor.label)} (${t("settingMax", { max })})`;
+    const label = html`<label for=${controlId}>${labelText}</label>`;
 
     // `aria-disabled` rather than `disabled`: a disabled control drops out of the tab
     // order, which costs a switch or eye-gaze user their scan position and puts the note
@@ -200,6 +203,7 @@ export function SettingsDialog (props: SettingsDialogProps): VNode {
           type="number"
           inputmode="numeric"
           min=${descriptor.min}
+          max=${descriptor.max}
           step="1"
           required
           readOnly=${unavailable}

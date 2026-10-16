@@ -40,13 +40,29 @@ describe("SettingsSchema", () => {
 
   describe("applyStoredSettings()", () => {
 
+    test("lowers a saved number above its maximum to the maximum", async (): Promise<void> => {
+      await store({ "wordPrediction.numSuggestions": 40, "telegraphicTranslation.numSentences": 9 });
+
+      const config = await applyStoredSettings(configWithSentences());
+
+      expect(config.wordPrediction.numSuggestions).toBe(13);
+      expect(config.telegraphicTranslation?.numSentences).toBe(3);
+    });
+
+    // The setting was renamed. A choice saved under the old key goes back to the default.
+    test("ignores a choice saved under the old maxSuggestions key", async (): Promise<void> => {
+      await store({ "wordPrediction.maxSuggestions": 4 });
+
+      expect((await applyStoredSettings(makeDefaultConfig())).wordPrediction.numSuggestions).toBe(5);
+    });
+
     test("applies a saved value, at the top level and inside a section", async (): Promise<void> => {
-      await store({ "announceSymbolOnInput": false, "wordPrediction.maxSuggestions": 4 });
+      await store({ "announceSymbolOnInput": false, "wordPrediction.numSuggestions": 4 });
 
       const config = await applyStoredSettings(makeDefaultConfig());
 
       expect(config.announceSymbolOnInput).toBe(false);
-      expect(config.wordPrediction.maxSuggestions).toBe(4);
+      expect(config.wordPrediction.numSuggestions).toBe(4);
     });
 
     test("leaves the configuration it was given untouched", async (): Promise<void> => {
@@ -59,28 +75,28 @@ describe("SettingsSchema", () => {
     });
 
     test("skips a saved value of the wrong type", async (): Promise<void> => {
-      await store({ "announceSymbolOnInput": "false", "wordPrediction.maxSuggestions": "4" });
+      await store({ "announceSymbolOnInput": "false", "wordPrediction.numSuggestions": "4" });
 
       const config = await applyStoredSettings(makeDefaultConfig());
 
       expect(config.announceSymbolOnInput).toBe(true);
-      expect(config.wordPrediction.maxSuggestions).toBe(10);
+      expect(config.wordPrediction.numSuggestions).toBe(5);
     });
 
     // Zero messages kept is a real choice; zero suggestions is not.
     test("skips a number below its minimum, and keeps zero where zero is allowed", async (): Promise<void> => {
-      await store({ "maxRecalledRecords": 0, "wordPrediction.maxSuggestions": 0 });
+      await store({ "maxRecalledRecords": 0, "wordPrediction.numSuggestions": 0 });
 
       const config = await applyStoredSettings(makeDefaultConfig());
 
       expect(config.maxRecalledRecords).toBe(0);
-      expect(config.wordPrediction.maxSuggestions).toBe(10);
+      expect(config.wordPrediction.numSuggestions).toBe(5);
     });
 
     test("skips a number that is not a whole number", async (): Promise<void> => {
-      await store({ "wordPrediction.maxSuggestions": 4.5 });
+      await store({ "wordPrediction.numSuggestions": 4.5 });
 
-      expect((await applyStoredSettings(makeDefaultConfig())).wordPrediction.maxSuggestions).toBe(10);
+      expect((await applyStoredSettings(makeDefaultConfig())).wordPrediction.numSuggestions).toBe(5);
     });
 
     // The store is hand-editable, so the prompts must not be reachable from it.
@@ -105,9 +121,9 @@ describe("SettingsSchema", () => {
     });
 
     test("applies a value whose section is configured", async (): Promise<void> => {
-      await store({ "telegraphicTranslation.numSentences": 5 });
+      await store({ "telegraphicTranslation.numSentences": 2 });
 
-      expect((await applyStoredSettings(configWithSentences())).telegraphicTranslation?.numSentences).toBe(5);
+      expect((await applyStoredSettings(configWithSentences())).telegraphicTranslation?.numSentences).toBe(2);
     });
 
     // Switching the query on would only buy an empty query: there are no prompts to send.
@@ -197,14 +213,14 @@ describe("SettingsSchema", () => {
       const saved = await saveSettings({
         "announceSymbolOnInput": false,
         "maxRecalledRecords": baseline.maxRecalledRecords,
-        "wordPrediction.maxSuggestions": 4,
+        "wordPrediction.numSuggestions": 4,
         "telegraphicTranslation.numSentences": 3
       }, baseline);
 
       expect(saved).toBe(true);
       expect(await storage.readSettings()).toEqual({
         "announceSymbolOnInput": false,
-        "wordPrediction.maxSuggestions": 4
+        "wordPrediction.numSuggestions": 4
       });
     });
 
@@ -225,7 +241,7 @@ describe("SettingsSchema", () => {
       const baseline = makeDefaultConfig();
 
       const saved = await saveSettings(
-        { "wordPrediction.maxSuggestions": 0, "announceSymbolOnInput": false }, baseline
+        { "wordPrediction.numSuggestions": 0, "announceSymbolOnInput": false }, baseline
       );
 
       expect(saved).toBe(true);

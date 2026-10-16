@@ -10,13 +10,20 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+/* On one line from 1024px up, so the top bar stays 44px tall. Narrower, the buttons wrap. */
 .symbolEntryToolbar {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
 
+  @media (min-width: 1024px) {
+    flex-wrap: nowrap;
+  }
+
   > button {
-    padding: 0.5rem 1rem;
+    height: 44px;
+    padding: 0 1rem;
+    white-space: nowrap;
   }
 }
 

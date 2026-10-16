@@ -8,15 +8,32 @@ html {
   font-size: 18px;
 }
 
+/*
+ * The page is exactly the height of the screen: the top bar, then the palette, which takes
+ * the rest. When it cannot fit -- below 1024×650, or zoomed in -- the bands keep their
+ * heights and the vocabulary rows stop at 64px, so the page scrolls down. Columns shrink, so
+ * it never scrolls sideways.
+ */
 body {
   background-color: #1fcecb;  /* robin's egg-shell blue */
-  margin: 0;
-  font-family: 'Roboto', sans-serif;
+  box-sizing: border-box;
   display: grid;
-  row-gap: 0.25rem;
-  margin-left: 1rem;
-  margin-top: 1rem;
-  margin-right: 1rem;
+  font-family: 'Roboto', sans-serif;
+  /* minmax(0, ...) so no content -- a row of chips, a long message -- widens or lengthens the
+     page. Below 1024×650 the palette runs past the bottom of its row and the page scrolls,
+     with no padding under the last row. */
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100dvh;
+  margin: 0;
+  padding: 8px;
+  row-gap: 4px;
+}
+
+/* Their dialogs open in the browser's top layer, so the containers take no space. */
+#firstRunSetup,
+#pageDialogs {
+  display: contents;
 }
 
 button {
@@ -70,41 +87,93 @@ svg.inter-word-padding {
 }
 
 /*
- * Command bar buttons are smaller than other cells.
+ * The input area and the command bar have fixed heights, so nothing that arrives in them can
+ * move the vocabulary. Their buttons shrink to their tracks and clip. The message box scrolls
+ * sideways inside itself, as before.
  */
-[data-palettename="Command Bar"] {
+[data-palettename="Input Area"] {
+  column-gap: 4px;
+  height: 88px;
+
+  button {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+    padding: 2px 4px;
+  }
+
   svg {
-    max-height: 2rem;
+    max-height: 2.4rem;
+  }
+}
+
+[data-palettename="Command Bar"] {
+  column-gap: 4px;
+  height: 48px;
+
+  svg {
+    flex: none;
+    max-height: 1.1rem;
     max-width: 100%;
   }
 
   button {
+    align-items: center;
     border-radius: 0.5rem;
-    /* 18 cells share one row, so a long label breaks at a hyphen rather than widening it. */
+    display: flex;
+    flex-direction: column;
+    font-size: 0.66rem;
+    /* 10 cells share one row, so a long label breaks at a hyphen rather than widening it. */
     hyphens: auto;
+    justify-content: center;
+    line-height: 1.05;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
     overflow-wrap: break-word;
-    padding-bottom: 0.25rem;
+    padding: 1px 3px;
   }
 }
 
 /*
- * The top bar: the chips for the attributes set on the message at the left, the symbol-entry
- * and settings triggers at the right.  It wraps rather than squeezing the triggers when there
- * are more chips than fit.
+ * The top bar: the chips for the attributes set on the message at the left, then the notice
+ * when there is one, and the symbol-entry and settings triggers at the right. One 44px line
+ * at any width from 1024px up. Narrower, it wraps rather than overflowing.
  */
 #topBar {
   align-items: center;
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  justify-content: space-between;
+  min-height: 44px;
+
+  @media (min-width: 1024px) {
+    flex-wrap: nowrap;
+    height: 44px;
+  }
 }
 
+/* The chips take the width the notice and the triggers leave, and always room for "+N". */
+#messageAttributes {
+  flex: 1 1 4rem;
+  min-width: 4rem;
+}
+
+/* The notice shrinks before the triggers do. Its full text stays in the live region. */
 #aiStatus:not(:empty) {
   background-color: #ffecec;
   border-radius: 1rem;
+  flex: 0 1 auto;
   font-weight: bold;
-  padding: 0.75rem 1rem;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0.5rem 1rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /*
@@ -134,8 +203,9 @@ svg.inter-word-padding {
 }
 
 /*
- * Palettes have no grid gap, so each row of the Standard Header keeps a gap below it.
+ * The header's bands are 4px apart, like the screen palette's rows. A margin rather than a
+ * grid gap: the sentence cell's row is empty, and a gap would still open on each side of it.
  */
-[data-palettename="Standard Header"] > * {
-  margin-bottom: 0.25rem;
+[data-palettename="Standard Header"] > :not(:last-child) {
+  margin-bottom: 4px;
 }

@@ -141,7 +141,7 @@ working: anything other than `false` reads as `true`.
 | Field | Type | Description |
 | ----- | ---- | ----------- |
 | `model` | string | Ollama model name. The empty string means Ollama's first available model. |
-| `numSentences` | number | Positive integer. How many candidate sentences to request. |
+| `numSentences` | number | Positive integer. How many candidate sentences to request. Values above 3 are lowered to 3. |
 | `systemPrompt` | string or object | Non-empty. Supports the `{{numSentences}}` placeholder. |
 | `userPrompt` | string or object | Non-empty. See [Prompt placeholders](#prompt-placeholders). |
 | `showBlissSentence` | boolean | Optional. Draws Bliss symbols above each sentence choice. Only `false` turns it off. |
@@ -188,7 +188,7 @@ to ask.
 | Field | Type | Description |
 | ----- | ---- | ----------- |
 | `show` | boolean | Required. Whether the suggestion row is rendered. |
-| `maxSuggestions` | number | Positive integer. How many suggestions to offer at once. Defaults to 10. |
+| `numSuggestions` | number | Positive integer. How many suggestions to offer at once. Defaults to 5. Values above 13 are lowered to 13. |
 | `enableModelQuery` | boolean | Whether a model is asked for words as well as the message history. Defaults to `false`. |
 | `model` | string | Ollama model name. The empty string means Ollama's first available model. |
 | `systemPrompt` | string or object | Non-empty when the query is enabled. Supports the `{{numWords}}` placeholder. |
@@ -201,8 +201,8 @@ to ask.
 The `{{attributes}}` and `{{aboutMe}}` lines are each dropped when there is nothing to fill them
 with, so give each one a line of its own.
 
-When the section is missing or `show` is not a boolean, the feature is off. A malformed `maxSuggestions`
-alone falls back to 10 and leaves the feature on.
+When the section is missing or `show` is not a boolean, the feature is off. A malformed `numSuggestions`
+alone falls back to 5 and leaves the feature on.
 
 The model query is a separate decision from the feature itself. It runs only when `enableModelQuery` is
 `true` and both prompts are filled in: there are no hardcoded prompts to query with, so a half-configured

@@ -45,7 +45,7 @@ type PredictedWordsPropsType = {
 
 /**
  * The suggested next words, the `ContentPredictedWords` cell. Each word is shown as a Bliss
- * symbol with its label, in `numColumns` columns: one row when the palette does not say.
+ * symbol with its label, in one row of `numSuggestions` slots.
  *
  * The suggestions are recomputed whenever the message changes, from the words the user has
  * used after the same words before. Choosing one adds it to the message exactly as choosing
@@ -56,6 +56,9 @@ type PredictedWordsPropsType = {
  *
  * The row keeps its place whenever the feature is on, even with nothing to suggest: a row
  * that appears and disappears would shift everything below it mid-composition.
+ *
+ * The status line is a live region only, and is never shown. While the model is answering, the
+ * empty slots show "…" instead.
  * @param {PredictedWordsPropsType} props - The cell id and its options.
  * @returns {VNode | null}
  */
@@ -63,8 +66,8 @@ export function PredictedWords (props: PredictedWordsPropsType): VNode | null {
   // Read so this draws again after a save. See `settingsSavedCount`.
   void settingsSavedCount.value;
   const { payloads, caretPosition } = changeEncodingContents.value;
-  const { show, maxSuggestions } = adaptivePaletteGlobals.config.wordPrediction;
-  const { columnStart, columnSpan, rowStart, rowSpan, numColumns } = props.options;
+  const { show, numSuggestions } = adaptivePaletteGlobals.config.wordPrediction;
+  const { columnStart, columnSpan, rowStart, rowSpan } = props.options;
   const markAiSuggestions = adaptivePaletteGlobals.config.markAiSuggestions;
   const modelWords = modelWordsSignal.value;
 
@@ -75,7 +78,7 @@ export function PredictedWords (props: PredictedWordsPropsType): VNode | null {
   // Predict from the message up to the caret: the words after it are not context for what
   // is about to be inserted.
   const precedingLabels = payloads.slice(0, caretPosition + 1).map((payload) => payload.label);
-  const historySuggestions = predictNext(precedingLabels, maxSuggestions);
+  const historySuggestions = predictNext(precedingLabels, numSuggestions);
 
   // Stop showing the status message when the user changes the message or its attributes -- the
   // model was asked under the combined key, so the row has to compare against that same key.
@@ -101,10 +104,16 @@ export function PredictedWords (props: PredictedWordsPropsType): VNode | null {
   //
   // The model's words are appended after the ones the history found, so a slot past the
   // history's count is the model's, and is marked when the setting asks for it.
-  const cells = Array.from({ length: maxSuggestions }, (ignored, index) => {
+  const cells = Array.from({ length: numSuggestions }, (ignored, index) => {
     const suggestion = suggestions[index];
     if (!suggestion) {
-      return html`<div key=${index} class="predictedWord predictedWordEmpty" aria-hidden="true"></div>`;
+      // While the model is answering, an empty slot says words are on the way.
+      return html`
+        <div
+          key=${index}
+          class=${isQuerying ? "predictedWord predictedWordEmpty predictedWordWaiting" : "predictedWord predictedWordEmpty"}
+          aria-hidden="true">${isQuerying ? "…" : null}</div>
+      `;
     }
     const isModelWord = index >= historySuggestions.length;
     const isMarked = markAiSuggestions && isModelWord;
@@ -144,7 +153,7 @@ export function PredictedWords (props: PredictedWordsPropsType): VNode | null {
         class="predictedWords"
         role="group"
         aria-label=${t("predictedWords")}
-        style="grid-template-columns: repeat(${numColumns ?? maxSuggestions}, minmax(0, 1fr));">
+        style="grid-template-columns: repeat(${numSuggestions}, minmax(0, 1fr));">
         ${cells}
       </div>
     </div>

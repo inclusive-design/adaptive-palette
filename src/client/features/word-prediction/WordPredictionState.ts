@@ -123,10 +123,10 @@ export function cancelModelQuery (): void {
 async function queryModelWords (
   contextKey: string, messageSoFar: string, labels: string[]
 ): Promise<void> {
-  const { maxSuggestions } = adaptivePaletteGlobals.config.wordPrediction;
+  const { numSuggestions } = adaptivePaletteGlobals.config.wordPrediction;
   const contextLabels = labels.filter((label) => label.trim().length > 0);
-  const historySuggestions = predictNext(labels, maxSuggestions);
-  const emptySlots = maxSuggestions - historySuggestions.length;
+  const historySuggestions = predictNext(labels, numSuggestions);
+  const emptySlots = numSuggestions - historySuggestions.length;
   if (emptySlots <= 0) {
     return;
   }

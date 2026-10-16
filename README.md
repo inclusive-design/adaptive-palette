@@ -25,6 +25,14 @@ The desktop version is for everyday use and protects your privacy. It saves your
 the AI features can tailor their suggestions to you, and both that data and the AI models stay
 on your computer: nothing you write leaves it.
 
+## Accessibility
+
+- **Screen size:** the whole interface fits on a screen of at least 1024×650 CSS pixels, such as a
+  10-inch tablet in landscape, with no scrolling. On a smaller screen the page scrolls up and down,
+  never sideways.
+- **Access methods:** keyboard, mouse, touch, and two-switch row scanning. See
+  [Access Methods](./docs/AccessMethods.md).
+
 ## Install
 
 To work on the project, you need to install [NodeJS and NPM](https://nodejs.org/en/download/)

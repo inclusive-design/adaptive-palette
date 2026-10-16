@@ -59,6 +59,13 @@ export const typedSentenceSignal = signal("");
 export const focusedMessageSignal = signal<string | null>(null);
 
 /**
+ * The name of the palette Make Sentences was last pressed on, or `null` before it has been.
+ * The sentence layer opens on that palette only, so the user can go to another palette and come
+ * back to the sentences.
+ */
+export const sentencePaletteSignal = signal<string | null>(null);
+
+/**
  * The abort handle for the sentence request currently in flight, if any.
  */
 let activeSentenceAbort: AbortController | null = null;
@@ -97,6 +104,21 @@ export function clearMessageAndChoices (): void {
 }
 
 /**
+ * Edit message: close the sentence layer and keep the message. Stops the request, clears the
+ * typed text and returns to idle, so the next edit goes through without asking. The message
+ * and its attributes stay.
+ * @returns {void}
+ */
+export function closeSentences (): void {
+  activeSentenceAbort?.abort();
+  activeSentenceAbort = null;
+  batch((): void => {
+    typedSentenceSignal.value = "";
+    sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
+  });
+}
+
+/**
  * The message currently in the input area, as text.
  * @returns {string}
  */
@@ -120,6 +142,7 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
       telegraphicMessage.trim().length === 0) {
     return;
   }
+  sentencePaletteSignal.value = adaptivePaletteGlobals.navigationStack.currentPalette?.name ?? null;
   const config = adaptivePaletteGlobals.config.telegraphicTranslation;
   const numSentences = config?.numSentences ?? 1;
   const recalled = findLatestTranslation(telegraphicMessage, languageSignal.value);

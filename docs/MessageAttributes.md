@@ -12,7 +12,8 @@ Attributes only reach the model, so **Msg Style** is hidden when no model is ava
 2. Tap any attribute to set it. Tap it again to take it off. As many as you like, from as many
    rows as you like.
 3. Tap **Back**. What you set shows as chips at the top left of the screen, opposite the
-   symbol-entry buttons; tapping a chip takes that attribute off.
+   symbol-entry buttons; tapping a chip takes that attribute off. When more are set than fit on
+   the line, the last place shows **+N**; tapping it opens the attributes palette.
 
 The attributes belong to the one message. They clear when the message clears — "Delete all", or
 the "Done" button under the sentence choices. Tapping a sentence speaks and records it, and

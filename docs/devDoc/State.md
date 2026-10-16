@@ -88,6 +88,10 @@ importing a feature: nine cells and `features/word-prediction/PredictedWords.ts`
 `core/MessageEdit`, and the one feature with an opinion registers a guard instead of being
 imported by all ten.
 
+**`core/PaletteNavigation.ts`** holds `goToPalette()`, the one way to open a named palette.
+`ActionBranchToPaletteCell` and the message-attributes "+N" chip both call it, so no feature
+imports a cell.
+
 ## Start-up order
 
 [`src/client/index.js`](../../src/client/index.js) awaits `initAdaptivePaletteGlobals()` before

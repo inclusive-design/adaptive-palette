@@ -13,3 +13,39 @@
 .paletteContainer {
   display: grid;
 }
+
+/*
+ * The palette `CurrentPalette` draws: the whole screen below the top bar. `Palette.ts` sets its
+ * rows. Cells shrink to their track and clip what does not fit, so content can never make a row
+ * taller and push the page past the screen.
+ */
+.screenPalette {
+  gap: 4px;
+  height: 100%;
+
+  > :not(.paletteInclude) {
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  /* The symbol sits above the label and takes the height the label leaves, up to 4rem. A long
+     label breaks at a hyphen and the cell clips it; its accessible name keeps all of it. */
+  > button {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    hyphens: auto;
+    justify-content: center;
+    overflow-wrap: break-word;
+    padding: 4px;
+
+    > svg {
+      flex: 0 1 auto;
+      height: min(4rem, calc(100% - 1.6rem));
+      max-width: 100%;
+      min-height: 0;
+      width: auto;
+    }
+  }
+}

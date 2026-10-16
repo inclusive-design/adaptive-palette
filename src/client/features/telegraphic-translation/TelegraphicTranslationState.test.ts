@@ -20,7 +20,7 @@ import { editMessage, setEditGuard } from "../../core/MessageEdit";
 import {
   abortActiveSentenceRequest, cancelDiscardEdit, clearMessageAndChoices, confirmDiscardEdit,
   currentTelegraphicMessage, discardEditPromptSignal, guardEdit, IDLE_SENTENCE_STATE,
-  makeSentences, sentenceCompletionsSignal
+  makeSentences, sentenceCompletionsSignal, closeSentences, sentencePaletteSignal, typedSentenceSignal
 } from "./TelegraphicTranslationState";
 import { readMessageLog, saveMessageRecord, saveTranslation } from "../../core/MessageLog";
 import { queryChat } from "../../core/OllamaApi";
@@ -110,6 +110,9 @@ describe("telegraphicTranslationState", (): void => {
     await resetMessageLog();
     setEditGuard(null);
     clearAttributes();
+    sentencePaletteSignal.value = null;
+    typedSentenceSignal.value = "";
+    adaptivePaletteGlobals.navigationStack.flushReset(null);
   });
 
   test("currentTelegraphicMessage joins the symbol labels with spaces", (): void => {
@@ -923,5 +926,52 @@ describe("telegraphicTranslationState", (): void => {
     expect(signal.aborted).toBe(true);
     expect(sentenceCompletionsSignal.value).toEqual(IDLE_SENTENCE_STATE);
     expect(prompts).toEqual([]);
+  });
+
+  test("making sentences records the palette they were asked for on", async (): Promise<void> => {
+    adaptivePaletteGlobals.navigationStack.flushReset({ name: "food", cells: {} });
+    editMessage(INPUT_CONTENTS);
+    mockedQueryChat.mockResolvedValue({ message: { content: "1. I am hungry." } } as never);
+
+    await requestForCurrentMessage();
+
+    expect(sentencePaletteSignal.value).toBe("food");
+  });
+
+  // Edit message: the layer closes and the message stays, ready to be changed.
+  test("closeSentences stops the request and keeps the message and its attributes", async (): Promise<void> => {
+    editMessage(INPUT_CONTENTS);
+    selectedAttributesSignal.value = [{ category: "Feeling", label: "angry", composition: 1198 }];
+    let querySignal: AbortSignal | undefined;
+    mockedQueryChat.mockImplementation(((...args: unknown[]) => {
+      querySignal = args[4] as AbortSignal;
+      return new Promise((resolve, reject) => {
+        querySignal?.addEventListener("abort", () => reject(new DOMException("Aborted", "AbortError")));
+      });
+    }) as never);
+    const request = requestForCurrentMessage();
+    await waitFor(() => expect(sentenceCompletionsSignal.value.status).toBe("working"));
+    typedSentenceSignal.value = "I want lunch.";
+
+    closeSentences();
+    await request;
+
+    expect(querySignal?.aborted).toBe(true);
+    expect(sentenceCompletionsSignal.value).toBe(IDLE_SENTENCE_STATE);
+    expect(typedSentenceSignal.value).toBe("");
+    expect(changeEncodingContents.value.payloads).toHaveLength(2);
+    expect(selectedAttributesSignal.value).toHaveLength(1);
+  });
+
+  test("an edit after closeSentences goes through without asking", async (): Promise<void> => {
+    editMessage(INPUT_CONTENTS);
+    mockedQueryChat.mockResolvedValue({ message: { content: "1. I am hungry." } } as never);
+    await requestForCurrentMessage();
+
+    closeSentences();
+    editMessage(EDITED_CONTENTS);
+
+    expect(prompts).toEqual([]);
+    expect(changeEncodingContents.value).toEqual(EDITED_CONTENTS);
   });
 });

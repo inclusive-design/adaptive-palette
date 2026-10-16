@@ -74,12 +74,16 @@ export const sv: Record<keyof typeof en, string> = {
   // AI and storage status
   noModels: "Inga modeller finns. Starta Ollama för att använda AI-funktionerna.",
   hosted: "AI-funktionerna finns bara i skrivbordsversionen.",
-  notSaved: "Inget sparas på den här datorn. Om du laddar om sidan försvinner dina data.",
+  // The top bar's notice. Short, so it fits on the bar's one line.
+  aiStatusHosted: "Testversion: ingen AI, inget sparas",
+  aiStatusNoModels: "AI av: Ollama körs inte",
+  aiStatusNoSentences: "Meningar av: kontrollera config.json",
 
   // Settings dialog
   settingsSave: "Spara och stäng",
   settingsModelNote: "Starta Ollama för att använda detta.",
   settingsFailed: "Inställningarna kunde inte sparas. Webbläsaren låter inte appen använda sin lagring.",
+  settingMax: "högst {{max}}",
   settingsDependentNote: "Slå på \"{{label}}\" för att använda detta.",
   settingGroupGeneral: "Allmänt",
   settingGroupSymbolEntry: "Symbolinmatning",
@@ -174,6 +178,8 @@ export const sv: Record<keyof typeof en, string> = {
   sentenceSpeak: "Läs upp",
   sentenceDone: "✓ Klar",
   sentenceDoneSpoken: "Klar",
+  sentenceChoose: "Välj en mening",
+  sentenceEditMessage: "Ändra meddelandet",
   discardWorking: "En mening skapas fortfarande. Om du ändrar meddelandet avbryts det. Ändra ändå?",
   discardReady: "Om du ändrar meddelandet tas meningarna bort. Ändra ändå?",
   discardTitle: "Ändra meddelandet?",
@@ -187,5 +193,6 @@ export const sv: Record<keyof typeof en, string> = {
   attributePriority: "Prioritet",
   attributeOn: "{{name}}, på",
   attributeOff: "{{name}}, av",
-  attributeRemove: "Ta bort {{name}}"
+  attributeRemove: "Ta bort {{name}}",
+  attributeMore: "+{{count}} till: {{names}}"
 };

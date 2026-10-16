@@ -20,7 +20,7 @@
  */
 import type { AdaptivePaletteConfigType } from "../../index.d";
 import { getStorage } from "../../core/StorageBackend";
-import { isPrompt } from "../../core/Config";
+import { isPrompt, MAX_NUM_SENTENCES, MAX_NUM_SUGGESTIONS } from "../../core/Config";
 import { LANGUAGES, LANGUAGE_NAMES, type StringKey } from "../../i18n/I18n";
 
 export type SettingValueType = boolean | number | string;
@@ -31,6 +31,7 @@ export type SettingDescriptorType = {
   label: StringKey,        // the text shown in the dialog
   group: StringKey,        // the heading it sits under
   min?: number,            // numbers only
+  max?: number,            // numbers only: a larger stored value is lowered to it
   choices?: { value: string, text: string }[],  // choices only: each value and its text
   // Useless without a model Ollama can serve, and without prompts in its own section.
   requiresModel?: boolean,
@@ -81,7 +82,7 @@ export const SETTING_DESCRIPTORS: SettingDescriptorType[] = [
     label: "settingWordSuggestion", group: "settingGroupWordPrediction"
   },
   {
-    path: ["wordPrediction", "maxSuggestions"], kind: "number", min: 1,
+    path: ["wordPrediction", "numSuggestions"], kind: "number", min: 1, max: MAX_NUM_SUGGESTIONS,
     enabledBy: "wordPrediction.show",
     label: "settingSuggestionsToShow", group: "settingGroupWordPrediction"
   },
@@ -91,7 +92,7 @@ export const SETTING_DESCRIPTORS: SettingDescriptorType[] = [
     label: "settingAskModelWords", group: "settingGroupWordPrediction"
   },
   {
-    path: ["telegraphicTranslation", "numSentences"], kind: "number", min: 1, requiresModel: true,
+    path: ["telegraphicTranslation", "numSentences"], kind: "number", min: 1, max: MAX_NUM_SENTENCES, requiresModel: true,
     label: "settingSentenceChoices", group: "settingGroupSentences"
   },
   {
@@ -240,7 +241,9 @@ export async function applyStoredSettings (
       return;
     }
     const parent = parentOf(merged, descriptor.path) as Record<string, unknown>;
-    parent[descriptor.path[descriptor.path.length - 1]] = overrides[key];
+    const value = overrides[key];
+    parent[descriptor.path[descriptor.path.length - 1]] =
+      descriptor.max !== undefined ? Math.min(value as number, descriptor.max) : value;
   });
   return merged;
 }

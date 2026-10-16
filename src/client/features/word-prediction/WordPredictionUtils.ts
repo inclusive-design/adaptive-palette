@@ -190,11 +190,11 @@ export function isModelTierActive (): boolean {
  * Each suggestion is returned in the form it was last used, so a symbol saved with an
  * indicator or a modifier is predicted with them applied.
  * @param {string[]} currentLabels - The labels in the message so far, up to the caret.
- * @param {number} maxSuggestions - The most suggestions to return.
+ * @param {number} numSuggestions - The most suggestions to return.
  * @returns {SymbolEncodingType[]} - The suggestions, most likely first. May be empty.
  */
-export function predictNext (currentLabels: string[], maxSuggestions: number): SymbolEncodingType[] {
-  if (maxSuggestions <= 0) {
+export function predictNext (currentLabels: string[], numSuggestions: number): SymbolEncodingType[] {
+  if (numSuggestions <= 0) {
     return [];
   }
   const messages = loggedMessages();
@@ -202,7 +202,7 @@ export function predictNext (currentLabels: string[], maxSuggestions: number): S
 
   if (messages.length === 0) {
     return contextLabels.length === 0
-      ? SEED_STARTERS.slice(0, maxSuggestions).map(({ label, composition }) => seedPayload(composition, label))
+      ? SEED_STARTERS.slice(0, numSuggestions).map(({ label, composition }) => seedPayload(composition, label))
       : [];
   }
 
@@ -228,7 +228,7 @@ export function predictNext (currentLabels: string[], maxSuggestions: number): S
   const suggestions: SymbolEncodingType[] = [];
   for (const tier of tiers) {
     for (const label of rankLabels(tier)) {
-      if (suggestions.length === maxSuggestions) {
+      if (suggestions.length === numSuggestions) {
         return suggestions;
       }
       const payload = payloadByLabel.get(label);

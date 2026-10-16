@@ -106,27 +106,44 @@ model query. It waits to be tapped like any other sentence, and nothing is recor
 for the rest, which are appended below the recalled sentence. A returned sentence identical to the
 recalled one is dropped, so the list can end up shorter than `numSentences`.
 
+The sentences appear in a layer over the vocabulary, so nothing else on the screen moves. The top
+bar, the input area, the word suggestions and the command bar stay usable. The vocabulary cells
+under the layer are inert: Tab, switch scanning and screen readers skip them. The layer is a
+`role="group"` labelled by its "Choose a sentence" title.
+
+From top to bottom, the layer holds:
+
+1. A header: "Choose a sentence", the status line, and **Edit message**.
+2. One slot per sentence asked for. A sentence that has not arrived yet leaves its slot empty.
+   `numSentences` is at most 3. A sentence whose Bliss row does not fit its slot shows its text
+   only, cut off after 2 lines; a screen reader still reads all of it.
+3. The typing area: a text field, **Speak** and **✓ Done**. Typing does not wait for the model.
+
 The sentence area can be in one of four states:
 
 1. **Idle**
-   - Nothing is shown. This is the state before any message has been sent for translation, and after
-     **✓ Done** or **Delete all** clears everything.
+   - The layer is closed. This is the state before any message has been sent for translation, and
+     after **✓ Done**, **Edit message** or **Delete all**.
 
 2. **Working**
    - Announces `⏳ Making sentences…` in a live region, or `⏳ Making more sentences…` when a recalled
      sentence is already showing.
-   - Includes the typing area (text field, **Speak**, **✓ Done**) and any recalled sentence.
+   - Shows any recalled sentence in the first slot.
 
 3. **Choices**
    - Displays one button per sentence: a recalled one first if there is one, followed by the model's
      suggestions in order.
-   - Includes the typing area (text field, **Speak**, **✓ Done**).
 
 4. **Error**
    - Announces `⚠ Could not make sentences. Try again.`
-   - The typing area stays on screen, together with any recalled sentence.
+   - Any recalled sentence and the typing area stay usable.
 
-The typing area is present in every state except **Idle**, and typing does not wait for the model.
+**Edit message** closes the layer and keeps the message and its attributes. **✓ Done** closes it and
+clears them.
+
+The layer shows only on the palette where **Sentence** was pressed. The user can leave through the
+controls it does not cover, such as **Back**, **Home**, "add indicator" or **Msg Style**, and use
+every cell of the other palette. The sentences wait; going back to that palette shows them again.
 
 Requesting a sentence also records the message for [word prediction](WordPrediction.md), since asking for
 a sentence means the message is finished.
@@ -238,14 +255,15 @@ Data can currently be inspected through browser developer tools. No in-applicati
 
 | Situation | Behaviour |
 | --- | --- |
-| Ollama is not running or no models are installed | A banner indicates that AI features are unavailable. The **Sentence** button is not shown. |
-| `config.telegraphicTranslation` is missing or invalid | A configuration error banner is displayed and the **Sentence** button is not shown. No fallback configuration is applied. |
+| Ollama is not running or no models are installed | The top bar shows the short notice "AI off: Ollama isn't running". The **Sentence** button is not shown. |
+| `config.telegraphicTranslation` is missing or invalid | The top bar shows the short notice "Sentences off: check config.json" and the **Sentence** button is not shown. No fallback configuration is applied. |
 | Configured model is unavailable | The first available model is used and a warning is logged to the console. |
 | Message has a past translation | Its most recently spoken sentence is shown first, with no query. Remaining sentences are requested only when `numSentences` is above `1`. |
 | Model repeats the recalled sentence | The repeat is dropped; the list can end up shorter than `numSentences`. |
 | Empty message | The **Sentence** button is marked `aria-disabled` and cannot be activated. |
 | Text field empty | The **Speak** button is marked `aria-disabled` and announces it is unavailable when pressed. |
 | **Done** or **Delete all** pressed while choices are visible | The message and generated choices are cleared. Any saved preference remains. |
+| **Edit message** pressed while choices are visible | The choices are closed. The message and its attributes are kept. |
 | Message edited while sentences are visible | Warn user this action will discard existing sentences because they no longer match the current message. This includes a recalled sentence still on screen under a failed request's error report. |
 | Message edited while a request is in progress | Warn user this action will abort the current query because responded sentences no longer match the current message. |
 | Request fails or times out | The feature enters the **Error** state: the error line replaces the progress line and the typing area stays on screen, along with any recalled sentence. The message remains available so the user can retry. |

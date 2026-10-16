@@ -317,6 +317,100 @@ describe("Palette", (): void => {
     });
   });
 
+  describe("the screen palette", (): void => {
+
+    const symbolCell = (label: string, rowStart: number): object => ({
+      type: "ActionCodeCell",
+      options: { label, composition: 823, rowStart, rowSpan: 1, columnStart: 1, columnSpan: 3 }
+    });
+
+    // A header like the Standard Header: a band, and the sentence cell below it.
+    const header = {
+      name: "Header",
+      cells: {
+        "top": { type: "ActionCodeCell", options: { label: "Top", composition: 823, rowStart: 1, rowSpan: 1, columnStart: 1, columnSpan: 1 } },
+        "sentence-choices": { type: "ContentSentenceChoices", options: { rowStart: 2, rowSpan: 1, columnStart: 1, columnSpan: 1 } }
+      }
+    };
+
+    // The header across 3 columns, and `rows` vocabulary rows below it.
+    const screenPalette = (rows: number): JsonPaletteType => ({
+      name: "Screen",
+      cells: {
+        "header": { type: "PaletteInclude", options: { palette: "Header", rowStart: 1, rowSpan: 1, columnStart: 1, columnSpan: 3 } },
+        ...Object.fromEntries(Array.from({ length: rows }, (unused, index) => [`cell${index}`, symbolCell(`Cell ${index}`, index + 2)]))
+      }
+    });
+
+    const paletteNamed = (container: Element, name: string): HTMLElement =>
+      container.querySelector(`[data-palettename='${name}']`) as HTMLElement;
+
+    beforeEach((): void => {
+      adaptivePaletteGlobals.paletteStore.addPalette(header);
+    });
+
+    afterEach((): void => {
+      vi.restoreAllMocks();
+    });
+
+    test("a row holding only an include fits its content; the other rows share the rest", async (): Promise<void> => {
+      const { container } = render(html`<${Palette} json=${screenPalette(2)} isScreen=${true} />`);
+      await screen.findByText("Cell 1");
+
+      expect(paletteNamed(container, "Screen").style.gridTemplateRows).toBe("auto minmax(64px, 1fr) minmax(64px, 1fr)");
+      // A palette drawn inside it keeps rows sized by their content.
+      expect(paletteNamed(container, "Header").style.gridTemplateRows).toBe("");
+    });
+
+    test("draws the header's sentence cell over every row below the header", async (): Promise<void> => {
+      const { container } = render(html`<${Palette} json=${screenPalette(2)} isScreen=${true} />`);
+      await screen.findByText("Cell 1");
+
+      const layer = container.querySelector(".sentenceChoices") as HTMLElement;
+      expect(layer.parentElement).toBe(paletteNamed(container, "Screen"));
+      expect(layer.style.gridRowStart).toBe("2");
+      expect(layer.style.gridRowEnd).toBe("span 2");
+      expect(layer.style.gridColumnEnd).toBe("span 3");
+      expect(paletteNamed(container, "Header").querySelector(".sentenceChoices")).toBeNull();
+    });
+
+    test("a palette that is not the screen draws the header's sentence cell in place", async (): Promise<void> => {
+      const { container } = render(html`<${Palette} json=${screenPalette(2)} />`);
+      await screen.findByText("Cell 1");
+
+      const layer = container.querySelector(".sentenceChoices") as HTMLElement;
+      expect(layer.parentElement).toBe(paletteNamed(container, "Header"));
+    });
+
+    test("a header over two rows: both fit their content, and the layer starts below them", async (): Promise<void> => {
+      const palette = {
+        name: "Screen",
+        cells: {
+          "header": { type: "PaletteInclude", options: { palette: "Header", rowStart: 1, rowSpan: 2, columnStart: 1, columnSpan: 3 } },
+          "cell0": symbolCell("Cell 0", 3),
+          "cell1": symbolCell("Cell 1", 4)
+        }
+      } as JsonPaletteType;
+      const { container } = render(html`<${Palette} json=${palette} isScreen=${true} />`);
+      await screen.findByText("Cell 1");
+
+      expect(paletteNamed(container, "Screen").style.gridTemplateRows).toBe("auto auto minmax(64px, 1fr) minmax(64px, 1fr)");
+      const layer = container.querySelector(".sentenceChoices") as HTMLElement;
+      expect(layer.style.gridRowStart).toBe("3");
+      expect(layer.style.gridRowEnd).toBe("span 2");
+    });
+
+    test("logs an error and draws no layer when no rows are below the header", async (): Promise<void> => {
+      const consoleError = vi.spyOn(console, "error").mockImplementation((): void => {});
+
+      render(html`<${Palette} json=${screenPalette(0)} isScreen=${true} />`);
+      await screen.findByText("Top");
+
+      expect(document.querySelector(".sentenceChoices")).toBeNull();
+      expect(consoleError).toHaveBeenCalledWith(expect.stringContaining("Palette \"Screen\""));
+    });
+  });
+
   describe("labels in more than one language", (): void => {
     const breadPalette = (label: unknown, language?: string) => ({
       name: "Bread", language,

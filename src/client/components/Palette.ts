@@ -23,8 +23,15 @@ import "./Palette.scss";
 type PalettePropsType = {
   json: JsonPaletteType,
   // The chain of nested palettes: starting from the outermost then move inwards.
-  includeChain?: JsonPaletteType[]
+  includeChain?: JsonPaletteType[],
+  // True for the palette `CurrentPalette` draws: the whole screen below the top bar.
+  isScreen?: boolean,
+  // True for a palette the screen includes directly: the screen draws its sentence cell.
+  inScreen?: boolean
 };
+
+// The cell the screen palette draws as the sentence layer.
+const SENTENCE_CHOICES_TYPE = "ContentSentenceChoices";
 
 type PaletteCellsType = {
   cells: VNode[],
@@ -98,6 +105,26 @@ function gridTemplateColumns (numColumns: number, emptyColumns: Set<number>): st
 }
 
 /**
+ * The `grid-template-rows` value for the screen palette. A row holding only included palettes,
+ * such as the header, takes its content's height: the bands in it have fixed heights. Every
+ * other row shares what is left, down to 64px, the smallest vocabulary target.
+ *
+ * @param {JsonPaletteType} paletteDefinition - The screen palette.
+ * @param {number} numRows - The number of rows in it.
+ * @return {string} - The CSS value.
+ */
+function gridTemplateRows (paletteDefinition: JsonPaletteType, numRows: number): string {
+  const cells = Object.values(paletteDefinition.cells);
+  const tracks: string[] = [];
+  for (let row = 1; row <= numRows; row++) {
+    const inRow = cells.filter(({ options }) => options.rowStart <= row && row < options.rowStart + options.rowSpan);
+    const onlyIncludes = inRow.length > 0 && inRow.every((cell) => cell.type === PALETTE_INCLUDE_TYPE);
+    tracks.push(onlyIncludes ? "auto" : "minmax(64px, 1fr)");
+  }
+  return tracks.join(" ");
+}
+
+/**
  * Whether a cell's feature is available: it needs a model, or a `config.json` section, or
  * neither.  An unavailable cell is left out of the palette.
  *
@@ -118,21 +145,30 @@ function isAvailable (options: LayoutInfoType): boolean {
  *
  * @param {JsonPaletteType} paletteDefinition - The palette whose cells to render.
  * @param {JsonPaletteType[]} includeChain - The palettes this one is drawn inside.
+ * @param {boolean} isScreen - Whether this palette is the screen.
+ * @param {boolean} inScreen - Whether the screen includes this palette directly.
  * @return {PaletteCellsType} - The cells, and the columns rendered and skipped.
  */
-function renderCells (paletteDefinition: JsonPaletteType, includeChain: JsonPaletteType[]): PaletteCellsType {
+function renderCells (
+  paletteDefinition: JsonPaletteType, includeChain: JsonPaletteType[], isScreen: boolean, inScreen: boolean
+): PaletteCellsType {
   // A language the app does not know falls back to English.
   const paletteLanguage = parseLanguage(paletteDefinition.language) ?? "en";
   const result: PaletteCellsType = { cells: [], renderedColumns: new Set(), skippedColumns: new Set(), labelLanguages: new Set() };
   Object.keys(paletteDefinition.cells).forEach((id) => {
     const aCell = paletteDefinition.cells[id];
     const cellOptions = aCell.options;
+    // The screen palette draws this cell itself, as the sentence layer, when the palette holding
+    // it is included directly by the screen. Anywhere else it is drawn here as usual.
+    if (inScreen && aCell.type === SENTENCE_CHOICES_TYPE) {
+      return;
+    }
     if (!isAvailable(cellOptions)) {
       columnsOf(cellOptions).forEach((column) => result.skippedColumns.add(column));
       return;
     }
     if (aCell.type === PALETTE_INCLUDE_TYPE) {
-      const include = renderInclude(id, cellOptions as PaletteIncludeType, [...includeChain, paletteDefinition]);
+      const include = renderInclude(id, cellOptions as PaletteIncludeType, [...includeChain, paletteDefinition], isScreen);
       if (include) {
         columnsOf(cellOptions).forEach((column) => result.renderedColumns.add(column));
         result.cells.push(include);
@@ -172,9 +208,12 @@ function renderCells (paletteDefinition: JsonPaletteType, includeChain: JsonPale
  * @param {PaletteIncludeType} options - The include cell's options.
  * @param {JsonPaletteType[]} includeChain - The palettes the included one is drawn inside, ending
  *                                          with the palette that holds this cell.
+ * @param {boolean} inScreen - Whether the palette that holds this cell is the screen.
  * @return {VNode | null} - The include cell, or `null` when it cannot be drawn.
  */
-function renderInclude (id: string, options: PaletteIncludeType, includeChain: JsonPaletteType[]): VNode | null {
+function renderInclude (
+  id: string, options: PaletteIncludeType, includeChain: JsonPaletteType[], inScreen: boolean
+): VNode | null {
   const included = PaletteStore.paletteMap[options.palette];
   if (!included) {
     console.error(`PaletteInclude "${id}": palette "${options.palette}" is not loaded.`);
@@ -190,16 +229,58 @@ function renderInclude (id: string, options: PaletteIncludeType, includeChain: J
   const gridStyle = generateGridStyle(options.columnStart, options.columnSpan, options.rowStart, options.rowSpan);
   return html`
     <div key=${id} class="paletteInclude" style="${gridStyle}">
-      <${Palette} json=${included} includeChain=${includeChain} />
+      <${Palette} json=${included} includeChain=${includeChain} inScreen=${inScreen} />
     </div>
   `;
+}
+
+/**
+ * The sentence layer: the `ContentSentenceChoices` cell of a palette the screen includes, such
+ * as the header, drawn in the screen's own grid over every row below that include. The grid
+ * sizes it, so it always matches the vocabulary area.
+ *
+ * Nothing is drawn when no included palette has the cell. Nothing is drawn, and an error is
+ * logged, when no rows are below the include.
+ *
+ * @param {JsonPaletteType} paletteDefinition - The screen palette.
+ * @param {Record<string, number>} rowsCols - Its row and column counts.
+ * @return {VNode | null}
+ */
+function renderSentenceLayer (paletteDefinition: JsonPaletteType, rowsCols: Record<string, number>): VNode | null {
+  for (const cell of Object.values(paletteDefinition.cells)) {
+    if (cell.type !== PALETTE_INCLUDE_TYPE || !isAvailable(cell.options)) {
+      continue;
+    }
+    const include = cell.options as PaletteIncludeType;
+    const entry = Object.entries(PaletteStore.paletteMap[include.palette]?.cells ?? {})
+      .find(([, includedCell]) => includedCell.type === SENTENCE_CHOICES_TYPE);
+    if (!entry) {
+      continue;
+    }
+    const [id, sentenceCell] = entry;
+    if (!isAvailable(sentenceCell.options)) {
+      return null;
+    }
+    const rowStart = include.rowStart + include.rowSpan;
+    if (rowStart > rowsCols.numRows) {
+      console.error(`Palette "${paletteDefinition.name}": no rows below "${include.palette}" for the sentence layer.`);
+      return null;
+    }
+    const options = {
+      rowStart, rowSpan: rowsCols.numRows - rowStart + 1, columnStart: 1, columnSpan: rowsCols.numColumns
+    };
+    return html`<${cellTypeRegistry[SENTENCE_CHOICES_TYPE]} key=${id} id=${id} options=${options} />`;
+  }
+  return null;
 }
 
 export function Palette (props: PalettePropsType): VNode {
 
   const paletteDefinition = props.json;
   const rowsCols = countRowsColumns(paletteDefinition);
-  const { cells, renderedColumns, skippedColumns, labelLanguages } = renderCells(paletteDefinition, props.includeChain ?? []);
+  const { cells, renderedColumns, skippedColumns, labelLanguages } = renderCells(
+    paletteDefinition, props.includeChain ?? [], !!props.isScreen, !!props.inScreen
+  );
 
   const emptyColumns = new Set(
     [...skippedColumns].filter((column) => !renderedColumns.has(column))
@@ -211,13 +292,19 @@ export function Palette (props: PalettePropsType): VNode {
   // language for a screen reader; give each cell its own lang (e.g. on BlissSymbol) if that matters.
   const paletteLang = labelLanguages.size === 1 ? [...labelLanguages][0] : undefined;
 
+  const layer = props.isScreen ? renderSentenceLayer(paletteDefinition, rowsCols) : null;
+  const rowsStyle = props.isScreen
+    ? ` grid-template-rows: ${gridTemplateRows(paletteDefinition, rowsCols.numRows)};`
+    : "";
+
   return html`
     <div
       data-palettename="${paletteDefinition.name}"
-      class="paletteContainer"
+      class=${props.isScreen ? "paletteContainer screenPalette" : "paletteContainer"}
       lang=${paletteLang}
-      style="grid-template-columns: ${gridTemplateColumns(rowsCols.numColumns, emptyColumns)};">
+      style="grid-template-columns: ${gridTemplateColumns(rowsCols.numColumns, emptyColumns)};${rowsStyle}">
         ${cells}
+        ${layer}
     </div>
   `;
 }

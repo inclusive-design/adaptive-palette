@@ -15,18 +15,7 @@ import { html } from "htm/preact";
 import { useLayoutEffect, useRef } from "preact/hooks";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { Palette } from "./Palette";
-
-/**
- * The first control a palette draws itself, skipping the palettes it includes such as the
- * shared header: the cells the user navigated to this palette to reach.
- * @param {string} paletteName - The palette's `name`.
- * @returns {HTMLElement | null}
- */
-function firstOwnControl (paletteName: string): HTMLElement | null {
-  const paletteElement = document.querySelector(`[data-palettename="${CSS.escape(paletteName)}"]`);
-  const controls = paletteElement?.querySelectorAll<HTMLElement>("button, [tabindex='0']") ?? [];
-  return Array.from(controls).find((control) => !control.closest(".paletteInclude")) ?? null;
-}
+import { firstOwnControl } from "../utils/FocusUtils";
 
 /**
  * The palette the user has navigated to.  Mounted once, in the main palette display
@@ -50,5 +39,5 @@ export function CurrentPalette (): VNode | null {
     }
   }, [palette]);
 
-  return palette ? html`<${Palette} json=${palette}/>` : null;
+  return palette ? html`<${Palette} json=${palette} isScreen=${true} />` : null;
 }

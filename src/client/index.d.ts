@@ -73,7 +73,7 @@ export type JsonPaletteType = {
     [key: string]: {
       type: string,
       options: BlissSymbolCellType | ContentEncodingType | ContentLabelType | AttributeCellType |
-        PaletteIncludeType | ContentPredictedWordsType
+        PaletteIncludeType
     }
   }
 };
@@ -82,10 +82,7 @@ export type ContentEncodingType = LayoutInfoType;
 
 export type ContentSentenceChoicesType = LayoutInfoType;
 
-export type ContentPredictedWordsType = LayoutInfoType & {
-  // How many columns the suggestion slots are set out in. Defaults to `maxSuggestions`: one row.
-  numColumns?: number
-};
+export type ContentPredictedWordsType = LayoutInfoType;
 
 export type PaletteIncludeType = LayoutInfoType & {
   // The name of the palette drawn in this cell's span.
@@ -155,7 +152,7 @@ export type TelegraphicTranslationConfigType = {
 
 export type WordPredictionConfigType = {
   show: boolean,
-  maxSuggestions: number,
+  numSuggestions: number,
   // Whether a model is asked for suggestions on top of the ones found in the message history.
   enableModelQuery: boolean,
   model: string,

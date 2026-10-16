@@ -34,8 +34,9 @@ public website keeps the setting until the page is reloaded.
 ### How scanning works
 
 1. **Rows.** The highlight outlines one row of controls at a time, top to bottom: the top bar,
-   the input area, sentence choices, word predictions, the command bar, then each row of the
-   palette. Empty rows are skipped. After the last row it goes back to the first.
+   the input area, word predictions, the command bar, then each row of the
+   palette. While the sentence layer is open, its rows take the place of the palette rows it
+   covers. Empty rows are skipped. After the last row it goes back to the first.
 2. **Enter a row.** Select enters the outlined row and highlights its first cell, so the first
    cell is two presses away.
 3. **Pick a cell.** Move steps through the row's cells, then to "Exit row", then back to the

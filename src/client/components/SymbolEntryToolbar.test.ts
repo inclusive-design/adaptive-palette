@@ -44,7 +44,7 @@ const withVisibility = (searchShown: boolean, svgShown: boolean): void => {
     ...originalConfig,
     symbolSearch: { show: searchShown },
     svgBuilderString: { show: svgShown },
-    wordPrediction: { show: false, maxSuggestions: 4, ...DISABLED_MODEL_QUERY }
+    wordPrediction: { show: false, numSuggestions: 4, ...DISABLED_MODEL_QUERY }
   };
 };
 
