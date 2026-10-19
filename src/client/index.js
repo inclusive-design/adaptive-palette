@@ -17,7 +17,7 @@ import { initAdaptivePaletteGlobals } from "./core/InitGlobals";
 import { paletteSetPath } from "./core/PaletteStore";
 import { isLocalHost } from "./core/OllamaApi";
 import { announceIfEnabled, speakUnavailable } from "./utils/SpeechUtils";
-import { goBackImpl } from "./cells/CommandGoBackCell";
+import { goBackImpl, goBackUnavailable } from "./cells/CommandGoBackCell";
 import { elementAllowsTextEntry } from "./utils/TextEntryUtils";
 import "./index.scss";
 
@@ -90,8 +90,8 @@ window.addEventListener("keydown", (event) => {
     if (document.querySelector("dialog[open]")) {
       return;
     }
-    // Depth zero means there is nowhere to go back to.
-    if (adaptivePaletteGlobals.navigationStack.depth === 0) {
+    // Same rule as the Back button: nowhere to go back to.
+    if (goBackUnavailable()) {
       speakUnavailable(t("back"));
       return;
     }

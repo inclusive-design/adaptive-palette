@@ -143,7 +143,15 @@ clears them.
 
 The layer shows only on the palette where **Sentence** was pressed. The user can leave through the
 controls it does not cover, such as **Back**, **Home**, "add indicator" or **Msg Style**, and use
-every cell of the other palette. The sentences wait; going back to that palette shows them again.
+every cell of the other palette. The sentences are kept until the message changes:
+
+1. **Back** on the open layer closes it and stays on the palette.
+2. **Home** closes it and goes to the home chart. The layer does not show there.
+3. Going back to the palette from another one, after "add indicator" for example, shows the
+   layer again, unless **Home** or **Back** closed it.
+4. **Sentence** shows the kept sentences again on the current palette, without asking the model
+   again. This works while they are still being made too.
+5. Changing the message drops them without asking, because they are not on screen.
 
 Requesting a sentence also records the message for [word prediction](WordPrediction.md), since asking for
 a sentence means the message is finished.

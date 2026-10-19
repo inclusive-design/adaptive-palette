@@ -20,11 +20,12 @@ import { setTestConfig } from "../../testUtils/TestConfig";
 import { editMessage, setEditGuard } from "../../core/MessageEdit";
 import {
   confirmDiscardEdit, discardEditPromptSignal, guardEdit, IDLE_SENTENCE_STATE,
-  sentenceCompletionsSignal
+  sentenceCompletionsSignal, hideSentences, sentencePaletteSignal
 } from "./TelegraphicTranslationState";
 import { queryChat } from "../../core/OllamaApi";
 import { CommandMakeSentence } from "./CommandMakeSentence";
 import { mockedSpeakUnavailable } from "../../testUtils/SpeechUtilsMock";
+import { readMessageLog } from "../../core/MessageLog";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 
 const make_setence_label = "Make a sentence";
@@ -92,6 +93,8 @@ describe("CommandMakeSentence", (): void => {
     cleanup();
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
     discardEditPromptSignal.value = null;
+    sentencePaletteSignal.value = null;
+    adaptivePaletteGlobals.navigationStack.flushReset(null);
     await resetMessageLog();
   });
 
@@ -235,5 +238,48 @@ describe("CommandMakeSentence", (): void => {
     // Resolved only to avoid leaving a dangling promise behind for the next test; the
     // continuation early-returns because this reply is no longer the one being waited for.
     resolveQuery({ message: { content: "1. I am hungry." } });
+  });
+
+  test("a click with hidden sentences reopens them without asking or saving again", async (): Promise<void> => {
+    adaptivePaletteGlobals.navigationStack.flushReset({ name: "food", cells: {} });
+    changeEncodingContents.value = INPUT_CONTENTS;
+    mockedQueryChat.mockResolvedValue({ message: { content: "1. I am hungry." } } as never);
+    renderCell();
+    const button = screen.getByRole("button", { name: make_setence_label });
+    await userEvent.click(button);
+    await waitFor(() => expect(sentenceCompletionsSignal.value.status).toBe("ready"));
+    const recordsAfterFirst = readMessageLog().length;
+
+    hideSentences();
+    adaptivePaletteGlobals.navigationStack.currentPalette = { name: "indicators", cells: {} };
+    await userEvent.click(button);
+
+    expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+    expect(readMessageLog().length).toBe(recordsAfterFirst);
+    expect(sentenceCompletionsSignal.value.hidden).toBe(false);
+    expect(sentencePaletteSignal.value).toBe("indicators");
+  });
+
+  test("stays available while hidden sentences are still being made, and reopens them", async (): Promise<void> => {
+    adaptivePaletteGlobals.navigationStack.flushReset({ name: "food", cells: {} });
+    changeEncodingContents.value = INPUT_CONTENTS;
+    let resolveQuery: (value: unknown) => void = () => undefined;
+    mockedQueryChat.mockReturnValue(new Promise((resolve) => {
+      resolveQuery = resolve;
+    }) as never);
+    renderCell();
+    const button = screen.getByRole("button", { name: make_setence_label });
+    await userEvent.click(button);
+    await waitFor(() => expect(button).toHaveAttribute("aria-disabled", "true"));
+
+    hideSentences();
+    await waitFor(() => expect(button).toHaveAttribute("aria-disabled", "false"));
+    await userEvent.click(button);
+    expect(sentenceCompletionsSignal.value.hidden).toBe(false);
+
+    resolveQuery({ message: { content: "1. I am hungry." } });
+    await waitFor(() => expect(sentenceCompletionsSignal.value.status).toBe("ready"));
+    expect(sentenceCompletionsSignal.value.hidden).toBe(false);
+    expect(mockedQueryChat).toHaveBeenCalledTimes(1);
   });
 });

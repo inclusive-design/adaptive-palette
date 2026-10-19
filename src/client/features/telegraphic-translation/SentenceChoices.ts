@@ -16,7 +16,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
 
 import {
   sentenceCompletionsSignal, clearMessageAndChoices, abortActiveSentenceRequest, closeSentences,
-  discardEditPromptSignal, typedSentenceSignal, focusedMessageSignal, sentencePaletteSignal
+  discardEditPromptSignal, typedSentenceSignal, focusedMessageSignal, sentenceLayerOpen
 } from "./TelegraphicTranslationState";
 import { announceIfEnabled, speak, speakUnavailable } from "../../utils/SpeechUtils";
 import { saveTranslation, SentenceSourceType } from "../../core/MessageLog";
@@ -74,9 +74,9 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
   const { columnStart, columnSpan, rowStart, rowSpan } = props.options;
   const typedSentence = typedSentenceSignal.value;
   const paletteName = adaptivePaletteGlobals.navigationStack.currentPalette?.name ?? null;
-  // Open only on the palette Make Sentences was pressed on. Elsewhere the sentences wait in the
-  // state, and the layer opens again when the user comes back.
-  const isOpen = state.status !== "idle" && sentencePaletteSignal.value === paletteName;
+  // Open only on the palette Make Sentences was pressed on, and not after Home or Back hid it.
+  // Otherwise the sentences wait in the state.
+  const isOpen = sentenceLayerOpen();
   const choicesRef = useRef<HTMLDivElement>(null);
   const wasAskingRef = useRef(false);
   // The sentences shown as text only, because their Bliss rows do not fit their slots.

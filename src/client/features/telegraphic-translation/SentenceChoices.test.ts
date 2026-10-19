@@ -20,7 +20,7 @@ import { aiSuggestionLabel } from "../../components/AiBadge";
 import { setTestConfig } from "../../testUtils/TestConfig";
 import {
   discardEditPromptSignal, focusedMessageSignal, IDLE_SENTENCE_STATE,
-  sentenceCompletionsSignal, typedSentenceSignal, sentencePaletteSignal
+  sentenceCompletionsSignal, typedSentenceSignal, sentencePaletteSignal, hideSentences, reopenSentences
 } from "./TelegraphicTranslationState";
 import { readMessageLog } from "../../core/MessageLog";
 import { SentenceChoices } from "./SentenceChoices";
@@ -667,6 +667,20 @@ describe("SentenceChoices", (): void => {
 
       sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
       await waitFor(() => expect(button("covered")).not.toHaveAttribute("inert"));
+    });
+
+    test("hiding the layer clears inert and keeps the sentences, and reopening shows them", async (): Promise<void> => {
+      sentenceCompletionsSignal.value = READY_STATE;
+      renderInGrid();
+      await waitFor(() => expect(button("covered")).toHaveAttribute("inert"));
+
+      hideSentences();
+      await waitFor(() => expect(button("covered")).not.toHaveAttribute("inert"));
+      expect(screen.queryByRole("button", { name: SENTENCES[0] })).toBeNull();
+      expect(sentenceCompletionsSignal.value.sentences).toEqual(READY_STATE.sentences);
+
+      reopenSentences();
+      expect(await screen.findByRole("button", { name: SENTENCES[0] })).toBeVisible();
     });
 
     test("Done moves focus to the first cell the layer uncovers", async (): Promise<void> => {

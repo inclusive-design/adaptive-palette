@@ -30,7 +30,8 @@ import { languageSignal, t } from "../../i18n/I18n";
  * place. It is never mutated.
  */
 export const IDLE_SENTENCE_STATE: SentenceCompletionsStateType = {
-  status: "idle", sentences: [], recalledSentence: null, model: "", telegraphicMessage: ""
+  status: "idle", sentences: [], recalledSentence: null, model: "", telegraphicMessage: "",
+  hidden: false
 };
 
 /**
@@ -118,6 +119,55 @@ export function closeSentences (): void {
 }
 
 /**
+ * Whether the sentence layer is on screen: there are sentences, they are not hidden, and the
+ * user is on the palette they were made on. Reads signals, so a component or cell that calls
+ * it re-renders when the answer changes.
+ * @returns {boolean}
+ */
+export function sentenceLayerOpen (): boolean {
+  const state = sentenceCompletionsSignal.value;
+  const paletteName = adaptivePaletteGlobals.navigationStack.currentPalette?.name ?? null;
+  return state.status !== "idle" && !state.hidden && sentencePaletteSignal.value === paletteName;
+}
+
+/**
+ * Home or Back: close the layer and keep the sentences. Making them again would cost another
+ * model run. Any edit that changes the message drops them.
+ * @returns {void}
+ */
+export function hideSentences (): void {
+  const state = sentenceCompletionsSignal.peek();
+  if (state.status !== "idle" && !state.hidden) {
+    sentenceCompletionsSignal.value = { ...state, hidden: true };
+  }
+}
+
+/**
+ * Whether Sentence should show the kept sentences instead of asking again. True when they are
+ * for this message and are not already on screen. Reads signals, for the button's render.
+ * @param {string} telegraphicMessage - The message in the input area.
+ * @returns {boolean}
+ */
+export function canReopenSentences (telegraphicMessage: string): boolean {
+  const state = sentenceCompletionsSignal.value;
+  // A failed or empty result has nothing to show again, so Sentence asks the model again.
+  const hasSentences = state.status === "working" || state.sentences.length > 0;
+  return hasSentences && state.telegraphicMessage === telegraphicMessage && !sentenceLayerOpen();
+}
+
+/**
+ * Show the kept sentences on the current palette. This does not ask the model again or save
+ * the message again.
+ * @returns {void}
+ */
+export function reopenSentences (): void {
+  batch((): void => {
+    sentencePaletteSignal.value = adaptivePaletteGlobals.navigationStack.currentPalette?.name ?? null;
+    sentenceCompletionsSignal.value = { ...sentenceCompletionsSignal.peek(), hidden: false };
+  });
+}
+
+/**
  * The message currently in the input area, as text.
  * @returns {string}
  */
@@ -187,7 +237,9 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
       : result.sentences.slice(0, numSentences);
     sentenceCompletionsSignal.value = {
       status: "ready", sentences, recalledSentence: recalled?.sentence ?? null,
-      model: result.model, telegraphicMessage, language: result.language, words: result.words
+      model: result.model, telegraphicMessage, language: result.language, words: result.words,
+      // Home or Back may have hidden the layer while the model was working.
+      hidden: pending.hidden
     };
   } catch (error) {
     // The user editing the message aborts the request. That is normal use, not a failure,
@@ -242,10 +294,12 @@ export function guardEdit (next: ContentSignalDataType): boolean {
   }
   const state = sentenceCompletionsSignal.peek();
   const changed = state.telegraphicMessage !== messageText(next.payloads);
-  // Away from the palette they were made on, the sentences are not on screen, so there is nothing
-  // in view to ask about: the edit closes them, as Edit message would.
+  // Away from the palette they were made on, or hidden by Home or Back, the sentences are not
+  // on screen. There is nothing in view to ask about, so the edit closes them, as Edit message
+  // would.
   const currentPalette = adaptivePaletteGlobals.navigationStack.currentPalette?.name ?? null;
-  if (state.status !== "idle" && changed && sentencePaletteSignal.peek() !== currentPalette) {
+  const offScreen = state.hidden || sentencePaletteSignal.peek() !== currentPalette;
+  if (state.status !== "idle" && changed && offScreen) {
     closeSentences();
     return false;
   }
