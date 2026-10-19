@@ -16,7 +16,8 @@ import { html } from "htm/preact";
 import { changeEncodingContents, finishedMessageSignal } from "../../state/GlobalData";
 import { saveMessageRecord } from "../../core/MessageLog";
 import {
-  currentTelegraphicMessage, makeSentences, sentenceCompletionsSignal
+  canReopenSentences, currentTelegraphicMessage, makeSentences, reopenSentences,
+  sentenceCompletionsSignal
 } from "./TelegraphicTranslationState";
 import { BlissSymbolInfoType, LayoutInfoType } from "../../index.d";
 import { BlissSymbol } from "../../components/BlissSymbol";
@@ -52,7 +53,10 @@ export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode {
   // it is disabled, which costs a switch or eye-gaze user loses their scan position in
   // the middle of the interaction. `aria-disabled` says the same thing to assistive
   // technology while keeping the element focusable.
-  const cannotRun = isFetching || telegraphicMessage.trim().length === 0;
+  // Kept sentences for this message, hidden by Home or Back or left on another palette, open
+  // again. This works even while they are still being made.
+  const canReopen = canReopenSentences(telegraphicMessage);
+  const cannotRun = (isFetching && !canReopen) || telegraphicMessage.trim().length === 0;
 
   return html`
     <button
@@ -66,10 +70,15 @@ export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode {
       speakUnavailable(label);
       return;
     }
-    // Asking for a sentence means the message is finished, so save it.
-    saveMessageRecord(changeEncodingContents.value.payloads);
     // The message is finished, so the row stops reporting on it. Its words stay usable.
     finishedMessageSignal.value = telegraphicMessage;
+    // Already saved and already made: show them again without asking the model.
+    if (canReopen) {
+      reopenSentences();
+      return;
+    }
+    // Asking for a sentence means the message is finished, so save it.
+    saveMessageRecord(changeEncodingContents.value.payloads);
     void makeSentences(telegraphicMessage);
   }}>
       ${composition

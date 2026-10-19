@@ -18,7 +18,7 @@
  * `telegraphicTranslationUtils.ts` holds the side-effect-free utility functions.
  */
 import { batch, signal } from "@preact/signals";
-import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents, settingsSavedCount } from "../../state/GlobalData";
 import { requestSentences, pickModel } from "./TelegraphicTranslationUtils";
 import { findLatestTranslation, messageText } from "../../core/MessageLog";
 import { clearAttributes, selectedAttributesSignal } from "../message-attributes/MessageAttributesState";
@@ -59,11 +59,32 @@ export const typedSentenceSignal = signal("");
 export const focusedMessageSignal = signal<string | null>(null);
 
 /**
- * The name of the palette Make Sentences was last pressed on, or `null` before it has been.
- * The sentence layer opens on that palette only, so the user can go to another palette and come
- * back to the sentences.
+ * The name of the palette Make Sentences was last pressed on, or `null` before it has been or
+ * after Home or Back hid the layer. The sentence layer opens on that palette only, so the user
+ * can go to another palette and come back to the sentences.
  */
 export const sentencePaletteSignal = signal<string | null>(null);
+
+/**
+ * Everything the last request for sentences was made from: the message, the UI language, the
+ * attributes and the number of sentences. Sentence reopens kept sentences only when none of it
+ * has changed since.
+ */
+let sentenceRequestKey = "";
+
+/**
+ * The key for a request made now. Reads signals, so the Sentence button re-renders when a
+ * setting, the language or an attribute changes.
+ * @param {string} telegraphicMessage - The message in the input area.
+ * @returns {string}
+ */
+function requestKey (telegraphicMessage: string): string {
+  void settingsSavedCount.value;
+  return JSON.stringify([
+    telegraphicMessage, languageSignal.value, selectedAttributesSignal.value,
+    adaptivePaletteGlobals.config.telegraphicTranslation?.numSentences ?? 1
+  ]);
+}
 
 /**
  * The abort handle for the sentence request currently in flight, if any.
@@ -118,6 +139,50 @@ export function closeSentences (): void {
 }
 
 /**
+ * Whether the sentence layer is on screen: there are sentences, and the user is on the palette
+ * they were made on. Reads signals, so a component or cell that calls it re-renders when the
+ * answer changes.
+ * @returns {boolean}
+ */
+export function sentenceLayerOpen (): boolean {
+  const paletteName = adaptivePaletteGlobals.navigationStack.currentPalette?.name ?? null;
+  return sentenceCompletionsSignal.value.status !== "idle" && sentencePaletteSignal.value === paletteName;
+}
+
+/**
+ * Home or Back: close the layer and keep the sentences. Making them again would cost another
+ * model run. Any edit that changes the message drops them.
+ * @returns {void}
+ */
+export function hideSentences (): void {
+  sentencePaletteSignal.value = null;
+}
+
+/**
+ * Whether Sentence should show the kept sentences instead of asking again. True when they were
+ * made from this message with the current language, attributes and settings, and are not
+ * already on screen. Reads signals, for the button's render.
+ * @param {string} telegraphicMessage - The message in the input area.
+ * @returns {boolean}
+ */
+export function canReopenSentences (telegraphicMessage: string): boolean {
+  const state = sentenceCompletionsSignal.value;
+  // A failed or empty result has nothing to show again, so Sentence asks the model again.
+  const hasSentences = state.status === "working" ||
+    (state.status === "ready" && state.sentences.length > 0);
+  return hasSentences && sentenceRequestKey === requestKey(telegraphicMessage) && !sentenceLayerOpen();
+}
+
+/**
+ * Show the kept sentences on the current palette. This does not ask the model again or save
+ * the message again.
+ * @returns {void}
+ */
+export function reopenSentences (): void {
+  sentencePaletteSignal.value = adaptivePaletteGlobals.navigationStack.currentPalette?.name ?? null;
+}
+
+/**
  * The message currently in the input area, as text.
  * @returns {string}
  */
@@ -142,6 +207,7 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
     return;
   }
   sentencePaletteSignal.value = adaptivePaletteGlobals.navigationStack.currentPalette?.name ?? null;
+  sentenceRequestKey = requestKey(telegraphicMessage);
   const config = adaptivePaletteGlobals.config.telegraphicTranslation;
   const numSentences = config?.numSentences ?? 1;
   const recalled = findLatestTranslation(telegraphicMessage, languageSignal.value);
@@ -242,8 +308,9 @@ export function guardEdit (next: ContentSignalDataType): boolean {
   }
   const state = sentenceCompletionsSignal.peek();
   const changed = state.telegraphicMessage !== messageText(next.payloads);
-  // Away from the palette they were made on, the sentences are not on screen, so there is nothing
-  // in view to ask about: the edit closes them, as Edit message would.
+  // Away from the palette they were made on, or hidden by Home or Back, the sentences are not
+  // on screen. There is nothing in view to ask about, so the edit closes them, as Edit message
+  // would.
   const currentPalette = adaptivePaletteGlobals.navigationStack.currentPalette?.name ?? null;
   if (state.status !== "idle" && changed && sentencePaletteSignal.peek() !== currentPalette) {
     closeSentences();

@@ -15,6 +15,7 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
+import { atRootWithNoOverlay, hideNavigationOverlay, navigationOverlayOpen } from "../core/NavigationOverlay";
 import type { Language } from "../i18n/I18n";
 import { BlissSymbol } from "../components/BlissSymbol";
 import "./ActionCodeCell.scss";
@@ -26,11 +27,16 @@ type CommandGoBackCellPropsType = {
 
 /*
  * The implementation of the function invoked by, for example, activating a
- * CommandGoBackCell button/cell.  This determines which palette to go back to
- * by consulting the navigation stack and adjusts the stack accordingly.  The
- * component watching the stack redraws.
+ * CommandGoBackCell button/cell.  An open layer over the palette is one level: Back closes
+ * it and stays on the palette.  Otherwise this determines which palette to go back to by
+ * consulting the navigation stack and adjusts the stack accordingly.  The component
+ * watching the stack redraws.
  */
 export function goBackImpl (): void {
+  if (navigationOverlayOpen()) {
+    hideNavigationOverlay();
+    return;
+  }
   const { navigationStack } = adaptivePaletteGlobals;
 
   // The stack holds the palette itself, so there is nothing to look up: looking it up by
@@ -47,7 +53,7 @@ export function goBackImpl (): void {
  */
 const goBackToPalette = (event: Event, language?: Language): void => {
   const button = event.currentTarget as HTMLElement;
-  if (adaptivePaletteGlobals.navigationStack.depth === 0) {
+  if (atRootWithNoOverlay()) {
     speakUnavailable(button.innerText);
     return;
   }
@@ -63,9 +69,9 @@ export function CommandGoBackCell (props: CommandGoBackCellPropsType): VNode {
   const ariaControlsId = adaptivePaletteGlobals.mainPaletteContainerId;
 
   // Marked unavailable rather than `disabled`: a disabled button leaves the tab order,
-  // which costs a switch or eye-gaze user their scan position.  Depth zero means there
-  // is nowhere to go back to.
-  const unavailable = adaptivePaletteGlobals.navigationStack.depth === 0;
+  // which costs a switch or eye-gaze user their scan position.  Unavailable when there is
+  // nowhere to go back to.
+  const unavailable = atRootWithNoOverlay();
 
   const gridStyles = `
     grid-column: ${columnStart} / span ${columnSpan};

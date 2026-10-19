@@ -11,12 +11,16 @@
  */
 
 import { vi } from "vitest";
-import { screen, fireEvent } from "@testing-library/preact";
+import { render, screen, fireEvent, waitFor } from "@testing-library/preact";
+import { html } from "htm/preact";
+import { signal } from "@preact/signals";
 
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
-import { CommandGoBackCell } from "./CommandGoBackCell";
+import { setNavigationOverlay } from "../core/NavigationOverlay";
+import { CommandGoBackCell, goBackImpl } from "./CommandGoBackCell";
+import { atRootWithNoOverlay } from "../core/NavigationOverlay";
 import { mockedSpeakUnavailable } from "../testUtils/SpeechUtilsMock";
 
 vi.mock("../utils/SpeechUtils");
@@ -116,5 +120,49 @@ describe("CommandGoBackCell", (): void => {
     // The button keeps `aria-disabled` rather than `disabled`, so it can be focused and
     // activated. Speech is the main feedback channel and must not go silent.
     expect(mockedSpeakUnavailable).toHaveBeenCalledWith(goBackCellNoAriaControls.options.label);
+  });
+
+  describe("with the sentence layer open", (): void => {
+    const layerOpen = signal(false);
+
+    beforeEach((): void => {
+      adaptivePaletteGlobals.navigationStack.flushReset(null);
+      layerOpen.value = true;
+      setNavigationOverlay({ isOpen: () => layerOpen.value, hide: () => { layerOpen.value = false; } });
+    });
+
+    afterEach((): void => {
+      setNavigationOverlay(null);
+    });
+
+    test("Back is available at the root, and hides the layer without popping", async (): Promise<void> => {
+      render(html`<${CommandGoBackCell} id="back" options=${goBackCellNoAriaControls.options} />`);
+      const button = await screen.findByRole("button", { name: goBackCellNoAriaControls.options.label });
+      expect(button).toHaveAttribute("aria-disabled", "false");
+
+      fireEvent.click(button);
+
+      expect(layerOpen.value).toBe(false);
+      expect(mockedSpeakUnavailable).not.toHaveBeenCalled();
+      await waitFor(() => expect(button).toHaveAttribute("aria-disabled", "true"));
+    });
+
+    test("on a sub-palette Back hides the layer and stays there", (): void => {
+      adaptivePaletteGlobals.navigationStack.push({ name: "root", cells: {} });
+      adaptivePaletteGlobals.navigationStack.currentPalette = { name: "sub", cells: {} };
+
+      expect(atRootWithNoOverlay()).toBe(false);
+      goBackImpl();
+
+      expect(layerOpen.value).toBe(false);
+      expect(adaptivePaletteGlobals.navigationStack.depth).toBe(1);
+      expect(adaptivePaletteGlobals.navigationStack.currentPalette?.name).toBe("sub");
+    });
+
+    test("atRootWithNoOverlay is true only at the root with the layer closed", (): void => {
+      expect(atRootWithNoOverlay()).toBe(false);
+      layerOpen.value = false;
+      expect(atRootWithNoOverlay()).toBe(true);
+    });
   });
 });

@@ -20,7 +20,8 @@ import { editMessage, setEditGuard } from "../../core/MessageEdit";
 import {
   abortActiveSentenceRequest, cancelDiscardEdit, clearMessageAndChoices, confirmDiscardEdit,
   currentTelegraphicMessage, discardEditPromptSignal, guardEdit, IDLE_SENTENCE_STATE,
-  makeSentences, sentenceCompletionsSignal, closeSentences, sentencePaletteSignal, typedSentenceSignal
+  makeSentences, sentenceCompletionsSignal, closeSentences, sentencePaletteSignal, typedSentenceSignal,
+  hideSentences, sentenceLayerOpen, canReopenSentences, reopenSentences
 } from "./TelegraphicTranslationState";
 import { readMessageLog, saveMessageRecord, saveTranslation } from "../../core/MessageLog";
 import { queryChat } from "../../core/OllamaApi";
@@ -1001,5 +1002,106 @@ describe("telegraphicTranslationState", (): void => {
 
     expect(prompts).toEqual([]);
     expect(changeEncodingContents.value).toEqual(EDITED_CONTENTS);
+  });
+
+  describe("hiding the sentence layer", (): void => {
+    const food = { name: "food", cells: {} };
+
+    const makeReadySentences = async (): Promise<void> => {
+      adaptivePaletteGlobals.navigationStack.flushReset(food);
+      editMessage(INPUT_CONTENTS);
+      mockedQueryChat.mockResolvedValue({
+        message: { content: "1. I am hungry.\n2. I want food." }
+      } as never);
+      await requestForCurrentMessage();
+    };
+
+    test("hiding closes the layer and keeps the sentences", async (): Promise<void> => {
+      await makeReadySentences();
+      expect(sentenceLayerOpen()).toBe(true);
+
+      hideSentences();
+
+      expect(sentenceLayerOpen()).toBe(false);
+      expect(sentenceCompletionsSignal.value.status).toBe("ready");
+      expect(sentenceCompletionsSignal.value.sentences).toEqual(["I am hungry.", "I want food."]);
+    });
+
+    test("hiding with no sentences does nothing", (): void => {
+      hideSentences();
+      expect(sentenceCompletionsSignal.value).toBe(IDLE_SENTENCE_STATE);
+    });
+
+    test("a request hidden while working stays hidden when it lands", async (): Promise<void> => {
+      adaptivePaletteGlobals.navigationStack.flushReset(food);
+      editMessage(INPUT_CONTENTS);
+      let resolveQuery: (value: unknown) => void = () => undefined;
+      mockedQueryChat.mockReturnValue(new Promise((resolve) => {
+        resolveQuery = resolve;
+      }) as never);
+      const request = requestForCurrentMessage();
+      await waitFor(() => expect(sentenceCompletionsSignal.value.status).toBe("working"));
+
+      hideSentences();
+      resolveQuery({ message: { content: "1. I am hungry." } });
+      await request;
+
+      expect(sentenceCompletionsSignal.value.status).toBe("ready");
+      expect(sentenceLayerOpen()).toBe(false);
+    });
+
+    test("hidden sentences reopen on the current palette", async (): Promise<void> => {
+      await makeReadySentences();
+      hideSentences();
+      adaptivePaletteGlobals.navigationStack.currentPalette = { name: "indicators", cells: {} };
+
+      expect(canReopenSentences("me hungry")).toBe(true);
+      expect(canReopenSentences("something else")).toBe(false);
+      reopenSentences();
+
+      expect(sentencePaletteSignal.value).toBe("indicators");
+      expect(sentenceLayerOpen()).toBe(true);
+    });
+
+    test("an open layer is not reopened", async (): Promise<void> => {
+      await makeReadySentences();
+      expect(canReopenSentences("me hungry")).toBe(false);
+    });
+
+    test("an error is asked again, not reopened, even with a recalled sentence", (): void => {
+      sentenceCompletionsSignal.value = {
+        ...IDLE_SENTENCE_STATE, status: "error", sentences: ["I am hungry."], telegraphicMessage: "me hungry"
+      };
+      expect(canReopenSentences("me hungry")).toBe(false);
+    });
+
+    test("a new attribute, language or sentence count asks again instead of reopening", async (): Promise<void> => {
+      await makeReadySentences();
+      hideSentences();
+      expect(canReopenSentences("me hungry")).toBe(true);
+
+      selectedAttributesSignal.value = [{ category: "Feeling", label: "angry", composition: 1198 }];
+      expect(canReopenSentences("me hungry")).toBe(false);
+      clearAttributes();
+
+      const language = languageSignal.value;
+      languageSignal.value = language === "en" ? "sv" : "en";
+      expect(canReopenSentences("me hungry")).toBe(false);
+      languageSignal.value = language;
+
+      setConfig(1);
+      expect(canReopenSentences("me hungry")).toBe(false);
+    });
+
+    test("an edit while hidden drops the sentences without asking", async (): Promise<void> => {
+      await makeReadySentences();
+      hideSentences();
+
+      editMessage(EDITED_CONTENTS);
+
+      expect(prompts).toEqual([]);
+      expect(sentenceCompletionsSignal.value).toBe(IDLE_SENTENCE_STATE);
+      expect(changeEncodingContents.value).toEqual(EDITED_CONTENTS);
+    });
   });
 });

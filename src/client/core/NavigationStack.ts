@@ -24,8 +24,9 @@ export class NavigationStack {
   // draws it re-renders when navigation happens.
   currPalette = signal<JsonPaletteType | null>(null);
 
-  // How many palettes are on the stack.  Zero means the root palette is displayed, which
-  // is when `Back` and `Home` are unavailable.  A signal so those cells re-render.
+  // How many palettes are on the stack.  Zero means the root palette is displayed.  With
+  // no layer open over it, `Back` and `Home` are then unavailable.  A signal so those cells
+  // re-render.
   depthSignal = signal<number>(0);
 
   /**

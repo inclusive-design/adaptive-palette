@@ -34,7 +34,10 @@ import { initIndicatorLabels } from "../utils/IndicatorLabelsUtils";
 import { initSvgCompositeDefinitions } from "../utils/SvgUtils";
 import { applyStoredSettings } from "../features/settings/SettingsSchema";
 import { setEditGuard } from "./MessageEdit";
-import { guardEdit } from "../features/telegraphic-translation/TelegraphicTranslationState";
+import { setNavigationOverlay } from "./NavigationOverlay";
+import {
+  guardEdit, hideSentences, sentenceLayerOpen
+} from "../features/telegraphic-translation/TelegraphicTranslationState";
 import { DATABASE_NAME, IndexedDbStorage } from "./IndexedDbStorage";
 import { MemoryStorage } from "./MemoryStorage";
 import { AdaptivePaletteStorage, setStorage } from "./StorageBackend";
@@ -98,6 +101,8 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
   // edit is offered to telegraphic translation, which holds the ones that would throw away a
   // request or the sentences on screen until the user agrees to them.
   setEditGuard(guardEdit);
+  // Home and Back close the sentence layer before they navigate.
+  setNavigationOverlay({ isOpen: sentenceLayerOpen, hide: hideSentences });
   initSvgCompositeDefinitions();
   adaptivePaletteGlobals.mainPaletteContainerId = mainPaletteContainerId || "";
 

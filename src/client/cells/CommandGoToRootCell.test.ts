@@ -11,13 +11,15 @@
  */
 
 import { vi } from "vitest";
-import { render, screen } from "@testing-library/preact";
+import { render, screen, waitFor } from "@testing-library/preact";
+import { signal } from "@preact/signals";
 import { fireEvent } from "@testing-library/dom";
 import { html } from "htm/preact";
 
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { expectCellRendered } from "../testUtils/CellTestUtils";
+import { setNavigationOverlay } from "../core/NavigationOverlay";
 import { CommandGoToRootCell } from "./CommandGoToRootCell";
 import { mockedSpeakUnavailable } from "../testUtils/SpeechUtilsMock";
 
@@ -132,5 +134,51 @@ describe("CommandGoToRootCell", (): void => {
     // The button keeps `aria-disabled` rather than `disabled`, so it can be focused and
     // activated. Speech is the main feedback channel and must not go silent.
     expect(mockedSpeakUnavailable).toHaveBeenCalledWith(homeCell.options.label);
+  });
+
+  describe("with a sentence overlay", (): void => {
+    const layerOpen = signal(false);
+    const hidden = signal(false);
+
+    beforeEach((): void => {
+      layerOpen.value = true;
+      hidden.value = false;
+      setNavigationOverlay({
+        isOpen: () => layerOpen.value,
+        hide: () => { layerOpen.value = false; hidden.value = true; }
+      });
+    });
+
+    afterEach((): void => {
+      setNavigationOverlay(null);
+    });
+
+    test("Home is available at the root while the layer is open, and hides it", async (): Promise<void> => {
+      render(html`<${CommandGoToRootCell} id="${TEST_CELL_ID}" options=${homeCell.options} />`);
+      const button = await screen.findByRole("button", { name: homeCell.options.label });
+      expect(button).toHaveAttribute("aria-disabled", "false");
+
+      fireEvent.click(button);
+
+      expect(layerOpen.value).toBe(false);
+      expect(mockedSpeakUnavailable).not.toHaveBeenCalled();
+      await waitFor(() => expect(button).toHaveAttribute("aria-disabled", "true"));
+
+      layerOpen.value = true;
+      await waitFor(() => expect(button).toHaveAttribute("aria-disabled", "false"));
+    });
+
+    test("Home from another palette goes to the root and hides kept sentences", async (): Promise<void> => {
+      layerOpen.value = false;
+      adaptivePaletteGlobals.navigationStack.push(rootPalette);
+      adaptivePaletteGlobals.navigationStack.currentPalette = secondPalette;
+      render(html`<${CommandGoToRootCell} id="${TEST_CELL_ID}" options=${homeCell.options} />`);
+
+      fireEvent.click(await screen.findByRole("button", { name: homeCell.options.label }));
+
+      expect(hidden.value).toBe(true);
+      expect(adaptivePaletteGlobals.navigationStack.depth).toBe(0);
+      expect(adaptivePaletteGlobals.navigationStack.currentPalette?.name).toBe("rootPalette");
+    });
   });
 });

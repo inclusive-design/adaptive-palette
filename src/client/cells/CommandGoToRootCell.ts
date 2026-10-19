@@ -16,6 +16,7 @@ import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
+import { atRootWithNoOverlay, hideNavigationOverlay } from "../core/NavigationOverlay";
 import { BlissSymbol } from "../components/BlissSymbol";
 import "./ActionCodeCell.scss";
 
@@ -25,11 +26,13 @@ type CommandGoToRootCellPropsType = {
 };
 
 /*
- * Make the palette at the bottom of the navigation stack -- the one seeded at startup --
- * the current one, and empty the stack.  Reading the stack instead of naming a palette
- * keeps this correct if the root palette is ever changed.
+ * Close any layer over the palette, then make the palette at the bottom of the navigation
+ * stack -- the one seeded at startup -- the current one, and empty the stack.  Reading the
+ * stack instead of naming a palette keeps this correct if the root palette is ever changed.
+ * Hiding comes first, even from another palette, so Home never lands on the sentence layer.
  */
 export function goToRootImpl (): void {
+  hideNavigationOverlay();
   const { navigationStack } = adaptivePaletteGlobals;
   const root = navigationStack.peekLast();
   if (!root) {
@@ -48,9 +51,9 @@ export function CommandGoToRootCell (props: CommandGoToRootCellPropsType): VNode
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   // Marked unavailable rather than `disabled`: a disabled button leaves the tab order,
-  // which costs a switch or eye-gaze user their scan position.  Depth zero means the
-  // root palette is already displayed.
-  const unavailable = adaptivePaletteGlobals.navigationStack.depth === 0;
+  // which costs a switch or eye-gaze user their scan position.  Unavailable when the root
+  // palette is already displayed with no layer over it.
+  const unavailable = atRootWithNoOverlay();
 
   const cellClicked = (): void => {
     if (unavailable) {
