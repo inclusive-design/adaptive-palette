@@ -14,7 +14,7 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/preact";
 import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
-import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
+import { renderCell, expectCellRendered, testPicture } from "../testUtils/CellTestUtils";
 import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
 import { ActionBranchToPaletteCell } from "./ActionBranchToPaletteCell";
 import { goBackImpl } from "./CommandGoBackCell";
@@ -51,6 +51,22 @@ describe("ActionBranchToPaletteCell", (): void => {
     expect(button.getAttribute("disabled")).toBe(null);
   });
 
+  test("a picture cell draws its picture in place of a symbol", async (): Promise<void> => {
+    const options = {
+      "label": "Food",
+      "branchTo": "Food",
+      "picture": testPicture(),
+      "rowStart": 1, "rowSpan": 1, "columnStart": 1, "columnSpan": 1
+    };
+
+    renderCell(ActionBranchToPaletteCell, TEST_CELL_ID, options);
+
+    const button = await expectCellRendered(TEST_CELL_ID, options, "actionBranchToPaletteCell foldedCorner");
+    expect(button.querySelector("img")?.getAttribute("src")).toBe(testPicture());
+    expect(button.querySelector("svg")).toBe(null);
+    expect(button).toHaveAttribute("data-branchto", "Food");
+  });
+
   test("with needsCaretSymbol, is a command that is unavailable without a symbol at the caret", async (): Promise<void> => {
     const options = { ...goToPaletteCell.options, needsCaretSymbol: true };
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
@@ -63,6 +79,20 @@ describe("ActionBranchToPaletteCell", (): void => {
 
     changeEncodingContents.value = { payloads: [{ label: "opposite", composition: 486 }], caretPosition: 0 };
     await waitFor(() => expect(button).toHaveAttribute("aria-disabled", "false"));
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+  });
+
+  test("with needsCaretSymbol, is unavailable with a picture at the caret", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [{ label: "bread", picture: "/pictures/bread.jpg", modifierInfo: [] }],
+      caretPosition: 0
+    };
+    const options = { ...goToPaletteCell.options, needsCaretSymbol: true };
+
+    renderCell(ActionBranchToPaletteCell, TEST_CELL_ID, options);
+
+    const button = await screen.findByRole("button", { name: options.label });
+    expect(button).toHaveAttribute("aria-disabled", "true");
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
   });
 

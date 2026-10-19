@@ -113,4 +113,22 @@ describe("ActionPreModifierCell", (): void => {
     // activated. Speech is the main feedback channel and must not go silent.
     expect(mockedSpeakUnavailable).toHaveBeenCalledWith(testCell.options.label);
   });
+
+  test("is unavailable with a picture at the caret, and a click leaves the input untouched", async (): Promise<void> => {
+    changeEncodingContents.value = {
+      payloads: [{ label: "bread", picture: "/pictures/bread.jpg", modifierInfo: [] }],
+      caretPosition: 0
+    };
+    const before = JSON.stringify(changeEncodingContents.value);
+
+    renderCell(ActionPreModifierCell, TEST_CELL_ID, testCell.options);
+
+    const button = await screen.findByRole("button", { name: testCell.options.label });
+    expect(button).toHaveAttribute("aria-disabled", "true");
+    fireEvent.click(button);
+
+    expect(JSON.stringify(changeEncodingContents.value)).toBe(before);
+    expect(mockedSpeakUnavailable).toHaveBeenCalledWith(testCell.options.label);
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+  });
 });

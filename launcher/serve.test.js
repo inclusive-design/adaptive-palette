@@ -135,6 +135,19 @@ describe("launcher", () => {
       expect(await response.text()).toContain("palette");
     });
 
+    test("serves each picture format with its content type", async () => {
+      const url = await start();
+      const types = {
+        ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".gif": "image/gif",
+        ".webp": "image/webp", ".avif": "image/avif", ".svg": "image/svg+xml", ".bmp": "image/bmp"
+      };
+      for (const [extension, type] of Object.entries(types)) {
+        fs.writeFileSync(path.join(root, `picture${extension}`), "");
+        const response = await fetch(`${url}/picture${extension}`);
+        expect(response.headers.get("content-type"), extension).toBe(type);
+      }
+    });
+
     test("an unknown path is a 404", async () => {
       const url = await start();
       expect((await fetch(`${url}/nowhere.html`)).status).toBe(404);

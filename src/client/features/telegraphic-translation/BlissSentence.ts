@@ -55,6 +55,7 @@ export function BlissSentence (props: BlissSentencePropsType): VNode {
           <span key=${index} class="blissSentenceSlot">
             <${BlissSymbol}
               composition=${slot.payload.composition}
+              picture=${slot.payload.picture}
               label=${slot.text}
               isPresentation="true"
             />

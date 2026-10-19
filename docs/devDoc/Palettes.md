@@ -200,3 +200,21 @@ spreads over the space instead of showing a hole.
 single numeric ID -- the `id` field from `bliss_symbol_explanations.json`, not its `bciAvId` --
 (e.g., `398`) or an array of IDs and separator strings
 (e.g., `[1433, "/", 1234]`) used to compose a combined symbol.
+
+**`picture`** is a picture file, drawn with the `label` in place of a symbol. Only `ActionCodeCell` and
+`ActionBranchToPaletteCell` read it; on any other cell type it is refused and an error is logged. A cell gives
+`composition` or `picture`, not both. Pressing an
+`ActionCodeCell` with a picture adds a word to the message, shown as the picture above its label. Indicators and
+modifiers cannot change a picture word.
+
+1. The path is relative to the palette file, and the file must be inside the palette set's folder. For a palette
+   in `palettes/`, `"../pictures/bread.jpg"` names `pictures/bread.jpg` in the set's folder.
+2. `PaletteStore.getNamedPalette()` resolves the path when it loads the palette. A path that is absolute, names
+   another site, or leaves the set's folder is refused: the cell shows its label only, and an error is logged.
+   This keeps the desktop version from fetching anything from outside the computer. With no palette set
+   loaded, every picture is refused. A picture word read back from the message log is drawn only when its path
+   is inside the loaded set's folder.
+3. The formats are PNG, JPEG, GIF, WebP, AVIF, SVG and BMP.
+4. A picture that cannot be loaded is hidden, and the cell shows its label only.
+5. Every set in `public/palette-sets/` is published on the public website, so its pictures must be licensed for
+   public release.

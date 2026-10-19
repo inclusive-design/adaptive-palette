@@ -18,7 +18,7 @@ import { changeEncodingContents } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
-import { replaceAtCaret } from "../utils/SymbolEncodingUtils";
+import { caretComposition, replaceAtCaret } from "../utils/SymbolEncodingUtils";
 import "./ActionModifierCell.scss";
 
 export type ActionModifierCodeCellPropsType = {
@@ -44,18 +44,19 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
   // Marked unavailable rather than `disabled` so the button keeps its place in the tab
-  // order for switch and eye-gaze users.
-  const unavailable = changeEncodingContents.value.caretPosition === -1;
+  // order for switch and eye-gaze users. A picture at the caret takes no modifier.
+  const caretSymbolComposition = caretComposition(changeEncodingContents.value);
+  const unavailable = caretSymbolComposition === undefined;
 
   const cellClicked = () => {
-    if (unavailable) { speakUnavailable(label); return; }
+    if (caretSymbolComposition === undefined) { speakUnavailable(label); return; }
     // Get the symbol at the caret position in the editing area.
     const { caretPosition, payloads } = changeEncodingContents.value;
     const symbolToEdit = payloads[caretPosition];
     let newComposition = (
-      typeof symbolToEdit.composition === "number" ?
-        [symbolToEdit.composition] :
-        symbolToEdit.composition
+      typeof caretSymbolComposition === "number" ?
+        [caretSymbolComposition] :
+        caretSymbolComposition
     );
     if (prepend) {
       newComposition = [ ...modifierComposition, "/", ...newComposition ];

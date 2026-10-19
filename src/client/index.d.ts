@@ -35,6 +35,14 @@ export type BlissSymbolInfoType = {
   label: string,
   composition: SymbolCompositionType
 }
+
+// A word cell, or a word in the message, shows a Bliss symbol or a picture: one of the two.
+// `picture` is a path `PaletteStore` has resolved and checked.
+export type PictureOrSymbolInfoType = {
+  label: string,
+  composition?: SymbolCompositionType,
+  picture?: string
+};
 export type LayoutInfoType = {
   columnStart: number,
   columnSpan: number,
@@ -64,7 +72,7 @@ export type BranchToInfoType = {
   needsCaretSymbol?: boolean
 };
 
-export type BlissSymbolCellType = LayoutInfoType & BranchToInfoType & BlissSymbolInfoType;
+export type BlissSymbolCellType = LayoutInfoType & BranchToInfoType & PictureOrSymbolInfoType;
 
 export type JsonPaletteType = {
   name: string,
@@ -116,7 +124,7 @@ export type ModifierInfoType = {
  * Symbol input area has associated content and caret position. Either or both
  * can change.
  */
-export type SymbolEncodingType = BlissSymbolInfoType & {
+export type SymbolEncodingType = PictureOrSymbolInfoType & {
   // Dictionary id of the originally selected symbol. Only set when the symbol is
   // selected from the dictionary and not when it is a composed symbol. It's
   // currently used to look up the new label when an indicator is applied to a symbol.

@@ -40,7 +40,8 @@
     overflow-wrap: break-word;
     padding: 4px;
 
-    > svg {
+    > svg,
+    > img.cellPicture {
       flex: 0 1 auto;
       height: min(4rem, calc(100% - 1.6rem));
       max-width: 100%;
