@@ -16,7 +16,7 @@ import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
-import { hideNavigationOverlay, navigationOverlayOpen } from "../core/NavigationOverlay";
+import { atRootWithNoOverlay, hideNavigationOverlay } from "../core/NavigationOverlay";
 import { BlissSymbol } from "../components/BlissSymbol";
 import "./ActionCodeCell.scss";
 
@@ -53,7 +53,7 @@ export function CommandGoToRootCell (props: CommandGoToRootCellPropsType): VNode
   // Marked unavailable rather than `disabled`: a disabled button leaves the tab order,
   // which costs a switch or eye-gaze user their scan position.  Unavailable when the root
   // palette is already displayed with no layer over it.
-  const unavailable = !navigationOverlayOpen() && adaptivePaletteGlobals.navigationStack.depth === 0;
+  const unavailable = atRootWithNoOverlay();
 
   const cellClicked = (): void => {
     if (unavailable) {

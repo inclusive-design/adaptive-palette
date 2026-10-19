@@ -1032,18 +1032,6 @@ describe("telegraphicTranslationState", (): void => {
       expect(sentenceCompletionsSignal.value).toBe(IDLE_SENTENCE_STATE);
     });
 
-    test("every way back to idle clears hidden", async (): Promise<void> => {
-      await makeReadySentences();
-      hideSentences();
-      closeSentences();
-      expect(sentenceCompletionsSignal.value.hidden).toBe(false);
-
-      await makeReadySentences();
-      hideSentences();
-      clearMessageAndChoices();
-      expect(sentenceCompletionsSignal.value.hidden).toBe(false);
-    });
-
     test("a request hidden while working stays hidden when it lands", async (): Promise<void> => {
       adaptivePaletteGlobals.navigationStack.flushReset(food);
       editMessage(INPUT_CONTENTS);
@@ -1080,10 +1068,28 @@ describe("telegraphicTranslationState", (): void => {
       expect(canReopenSentences("me hungry")).toBe(false);
     });
 
-    test("a hidden error is asked again, not reopened", (): void => {
+    test("an error is asked again, not reopened, even with a recalled sentence", (): void => {
       sentenceCompletionsSignal.value = {
-        ...IDLE_SENTENCE_STATE, status: "error", telegraphicMessage: "me hungry", hidden: true
+        ...IDLE_SENTENCE_STATE, status: "error", sentences: ["I am hungry."], telegraphicMessage: "me hungry"
       };
+      expect(canReopenSentences("me hungry")).toBe(false);
+    });
+
+    test("a new attribute, language or sentence count asks again instead of reopening", async (): Promise<void> => {
+      await makeReadySentences();
+      hideSentences();
+      expect(canReopenSentences("me hungry")).toBe(true);
+
+      selectedAttributesSignal.value = [{ category: "Feeling", label: "angry", composition: 1198 }];
+      expect(canReopenSentences("me hungry")).toBe(false);
+      clearAttributes();
+
+      const language = languageSignal.value;
+      languageSignal.value = language === "en" ? "sv" : "en";
+      expect(canReopenSentences("me hungry")).toBe(false);
+      languageSignal.value = language;
+
+      setConfig(1);
       expect(canReopenSentences("me hungry")).toBe(false);
     });
 

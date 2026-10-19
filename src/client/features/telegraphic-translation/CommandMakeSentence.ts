@@ -70,6 +70,8 @@ export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode {
       speakUnavailable(label);
       return;
     }
+    // The message is finished, so the row stops reporting on it. Its words stay usable.
+    finishedMessageSignal.value = telegraphicMessage;
     // Already saved and already made: show them again without asking the model.
     if (canReopen) {
       reopenSentences();
@@ -77,8 +79,6 @@ export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode {
     }
     // Asking for a sentence means the message is finished, so save it.
     saveMessageRecord(changeEncodingContents.value.payloads);
-    // The message is finished, so the row stops reporting on it. Its words stay usable.
-    finishedMessageSignal.value = telegraphicMessage;
     void makeSentences(telegraphicMessage);
   }}>
       ${composition

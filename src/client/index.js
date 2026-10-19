@@ -17,7 +17,8 @@ import { initAdaptivePaletteGlobals } from "./core/InitGlobals";
 import { paletteSetPath } from "./core/PaletteStore";
 import { isLocalHost } from "./core/OllamaApi";
 import { announceIfEnabled, speakUnavailable } from "./utils/SpeechUtils";
-import { goBackImpl, goBackUnavailable } from "./cells/CommandGoBackCell";
+import { goBackImpl } from "./cells/CommandGoBackCell";
+import { atRootWithNoOverlay } from "./core/NavigationOverlay";
 import { elementAllowsTextEntry } from "./utils/TextEntryUtils";
 import "./index.scss";
 
@@ -91,7 +92,7 @@ window.addEventListener("keydown", (event) => {
       return;
     }
     // Same rule as the Back button: nowhere to go back to.
-    if (goBackUnavailable()) {
+    if (atRootWithNoOverlay()) {
       speakUnavailable(t("back"));
       return;
     }

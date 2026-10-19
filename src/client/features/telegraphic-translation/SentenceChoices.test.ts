@@ -670,6 +670,8 @@ describe("SentenceChoices", (): void => {
     });
 
     test("hiding the layer clears inert and keeps the sentences, and reopening shows them", async (): Promise<void> => {
+      adaptivePaletteGlobals.navigationStack.flushReset({ name: "Screen", cells: {} });
+      sentencePaletteSignal.value = "Screen";
       sentenceCompletionsSignal.value = READY_STATE;
       renderInGrid();
       await waitFor(() => expect(button("covered")).toHaveAttribute("inert"));

@@ -256,7 +256,6 @@ describe("CommandMakeSentence", (): void => {
 
     expect(mockedQueryChat).toHaveBeenCalledTimes(1);
     expect(readMessageLog().length).toBe(recordsAfterFirst);
-    expect(sentenceCompletionsSignal.value.hidden).toBe(false);
     expect(sentencePaletteSignal.value).toBe("indicators");
   });
 
@@ -275,11 +274,11 @@ describe("CommandMakeSentence", (): void => {
     hideSentences();
     await waitFor(() => expect(button).toHaveAttribute("aria-disabled", "false"));
     await userEvent.click(button);
-    expect(sentenceCompletionsSignal.value.hidden).toBe(false);
+    expect(sentencePaletteSignal.value).toBe("food");
 
     resolveQuery({ message: { content: "1. I am hungry." } });
     await waitFor(() => expect(sentenceCompletionsSignal.value.status).toBe("ready"));
-    expect(sentenceCompletionsSignal.value.hidden).toBe(false);
+    expect(sentencePaletteSignal.value).toBe("food");
     expect(mockedQueryChat).toHaveBeenCalledTimes(1);
   });
 });

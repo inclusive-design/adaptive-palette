@@ -150,7 +150,8 @@ every cell of the other palette. The sentences are kept until the message change
 3. Going back to the palette from another one, after "add indicator" for example, shows the
    layer again, unless **Home** or **Back** closed it.
 4. **Sentence** shows the kept sentences again on the current palette, without asking the model
-   again. This works while they are still being made too.
+   again. This works while they are still being made too. After a change to the language, the
+   attributes or the number of sentences, or after a failed request, it asks the model again.
 5. Changing the message drops them without asking, because they are not on screen.
 
 Requesting a sentence also records the message for [word prediction](WordPrediction.md), since asking for

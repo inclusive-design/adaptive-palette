@@ -279,9 +279,6 @@ export type SentenceCompletionsStateType = {
   recalledSentence: string | null,
   model: string,
   telegraphicMessage: string,
-  // Home or Back closed the layer. The sentences are kept until the message changes.
-  // Absent means shown.
-  hidden?: boolean,
   // The language the sentences were asked for in. Absent means the UI language.
   language?: Language,
   // Each sentence's words, as the model gave them, for a language `compromise` cannot parse.

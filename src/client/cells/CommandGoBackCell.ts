@@ -15,7 +15,7 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
-import { hideNavigationOverlay, navigationOverlayOpen } from "../core/NavigationOverlay";
+import { atRootWithNoOverlay, hideNavigationOverlay, navigationOverlayOpen } from "../core/NavigationOverlay";
 import type { Language } from "../i18n/I18n";
 import { BlissSymbol } from "../components/BlissSymbol";
 import "./ActionCodeCell.scss";
@@ -24,14 +24,6 @@ type CommandGoBackCellPropsType = {
   id: string,
   options: BlissSymbolInfoType & LayoutInfoType
 };
-
-/*
- * Back has nowhere to go: the root palette is showing and no layer covers it.  Reads
- * signals, so the cell re-renders when either changes.  Shared with the Backquote key.
- */
-export function goBackUnavailable (): boolean {
-  return !navigationOverlayOpen() && adaptivePaletteGlobals.navigationStack.depth === 0;
-}
 
 /*
  * The implementation of the function invoked by, for example, activating a
@@ -61,7 +53,7 @@ export function goBackImpl (): void {
  */
 const goBackToPalette = (event: Event, language?: Language): void => {
   const button = event.currentTarget as HTMLElement;
-  if (goBackUnavailable()) {
+  if (atRootWithNoOverlay()) {
     speakUnavailable(button.innerText);
     return;
   }
@@ -79,7 +71,7 @@ export function CommandGoBackCell (props: CommandGoBackCellPropsType): VNode {
   // Marked unavailable rather than `disabled`: a disabled button leaves the tab order,
   // which costs a switch or eye-gaze user their scan position.  Unavailable when there is
   // nowhere to go back to.
-  const unavailable = goBackUnavailable();
+  const unavailable = atRootWithNoOverlay();
 
   const gridStyles = `
     grid-column: ${columnStart} / span ${columnSpan};

@@ -19,7 +19,8 @@ import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { setNavigationOverlay } from "../core/NavigationOverlay";
-import { CommandGoBackCell, goBackImpl, goBackUnavailable } from "./CommandGoBackCell";
+import { CommandGoBackCell, goBackImpl } from "./CommandGoBackCell";
+import { atRootWithNoOverlay } from "../core/NavigationOverlay";
 import { mockedSpeakUnavailable } from "../testUtils/SpeechUtilsMock";
 
 vi.mock("../utils/SpeechUtils");
@@ -150,7 +151,7 @@ describe("CommandGoBackCell", (): void => {
       adaptivePaletteGlobals.navigationStack.push({ name: "root", cells: {} });
       adaptivePaletteGlobals.navigationStack.currentPalette = { name: "sub", cells: {} };
 
-      expect(goBackUnavailable()).toBe(false);
+      expect(atRootWithNoOverlay()).toBe(false);
       goBackImpl();
 
       expect(layerOpen.value).toBe(false);
@@ -158,10 +159,10 @@ describe("CommandGoBackCell", (): void => {
       expect(adaptivePaletteGlobals.navigationStack.currentPalette?.name).toBe("sub");
     });
 
-    test("goBackUnavailable is true only at the root with the layer closed", (): void => {
-      expect(goBackUnavailable()).toBe(false);
+    test("atRootWithNoOverlay is true only at the root with the layer closed", (): void => {
+      expect(atRootWithNoOverlay()).toBe(false);
       layerOpen.value = false;
-      expect(goBackUnavailable()).toBe(true);
+      expect(atRootWithNoOverlay()).toBe(true);
     });
   });
 });
