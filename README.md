@@ -41,7 +41,9 @@ The current version of Chrome, Edge, Firefox or Safari. The oldest versions that
 ## Supported Picture Formats
 
 A palette cell can show a picture in place of a Bliss symbol. The picture can be PNG, JPEG, GIF, WebP, AVIF,
-SVG or BMP. See [Palettes](./docs/devDoc/Palettes.md#palette-json-structure).
+SVG or BMP. Any size and shape works: the picture is scaled to fit its cell, at most 64 pixels tall, and keeps its
+proportions. A near-square picture about 128–192 pixels tall shows largest and stays sharp on high-resolution screens.
+See [Palettes](./docs/devDoc/Palettes.md#palette-json-structure).
 
 ## Install
 
