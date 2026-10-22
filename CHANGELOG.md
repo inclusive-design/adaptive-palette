@@ -2,36 +2,45 @@
 
 ## [0.3.0](https://github.com/inclusive-design/adaptive-palette/compare/v0.2.1...v0.3.0) (2026-10-22)
 
-
 ### Features
 
-* add a modifier palette (resolves [#263](https://github.com/inclusive-design/adaptive-palette/issues/263)) ([#267](https://github.com/inclusive-design/adaptive-palette/issues/267)) ([2de1785](https://github.com/inclusive-design/adaptive-palette/commit/2de1785ceedb3430327089d9b38616bc81aa19b7))
-* add an indicator palette to make all indicators available (resolves [#259](https://github.com/inclusive-design/adaptive-palette/issues/259)) ([#260](https://github.com/inclusive-design/adaptive-palette/issues/260)) ([2afb5d2](https://github.com/inclusive-design/adaptive-palette/commit/2afb5d29fddc3c0036d591d47f74064087e2c56e))
-* add modifiers.json ([90b85a6](https://github.com/inclusive-design/adaptive-palette/commit/90b85a62d8fad84ded166f26d85a56cb4e3e96cc))
-* add modifiers.json (resolves [#261](https://github.com/inclusive-design/adaptive-palette/issues/261)) ([#262](https://github.com/inclusive-design/adaptive-palette/issues/262)) ([90b85a6](https://github.com/inclusive-design/adaptive-palette/commit/90b85a62d8fad84ded166f26d85a56cb4e3e96cc))
-* add the language setting and support both English and Swedish for UI texts (resolves [#252](https://github.com/inclusive-design/adaptive-palette/issues/252)) ([#255](https://github.com/inclusive-design/adaptive-palette/issues/255)) ([d602bef](https://github.com/inclusive-design/adaptive-palette/commit/d602bef0de1890865f32cbc3730afe9ccf9045ee))
-* fit the whole screen in the viewport without scrolling (resolves [#270](https://github.com/inclusive-design/adaptive-palette/issues/270)) ([#272](https://github.com/inclusive-design/adaptive-palette/issues/272)) ([e929c7c](https://github.com/inclusive-design/adaptive-palette/commit/e929c7c08c3521bd3d6aa452bb121e1c8c8db2d4))
-* implement the flexible palette layout ([#228](https://github.com/inclusive-design/adaptive-palette/issues/228)) ([e6b62fb](https://github.com/inclusive-design/adaptive-palette/commit/e6b62fbba0d8504cc4498fd4a83fa512d5634224))
-* learn about the user over time (resolves [#237](https://github.com/inclusive-design/adaptive-palette/issues/237)) ([#238](https://github.com/inclusive-design/adaptive-palette/issues/238)) ([d1434cc](https://github.com/inclusive-design/adaptive-palette/commit/d1434cc4cade9ab417605114a5466d12af2a8730))
-* model features now support swedish (resolves [#254](https://github.com/inclusive-design/adaptive-palette/issues/254)) ([#258](https://github.com/inclusive-design/adaptive-palette/issues/258)) ([9ef6e3d](https://github.com/inclusive-design/adaptive-palette/commit/9ef6e3d2b56834be0ca1206e637eba39eeead3aa))
-* move "exit row" to the last item in a row ([7940270](https://github.com/inclusive-design/adaptive-palette/commit/7940270538ade0d75fb4938f42d3294a47b0f3c6))
-* move "exit row" to the last item in a row (resolves [#250](https://github.com/inclusive-design/adaptive-palette/issues/250)) ([#251](https://github.com/inclusive-design/adaptive-palette/issues/251)) ([7940270](https://github.com/inclusive-design/adaptive-palette/commit/7940270538ade0d75fb4938f42d3294a47b0f3c6))
-* support displaying pictures on action and folder cells (resolves [#273](https://github.com/inclusive-design/adaptive-palette/issues/273)) ([#274](https://github.com/inclusive-design/adaptive-palette/issues/274)) ([8035125](https://github.com/inclusive-design/adaptive-palette/commit/8035125b4cc8dd45b5970e5aa9548aedd854e9a7))
-* support two switch row scanning (resolves [#244](https://github.com/inclusive-design/adaptive-palette/issues/244)) ([#246](https://github.com/inclusive-design/adaptive-palette/issues/246)) ([93dc348](https://github.com/inclusive-design/adaptive-palette/commit/93dc34829b7c1f31026cf4ad4270215bc48fcc7c))
-* update bliss_symbol_explanations.json and palette labels with swedish gloss ([714bf21](https://github.com/inclusive-design/adaptive-palette/commit/714bf2153d013e222736550b39e325c2cb9162aa))
-* update bliss_symbol_explanations.json and palette labels with swedish gloss (resolves [#253](https://github.com/inclusive-design/adaptive-palette/issues/253)) ([#256](https://github.com/inclusive-design/adaptive-palette/issues/256)) ([714bf21](https://github.com/inclusive-design/adaptive-palette/commit/714bf2153d013e222736550b39e325c2cb9162aa))
-* verify and fix keyboard, pointer and touch access (resolves [#241](https://github.com/inclusive-design/adaptive-palette/issues/241)) ([#242](https://github.com/inclusive-design/adaptive-palette/issues/242)) ([feec621](https://github.com/inclusive-design/adaptive-palette/commit/feec62177dd828328b8c74448814df0b13996feb))
+#### Language Support
 
+* The UI can now be shown in English or Swedish, chosen from a new language setting ([#255](https://github.com/inclusive-design/adaptive-palette/issues/255)) ([d602bef](https://github.com/inclusive-design/adaptive-palette/commit/d602bef0de1890865f32cbc3730afe9ccf9045ee)).
+* Bliss symbol explanations and palette labels now include Swedish glosses ([#256](https://github.com/inclusive-design/adaptive-palette/issues/256)) ([714bf21](https://github.com/inclusive-design/adaptive-palette/commit/714bf2153d013e222736550b39e325c2cb9162aa)).
+* Model features (sentence translation, word prediction, label lookup) now work in Swedish ([#258](https://github.com/inclusive-design/adaptive-palette/issues/258)) ([9ef6e3d](https://github.com/inclusive-design/adaptive-palette/commit/9ef6e3d2b56834be0ca1206e637eba39eeead3aa)).
+
+#### Palettes & Layout
+
+* Palettes now use a flexible layout, where each palette is a whole screen and can include other palettes ([#228](https://github.com/inclusive-design/adaptive-palette/issues/228)) ([e6b62fb](https://github.com/inclusive-design/adaptive-palette/commit/e6b62fbba0d8504cc4498fd4a83fa512d5634224)).
+* The whole interface now fits on one screen without scrolling ([#272](https://github.com/inclusive-design/adaptive-palette/issues/272)) ([e929c7c](https://github.com/inclusive-design/adaptive-palette/commit/e929c7c08c3521bd3d6aa452bb121e1c8c8db2d4)).
+* An indicator palette makes all grammatical indicators available ([#260](https://github.com/inclusive-design/adaptive-palette/issues/260)) ([2afb5d2](https://github.com/inclusive-design/adaptive-palette/commit/2afb5d29fddc3c0036d591d47f74064087e2c56e)).
+* A modifier palette has been added, backed by a new `modifiers.json` data file ([#262](https://github.com/inclusive-design/adaptive-palette/issues/262)) ([90b85a6](https://github.com/inclusive-design/adaptive-palette/commit/90b85a62d8fad84ded166f26d85a56cb4e3e96cc)) ([#267](https://github.com/inclusive-design/adaptive-palette/issues/267)) ([2de1785](https://github.com/inclusive-design/adaptive-palette/commit/2de1785ceedb3430327089d9b38616bc81aa19b7)).
+* Action and folder cells can now display pictures ([#274](https://github.com/inclusive-design/adaptive-palette/issues/274)) ([8035125](https://github.com/inclusive-design/adaptive-palette/commit/8035125b4cc8dd45b5970e5aa9548aedd854e9a7)).
+
+#### AI-involved Features
+
+* The app can now learn about the user over time: "About Me" facts are suggested from past messages, accepted or rejected by the user, and used to personalize sentence translation and word prediction ([#238](https://github.com/inclusive-design/adaptive-palette/issues/238)) ([d1434cc](https://github.com/inclusive-design/adaptive-palette/commit/d1434cc4cade9ab417605114a5466d12af2a8730)).
+
+#### Accessibility
+
+* Keyboard, pointer and touch access has been verified and fixed across the interface ([#242](https://github.com/inclusive-design/adaptive-palette/issues/242)) ([feec621](https://github.com/inclusive-design/adaptive-palette/commit/feec62177dd828328b8c74448814df0b13996feb)).
+* Two-switch row scanning is now supported ([#246](https://github.com/inclusive-design/adaptive-palette/issues/246)) ([93dc348](https://github.com/inclusive-design/adaptive-palette/commit/93dc34829b7c1f31026cf4ad4270215bc48fcc7c)).
+* The "exit row" item in switch scanning has been moved to the last item in each row ([#251](https://github.com/inclusive-design/adaptive-palette/issues/251)) ([7940270](https://github.com/inclusive-design/adaptive-palette/commit/7940270538ade0d75fb4938f42d3294a47b0f3c6)).
 
 ### Bug Fixes
 
-* fix symbols used for "undo" and "modifier" ([#269](https://github.com/inclusive-design/adaptive-palette/issues/269)) ([93fd264](https://github.com/inclusive-design/adaptive-palette/commit/93fd264317b2de112d372254e3ab1101d2843039))
-* fix the issue that settings cannot be changed on the public website (resolves [#248](https://github.com/inclusive-design/adaptive-palette/issues/248)) ([#249](https://github.com/inclusive-design/adaptive-palette/issues/249)) ([01d7b1d](https://github.com/inclusive-design/adaptive-palette/commit/01d7b1d8914cb405a7eda980dcbfa665710b3e14))
-* Home and Back buttons now treat the sentence layer as a place to go back to (resolves [#275](https://github.com/inclusive-design/adaptive-palette/issues/275)) ([#276](https://github.com/inclusive-design/adaptive-palette/issues/276)) ([6c660d7](https://github.com/inclusive-design/adaptive-palette/commit/6c660d71a662d0dd4bc5ad99ee23b4150fa35cc7))
-* not to save user data on the public website version ([#233](https://github.com/inclusive-design/adaptive-palette/issues/233)) ([f64a4c6](https://github.com/inclusive-design/adaptive-palette/commit/f64a4c6057d354e91fc96f9797a95566307ad9e3))
+* The public website no longer saves user data in the browser ([#233](https://github.com/inclusive-design/adaptive-palette/issues/233)) ([f64a4c6](https://github.com/inclusive-design/adaptive-palette/commit/f64a4c6057d354e91fc96f9797a95566307ad9e3)).
+* Settings can now be changed on the public website ([#249](https://github.com/inclusive-design/adaptive-palette/issues/249)) ([01d7b1d](https://github.com/inclusive-design/adaptive-palette/commit/01d7b1d8914cb405a7eda980dcbfa665710b3e14)).
+* The symbols used for "undo" and "modifier" have been corrected ([#269](https://github.com/inclusive-design/adaptive-palette/issues/269)) ([93fd264](https://github.com/inclusive-design/adaptive-palette/commit/93fd264317b2de112d372254e3ab1101d2843039)).
+* The Home and Back buttons now treat the sentence layer as a place to go back to ([#276](https://github.com/inclusive-design/adaptive-palette/issues/276)) ([6c660d7](https://github.com/inclusive-design/adaptive-palette/commit/6c660d71a662d0dd4bc5ad99ee23b4150fa35cc7)).
+
+### Infrastructure
+
+* Documentation has been updated to explain the desktop version and the public website, and to cover recent changes ([#235](https://github.com/inclusive-design/adaptive-palette/issues/235)) ([963fde8](https://github.com/inclusive-design/adaptive-palette/commit/963fde8d425ad0152dd064c1d5fe5371e51d3db6)) ([#268](https://github.com/inclusive-design/adaptive-palette/issues/268)) ([083c5ea](https://github.com/inclusive-design/adaptive-palette/commit/083c5ea8ccbd4d03e8bb765febf6a9e0414a6a13)) ([#279](https://github.com/inclusive-design/adaptive-palette/issues/279)) ([6117f28](https://github.com/inclusive-design/adaptive-palette/commit/6117f2812025389252a49f2866bdc66a727840f9)).
+* Node.js has been updated to 24.21 and `actions/setup-node` to v7.1.0 ([#226](https://github.com/inclusive-design/adaptive-palette/issues/226)) ([b1d34eb](https://github.com/inclusive-design/adaptive-palette/commit/b1d34eb621da9103f86cf71bae0b91d93c0436f3)) ([#264](https://github.com/inclusive-design/adaptive-palette/issues/264)) ([959a742](https://github.com/inclusive-design/adaptive-palette/commit/959a7427376c62bcc50f55c6267a7affa070c8b2)).
 
 ## [0.2.1](https://github.com/inclusive-design/adaptive-palette/compare/v0.2.0...v0.2.1) (2026-09-11)
-
 
 ### Bug Fixes
 
