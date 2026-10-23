@@ -18,3 +18,14 @@
   font-weight: bold;
   text-align: end;
 }
+
+/* In the vocabulary grid, a row label scales with its cell like the labels on the buttons beside
+   it (Palette.scss), from the page's 1rem. `cqh` resolves against the nearest container above
+   an element, so the size is set on the text's own element. */
+.screenPalette > .contentLabel {
+  container-type: size;
+
+  > span {
+    font-size: clamp(1rem, 12cqh, 1.85rem);
+  }
+}

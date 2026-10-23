@@ -38,6 +38,6 @@ export function ContentLabel (props: ContentLabelPropsType): VNode {
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   return html`
-    <div id="${id}" class="contentLabel" style="${gridStyles}" aria-hidden="true">${label}</div>
+    <div id="${id}" class="contentLabel" style="${gridStyles}" aria-hidden="true"><span>${label}</span></div>
   `;
 }

@@ -24,7 +24,6 @@ import { BlissSymbol } from "../../components/BlissSymbol";
 import { generateGridStyle } from "../../utils/GridUtils";
 import { normalizeComposition } from "../../utils/SymbolEncodingUtils";
 import { speakUnavailable } from "../../utils/SpeechUtils";
-import "./CommandMakeSentence.scss";
 
 type CommandMakeSentenceProps = {
   id: string,
@@ -61,7 +60,7 @@ export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode {
   return html`
     <button
       id="${id}"
-      class="btn-makeSentence"
+      class="btn-makeSentence btn-command"
       style="${gridStyles}"
       aria-controls=${ariaControls}
       aria-disabled=${cannotRun}

@@ -125,7 +125,8 @@ The span stays empty, and an error is logged, when the palette is not loaded or 
 The palette on screen fits the window, whatever its JSON says:
 
 1. A row holding only included palettes, such as the header, is as tall as its content. The bands
-   in the header have fixed heights.
+   in the header have their 1024×650 heights up to 650px tall, and grow with the screen's height
+   from there.
 2. Every other row shares what is left, and never goes below 64px. At 1024×650, 4 rows are 89px
    each and 5 rows 70px; 6 rows scroll.
 3. Columns shrink to fit the width, so the page never scrolls sideways. The body grid is
