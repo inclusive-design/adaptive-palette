@@ -329,8 +329,8 @@ describe("The page fits the screen", (): void => {
   });
 
   // Each band is its 1024×650 height times the screen's height ÷ 650, so the header keeps its
-  // share of the screen. Its symbols and labels grow with it on a screen at least as wide as
-  // 1024×650's shape.
+  // share of the screen. The input area's and command bar's symbols and labels grow with it on a
+  // screen at least as wide as 1024×650's shape.
   test("header bands and their content grow with the screen's height", async (): Promise<void> => {
     await showScreen("Bliss standard chart");
     unmount = mountPage();
@@ -356,9 +356,26 @@ describe("The page fits the screen", (): void => {
     const small = await measure(1024, 650);
     const large = await measure(2560, 1440);
     BANDS.forEach(([selector], index) => {
-      expect(large[index].symbol, `symbol in ${selector}`).toBeGreaterThan(small[index].symbol * 1.5);
-      expect(large[index].label, `label in ${selector}`).toBeGreaterThan(small[index].label * 1.5);
+      // A suggestion is sized like a vocabulary cell instead, tested below.
+      if (selector !== ".predictedWordsArea") {
+        expect(large[index].symbol, `symbol in ${selector}`).toBeGreaterThan(small[index].symbol * 1.5);
+        expect(large[index].label, `label in ${selector}`).toBeGreaterThan(small[index].label * 1.5);
+      }
     });
+  });
+
+  // A suggestion is a palette cell in every way but colour. At 2560×1440 neither label is at
+  // its smallest size, which would change the proportion.
+  test("a suggestion's label and symbol have the proportions of a vocabulary cell's", async (): Promise<void> => {
+    await showScreen("Bliss standard chart");
+    unmount = mountPage();
+    showLongMessage("happy");
+    await resize(2560, 1440);
+    const labelPerSymbol = (cell: HTMLElement): number =>
+      parseFloat(getComputedStyle(cell.querySelector(":scope > div") as HTMLElement).fontSize) /
+      (cell.querySelector(":scope > svg") as SVGElement).getBoundingClientRect().height;
+    const vocabulary = labelPerSymbol(document.querySelector(".screenPalette > button:has(> svg)") as HTMLElement);
+    expect(labelPerSymbol(document.querySelector("button.predictedWord") as HTMLElement)).toBeCloseTo(vocabulary, 1);
   });
 
   // Header symbols and labels grow with the screen's width as well as its height, so on a 4:3 or

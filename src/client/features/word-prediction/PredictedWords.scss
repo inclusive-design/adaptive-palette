@@ -40,25 +40,19 @@
   display: grid;
   min-height: 0;
   width: 100%;
-
-  /* Symbol and label sizes are their px at 1024×650 times `--contentScale` (index.scss). */
-  svg,
-  img.cellPicture {
-    max-height: calc(34 * var(--contentScale));
-    max-width: 100%;
-  }
 }
 
-/* A palette cell in every way but colour, which marks it as a suggestion. */
+/* A palette cell in every way but colour, which marks it as a suggestion. Its symbol and label
+   take the same shares of its height as a vocabulary cell's (Palette.scss). */
 .predictedWord {
   align-items: center;
   background-color: #d7f0d5;
   border: 3px solid blue;
   /* Matches the rule `<button>` gets in index.scss, so an empty cell is the same shape. */
   border-radius: 0.5rem;
+  container-type: size;
   display: flex;
   flex-direction: column;
-  font-size: calc(15.3 * var(--contentScale));
   hyphens: auto;
   justify-content: center;
   min-height: 0;
@@ -68,6 +62,21 @@
   padding-block: 0.15rem;
   padding-inline: 0.5rem;
   text-align: center;
+
+  > svg,
+  > img.cellPicture {
+    flex: 0 1 auto;
+    height: 70cqh;
+    /* Lifts the 4rem cap that index.scss gives every symbol. */
+    max-height: none;
+    max-width: 100%;
+    min-height: 0;
+    width: auto;
+  }
+
+  > div {
+    font-size: clamp(0.74rem, 12cqh, 1.85rem);
+  }
 }
 
 /* A slot with no word for it: the cell is there, with nothing in it. */

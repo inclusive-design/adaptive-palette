@@ -35,9 +35,9 @@ body {
      height from there, so the header keeps its share of the screen. Multiply a band's height
      in px by it. */
   --bandScale: max(1px, 100dvh / 650);
-  /* The same growth for the symbols and labels in the bands, held to the screen's width ÷ 1024,
-     so a label never wraps onto more lines than at 1024×650. Capped at 2.5, so 500% zoom still
-     doubles text (WCAG 1.4.4). Multiply a size at 1024×650, in px, by it. */
+  /* The same growth for the symbols and labels in the input area and command bar, held to the
+     screen's width ÷ 1024, so a label never wraps onto more lines than at 1024×650. Capped at
+     2.5, so 500% zoom still doubles text (WCAG 1.4.4). Multiply a size at 1024×650, in px, by it. */
   --contentScale: clamp(1px, min(100dvh / 650, 100vw / 1024), 2.5px);
 }
 
