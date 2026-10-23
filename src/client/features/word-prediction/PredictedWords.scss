@@ -41,15 +41,11 @@
   min-height: 0;
   width: 100%;
 
-  /* Symbol and label keep their 1024×650 share of the slot, and never get smaller. */
+  /* Symbol and label sizes are their px at 1024×650 times `--contentScale` (index.scss). */
   svg,
   img.cellPicture {
-    max-height: max(34px, 56cqh);
+    max-height: calc(34 * var(--contentScale));
     max-width: 100%;
-  }
-
-  .predictedWord > div {
-    font-size: max(0.85rem, 25cqh);
   }
 }
 
@@ -60,10 +56,9 @@
   border: 3px solid blue;
   /* Matches the rule `<button>` gets in index.scss, so an empty cell is the same shape. */
   border-radius: 0.5rem;
-  container-type: size;
   display: flex;
   flex-direction: column;
-  font-size: 0.85rem;
+  font-size: calc(15.3 * var(--contentScale));
   hyphens: auto;
   justify-content: center;
   min-height: 0;
@@ -83,7 +78,7 @@
 /* An empty slot while the model is answering. */
 .predictedWordWaiting {
   color: #777;
-  font-size: 1.6rem;
+  font-size: calc(28.8 * var(--contentScale));
   font-weight: bold;
   letter-spacing: 0.15rem;
 }

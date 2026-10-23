@@ -30,7 +30,8 @@
   }
 
   /* The symbol sits above the label, and both scale with the cell: the symbol is 70% of its
-     height, the label 12% but never smaller than 0.74rem. A label on two lines takes room from
+     height, the label 12%, from 0.74rem up to 2.5 times that, so 500% zoom still doubles it
+     (WCAG 1.4.4). A label on two lines takes room from
      the symbol. A long label breaks at a hyphen and the cell clips it; its accessible name keeps
      all of it. `cqh` resolves against the nearest container above an element, so the label's
      size is set on the label, not on the button. */
@@ -56,7 +57,7 @@
     }
 
     > div {
-      font-size: max(0.74rem, 12cqh);
+      font-size: clamp(0.74rem, 12cqh, 1.85rem);
     }
   }
 }

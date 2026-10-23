@@ -24,7 +24,6 @@ import { BlissSymbol } from "../../components/BlissSymbol";
 import { generateGridStyle } from "../../utils/GridUtils";
 import { normalizeComposition } from "../../utils/SymbolEncodingUtils";
 import { speakUnavailable } from "../../utils/SpeechUtils";
-import "./CommandMakeSentence.scss";
 
 type CommandMakeSentenceProps = {
   id: string,
