@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/inclusive-design/adaptive-palette/compare/v0.3.0...v0.3.1) (2026-10-23)
+
+
+### Bug Fixes
+
+* consistent command buttons, symbols and labels grow with cell sizes (resolves [#281](https://github.com/inclusive-design/adaptive-palette/issues/281)) ([#282](https://github.com/inclusive-design/adaptive-palette/issues/282)) ([f3c780e](https://github.com/inclusive-design/adaptive-palette/commit/f3c780eb4f248e62ae238af372d4856b81af15ee))
+
 ## [0.3.0](https://github.com/inclusive-design/adaptive-palette/compare/v0.2.1...v0.3.0) (2026-10-22)
 
 ### Features
