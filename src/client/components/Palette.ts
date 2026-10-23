@@ -104,7 +104,7 @@ function gridTemplateColumns (numColumns: number, emptyColumns: Set<number>): st
 
 /**
  * The `grid-template-rows` value for the screen palette. A row holding only included palettes,
- * such as the header, takes its content's height: the bands in it have fixed heights. Every
+ * such as the header, takes its content's height: the bands in it set their own heights. Every
  * other row shares what is left, down to 64px, the smallest vocabulary target.
  *
  * @param {JsonPaletteType} paletteDefinition - The screen palette.

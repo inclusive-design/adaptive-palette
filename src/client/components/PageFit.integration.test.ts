@@ -43,7 +43,7 @@ vi.mock("../core/OllamaApi", async (importOriginal) => {
 });
 
 const SET_FOLDER = "/palette-sets/standardBlissChart";
-const SUPPORTED_SIZES = [[1024, 650], [1280, 720], [1366, 650], [1920, 950]];
+const SUPPORTED_SIZES = [[1024, 650], [1280, 720], [1366, 650], [1920, 950], [2560, 1440]];
 // Below the smallest size, and 1024×650 zoomed to 200%. The page may scroll down, never sideways.
 const SMALL_SIZES = [[800, 600], [512, 325]];
 
@@ -284,6 +284,61 @@ describe("The page fits the screen", (): void => {
 
     await showWorstCase(palette);
     expectTargetSizes();
+  });
+
+  test("vocabulary symbols and labels grow with their cell", async (): Promise<void> => {
+    await showScreen("Bliss standard chart");
+    unmount = mountPage();
+    const measure = async (width: number, height: number): Promise<{ symbol: number, label: number }> => {
+      await resize(width, height);
+      // "question": its label is one line, so the symbol keeps its whole share.
+      const cell = document.querySelector(".screenPalette > button") as HTMLElement;
+      const { paddingTop, paddingBottom } = getComputedStyle(cell);
+      const contentHeight = cell.clientHeight - parseFloat(paddingTop) - parseFloat(paddingBottom);
+      const symbol = (cell.querySelector(":scope > svg") as SVGElement).getBoundingClientRect().height;
+      const label = parseFloat(getComputedStyle(cell.querySelector(":scope > div") as HTMLElement).fontSize);
+      const at = `at ${width}×${height}`;
+      expect(symbol / contentHeight, `symbol share ${at}`).toBeCloseTo(0.7, 1);
+      expect(label, `label size ${at}`).toBeGreaterThanOrEqual(13.3);
+      return { symbol, label };
+    };
+
+    const small = await measure(1024, 650);
+    const large = await measure(2560, 1440);
+    expect(large.symbol).toBeGreaterThan(small.symbol);
+    expect(large.label).toBeGreaterThan(small.label);
+  });
+
+  // Each band is its 1024×650 height times the screen's height ÷ 650, so the header keeps its
+  // share of the screen. Its symbols and labels grow with it.
+  test("header bands and their content grow with the screen's height", async (): Promise<void> => {
+    await showScreen("Bliss standard chart");
+    unmount = mountPage();
+    const BANDS: [string, number][] = [
+      ["[data-palettename=\"Input Area\"]", 88], [".predictedWordsArea", 72], ["[data-palettename=\"Command Bar\"]", 48]
+    ];
+    const measure = async (width: number, height: number): Promise<{ symbol: number, label: number }[]> => {
+      await resize(width, height);
+      return BANDS.map(([selector, base]) => {
+        const band = document.querySelector(selector) as HTMLElement;
+        const expected = base * Math.max(1, height / 650);
+        const at = `${selector} at ${width}×${height}`;
+        // Firefox rounds the scale, which puts the 88px band 1.4px off at 2560×1440.
+        expect(Math.abs(band.getBoundingClientRect().height - expected), `height of ${at}`).toBeLessThanOrEqual(2);
+        const cell = band.querySelector("button, .predictedWord") as HTMLElement;
+        return {
+          symbol: (cell.querySelector(":scope > svg") as SVGElement).getBoundingClientRect().height,
+          label: parseFloat(getComputedStyle(cell.querySelector(":scope > div") as HTMLElement).fontSize)
+        };
+      });
+    };
+
+    const small = await measure(1024, 650);
+    const large = await measure(2560, 1440);
+    BANDS.forEach(([selector], index) => {
+      expect(large[index].symbol, `symbol in ${selector}`).toBeGreaterThan(small[index].symbol * 1.5);
+      expect(large[index].label, `label in ${selector}`).toBeGreaterThan(small[index].label * 1.5);
+    });
   });
 
   // Swedish has the longest toolbar labels.

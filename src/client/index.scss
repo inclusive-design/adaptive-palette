@@ -11,8 +11,8 @@ html {
 /*
  * The page is exactly the height of the screen: the top bar, then the palette, which takes
  * the rest. When it cannot fit -- below 1024×650, or zoomed in -- the bands keep their
- * heights and the vocabulary rows stop at 64px, so the page scrolls down. Columns shrink, so
- * it never scrolls sideways.
+ * 1024×650 heights and the vocabulary rows stop at 64px, so the page scrolls down. Columns
+ * shrink, so it never scrolls sideways.
  */
 body {
   background-color: #1fcecb;  /* robin's egg-shell blue */
@@ -28,6 +28,10 @@ body {
   margin: 0;
   padding: 8px;
   row-gap: 4px;
+  /* The header bands have their 1024×650 heights at 650px tall, and grow with the screen's
+     height from there, so the header keeps its share of the screen. Multiply a band's height
+     in px by it. */
+  --bandScale: max(1px, 100dvh / 650);
 }
 
 /* Their dialogs open in the browser's top layer, so the containers take no space. */
@@ -94,13 +98,20 @@ svg.inter-word-padding {
 }
 
 /*
- * The input area and the command bar have fixed heights, so nothing that arrives in them can
- * move the vocabulary. Their buttons shrink to their tracks and clip. The message box scrolls
- * sideways inside itself, as before.
+ * The input area and the command bar take their heights from the screen (`--bandScale`), so
+ * nothing that arrives in them can move the vocabulary. Their buttons shrink to their tracks
+ * and clip. The message box scrolls sideways inside itself, as before. Symbols and labels keep
+ * their 1024×650 share of their cell, and never get smaller than at 1024×650. `cqh` resolves
+ * against the nearest container above an element, so label sizes are set on the label.
  */
 [data-palettename="Input Area"] {
   column-gap: 4px;
-  height: 88px;
+  height: calc(88 * var(--bandScale));
+
+  button,
+  .contentEncodingArea {
+    container-type: size;
+  }
 
   button {
     align-items: center;
@@ -111,28 +122,33 @@ svg.inter-word-padding {
     min-width: 0;
     overflow: hidden;
     padding: 2px 4px;
+
+    > div {
+      font-size: max(0.74rem, 16cqh);
+    }
   }
 
   svg,
   img.cellPicture {
-    max-height: 2.4rem;
+    max-height: max(2.4rem, 52cqh);
   }
 }
 
 [data-palettename="Command Bar"] {
   column-gap: 4px;
-  height: 48px;
+  height: calc(48 * var(--bandScale));
 
   svg,
   img.cellPicture {
     flex: none;
-    max-height: 1.1rem;
+    max-height: max(1.1rem, 47cqh);
     max-width: 100%;
   }
 
   button {
     align-items: center;
     border-radius: 0.5rem;
+    container-type: size;
     display: flex;
     flex-direction: column;
     font-size: 0.66rem;
@@ -145,6 +161,11 @@ svg.inter-word-padding {
     overflow: hidden;
     overflow-wrap: break-word;
     padding: 1px 3px;
+
+    /* Leaves room for two lines under the symbol. */
+    > div {
+      font-size: max(0.66rem, 25cqh);
+    }
   }
 }
 

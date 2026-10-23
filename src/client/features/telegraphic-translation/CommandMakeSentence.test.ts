@@ -104,6 +104,12 @@ describe("CommandMakeSentence", (): void => {
     expect(button.querySelector("svg")).toBeInTheDocument();
   });
 
+  // The same colour as Speak and the other commands, and the same grey when unavailable.
+  test("is styled as a command button", (): void => {
+    renderCell();
+    expect(screen.getByRole("button", { name: make_setence_label })).toHaveClass("btn-command");
+  });
+
   test("is marked unavailable, but stays focusable, while the input area is empty", (): void => {
     renderCell();
     const button = screen.getByRole("button", { name: make_setence_label });

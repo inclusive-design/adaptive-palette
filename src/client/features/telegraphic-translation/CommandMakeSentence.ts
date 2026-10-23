@@ -61,7 +61,7 @@ export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode {
   return html`
     <button
       id="${id}"
-      class="btn-makeSentence"
+      class="btn-makeSentence btn-command"
       style="${gridStyles}"
       aria-controls=${ariaControls}
       aria-disabled=${cannotRun}

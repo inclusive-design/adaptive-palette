@@ -11,14 +11,15 @@
  */
 
 /*
- * A 72px band with one row of slots. The status line is a live region only, always visually
+ * A band with one row of slots: 72px at 1024×650, growing with the screen's height
+ * (`--bandScale` in index.scss). The status line is a live region only, always visually
  * hidden, so its text never moves the row. While the model is answering, the empty slots show
  * "…" instead.
  */
 .predictedWordsArea {
   display: grid;
   grid-template-rows: minmax(0, 1fr);
-  height: 72px;
+  height: calc(72 * var(--bandScale));
 
   .statusMessage {
     clip-path: inset(50%);
@@ -40,10 +41,15 @@
   min-height: 0;
   width: 100%;
 
+  /* Symbol and label keep their 1024×650 share of the slot, and never get smaller. */
   svg,
   img.cellPicture {
-    max-height: 34px;
+    max-height: max(34px, 56cqh);
     max-width: 100%;
+  }
+
+  .predictedWord > div {
+    font-size: max(0.85rem, 25cqh);
   }
 }
 
@@ -54,6 +60,7 @@
   border: 3px solid blue;
   /* Matches the rule `<button>` gets in index.scss, so an empty cell is the same shape. */
   border-radius: 0.5rem;
+  container-type: size;
   display: flex;
   flex-direction: column;
   font-size: 0.85rem;

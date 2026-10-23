@@ -29,10 +29,14 @@
     overflow: hidden;
   }
 
-  /* The symbol sits above the label and takes the height the label leaves, up to 4rem. A long
-     label breaks at a hyphen and the cell clips it; its accessible name keeps all of it. */
+  /* The symbol sits above the label, and both scale with the cell: the symbol is 70% of its
+     height, the label 12% but never smaller than 0.74rem. A label on two lines takes room from
+     the symbol. A long label breaks at a hyphen and the cell clips it; its accessible name keeps
+     all of it. `cqh` resolves against the nearest container above an element, so the label's
+     size is set on the label, not on the button. */
   > button {
     align-items: center;
+    container-type: size;
     display: flex;
     flex-direction: column;
     hyphens: auto;
@@ -43,10 +47,16 @@
     > svg,
     > img.cellPicture {
       flex: 0 1 auto;
-      height: min(4rem, calc(100% - 1.6rem));
+      height: 70cqh;
+      /* Lifts the 4rem cap that index.scss gives every symbol. */
+      max-height: none;
       max-width: 100%;
       min-height: 0;
       width: auto;
+    }
+
+    > div {
+      font-size: max(0.74rem, 12cqh);
     }
   }
 }

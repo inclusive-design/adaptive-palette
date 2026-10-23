@@ -10,11 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
+/* Takes `.btn-command`'s colours. Sits beside the Speak button, so it takes its column the same way. */
 .btn-makeSentence {
-  background-color: #ffe14d;
   width: 100%;
-
-  &[aria-disabled="true"] {
-    background-color: silver;
-  }
 }
