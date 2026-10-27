@@ -191,9 +191,9 @@ describe("loadConfig maxRecalledRecords", (): void => {
 describe("loadConfig paletteSet", (): void => {
 
   test("a set name is loaded as given", async (): Promise<void> => {
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, paletteSet: "petterBlissChart" });
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, paletteSet: "userBlissChart" });
     const config = await loadConfig();
-    expect(config.paletteSet).toBe("petterBlissChart");
+    expect(config.paletteSet).toBe("userBlissChart");
   });
 
   test("a missing or invalid value falls back to standardBlissChart", async (): Promise<void> => {

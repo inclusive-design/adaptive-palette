@@ -51,7 +51,7 @@ test("a palette set not named to ship is left out, and everything else is copied
   const shipped = new Set(["standardBlissChart"]);
   const sets = path.join(built, "palette-sets");
   expect(isShipped(path.join(sets, "standardBlissChart"), built, shipped)).toBe(true);
-  expect(isShipped(path.join(sets, "petterBlissChart"), built, shipped)).toBe(false);
+  expect(isShipped(path.join(sets, "userBlissChart"), built, shipped)).toBe(false);
   expect(isShipped(sets, built, shipped)).toBe(true);
   expect(isShipped(path.join(built, "index.html"), built, shipped)).toBe(true);
 });

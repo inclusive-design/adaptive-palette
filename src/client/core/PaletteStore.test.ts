@@ -312,11 +312,11 @@ describe("paletteSetPath", (): void => {
   });
 
   test("names the given default set when the URL names none", (): void => {
-    expect(paletteSetPath("", "petterBlissChart")).toBe("/palette-sets/petterBlissChart/palette_set.json");
+    expect(paletteSetPath("", "userBlissChart")).toBe("/palette-sets/userBlissChart/palette_set.json");
   });
 
   test("a set the URL names wins over the given default", (): void => {
-    expect(paletteSetPath("?set=demo_1", "petterBlissChart")).toBe("/palette-sets/demo_1/palette_set.json");
+    expect(paletteSetPath("?set=demo_1", "userBlissChart")).toBe("/palette-sets/demo_1/palette_set.json");
   });
 
   test("throws for a name that is not a plain folder name", (): void => {
