@@ -34,6 +34,7 @@ import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { SET_NAME } from "./import_grid3.js";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const outDir = path.join(root, "dist-desktop");
@@ -45,6 +46,13 @@ const MAC_ARCHS = { arm64: "arm64", x64: "x86_64" };
 // Downloaded Node binaries live here. Already ignored by git, and `npm ci` wiping it costs
 // only a re-download: CI has no cache to lose either way.
 const NODE_CACHE = path.join(root, "node_modules", ".cache", "adaptive-palette-node");
+
+// The UI languages the app has, and the set it falls back to. Copies of `LANGUAGES` in
+// `src/client/i18n/I18n.ts` and `DEFAULT_PALETTE_SET` in `src/client/core/PaletteStore.ts`,
+// which this script can't import.
+// ponytail: two copies to keep in step; add a new language to both lists.
+const LANGUAGES = ["en", "sv"];
+const DEFAULT_SET = "standardBlissChart";
 
 const run = (command, args, options = {}) =>
   execFileSync(command, args, { stdio: "inherit", cwd: root, ...options });
@@ -196,19 +204,92 @@ function copyRuntime (target, nodeName) {
 }
 
 /**
- * Copy the built app in beside the binary.
- * @param {string} target - The directory `dist` goes into.
- * @returns {void}
+ * The palette sets `INCLUDE_SETS` names, in order. Each must be a set in the build: a mistyped
+ * name would otherwise ship a bundle that opens on nothing.
+ * @param {string|undefined} value - `INCLUDE_SETS`: set names separated by commas.
+ * @param {string} setsDir - The built `palette-sets` folder.
+ * @returns {string[]} - The names, in order; empty when `value` names none.
  */
-function copyDist (target) {
-  const built = path.join(root, "dist");
-  if (!fs.existsSync(built)) {
-    throw new Error("There is no `dist` to package. Run `npm run build` first.");
+function includedSets (value, setsDir) {
+  const names = (value ?? "").split(",").map((name) => name.trim()).filter(Boolean);
+  for (const name of names) {
+    if (!SET_NAME.test(name)) {
+      throw new Error(`INCLUDE_SETS: "${name}" is not a palette set name. Use only letters, digits, "_" and "-".`);
+    }
+    if (!fs.existsSync(path.join(setsDir, name, "palette_set.json"))) {
+      throw new Error(
+        `INCLUDE_SETS: "${name}" is not in dist/palette-sets. ` +
+        "Check the name, or run `npm run build` after importing it."
+      );
+    }
   }
-  fs.cpSync(built, path.join(target, "dist"), { recursive: true });
+  return names;
 }
 
-function packageMac () {
+/**
+ * The `config.json` of a bundle made for one user: it opens on `setDir`'s set, in the language
+ * of that set's start palette when the app has that language, and in `config`'s otherwise.
+ * @param {object} config - The built `config.json`.
+ * @param {string} setDir - The set's folder in the build.
+ * @returns {object} - `config`, with `paletteSet` and `language` set.
+ */
+function bundleConfig (config, setDir) {
+  const readJson = (file) => JSON.parse(fs.readFileSync(path.join(setDir, file), "utf8"));
+  const { startPalette, palettes } = readJson("palette_set.json");
+  // A palette with no `language` can have labels in every language, as the standard chart does.
+  const { language } = readJson(palettes[startPalette]);
+  return { ...config, paletteSet: path.basename(setDir), language: LANGUAGES.includes(language) ? language : config.language };
+}
+
+/**
+ * Copy the built app in beside the binary. A palette set git does not track, such as one imported
+ * from a user's grid set, holds personal data, so it is left out. `INCLUDE_SETS=mySet npm run
+ * package:desktop` makes a bundle for that set's owner instead: it holds the sets named and opens
+ * on the first, in its start palette's language. It also holds the standard chart, which the app
+ * falls back to when `config.json` cannot be read or the page URL names that set.
+ * @param {string} target - The directory `dist` goes into.
+ * @param {string[]} included - The sets `INCLUDE_SETS` names, from `includedSets()`.
+ * @returns {void}
+ */
+function copyDist (target, included) {
+  const built = path.join(root, "dist");
+  const setsDir = path.join(built, "palette-sets");
+  const shipped = new Set(included.length > 0
+    ? [DEFAULT_SET, ...included]
+    : execFileSync("git", ["ls-files", "--", "public/palette-sets"], { cwd: root, encoding: "utf8" })
+      .split("\n").map((file) => file.split("/")[2]).filter(Boolean));
+  fs.cpSync(built, path.join(target, "dist"), { recursive: true, filter: (src) => isShipped(src, built, shipped) });
+  if (included.length > 0) {
+    // The bundle's copy, never `dist/config.json`, which `npm start` and the next package share.
+    const configFile = path.join(target, "dist", "config.json");
+    const config = bundleConfig(JSON.parse(fs.readFileSync(configFile, "utf8")), path.join(setsDir, included[0]));
+    fs.writeFileSync(configFile, `${JSON.stringify(config, null, 2)}\n`);
+  }
+}
+
+/**
+ * Whether `copyDist()` copies a file or folder of `dist/`: anything but a palette set not in `shipped`.
+ * @param {string} src - A path in `built`.
+ * @param {string} built - The `dist` folder.
+ * @param {Set<string>} shipped - The names of the palette sets to ship.
+ * @returns {boolean}
+ */
+function isShipped (src, built, shipped) {
+  return path.dirname(src) !== path.join(built, "palette-sets") || shipped.has(path.basename(src));
+}
+
+/**
+ * The zip's file name. A bundle made for one user is named after their first set, so it never
+ * replaces the general bundle, nor is mistaken for it.
+ * @param {string[]} included - The sets `INCLUDE_SETS` names.
+ * @param {string} platform - "macos" or "windows".
+ * @returns {string}
+ */
+function zipName (included, platform) {
+  return `AdaptivePalette${included.length > 0 ? `-${included[0]}` : ""}-${platform}.zip`;
+}
+
+function packageMac (included) {
   const app = path.join(outDir, "Adaptive Palette.app");
   fs.rmSync(app, { recursive: true, force: true });
   const contents = path.join(app, "Contents");
@@ -234,7 +315,7 @@ fi
 exec ./node launcher/main.cjs
 `);
   fs.chmodSync(launcherScript, 0o755);
-  copyDist(path.join(contents, "Resources"));
+  copyDist(path.join(contents, "Resources"), included);
   // LSUIElement keeps a process with no window out of the Dock, where its icon could
   // only ever be a dead end -- quitting is done from inside the app.
   fs.writeFileSync(path.join(contents, "Info.plist"), `<?xml version="1.0" encoding="UTF-8"?>
@@ -256,14 +337,14 @@ exec ./node launcher/main.cjs
   // only the entry script gets signed, and Apple Silicon refuses to run an unsigned
   // executable no matter how it's launched.
   run("codesign", ["--sign", "-", "--force", "--deep", app]);
-  const zip = path.join(outDir, "AdaptivePalette-macos.zip");
+  const zip = path.join(outDir, zipName(included, "macos"));
   fs.rmSync(zip, { force: true });
   // `ditto`, not `zip`: it is what keeps a bundle's structure and its signature intact.
   run("ditto", ["-c", "-k", "--keepParent", app, zip]);
   return zip;
 }
 
-function packageWindows () {
+function packageWindows (included) {
   const folder = path.join(outDir, "AdaptivePalette");
   fs.rmSync(folder, { recursive: true, force: true });
   copyRuntime(folder, "node.exe");
@@ -271,8 +352,8 @@ function packageWindows () {
     path.join(folder, "AdaptivePalette.bat"),
     "@echo off\r\n\"%~dp0node.exe\" \"%~dp0launcher\\main.cjs\"\r\n"
   );
-  copyDist(folder);
-  const zip = path.join(outDir, "AdaptivePalette-windows.zip");
+  copyDist(folder, included);
+  const zip = path.join(outDir, zipName(included, "windows"));
   fs.rmSync(zip, { force: true });
   run("powershell", [
     "-NoProfile", "-Command",
@@ -285,16 +366,21 @@ function version () {
   return JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8")).version;
 }
 
-// Only when run as `node scripts/package_desktop.js`. A test imports this file for the one
-// pure function it exports, and importing it must not build, sign, or zip anything.
+// Only when run as `node scripts/package_desktop.js`. A test imports this file for the pure
+// functions it exports, and importing it must not build, sign, or zip anything.
 if (import.meta.main) {
+  // Checked before anything is deleted, downloaded or built, so a mistyped name costs nothing.
+  if (!fs.existsSync(path.join(root, "dist"))) {
+    throw new Error("There is no `dist` to package. Run `npm run build` first.");
+  }
+  const included = includedSets(process.env.INCLUDE_SETS, path.join(root, "dist", "palette-sets"));
   fs.mkdirSync(outDir, { recursive: true });
   const zip = process.platform === "darwin"
-    ? packageMac()
+    ? packageMac(included)
     : process.platform === "win32"
-      ? packageWindows()
+      ? packageWindows(included)
       : (() => { throw new Error(`No desktop bundle is built for ${process.platform}.`); })();
   console.log(`Packaged ${path.relative(root, zip)}`);
 }
 
-export { findNonSystemLib };
+export { bundleConfig, findNonSystemLib, includedSets, isShipped, zipName };

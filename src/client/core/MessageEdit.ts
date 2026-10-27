@@ -26,9 +26,9 @@ import type { ContentSignalDataType } from "../index.d";
 
 /**
  * Decides whether an edit may be published. Returning `true` holds it: the guard has taken
- * the edit on and will either apply it later or drop it.
+ * the edit on and will either apply it later, then call `afterApply`, or drop both.
  */
-export type EditGuard = (next: ContentSignalDataType) => boolean;
+export type EditGuard = (next: ContentSignalDataType, afterApply?: () => void) => boolean;
 
 /**
  * The guard consulted before every edit, if one is registered.
@@ -74,15 +74,18 @@ function deepFreeze (contents: ContentSignalDataType): void {
 /**
  * Publish a change to the message being composed, unless the registered guard holds it.
  * @param {ContentSignalDataType} next - The message as it would be after the edit.
+ * @param {Function} afterApply - Optional. Called once the edit is published, now or when the
+ *                                guard applies a held edit. Not called for an edit that is dropped.
  * @returns {boolean} - `true` when the edit was published, `false` when the guard held it.
  */
-export function editMessage (next: ContentSignalDataType): boolean {
+export function editMessage (next: ContentSignalDataType, afterApply?: () => void): boolean {
   // Frozen before the guard is asked, so an edit the guard holds is already safe from later
   // in-place changes by the time the guard applies it.
   deepFreeze(next);
-  if (guard?.(next)) {
+  if (guard?.(next, afterApply)) {
     return false;
   }
   changeEncodingContents.value = next;
+  afterApply?.();
   return true;
 }

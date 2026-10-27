@@ -21,7 +21,7 @@ export const PALETTE_INCLUDE_TYPE = "PaletteInclude";
 // The only palette set format this code reads.
 const PALETTE_SET_FORMAT_VERSION = 1;
 
-// The palette set loaded when the page URL names none.
+// The palette set loaded when neither the page URL nor `config.json` names one.
 export const DEFAULT_PALETTE_SET = "standardBlissChart";
 
 // A set name is a folder name under `/palette-sets/`. Allowing only these characters keeps the
@@ -29,15 +29,26 @@ export const DEFAULT_PALETTE_SET = "standardBlissChart";
 const PALETTE_SET_NAME = /^[A-Za-z0-9_-]+$/;
 
 /**
- * The path of the palette set file the page URL asks for with `?set=<folder>`.
- * @param {String} search - The URL's query string, such as `window.location.search`.
- * @return {String} - `/palette-sets/<set>/palette_set.json`.
- * @throws when `set` holds anything but letters, digits, `_` and `-`.
+ * Whether a value can name a palette set: a folder name under `/palette-sets/`.
+ * @param {unknown} value - The value to check.
+ * @return {boolean}
  */
-export function paletteSetPath (search: string): string {
-  const setName = new URLSearchParams(search).get("set") ?? DEFAULT_PALETTE_SET;
-  if (!PALETTE_SET_NAME.test(setName)) {
-    throw new Error(`Invalid palette set name "${setName}"`);
+export function isPaletteSetName (value: unknown): value is string {
+  return typeof value === "string" && PALETTE_SET_NAME.test(value);
+}
+
+/**
+ * The path of the palette set file the page URL asks for with `?set=<folder>`, or of
+ * `defaultSet` when it asks for none.
+ * @param {String} search - The URL's query string, such as `window.location.search`.
+ * @param {String} defaultSet - The set to use when `search` has no `set`.
+ * @return {String} - `/palette-sets/<set>/palette_set.json`.
+ * @throws when the set name holds anything but letters, digits, `_` and `-`.
+ */
+export function paletteSetPath (search: string, defaultSet = DEFAULT_PALETTE_SET): string {
+  const setName = new URLSearchParams(search).get("set") ?? defaultSet;
+  if (!isPaletteSetName(setName)) {
+    throw new Error(`Invalid palette set name ${JSON.stringify(setName)}`);
   }
   return `/palette-sets/${setName}/palette_set.json`;
 }
@@ -136,6 +147,29 @@ function resolvePictures (palette: JsonPaletteType, filePath: string, setFolder:
       delete options.picture;
     } else {
       options.picture = resolved;
+    }
+  }
+}
+
+// The options a cell takes as a CSS colour.
+const COLOR_OPTIONS = ["backgroundColor", "textColor"];
+
+/**
+ * Remove each cell colour that is not a CSS colour, and log an error. A cell puts its colours in
+ * its inline style, so any other value could add other properties, such as a picture from
+ * another site.
+ * @param {JsonPaletteType} palette - The palette as loaded. Changed in place.
+ * @param {String} filePath         - Path of the palette file.
+ */
+function dropInvalidColors (palette: JsonPaletteType, filePath: string): void {
+  for (const [cellId, cell] of Object.entries(palette.cells)) {
+    const options = (cell.options ?? {}) as Record<string, unknown>;
+    for (const name of COLOR_OPTIONS) {
+      const value = options[name];
+      if (value !== undefined && !(typeof value === "string" && CSS.supports("color", value))) {
+        console.error(`${filePath}: cell ${cellId}: ${name} ${JSON.stringify(value)} is not a CSS colour.`);
+        delete options[name];
+      }
     }
   }
 }
@@ -273,6 +307,7 @@ export class PaletteStore {
       return undefined;
     }
     resolvePictures(loadedPalette, filePath, PaletteStore.setFolder);
+    dropInvalidColors(loadedPalette, filePath);
     this.addPalette(loadedPalette, paletteName);
 
     // Included palettes are drawn with this one, so they are loaded now rather than on click.

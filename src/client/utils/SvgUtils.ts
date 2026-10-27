@@ -331,12 +331,15 @@ function getSvgBuilderOptions (composition: SymbolCompositionType): BlissOptions
  * @param {SymbolCompositionType} id - A ID (a number) or an array of
  *                           IDs and separators, e.g.
  *                           `[ 106, "/", 12 ]`
+ * @param {String} color   - Optional. The colour of the strokes and letters, as a CSS colour.
+ *                           The builder draws them black by default.
  * @return {BlissSVGBuilder} - The corresponding builder.
  */
-function getSvgBuilder (composition: SymbolCompositionType): BlissSVGBuilder {
+function getSvgBuilder (composition: SymbolCompositionType, color?: string): BlissSVGBuilder {
   let builder: BlissSVGBuilder;
+  const options = color === undefined ? getSvgBuilderOptions(composition) : { ...getSvgBuilderOptions(composition), color };
   try {
-    builder = new BlissSVGBuilder(compositionToBstr(composition), getSvgBuilderOptions(composition));
+    builder = new BlissSVGBuilder(compositionToBstr(composition), options);
   } catch (err) {
     console.error(err);
     console.error(`Unknown composition = ${String(composition)}`);
@@ -369,8 +372,9 @@ export function getSvgMarkupString (composition: SymbolCompositionType): string 
  * @param {SymbolCompositionType} composition - A ID (a number) or an array of
  *                           IDs and separators, e.g.
  *                           `[ 106, "/", 12 ]`
+ * @param {String} color   - Optional. The colour of the strokes and letters, as a CSS colour.
  * @return {Element} - The corresponding SVG markup.
  */
-export function getSvgElement (composition: SymbolCompositionType): SVGElement {
-  return getSvgBuilder(composition).svgElement;
+export function getSvgElement (composition: SymbolCompositionType, color?: string): SVGElement {
+  return getSvgBuilder(composition, color).svgElement;
 }

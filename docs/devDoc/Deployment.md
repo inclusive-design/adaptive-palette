@@ -12,6 +12,15 @@ runtime and copies it with `launcher/` into a bundle, puts `dist/` beside them, 
 result into `dist-desktop/`. On macOS that runtime is a universal binary downloaded from
 nodejs.org and merged with `lipo`; on Windows it is a copy of the running `node.exe`.
 
+The bundle leaves out each palette set git does not track, such as one imported from a user's
+Grid 3 grid set, since it holds personal data. To make a bundle for that set's owner, name the
+set: `INCLUDE_SETS=mySet npm run package:desktop`. Several sets are separated by commas. The
+bundle then holds the sets named, plus `standardBlissChart`, which the app falls back to, and
+opens on the first: its `config.json` gets `paletteSet`, and the `language` of that set's start
+palette when the app has that language. Its zip is named after the first set, such as
+`AdaptivePalette-mySet-macos.zip`, so it never replaces the general bundle. Packaging stops before
+it builds anything if a name is not a set in `dist/palette-sets/`.
+
 Node's single-executable-application feature was tried first, but its embedded main script
 may only `require()` Node builtins, so `launcher/main.cjs` could not `require("./serve.cjs")`.
 Shipping a plain Node binary and running the launcher as plain CommonJS files avoids that

@@ -193,7 +193,18 @@ describe("PaletteStore palette sets and includes", (): void => {
     "/sets/picture_set.json": {
       formatVersion: 1,
       startPalette: "Pictures",
-      palettes: { "Pictures": "palettes/pictures.json" }
+      palettes: { "Pictures": "palettes/pictures.json", "Colours": "palettes/colours.json" }
+    },
+    "/sets/palettes/colours.json": {
+      name: "Colours",
+      cells: {
+        "pink": cell("ActionCodeCell", { label: "pink", backgroundColor: "#E86E9BFF", textColor: "white" }),
+        "extra": cell("ActionCodeCell", {
+          label: "extra", backgroundColor: "red; background-image: url(https://example.com/x.png)", textColor: 5
+        }),
+        // A cell with no options has no colours to check.
+        "bare": { type: "ContentLabel" }
+      }
     },
     "/sets/palettes/pictures.json": {
       name: "Pictures",
@@ -275,6 +286,19 @@ describe("PaletteStore palette sets and includes", (): void => {
     expect(errorSpy).toHaveBeenCalledTimes(3);
     errorSpy.mockRestore();
   });
+
+  test("loading a palette drops a cell colour that is not a CSS colour", async (): Promise<void> => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    await paletteStore.loadPaletteSet("/sets/picture_set.json");
+
+    const loaded = await paletteStore.getNamedPalette("Colours", true);
+
+    expect(loaded?.cells["pink"].options).toMatchObject({ backgroundColor: "#E86E9BFF", textColor: "white" });
+    expect(loaded?.cells["extra"].options).not.toHaveProperty("backgroundColor");
+    expect(loaded?.cells["extra"].options).not.toHaveProperty("textColor");
+    expect(errorSpy).toHaveBeenCalledTimes(2);
+    errorSpy.mockRestore();
+  });
 });
 
 describe("paletteSetPath", (): void => {
@@ -289,10 +313,19 @@ describe("paletteSetPath", (): void => {
     expect(paletteSetPath("?set=my-demo")).toBe("/palette-sets/my-demo/palette_set.json");
   });
 
+  test("names the given default set when the URL names none", (): void => {
+    expect(paletteSetPath("", "userBlissChart")).toBe("/palette-sets/userBlissChart/palette_set.json");
+  });
+
+  test("a set the URL names wins over the given default", (): void => {
+    expect(paletteSetPath("?set=demo_1", "userBlissChart")).toBe("/palette-sets/demo_1/palette_set.json");
+  });
+
   test("throws for a name that is not a plain folder name", (): void => {
     ["?set=../x", "?set=a/b", "?set=%2E%2E", "?set="].forEach((search) => {
       expect(() => paletteSetPath(search), search).toThrow("Invalid palette set name");
     });
+    expect(() => paletteSetPath("", "../x")).toThrow("Invalid palette set name");
   });
 });
 

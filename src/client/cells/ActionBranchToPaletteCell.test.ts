@@ -67,6 +67,26 @@ describe("ActionBranchToPaletteCell", (): void => {
     expect(button).toHaveAttribute("data-branchto", "Food");
   });
 
+  test("backgroundColor colours the button", async (): Promise<void> => {
+    renderCell(ActionBranchToPaletteCell, TEST_CELL_ID, { ...goToPaletteCell.options, backgroundColor: "#E86E9BFF" });
+
+    const button = await screen.findByRole("button", { name: goToPaletteCell.options.label });
+    expect(getComputedStyle(button).backgroundColor).toBe("rgb(232, 110, 155)");
+  });
+
+  test("with needsCaretSymbol, drops its own colours while unavailable", async (): Promise<void> => {
+    const options = { ...goToPaletteCell.options, needsCaretSymbol: true, backgroundColor: "#E86E9BFF" };
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+
+    renderCell(ActionBranchToPaletteCell, TEST_CELL_ID, options);
+    const button = await screen.findByRole("button", { name: goToPaletteCell.options.label });
+    expect(button.style.backgroundColor).toBe("");
+
+    changeEncodingContents.value = { payloads: [{ label: "opposite", composition: 486 }], caretPosition: 0 };
+    await waitFor(() => expect(button.style.backgroundColor).toBe("rgb(232, 110, 155)"));
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+  });
+
   test("with needsCaretSymbol, is a command that is unavailable without a symbol at the caret", async (): Promise<void> => {
     const options = { ...goToPaletteCell.options, needsCaretSymbol: true };
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };

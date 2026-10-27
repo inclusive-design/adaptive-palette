@@ -12,23 +12,25 @@
 
 import { VNode } from "preact";
 import { html } from "htm/preact";
-import { PictureOrSymbolInfoType, LayoutInfoType, SymbolEncodingType } from "../index.d";
+import { CellColorsType, PictureOrSymbolInfoType, LayoutInfoType, SymbolEncodingType } from "../index.d";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { changeEncodingContents, adaptivePaletteGlobals } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
-import { generateGridStyle } from "../utils/GridUtils";
+import { goToPalette } from "../core/PaletteNavigation";
+import { colorStyle, generateGridStyle } from "../utils/GridUtils";
 import { insertWordAtCaret, normalizeComposition } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
 import "./ActionCodeCell.scss";
 
 type ActionCodeCellPropsType = {
   id: string,
-  options: PictureOrSymbolInfoType & LayoutInfoType
+  // `branchTo` names a palette to go to after the insert.
+  options: PictureOrSymbolInfoType & LayoutInfoType & CellColorsType & { branchTo?: string }
 };
 
 export function ActionCodeCell (props: ActionCodeCellPropsType): VNode {
   const {
-    columnStart, columnSpan, rowStart, rowSpan, label, picture
+    columnStart, columnSpan, rowStart, rowSpan, label, picture, branchTo, backgroundColor, textColor
   } = props.options;
   const composition = props.options.composition === undefined
     ? undefined
@@ -50,16 +52,21 @@ export function ActionCodeCell (props: ActionCodeCellPropsType): VNode {
       }
       : { "label": props.options.label, "picture": picture, "modifierInfo": [] };
     const{ caretPosition, payloads } = changeEncodingContents.value;
-    editMessage(insertWordAtCaret(payload, payloads, caretPosition));
+    // The jump waits for the insert: a held edit stays on this palette, where the sentences the
+    // guard asks about are, and jumps only if the user lets it through.
+    editMessage(insertWordAtCaret(payload, payloads, caretPosition), branchTo ? () => void goToPalette(branchTo) : undefined);
     announceIfEnabled(props.options.label, props.options.labelLanguage);
   };
 
   return html`
-    <button id="${props.id}" class="ActionCodeCell" style="${gridStyles}" onClick=${cellClicked}>
+    <button
+      id="${props.id}" class="ActionCodeCell${branchTo ? " foldedCorner" : ""}" style="${gridStyles + colorStyle(backgroundColor, textColor)}"
+      onClick=${cellClicked}>
       <${BlissSymbol}
         composition=${composition}
         picture=${picture}
         label=${label}
+        color="currentColor"
         isPresentation=true
       />
     </button>

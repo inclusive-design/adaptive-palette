@@ -10,7 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { generateGridStyle } from "./GridUtils";
+import { colorStyle, generateGridStyle } from "./GridUtils";
 
 describe("GridUtils", (): void => {
 
@@ -42,4 +42,11 @@ describe("GridUtils", (): void => {
     // Mixed variations (e.g., columnSpan and rowStart only)
     expect(generateGridStyle(undefined, 3, 4, undefined)).toBe("grid-column: span 3;grid-row: 4;");
   });
+
+  test("colorStyle() sets the colours given", (): void => {
+    expect(colorStyle()).toBe("");
+    expect(colorStyle("#E86E9BFF")).toBe("background-color: #E86E9BFF;");
+    expect(colorStyle("#E86E9BFF", "white")).toBe("background-color: #E86E9BFF;color: white;");
+  });
+
 });

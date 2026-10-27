@@ -28,7 +28,8 @@ Grids/
 A grid's name is its folder name, such as `Start` or `göra`. Names can contain spaces and non-ASCII letters.
 
 `settings.xml` names the first grid shown (`<StartGrid>`) and the language (`<Language>sv-SE</Language>`).
-`sv-SE` maps to a palette's `"language": "sv"`. Adaptive Palette supports English and Swedish. See
+A Swedish language, such as `sv-SE` or `sv-FI`, maps to a palette's `"language": "sv"`, and any other to `"en"`.
+Adaptive Palette supports English and Swedish. See
 [Palettes](Palettes.md#palette-json-structure).
 
 ## Grid
@@ -236,6 +237,78 @@ Adaptive Palette works the same way: each palette is a whole screen below the to
 the Standard Header palette for the message area, sentence choices, word predictions and command bar. An imported
 grid can place those cells itself. See [Palettes](Palettes.md#screens).
 
+## Importing a grid set
+
+`scripts/import_grid3.js` turns an unzipped grid set into a palette set:
+
+```sh
+node scripts/import_grid3.js "temp/My grids.gridset" temp/mapping.json myBlissChart
+```
+
+1. The arguments are the grid set folder, a mapping file and the set name. The name cannot be
+   `standardBlissChart`. The script stops with `Not found: <path>` when the grid set or mapping is missing.
+2. The script writes `public/palette-sets/<set>/` again: `palette_set.json`, one palette per grid in
+   `palettes/`, and the pictures the palettes use in `pictures/`. It writes to `<set>.partial/` first and
+   replaces the set only when that succeeds, so a failed run leaves the earlier import as it was.
+3. It lists each cell it skipped or could not find a picture for, then the URL to open, such as
+   `http://localhost:3000/?set=myBlissChart`.
+
+A grid set holds personal data, so git ignores every palette set but `standardBlissChart`, and
+`npm run package:desktop` leaves out the sets git does not track. To package a bundle for the grid set's owner,
+name the set: `INCLUDE_SETS=myBlissChart npm run package:desktop`. The bundle holds that set and
+`standardBlissChart`, opens on that set, and is named after it. See [Packaging the Desktop Build](Deployment.md#how-it-is-built).
+
+### The mapping file
+
+Embedded pictures carry no symbol ID, so a mapping file made by hand names the symbols each one shows:
+
+```json
+{
+  "Grids/Person/0-1-0-text-0.jpg": "B513",
+  "Grids/Person/0-5-0-text-0.jpg": "B368/B513/B548",
+  "[blissx]18274.wmf": "B711;B81"
+}
+```
+
+1. A key is the picture's path in the grid set, or a library picture's `<Image>` value as written.
+2. A value is a `bliss-svg-builder` string. Each `B<id>` becomes the number `<id>`, and every other part stays a
+   string: `"B513/B548"` becomes `[513, "/", 548]`, and `"B513"` becomes `513`.
+
+### What each cell becomes
+
+The first matching row decides. A self-closing `<Cell/>` is an empty cell.
+
+| Grid 3 cell | Becomes |
+| ----------- | ------- |
+| `ContentType` `Workspace` | `ContentEncoding`. A second one in the same grid is skipped |
+| No commands and no caption, or only an `Action.InsertText` with no text, caption or picture | Left out: an empty slot |
+| Has `Action.InsertText` and `Jump.To` | `ActionCodeCell` with `branchTo`, which goes to the grid after the insert. `branchTo` is left out, and the report lists the cell, when the grid does not exist. Other commands are dropped |
+| Has `Action.InsertText` | `ActionCodeCell`. The other commands are dropped |
+| Has `Jump.To` | `ActionBranchToPaletteCell`. Skipped when the grid it names does not exist |
+| `Jump.Back`, `Jump.Home` | `CommandGoBackCell`, `CommandGoToRootCell` |
+| `Action.Speak`, `Action.DeleteWord`, `Action.Clear` | `ActionSpeakCell`, `CommandDelLastEncoding`, `CommandClearEncoding` |
+| Anything else | Skipped |
+
+A cell's label is its caption, or the inserted text when the caption is empty. An `ActionCodeCell` or
+`ActionBranchToPaletteCell` shows:
+
+1. The symbols the mapping gives its picture.
+2. Otherwise its embedded picture, as a `picture`. A picture whose `<Image>` value contains `/` or `\`, or whose
+   type browsers do not show, such as `.emf`, is not copied, and the report lists it.
+3. Otherwise its label only. Widgit, SymbolStix and Grid 3 icons are not in the export.
+
+A command cell shows the symbol its cell type has in the standard chart. A Speak, Delete word or Clear cell names
+the message area with `ariaControls` when its grid has one.
+
+An `ActionCodeCell` or `ActionBranchToPaletteCell` takes the Grid 3 cell's colours: `<BackColour>` as
+`backgroundColor` and `<FontColour>` as `textColor`. Each is the cell's own value, or else its style's in
+`styles.xml`. A style that is not in `styles.xml`, or a grid set with no `styles.xml`, gives no colour. Command
+cells keep the standard chart's colours. Border, font and shape are not imported.
+
+A palette keeps its grid's size. When no imported cell reaches the grid's last column or row, the script puts an
+empty `ContentLabel` with the id `grid-size` in the bottom-right slot, because `Palette.ts` sizes a palette from
+its cells.
+
 ## Example grid set in numbers
 
 | Item | Count |
@@ -256,29 +329,29 @@ What Adaptive Palette cannot yet represent, with the size of each gap in the exa
 it.
 
 1. **Symbols without an ID.** 513 of the 600 text cells show an embedded picture with no symbol ID. Adaptive
-   Palette draws every symbol from its BCI-AV ID. Options:
-   - Match pictures to BCI-AV symbols, by caption or by comparing images. Swedish captions can be matched
-     against the Swedish glosses (`glossSv`) in our symbol data.
-   - Show the picture as it is, with a `picture` cell. See [Palettes](Palettes.md#palette-json-structure). The
-     word then cannot take indicators or modifiers. Word prediction and sentence making read its label.
+   Palette draws every symbol from its BCI-AV ID. The import reads the symbols from a mapping file made by hand
+   (see [The mapping file](#the-mapping-file)). A picture not in it becomes a `picture` cell, which cannot take
+   indicators or modifiers. See [Palettes](Palettes.md#palette-json-structure).
 2. **Library pictures are missing.** 264 Grid 3 command icons, 41 Widgit and 1 SymbolStix pictures are not in the
    export. Command icons can be replaced with our own Bliss compositions. Widgit and SymbolStix are licensed and
    need a replacement or a caption-only cell. The 5 `[blissx]` references map straight to BCI-AV IDs.
 3. **Text messages and phrases.** A Grid 3 message is text with pictures, and a phrase goes in as one unit.
    Adaptive Palette's message is a list of Bliss symbols. The 64 phrases have no equivalent, and deleting a word
    is not the same as deleting a symbol.
-4. **One action per cell.** 52 cells combine commands, such as inserting a word and then going to another grid.
-   Each Adaptive Palette cell type does one thing.
+4. **One action per cell.** 52 cells combine commands, such as inserting a word and then speaking. An
+   `ActionCodeCell` can go to another palette after its insert, so the 12 cells that insert and then jump keep
+   both. For every other combination the import keeps the insert, or else the jump, and drops the rest.
 5. **Commands with no equivalent.** Computer control (32 cells) works outside the browser and is likely out of
    scope. Also missing: clipboard (5), rest (2), grid explorer (2), opening another grid set (1) and spelling
    correction (1). Reading a cell aloud (7) is close: with "announce symbol on input" on, a branch cell speaks
    its label when pressed, but the setting covers every cell, not one.
 6. **Per-cell styles.** Grid 3 sets background, border and text colour, font, font size and shape per cell.
-   Adaptive Palette styles cells by type in SCSS.
+   Adaptive Palette styles cells by type in SCSS. Only the background and text colours of word and folder cells are imported.
 7. **Switch scanning.** Adaptive Palette has two-switch row scanning only (see
    [Access Methods](../AccessMethods.md#switches)). Missing: scan blocks (1,541 cells belong to one), spoken
    descriptions (134 rows and columns have one) and hiding a cell from switch users (1 cell).
-8. **Grid size.** Adaptive Palette works out a palette's size from its cells, so trailing empty rows and
-   columns disappear. Grid 3 sets the size explicitly.
+8. **Grid size.** Adaptive Palette works out a palette's size from its cells, while Grid 3 sets it explicitly.
+   The import adds an empty cell in the bottom-right slot to keep the size (see
+   [What each cell becomes](#what-each-cell-becomes)).
 9. **Auto-replacements.** Grid 3 corrects 8 misspellings while typing. Adaptive Palette has no typing and no
    corrections.

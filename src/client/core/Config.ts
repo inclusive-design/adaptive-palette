@@ -13,9 +13,9 @@
 /**
  * Read and validate `public/config.json`.
  *
- * This module imports nothing but types and the leaf `I18n` module.  Keeping it a leaf is
- * deliberate: it is what lets `GlobalData` hold the parsed config without acquiring a
- * dependency that points back at it.
+ * This module imports nothing but types and the leaf `I18n` and `PaletteStore` modules.
+ * Keeping it a leaf is deliberate: it is what lets `GlobalData` hold the parsed config without
+ * acquiring a dependency that points back at it.
  */
 import type {
   AdaptivePaletteConfigType, IndicatorLabelLookupConfigType,
@@ -23,6 +23,7 @@ import type {
   AboutMeConfigType, SwitchScanningConfigType, PromptType
 } from "../index.d";
 import { parseLanguage } from "../i18n/I18n";
+import { DEFAULT_PALETTE_SET, isPaletteSetName } from "./PaletteStore";
 
 // Used when `maxRecalledRecords` or `wordPrediction.numSuggestions` is missing or malformed.
 // 500 is a working-set size, not a storage limit: reading further back costs time on every
@@ -77,6 +78,7 @@ const isKeyCode = (value: unknown): boolean => typeof value === "string" && /^[A
 export function makeDefaultConfig (): AdaptivePaletteConfigType {
   return {
     language: "en",
+    paletteSet: DEFAULT_PALETTE_SET,
     maxRecalledRecords: DEFAULT_MAX_RECALLED_RECORDS,
     announceSymbolOnInput: true,
     markAiSuggestions: true,
@@ -271,8 +273,8 @@ function parseSwitchScanning (section: unknown): SwitchScanningConfigType {
 }
 
 /**
- * Fetch and validate `public/config.json`: the top-level `language` and `maxRecalledRecords`, and the
- * `indicatorLabelLookup`, `telegraphicTranslation`, `symbolSearch`, `svgBuilderString`,
+ * Fetch and validate `public/config.json`: the top-level `language`, `paletteSet` and
+ * `maxRecalledRecords`, and the `indicatorLabelLookup`, `telegraphicTranslation`, `symbolSearch`, `svgBuilderString`,
  * `wordPrediction`, `aboutMe` and `switchScanning` sections.
  * @returns {Promise<AdaptivePaletteConfigType>}
  */
@@ -286,6 +288,7 @@ export async function loadConfig (): Promise<AdaptivePaletteConfigType> {
     const indicatorLabelLookup = parseIndicatorLabelLookup(parsed?.indicatorLabelLookup);
     return {
       language: parseLanguage(parsed?.language) ?? "en",
+      paletteSet: isPaletteSetName(parsed?.paletteSet) ? parsed.paletteSet : DEFAULT_PALETTE_SET,
       maxRecalledRecords: parseMaxRecalledRecords(parsed?.maxRecalledRecords),
       // Anything other than `false` leaves announcements on: a mistyped config must not
       // silently mute the palette.

@@ -24,6 +24,8 @@ type BlissSymbolPropsType = {
   // The path of a picture file, drawn in place of the symbol.
   picture?: string,
   label: string,
+  // The colour of the symbol's strokes and letters, as a CSS colour. Black when absent.
+  color?: string,
   // Aria markup information for svg part of the BlissSymbol.  The first is
   // really a boolean, but the html template function converts it to string
   // values.
@@ -48,9 +50,9 @@ function hidePicture (event: Event): void {
 }
 
 export function BlissSymbol (props: BlissSymbolPropsType): VNode {
-  const { composition, picture, label, isPresentation, labelledBy, isMarked } = props;
+  const { composition, picture, label, color, isPresentation, labelledBy, isMarked } = props;
   // A picture is drawn in place of the symbol, so the symbol is not built.
-  const svgElement = picture === undefined && composition !== undefined ? getSvgElement(composition) : undefined;
+  const svgElement = picture === undefined && composition !== undefined ? getSvgElement(composition, color) : undefined;
 
   // Deal with aria markup, depending on whether the SVG is for presentation only or
   // associates with a labelled area.

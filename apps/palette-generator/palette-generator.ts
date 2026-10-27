@@ -34,9 +34,11 @@ type MatchByInfo = { [label: string]: MatchInfo[] };
 await initAdaptivePaletteGlobals("paletteDisplay");
 await fetchBlissGlossJson();
 // Generated palettes include the Standard Header, so it and the palettes it includes are loaded from
-// the palette set that `?set=` in the page URL names. As in the main app, a bad set name or a missing
-// `palette_set.json` throws.
-await adaptivePaletteGlobals.paletteStore.loadPaletteSet(paletteSetPath(window.location.search));
+// the palette set that `?set=` in the page URL names, or else `config.paletteSet`. As in the main app,
+// a bad set name or a missing `palette_set.json` throws.
+await adaptivePaletteGlobals.paletteStore.loadPaletteSet(
+  paletteSetPath(window.location.search, adaptivePaletteGlobals.config.paletteSet)
+);
 await adaptivePaletteGlobals.paletteStore.getNamedPalette(STANDARD_HEADER_PALETTE, true);
 let currentPaletteName = "";
 

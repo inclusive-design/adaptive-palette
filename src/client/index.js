@@ -35,10 +35,13 @@ import { languageSignal, t } from "./i18n/I18n";
 
 // Each palette draws the whole screen below the top bar, so the start palette and the palettes
 // it includes are all that must load before the first render. `?set=<folder>` in the page URL
-// picks the palette set. `paletteSetPath` throws for an invalid set name; `loadPaletteSet` throws
-// when the file is missing or has a format this code does not read.
+// picks the palette set, and `config.paletteSet` when it names none. `paletteSetPath` throws for
+// an invalid set name; `loadPaletteSet` throws when the file is missing or has a format this code
+// does not read.
 const { paletteStore, navigationStack } = adaptivePaletteGlobals;
-const startPaletteName = await paletteStore.loadPaletteSet(paletteSetPath(window.location.search));
+const startPaletteName = await paletteStore.loadPaletteSet(
+  paletteSetPath(window.location.search, adaptivePaletteGlobals.config.paletteSet)
+);
 const startPalette = await paletteStore.getNamedPalette(startPaletteName, true);
 if (!startPalette) { throw new Error(`Failed to load the start palette "${startPaletteName}"`); }
 

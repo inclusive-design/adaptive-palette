@@ -33,9 +33,19 @@
     outline-offset: 1px;
   }
 
+  /* The symbol shrinks so that its label stays in view in a short message area. */
   .blissSymbol {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
     margin: 0 0.5rem;
+    max-height: 100%;
     text-align: center;
+
+    > svg,
+    > img.cellPicture {
+      min-height: 0;
+    }
   }
 
   .cursorCaret {

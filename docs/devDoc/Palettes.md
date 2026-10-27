@@ -52,14 +52,20 @@ To add a palette, put its file in the set's `palettes/` folder and add it to `pa
 ### Choosing a set
 
 `?set=<folder>` in the page URL picks the set, for example `http://localhost:3000/?set=standardBlissChart`. With no
-`set`, the app loads `standardBlissChart`.
+`set`, the app loads the set `paletteSet` names in `config.json`, which defaults to `standardBlissChart`. See
+[Config.md](Config.md#paletteset).
 
 `paletteSetPath()` in `src/client/core/PaletteStore.ts` turns the name into `/palette-sets/<set>/palette_set.json`.
 It throws when the name holds anything but letters, digits, `_` and `-`. An invalid name, or a set with no folder,
 stops start-up with an error in the console.
 
 To add a set, create its folder with a `palette_set.json` and a `palettes/` folder, then open the app with
-`?set=<folder>`.
+`?set=<folder>`. To make a set from a Grid 3 grid set, see
+[Importing a grid set](Grid3Mapping.md#importing-a-grid-set).
+
+Git ignores every set but `standardBlissChart`, because an imported set holds personal data. To ship a new set, add
+a `!public/palette-sets/<set>/` line to `.gitignore`. `npm run package:desktop` leaves out the sets git does not
+track; see [Packaging the Desktop Build](Deployment.md#how-it-is-built).
 
 ### Naming a set
 
@@ -217,5 +223,13 @@ modifiers cannot change a picture word.
    is inside the loaded set's folder.
 3. The formats are PNG, JPEG, GIF, WebP, AVIF, SVG and BMP.
 4. A picture that cannot be loaded is hidden, and the cell shows its label only.
-5. Every set in `public/palette-sets/` is published on the public website, so its pictures must be licensed for
-   public release.
+5. Every set git tracks is published on the public website, so its pictures must be licensed for public release.
+
+**`backgroundColor`** and **`textColor`** are CSS colours, such as `"#E86E9B"`, for the cell's background and for
+its label and Bliss symbol. Only `ActionCodeCell` and `ActionBranchToPaletteCell` read them. `PaletteStore` drops a
+value that is not a colour when it loads the palette, and logs an error, so a palette cannot add other styles
+through it. A branch cell that is unavailable (`needsCaretSymbol`) shows the command colours instead. Palettes
+imported from Grid 3 use them (see [Mapping Grid 3 Grid Sets](Grid3Mapping.md#what-each-cell-becomes)).
+
+**`branchTo`** on an `ActionCodeCell` names a palette to go to after the cell adds its word to the message. It takes
+the same palette names as an `ActionBranchToPaletteCell`'s `branchTo`, and the cell has the same folded corner.

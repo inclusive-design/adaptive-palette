@@ -35,3 +35,14 @@ export function generateGridStyle(columnStart?: number, columnSpan?: number, row
 
   return colStyle + rowStyle;
 }
+
+/**
+ * The inline style for a cell's `backgroundColor` and `textColor` options. `PaletteStore` drops a
+ * value that is not a CSS colour when it loads the palette.
+ * @param {string} [backgroundColor] - A CSS colour, such as "#E86E9BFF".
+ * @param {string} [textColor] - A CSS colour for the label and the Bliss symbol.
+ * @returns {string} - "" when there is neither.
+ */
+export function colorStyle (backgroundColor?: string, textColor?: string): string {
+  return (backgroundColor ? `background-color: ${backgroundColor};` : "") + (textColor ? `color: ${textColor};` : "");
+}

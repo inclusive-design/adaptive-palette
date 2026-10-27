@@ -292,14 +292,18 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
  */
 let pendingContents: ContentSignalDataType | null = null;
 
+// What to do once the held edit is applied, such as a word cell's jump to another palette.
+let pendingAfterApply: (() => void) | undefined;
+
 /**
  * Decide whether an edit to the message may be published. Registered with `setEditGuard()`
  * from `core/InitGlobals.ts`, so every edit is offered here before it reaches the signal.
  * Returning `true` holds the edit; the answer to the question applies or drops it.
  * @param {ContentSignalDataType} next - The message as it would be after the edit.
+ * @param {Function} afterApply - Optional. Called if a held edit is applied.
  * @returns {boolean} - `true` when the edit is held back.
  */
-export function guardEdit (next: ContentSignalDataType): boolean {
+export function guardEdit (next: ContentSignalDataType, afterApply?: () => void): boolean {
   // A question is already up. Clicks cannot reach here -- the page is `inert` behind the
   // dialog -- so this is `ActionIndicatorCell`'s resolved label arriving. It was built from
   // the message as it stood before the held edit, so it is stale either way: drop it.
@@ -327,6 +331,7 @@ export function guardEdit (next: ContentSignalDataType): boolean {
     // confirms. Publishing it would show a message the user has not agreed to, and start
     // word prediction on it.
     pendingContents = next;
+    pendingAfterApply = afterApply;
     discardEditPromptSignal.value =
       state.status === "working" ? t("discardWorking") : t("discardReady");
     return true;
@@ -351,7 +356,9 @@ export function confirmDiscardEdit (): void {
   }
   activeSentenceAbort?.abort();
   const edit = pendingContents;
+  const afterApply = pendingAfterApply;
   pendingContents = null;
+  pendingAfterApply = undefined;
   // Batched so the dialog closing, the sentences going and the edit arriving are one render
   // rather than three.
   batch((): void => {
@@ -362,6 +369,7 @@ export function confirmDiscardEdit (): void {
       changeEncodingContents.value = edit;
     }
   });
+  afterApply?.();
 }
 
 /**
@@ -378,5 +386,6 @@ export function cancelDiscardEdit (): void {
     return;
   }
   pendingContents = null;
+  pendingAfterApply = undefined;
   discardEditPromptSignal.value = null;
 }

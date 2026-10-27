@@ -18,6 +18,7 @@ import { goToPalette } from "../core/PaletteNavigation";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { caretComposition } from "../utils/SymbolEncodingUtils";
+import { colorStyle } from "../utils/GridUtils";
 import type { Language } from "../i18n/I18n";
 import "./ActionBranchToPaletteCell.scss";
 
@@ -49,17 +50,20 @@ const navigateToPalette = async (event: Event, language?: Language): Promise<voi
  */
 export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType): VNode {
   const {
-    columnStart, columnSpan, rowStart, rowSpan, branchTo, composition, picture, label, labelLanguage, needsCaretSymbol
+    columnStart, columnSpan, rowStart, rowSpan, branchTo, composition, picture, label, labelLanguage, needsCaretSymbol,
+    backgroundColor, textColor
   } = props.options;
-
-  const gridStyles = `
-    grid-column: ${columnStart} / span ${columnSpan};
-    grid-row: ${rowStart} / span ${rowSpan};
-  `;
 
   // Marked unavailable rather than `disabled` so the button keeps its place in the tab
   // order for switch and eye-gaze users.
   const unavailable = !!needsCaretSymbol && caretComposition(changeEncodingContents.value) === undefined;
+
+  // An unavailable button drops its own colours, so the greying of `.btn-command` shows.
+  const gridStyles = `
+    grid-column: ${columnStart} / span ${columnSpan};
+    grid-row: ${rowStart} / span ${rowSpan};
+    ${unavailable ? "" : colorStyle(backgroundColor, textColor)}
+  `;
   const cellClicked = (event: Event) => {
     if (unavailable) { speakUnavailable(label); return; }
     void navigateToPalette(event, labelLanguage);
@@ -70,7 +74,7 @@ export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType
     <button
       id="${props.id}" class="${className}" style="${gridStyles}"
       data-branchto="${branchTo}" onClick=${cellClicked} aria-disabled=${needsCaretSymbol ? unavailable : undefined}>
-      <${BlissSymbol} composition=${composition} picture=${picture} label=${label} />
+      <${BlissSymbol} composition=${composition} picture=${picture} label=${label} color="currentColor" />
     </button>
   `;
 }
