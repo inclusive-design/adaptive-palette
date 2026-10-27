@@ -188,6 +188,27 @@ describe("loadConfig maxRecalledRecords", (): void => {
   });
 });
 
+describe("loadConfig paletteSet", (): void => {
+
+  test("a set name is loaded as given", async (): Promise<void> => {
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, paletteSet: "petterBlissChart" });
+    const config = await loadConfig();
+    expect(config.paletteSet).toBe("petterBlissChart");
+  });
+
+  test("a missing or invalid value falls back to standardBlissChart", async (): Promise<void> => {
+    for (const paletteSet of [undefined, "", "../x", 7]) {
+      stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, paletteSet });
+      const config = await loadConfig();
+      expect(config.paletteSet, String(paletteSet)).toBe("standardBlissChart");
+    }
+  });
+
+  test("the default config opens standardBlissChart", (): void => {
+    expect(makeDefaultConfig().paletteSet).toBe("standardBlissChart");
+  });
+});
+
 describe("loadConfig wordPrediction section", (): void => {
 
   test("a numSuggestions above the maximum is lowered to it", async (): Promise<void> => {

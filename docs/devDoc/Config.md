@@ -20,6 +20,7 @@ whatever this file says. See `isLocalHost()` in [`src/client/core/OllamaApi.ts`]
 | Section | Controls |
 | ------- | -------- |
 | `language` | Top-level, not a section. The UI language: `"en"` or `"sv"`. |
+| `paletteSet` | Top-level, not a section. The palette set opened when the page URL has no `?set=`. |
 | `maxRecalledRecords` | Top-level, not a section. How many of the newest stored messages the app reads back for word prediction and sentence recall. |
 | `announceSymbolOnInput` | Top-level, not a section. Whether labels are spoken as the user inputs. |
 | `markAiSuggestions` | Top-level, not a section. Whether suggestions a model made are marked as such. |
@@ -58,6 +59,13 @@ unsupported value falls back to `"en"`. The user's choice in the settings dialog
 and `?lang=` in the page URL overrides both for that page, without changing `config.language`
 or the saved choice. All three are read through
 `parseLanguage()` in [`src/client/i18n/I18n.ts`](../../src/client/i18n/I18n.ts).
+
+## `paletteSet`
+
+The palette set the app opens when the page URL has no `?set=`: a folder name under
+`public/palette-sets/`. A missing or invalid value falls back to `"standardBlissChart"`.
+`public/config.json` leaves it out. Packaging with `INCLUDE_SETS` writes it into a bundle made
+for one user. See [Packaging the Desktop Build](Deployment.md#how-it-is-built).
 
 ## `maxRecalledRecords`
 

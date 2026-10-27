@@ -52,7 +52,8 @@ To add a palette, put its file in the set's `palettes/` folder and add it to `pa
 ### Choosing a set
 
 `?set=<folder>` in the page URL picks the set, for example `http://localhost:3000/?set=standardBlissChart`. With no
-`set`, the app loads `standardBlissChart`.
+`set`, the app loads the set `paletteSet` names in `config.json`, which defaults to `standardBlissChart`. See
+[Config.md](Config.md#paletteset).
 
 `paletteSetPath()` in `src/client/core/PaletteStore.ts` turns the name into `/palette-sets/<set>/palette_set.json`.
 It throws when the name holds anything but letters, digits, `_` and `-`. An invalid name, or a set with no folder,

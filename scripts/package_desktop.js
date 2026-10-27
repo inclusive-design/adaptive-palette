@@ -46,6 +46,13 @@ const MAC_ARCHS = { arm64: "arm64", x64: "x86_64" };
 // only a re-download: CI has no cache to lose either way.
 const NODE_CACHE = path.join(root, "node_modules", ".cache", "adaptive-palette-node");
 
+// The UI languages the app has, and the rule for a palette set's folder name. Copies of
+// `LANGUAGES` in `src/client/i18n/I18n.ts` and `PALETTE_SET_NAME` in
+// `src/client/core/PaletteStore.ts`, which this script can't import.
+// ponytail: two copies to keep in step; add a new language to both lists.
+const LANGUAGES = ["en", "sv"];
+const SET_NAME = /^[A-Za-z0-9_-]+$/;
+
 const run = (command, args, options = {}) =>
   execFileSync(command, args, { stdio: "inherit", cwd: root, ...options });
 
@@ -196,9 +203,48 @@ function copyRuntime (target, nodeName) {
 }
 
 /**
+ * The palette sets `INCLUDE_SETS` names, in order. Each must be a set in the build: a mistyped
+ * name would otherwise ship a bundle that opens on nothing.
+ * @param {string|undefined} value - `INCLUDE_SETS`: set names separated by commas.
+ * @param {string} setsDir - The built `palette-sets` folder.
+ * @returns {string[]} - The names, in order; empty when `value` names none.
+ */
+function includedSets (value, setsDir) {
+  const names = (value ?? "").split(",").map((name) => name.trim()).filter(Boolean);
+  for (const name of names) {
+    if (!SET_NAME.test(name)) {
+      throw new Error(`INCLUDE_SETS: "${name}" is not a palette set name. Use only letters, digits, "_" and "-".`);
+    }
+    if (!fs.existsSync(path.join(setsDir, name, "palette_set.json"))) {
+      throw new Error(
+        `INCLUDE_SETS: "${name}" is not in dist/palette-sets. ` +
+        "Check the name, or run `npm run build` after importing it."
+      );
+    }
+  }
+  return names;
+}
+
+/**
+ * The `config.json` of a bundle made for one user: it opens on `setDir`'s set, in the language
+ * of that set's start palette when the app has that language, and in English otherwise.
+ * @param {object} config - The built `config.json`.
+ * @param {string} setDir - The set's folder in the build.
+ * @returns {object} - `config`, with `paletteSet` and `language` set.
+ */
+function bundleConfig (config, setDir) {
+  const readJson = (file) => JSON.parse(fs.readFileSync(path.join(setDir, file), "utf8"));
+  const { startPalette, palettes } = readJson("palette_set.json");
+  // A palette with no `language` has English labels.
+  const { language } = readJson(palettes[startPalette]);
+  return { ...config, paletteSet: path.basename(setDir), language: LANGUAGES.includes(language) ? language : "en" };
+}
+
+/**
  * Copy the built app in beside the binary. A palette set git does not track, such as one imported
- * from a user's grid set, holds personal data, so it is left out unless `INCLUDE_SETS` names it:
- * `INCLUDE_SETS=mySet npm run package:desktop`, for a bundle made for that set's owner.
+ * from a user's grid set, holds personal data, so it is left out. `INCLUDE_SETS=mySet npm run
+ * package:desktop` makes a bundle for that set's owner instead: it holds only the sets named and
+ * opens on the first, in its start palette's language.
  * @param {string} target - The directory `dist` goes into.
  * @returns {void}
  */
@@ -207,10 +253,18 @@ function copyDist (target) {
   if (!fs.existsSync(built)) {
     throw new Error("There is no `dist` to package. Run `npm run build` first.");
   }
+  const setsDir = path.join(built, "palette-sets");
+  const included = includedSets(process.env.INCLUDE_SETS, setsDir);
   const tracked = execFileSync("git", ["ls-files", "--", "public/palette-sets"], { cwd: root, encoding: "utf8" })
-    .split("\n").map((file) => file.split("/")[2]);
-  const shipped = new Set([...tracked, ...(process.env.INCLUDE_SETS ?? "").split(",")].filter(Boolean));
+    .split("\n").map((file) => file.split("/")[2]).filter(Boolean);
+  const shipped = new Set(included.length > 0 ? included : tracked);
   fs.cpSync(built, path.join(target, "dist"), { recursive: true, filter: (src) => isShipped(src, built, shipped) });
+  if (included.length > 0) {
+    // The bundle's copy, never `dist/config.json`, which `npm start` and the next package share.
+    const configFile = path.join(target, "dist", "config.json");
+    const config = bundleConfig(JSON.parse(fs.readFileSync(configFile, "utf8")), path.join(setsDir, included[0]));
+    fs.writeFileSync(configFile, `${JSON.stringify(config, null, 2)}\n`);
+  }
 }
 
 /**
@@ -301,8 +355,8 @@ function version () {
   return JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8")).version;
 }
 
-// Only when run as `node scripts/package_desktop.js`. A test imports this file for the one
-// pure function it exports, and importing it must not build, sign, or zip anything.
+// Only when run as `node scripts/package_desktop.js`. A test imports this file for the pure
+// functions it exports, and importing it must not build, sign, or zip anything.
 if (import.meta.main) {
   fs.mkdirSync(outDir, { recursive: true });
   const zip = process.platform === "darwin"
@@ -313,4 +367,4 @@ if (import.meta.main) {
   console.log(`Packaged ${path.relative(root, zip)}`);
 }
 
-export { findNonSystemLib, isShipped };
+export { bundleConfig, findNonSystemLib, includedSets, isShipped };

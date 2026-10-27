@@ -219,6 +219,9 @@ export type SwitchScanningConfigType = {
 export type AdaptivePaletteConfigType = {
   // The UI language. `?lang=` in the page URL overrides it at start-up.
   language: Language,
+  // The palette set opened when the page URL has no `?set=`. Defaults to `standardBlissChart`;
+  // the desktop packaging script sets it for a bundle made for one user.
+  paletteSet: string,
   // How many of the newest stored messages are read back for word prediction and for
   // recalling a sentence. Nothing is ever deleted; this caps what is read, not what is kept.
   // Zero turns the history off: nothing is read and nothing is written.
