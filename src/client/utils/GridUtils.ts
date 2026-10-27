@@ -35,3 +35,20 @@ export function generateGridStyle(columnStart?: number, columnSpan?: number, row
 
   return colStyle + rowStyle;
 }
+
+/**
+ * The inline style for a cell's `backgroundColor` option.
+ * @param {string} [color] - A CSS colour, such as "#E86E9BFF".
+ * @returns {string} - "" when there is no colour. A value that is not a colour is also "", with an
+ *                     error logged, so that a palette cannot add other properties through it.
+ */
+export function backgroundColorStyle (color?: string): string {
+  if (color === undefined) {
+    return "";
+  }
+  if (!CSS.supports("color", color)) {
+    console.error(`backgroundColorStyle(): "${color}" is not a CSS colour`);
+    return "";
+  }
+  return `background-color: ${color};`;
+}

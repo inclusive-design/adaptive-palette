@@ -16,19 +16,23 @@ import { PictureOrSymbolInfoType, LayoutInfoType, SymbolEncodingType } from "../
 import { BlissSymbol } from "../components/BlissSymbol";
 import { changeEncodingContents, adaptivePaletteGlobals } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
-import { generateGridStyle } from "../utils/GridUtils";
+import { goToPalette } from "../core/PaletteNavigation";
+import { backgroundColorStyle, generateGridStyle } from "../utils/GridUtils";
 import { insertWordAtCaret, normalizeComposition } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
 import "./ActionCodeCell.scss";
+// For `.foldedCorner`, the folder look a cell with `branchTo` takes.
+import "./ActionBranchToPaletteCell.scss";
 
 type ActionCodeCellPropsType = {
   id: string,
-  options: PictureOrSymbolInfoType & LayoutInfoType
+  // `branchTo` names a palette to go to after the insert. `backgroundColor` is a CSS colour.
+  options: PictureOrSymbolInfoType & LayoutInfoType & { branchTo?: string, backgroundColor?: string }
 };
 
 export function ActionCodeCell (props: ActionCodeCellPropsType): VNode {
   const {
-    columnStart, columnSpan, rowStart, rowSpan, label, picture
+    columnStart, columnSpan, rowStart, rowSpan, label, picture, branchTo, backgroundColor
   } = props.options;
   const composition = props.options.composition === undefined
     ? undefined
@@ -52,10 +56,15 @@ export function ActionCodeCell (props: ActionCodeCellPropsType): VNode {
     const{ caretPosition, payloads } = changeEncodingContents.value;
     editMessage(insertWordAtCaret(payload, payloads, caretPosition));
     announceIfEnabled(props.options.label, props.options.labelLanguage);
+    if (branchTo) {
+      void goToPalette(branchTo);
+    }
   };
 
   return html`
-    <button id="${props.id}" class="ActionCodeCell" style="${gridStyles}" onClick=${cellClicked}>
+    <button
+      id="${props.id}" class="ActionCodeCell${branchTo ? " foldedCorner" : ""}" style="${gridStyles + backgroundColorStyle(backgroundColor)}"
+      onClick=${cellClicked}>
       <${BlissSymbol}
         composition=${composition}
         picture=${picture}

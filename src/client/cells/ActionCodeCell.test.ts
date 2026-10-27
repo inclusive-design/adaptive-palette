@@ -11,9 +11,9 @@
  */
 
 import { vi } from "vitest";
-import { screen, fireEvent } from "@testing-library/preact";
+import { screen, fireEvent, waitFor } from "@testing-library/preact";
 
-import { changeEncodingContents } from "../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { ActionCodeCell } from "./ActionCodeCell";
 import { renderCell, expectCellRendered, testPicture } from "../testUtils/CellTestUtils";
@@ -116,6 +116,37 @@ describe("ActionCodeCell", (): void => {
     ]);
     expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith("bread", undefined);
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+  });
+
+  test("backgroundColor colours the button", async (): Promise<void> => {
+    renderCell(ActionCodeCell, TEST_CELL_ID, { ...testCell.options, backgroundColor: "#E86E9BFF" });
+
+    const button = await screen.findByRole("button", { name: testCell.options.label });
+    expect(getComputedStyle(button).backgroundColor).toBe("rgb(232, 110, 155)");
+  });
+
+  test("with branchTo, a click inserts the symbol and then shows that palette", async (): Promise<void> => {
+    const { paletteStore, navigationStack } = adaptivePaletteGlobals;
+    const rootPalette = { name: "Root Palette", cells: {} };
+    paletteStore.addPalette(rootPalette);
+    paletteStore.addPalette({ name: "Target Palette", cells: {} });
+    navigationStack.flushReset(rootPalette);
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+
+    renderCell(ActionCodeCell, TEST_CELL_ID, { ...testCell.options, branchTo: "Target Palette" });
+    fireEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
+
+    expect(changeEncodingContents.value.payloads.map(payload => payload.label)).toEqual(["Bliss Language"]);
+    await waitFor(() => {
+      expect(navigationStack.currentPalette?.name).toBe("Target Palette");
+    });
+    expect(navigationStack.depth).toBe(1);
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+  });
+
+  test("looks like a folder only with branchTo", async (): Promise<void> => {
+    renderCell(ActionCodeCell, TEST_CELL_ID, { ...testCell.options, branchTo: "Target Palette" });
+    expect(await screen.findByRole("button", { name: testCell.options.label })).toHaveClass("foldedCorner");
   });
 
 });

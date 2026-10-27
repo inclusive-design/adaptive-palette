@@ -18,6 +18,7 @@ import { goToPalette } from "../core/PaletteNavigation";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { caretComposition } from "../utils/SymbolEncodingUtils";
+import { backgroundColorStyle } from "../utils/GridUtils";
 import type { Language } from "../i18n/I18n";
 import "./ActionBranchToPaletteCell.scss";
 
@@ -49,12 +50,14 @@ const navigateToPalette = async (event: Event, language?: Language): Promise<voi
  */
 export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType): VNode {
   const {
-    columnStart, columnSpan, rowStart, rowSpan, branchTo, composition, picture, label, labelLanguage, needsCaretSymbol
+    columnStart, columnSpan, rowStart, rowSpan, branchTo, composition, picture, label, labelLanguage, needsCaretSymbol,
+    backgroundColor
   } = props.options;
 
   const gridStyles = `
     grid-column: ${columnStart} / span ${columnSpan};
     grid-row: ${rowStart} / span ${rowSpan};
+    ${backgroundColorStyle(backgroundColor)}
   `;
 
   // Marked unavailable rather than `disabled` so the button keeps its place in the tab

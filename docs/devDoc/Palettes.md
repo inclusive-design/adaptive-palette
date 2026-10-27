@@ -59,7 +59,8 @@ It throws when the name holds anything but letters, digits, `_` and `-`. An inva
 stops start-up with an error in the console.
 
 To add a set, create its folder with a `palette_set.json` and a `palettes/` folder, then open the app with
-`?set=<folder>`.
+`?set=<folder>`. To make a set from a Grid 3 grid set, see
+[Importing a grid set](Grid3Mapping.md#importing-a-grid-set).
 
 ### Naming a set
 
@@ -219,3 +220,11 @@ modifiers cannot change a picture word.
 4. A picture that cannot be loaded is hidden, and the cell shows its label only.
 5. Every set in `public/palette-sets/` is published on the public website, so its pictures must be licensed for
    public release.
+
+**`backgroundColor`** is a CSS colour for the cell's background, such as `"#E86E9B"`. Only `ActionCodeCell` and
+`ActionBranchToPaletteCell` read it. A value that is not a colour is ignored and an error is logged, so a palette
+cannot add other styles through it. Palettes imported from Grid 3 use it (see
+[Mapping Grid 3 Grid Sets](Grid3Mapping.md#what-each-cell-becomes)).
+
+**`branchTo`** on an `ActionCodeCell` names a palette to go to after the cell adds its word to the message. It takes
+the same palette names as an `ActionBranchToPaletteCell`'s `branchTo`, and the cell has the same folded corner.
