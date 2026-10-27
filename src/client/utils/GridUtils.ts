@@ -37,18 +37,12 @@ export function generateGridStyle(columnStart?: number, columnSpan?: number, row
 }
 
 /**
- * The inline style for a cell's `backgroundColor` option.
- * @param {string} [color] - A CSS colour, such as "#E86E9BFF".
- * @returns {string} - "" when there is no colour. A value that is not a colour is also "", with an
- *                     error logged, so that a palette cannot add other properties through it.
+ * The inline style for a cell's `backgroundColor` and `textColor` options. `PaletteStore` drops a
+ * value that is not a CSS colour when it loads the palette.
+ * @param {string} [backgroundColor] - A CSS colour, such as "#E86E9BFF".
+ * @param {string} [textColor] - A CSS colour for the label and the Bliss symbol.
+ * @returns {string} - "" when there is neither.
  */
-export function backgroundColorStyle (color?: string): string {
-  if (color === undefined) {
-    return "";
-  }
-  if (!CSS.supports("color", color)) {
-    console.error(`backgroundColorStyle(): "${color}" is not a CSS colour`);
-    return "";
-  }
-  return `background-color: ${color};`;
+export function colorStyle (backgroundColor?: string, textColor?: string): string {
+  return (backgroundColor ? `background-color: ${backgroundColor};` : "") + (textColor ? `color: ${textColor};` : "");
 }

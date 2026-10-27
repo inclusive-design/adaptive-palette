@@ -88,18 +88,24 @@ test("readCells() reads each cell's position, commands, caption, picture, insert
   expect(readCells(GRID_XML)).toEqual([
     {
       x: 0, y: 0, columnSpan: 10, rowSpan: 1, contentType: "Workspace", commands: [], jumpTo: "",
-      caption: "", image: "", insertedText: "", basedOnStyle: "", backColour: ""
+      caption: "", image: "", insertedText: "", basedOnStyle: "", backColour: "", fontColour: ""
     },
     {
       x: 2, y: 1, columnSpan: 2, rowSpan: 2, contentType: "", commands: ["Action.InsertText", "Jump.To"],
       jumpTo: "Blå sida", caption: "rita & måla", image: "-0-text-0.jpg", insertedText: "rita, måla",
-      basedOnStyle: "Vocab cell", backColour: "#CCFFF6FF"
+      basedOnStyle: "Vocab cell", backColour: "#CCFFF6FF", fontColour: ""
     },
     {
       x: 4, y: 9, columnSpan: 1, rowSpan: 1, contentType: "", commands: ["Jump.Home"], jumpTo: "",
-      caption: "hem & karta", image: "[GRID2X]jump.home.wmf", insertedText: "", basedOnStyle: "", backColour: ""
+      caption: "hem & karta", image: "[GRID2X]jump.home.wmf", insertedText: "", basedOnStyle: "",
+      backColour: "", fontColour: ""
     }
   ]);
+});
+
+test("readCells() decodes numeric character references", () => {
+  const xml = "<Cell><Content><CaptionAndImage><Caption>M&#229;ndag&#xA;kv&#xE4;ll</Caption></CaptionAndImage></Content></Cell>";
+  expect(readCells(xml)[0].caption).toBe("Måndag\nkväll");
 });
 
 test("readCells() handles a self-closing cell", () => {
@@ -127,22 +133,30 @@ describe("convertCell()", () => {
   // A cell as readCells() gives it, at X 0, Y 1, spanning 2 × 2.
   const cell = fields => ({
     x: 0, y: 1, columnSpan: 2, rowSpan: 2, contentType: "", commands: [], jumpTo: "", caption: "", image: "",
-    insertedText: "", basedOnStyle: "", backColour: "", ...fields
+    insertedText: "", basedOnStyle: "", backColour: "", fontColour: "", ...fields
   });
   const grid = () => ({
     name: "Blå sida",
     slug: "bla_sida",
     dir,
+    hasWorkspace: true,
     mapping: { "Grids/Blå sida/0-1-0-text-0.jpg": "B513/B10", "[blissx]18274.wmf": "B711;B81" },
     gridNames: new Set(["Blå sida", "Start"]),
     icons: { CommandGoToRootCell: 392, ActionSpeakCell: 2325 },
-    styles: new Map([["Vocab cell", "#FEFEF4FF"], ["Actions category style", "#ED9C9EFF"]])
+    styles: new Map([
+      ["Vocab cell", { backColour: "#FEFEF4FF", fontColour: "#000000FF" }],
+      ["Actions category style", { backColour: "#ED9C9EFF", fontColour: "" }]
+    ])
   });
   const layout = { rowStart: 2, rowSpan: 2, columnStart: 1, columnSpan: 2 };
   const insert = { commands: ["Action.InsertText"], caption: "person" };
 
   test("an empty slot is left out", () => {
     expect(convertCell(cell({}), grid())).toBe(null);
+  });
+
+  test("a blank cell with an insert of no text is left out", () => {
+    expect(convertCell(cell({ commands: ["Action.InsertText"] }), grid())).toBe(null);
   });
 
   test("the Workspace becomes the message area", () => {
@@ -183,7 +197,12 @@ describe("convertCell()", () => {
 
   test("a word cell with no colour of its own takes its style's", () => {
     const styled = cell({ ...insert, basedOnStyle: "Vocab cell" });
-    expect(convertCell(styled, grid()).cell.options.backgroundColor).toBe("#FEFEF4FF");
+    expect(convertCell(styled, grid()).cell.options).toMatchObject({ backgroundColor: "#FEFEF4FF", textColor: "#000000FF" });
+  });
+
+  test("a word cell's own text colour wins over its style's", () => {
+    const own = cell({ ...insert, basedOnStyle: "Vocab cell", fontColour: "#FFFFFFFF" });
+    expect(convertCell(own, grid()).cell.options.textColor).toBe("#FFFFFFFF");
   });
 
   test("a folder cell takes its colour", () => {
@@ -214,6 +233,15 @@ describe("convertCell()", () => {
         options: { label: "person", picture: "../pictures/bla_sida/0-1-0-text-0.png", ...layout }
       },
       copy: "0-1-0-text-0.png"
+    });
+  });
+
+  test("an embedded picture browsers cannot show leaves the label only, with a warning", () => {
+    fs.writeFileSync(path.join(dir, "0-1-0-text-0.emf"), "");
+    expect(convertCell(cell({ ...insert, image: "-0-text-0.emf" }), grid())).toEqual({
+      id: "cell-0-1",
+      cell: { type: "ActionCodeCell", options: { label: "person", ...layout } },
+      warning: "picture 0-1-0-text-0.emf is not a type browsers show"
     });
   });
 
@@ -272,6 +300,11 @@ describe("convertCell()", () => {
       type: "ActionSpeakCell",
       options: { label: "tala", composition: 2325, ariaControls: "content-encoding-area", ...layout }
     });
+  });
+
+  test("a message command in a grid with no message area names none", () => {
+    const speak = cell({ commands: ["Action.Speak"], caption: "tala" });
+    expect(convertCell(speak, { ...grid(), hasWorkspace: false }).cell.options).not.toHaveProperty("ariaControls");
   });
 
   test.each([
@@ -396,6 +429,54 @@ describe("importGridset()", () => {
     importGridset(gridset, mapping, setDir);
     expect(fs.existsSync(path.join(setDir, "palettes", "stale.json"))).toBe(false);
     expect(fs.existsSync(path.join(setDir, "palettes", "start.json"))).toBe(true);
+  });
+
+  test("an empty ContentLabel keeps a palette the size of its grid", () => {
+    const setDir = path.join(tmp, "set");
+    const gridset = writeGridset();
+    const definitions = "<ColumnDefinitions><ColumnDefinition /><ColumnDefinition /><ColumnDefinition /></ColumnDefinitions>" +
+      "<RowDefinitions><RowDefinition /><RowDefinition /></RowDefinitions>";
+    const startXml = path.join(gridset, "Grids", "Start", "grid.xml");
+    fs.writeFileSync(startXml, fs.readFileSync(startXml, "utf8").replace("<Grid>", `<Grid>${definitions}`));
+
+    importGridset(gridset, mapping, setDir);
+    expect(readJson(path.join(setDir, "palettes", "start.json")).cells["grid-size"]).toEqual({
+      type: "ContentLabel", options: { label: "", rowStart: 2, rowSpan: 1, columnStart: 3, columnSpan: 1 }
+    });
+    expect(readJson(path.join(setDir, "palettes", "bla_sida.json")).cells).not.toHaveProperty("grid-size");
+  });
+
+  test("a second Workspace in a grid is skipped", () => {
+    const setDir = path.join(tmp, "set");
+    const gridset = writeGridset();
+    const workspace = y => `<Cell Y="${y}"><Content><ContentType>Workspace</ContentType></Content></Cell>`;
+    const startXml = path.join(gridset, "Grids", "Start", "grid.xml");
+    fs.writeFileSync(startXml, `<Grid><Cells>${workspace(1)}${workspace(2)}</Cells></Grid>`);
+
+    const report = importGridset(gridset, mapping, setDir);
+    expect(report).toEqual(["Start (0, 2): skipped, a second Workspace; a palette has one message area"]);
+    expect(readJson(path.join(setDir, "palettes", "start.json")).cells["content-encoding-area"].options.rowStart).toBe(2);
+  });
+
+  test("a grid set with no styles.xml imports with no style colours", () => {
+    const setDir = path.join(tmp, "set");
+    const gridset = writeGridset();
+    fs.rmSync(path.join(gridset, "Settings0", "Styles"), { recursive: true });
+
+    importGridset(gridset, mapping, setDir);
+    expect(readJson(path.join(setDir, "palettes", "bla_sida.json")).cells["cell-0-0"].options)
+      .not.toHaveProperty("backgroundColor");
+  });
+
+  test("a run that fails leaves the earlier import as it was", () => {
+    const setDir = path.join(tmp, "set");
+    const gridset = writeGridset();
+    importGridset(gridset, mapping, setDir);
+    fs.rmSync(path.join(gridset, "Grids", "Start", "grid.xml"));
+
+    expect(() => importGridset(gridset, mapping, setDir)).toThrow("ENOENT");
+    expect(fs.existsSync(path.join(setDir, "palette_set.json"))).toBe(true);
+    expect(fs.existsSync(`${setDir}.partial`)).toBe(false);
   });
 
   test("two grids with the same file name stop the import before anything is written", () => {

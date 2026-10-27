@@ -12,6 +12,10 @@ runtime and copies it with `launcher/` into a bundle, puts `dist/` beside them, 
 result into `dist-desktop/`. On macOS that runtime is a universal binary downloaded from
 nodejs.org and merged with `lipo`; on Windows it is a copy of the running `node.exe`.
 
+The bundle leaves out each palette set git does not track, such as one imported from a user's
+Grid 3 grid set, since it holds personal data. To make a bundle for that set's owner, name the
+set: `INCLUDE_SETS=mySet npm run package:desktop`. Several sets are separated by commas.
+
 Node's single-executable-application feature was tried first, but its embedded main script
 may only `require()` Node builtins, so `launcher/main.cjs` could not `require("./serve.cjs")`.
 Shipping a plain Node binary and running the launcher as plain CommonJS files avoids that

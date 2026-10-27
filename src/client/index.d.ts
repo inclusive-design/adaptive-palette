@@ -72,9 +72,11 @@ export type BranchToInfoType = {
   needsCaretSymbol?: boolean
 };
 
-// `backgroundColor` is a CSS colour for the cell's background.
+// `backgroundColor` and `textColor` are CSS colours for the cell's background, and for its label
+// and Bliss symbol.
 export type BlissSymbolCellType = LayoutInfoType & BranchToInfoType & PictureOrSymbolInfoType & {
-  backgroundColor?: string
+  backgroundColor?: string,
+  textColor?: string
 };
 
 export type JsonPaletteType = {

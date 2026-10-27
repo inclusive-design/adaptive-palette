@@ -1,9 +1,10 @@
 /*
  * Tests `findNonSystemLib`: deciding whether a line of `otool` output names a library that
- * will not exist on someone else's Mac.
+ * will not exist on someone else's Mac. Also `isShipped`, which leaves personal palette sets out.
  */
+import path from "node:path";
 import { expect, test } from "vitest";
-import { findNonSystemLib } from "./package_desktop.js";
+import { findNonSystemLib, isShipped } from "./package_desktop.js";
 
 // Real `otool -L` shape: the first line is the binary's own path, every later line is a
 // library followed by its version information. The trailing newline is deliberate -- it
@@ -40,4 +41,14 @@ test("the binary's own path on the first line is never the offender", () => {
 	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1351.0.0)
 `;
   expect(findNonSystemLib(ownPathOutside)).toBe(null);
+});
+
+test("a palette set not named to ship is left out, and everything else is copied", () => {
+  const built = path.join("/repo", "dist");
+  const shipped = new Set(["standardBlissChart"]);
+  const sets = path.join(built, "palette-sets");
+  expect(isShipped(path.join(sets, "standardBlissChart"), built, shipped)).toBe(true);
+  expect(isShipped(path.join(sets, "petterBlissChart"), built, shipped)).toBe(false);
+  expect(isShipped(sets, built, shipped)).toBe(true);
+  expect(isShipped(path.join(built, "index.html"), built, shipped)).toBe(true);
 });

@@ -140,6 +140,29 @@ function resolvePictures (palette: JsonPaletteType, filePath: string, setFolder:
   }
 }
 
+// The options a cell takes as a CSS colour.
+const COLOR_OPTIONS = ["backgroundColor", "textColor"];
+
+/**
+ * Remove each cell colour that is not a CSS colour, and log an error. A cell puts its colours in
+ * its inline style, so any other value could add other properties, such as a picture from
+ * another site.
+ * @param {JsonPaletteType} palette - The palette as loaded. Changed in place.
+ * @param {String} filePath         - Path of the palette file.
+ */
+function dropInvalidColors (palette: JsonPaletteType, filePath: string): void {
+  for (const [cellId, cell] of Object.entries(palette.cells)) {
+    const options = cell.options as Record<string, unknown>;
+    for (const name of COLOR_OPTIONS) {
+      const value = options[name];
+      if (value !== undefined && !(typeof value === "string" && CSS.supports("color", value))) {
+        console.error(`${filePath}: cell ${cellId}: ${name} ${JSON.stringify(value)} is not a CSS colour.`);
+        delete options[name];
+      }
+    }
+  }
+}
+
 export class PaletteStore {
 
   // Singleton storage for all palettes
@@ -273,6 +296,7 @@ export class PaletteStore {
       return undefined;
     }
     resolvePictures(loadedPalette, filePath, PaletteStore.setFolder);
+    dropInvalidColors(loadedPalette, filePath);
     this.addPalette(loadedPalette, paletteName);
 
     // Included palettes are drawn with this one, so they are loaded now rather than on click.

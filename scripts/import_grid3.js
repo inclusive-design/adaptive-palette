@@ -34,13 +34,15 @@ const SET_NAME = /^[A-Za-z0-9_-]+$/;
 const ENTITIES = { lt: "<", gt: ">", quot: "\"", apos: "'", amp: "&" };
 
 /**
- * The text an XML value holds, with CDATA sections unwrapped and the five XML entities decoded.
+ * The text an XML value holds, with CDATA sections unwrapped and entities decoded: the five
+ * named ones and numeric references such as `&#229;` or `&#xA;`.
  * @param {string} raw - The value between an element's tags.
  * @returns {string}
  */
 function xmlText (raw) {
-  return raw.replace(/<!\[CDATA\[([\s\S]*?)\]\]>|&(lt|gt|quot|apos|amp);/g,
-    (match, cdata, entity) => cdata ?? ENTITIES[entity]);
+  return raw.replace(/<!\[CDATA\[([\s\S]*?)\]\]>|&(lt|gt|quot|apos|amp);|&#(x[0-9a-fA-F]+|\d+);/g,
+    (match, cdata, entity, code) => cdata ?? ENTITIES[entity] ??
+      String.fromCodePoint(code.startsWith("x") ? parseInt(code.slice(1), 16) : Number(code)));
 }
 
 /**
@@ -62,6 +64,12 @@ const COMMAND_CELLS = {
   "Action.DeleteWord": "CommandDelLastEncoding",
   "Action.Clear": "CommandClearEncoding"
 };
+
+// The file types browsers show, which `launcher/serve.cjs` serves.
+const PICTURE_FILE = /\.(png|jpe?g|gif|webp|avif|svg|bmp)$/i;
+
+// The id of the message area, which is also what the message commands name with `ariaControls`.
+const MESSAGE_AREA_ID = "content-encoding-area";
 
 // The command cells that speak or change the message, so they name it with `ariaControls`.
 const MESSAGE_COMMANDS = new Set(["ActionSpeakCell", "CommandDelLastEncoding", "CommandClearEncoding"]);
@@ -99,8 +107,9 @@ export function slugify (name) {
  * machine and never nests `<Cell>`, so regular expressions are enough.
  * @param {string} xml - The contents of a `grid.xml`.
  * @returns {Object[]} - One `{ x, y, columnSpan, rowSpan, contentType, commands, jumpTo, caption,
- *                       image, insertedText, basedOnStyle, backColour }` per cell. `jumpTo` is NFC, to
- *                       match grid names. `backColour` is the cell's own colour, "" when it has none.
+ *                       image, insertedText, basedOnStyle, backColour, fontColour }` per cell. `jumpTo` is
+ *                       NFC, to match grid names. `backColour` and `fontColour` are the cell's own colours,
+ *                       "" when it has none.
  */
 export function readCells (xml) {
   return [...xml.matchAll(/<Cell\b([^>]*?)(?:\/>|>([\s\S]*?)<\/Cell>)/g)].map(([, attributeText, body = ""]) => {
@@ -125,7 +134,8 @@ export function readCells (xml) {
         .replace(/\s+/g, " ")
         .trim(),
       basedOnStyle: element(body, "BasedOnStyle"),
-      backColour: element(body, "BackColour")
+      backColour: element(body, "BackColour"),
+      fontColour: element(body, "FontColour")
     };
   });
 }
@@ -159,16 +169,20 @@ function symbolOrPicture (raw, grid) {
   if (!fs.existsSync(path.join(grid.dir, file))) {
     return { warning: `picture ${file} not found` };
   }
+  if (!PICTURE_FILE.test(file)) {
+    return { warning: `picture ${file} is not a type browsers show` };
+  }
   return { picture: `../pictures/${grid.slug}/${file}`, copy: file };
 }
 
 /**
  * Convert one cell read by `readCells()` to a palette cell.
  * @param {Object} raw - A cell from `readCells()`.
- * @param {Object} grid - `{ name, slug, dir, mapping, gridNames, icons, styles }`: the grid's NFC name,
- *                        its file slug and its folder; the mapping, with NFC keys; every grid's name;
- *                        the standard chart's command cell compositions, by cell type; and a Map of
- *                        each named style's background colour.
+ * @param {Object} grid - `{ name, slug, dir, hasWorkspace, mapping, gridNames, icons, styles }`: the
+ *                        grid's NFC name, its file slug and its folder; whether it has a message area;
+ *                        the mapping, with NFC keys; every grid's name; the standard chart's command
+ *                        cell compositions, by cell type; and a Map of each named style's
+ *                        `{ backColour, fontColour }`.
  * @returns {Object|null} - `null` for an empty slot, `{ skipped }` with the reason for a cell that
  *                          cannot be imported, or `{ id, cell, copy, warning }`. `copy` names a picture
  *                          file to copy, and `warning` is a problem to report.
@@ -176,13 +190,15 @@ function symbolOrPicture (raw, grid) {
 export function convertCell (raw, grid) {
   const layout = { rowStart: raw.y + 1, rowSpan: raw.rowSpan, columnStart: raw.x + 1, columnSpan: raw.columnSpan };
   if (raw.contentType === "Workspace") {
-    return { id: "content-encoding-area", cell: { type: "ContentEncoding", options: layout } };
-  }
-  if (raw.commands.length === 0 && !raw.caption) {
-    return null;
+    return { id: MESSAGE_AREA_ID, cell: { type: "ContentEncoding", options: layout } };
   }
   const id = `cell-${raw.x}-${raw.y}`;
   const label = raw.caption || raw.insertedText;
+  // Grid 3 leaves an insert with no text in some blank cells.
+  const onlyEmptyInserts = !label && !raw.image && raw.commands.every(command => command === "Action.InsertText");
+  if ((raw.commands.length === 0 && !raw.caption) || onlyEmptyInserts) {
+    return null;
+  }
 
   // An insert wins over the cell's other commands, except a jump, which the word cell makes after it.
   const inserts = raw.commands.includes("Action.InsertText");
@@ -195,12 +211,14 @@ export function convertCell (raw, grid) {
     const { copy, warning, ...shown } = symbolOrPicture(raw, grid);
     const type = inserts ? "ActionCodeCell" : "ActionBranchToPaletteCell";
     const branchTo = jumps && !noGrid ? { branchTo: raw.jumpTo } : {};
-    // The cell's own colour, or else its style's. A style Grid 3 has built in is not in styles.xml.
-    const colour = raw.backColour || grid.styles.get(raw.basedOnStyle);
-    const backgroundColor = colour ? { backgroundColor: colour } : {};
+    // The cell's own colours, or else its style's. A style Grid 3 has built in is not in styles.xml.
+    const style = grid.styles.get(raw.basedOnStyle);
+    const back = raw.backColour || style?.backColour;
+    const font = raw.fontColour || style?.fontColour;
+    const colours = { ...(back && { backgroundColor: back }), ...(font && { textColor: font }) };
     return {
       id,
-      cell: { type, options: { label, ...shown, ...branchTo, ...backgroundColor, ...layout } },
+      cell: { type, options: { label, ...shown, ...branchTo, ...colours, ...layout } },
       copy,
       warning: [warning, noGrid].filter(Boolean).join("; ") || undefined
     };
@@ -210,8 +228,28 @@ export function convertCell (raw, grid) {
   if (!type) {
     return { skipped: `unsupported: ${raw.commands.join(" + ") || "no command"}` };
   }
-  const ariaControls = MESSAGE_COMMANDS.has(type) ? { ariaControls: "content-encoding-area" } : {};
+  const ariaControls = MESSAGE_COMMANDS.has(type) && grid.hasWorkspace ? { ariaControls: MESSAGE_AREA_ID } : {};
   return { id, cell: { type, options: { label, composition: grid.icons[type], ...ariaControls, ...layout } } };
+}
+
+/**
+ * Keep a palette the size of its grid. `Palette.ts` sizes a palette from its cells, so when no cell
+ * reaches the grid's last column or row, an empty `ContentLabel` is put in the bottom-right slot.
+ * That slot is free, since a cell in it would reach both.
+ * @param {Object} cells - The palette's cells, by id. Changed in place.
+ * @param {string} xml - The grid's `grid.xml`, whose column and row definitions give its size.
+ */
+function fillGridSize (cells, xml) {
+  const columns = xml.match(/<ColumnDefinition\b/g)?.length ?? 0;
+  const rows = xml.match(/<RowDefinition\b/g)?.length ?? 0;
+  const options = Object.values(cells).map(cell => cell.options);
+  const right = Math.max(0, ...options.map(o => o.columnStart + o.columnSpan - 1));
+  const bottom = Math.max(0, ...options.map(o => o.rowStart + o.rowSpan - 1));
+  if (columns > 0 && rows > 0 && (right < columns || bottom < rows)) {
+    cells["grid-size"] = {
+      type: "ContentLabel", options: { label: "", rowStart: rows, rowSpan: 1, columnStart: columns, columnSpan: 1 }
+    };
+  }
 }
 
 function writeJson (file, value) {
@@ -219,17 +257,18 @@ function writeJson (file, value) {
 }
 
 /**
- * Write the palette set for a grid set into `setDir`, replacing whatever is there.
+ * Write the palette set for a grid set into `setDir`, replacing whatever is there. The set is
+ * written beside it first, so a run that fails leaves the earlier import as it was.
  * @param {string} gridsetDir - The unzipped grid set.
  * @param {Object} mapping - The mapping file's contents: picture keys to mapping strings.
  * @param {string} setDir - The palette set folder to write.
  * @returns {string[]} - The report: one line per skipped cell or missing picture.
- * @throws when two grids have the same file slug, or the start grid is missing.
+ * @throws when two grids have the same file slug, the start grid is missing, or a file cannot be read.
  */
 export function importGridset (gridsetDir, mapping, setDir) {
   const settings = fs.readFileSync(path.join(gridsetDir, "Settings0", "settings.xml"), "utf8");
   const startPalette = element(settings, "StartGrid").normalize("NFC");
-  const language = element(settings, "Language") === "sv-SE" ? "sv" : "en";
+  const language = element(settings, "Language").startsWith("sv") ? "sv" : "en";
 
   // macOS can unzip accented folder names decomposed, so grid names are NFC from here on.
   const gridsDir = path.join(gridsetDir, "Grids");
@@ -261,42 +300,60 @@ export function importGridset (gridsetDir, mapping, setDir) {
     }
   }
 
-  // Each named style's background colour, by style name.
-  const stylesXml = fs.readFileSync(path.join(gridsetDir, "Settings0", "Styles", "styles.xml"), "utf8");
+  // Each named style's colours, by style name. A grid set with no styles.xml has none.
+  const stylesFile = path.join(gridsetDir, "Settings0", "Styles", "styles.xml");
+  const stylesXml = fs.existsSync(stylesFile) ? fs.readFileSync(stylesFile, "utf8") : "";
   const styles = new Map([...stylesXml.matchAll(/<Style Key="([^"]*)">([\s\S]*?)<\/Style>/g)]
-    .map(([, name, body]) => [xmlText(name), element(body, "BackColour")]));
+    .map(([, name, body]) => [
+      xmlText(name), { backColour: element(body, "BackColour"), fontColour: element(body, "FontColour") }
+    ]));
 
-  fs.rmSync(setDir, { recursive: true, force: true });
-  fs.mkdirSync(path.join(setDir, "palettes"), { recursive: true });
-  const report = [];
-  const palettes = {};
-  for (const grid of grids) {
-    const cells = {};
-    for (const raw of readCells(fs.readFileSync(path.join(grid.dir, "grid.xml"), "utf8"))) {
-      const result = convertCell(raw, { ...grid, mapping: nfcMapping, gridNames, icons, styles });
-      const where = `${grid.name} (${raw.x}, ${raw.y})`;
-      if (!result) {
-        continue;
+  const outDir = `${setDir}.partial`;
+  fs.rmSync(outDir, { recursive: true, force: true });
+  try {
+    fs.mkdirSync(path.join(outDir, "palettes"), { recursive: true });
+    const report = [];
+    const palettes = {};
+    for (const grid of grids) {
+      const xml = fs.readFileSync(path.join(grid.dir, "grid.xml"), "utf8");
+      const raws = readCells(xml);
+      const hasWorkspace = raws.some(raw => raw.contentType === "Workspace");
+      const cells = {};
+      for (const raw of raws) {
+        const result = convertCell(raw, { ...grid, hasWorkspace, mapping: nfcMapping, gridNames, icons, styles });
+        const where = `${grid.name} (${raw.x}, ${raw.y})`;
+        if (!result) {
+          continue;
+        }
+        if (result.skipped) {
+          report.push(`${where}: skipped, ${result.skipped}`);
+          continue;
+        }
+        if (result.id in cells) {
+          report.push(`${where}: skipped, a second Workspace; a palette has one message area`);
+          continue;
+        }
+        if (result.warning) {
+          report.push(`${where}: ${result.warning}`);
+        }
+        if (result.copy) {
+          const pictures = path.join(outDir, "pictures", grid.slug);
+          fs.mkdirSync(pictures, { recursive: true });
+          fs.copyFileSync(path.join(grid.dir, result.copy), path.join(pictures, result.copy));
+        }
+        cells[result.id] = result.cell;
       }
-      if (result.skipped) {
-        report.push(`${where}: skipped, ${result.skipped}`);
-        continue;
-      }
-      if (result.warning) {
-        report.push(`${where}: ${result.warning}`);
-      }
-      if (result.copy) {
-        const pictures = path.join(setDir, "pictures", grid.slug);
-        fs.mkdirSync(pictures, { recursive: true });
-        fs.copyFileSync(path.join(grid.dir, result.copy), path.join(pictures, result.copy));
-      }
-      cells[result.id] = result.cell;
+      fillGridSize(cells, xml);
+      palettes[grid.name] = `palettes/${grid.slug}.json`;
+      writeJson(path.join(outDir, palettes[grid.name]), { name: grid.name, language, cells });
     }
-    palettes[grid.name] = `palettes/${grid.slug}.json`;
-    writeJson(path.join(setDir, palettes[grid.name]), { name: grid.name, language, cells });
+    writeJson(path.join(outDir, "palette_set.json"), { formatVersion: 1, startPalette, palettes });
+    fs.rmSync(setDir, { recursive: true, force: true });
+    fs.renameSync(outDir, setDir);
+    return report;
+  } finally {
+    fs.rmSync(outDir, { recursive: true, force: true });
   }
-  writeJson(path.join(setDir, "palette_set.json"), { formatVersion: 1, startPalette, palettes });
-  return report;
 }
 
 if (import.meta.main) {

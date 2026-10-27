@@ -17,22 +17,20 @@ import { BlissSymbol } from "../components/BlissSymbol";
 import { changeEncodingContents, adaptivePaletteGlobals } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
 import { goToPalette } from "../core/PaletteNavigation";
-import { backgroundColorStyle, generateGridStyle } from "../utils/GridUtils";
+import { colorStyle, generateGridStyle } from "../utils/GridUtils";
 import { insertWordAtCaret, normalizeComposition } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
 import "./ActionCodeCell.scss";
-// For `.foldedCorner`, the folder look a cell with `branchTo` takes.
-import "./ActionBranchToPaletteCell.scss";
 
 type ActionCodeCellPropsType = {
   id: string,
-  // `branchTo` names a palette to go to after the insert. `backgroundColor` is a CSS colour.
-  options: PictureOrSymbolInfoType & LayoutInfoType & { branchTo?: string, backgroundColor?: string }
+  // `branchTo` names a palette to go to after the insert. `backgroundColor` and `textColor` are CSS colours.
+  options: PictureOrSymbolInfoType & LayoutInfoType & { branchTo?: string, backgroundColor?: string, textColor?: string }
 };
 
 export function ActionCodeCell (props: ActionCodeCellPropsType): VNode {
   const {
-    columnStart, columnSpan, rowStart, rowSpan, label, picture, branchTo, backgroundColor
+    columnStart, columnSpan, rowStart, rowSpan, label, picture, branchTo, backgroundColor, textColor
   } = props.options;
   const composition = props.options.composition === undefined
     ? undefined
@@ -54,16 +52,17 @@ export function ActionCodeCell (props: ActionCodeCellPropsType): VNode {
       }
       : { "label": props.options.label, "picture": picture, "modifierInfo": [] };
     const{ caretPosition, payloads } = changeEncodingContents.value;
-    editMessage(insertWordAtCaret(payload, payloads, caretPosition));
+    const added = editMessage(insertWordAtCaret(payload, payloads, caretPosition));
     announceIfEnabled(props.options.label, props.options.labelLanguage);
-    if (branchTo) {
+    // A held edit stays on this palette, where the sentences the guard asks about are.
+    if (added && branchTo) {
       void goToPalette(branchTo);
     }
   };
 
   return html`
     <button
-      id="${props.id}" class="ActionCodeCell${branchTo ? " foldedCorner" : ""}" style="${gridStyles + backgroundColorStyle(backgroundColor)}"
+      id="${props.id}" class="ActionCodeCell${branchTo ? " foldedCorner" : ""}" style="${gridStyles + colorStyle(backgroundColor, textColor)}"
       onClick=${cellClicked}>
       <${BlissSymbol}
         composition=${composition}

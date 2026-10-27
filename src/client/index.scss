@@ -79,6 +79,44 @@ button {
   }
 }
 
+/* A word or folder cell's Bliss symbol takes the cell's text colour, which `textColor` can set.
+   The symbol builder draws the strokes black on `.bliss-content`, and a CSS rule outranks that. */
+.ActionCodeCell,
+.actionBranchToPaletteCell {
+  .bliss-content {
+    stroke: currentColor;
+  }
+}
+
+/*
+ * The folder look of an `ActionBranchToPaletteCell`, and of an `ActionCodeCell` with `branchTo`:
+ * a "folded corner" at the top-right of the cell, based on "Pure CSS folded-corner effect":
+ * https://nicolasgallagher.com/pure-css-folded-corner-effect/
+ */
+.foldedCorner {
+  position: relative;
+  overflow: hidden;
+
+  :before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-width: 0 1.33rem 1.33rem 0;
+    border-style: solid;
+    border-top-color: lightgray;
+    border-right-color: lightgray;
+    border-bottom-color: black;
+    border-left-color: black;
+    background: #658E15;
+    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+    -moz-box-shadow: 0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+    //  Firefox 3.0 damage limitation
+    display: block; width: 0;
+  }
+}
+
 svg,
 img.cellPicture {
   max-height: 4rem;

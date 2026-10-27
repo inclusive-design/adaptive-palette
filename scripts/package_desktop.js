@@ -196,7 +196,9 @@ function copyRuntime (target, nodeName) {
 }
 
 /**
- * Copy the built app in beside the binary.
+ * Copy the built app in beside the binary. A palette set git does not track, such as one imported
+ * from a user's grid set, holds personal data, so it is left out unless `INCLUDE_SETS` names it:
+ * `INCLUDE_SETS=mySet npm run package:desktop`, for a bundle made for that set's owner.
  * @param {string} target - The directory `dist` goes into.
  * @returns {void}
  */
@@ -205,7 +207,21 @@ function copyDist (target) {
   if (!fs.existsSync(built)) {
     throw new Error("There is no `dist` to package. Run `npm run build` first.");
   }
-  fs.cpSync(built, path.join(target, "dist"), { recursive: true });
+  const tracked = execFileSync("git", ["ls-files", "--", "public/palette-sets"], { cwd: root, encoding: "utf8" })
+    .split("\n").map((file) => file.split("/")[2]);
+  const shipped = new Set([...tracked, ...(process.env.INCLUDE_SETS ?? "").split(",")].filter(Boolean));
+  fs.cpSync(built, path.join(target, "dist"), { recursive: true, filter: (src) => isShipped(src, built, shipped) });
+}
+
+/**
+ * Whether `copyDist()` copies a file or folder of `dist/`: anything but a palette set not in `shipped`.
+ * @param {string} src - A path in `built`.
+ * @param {string} built - The `dist` folder.
+ * @param {Set<string>} shipped - The names of the palette sets to ship.
+ * @returns {boolean}
+ */
+function isShipped (src, built, shipped) {
+  return path.dirname(src) !== path.join(built, "palette-sets") || shipped.has(path.basename(src));
 }
 
 function packageMac () {
@@ -297,4 +313,4 @@ if (import.meta.main) {
   console.log(`Packaged ${path.relative(root, zip)}`);
 }
 
-export { findNonSystemLib };
+export { findNonSystemLib, isShipped };

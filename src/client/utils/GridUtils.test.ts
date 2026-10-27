@@ -10,8 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { vi } from "vitest";
-import { backgroundColorStyle, generateGridStyle } from "./GridUtils";
+import { colorStyle, generateGridStyle } from "./GridUtils";
 
 describe("GridUtils", (): void => {
 
@@ -44,18 +43,10 @@ describe("GridUtils", (): void => {
     expect(generateGridStyle(undefined, 3, 4, undefined)).toBe("grid-column: span 3;grid-row: 4;");
   });
 
-  test("backgroundColorStyle() sets a CSS colour and nothing else", (): void => {
-    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-
-    expect(backgroundColorStyle(undefined)).toBe("");
-    expect(backgroundColorStyle("#E86E9BFF")).toBe("background-color: #E86E9BFF;");
-    expect(errorSpy).not.toHaveBeenCalled();
-
-    // A value that is not a colour could add other properties, such as a picture from another site.
-    expect(backgroundColorStyle("red; background-image: url(https://example.com/x.png)")).toBe("");
-    expect(errorSpy).toHaveBeenCalledTimes(1);
-
-    errorSpy.mockRestore();
+  test("colorStyle() sets the colours given", (): void => {
+    expect(colorStyle()).toBe("");
+    expect(colorStyle("#E86E9BFF")).toBe("background-color: #E86E9BFF;");
+    expect(colorStyle("#E86E9BFF", "white")).toBe("background-color: #E86E9BFF;color: white;");
   });
 
 });

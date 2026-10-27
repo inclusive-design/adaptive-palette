@@ -193,7 +193,16 @@ describe("PaletteStore palette sets and includes", (): void => {
     "/sets/picture_set.json": {
       formatVersion: 1,
       startPalette: "Pictures",
-      palettes: { "Pictures": "palettes/pictures.json" }
+      palettes: { "Pictures": "palettes/pictures.json", "Colours": "palettes/colours.json" }
+    },
+    "/sets/palettes/colours.json": {
+      name: "Colours",
+      cells: {
+        "pink": cell("ActionCodeCell", { label: "pink", backgroundColor: "#E86E9BFF", textColor: "white" }),
+        "extra": cell("ActionCodeCell", {
+          label: "extra", backgroundColor: "red; background-image: url(https://example.com/x.png)", textColor: 5
+        })
+      }
     },
     "/sets/palettes/pictures.json": {
       name: "Pictures",
@@ -273,6 +282,19 @@ describe("PaletteStore palette sets and includes", (): void => {
     expect(loaded?.cells["number"].options).not.toHaveProperty("picture");
     expect(loaded?.cells["back"].options).not.toHaveProperty("picture");
     expect(errorSpy).toHaveBeenCalledTimes(3);
+    errorSpy.mockRestore();
+  });
+
+  test("loading a palette drops a cell colour that is not a CSS colour", async (): Promise<void> => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    await paletteStore.loadPaletteSet("/sets/picture_set.json");
+
+    const loaded = await paletteStore.getNamedPalette("Colours", true);
+
+    expect(loaded?.cells["pink"].options).toMatchObject({ backgroundColor: "#E86E9BFF", textColor: "white" });
+    expect(loaded?.cells["extra"].options).not.toHaveProperty("backgroundColor");
+    expect(loaded?.cells["extra"].options).not.toHaveProperty("textColor");
+    expect(errorSpy).toHaveBeenCalledTimes(2);
     errorSpy.mockRestore();
   });
 });
