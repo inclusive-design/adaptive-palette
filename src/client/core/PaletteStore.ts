@@ -47,8 +47,8 @@ export function isPaletteSetName (value: unknown): value is string {
  */
 export function paletteSetPath (search: string, defaultSet = DEFAULT_PALETTE_SET): string {
   const setName = new URLSearchParams(search).get("set") ?? defaultSet;
-  if (!PALETTE_SET_NAME.test(setName)) {
-    throw new Error(`Invalid palette set name "${setName}"`);
+  if (!isPaletteSetName(setName)) {
+    throw new Error(`Invalid palette set name ${JSON.stringify(setName)}`);
   }
   return `/palette-sets/${setName}/palette_set.json`;
 }
@@ -163,7 +163,7 @@ const COLOR_OPTIONS = ["backgroundColor", "textColor"];
  */
 function dropInvalidColors (palette: JsonPaletteType, filePath: string): void {
   for (const [cellId, cell] of Object.entries(palette.cells)) {
-    const options = cell.options as Record<string, unknown>;
+    const options = (cell.options ?? {}) as Record<string, unknown>;
     for (const name of COLOR_OPTIONS) {
       const value = options[name];
       if (value !== undefined && !(typeof value === "string" && CSS.supports("color", value))) {

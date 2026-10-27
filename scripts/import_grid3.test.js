@@ -16,7 +16,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { afterEach, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { convertCell, importGridset, parseComposition, readCells, slugify } from "./import_grid3.js";
 
 test.each([
@@ -476,6 +476,27 @@ describe("importGridset()", () => {
 
     expect(() => importGridset(gridset, mapping, setDir)).toThrow("ENOENT");
     expect(fs.existsSync(path.join(setDir, "palette_set.json"))).toBe(true);
+    expect(fs.existsSync(`${setDir}.partial`)).toBe(false);
+  });
+
+  test("a failed rename into place puts the earlier import back", () => {
+    const setDir = path.join(tmp, "set");
+    const gridset = writeGridset();
+    importGridset(gridset, mapping, setDir);
+    const renameSync = fs.renameSync;
+    const spy = vi.spyOn(fs, "renameSync").mockImplementation((from, to) => {
+      if (from.endsWith(".partial")) {
+        throw new Error("EBUSY");
+      }
+      renameSync(from, to);
+    });
+    try {
+      expect(() => importGridset(gridset, mapping, setDir)).toThrow("EBUSY");
+    } finally {
+      spy.mockRestore();
+    }
+    expect(fs.existsSync(path.join(setDir, "palette_set.json"))).toBe(true);
+    expect(fs.existsSync(`${setDir}.old`)).toBe(false);
     expect(fs.existsSync(`${setDir}.partial`)).toBe(false);
   });
 

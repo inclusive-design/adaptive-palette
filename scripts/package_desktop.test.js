@@ -1,13 +1,13 @@
 /*
  * Tests `findNonSystemLib`: deciding whether a line of `otool` output names a library that
  * will not exist on someone else's Mac. Also `isShipped`, which leaves personal palette sets out,
- * and `includedSets` and `bundleConfig`, which make a bundle for one user's sets.
+ * and `includedSets`, `bundleConfig` and `zipName`, which make a bundle for one user's sets.
  */
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterAll, expect, test } from "vitest";
-import { bundleConfig, findNonSystemLib, includedSets, isShipped } from "./package_desktop.js";
+import { bundleConfig, findNonSystemLib, includedSets, isShipped, zipName } from "./package_desktop.js";
 
 // Real `otool -L` shape: the first line is the binary's own path, every later line is a
 // library followed by its version information. The trailing newline is deliberate -- it
@@ -100,7 +100,12 @@ test("the bundle opens on the set, in its start palette's language, and keeps th
   expect(config).toEqual({ language: "sv", maxRecalledRecords: 9, paletteSet: "swedish" });
 });
 
-test("a start palette with no language or an unsupported one gives English", () => {
-  expect(bundleConfig({ language: "sv" }, writeSet("unmarked")).language).toBe("en");
-  expect(bundleConfig({ language: "sv" }, writeSet("german", "de")).language).toBe("en");
+test("a start palette with no language or an unsupported one keeps the config's language", () => {
+  expect(bundleConfig({ language: "sv" }, writeSet("unmarked")).language).toBe("sv");
+  expect(bundleConfig({ language: "sv" }, writeSet("german", "de")).language).toBe("sv");
+});
+
+test("a bundle for one user's sets is named after the first", () => {
+  expect(zipName([], "macos")).toBe("AdaptivePalette-macos.zip");
+  expect(zipName(["petterBlissChart", "other"], "windows")).toBe("AdaptivePalette-petterBlissChart-windows.zip");
 });

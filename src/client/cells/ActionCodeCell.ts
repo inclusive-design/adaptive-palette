@@ -12,7 +12,7 @@
 
 import { VNode } from "preact";
 import { html } from "htm/preact";
-import { PictureOrSymbolInfoType, LayoutInfoType, SymbolEncodingType } from "../index.d";
+import { CellColorsType, PictureOrSymbolInfoType, LayoutInfoType, SymbolEncodingType } from "../index.d";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { changeEncodingContents, adaptivePaletteGlobals } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
@@ -24,8 +24,8 @@ import "./ActionCodeCell.scss";
 
 type ActionCodeCellPropsType = {
   id: string,
-  // `branchTo` names a palette to go to after the insert. `backgroundColor` and `textColor` are CSS colours.
-  options: PictureOrSymbolInfoType & LayoutInfoType & { branchTo?: string, backgroundColor?: string, textColor?: string }
+  // `branchTo` names a palette to go to after the insert.
+  options: PictureOrSymbolInfoType & LayoutInfoType & CellColorsType & { branchTo?: string }
 };
 
 export function ActionCodeCell (props: ActionCodeCellPropsType): VNode {
@@ -52,12 +52,10 @@ export function ActionCodeCell (props: ActionCodeCellPropsType): VNode {
       }
       : { "label": props.options.label, "picture": picture, "modifierInfo": [] };
     const{ caretPosition, payloads } = changeEncodingContents.value;
-    const added = editMessage(insertWordAtCaret(payload, payloads, caretPosition));
+    // The jump waits for the insert: a held edit stays on this palette, where the sentences the
+    // guard asks about are, and jumps only if the user lets it through.
+    editMessage(insertWordAtCaret(payload, payloads, caretPosition), branchTo ? () => void goToPalette(branchTo) : undefined);
     announceIfEnabled(props.options.label, props.options.labelLanguage);
-    // A held edit stays on this palette, where the sentences the guard asks about are.
-    if (added && branchTo) {
-      void goToPalette(branchTo);
-    }
   };
 
   return html`
@@ -68,6 +66,7 @@ export function ActionCodeCell (props: ActionCodeCellPropsType): VNode {
         composition=${composition}
         picture=${picture}
         label=${label}
+        color="currentColor"
         isPresentation=true
       />
     </button>

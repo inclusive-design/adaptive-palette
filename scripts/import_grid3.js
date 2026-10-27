@@ -28,8 +28,9 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 // The standard chart's command cells give their symbols to the imported command cells.
 const STANDARD_PALETTES = path.join(root, "public", "palette-sets", "standardBlissChart", "palettes");
 
-// The rule `paletteSetPath()` in `src/client/core/PaletteStore.ts` applies to a set name.
-const SET_NAME = /^[A-Za-z0-9_-]+$/;
+// The rule for a set name. A copy of `PALETTE_SET_NAME` in `src/client/core/PaletteStore.ts`, which
+// the scripts can't import; `package_desktop.js` imports this one.
+export const SET_NAME = /^[A-Za-z0-9_-]+$/;
 
 const ENTITIES = { lt: "<", gt: ">", quot: "\"", apos: "'", amp: "&" };
 
@@ -348,8 +349,22 @@ export function importGridset (gridsetDir, mapping, setDir) {
       writeJson(path.join(outDir, palettes[grid.name]), { name: grid.name, language, cells });
     }
     writeJson(path.join(outDir, "palette_set.json"), { formatVersion: 1, startPalette, palettes });
-    fs.rmSync(setDir, { recursive: true, force: true });
-    fs.renameSync(outDir, setDir);
+    // The earlier import is moved aside, not deleted, so it can be put back if the rename fails,
+    // as it can on Windows while another program has the folder open.
+    const oldDir = `${setDir}.old`;
+    fs.rmSync(oldDir, { recursive: true, force: true });
+    if (fs.existsSync(setDir)) {
+      fs.renameSync(setDir, oldDir);
+    }
+    try {
+      fs.renameSync(outDir, setDir);
+    } catch (error) {
+      if (fs.existsSync(oldDir)) {
+        fs.renameSync(oldDir, setDir);
+      }
+      throw error;
+    }
+    fs.rmSync(oldDir, { recursive: true, force: true });
     return report;
   } finally {
     fs.rmSync(outDir, { recursive: true, force: true });

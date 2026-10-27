@@ -201,7 +201,9 @@ describe("PaletteStore palette sets and includes", (): void => {
         "pink": cell("ActionCodeCell", { label: "pink", backgroundColor: "#E86E9BFF", textColor: "white" }),
         "extra": cell("ActionCodeCell", {
           label: "extra", backgroundColor: "red; background-image: url(https://example.com/x.png)", textColor: 5
-        })
+        }),
+        // A cell with no options has no colours to check.
+        "bare": { type: "ContentLabel" }
       }
     },
     "/sets/palettes/pictures.json": {

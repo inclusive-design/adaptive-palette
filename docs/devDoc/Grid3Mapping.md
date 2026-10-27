@@ -255,8 +255,8 @@ node scripts/import_grid3.js "temp/My grids.gridset" temp/mapping.json myBlissCh
 
 A grid set holds personal data, so git ignores every palette set but `standardBlissChart`, and
 `npm run package:desktop` leaves out the sets git does not track. To package a bundle for the grid set's owner,
-name the set: `INCLUDE_SETS=myBlissChart npm run package:desktop`. The bundle holds only that set
-and opens on it. See [Packaging the Desktop Build](Deployment.md#how-it-is-built).
+name the set: `INCLUDE_SETS=myBlissChart npm run package:desktop`. The bundle holds that set and
+`standardBlissChart`, opens on that set, and is named after it. See [Packaging the Desktop Build](Deployment.md#how-it-is-built).
 
 ### The mapping file
 

@@ -74,7 +74,7 @@ export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType
     <button
       id="${props.id}" class="${className}" style="${gridStyles}"
       data-branchto="${branchTo}" onClick=${cellClicked} aria-disabled=${needsCaretSymbol ? unavailable : undefined}>
-      <${BlissSymbol} composition=${composition} picture=${picture} label=${label} />
+      <${BlissSymbol} composition=${composition} picture=${picture} label=${label} color="currentColor" />
     </button>
   `;
 }

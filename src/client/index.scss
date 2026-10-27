@@ -79,15 +79,6 @@ button {
   }
 }
 
-/* A word or folder cell's Bliss symbol takes the cell's text colour, which `textColor` can set.
-   The symbol builder draws the strokes black on `.bliss-content`, and a CSS rule outranks that. */
-.ActionCodeCell,
-.actionBranchToPaletteCell {
-  .bliss-content {
-    stroke: currentColor;
-  }
-}
-
 /*
  * The folder look of an `ActionBranchToPaletteCell`, and of an `ActionCodeCell` with `branchTo`:
  * a "folded corner" at the top-right of the cell, based on "Pure CSS folded-corner effect":
