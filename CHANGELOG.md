@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.4.0](https://github.com/inclusive-design/adaptive-palette/compare/v0.3.0...v0.4.0) (2026-10-29)
+
+
+### Features
+
+* Address issues discovered when importing Grid 3 gridsets (resolves [#288](https://github.com/inclusive-design/adaptive-palette/issues/288)) ([#289](https://github.com/inclusive-design/adaptive-palette/issues/289)) ([b13372c](https://github.com/inclusive-design/adaptive-palette/commit/b13372c16af6032d7a0159bda5b005479b3dc760))
+* support composing new Bliss words (resolves [#293](https://github.com/inclusive-design/adaptive-palette/issues/293)) ([#294](https://github.com/inclusive-design/adaptive-palette/issues/294)) ([dce48fa](https://github.com/inclusive-design/adaptive-palette/commit/dce48fa1feba37839ce112576fc4df2f616f7e03))
+
+
+### Bug Fixes
+
+* consistent command buttons, symbols and labels grow with cell sizes (resolves [#281](https://github.com/inclusive-design/adaptive-palette/issues/281)) ([#282](https://github.com/inclusive-design/adaptive-palette/issues/282)) ([f3c780e](https://github.com/inclusive-design/adaptive-palette/commit/f3c780eb4f248e62ae238af372d4856b81af15ee))
+
 ## [0.3.0](https://github.com/inclusive-design/adaptive-palette/compare/v0.2.1...v0.3.0) (2026-10-22)
 
 ### Features
