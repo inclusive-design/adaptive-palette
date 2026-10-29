@@ -17,10 +17,9 @@ import {
   adaptivePaletteGlobals, changeEncodingContents, finishedMessageSignal, settingsSavedCount
 } from "../../state/GlobalData";
 import { messageText } from "../../core/MessageLog";
-import { editMessage } from "../../core/MessageEdit";
+import { insertWord } from "../../core/MessageEdit";
 import { AiBadge, aiSuggestionLabel } from "../../components/AiBadge";
 import { BlissSymbol } from "../../components/BlissSymbol";
-import { insertWordAtCaret } from "../../utils/SymbolEncodingUtils";
 import { announceIfEnabled } from "../../utils/SpeechUtils";
 import { isModelTierActive, predictNext } from "./WordPredictionUtils";
 import { messageUpToCaret, queryContextKeyOf, modelWordsSignal } from "./WordPredictionState";
@@ -92,9 +91,8 @@ export function PredictedWords (props: PredictedWordsPropsType): VNode | null {
   const suggestions = [...historySuggestions, ...modelSuggestions];
 
   const chooseWord = (suggestion: SymbolEncodingType): void => {
-    const { payloads: currentPayloads, caretPosition: currentCaret } = changeEncodingContents.value;
     // A fresh copy each time.
-    editMessage(insertWordAtCaret(structuredClone(suggestion), currentPayloads, currentCaret));
+    insertWord(structuredClone(suggestion));
     announceIfEnabled(suggestion.label);
   };
 

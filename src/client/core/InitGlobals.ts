@@ -24,8 +24,8 @@
  * feature's own module scope would fire on any import of the module, including from tests that
  * import it directly and need to decide for themselves whether a guard is in play.
  *
- * It also installs the storage backend and reads the saved messages and About Me facts in.  The backend is installed
- * here, not at module scope, so a test can put its own in place instead.
+ * It also installs the storage backend and reads the saved messages, About Me facts and the saved words in.  The
+ * backend is installed here, not at module scope, so a test can put its own in place instead.
  */
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { loadConfig } from "./Config";
@@ -42,6 +42,7 @@ import { DATABASE_NAME, IndexedDbStorage } from "./IndexedDbStorage";
 import { MemoryStorage } from "./MemoryStorage";
 import { AdaptivePaletteStorage, setStorage } from "./StorageBackend";
 import { hydrateMessageLog } from "./MessageLog";
+import { hydrateSavedWords } from "./SavedWords";
 import { hydrateAboutMe } from "../features/about-me/AboutMeState";
 import { languageSignal, startLanguage } from "../i18n/I18n";
 
@@ -129,5 +130,5 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
   languageSignal.value = startLanguage(window.location.search, adaptivePaletteGlobals.config.language);
 
   // After the settings, because how much of the log is read back is one of them.
-  await Promise.all([hydrateMessageLog(), hydrateAboutMe()]);
+  await Promise.all([hydrateMessageLog(), hydrateAboutMe(), hydrateSavedWords()]);
 }

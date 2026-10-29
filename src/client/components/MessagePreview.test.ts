@@ -13,7 +13,7 @@
 import { render, screen, cleanup } from "@testing-library/preact";
 import { html } from "htm/preact";
 
-import { changeEncodingContents } from "../state/GlobalData";
+import { changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
 import { MessagePreview } from "./MessagePreview";
 import { en } from "../i18n/en";
 
@@ -22,6 +22,18 @@ describe("MessagePreview", () => {
   afterEach(() => {
     cleanup();
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+    wordBuildSignal.value = null;
+  });
+
+  test("while a word is built, shows the message around the new word", () => {
+    wordBuildSignal.value = {
+      message: { payloads: [{ label: "dog", composition: 12380 }], caretPosition: 0 }, combine: false
+    };
+    changeEncodingContents.value = { payloads: [{ label: "water", composition: 15068 }], caretPosition: 0 };
+    const { container } = render(html`<${MessagePreview} />`);
+
+    expect(screen.getByText("dog")).toBeInTheDocument();
+    expect(container.querySelector(".newWord")?.textContent).toContain("water");
   });
 
   test("shows the symbols currently in the message", () => {

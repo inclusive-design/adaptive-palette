@@ -27,6 +27,7 @@ await initAdaptivePaletteGlobals("mainPaletteDisplayArea");
 
 import { CurrentPalette } from "./components/CurrentPalette";
 import { DiscardEditDialog } from "./features/telegraphic-translation/DiscardEditDialog";
+import { NameWordDialog } from "./features/compose-word/NameWordDialog";
 import { SymbolEntryToolbar } from "./components/SymbolEntryToolbar";
 import { MessageAttributesBar } from "./features/message-attributes/MessageAttributesBar";
 import { FirstRunSetup } from "./features/setup/FirstRunSetup";
@@ -54,9 +55,9 @@ effect(() => {
 navigationStack.currentPalette = startPalette;
 render(html`<${CurrentPalette} />`, getRequiredElement("mainPaletteDisplayArea"));
 
-// Asks before an edit throws sentence work away. Mounted outside the palettes, so it is there on
-// every screen.
-render(html`<${DiscardEditDialog} />`, getRequiredElement("pageDialogs"));
+// Asks before an edit throws sentence work away, and names a word built with Compose new word. Mounted
+// outside the palettes, so both are there on every screen.
+render(html`<${DiscardEditDialog} /><${NameWordDialog} />`, getRequiredElement("pageDialogs"));
 
 // First-run setup. It draws nothing when Ollama is running with the configured models. It is
 // not mounted away from this computer, where Ollama cannot be installed.

@@ -10,8 +10,9 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { changeEncodingContents } from "../state/GlobalData";
-import { editMessage, setEditGuard } from "./MessageEdit";
+import { changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
+import { editMessage, insertWord, setEditGuard } from "./MessageEdit";
+import { SPACE_PART } from "../utils/SymbolEncodingUtils";
 import type { ContentSignalDataType } from "../index.d";
 
 describe("editMessage()", (): void => {
@@ -154,5 +155,32 @@ describe("editMessage()", (): void => {
     });
     editMessage(contents("me"));
     expect(asked).toEqual(["second"]);
+  });
+});
+
+describe("insertWord()", (): void => {
+
+  const cat = { label: "cat", composition: 126, modifierInfo: [] };
+  const colour = { label: "colour", composition: 1161, modifierInfo: [] };
+
+  beforeEach((): void => {
+    setEditGuard(null);
+    changeEncodingContents.value = { payloads: [cat], caretPosition: 0 };
+  });
+
+  afterEach((): void => {
+    wordBuildSignal.value = null;
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+  });
+
+  test("Inserts after the caret with no space while no combine marker is on", (): void => {
+    insertWord(colour);
+    expect(changeEncodingContents.value).toEqual({ payloads: [cat, colour], caretPosition: 1 });
+  });
+
+  test("Inserts a space before the word inside the combine markers", (): void => {
+    wordBuildSignal.value = { message: { payloads: [], caretPosition: -1 }, combine: true };
+    insertWord(colour);
+    expect(changeEncodingContents.value).toEqual({ payloads: [cat, SPACE_PART, colour], caretPosition: 2 });
   });
 });

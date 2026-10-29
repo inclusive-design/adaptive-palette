@@ -24,7 +24,7 @@
  * dependency graph and no cycle is formed with `MessageLog.ts`.
  */
 import type { MessageRecordType } from "./MessageLog";
-import type { AboutMeType } from "../index.d";
+import type { AboutMeType, SavedWordType } from "../index.d";
 
 // A message as it exists in storage: the record plus the identity storage gave it.
 export type StoredMessage = MessageRecordType & { id: number };
@@ -59,6 +59,12 @@ export interface AdaptivePaletteStorage {
 
   /** Replace the message with that id, storing it when nothing is under that id yet. */
   updateMessage (id: number, record: MessageRecordType): Promise<void>;
+
+  /** The words saved to palettes, oldest first. Empty when none has been saved. */
+  readSavedWords (): Promise<SavedWordType[]>;
+
+  /** Store one more saved word. */
+  addSavedWord (word: SavedWordType): Promise<void>;
 
   /** Discard everything the app has stored. */
   clearAll (): Promise<void>;

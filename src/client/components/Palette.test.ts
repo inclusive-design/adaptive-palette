@@ -17,7 +17,7 @@ import { html } from "htm/preact";
 import { JsonPaletteType } from "../index.d";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { setTestConfig } from "../testUtils/TestConfig";
-import { adaptivePaletteGlobals } from "../state/GlobalData";
+import { adaptivePaletteGlobals, wordBuildSignal } from "../state/GlobalData";
 import { languageSignal } from "../i18n/I18n";
 import { mockedAnnounceIfEnabled } from "../testUtils/SpeechUtilsMock";
 import { Palette } from "./Palette";
@@ -143,6 +143,25 @@ describe("Palette", (): void => {
 
     afterEach((): void => {
       adaptivePaletteGlobals.models = [];
+      wordBuildSignal.value = null;
+    });
+
+    test("flagged `buildingWord: true` is shown only while a word is being built", async (): Promise<void> => {
+      const { container } = render(html`<${Palette} json=${paletteFlagging({ buildingWord: true })}/>`);
+      await screen.findByText("Last Cell");
+      expect(screen.queryByText("Feature Cell")).toBeNull();
+      expect(gridColumns(container)).toBe("minmax(0px, 1fr) 0fr minmax(0px, 1fr)");
+
+      wordBuildSignal.value = { message: { payloads: [], caretPosition: -1 }, combine: false };
+
+      expect(await screen.findByText("Feature Cell")).toBeInTheDocument();
+    });
+
+    test("flagged `buildingWord: false` is left out while a word is being built", async (): Promise<void> => {
+      wordBuildSignal.value = { message: { payloads: [], caretPosition: -1 }, combine: false };
+      render(html`<${Palette} json=${paletteFlagging({ buildingWord: false })}/>`);
+      await screen.findByText("Last Cell");
+      expect(screen.queryByText("Feature Cell")).toBeNull();
     });
 
     test("flagged `requiresModel` is left out with no model, and its column collapses", async (): Promise<void> => {

@@ -12,7 +12,7 @@
 
 import {
   applyModifiersToLabel, insertWordAtCaret, removeModifierFromLabel, normalizeComposition, replaceAtCaret,
-  caretComposition
+  caretComposition, deleteAtCaret, COMMA_ID, SPACE_PART
 } from "./SymbolEncodingUtils";
 
 // A minimal symbol payload; only the label distinguishes one from another in these tests.
@@ -145,5 +145,54 @@ describe("caretComposition()", (): void => {
   test("is undefined before the first symbol, and on a picture", (): void => {
     expect(caretComposition({ payloads: [symbol("a")], caretPosition: -1 })).toBeUndefined();
     expect(caretComposition({ payloads: [{ label: "bread", picture: "/bread.jpg" }], caretPosition: 0 })).toBeUndefined();
+  });
+});
+
+const comma = { label: ",", composition: COMMA_ID, modifierInfo: [] };
+
+describe("insertWordAtCaret() with spaced words", (): void => {
+
+  test("A word gets a space between it and the word before it", (): void => {
+    expect(insertWordAtCaret(symbol("colour"), [symbol("cat")], 0, true)).toEqual({
+      payloads: [symbol("cat"), SPACE_PART, symbol("colour")],
+      caretPosition: 2
+    });
+  });
+
+  test("A word gets no space at the front, after a space or after a comma", (): void => {
+    expect(insertWordAtCaret(symbol("cat"), [], -1, true).payloads).toEqual([symbol("cat")]);
+    expect(insertWordAtCaret(symbol("night"), [symbol("cat"), SPACE_PART], 1, true).payloads)
+      .toEqual([symbol("cat"), SPACE_PART, symbol("night")]);
+    expect(insertWordAtCaret(symbol("drink"), [symbol("food"), comma], 1, true).payloads)
+      .toEqual([symbol("food"), comma, symbol("drink")]);
+  });
+
+  test("A comma or a space gets no space before it", (): void => {
+    expect(insertWordAtCaret(comma, [symbol("food")], 0, true).payloads).toEqual([symbol("food"), comma]);
+    expect(insertWordAtCaret(SPACE_PART, [symbol("food")], 0, true).payloads)
+      .toEqual([symbol("food"), SPACE_PART]);
+  });
+});
+
+describe("deleteAtCaret()", (): void => {
+
+  test("Deletes the symbol at the caret and moves the caret back", (): void => {
+    expect(deleteAtCaret([symbol("me"), symbol("hungry")], 1))
+      .toEqual({ payloads: [symbol("me")], caretPosition: 0 });
+  });
+
+  test("A word takes the space before it with it", (): void => {
+    expect(deleteAtCaret([symbol("cat"), SPACE_PART, symbol("tail")], 2))
+      .toEqual({ payloads: [symbol("cat")], caretPosition: 0 });
+  });
+
+  test("A space goes alone", (): void => {
+    expect(deleteAtCaret([symbol("cat"), SPACE_PART, symbol("tail")], 1))
+      .toEqual({ payloads: [symbol("cat"), symbol("tail")], caretPosition: 0 });
+  });
+
+  test("Nothing changes with the caret before the first symbol", (): void => {
+    const symbolSet = [symbol("me")];
+    expect(deleteAtCaret(symbolSet, -1)).toEqual({ payloads: symbolSet, caretPosition: -1 });
   });
 });

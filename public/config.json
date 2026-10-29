@@ -43,6 +43,17 @@
       "sv": "Meddelanden, äldst först:\n{{messages}}\nRedan känt: {{facts}}\nAvvisat, föreslå inte igen: {{dismissed}}"
     }
   },
+  "wordNaming": {
+    "model": "gemma4:12b",
+    "systemPrompt": {
+      "en": "You name new words for someone using a Bliss-symbol AAC device. A new Bliss word is built from existing words, and its meaning comes from its parts read in order.\n\nGiven the parts, suggest {{numNames}} short English names for the new word, most likely first.\n\nExample: parts \"woman + giving + knowledge\" -> female teacher\n\nRules:\n- One name per line.\n- Each name is one to three everyday words, lowercase.\n- No numbering, no punctuation, no explanation, no preamble.",
+      "sv": "Du namnger nya ord åt någon som använder ett AAC-hjälpmedel med blissymboler. Ett nytt blissord byggs av befintliga ord, och dess betydelse kommer från delarna lästa i ordning.\n\nGivet delarna, föreslå {{numNames}} korta svenska namn på det nya ordet, det mest troliga först.\n\nExempel: delarna \"kvinna + givande + kunskap\" -> lärarinna\n\nRegler:\n- Ett namn per rad.\n- Varje namn är ett till tre vardagliga ord, med små bokstäver.\n- Ingen numrering, inga skiljetecken, inga förklaringar, ingen inledning."
+    },
+    "userPrompt": {
+      "en": "Parts, in order: {{parts}}",
+      "sv": "Delar, i ordning: {{parts}}"
+    }
+  },
   "symbolSearch": {
     "show": true
   },

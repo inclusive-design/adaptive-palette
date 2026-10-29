@@ -14,7 +14,8 @@ import { screen } from "@testing-library/preact";
 import { ContentEncoding, clamp } from "./ContentEncoding";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { renderCell, testPicture } from "../testUtils/CellTestUtils";
-import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
+import { SPACE_PART } from "../utils/SymbolEncodingUtils";
 import { en } from "../i18n/en";
 
 test("The content encoding area is rendered correctly", async (): Promise<void> => {
@@ -173,5 +174,45 @@ describe("a picture word", (): void => {
     pictures.forEach((img) => expect(img.getAttribute("src")).toBe(testPicture()));
     expect(inputArea.querySelector("svg")).toBe(null);
     expect(inputArea.textContent).toBe("breadbread");
+  });
+});
+
+describe("a word being built", (): void => {
+
+  const cellOptions = { columnStart: 1, columnSpan: 5, rowStart: 1, rowSpan: 1 };
+  const word = (label: string, composition: number) => ({ label, composition, modifierInfo: [] });
+  // A symbol's label is the last element in it.
+  const labelOf = (element: Element): string | null | undefined => element.lastElementChild?.textContent;
+
+  beforeAll(async (): Promise<void> => {
+    await initAdaptivePaletteGlobals();
+  });
+
+  afterEach((): void => {
+    wordBuildSignal.value = null;
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+  });
+
+  test("is drawn in a box where the caret was, with the message around it", async (): Promise<void> => {
+    wordBuildSignal.value = { message: { payloads: [word("I", 1840), word("see", 2340)], caretPosition: 0 }, combine: true };
+    changeEncodingContents.value = { payloads: [word("cat", 126), SPACE_PART, word("colour", 1161)], caretPosition: 2 };
+    renderCell(ContentEncoding, "content-encoding-area", cellOptions);
+
+    const area = await screen.findByRole("textbox");
+    const box = area.querySelector(".newWord") as HTMLElement;
+    expect([...area.children].map((child) => child === box ? "box" : labelOf(child))).toEqual(["I", "box", "see"]);
+    expect(box.querySelectorAll(".combineMarker")).toHaveLength(2);
+    expect(box.querySelector(".wordSpace")?.textContent).toBe(en.wordSpace);
+    expect(area.querySelectorAll(".cursorCaret")).toHaveLength(1);
+    expect(labelOf(box.querySelector(".cursorCaret") as Element)).toBe("colour");
+  });
+
+  test("an empty word shows the caret alone, and no markers while the marker is off", async (): Promise<void> => {
+    wordBuildSignal.value = { message: { payloads: [], caretPosition: -1 }, combine: false };
+    renderCell(ContentEncoding, "content-encoding-area", cellOptions);
+
+    const box = (await screen.findByRole("textbox")).querySelector(".newWord") as HTMLElement;
+    expect(box.querySelector(".insertionCaret")).not.toBeNull();
+    expect(box.querySelector(".combineMarker")).toBeNull();
   });
 });

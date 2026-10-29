@@ -11,9 +11,15 @@
  */
 
 
+import { vi } from "vitest";
+import { fireEvent, screen } from "@testing-library/preact";
+import { changeEncodingContents } from "../state/GlobalData";
+import { SPACE_PART } from "../utils/SymbolEncodingUtils";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { CommandDelLastEncoding } from "./CommandDelLastEncoding";
+
+vi.mock("../utils/SpeechUtils");
 
 describe("CommandDelLastEncoding", (): void => {
 
@@ -32,6 +38,23 @@ describe("CommandDelLastEncoding", (): void => {
 
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
+  });
+
+  afterEach((): void => {
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+  });
+
+  test("deleting a word deletes the space before it", async (): Promise<void> => {
+    const cat = { label: "cat", composition: 126 };
+    changeEncodingContents.value = {
+      payloads: [cat, SPACE_PART, { label: "tail", composition: 640 }],
+      caretPosition: 2
+    };
+    renderCell(CommandDelLastEncoding, TEST_CELL_ID, testCell.options);
+
+    fireEvent.click(await screen.findByRole("button", { name: "Delete" }));
+
+    expect(changeEncodingContents.value).toEqual({ payloads: [cat], caretPosition: 0 });
   });
 
   test("renders at its grid position", async (): Promise<void> => {

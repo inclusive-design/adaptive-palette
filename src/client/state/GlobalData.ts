@@ -15,7 +15,7 @@
  */
 import { signal } from "@preact/signals";
 import { makeDefaultConfig } from "../core/Config";
-import type { ContentSignalDataType, BlissSymbolEntry } from "../index.d";
+import type { ContentSignalDataType, BlissSymbolEntry, WordBuildType } from "../index.d";
 
 // NOTE: this import causes a warning serving the application using the `vite`
 // server.  The warning suggests to *not* use the `public` folder but to use
@@ -70,6 +70,13 @@ export const changeEncodingContents = signal<ContentSignalDataType>({
   payloads: [],
   caretPosition: -1,
 });
+
+/**
+ * The word being built with Compose new word, or `null` when none is. While a word is built,
+ * `changeEncodingContents` holds its parts, so the commands that edit the message edit the word.
+ * Written only by `features/compose-word/`.
+ */
+export const wordBuildSignal = signal<WordBuildType | null>(null);
 
 /**
  * The message the user has finished composing (when `Speak` or `Make Sentence`

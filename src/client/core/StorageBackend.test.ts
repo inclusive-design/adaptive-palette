@@ -24,6 +24,8 @@ describe("storage backend registry", (): void => {
     readMessagesAfter: () => Promise.resolve([]),
     addMessage: (record) => Promise.resolve({ ...record, id: 1 }),
     updateMessage: (): Promise<void> => Promise.resolve(),
+    readSavedWords: () => Promise.resolve([]),
+    addSavedWord: (): Promise<void> => Promise.resolve(),
     clearAll: (): Promise<void> => Promise.resolve(),
     destroy: (): Promise<void> => Promise.resolve()
   });

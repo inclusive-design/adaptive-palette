@@ -26,13 +26,14 @@
  */
 import { AdaptivePaletteStorage, StoredMessage } from "./StorageBackend";
 import { MessageRecordType } from "./MessageLog";
-import type { AboutMeType } from "../index.d";
+import type { AboutMeType, SavedWordType } from "../index.d";
 
 export class MemoryStorage implements AdaptivePaletteStorage {
 
   private messages: StoredMessage[] = [];
   private settings: Record<string, unknown> = {};
   private aboutMe: AboutMeType = { facts: [], dismissed: [], pending: [] };
+  private savedWords: SavedWordType[] = [];
   private nextId = 1;
 
   open (): Promise<void> {
@@ -86,8 +87,18 @@ export class MemoryStorage implements AdaptivePaletteStorage {
     return Promise.resolve();
   }
 
+  readSavedWords (): Promise<SavedWordType[]> {
+    return Promise.resolve(structuredClone(this.savedWords));
+  }
+
+  addSavedWord (word: SavedWordType): Promise<void> {
+    this.savedWords.push(structuredClone(word));
+    return Promise.resolve();
+  }
+
   clearAll (): Promise<void> {
     this.messages = [];
+    this.savedWords = [];
     this.settings = {};
     this.aboutMe = { facts: [], dismissed: [], pending: [] };
     this.nextId = 1;
@@ -96,6 +107,7 @@ export class MemoryStorage implements AdaptivePaletteStorage {
 
   destroy (): Promise<void> {
     this.messages = [];
+    this.savedWords = [];
     this.settings = {};
     this.aboutMe = { facts: [], dismissed: [], pending: [] };
     this.nextId = 1;

@@ -62,6 +62,9 @@ export const sv: Record<keyof typeof en, string> = {
 
   // Input area
   inputArea: "Inmatningsområde",
+  newWordTag: "Nytt ord",
+  wordSpace: "mellanslag",
+  combineMarker: "kombinationsmarkör",
   cursorBackward: "bakåt",
   cursorForward: "framåt",
   cursorStart: "markören till början",
@@ -185,6 +188,20 @@ export const sv: Record<keyof typeof en, string> = {
   discardTitle: "Ändra meddelandet?",
   discardChangeAnyway: "Ändra ändå",
   discardKeep: "Behåll meningarna",
+
+  // Naming a new word
+  wordNameTitle: "Namnge ordet",
+  wordChooseName: "Välj ett namn",
+  wordDefaultTag: "(standard)",
+  wordNameField: "Eller skriv ett eget",
+  wordNamePlaceholder: "Skriv ett namn",
+  wordNameUse: "Använd namnet",
+  wordSuggesting: "⏳ Ber AI-modellen om namn…",
+  wordSuggestFailed: "Inga namn kunde föreslås.",
+  wordUseDefault: "Använd standardnamnet och stäng",
+  wordBack: "Tillbaka till ordet",
+  wordMatchTitle: "Det här är {{label}}",
+  wordMatchUse: "Använd {{label}}",
 
   // Message attributes
   attributeIntent: "Avsikt",

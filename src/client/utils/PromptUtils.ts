@@ -14,6 +14,15 @@ import type { Language } from "../i18n/I18n";
 import type { PromptType } from "../index.d";
 
 /**
+ * One line of a model's reply, trimmed and without a list marker: "1.", "2)", "-", "*" or "•".
+ * @param {string} line - The line.
+ * @returns {string}
+ */
+export function replyLine (line: string): string {
+  return line.trim().replace(/^(?:\d+[.)]|[-*•])\s*/, "").trim();
+}
+
+/**
  * Substitute `{{name}}` placeholders in a prompt template. Placeholders with no matching
  * value are left in place.
  * @param {string} template - The template text.

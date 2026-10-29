@@ -12,7 +12,7 @@
 import { vi } from "vitest";
 import { screen, fireEvent } from "@testing-library/preact";
 
-import { changeEncodingContents } from "../state/GlobalData";
+import { changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
@@ -75,6 +75,10 @@ describe("ActionRemoveIndicatorCell", (): void => {
     await initAdaptivePaletteGlobals();
   });
 
+  afterEach((): void => {
+    wordBuildSignal.value = null;
+  });
+
   test("is unavailable while the input area is empty", async (): Promise<void> => {
 
     renderCell(ActionRemoveIndicatorCell, TEST_CELL_ID, testCell.options);
@@ -113,6 +117,22 @@ describe("ActionRemoveIndicatorCell", (): void => {
 
     const button = await screen.findByRole("button", { name: testCell.options.label });
     expect(button).toHaveAttribute("aria-disabled", "true");
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+  });
+
+  test("is unavailable while a word is being built, and a click leaves the input untouched", async (): Promise<void> => {
+    changeEncodingContents.value = { payloads: [blissWordWithIndicator], caretPosition: 0 };
+    wordBuildSignal.value = { message: { payloads: [], caretPosition: -1 }, combine: false };
+    const before = JSON.stringify(changeEncodingContents.value);
+
+    renderCell(ActionRemoveIndicatorCell, TEST_CELL_ID, testCell.options);
+
+    const button = await screen.findByRole("button", { name: testCell.options.label });
+    expect(button).toHaveAttribute("aria-disabled", "true");
+    fireEvent.click(button);
+
+    expect(JSON.stringify(changeEncodingContents.value)).toBe(before);
+    expect(mockedSpeakUnavailable).toHaveBeenCalledWith(testCell.options.label);
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
   });
 

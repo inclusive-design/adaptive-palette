@@ -15,7 +15,7 @@
  * fact is added to About Me only after the user accepts it in the About Me dialog.
  */
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
-import { renderTemplate, renderPromptLines, promptsFor } from "../../utils/PromptUtils";
+import { renderTemplate, renderPromptLines, promptsFor, replyLine } from "../../utils/PromptUtils";
 import { queryChat } from "../../core/OllamaApi";
 import { isMessageRecord, recordMessageText } from "../../core/MessageLog";
 import { getStorage, StoredMessage } from "../../core/StorageBackend";
@@ -37,7 +37,7 @@ import { languageSignal, t } from "../../i18n/I18n";
 export function parseFactSuggestions (content: string): FactSuggestionType[] {
   const suggestions: FactSuggestionType[] = [];
   for (const rawLine of content.split("\n")) {
-    const line = rawLine.trim().replace(/^(?:\d+[.)]|[-*•])\s*/, "").trim();
+    const line = replyLine(rawLine);
     const colon = line.indexOf(":");
     const text = line.slice(colon + 1).trim();
     if (colon <= 0 || text.length === 0) {

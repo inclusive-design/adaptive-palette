@@ -11,7 +11,7 @@
  */
 
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
-import { renderTemplate, renderPromptLines, promptsFor } from "../../utils/PromptUtils";
+import { renderTemplate, renderPromptLines, promptsFor, replyLine } from "../../utils/PromptUtils";
 import { queryChat } from "../../core/OllamaApi";
 import { attributesPromptText } from "../message-attributes/MessageAttributesState";
 import { aboutMePromptText } from "../about-me/AboutMeState";
@@ -35,9 +35,6 @@ const WORD_TAG_INDICATORS: Record<string, number> = {
   imperative: IMPERATIVE_INDICATOR_ID,
   plural: PLURAL_INDICATOR_ID
 };
-
-// A list number or bullet at the start of a reply line.
-const LIST_MARKER = /^(?:\d+[.)]|[-*•])\s*/;
 
 /**
  * Choose the model to query: the configured one when Ollama reports it as available,
@@ -69,7 +66,7 @@ function sentenceLine (line: string): string | undefined {
   if (trimmed.startsWith(">")) {
     return undefined;
   }
-  const sentence = trimmed.replace(LIST_MARKER, "").trim();
+  const sentence = replyLine(trimmed);
   return sentence.length > 0 && !sentence.endsWith(":") ? sentence : undefined;
 }
 

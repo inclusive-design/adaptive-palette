@@ -465,8 +465,30 @@ describe("loadConfig with the shipped config.json", (): void => {
       expect(promptsFor(config.telegraphicTranslation, language)).toBeDefined();
       expect(promptsFor(config.wordPrediction, language)).toBeDefined();
       expect(promptsFor(config.aboutMe, language)).toBeDefined();
+      expect(promptsFor(config.wordNaming, language)).toBeDefined();
       expect(promptsFor(config.indicatorLabelLookup, language)).toBeDefined();
     }
+  });
+});
+
+describe("loadConfig wordNaming section", (): void => {
+
+  const WORD_NAMING_SECTION = {
+    model: "phony-model:12b",
+    systemPrompt: "Name the word.",
+    userPrompt: "Parts: {{parts}}"
+  };
+
+  test("a valid section is loaded as given", async (): Promise<void> => {
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, wordNaming: WORD_NAMING_SECTION });
+    expect((await loadConfig()).wordNaming).toEqual(WORD_NAMING_SECTION);
+  });
+
+  test("a missing section, or one with an empty prompt, leaves name suggestions off", async (): Promise<void> => {
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
+    expect((await loadConfig()).wordNaming).toBeUndefined();
+    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, wordNaming: { ...WORD_NAMING_SECTION, userPrompt: " " } });
+    expect((await loadConfig()).wordNaming).toBeUndefined();
   });
 });
 

@@ -21,8 +21,9 @@
  * This lives in `core/` rather than in the feature that vetoes edits, so that no cell imports
  * a feature.
  */
-import { changeEncodingContents } from "../state/GlobalData";
-import type { ContentSignalDataType } from "../index.d";
+import { changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
+import { insertWordAtCaret } from "../utils/SymbolEncodingUtils";
+import type { ContentSignalDataType, SymbolEncodingType } from "../index.d";
 
 /**
  * Decides whether an edit may be published. Returning `true` holds it: the guard has taken
@@ -88,4 +89,17 @@ export function editMessage (next: ContentSignalDataType, afterApply?: () => voi
   changeEncodingContents.value = next;
   afterApply?.();
   return true;
+}
+
+/**
+ * Add a word after the caret, with a space before it inside a new word's combine markers. Every
+ * cell that adds a word adds it this way.
+ * @param {SymbolEncodingType} word - The word to add.
+ * @param {Function} afterApply     - Optional. As for `editMessage()`.
+ * @returns {boolean} - As for `editMessage()`.
+ */
+export function insertWord (word: SymbolEncodingType, afterApply?: () => void): boolean {
+  const { payloads, caretPosition } = changeEncodingContents.value;
+  const spaced = wordBuildSignal.value?.combine ?? false;
+  return editMessage(insertWordAtCaret(word, payloads, caretPosition, spaced), afterApply);
 }

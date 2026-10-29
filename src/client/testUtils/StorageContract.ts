@@ -16,7 +16,7 @@
  */
 import { AdaptivePaletteStorage } from "../core/StorageBackend";
 import { MessageRecordType } from "../core/MessageLog";
-import type { AboutMeType } from "../index.d";
+import type { AboutMeType, SavedWordType } from "../index.d";
 
 /**
  * Run the shared behaviour suite against one backend.
@@ -49,6 +49,10 @@ export function runStorageContractTests (
       learntUpTo: { id: 7, timestamp: "2026-09-24T15:15:00.000Z" }
     };
     const EMPTY_ABOUT_ME: AboutMeType = { facts: [], dismissed: [], pending: [] };
+    const savedWord = (label: string): SavedWordType => ({
+      id: `saved-word-${label}`, paletteSet: "/palette-sets/standardBlissChart/", palette: "man_woman",
+      label, composition: [710, "/", 949, "/", 412]
+    });
 
     beforeEach(async (): Promise<void> => {
       storage = await makeStorage();
@@ -176,22 +180,35 @@ export function runStorageContractTests (
       expect(labelsOf(await storage.readMessages(10))).toEqual(["one", "two"]);
     });
 
+    test("saved words read as empty before any is added", async (): Promise<void> => {
+      expect(await storage.readSavedWords()).toEqual([]);
+    });
+
+    test("saved words read back in the order they were added", async (): Promise<void> => {
+      await storage.addSavedWord(savedWord("female teacher"));
+      await storage.addSavedWord(savedWord("panther"));
+      expect(await storage.readSavedWords()).toEqual([savedWord("female teacher"), savedWord("panther")]);
+    });
+
     test("clearAll empties every store", async (): Promise<void> => {
       await storage.addMessage(record("juice"));
       await storage.writeSettings({ "maxRecalledRecords": 12 });
       await storage.writeAboutMe(ABOUT_ME);
+      await storage.addSavedWord(savedWord("panther"));
 
       await storage.clearAll();
 
       expect(await storage.readMessages(10)).toEqual([]);
       expect(await storage.readSettings()).toEqual({});
       expect(await storage.readAboutMe()).toEqual(EMPTY_ABOUT_ME);
+      expect(await storage.readSavedWords()).toEqual([]);
     });
 
     test("destroy leaves a store with nothing in it", async (): Promise<void> => {
       await storage.writeSettings({ "maxRecalledRecords": 12 });
       await storage.addMessage(record("hello"));
       await storage.writeAboutMe(ABOUT_ME);
+      await storage.addSavedWord(savedWord("panther"));
 
       await storage.destroy();
       await storage.open();
@@ -199,6 +216,7 @@ export function runStorageContractTests (
       expect(await storage.readSettings()).toEqual({});
       expect(await storage.readMessages(10)).toEqual([]);
       expect(await storage.readAboutMe()).toEqual(EMPTY_ABOUT_ME);
+      expect(await storage.readSavedWords()).toEqual([]);
     });
   });
 }
