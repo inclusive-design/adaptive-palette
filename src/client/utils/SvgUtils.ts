@@ -24,6 +24,9 @@ const indicatorIds = {
   list: [902, 903, 928, 992, 6436, 6439]  // bciAvId 24665, 28043, 24807, 25458, 16436, 16439
 };
 
+// Indicators that carry meaning rather than grammar, kept on the parts of a word (§7.0).
+export const SEMANTIC_INDICATORS = [97, 6436]; // thing, abstract
+
 // Lists of modifier symbols
 // Note: These may be relevant to strategies since there is some overlap, e.g.,
 // Semantic and Grammatical strategies.
@@ -188,6 +191,28 @@ export function findIndicators (id: SymbolCompositionType): number[] {
     });
   }
   return positions;
+}
+
+/**
+ * The positions of a word's own indicators, the ones a new indicator replaces: those on its
+ * classifier, or else its grammatical ones. A thing or abstract indicator off the classifier
+ * belongs to a word the whole is made of, as in a new word, and stays.
+ * @param {SymbolCompositionType} composition - The word's composition.
+ * @return {number[]} - The positions, or an empty array when the indicator goes on the classifier.
+ */
+export function findWordIndicators (composition: SymbolCompositionType): number[] {
+  const positions = findIndicators(composition);
+  if (!Array.isArray(composition)) {
+    return positions;
+  }
+  const onClassifier: number[] = [];
+  for (let index = findClassifierFromLeft(composition) + 1;
+    (composition[index] === ";" || composition[index] === ";;") && positions.includes(index + 1); index += 2) {
+    onClassifier.push(index + 1);
+  }
+  return onClassifier.length > 0
+    ? onClassifier
+    : positions.filter((position) => !SEMANTIC_INDICATORS.includes(composition[position] as number));
 }
 
 /*

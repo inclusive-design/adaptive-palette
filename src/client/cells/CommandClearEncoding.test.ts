@@ -38,6 +38,10 @@ describe("CommandClearEncoding", (): void => {
     await initAdaptivePaletteGlobals();
   });
 
+  afterEach((): void => {
+    wordBuildSignal.value = null;
+  });
+
   test("renders at its grid position", async (): Promise<void> => {
 
     renderCell(CommandClearEncoding, TEST_CELL_ID, testCell.options);
@@ -81,7 +85,6 @@ describe("CommandClearEncoding", (): void => {
 
     expect(changeEncodingContents.value).toEqual({ payloads: [], caretPosition: -1 });
     expect(wordBuildSignal.value?.message).toBe(message);
-    wordBuildSignal.value = null;
   });
 
 });

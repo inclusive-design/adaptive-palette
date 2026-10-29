@@ -54,8 +54,9 @@ export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType
     unavailableWhileBuildingWord, backgroundColor, textColor
   } = props.options;
 
-  // Marked unavailable rather than `disabled` so the button keeps its place in the tab
-  // order for switch and eye-gaze users.
+  // A cell that can be unavailable is a command. Marked unavailable rather than `disabled` so
+  // the button keeps its place in the tab order for switch and eye-gaze users.
+  const isCommand = !!needsCaretSymbol || !!unavailableWhileBuildingWord;
   const unavailable = (!!needsCaretSymbol && caretComposition(changeEncodingContents.value) === undefined) ||
     (!!unavailableWhileBuildingWord && wordBuildSignal.value !== null);
 
@@ -69,12 +70,12 @@ export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType
     if (unavailable) { speakUnavailable(label); return; }
     void navigateToPalette(event, labelLanguage);
   };
-  const className = `actionBranchToPaletteCell foldedCorner${needsCaretSymbol ? " btn-command" : ""}`;
+  const className = `actionBranchToPaletteCell foldedCorner${isCommand ? " btn-command" : ""}`;
 
   return html`
     <button
       id="${props.id}" class="${className}" style="${gridStyles}"
-      data-branchto="${branchTo}" onClick=${cellClicked} aria-disabled=${needsCaretSymbol || unavailableWhileBuildingWord ? unavailable : undefined}>
+      data-branchto="${branchTo}" onClick=${cellClicked} aria-disabled=${isCommand ? unavailable : undefined}>
       <${BlissSymbol} composition=${composition} picture=${picture} label=${label} color="currentColor" />
     </button>
   `;

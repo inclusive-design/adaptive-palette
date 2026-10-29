@@ -10,8 +10,8 @@ Build a Bliss word that is not in the vocabulary, name it, use it in a message, 
    undo modifier.
 4. Select **Done** to name the word, or **Cancel** to drop it.
 
-While a word is being built, "add indicator" is unavailable. Add an indicator to the finished word instead:
-it goes on the word's classifier. Speak and Make Sentences come back after Done or Cancel.
+While a word is being built, "add indicator" and "remove indicator" are unavailable. Add an indicator to the
+finished word instead: it goes on the word's classifier. Speak and Make Sentences come back after Done or Cancel.
 
 ## The building controls
 
@@ -38,7 +38,8 @@ In the finished word, a space is a full space. The characters inside a word stay
 ## Name the word
 
 After Done, the dialog offers the parts' names joined, marked "(default)", for example "woman giving
-knowledge". Select it, or "Use default name and close", to use it. A helper can type another name and
+knowledge". Select it, or "Use default name and close", to use it. Pictures add no name, and when no
+part has a name, no default is offered. A helper can type another name and
 select "Use this name". On the desktop version, the dialog also asks the AI model for names as it
 opens, showing "Asking the AI model for names…" and a placeholder for each name until they arrive.
 They are marked as AI suggestions.
@@ -54,7 +55,7 @@ indicators stay.
 Go to the palette the word belongs on, put the caret on the word and select **Save new word**. The word
 is added at the end of the palette, in a new row when the palette is full.
 A word can be saved only until a modifier or indicator is added to it in the message; after that it is
-an ordinary edited word.
+an ordinary edited word. Once saved to a palette, it cannot be saved to that palette again.
 
 On the desktop version, saved words are kept on this computer. On the public website, they are gone
 after a reload. "Clear all saved data" removes them.

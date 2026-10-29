@@ -22,11 +22,11 @@ import type { SymbolCompositionType, SymbolEncodingType } from "../../index.d";
 import { adaptivePaletteGlobals, changeEncodingContents, wordBuildSignal } from "../../state/GlobalData";
 import { editMessage, insertWord } from "../../core/MessageEdit";
 import { PaletteStore } from "../../core/PaletteStore";
-import { saveWord } from "../../core/SavedWords";
+import { isWordSaved, saveWord } from "../../core/SavedWords";
 import { glossFor } from "../../utils/SvgUtils";
-import { COMMA_ID, SPACE_PART, insertWordAtCaret, isWordPart } from "../../utils/SymbolEncodingUtils";
+import { COMMA_ID, SPACE_PART, insertWordAtCaret } from "../../utils/SymbolEncodingUtils";
 import { languageSignal } from "../../i18n/I18n";
-import { defaultName, findExistingWord, firstGloss, splitPart, wordComposition } from "./ComposeWordUtils";
+import { defaultName, findExistingWord, firstGloss, isSymbolWord, splitPart, wordComposition } from "./ComposeWordUtils";
 
 /**
  * What the dialog after Done shows. `match` is set when the word is already in the vocabulary.
@@ -168,7 +168,7 @@ export function requestFinish (): void {
   wordDialogSignal.value = {
     composition,
     offeredName: defaultName(parts),
-    partLabels: parts.filter(isWordPart).map((part) => part.label),
+    partLabels: parts.filter(isSymbolWord).map((part) => part.label),
     ...(entry && {
       match: {
         id: entry.id,
@@ -188,14 +188,14 @@ export function closeWordDialog (): void {
 }
 
 /**
- * Name the new word and put it in the message.
+ * Name the new word and put it in the message. An empty name is refused.
  * @param {string} name - The name.
  * @param {boolean} isAiLabel - Whether a model suggested the name.
  * @returns {void}
  */
 export function chooseName (name: string, isAiLabel = false): void {
   const dialog = wordDialogSignal.peek();
-  if (dialog) {
+  if (dialog && name.trim() !== "") {
     finishBuilding({
       label: name, composition: dialog.composition, modifierInfo: [], isComposedWord: true,
       ...(isAiLabel && { isAiLabel })
@@ -217,12 +217,32 @@ export function chooseMatch (): void {
 }
 
 /**
- * Whether the word at the caret was built with Compose new word, so it can be saved. Reads `.value`.
+ * Where Save new word would save the word at the caret, or `undefined` when it cannot: the word
+ * was not built with Compose new word, the palette on screen is not in the set, or the word is
+ * saved to it already. Reads `.value`, so a cell that calls it while drawing draws again when
+ * any of these change.
+ * @returns {Parameters<typeof saveWord> | undefined} - The arguments for `saveWord()`.
+ */
+function saveTarget (): Parameters<typeof saveWord> | undefined {
+  const { payloads, caretPosition } = changeEncodingContents.value;
+  const word = payloads[caretPosition];
+  const palette = adaptivePaletteGlobals.navigationStack.currentPalette;
+  // A palette is stored under its name in the set, which may differ from its `name`.
+  const paletteName = Object.keys(PaletteStore.paletteMap).find((name) => PaletteStore.paletteMap[name] === palette);
+  const paletteSet = PaletteStore.setFolder;
+  if (!word?.isComposedWord || word.composition === undefined || !palette || !paletteName || !paletteSet ||
+    isWordSaved(paletteName, paletteSet, word.label, word.composition)) {
+    return undefined;
+  }
+  return [palette, paletteName, paletteSet, word.label, word.composition];
+}
+
+/**
+ * Whether Save new word can save the word at the caret. Reads `.value`, as above.
  * @returns {boolean}
  */
 export function canSaveAtCaret (): boolean {
-  const { payloads, caretPosition } = changeEncodingContents.value;
-  return !!payloads[caretPosition]?.isComposedWord;
+  return saveTarget() !== undefined;
 }
 
 /**
@@ -230,13 +250,8 @@ export function canSaveAtCaret (): boolean {
  * @returns {void}
  */
 export function saveWordAtCaret (): void {
-  const { payloads, caretPosition } = changeEncodingContents.peek();
-  const word = payloads[caretPosition];
-  const palette = adaptivePaletteGlobals.navigationStack.currentPalette;
-  // A palette is stored under its name in the set, which may differ from its `name`.
-  const paletteName = Object.keys(PaletteStore.paletteMap).find((name) => PaletteStore.paletteMap[name] === palette);
-  const paletteSet = PaletteStore.setFolder;
-  if (word?.isComposedWord && word.composition !== undefined && palette && paletteName && paletteSet) {
-    saveWord(palette, paletteName, paletteSet, word.label, word.composition);
+  const target = saveTarget();
+  if (target) {
+    saveWord(...target);
   }
 }

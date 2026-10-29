@@ -117,8 +117,6 @@ export class IndexedDbStorage implements AdaptivePaletteStorage {
           return;
         }
         this.database = request.result;
-        // Close for a later version, so this tab never blocks a future upgrade.
-        this.database.onversionchange = (): void => this.database?.close();
         resolve();
       };
       request.onerror = (): void => reject(requestError(request));

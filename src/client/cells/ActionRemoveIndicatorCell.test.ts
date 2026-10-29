@@ -75,6 +75,10 @@ describe("ActionRemoveIndicatorCell", (): void => {
     await initAdaptivePaletteGlobals();
   });
 
+  afterEach((): void => {
+    wordBuildSignal.value = null;
+  });
+
   test("is unavailable while the input area is empty", async (): Promise<void> => {
 
     renderCell(ActionRemoveIndicatorCell, TEST_CELL_ID, testCell.options);
@@ -129,7 +133,6 @@ describe("ActionRemoveIndicatorCell", (): void => {
 
     expect(JSON.stringify(changeEncodingContents.value)).toBe(before);
     expect(mockedSpeakUnavailable).toHaveBeenCalledWith(testCell.options.label);
-    wordBuildSignal.value = null;
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
   });
 

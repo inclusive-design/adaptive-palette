@@ -121,8 +121,7 @@
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 6,
-        "columnSpan": 1,
-        "buildingWord": false
+        "columnSpan": 1
       }
     },
     "command-modifiers": {

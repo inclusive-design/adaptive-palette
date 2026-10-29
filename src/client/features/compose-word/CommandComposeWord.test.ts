@@ -11,7 +11,8 @@
  */
 
 import { vi } from "vitest";
-import { fireEvent, screen, waitFor } from "@testing-library/preact";
+import { fireEvent, render, screen, waitFor } from "@testing-library/preact";
+import { html } from "htm/preact";
 import type { JsonPaletteType } from "../../index.d";
 import { initAdaptivePaletteGlobals } from "../../core/InitGlobals";
 import { insertWord } from "../../core/MessageEdit";
@@ -20,6 +21,8 @@ import { MemoryStorage } from "../../core/MemoryStorage";
 import { setStorage } from "../../core/StorageBackend";
 import { adaptivePaletteGlobals, changeEncodingContents, wordBuildSignal } from "../../state/GlobalData";
 import { renderCell } from "../../testUtils/CellTestUtils";
+import { Palette } from "../../components/Palette";
+import { INPUT_AREA_ID } from "../../cells/ContentEncoding";
 import { mockedSpeakUnavailable } from "../../testUtils/SpeechUtilsMock";
 import { CommandComposeWord, type ComposeActionType } from "./CommandComposeWord";
 import { startBuilding, wordDialogSignal } from "./ComposeWordState";
@@ -34,9 +37,13 @@ describe("CommandComposeWord", (): void => {
     });
   };
   const cat = { label: "cat", composition: 126, modifierInfo: [] };
+  let setFolder: string | undefined;
+  let currentPalette: JsonPaletteType | null;
 
   beforeAll(async (): Promise<void> => {
     await initAdaptivePaletteGlobals();
+    setFolder = PaletteStore.setFolder;
+    currentPalette = adaptivePaletteGlobals.navigationStack.currentPalette;
   });
 
   beforeEach((): void => {
@@ -45,10 +52,30 @@ describe("CommandComposeWord", (): void => {
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
   });
 
+  afterEach((): void => {
+    wordBuildSignal.value = null;
+    delete PaletteStore.paletteMap["Saving"];
+    PaletteStore.setFolder = setFolder;
+    adaptivePaletteGlobals.navigationStack.currentPalette = currentPalette;
+  });
+
   test("Compose new word starts a word", async (): Promise<void> => {
     renderAction("new", "Compose new word");
     fireEvent.click(await screen.findByRole("button", { name: "Compose new word" }));
     expect(wordBuildSignal.value).not.toBeNull();
+  });
+
+  test("Compose new word, taken away as the word starts, leaves the focus on the input area", async (): Promise<void> => {
+    const options = { label: "Compose new word", action: "new", buildingWord: false, rowStart: 1, rowSpan: 1, columnStart: 1, columnSpan: 1 };
+    const bar: JsonPaletteType = { name: "Bar", cells: { "compose-new": { type: "CommandComposeWord", options } } };
+    render(html`<div id=${INPUT_AREA_ID} tabindex="0"></div><${Palette} json=${bar} />`);
+    const button = await screen.findByRole("button", { name: "Compose new word" });
+    button.focus();
+
+    fireEvent.click(button);
+
+    await waitFor(() => expect(screen.queryByRole("button", { name: "Compose new word" })).toBeNull());
+    expect(document.activeElement?.id).toBe(INPUT_AREA_ID);
   });
 
   test("Space is available without the combine marker", async (): Promise<void> => {
@@ -130,11 +157,14 @@ describe("CommandComposeWord", (): void => {
       caretPosition: 0
     };
     renderAction("save", "Save new word");
+    const button = await screen.findByRole("button", { name: "Save new word" });
 
-    fireEvent.click(await screen.findByRole("button", { name: "Save new word" }));
+    fireEvent.click(button);
 
     expect(Object.values(palette.cells).map((one) => (one.options as { label: string }).label))
       .toEqual(["first", "female teacher"]);
+    // Saved once, it cannot be saved there again.
+    await waitFor(() => expect(button).toHaveAttribute("aria-disabled", "true"));
   });
 
   test("Save new word is unavailable on a word not built with Compose new word", async (): Promise<void> => {

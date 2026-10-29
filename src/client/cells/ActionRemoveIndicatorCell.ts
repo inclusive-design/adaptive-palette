@@ -19,7 +19,7 @@ import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { applyModifiersToLabel, caretComposition, replaceAtCaret } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
-import { findIndicators } from "../utils/SvgUtils";
+import { findWordIndicators } from "../utils/SvgUtils";
 
 type ActionIndicatorCodeCellPropsType = {
   id: string,
@@ -35,7 +35,7 @@ type ActionIndicatorCodeCellPropsType = {
  */
 function caretSymbolIndicatorPosition (symbols: ContentSignalDataType): number {
   const composition = caretComposition(symbols);
-  const indicatorPositions = composition === undefined ? [] : findIndicators(composition);
+  const indicatorPositions = composition === undefined ? [] : findWordIndicators(composition);
   return ( indicatorPositions.length === 0 ? -1 : indicatorPositions[0]);
 }
 

@@ -91,8 +91,9 @@ describe("defaultName()", (): void => {
     expect(defaultName([part("woman, female", 710), giving, knowledge])).toBe("woman giving knowledge");
   });
 
-  test("leaves out spaces and commas", (): void => {
-    expect(defaultName([cat, SPACE_PART, colour, comma, night])).toBe("cat colour night");
+  test("leaves out spaces, commas and pictures", (): void => {
+    const bread = { label: "bread", picture: "bread.png", modifierInfo: [] };
+    expect(defaultName([bread, cat, SPACE_PART, colour, comma, night])).toBe("cat colour night");
   });
 });
 

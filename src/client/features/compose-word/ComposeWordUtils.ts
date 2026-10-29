@@ -11,19 +11,15 @@
  */
 /**
  * The pure side of building a word: its composition, breaking a part into characters, the name
- * offered for it, and whether it is already in the vocabulary. See
- * `docs/design/design_compose.md`.
+ * offered for it, and whether it is already in the vocabulary. See `docs/ComposeWords.md`.
  */
 import type { BlissSymbolEntry, SymbolCompositionType, SymbolEncodingType } from "../../index.d";
 import type { Language } from "../../i18n/I18n";
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
-import { COMBINE_MARKER_ID, glossFor, isIndicator } from "../../utils/SvgUtils";
+import { COMBINE_MARKER_ID, SEMANTIC_INDICATORS, glossFor, isIndicator } from "../../utils/SvgUtils";
 import { isWordPart, normalizeComposition } from "../../utils/SymbolEncodingUtils";
 
 type TokenType = string | number;
-
-// Indicators that carry meaning rather than grammar, kept on the parts of a word (§7.0).
-const SEMANTIC_INDICATORS = [97, 6436]; // thing, abstract
 
 // A kerning code moves one character against the next. It carries no meaning.
 const KERNING = /^[AR]K:/;
@@ -35,6 +31,16 @@ const isOverlay = (token: TokenType | undefined): boolean => token === ";" || to
 
 const isGrammaticalIndicator = (token: TokenType | undefined): boolean =>
   typeof token === "number" && isIndicator(token) && !SEMANTIC_INDICATORS.includes(token);
+
+/**
+ * Whether a part is one of the words the built word is made of: a word with a symbol, not a
+ * picture, a space or a comma.
+ * @param {SymbolEncodingType} part - The part.
+ * @returns {boolean}
+ */
+export function isSymbolWord (part: SymbolEncodingType): boolean {
+  return isWordPart(part) && part.composition !== undefined;
+}
 
 /**
  * The first of a gloss's comma-separated meanings: "woman, female" gives "woman".
@@ -132,12 +138,12 @@ export function splitPart (part: SymbolEncodingType, language: Language): Symbol
 
 /**
  * The name offered for a new word: its words' labels in order, each cut to its first meaning.
- * Spaces and commas add nothing.
+ * Spaces, commas and pictures add nothing.
  * @param {SymbolEncodingType[]} parts - The word's parts.
  * @returns {string}
  */
 export function defaultName (parts: SymbolEncodingType[]): string {
-  return parts.filter(isWordPart).map((part) => firstGloss(part.label)).filter(Boolean).join(" ");
+  return parts.filter(isSymbolWord).map((part) => firstGloss(part.label)).filter(Boolean).join(" ");
 }
 
 /**

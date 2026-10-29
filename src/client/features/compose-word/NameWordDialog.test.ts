@@ -58,6 +58,14 @@ describe("NameWordDialog", (): void => {
     expect(wordBuildSignal.value).toBeNull();
   });
 
+  test("with no name to offer, offers no default and the name field takes the focus", async (): Promise<void> => {
+    buildWord([word("", 710), word("", 949)]);
+    const field = await screen.findByLabelText(en.wordNameField);
+    await waitFor(() => expect(field).toHaveFocus());
+    expect(screen.queryByRole("button", { name: en.wordUseDefault })).toBeNull();
+    expect(screen.queryByText(en.wordDefaultTag)).toBeNull();
+  });
+
   test("a typed name is used instead", async (): Promise<void> => {
     buildWord([word("woman", 710), word("giving", 949), word("knowledge", 412)]);
     // Real input: user-event's simulated click can beat showModal()'s initial focus in WebKit.
@@ -115,6 +123,18 @@ describe("NameWordDialog", (): void => {
       expect(await screen.findByRole("button", { name: "AI suggestion, female teacher" })).toBeInTheDocument();
       expect(document.querySelectorAll(".namePlaceholder")).toHaveLength(0);
       expect(screen.queryByText(en.wordSuggesting)).toBeNull();
+    });
+
+    test("closing the dialog stops the request", async (): Promise<void> => {
+      vi.mocked(queryChat).mockReturnValue(new Promise(() => {}) as never);
+      buildWord([word("woman", 710), word("giving", 949)]);
+      await screen.findByText(en.wordSuggesting);
+      const abortSignal = vi.mocked(queryChat).mock.calls[0][4] as AbortSignal;
+      expect(abortSignal.aborted).toBe(false);
+
+      await userEvent.click(screen.getByRole("button", { name: en.wordBack }));
+
+      await waitFor(() => expect(abortSignal.aborted).toBe(true));
     });
 
     test("does not ask for names for a word already in the vocabulary", async (): Promise<void> => {

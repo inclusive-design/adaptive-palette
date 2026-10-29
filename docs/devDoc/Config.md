@@ -194,11 +194,12 @@ to ask.
 
 ## `wordNaming`
 
-Configures "Suggest names" in the dialog that names a new word. Without the section, the button is
-hidden and the word is named by hand or with the parts' names.
+Configures the names a model offers in the dialog that names a new word, asked for as the dialog
+opens. Without the section, no names are asked for, and the word is named by hand or with the
+parts' names.
 
-The button is also hidden away from `localhost`, and when Ollama has no model installed, whatever
-this section says, since there is no model to ask.
+No names are asked for away from `localhost`, or when Ollama has no model installed, whatever this
+section says, since there is no model to ask.
 
 | Field | Type | Description |
 | ----- | ---- | ----------- |

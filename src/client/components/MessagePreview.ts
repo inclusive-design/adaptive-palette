@@ -14,8 +14,7 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { useId } from "preact/hooks";
 
-import { changeEncodingContents } from "../state/GlobalData";
-import { generateMarkupArray } from "../cells/ContentEncoding";
+import { messageMarkup } from "../cells/ContentEncoding";
 import { t } from "../i18n/I18n";
 import "./MessagePreview.scss";
 
@@ -35,7 +34,6 @@ import "./MessagePreview.scss";
  * @returns {VNode}
  */
 export function MessagePreview (): VNode {
-  const { payloads, caretPosition } = changeEncodingContents.value;
   const labelId = useId();
 
   return html`
@@ -45,7 +43,7 @@ export function MessagePreview (): VNode {
         class="contentEncodingArea messagePreviewArea"
         role="group"
         aria-labelledby=${labelId}>
-        ${generateMarkupArray(payloads, caretPosition)}
+        ${messageMarkup()}
       </div>
     </div>
   `;

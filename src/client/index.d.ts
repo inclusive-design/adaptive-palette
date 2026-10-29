@@ -196,7 +196,7 @@ export type AboutMeConfigType = {
   messagesPerRun: number
 };
 
-// "Suggest names" in the dialog that names a new word.
+// The names a model offers in the dialog that names a new word.
 export type WordNamingConfigType = {
   model: string,
   systemPrompt: PromptType,

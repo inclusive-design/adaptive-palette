@@ -62,6 +62,7 @@ describe("ActionIndicatorCell", (): void => {
   afterEach((): void => {
     setEditGuard(null);
     languageSignal.value = "en";
+    wordBuildSignal.value = null;
   });
 
   test("is unavailable while the input area is empty", async (): Promise<void> => {
@@ -600,7 +601,6 @@ describe("ActionIndicatorCell", (): void => {
 
     expect(JSON.stringify(changeEncodingContents.value)).toBe(before);
     expect(mockedSpeakUnavailable).toHaveBeenCalledWith(testCell.options.label);
-    wordBuildSignal.value = null;
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
   });
 

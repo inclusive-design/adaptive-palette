@@ -59,7 +59,6 @@ const NO_CARET = -2;
  * - if the caret position is -1, and there are symbols in the array, add a
  *   special caret markup to indicate insertion is possible before the first
  *   symbol.
- * This is the shared rendering primitive behind both `ContentEncoding` and `MessagePreview`.
  * @param {ContentSignalDataType} symbols: Array of symbols and caret position.
  * @return {Array<VNode>} - Array of markup for the symbols
  */
@@ -110,6 +109,26 @@ function newWordMarkup (parts: SymbolEncodingType[], caretPos: number, combine: 
       ${marker()}${partsMarkup}${marker()}
     </div>
   `;
+}
+
+/**
+ * The message as the input area draws it, with its caret. While a word is built, the input area
+ * holds its parts, and the message is drawn around them, with the word where it will go: after
+ * the message's caret. Shared by `ContentEncoding` and `MessagePreview`.
+ * @return {Array<VNode>}
+ */
+export function messageMarkup (): Array<VNode> {
+  const { payloads, caretPosition } = changeEncodingContents.value;
+  const build = wordBuildSignal.value;
+  if (!build) {
+    return generateMarkupArray(payloads, caretPosition);
+  }
+  const splitAt = build.message.caretPosition + 1;
+  return [
+    ...generateMarkupArray(build.message.payloads.slice(0, splitAt), NO_CARET),
+    newWordMarkup(payloads, caretPosition, build.combine),
+    ...generateMarkupArray(build.message.payloads.slice(splitAt), NO_CARET)
+  ];
 }
 
 function moveCursor (positionChange: number = 1) {
@@ -179,18 +198,6 @@ export function ContentEncoding (props: ContentEncodingProps): VNode {
   const { columnStart, columnSpan, rowStart, rowSpan } = options;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
-  const { payloads, caretPosition } = changeEncodingContents.value;
-  const build = wordBuildSignal.value;
-  // While a word is built, the input area holds its parts. The message is drawn around them,
-  // with the word where it will go: after the message's caret.
-  const splitAt = build ? build.message.caretPosition + 1 : 0;
-  const contentsMarkupArray = build
-    ? [
-      ...generateMarkupArray(build.message.payloads.slice(0, splitAt), NO_CARET),
-      newWordMarkup(payloads, caretPosition, build.combine),
-      ...generateMarkupArray(build.message.payloads.slice(splitAt), NO_CARET)
-    ]
-    : generateMarkupArray(payloads, caretPosition);
 
   return html`
     <div
@@ -202,7 +209,7 @@ export function ContentEncoding (props: ContentEncodingProps): VNode {
       style="${gridStyles}"
       tabindex="0"
       onKeyDown=${handleKeyDown}>
-      ${contentsMarkupArray}
+      ${messageMarkup()}
     </div>
   `;
 }

@@ -21,7 +21,7 @@ import { generateGridStyle } from "../utils/GridUtils";
 import { applyModifiersToLabel, caretComposition, replaceAtCaret } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { t } from "../i18n/I18n";
-import { findIndicators, findClassifierFromLeft } from "../utils/SvgUtils";
+import { findWordIndicators, findClassifierFromLeft } from "../utils/SvgUtils";
 import { getStaticNewLabel, getNewLabelViaModelQuery } from "../utils/IndicatorLabelsUtils";
 import "./ActionIndicatorCell.scss";
 
@@ -52,9 +52,9 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
     let newComposition = caretSymbolComposition;
     if (Array.isArray(newComposition)) {
       newComposition = [...newComposition];
-      const indicatorPositions = findIndicators(newComposition);
+      const indicatorPositions = findWordIndicators(newComposition);
       const classifierIndex = findClassifierFromLeft(newComposition);
-      // If there are no indicators on the symbol, then place the indicator
+      // If the word has no indicator of its own, then place the indicator
       // above the first symbol that is not a modifier.  Otherwise, replace the
       // current indicator with the new one at the same position.
       // 1. `classifierIndex` is the index of the classifier in the array,

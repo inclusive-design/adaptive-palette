@@ -39,6 +39,10 @@ describe("ActionBranchToPaletteCell", (): void => {
     await initAdaptivePaletteGlobals();
   });
 
+  afterEach((): void => {
+    wordBuildSignal.value = null;
+  });
+
   test("renders at its grid position", async (): Promise<void> => {
 
     renderCell(ActionBranchToPaletteCell, TEST_CELL_ID, goToPaletteCell.options);
@@ -120,13 +124,15 @@ describe("ActionBranchToPaletteCell", (): void => {
     changeEncodingContents.value = { payloads: [{ label: "cat", composition: 126 }], caretPosition: 0 };
     wordBuildSignal.value = { message: { payloads: [], caretPosition: -1 }, combine: false };
     renderCell(ActionBranchToPaletteCell, "command-indicators", {
-      label: "add indicator", composition: 81, branchTo: "indicators", needsCaretSymbol: true,
+      label: "add indicator", composition: 81, branchTo: "indicators",
       unavailableWhileBuildingWord: true, rowStart: 1, rowSpan: 1, columnStart: 1, columnSpan: 1
     });
 
-    expect(await screen.findByRole("button", { name: "add indicator" })).toHaveAttribute("aria-disabled", "true");
+    const button = await screen.findByRole("button", { name: "add indicator" });
+    expect(button).toHaveAttribute("aria-disabled", "true");
+    // A command, so it greys out.
+    expect(button).toHaveClass("btn-command");
 
-    wordBuildSignal.value = null;
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
   });
 

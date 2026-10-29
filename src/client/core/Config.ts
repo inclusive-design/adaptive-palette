@@ -155,13 +155,14 @@ function parseTelegraphicTranslation (section: unknown): TelegraphicTranslationC
 }
 
 /**
- * Validate the `wordNaming` section, which configures "Suggest names" in the dialog that names a
- * new word. Both prompts are required because there are no hardcoded fallback prompts. A missing
- * or malformed section returns `undefined`, which hides the button.
+ * Validate a section that asks a model with prompts of its own: `wordNaming`, which configures
+ * the names the model offers in the dialog that names a new word, and the base of `aboutMe`.
+ * Both prompts are required because there are no hardcoded fallback prompts. A missing or
+ * malformed section returns `undefined`, which turns the feature off.
  * @param {unknown} section - The raw parsed section.
  * @returns {WordNamingConfigType | undefined}
  */
-function parseWordNaming (section: unknown): WordNamingConfigType | undefined {
+function parseModelPrompts (section: unknown): WordNamingConfigType | undefined {
   const candidate = section as { model?: unknown, systemPrompt?: unknown, userPrompt?: unknown } | undefined;
   if (!candidate) {
     return undefined;
@@ -176,28 +177,19 @@ function parseWordNaming (section: unknown): WordNamingConfigType | undefined {
 
 /**
  * Validate the `aboutMe` section, which configures "Suggest updates" in the About Me
- * dialog. Both prompts are required because there are no hardcoded fallback prompts. A
- * missing or malformed section returns `undefined`, which hides the button. A bad
+ * dialog. A missing or malformed section returns `undefined`, which hides the button. A bad
  * `messagesPerRun` falls back to the default and keeps the rest of the section.
  * @param {unknown} section - The raw parsed section.
  * @returns {AboutMeConfigType | undefined}
  */
 function parseAboutMe (section: unknown): AboutMeConfigType | undefined {
-  const candidate = section as {
-    model?: unknown, systemPrompt?: unknown, userPrompt?: unknown, messagesPerRun?: unknown
-  } | undefined;
-  if (!candidate) {
+  const base = parseModelPrompts(section);
+  if (!base) {
     return undefined;
   }
-  const { model, systemPrompt, userPrompt, messagesPerRun } = candidate;
-  // An empty `model` is valid and means the first model Ollama reports.
-  if (typeof model !== "string" || !isPrompt(systemPrompt) || !isPrompt(userPrompt)) {
-    return undefined;
-  }
+  const { messagesPerRun } = section as { messagesPerRun?: unknown };
   return {
-    model,
-    systemPrompt: systemPrompt,
-    userPrompt: userPrompt,
+    ...base,
     messagesPerRun: isPositiveInteger(messagesPerRun) ? messagesPerRun as number : DEFAULT_MESSAGES_PER_RUN
   };
 }
@@ -322,7 +314,7 @@ export async function loadConfig (): Promise<AdaptivePaletteConfigType> {
       indicatorLabelLookup: indicatorLabelLookup ?? makeDefaultConfig().indicatorLabelLookup,
       telegraphicTranslation: parseTelegraphicTranslation(parsed?.telegraphicTranslation),
       aboutMe: parseAboutMe(parsed?.aboutMe),
-      wordNaming: parseWordNaming(parsed?.wordNaming),
+      wordNaming: parseModelPrompts(parsed?.wordNaming),
       symbolSearch: parseShowFlag(parsed?.symbolSearch, true),
       svgBuilderString: parseShowFlag(parsed?.svgBuilderString, false),
       wordPrediction: parseWordPrediction(parsed?.wordPrediction)

@@ -14,7 +14,7 @@ import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { readMessageLog } from "../../core/MessageLog";
 import { resolveWordPayload } from "../../utils/GlossLookupUtils";
 import { normalizeComposition } from "../../utils/SymbolEncodingUtils";
-import { renderTemplate, renderPromptLines, promptsFor } from "../../utils/PromptUtils";
+import { renderTemplate, renderPromptLines, promptsFor, replyLine } from "../../utils/PromptUtils";
 import { pickModel } from "../telegraphic-translation/TelegraphicTranslationUtils";
 import { queryChat } from "../../core/OllamaApi";
 import { attributesPromptText } from "../message-attributes/MessageAttributesState";
@@ -267,7 +267,7 @@ export function parseModelWords (content: string): string[] {
   const words: string[] = [];
   const seen = new Set<string>();
   content.split("\n").forEach((line) => {
-    const withoutMarker = line.trim().replace(/^(?:\d+[.)]|[-*•])\s*/, "").trim();
+    const withoutMarker = replyLine(line);
     if (withoutMarker.endsWith(":")) {
       return;
     }

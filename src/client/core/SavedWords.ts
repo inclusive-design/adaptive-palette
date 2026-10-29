@@ -104,6 +104,24 @@ async function persist (word: SavedWordType): Promise<void> {
 }
 
 /**
+ * Whether a word with this name and composition is saved to the palette already. Reads
+ * `savedWordCount`, so a cell that calls it while drawing draws again after a save.
+ * @param {string} paletteName - The palette's name in the set.
+ * @param {string} paletteSet - The set's folder.
+ * @param {string} label - The word's name.
+ * @param {SymbolCompositionType} composition - The word's composition.
+ * @returns {boolean}
+ */
+export function isWordSaved (
+  paletteName: string, paletteSet: string, label: string, composition: SymbolCompositionType
+): boolean {
+  void savedWordCount.value;
+  const key = JSON.stringify(composition);
+  return savedWords.some((one) => one.paletteSet === paletteSet && one.palette === paletteName &&
+    one.label === label && JSON.stringify(one.composition) === key);
+}
+
+/**
  * Save a word to a palette: it is added at the palette's end at once, and stored behind it.
  * A word already saved to that palette, with the same name and composition, is not saved again.
  * @param {JsonPaletteType} palette - The palette. Changed in place.
@@ -116,9 +134,7 @@ async function persist (word: SavedWordType): Promise<void> {
 export function saveWord (
   palette: JsonPaletteType, paletteName: string, paletteSet: string, label: string, composition: SymbolCompositionType
 ): void {
-  const key = JSON.stringify(composition);
-  if (savedWords.some((one) => one.paletteSet === paletteSet && one.palette === paletteName &&
-    one.label === label && JSON.stringify(one.composition) === key)) {
+  if (isWordSaved(paletteName, paletteSet, label, composition)) {
     return;
   }
   const word: SavedWordType = { id: `saved-word-${crypto.randomUUID()}`, paletteSet, palette: paletteName, label, composition };

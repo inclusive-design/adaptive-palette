@@ -41,17 +41,24 @@ function NameWordBody (props: { dialog: WordDialogType }): VNode {
   const [suggest, setSuggest] = useState<SuggestStateType>({ status: "idle" });
 
   // Ask the model for names once, as the dialog opens. Not for a word already in the vocabulary.
-  useEffect((): void => {
+  // Closing the dialog stops the request, so going back and pressing Done again never queues
+  // another behind it.
+  useEffect(() => {
     if (dialog.match || !canSuggestNames()) {
       return;
     }
+    const controller = new AbortController();
     setSuggest({ status: "working" });
-    requestNameSuggestions(dialog.partLabels, dialog.offeredName)
+    requestNameSuggestions(dialog.partLabels, dialog.offeredName, controller.signal)
       .then((names) => setSuggest({ status: "done", names }))
       .catch((error) => {
+        if (controller.signal.aborted) {
+          return;
+        }
         console.error(`Could not suggest names: ${String(error)}`);
         setSuggest({ status: "done", names: [] });
       });
+    return () => controller.abort();
   }, []);
 
   if (dialog.match) {
@@ -82,15 +89,18 @@ function NameWordBody (props: { dialog: WordDialogType }): VNode {
     ? Array.from({ length: MAX_SUGGESTED_NAMES }, () => html`<span class="namePlaceholder" aria-hidden="true"></span>`)
     : null;
   const useOffered = (): void => chooseName(dialog.offeredName);
+  // Parts with no label, such as one from the SVG entry, leave no name to offer.
+  const hasOffered = dialog.offeredName !== "";
 
   // The name offered comes first and takes the focus: one selection names the word without a keyboard.
+  // With none, the name field takes it.
   return html`
     <div class="wordPreview"><${BlissSymbol} composition=${dialog.composition} label="" isPresentation="true" /></div>
     <p id=${NAMES_LABEL_ID} class="wordSectionLabel">${t("wordChooseName")}</p>
     <div class="wordNames" role="group" aria-labelledby=${NAMES_LABEL_ID}>
-      <button type="button" autofocus onClick=${useOffered}>
+      ${hasOffered && html`<button type="button" autofocus onClick=${useOffered}>
         ${dialog.offeredName} <span class="wordDefaultTag">${t("wordDefaultTag")}</span>
-      </button>
+      </button>`}
       ${suggested.map((name) => html`
         <button type="button" class=${markAi ? "aiSuggestion" : undefined}
           aria-label=${markAi ? aiSuggestionLabel(name) : undefined}
@@ -104,6 +114,7 @@ function NameWordBody (props: { dialog: WordDialogType }): VNode {
       <input
         id=${NAME_FIELD_ID}
         type="text"
+        autofocus=${!hasOffered}
         placeholder=${t("wordNamePlaceholder")}
         value=${typedName}
         onInput=${(event: Event) => setTypedName((event.target as HTMLInputElement).value)}
@@ -111,7 +122,7 @@ function NameWordBody (props: { dialog: WordDialogType }): VNode {
       <button type="submit" aria-disabled=${typedName.trim() === ""}>${t("wordNameUse")}</button>
     </form>
     <div class="dialogFooter">
-      <button type="button" class="useDefaultName" onClick=${useOffered}>${t("wordUseDefault")}</button>
+      ${hasOffered && html`<button type="button" class="useDefaultName" onClick=${useOffered}>${t("wordUseDefault")}</button>`}
       <button type="button" onClick=${closeWordDialog}>${t("wordBack")}</button>
     </div>
   `;

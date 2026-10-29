@@ -30,6 +30,11 @@ describe("parseNames()", (): void => {
       .toEqual(["female teacher", "lady teacher"]);
   });
 
+  test("drops a preamble ending in a colon", (): void => {
+    expect(parseNames("Here are 3 names:\nfemale teacher\nwoman educator\nlady teacher", "x"))
+      .toEqual(["female teacher", "woman educator", "lady teacher"]);
+  });
+
   test("takes three names at most", (): void => {
     expect(parseNames("a\nb\nc\nd", "x")).toEqual(["a", "b", "c"]);
   });
@@ -49,7 +54,7 @@ describe("requestNameSuggestions()", (): void => {
 
     expect(await requestNameSuggestions(["woman", "giving", "knowledge"], "woman giving knowledge"))
       .toEqual(["female teacher"]);
-    expect(mockedQueryChat).toHaveBeenCalledWith("Parts: woman + giving + knowledge", "phony-model:12b", false, "Name it.");
+    expect(mockedQueryChat).toHaveBeenCalledWith("Parts: woman + giving + knowledge", "phony-model:12b", false, "Name it.", undefined);
   });
 
   test("names can be suggested only with a model and the section configured", (): void => {
