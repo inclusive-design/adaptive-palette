@@ -20,7 +20,7 @@ import { SymbolEncodingType, ContentSignalDataType, ModifierInfoType, SymbolComp
 export const COMMA_ID = 5;
 
 /**
- * A space part: separates two words inside a new word's combine markers. It has no symbol, so
+ * A space part: separates two words in a new word. It has no symbol, so
  * modifiers and indicators are unavailable on it, as on a picture.
  */
 export const SPACE_PART: SymbolEncodingType = { label: "", isSpace: true };

@@ -18,28 +18,30 @@ it goes on the word's classifier. Speak and Make Sentences come back after Done 
 | Control | What it does |
 | ------- | ------------ |
 | Split | Breaks the part at the caret into its characters. Teacher becomes person, giving and knowledge. |
-| Combine marker | Puts a combine marker at each end of the word. Select it again to take both markers and every space away. |
-| Space | Adds a space after the caret. Available while the combine marker is on. |
+| Combine marker | Puts a combine marker at each end of the word. Select it again to take both markers away. The spaces stay. |
+| Space | Adds a space after the caret. |
 | Comma | Adds a comma after the caret. |
 | Cancel | Drops the word and goes back to the message. |
 | Done | Finishes the word, then asks for its name. |
 
-## Spaces inside the combine markers
+## Spaces
 
 1. Once the combine marker is on, each word added gets a space between it and the word before it.
 2. Words added before the marker was turned on stay joined.
 3. The caret stops on a space. Delete removes it, and Space adds one.
 4. Split and add modifier never add a space.
 5. Deleting a word also deletes the space before it.
+6. Space works without the marker too, and turning the marker off keeps every space.
 
 In the finished word, a space is a full space. The characters inside a word stay a quarter space apart.
 
 ## Name the word
 
-After Done, the dialog offers the parts' names joined, for example "woman giving knowledge". Select it to
-use it. A helper can type another name and select "Use this name". On the desktop version, the dialog
-also asks the AI model for names as it opens, showing "Asking for names…" until they arrive. They are
-marked as AI suggestions.
+After Done, the dialog offers the parts' names joined, marked "(default)", for example "woman giving
+knowledge". Select it, or "Use default name and close", to use it. A helper can type another name and
+select "Use this name". On the desktop version, the dialog also asks the AI model for names as it
+opens, showing "Asking the AI model for names…" and a placeholder for each name until they arrive.
+They are marked as AI suggestions.
 
 When the word is already in the vocabulary, the dialog says so, for example "This is teacher", and offers
 that word.

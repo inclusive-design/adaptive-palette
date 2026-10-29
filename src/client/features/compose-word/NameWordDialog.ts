@@ -21,11 +21,12 @@ import { t } from "../../i18n/I18n";
 import {
   type WordDialogType, chooseMatch, chooseName, closeWordDialog, wordDialogSignal
 } from "./ComposeWordState";
-import { canSuggestNames, requestNameSuggestions } from "./WordNamingUtils";
+import { MAX_SUGGESTED_NAMES, canSuggestNames, requestNameSuggestions } from "./WordNamingUtils";
 import "./NameWordDialog.scss";
 
 export const NAME_WORD_DIALOG_ID = "nameWordDialog";
 export const NAME_FIELD_ID = "nameWordField";
+const NAMES_LABEL_ID = "nameWordNamesLabel";
 
 type SuggestStateType = { status: "idle" } | { status: "working" } | { status: "done", names: string[] };
 
@@ -76,29 +77,41 @@ function NameWordBody (props: { dialog: WordDialogType }): VNode {
   const suggested = suggest.status === "done" ? suggest.names : [];
   const status = suggest.status === "working" ? t("wordSuggesting")
     : suggest.status === "done" && suggested.length === 0 ? t("wordSuggestFailed") : "";
+  // Where the model's names will appear, while it is asked.
+  const placeholders = suggest.status === "working"
+    ? Array.from({ length: MAX_SUGGESTED_NAMES }, () => html`<span class="namePlaceholder" aria-hidden="true"></span>`)
+    : null;
+  const useOffered = (): void => chooseName(dialog.offeredName);
 
   // The name offered comes first and takes the focus: one selection names the word without a keyboard.
   return html`
     <div class="wordPreview"><${BlissSymbol} composition=${dialog.composition} label="" isPresentation="true" /></div>
-    <div class="wordNames">
-      <button type="button" autofocus onClick=${() => chooseName(dialog.offeredName)}>${dialog.offeredName}</button>
+    <p id=${NAMES_LABEL_ID} class="wordSectionLabel">${t("wordChooseName")}</p>
+    <div class="wordNames" role="group" aria-labelledby=${NAMES_LABEL_ID}>
+      <button type="button" autofocus onClick=${useOffered}>
+        ${dialog.offeredName} <span class="wordDefaultTag">${t("wordDefaultTag")}</span>
+      </button>
       ${suggested.map((name) => html`
-        <button type="button" aria-label=${markAi ? aiSuggestionLabel(name) : undefined}
+        <button type="button" class=${markAi ? "aiSuggestion" : undefined}
+          aria-label=${markAi ? aiSuggestionLabel(name) : undefined}
           onClick=${() => chooseName(name, true)}>${markAi && html`<${AiBadge} />`}${name}</button>
       `)}
+      ${placeholders}
     </div>
-    <p role="status" class="wordSuggestStatus">${status}</p>
+    <p role="status" class="statusMessage">${status}</p>
     <form class="wordNameForm" onSubmit=${useTypedName}>
-      <label for=${NAME_FIELD_ID}>${t("wordNameField")}</label>
+      <label for=${NAME_FIELD_ID} class="wordSectionLabel">${t("wordNameField")}</label>
       <input
         id=${NAME_FIELD_ID}
         type="text"
+        placeholder=${t("wordNamePlaceholder")}
         value=${typedName}
         onInput=${(event: Event) => setTypedName((event.target as HTMLInputElement).value)}
       />
       <button type="submit" aria-disabled=${typedName.trim() === ""}>${t("wordNameUse")}</button>
     </form>
     <div class="dialogFooter">
+      <button type="button" class="useDefaultName" onClick=${useOffered}>${t("wordUseDefault")}</button>
       <button type="button" onClick=${closeWordDialog}>${t("wordBack")}</button>
     </div>
   `;

@@ -36,7 +36,7 @@ const ACTIONS: Record<ComposeActionType, { run: () => void, unavailable?: () => 
   new: { run: startBuilding },
   split: { run: splitAtCaret, unavailable: () => !canSplitAtCaret() },
   combine: { run: () => setCombine(!wordBuildSignal.peek()?.combine) },
-  space: { run: insertSpace, unavailable: () => !wordBuildSignal.value?.combine },
+  space: { run: insertSpace },
   comma: { run: insertComma },
   cancel: { run: cancelBuilding },
   done: { run: requestFinish, unavailable: () => !hasSymbol() },

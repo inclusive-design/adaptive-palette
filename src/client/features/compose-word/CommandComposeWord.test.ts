@@ -22,7 +22,7 @@ import { adaptivePaletteGlobals, changeEncodingContents, wordBuildSignal } from 
 import { renderCell } from "../../testUtils/CellTestUtils";
 import { mockedSpeakUnavailable } from "../../testUtils/SpeechUtilsMock";
 import { CommandComposeWord, type ComposeActionType } from "./CommandComposeWord";
-import { setCombine, startBuilding, wordDialogSignal } from "./ComposeWordState";
+import { startBuilding, wordDialogSignal } from "./ComposeWordState";
 
 vi.mock("../../utils/SpeechUtils");
 
@@ -51,17 +51,21 @@ describe("CommandComposeWord", (): void => {
     expect(wordBuildSignal.value).not.toBeNull();
   });
 
-  test("Space is unavailable until the combine marker is on", async (): Promise<void> => {
+  test("Space is available without the combine marker", async (): Promise<void> => {
     startBuilding();
     renderAction("space", "Space");
     const button = await screen.findByRole("button", { name: "Space" });
+    expect(button).not.toHaveAttribute("aria-disabled");
+  });
+
+  test("an unavailable action says so instead of running", async (): Promise<void> => {
+    startBuilding();
+    renderAction("done", "Done");
+    const button = await screen.findByRole("button", { name: "Done" });
     expect(button).toHaveAttribute("aria-disabled", "true");
     fireEvent.click(button);
-    expect(mockedSpeakUnavailable).toHaveBeenCalledWith("Space");
-
-    setCombine(true);
-
-    await waitFor(() => expect(button).toHaveAttribute("aria-disabled", "false"));
+    expect(mockedSpeakUnavailable).toHaveBeenCalledWith("Done");
+    expect(wordDialogSignal.value).toBeNull();
   });
 
   test("Combine marker shows whether the marker is on", async (): Promise<void> => {

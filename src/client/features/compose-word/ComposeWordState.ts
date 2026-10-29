@@ -89,27 +89,15 @@ function finishBuilding (word: SymbolEncodingType): void {
 }
 
 /**
- * Turn the combine marker on or off. Off removes every space, since without the markers the
- * parts are one word. The caret stays on its part, or moves to the part before a removed space.
+ * Turn the combine marker on or off. The spaces stay either way: the user deletes them.
  * @param {boolean} on - Whether the marker is to be on.
  * @returns {void}
  */
 export function setCombine (on: boolean): void {
   const build = wordBuildSignal.peek();
-  if (!build) {
-    return;
-  }
-  const apply = (): void => {
+  if (build) {
     wordBuildSignal.value = { ...build, combine: on };
-  };
-  if (on) {
-    apply();
-    return;
   }
-  const { payloads, caretPosition } = changeEncodingContents.peek();
-  const kept = payloads.filter((part) => !part.isSpace);
-  const upToCaret = payloads.slice(0, caretPosition + 1).filter((part) => !part.isSpace).length;
-  editMessage({ payloads: kept, caretPosition: upToCaret - 1 }, apply);
 }
 
 /**

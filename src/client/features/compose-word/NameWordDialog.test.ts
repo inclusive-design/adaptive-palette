@@ -12,6 +12,7 @@ import { adaptivePaletteGlobals, changeEncodingContents, wordBuildSignal } from 
 import { en } from "../../i18n/en";
 import { requestFinish, startBuilding, wordDialogSignal } from "./ComposeWordState";
 import { NameWordDialog } from "./NameWordDialog";
+import { MAX_SUGGESTED_NAMES } from "./WordNamingUtils";
 
 vi.mock("../../utils/SpeechUtils");
 vi.mock("../../core/OllamaApi", async (importOriginal) => {
@@ -43,10 +44,17 @@ describe("NameWordDialog", (): void => {
 
   test("the name offered puts the word in the message in one selection", async (): Promise<void> => {
     buildWord([word("woman", 710), word("giving", 949), word("knowledge", 412)]);
-    const offered = await screen.findByRole("button", { name: "woman giving knowledge" });
+    const offered = await screen.findByRole("button", { name: `woman giving knowledge ${en.wordDefaultTag}` });
     await waitFor(() => expect(offered).toHaveFocus());
     await userEvent.click(offered);
     expect(labels()).toEqual(["I", "woman giving knowledge"]);
+    expect(wordBuildSignal.value).toBeNull();
+  });
+
+  test("Use default name and close puts the name offered in the message", async (): Promise<void> => {
+    buildWord([word("woman", 710), word("giving", 949)]);
+    await userEvent.click(await screen.findByRole("button", { name: en.wordUseDefault }));
+    expect(labels()).toEqual(["I", "woman giving"]);
     expect(wordBuildSignal.value).toBeNull();
   });
 
@@ -94,10 +102,19 @@ describe("NameWordDialog", (): void => {
       buildWord([word("woman", 710), word("giving", 949), word("knowledge", 412)]);
 
       expect(await screen.findByText(en.wordSuggesting)).toBeInTheDocument();
+      expect(document.querySelectorAll(".namePlaceholder")).toHaveLength(MAX_SUGGESTED_NAMES);
       answer({ message: { content: "female teacher" } });
       await userEvent.click(await screen.findByRole("button", { name: "AI suggestion, female teacher" }));
 
       expect(changeEncodingContents.value.payloads[1]).toMatchObject({ label: "female teacher", isAiLabel: true });
+    });
+
+    test("a reply with fewer names leaves no placeholders", async (): Promise<void> => {
+      vi.mocked(queryChat).mockResolvedValue({ message: { content: "female teacher" } } as never);
+      buildWord([word("woman", 710), word("giving", 949), word("knowledge", 412)]);
+      expect(await screen.findByRole("button", { name: "AI suggestion, female teacher" })).toBeInTheDocument();
+      expect(document.querySelectorAll(".namePlaceholder")).toHaveLength(0);
+      expect(screen.queryByText(en.wordSuggesting)).toBeNull();
     });
 
     test("does not ask for names for a word already in the vocabulary", async (): Promise<void> => {

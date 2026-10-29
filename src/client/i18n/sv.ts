@@ -191,10 +191,14 @@ export const sv: Record<keyof typeof en, string> = {
 
   // Naming a new word
   wordNameTitle: "Namnge ordet",
-  wordNameField: "Skriv ett namn:",
+  wordChooseName: "Välj ett namn",
+  wordDefaultTag: "(standard)",
+  wordNameField: "Eller skriv ett eget",
+  wordNamePlaceholder: "Skriv ett namn",
   wordNameUse: "Använd namnet",
-  wordSuggesting: "Ber om namn …",
+  wordSuggesting: "⏳ Ber AI-modellen om namn…",
   wordSuggestFailed: "Inga namn kunde föreslås.",
+  wordUseDefault: "Använd standardnamnet och stäng",
   wordBack: "Tillbaka till ordet",
   wordMatchTitle: "Det här är {{label}}",
   wordMatchUse: "Använd {{label}}",

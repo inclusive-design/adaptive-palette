@@ -61,15 +61,25 @@ describe("ComposeWordState", (): void => {
     });
   });
 
-  test("turning the marker off removes every space and keeps the caret on its word", (): void => {
+  test("turning the marker off keeps the spaces", (): void => {
     startBuilding();
     setCombine(true);
     insertWord(cat);
     insertWord(colour);
     insertWord(night);
     setCombine(false);
-    expect(changeEncodingContents.value).toEqual({ payloads: [cat, colour, night], caretPosition: 2 });
+    expect(changeEncodingContents.value).toEqual({
+      payloads: [cat, SPACE_PART, colour, SPACE_PART, night], caretPosition: 4
+    });
     expect(wordBuildSignal.value?.combine).toBe(false);
+  });
+
+  test("Space adds a space without the combine marker", (): void => {
+    startBuilding();
+    insertWord(cat);
+    insertSpace();
+    insertWord(night);
+    expect(changeEncodingContents.value.payloads).toEqual([cat, SPACE_PART, night]);
   });
 
   test("Split puts the characters in place of the part, with the caret on the last", (): void => {
