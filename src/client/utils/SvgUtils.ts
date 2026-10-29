@@ -42,6 +42,9 @@ const modifierIds = {
   multiSymbol: [[2404, "/", 374], [2404, "/", 473], [2404, "/", 642]]
 };
 
+// The combine marker: one at each end of a word the user invented (§6.5.4.5).
+export const COMBINE_MARKER_ID = 233;
+
 /**
  * Parses a Blissary SVG builder string into a composition array.
  * 
@@ -208,6 +211,7 @@ export function isModifier (id: number): boolean {
  * should be a classifier symbol.  If the single number form of a SymbolCompositionType is
  * provided, then 0 (zero) is returned.  If the entire sequence of symbols has
  * been processed, and none are left, then 0 (zero) is returned.
+ * A combine marker at the start is passed over like a prefix modifier.
  * @param {SymbolCompositionType} id - The array form of a SymbolCompositionType is a mixture
  *                           of integers and strings.
  * @return {number} - the index of the symbol just after the last modifier.
@@ -228,7 +232,7 @@ export function findClassifierFromLeft (id: SymbolCompositionType): number {
         index += sequence.length - 1;
       }
       else if (typeof item === "number") {
-        if (isModifier(item)) {
+        if (isModifier(item) || item === COMBINE_MARKER_ID) {
           rightMost = index + 2;
         }
         else {

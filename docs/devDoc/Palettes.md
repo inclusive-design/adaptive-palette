@@ -196,12 +196,16 @@ label in the standard chart has both; `scripts/draft_swedish_labels.js` drafted 
 | `columnSpan` | number | Number of grid columns the cell occupies |
 | `requiresModel` | boolean | Optional. When true the cell is left out unless a model is available |
 | `requiresConfig` | string | Optional. The `config.json` section the cell needs; the cell is left out when that section is missing |
+| `buildingWord` | boolean | Optional. true: the cell is shown only while a word is being built with Compose new word. false: only while none is. Two cells may share a position when one is true and the other false |
 | `layer` | boolean | Optional. The screen palette draws the cell over the rows below the include that holds it (see [Fitting the screen](#fitting-the-screen)) |
 
 Both flags mark a cell whose feature can be unavailable: the command bar's "Msg Style" button
 carries `requiresModel`, and the input area's "Make Sentences" button carries both. `Palette.ts`
 leaves such a cell out and collapses the grid column it would have taken, so the rest of the row
 spreads over the space instead of showing a hole.
+
+The command bar and the input area use `buildingWord` to swap the writing controls for the building ones (see
+[Compose New Words](../ComposeWords.md)).
 
 **`composition`** identifies the Bliss symbol(s) to render. It is either a
 single numeric ID -- the `id` field from `bliss_symbol_explanations.json`, not its `bciAvId` --

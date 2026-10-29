@@ -9,7 +9,7 @@ three categories by prefix.
 | Type | Purpose | Key options beyond layout |
 | ---- | ------- | ------------------------- |
 | `ActionCodeCell` | Appends a Bliss symbol, or a picture, to the encoding area when clicked | `label`, and `composition` or `picture` (see [Palettes](Palettes.md#palette-json-structure)); `branchTo` (optional) goes to that palette after the insert, and gives the cell the folder look; `backgroundColor` and `textColor` (optional) |
-| `ActionBranchToPaletteCell` | Navigates to another palette | `label`, `composition` or `picture`, `branchTo` (the palette's name in [`palette_set.json`](../../public/palette-sets/standardBlissChart/palette_set.json)); `needsCaretSymbol` (optional) shows it as a command that is unavailable while no Bliss symbol is at the caret; `backgroundColor` and `textColor` (optional) |
+| `ActionBranchToPaletteCell` | Navigates to another palette | `label`, `composition` or `picture`, `branchTo` (the palette's name in [`palette_set.json`](../../public/palette-sets/standardBlissChart/palette_set.json)); `needsCaretSymbol` (optional) shows it as a command that is unavailable while no Bliss symbol is at the caret; `unavailableWhileBuildingWord` (optional) makes it unavailable while a word is being built; `backgroundColor` and `textColor` (optional) |
 | `ActionIndicatorCell` | Applies a Bliss indicator to the last symbol in the encoding area | `label`, `composition` |
 | `ActionPreModifierCell` | Prepends a modifier to the last symbol | `label`, `composition` |
 | `ActionPostModifierCell` | Appends a modifier to the last symbol | `label`, `composition` |
@@ -22,11 +22,12 @@ three categories by prefix.
 
 | Type | Purpose | Key options beyond layout |
 | ---- | ------- | ------------------------- |
-| `CommandClearEncoding` | Clears the entire encoding area | `label`, `composition`, `ariaControls` |
+| `CommandClearEncoding` | Clears the encoding area; while a word is being built, only the word | `label`, `composition`, `ariaControls` |
 | `CommandClearSavedData` | Deletes everything the app has saved, after a confirmation dialog, then reloads the page | `label`, `composition` |
+| `CommandComposeWord` | A control for building a word: Compose new word, Split, Combine marker, Space, Comma, Cancel, Done or Save new word. See [Compose New Words](../ComposeWords.md) | `label`, `composition` (optional), `action`: "new", "split", "combine", "space", "comma", "cancel", "done" or "save" |
 | `CommandCursorBackward` | Moves the caret one position left in the encoding area | `label`, `composition`, `ariaControls` |
 | `CommandCursorForward` | Moves the caret one position right in the encoding area | `label`, `composition`, `ariaControls` |
-| `CommandDelLastEncoding` | Deletes the last symbol in the encoding area | `label`, `composition`, `ariaControls` |
+| `CommandDelLastEncoding` | Deletes the symbol at the caret; a word takes the space before it | `label`, `composition`, `ariaControls` |
 | `CommandGoBackCell` | Pops the navigation stack and returns to the previous palette | `label`, `composition` |
 | `CommandGoToRootCell` | Empties the navigation stack and returns to the root palette | `label`, `composition` |
 | `CommandMakeSentence` | Translates the telegraphic message into full sentences. Flagged `requiresModel` and `requiresConfig` in the palette JSON, so the palette leaves it out when the feature is unavailable | `label`, `composition`, `ariaControls` |

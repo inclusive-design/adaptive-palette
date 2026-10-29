@@ -35,6 +35,10 @@ such: `clearMessageAndChoices()`, which has already cleared the state the guard 
 and `confirmDiscardEdit()`, which applies an edit the guard itself held. A raw
 `changeEncodingContents.value = …` anywhere else is a bug.
 
+While a word is built with Compose new word, `changeEncodingContents` holds the word's parts and
+`wordBuildSignal` holds the message, so the existing commands edit the word. Only
+`features/compose-word/` writes `wordBuildSignal`. See [ComposeWords.md](../ComposeWords.md).
+
 ## Settings
 
 `adaptivePaletteGlobals.config` is replaced when the user saves settings. Code that reads it when
@@ -84,9 +88,9 @@ convenience. A value re-export is a real import and rebuilds the cycle.
 
 **`core/MessageEdit.ts`** owns the write side of `changeEncodingContents`. It sits in `core/`
 rather than in the feature that vetoes edits, so that editing the message does not require
-importing a feature: nine cells and `features/word-prediction/PredictedWords.ts` import
-`core/MessageEdit`, and the one feature with an opinion registers a guard instead of being
-imported by all ten.
+importing a feature (it exports `insertWord()` beside `editMessage()`): the cells and features
+that edit the message import `core/MessageEdit`, and the one feature with an opinion registers a
+guard instead of being imported by all of them.
 
 **`core/PaletteNavigation.ts`** holds `goToPalette()`, the one way to open a named palette.
 `ActionBranchToPaletteCell` and the message-attributes "+N" chip both call it, so no feature

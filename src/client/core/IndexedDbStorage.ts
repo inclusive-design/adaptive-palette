@@ -12,7 +12,7 @@
 
 /**
  * The storage of a page served from this computer: one IndexedDB database with a store each
- * for messages, settings and About Me. The hosted site uses `MemoryStorage` instead and
+ * for messages, settings, About Me and saved words. The hosted site uses `MemoryStorage` instead and
  * keeps nothing.
  *
  * Nothing is ever deleted to make room. The message log is kept whole, and how much of it the
@@ -20,14 +20,15 @@
  */
 import { AdaptivePaletteStorage, StoredMessage } from "./StorageBackend";
 import type { MessageRecordType } from "./MessageLog";
-import type { AboutMeType } from "../index.d";
+import type { AboutMeType, SavedWordType } from "../index.d";
 
 export const DATABASE_NAME = "AdaptivePalette";
 export const MESSAGES_STORE = "messages";
 export const SETTINGS_STORE = "settings";
 export const ABOUT_ME_STORE = "aboutMe";
+export const SAVED_WORDS_STORE = "savedWords";
 
-const DATABASE_VERSION = 1;
+const DATABASE_VERSION = 2;
 
 // The settings store holds one record; this is its key.
 const SETTINGS_KEY = "overrides";
@@ -36,7 +37,7 @@ const SETTINGS_KEY = "overrides";
 const ABOUT_ME_KEY = "aboutMe";
 
 // Every store, for the transactions that must cover all of them.
-const ALL_STORES = [MESSAGES_STORE, SETTINGS_STORE, ABOUT_ME_STORE];
+const ALL_STORES = [MESSAGES_STORE, SETTINGS_STORE, ABOUT_ME_STORE, SAVED_WORDS_STORE];
 
 /**
  * An `Error` for a failed request. `DOMException` carries the real message but is not
@@ -95,14 +96,29 @@ export class IndexedDbStorage implements AdaptivePaletteStorage {
         if (!database.objectStoreNames.contains(ABOUT_ME_STORE)) {
           database.createObjectStore(ABOUT_ME_STORE);
         }
+        if (!database.objectStoreNames.contains(SAVED_WORDS_STORE)) {
+          // Keys rise with insertion, so reading them all gives the words oldest first.
+          database.createObjectStore(SAVED_WORDS_STORE, { autoIncrement: true });
+        }
       };
       // Another tab holding the old version open. Rejected rather than left hanging: the
       // caller logs it and degrades to storing nothing, which is better than never starting.
+      let blocked = false;
       request.onblocked = (): void => {
+        blocked = true;
         reject(new Error("The saved data cannot be opened while another tab has it open."));
       };
       request.onsuccess = (): void => {
+        // The request stays pending after a block and succeeds once the other tab closes.
+        // This session already runs storing nothing, so it must not start writing now: its
+        // defaults would overwrite the user's saved settings and About Me.
+        if (blocked) {
+          request.result.close();
+          return;
+        }
         this.database = request.result;
+        // Close for a later version, so this tab never blocks a future upgrade.
+        this.database.onversionchange = (): void => this.database?.close();
         resolve();
       };
       request.onerror = (): void => reject(requestError(request));
@@ -250,6 +266,15 @@ export class IndexedDbStorage implements AdaptivePaletteStorage {
 
   async updateMessage (id: number, record: MessageRecordType): Promise<void> {
     await asPromise(this.objectStore(MESSAGES_STORE, "readwrite").put({ ...record, id }));
+  }
+
+  async readSavedWords (): Promise<SavedWordType[]> {
+    // Checked by `hydrateSavedWords()`: the store is hand-editable through the developer tools.
+    return await asPromise(this.objectStore(SAVED_WORDS_STORE, "readonly").getAll()) as SavedWordType[];
+  }
+
+  async addSavedWord (word: SavedWordType): Promise<void> {
+    await asPromise(this.objectStore(SAVED_WORDS_STORE, "readwrite").add(word));
   }
 
   clearAll (): Promise<void> {

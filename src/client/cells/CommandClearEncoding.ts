@@ -14,6 +14,8 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { clearMessageAndChoices } from "../features/telegraphic-translation/TelegraphicTranslationState";
+import { editMessage } from "../core/MessageEdit";
+import { wordBuildSignal } from "../state/GlobalData";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
@@ -32,7 +34,12 @@ export function CommandClearEncoding (props: CommandClearEncodingProps): VNode {
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
-    clearMessageAndChoices();
+    // While a word is being built, only its parts go. The message and its sentences wait for it.
+    if (wordBuildSignal.value) {
+      editMessage({ payloads: [], caretPosition: -1 });
+    } else {
+      clearMessageAndChoices();
+    }
     announceIfEnabled(label, labelLanguage);
   };
 

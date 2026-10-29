@@ -13,7 +13,7 @@
 import { screen } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
 
-import { changeEncodingContents } from "../state/GlobalData";
+import { changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { IDLE_SENTENCE_STATE, sentenceCompletionsSignal } from "../features/telegraphic-translation/TelegraphicTranslationState";
 import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
@@ -69,6 +69,19 @@ describe("CommandClearEncoding", (): void => {
 
     expect(changeEncodingContents.value.payloads).toEqual([]);
     expect(sentenceCompletionsSignal.value).toEqual(IDLE_SENTENCE_STATE);
+  });
+
+  test("while a word is being built, empties only the word", async (): Promise<void> => {
+    const message = { payloads: [{ label: "I", composition: 1840 }], caretPosition: 0 };
+    wordBuildSignal.value = { message, combine: false };
+    changeEncodingContents.value = { payloads: [{ label: "cat", composition: 126 }], caretPosition: 0 };
+    renderCell(CommandClearEncoding, TEST_CELL_ID, testCell.options);
+
+    await userEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
+
+    expect(changeEncodingContents.value).toEqual({ payloads: [], caretPosition: -1 });
+    expect(wordBuildSignal.value?.message).toBe(message);
+    wordBuildSignal.value = null;
   });
 
 });

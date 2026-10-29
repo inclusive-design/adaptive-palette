@@ -172,7 +172,7 @@ svg.inter-word-padding {
     display: flex;
     flex-direction: column;
     font-size: calc(11.88 * var(--contentScale));
-    /* 10 cells share one row, so a long label breaks at a hyphen rather than widening it. */
+    /* 12 cells share one row, so a long label breaks at a hyphen rather than widening it. */
     hyphens: auto;
     justify-content: center;
     line-height: 1.05;

@@ -14,7 +14,7 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType, ContentSignalDataType } from "../index.d";
 import { BlissSymbol } from "../components/BlissSymbol";
-import { changeEncodingContents } from "../state/GlobalData";
+import { changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { applyModifiersToLabel, caretComposition, replaceAtCaret } from "../utils/SymbolEncodingUtils";
@@ -51,8 +51,8 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
   // last symbol in the encoding contents array.
   const indicatorPosition = caretSymbolIndicatorPosition(changeEncodingContents.value);
   // Marked unavailable rather than `disabled` so the button keeps its place in the tab
-  // order for switch and eye-gaze users.
-  const unavailable = indicatorPosition === -1;
+  // order for switch and eye-gaze users. Not available while a new word is being built.
+  const unavailable = indicatorPosition === -1 || wordBuildSignal.value !== null;
 
   const cellClicked = () => {
     if (unavailable) { speakUnavailable(label); return; }

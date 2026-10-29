@@ -17,6 +17,7 @@ import { changeEncodingContents } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { generateGridStyle } from "../utils/GridUtils";
+import { deleteAtCaret } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
 
 type CommandDelLastEncodingProps = {
@@ -39,13 +40,9 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNo
     // - there are no symbols (payloads), or
     // - there are symbols, but the caret is for inserting before the first
     //   symbol
+    // A word also takes the space before it.
     if (payloads.length !== 0 && caretPosition !== -1) {
-      const newEncodingContents = [...changeEncodingContents.value.payloads];
-      newEncodingContents.splice(caretPosition, 1);
-      editMessage({
-        payloads: newEncodingContents,
-        caretPosition: caretPosition - 1
-      });
+      editMessage(deleteAtCaret(payloads, caretPosition));
     }
     announceIfEnabled(label, labelLanguage);
   };

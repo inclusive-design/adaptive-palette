@@ -14,11 +14,11 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { CellColorsType, PictureOrSymbolInfoType, LayoutInfoType, SymbolEncodingType } from "../index.d";
 import { BlissSymbol } from "../components/BlissSymbol";
-import { changeEncodingContents, adaptivePaletteGlobals } from "../state/GlobalData";
-import { editMessage } from "../core/MessageEdit";
+import { adaptivePaletteGlobals } from "../state/GlobalData";
+import { insertWord } from "../core/MessageEdit";
 import { goToPalette } from "../core/PaletteNavigation";
 import { colorStyle, generateGridStyle } from "../utils/GridUtils";
-import { insertWordAtCaret, normalizeComposition } from "../utils/SymbolEncodingUtils";
+import { normalizeComposition } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
 import "./ActionCodeCell.scss";
 
@@ -51,10 +51,9 @@ export function ActionCodeCell (props: ActionCodeCellPropsType): VNode {
         "modifierInfo": []
       }
       : { "label": props.options.label, "picture": picture, "modifierInfo": [] };
-    const{ caretPosition, payloads } = changeEncodingContents.value;
     // The jump waits for the insert: a held edit stays on this palette, where the sentences the
     // guard asks about are, and jumps only if the user lets it through.
-    editMessage(insertWordAtCaret(payload, payloads, caretPosition), branchTo ? () => void goToPalette(branchTo) : undefined);
+    insertWord(payload, branchTo ? () => void goToPalette(branchTo) : undefined);
     announceIfEnabled(props.options.label, props.options.labelLanguage);
   };
 

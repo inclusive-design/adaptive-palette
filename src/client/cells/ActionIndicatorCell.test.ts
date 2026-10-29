@@ -14,7 +14,7 @@ import { vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/preact";
 import { html } from "htm/preact";
 
-import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
 import { setEditGuard } from "../core/MessageEdit";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
@@ -586,6 +586,23 @@ describe("ActionIndicatorCell", (): void => {
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
   });
 
+
+  test("is unavailable while a word is being built, and a click leaves the input untouched", async (): Promise<void> => {
+    changeEncodingContents.value = { payloads: [{ label: "opposite", composition: 486 }], caretPosition: 0 };
+    wordBuildSignal.value = { message: { payloads: [], caretPosition: -1 }, combine: false };
+    const before = JSON.stringify(changeEncodingContents.value);
+
+    renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
+
+    const button = await screen.findByRole("button", { name: testCell.options.label });
+    expect(button).toHaveAttribute("aria-disabled", "true");
+    fireEvent.click(button);
+
+    expect(JSON.stringify(changeEncodingContents.value)).toBe(before);
+    expect(mockedSpeakUnavailable).toHaveBeenCalledWith(testCell.options.label);
+    wordBuildSignal.value = null;
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+  });
 
   describe("recording which tier answered", (): void => {
 

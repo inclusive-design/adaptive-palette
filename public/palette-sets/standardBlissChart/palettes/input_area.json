@@ -39,6 +39,7 @@
         "composition": [1968, "//", 2351, ";;", 99],
         "requiresModel": true,
         "requiresConfig": "telegraphicTranslation",
+        "buildingWord": false,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 14,
@@ -51,11 +52,38 @@
       "options": {
         "label": { "en": "Speak", "sv": "Tala" },
         "composition": 2325,
+        "buildingWord": false,
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 15,
         "columnSpan": 1,
         "ariaControls": "content-encoding-area"
+      }
+    },
+    "command-cancel-word": {
+      "type": "CommandComposeWord",
+      "options": {
+        "label": { "en": "Cancel", "sv": "Avbryt" },
+        "composition": 1532,
+        "action": "cancel",
+        "buildingWord": true,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 14,
+        "columnSpan": 1
+      }
+    },
+    "command-done-word": {
+      "type": "CommandComposeWord",
+      "options": {
+        "label": { "en": "Done", "sv": "Klar" },
+        "composition": 4771,
+        "action": "done",
+        "buildingWord": true,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 15,
+        "columnSpan": 1
       }
     }
   }

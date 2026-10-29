@@ -126,6 +126,7 @@ open the browser's site settings for `localhost:3210` and choose **Clear site da
 There is no automatic update. Check the
 [releases page](https://github.com/inclusive-design/adaptive-palette/releases) for a newer
 version. Erase your data and delete the old app first, then install the new one.
+Close all of the app's browser tabs before you start the new version.
 
 ---
 

@@ -98,7 +98,8 @@
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 5,
-        "columnSpan": 1
+        "columnSpan": 1,
+        "unavailableWhileBuildingWord": true
       }
     },
     "remove-indicator": {
@@ -120,7 +121,8 @@
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 6,
-        "columnSpan": 1
+        "columnSpan": 1,
+        "buildingWord": false
       }
     },
     "command-modifiers": {
@@ -186,7 +188,8 @@
         "rowStart": 1,
         "rowSpan": 1,
         "columnStart": 9,
-        "columnSpan": 1
+        "columnSpan": 1,
+        "buildingWord": false
       }
     },
     "command-clear-saved-data": {
@@ -205,7 +208,104 @@
         ],
         "rowStart": 1,
         "rowSpan": 1,
+        "columnStart": 12,
+        "columnSpan": 1,
+        "buildingWord": false
+      }
+    },
+    "command-new-word": {
+      "type": "CommandComposeWord",
+      "options": {
+        "label": {
+          "en": "Compose new word",
+          "sv": "Komponera nytt ord"
+        },
+        "composition": [5740, "//", 2070, "//", 2761],
+        "action": "new",
+        "buildingWord": false,
+        "rowStart": 1,
+        "rowSpan": 1,
         "columnStart": 10,
+        "columnSpan": 1
+      }
+    },
+    "command-save-word": {
+      "type": "CommandComposeWord",
+      "options": {
+        "label": {
+          "en": "Save new word",
+          "sv": "Spara nytt ord"
+        },
+        "composition": [1891, "//", 2070, "//", 2761],
+        "action": "save",
+        "buildingWord": false,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 11,
+        "columnSpan": 1
+      }
+    },
+    "command-split-word": {
+      "type": "CommandComposeWord",
+      "options": {
+        "label": {
+          "en": "Split",
+          "sv": "Dela upp"
+        },
+        "composition": 5740,
+        "action": "split",
+        "buildingWord": true,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 9,
+        "columnSpan": 1
+      }
+    },
+    "command-combine-marker": {
+      "type": "CommandComposeWord",
+      "options": {
+        "label": {
+          "en": "Combine marker",
+          "sv": "Kombinationsmarkör"
+        },
+        "composition": 233,
+        "action": "combine",
+        "buildingWord": true,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 10,
+        "columnSpan": 1
+      }
+    },
+    "command-word-space": {
+      "type": "CommandComposeWord",
+      "options": {
+        "label": {
+          "en": "Space",
+          "sv": "Mellanslag"
+        },
+        "composition": 1025,
+        "action": "space",
+        "buildingWord": true,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 11,
+        "columnSpan": 1
+      }
+    },
+    "command-comma": {
+      "type": "CommandComposeWord",
+      "options": {
+        "label": {
+          "en": "Comma",
+          "sv": "Komma"
+        },
+        "composition": 5,
+        "action": "comma",
+        "buildingWord": true,
+        "rowStart": 1,
+        "rowSpan": 1,
+        "columnStart": 12,
         "columnSpan": 1
       }
     }

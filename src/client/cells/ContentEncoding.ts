@@ -13,9 +13,10 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "../components/BlissSymbol";
-import { adaptivePaletteGlobals, changeEncodingContents, settingsSavedCount } from "../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents, settingsSavedCount, wordBuildSignal } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
 import { ContentEncodingType, SymbolEncodingType } from "../index.d";
+import { COMBINE_MARKER_ID } from "../utils/SvgUtils";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
 import { t } from "../i18n/I18n";
@@ -46,6 +47,10 @@ type ContentEncodingProps = {
   options: ContentEncodingType
 }
 
+// The caret position given for the message around a word being built: no symbol in it has the
+// caret, since the caret is in the word.
+const NO_CARET = -2;
+
 /*
  * Given an array of symbols and a caret position create the proper markup for
  * each symbol in the array:
@@ -69,12 +74,42 @@ export function generateMarkupArray (payloadArray: Array<SymbolEncodingType>, ca
     const isMarked = payload.isAiLabel && markAiSuggestions;
     // The caret before the first symbol, the caret on this symbol, or no caret.
     const caretClass = index === 0 && caretPos === -1 ? " insertionCaret" : index === caretPos ? " cursorCaret" : "";
+    // A space has no symbol: an outlined gap, named for a screen reader.
+    if (payload.isSpace) {
+      return html`<div class=${`blissSymbol wordSpace${caretClass}`}><span>${t("wordSpace")}</span></div>`;
+    }
     return html`
       <div class=${`blissSymbol${caretClass}`}>
         <${BlissSymbol} composition=${payload.composition} picture=${payload.picture} label=${payload.label} isPresentation="true" isMarked=${isMarked} />
       </div>
     `;
   });
+}
+
+/**
+ * The word being built: a dashed box inside the message, with a tag naming it, then its parts,
+ * between two combine markers when the marker is on. An empty word shows the caret alone.
+ * @param {SymbolEncodingType[]} parts - The word's parts.
+ * @param {number} caretPos - The caret's position in the parts.
+ * @param {boolean} combine - Whether the combine marker is on.
+ * @return {VNode}
+ */
+function newWordMarkup (parts: SymbolEncodingType[], caretPos: number, combine: boolean): VNode {
+  // A function, so each end gets an element of its own.
+  const marker = (): VNode | null => combine
+    ? html`<div class="blissSymbol combineMarker">
+        <${BlissSymbol} composition=${COMBINE_MARKER_ID} label=${t("combineMarker")} isPresentation="true" />
+      </div>`
+    : null;
+  const partsMarkup = parts.length === 0
+    ? html`<div class="blissSymbol insertionCaret emptyWord"></div>`
+    : generateMarkupArray(parts, caretPos);
+  return html`
+    <div class="newWord">
+      <span class="newWordTag">${t("newWordTag")}</span>
+      ${marker()}${partsMarkup}${marker()}
+    </div>
+  `;
 }
 
 function moveCursor (positionChange: number = 1) {
@@ -144,9 +179,18 @@ export function ContentEncoding (props: ContentEncodingProps): VNode {
   const { columnStart, columnSpan, rowStart, rowSpan } = options;
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
-  const contentsMarkupArray = generateMarkupArray(
-    changeEncodingContents.value.payloads, changeEncodingContents.value.caretPosition
-  );
+  const { payloads, caretPosition } = changeEncodingContents.value;
+  const build = wordBuildSignal.value;
+  // While a word is built, the input area holds its parts. The message is drawn around them,
+  // with the word where it will go: after the message's caret.
+  const splitAt = build ? build.message.caretPosition + 1 : 0;
+  const contentsMarkupArray = build
+    ? [
+      ...generateMarkupArray(build.message.payloads.slice(0, splitAt), NO_CARET),
+      newWordMarkup(payloads, caretPosition, build.combine),
+      ...generateMarkupArray(build.message.payloads.slice(splitAt), NO_CARET)
+    ]
+    : generateMarkupArray(payloads, caretPosition);
 
   return html`
     <div

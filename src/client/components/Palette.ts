@@ -13,9 +13,10 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { JsonPaletteType, LayoutInfoType, PaletteIncludeType } from "../index.d";
-import { adaptivePaletteGlobals } from "../state/GlobalData";
+import { adaptivePaletteGlobals, wordBuildSignal } from "../state/GlobalData";
 import { cellTypeRegistry } from "../core/CellTypeRegistry";
 import { PALETTE_INCLUDE_TYPE, PaletteStore } from "../core/PaletteStore";
+import { savedWordCount } from "../core/SavedWords";
 import { generateGridStyle } from "../utils/GridUtils";
 import { Language, LabelType, parseLanguage, resolveLabel } from "../i18n/I18n";
 import "./Palette.scss";
@@ -123,8 +124,9 @@ function gridTemplateRows (paletteDefinition: JsonPaletteType, numRows: number):
 }
 
 /**
- * Whether a cell's feature is available: it needs a model, or a `config.json` section, or
- * neither.  An unavailable cell is left out of the palette.
+ * Whether a cell is available: its feature may need a model or a `config.json` section, and a
+ * cell flagged `buildingWord` suits only one of building a word or not. An unavailable cell is
+ * left out of the palette.
  *
  * @param {LayoutInfoType} options - The cell's layout options.
  * @return {boolean} - `true` when the cell can be rendered.
@@ -133,7 +135,10 @@ function isAvailable (options: LayoutInfoType): boolean {
   const { models, config } = adaptivePaletteGlobals;
   const hasModel = !options.requiresModel || models.length > 0;
   const isConfigured = !options.requiresConfig || !!config[options.requiresConfig];
-  return hasModel && isConfigured;
+  // Read with `.value`, so the palette draws again when a word is started or finished.
+  const isBuilding = wordBuildSignal.value !== null;
+  const suitsBuilding = options.buildingWord === undefined || options.buildingWord === isBuilding;
+  return hasModel && isConfigured && suitsBuilding;
 }
 
 /**
@@ -280,6 +285,10 @@ function renderLayer (paletteDefinition: JsonPaletteType, rowsCols: Record<strin
 }
 
 export function Palette (props: PalettePropsType): VNode {
+  // Read so a palette draws again when a word is saved to it. Reading it in the parent is not
+  // enough: the signals integration skips a child whose props have not changed, and a saved word
+  // changes the palette in place.
+  void savedWordCount.value;
 
   const paletteDefinition = props.json;
   const rowsCols = countRowsColumns(paletteDefinition);

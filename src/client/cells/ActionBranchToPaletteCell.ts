@@ -13,7 +13,7 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolCellType } from "../index.d";
-import { changeEncodingContents } from "../state/GlobalData";
+import { changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
 import { goToPalette } from "../core/PaletteNavigation";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
@@ -51,12 +51,13 @@ const navigateToPalette = async (event: Event, language?: Language): Promise<voi
 export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType): VNode {
   const {
     columnStart, columnSpan, rowStart, rowSpan, branchTo, composition, picture, label, labelLanguage, needsCaretSymbol,
-    backgroundColor, textColor
+    unavailableWhileBuildingWord, backgroundColor, textColor
   } = props.options;
 
   // Marked unavailable rather than `disabled` so the button keeps its place in the tab
   // order for switch and eye-gaze users.
-  const unavailable = !!needsCaretSymbol && caretComposition(changeEncodingContents.value) === undefined;
+  const unavailable = (!!needsCaretSymbol && caretComposition(changeEncodingContents.value) === undefined) ||
+    (!!unavailableWhileBuildingWord && wordBuildSignal.value !== null);
 
   // An unavailable button drops its own colours, so the greying of `.btn-command` shows.
   const gridStyles = `
@@ -73,7 +74,7 @@ export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType
   return html`
     <button
       id="${props.id}" class="${className}" style="${gridStyles}"
-      data-branchto="${branchTo}" onClick=${cellClicked} aria-disabled=${needsCaretSymbol ? unavailable : undefined}>
+      data-branchto="${branchTo}" onClick=${cellClicked} aria-disabled=${needsCaretSymbol || unavailableWhileBuildingWord ? unavailable : undefined}>
       <${BlissSymbol} composition=${composition} picture=${picture} label=${label} color="currentColor" />
     </button>
   `;

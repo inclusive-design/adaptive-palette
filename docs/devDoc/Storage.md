@@ -21,6 +21,8 @@ export interface AdaptivePaletteStorage {
   readMessagesAfter (afterId: number | undefined, limit: number): Promise<StoredMessage[]>;
   addMessage (record: MessageRecordType): Promise<StoredMessage>;
   updateMessage (id: number, record: MessageRecordType): Promise<void>;
+  readSavedWords (): Promise<SavedWordType[]>;
+  addSavedWord (word: SavedWordType): Promise<void>;
   clearAll (): Promise<void>;
   destroy (): Promise<void>;
 }
@@ -38,8 +40,9 @@ app data and quit" uses, where the point is that nothing of the app's is left in
 afterwards. A destroyed store can be opened again, empty.
 
 [`src/client/core/IndexedDbStorage.ts`](../../src/client/core/IndexedDbStorage.ts) is the
-implementation for a page served from this computer: one database, version 1, with three object
-stores created in `onupgradeneeded`:
+implementation for a page served from this computer: one database, version 2, with four object
+stores created in `onupgradeneeded`. Each is created only when missing, so a version 1 database
+keeps its data and gains the `savedWords` store:
 
 - `messages` — key path `id`, `autoIncrement: true`. Insertion order is id order, so the newest
   messages are the tail and `readMessages()` is a cursor opened in reverse rather than a sort.
@@ -48,6 +51,17 @@ stores created in `onupgradeneeded`:
   `{ category, text }` pairs the user turned down; `pending`, suggestions not answered yet; and
   `learntUpTo`, the id and timestamp of the last message "Suggest updates" read. See
   [AboutMe.md](../AboutMe.md).
+- `savedWords` — `autoIncrement: true`, one record per word saved with "Save new word": its
+  palette set's folder, palette name, label and composition. Read oldest first by
+  `core/SavedWords.ts`, which adds each word to its palette as the palette loads.
+
+## Saved words
+
+[`core/SavedWords.ts`](../../src/client/core/SavedWords.ts) keeps a cache that `InitGlobals.ts` fills
+before the first palette loads. `PaletteStore.getNamedPalette()` adds a palette's saved words at its
+end as it loads. A new save updates the cache and the palette at once and writes behind them.
+`components/Palette.ts` reads the `savedWordCount` signal, so the palette on
+screen draws again when a word is added to it.
 
 ## Which backend a page gets
 
@@ -137,11 +151,13 @@ persisted. No fallback backend is needed.
 
 | Failure | Result |
 | --- | --- |
-| `open()` rejects | Logged. Later calls reject and are logged. The session works; nothing persists. Includes a blocked upgrade, which rejects rather than leaving start-up waiting. |
+| `open()` rejects | Logged. Later calls reject and are logged. The session works; nothing persists. Includes a blocked upgrade, which rejects rather than leaving start-up waiting; the session keeps storing nothing even after the other tab closes. |
 | Hydration rejects | Empty log, app starts normally — the same as a first run. |
 | `addMessage` rejects | Logged. The record stays in the cache for the session and gets no `id`; a later `saveTranslation` on it skips the write and logs, rather than failing silently. |
 | `updateMessage` rejects | Logged. The cache keeps the translation for the session. |
 | `readSettings` rejects | `{}`, so the values from `config.json` stand — today's `readOverrides` behaviour. |
+| `readSavedWords` rejects | Logged. No saved words for the session. |
+| `addSavedWord` rejects | Logged. The word stays for the session. |
 | `readAboutMe` rejects | Logged. About Me starts empty and the app runs without it. |
 | `writeAboutMe` rejects | Logged. The change still applies for the session; it is not saved. |
 | `writeSettings` rejects | `saveSettings()` resolves `false`; the dialog shows its existing failure message. |
@@ -150,7 +166,7 @@ persisted. No fallback backend is needed.
 `clearSavedData()` in
 [`cells/CommandClearSavedData.ts`](../../src/client/cells/CommandClearSavedData.ts) calls
 `clearAll()` and then empties the cache by calling `hydrateMessageLog()` again. `clearAll()`
-empties every object store in one transaction, so a failure on any of them leaves all three as
+empties every object store in one transaction, so a failure on any of them leaves all four as
 they were rather than half the data gone.
 
 ## Testing
@@ -173,7 +189,8 @@ just that wait followed by `deleteDatabase`.
 [`testUtils/StorageContract.ts`](../../src/client/testUtils/StorageContract.ts) exports
 `runStorageContractTests()`, the behaviour suite both backends must pass — settings and the
 About Me round-tripping, messages read back oldest first, a limit returning the newest records,
-`readMessagesAfter` reading past an id, `updateMessage` replacing a record, `clearAll` emptying
+`readMessagesAfter` reading past an id, saved words read back oldest first,
+`updateMessage` replacing a record, `clearAll` emptying
 every store. It is what makes "the backend is swappable" a tested claim rather than a hope — and
 both backends it covers now ship.
 

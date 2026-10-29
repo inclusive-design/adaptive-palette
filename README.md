@@ -194,6 +194,7 @@ command" and "Build output directory" settings:
 every symbol+indicator pair that the vocabulary supports to its grammatically correct label.
   - [Corresponding script directory](scripts/new_labels_with_indicator/)
 - [Modifiers](./docs/Modifiers.md): add any Bliss modifier to a symbol from the modifier palette.
+- [Compose New Words](./docs/ComposeWords.md): build, name and save a Bliss word that is not in the vocabulary.
 - [Telegraphic Message Translation](./docs/TelegraphicMessageTranslation.md): use a local Ollama model to
 turn telegraphic messages into complete, speakable English sentences.
 - [Word Prediction](./docs/WordPrediction.md): suggest the words most likely to come next, from the user's

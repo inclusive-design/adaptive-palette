@@ -151,6 +151,9 @@ describe("SvgUtils", (): void => {
     expect(findClassifierFromLeft([2404, "/", 374, "/", 382])).toEqual(4);
     expect(findClassifierFromLeft([449, "/", 2404, "/", 374, "/", 382])).toEqual(6);
 
+    // A combine marker at the start is passed over: the indicator goes on the classifier inside.
+    expect(findClassifierFromLeft([233, "/", 126, "//", 449, "/", 640, "/", 233])).toEqual(2);
+
     // The original `expectedMixedSeparatorsComposition` has no modifiers; also a single id has no modifiers.
     expect(findClassifierFromLeft(expectedMixedSeparatorsComposition)).toEqual(0);
     expect(findClassifierFromLeft(singleId)).toEqual(0);

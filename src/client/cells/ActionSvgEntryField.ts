@@ -14,10 +14,8 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { useRef, useState } from "preact/hooks";
 
-import { changeEncodingContents } from "../state/GlobalData";
-import { editMessage } from "../core/MessageEdit";
+import { insertWord } from "../core/MessageEdit";
 import { bstrToComposition } from "../utils/SvgUtils";
-import { insertWordAtCaret } from "../utils/SymbolEncodingUtils";
 import { MessagePreview } from "../components/MessagePreview";
 import { t } from "../i18n/I18n";
 import "./ActionSvgEntryField.scss";
@@ -75,11 +73,7 @@ export function ActionSvgEntryField (props: ActionSvgEntryFieldProps): VNode {
     };
 
     setMalformed(false);
-    const added = editMessage(insertWordAtCaret(
-      payload,
-      changeEncodingContents.value.payloads,
-      changeEncodingContents.value.caretPosition
-    ));
+    const added = insertWord(payload);
 
     // If edit is rejected, the status is cleared.
     if (!added) {

@@ -13,6 +13,7 @@
 import {
   JsonPaletteType, PaletteFileMapType, PaletteIncludeType, PaletteSetType, PictureOrSymbolInfoType
 } from "../index.d";
+import { addSavedWordCells } from "./SavedWords";
 
 // The cell type that draws another palette. `Palette.ts` handles it rather than the cell type
 // registry, which cannot import `Palette` without making an import cycle.
@@ -308,6 +309,7 @@ export class PaletteStore {
     }
     resolvePictures(loadedPalette, filePath, PaletteStore.setFolder);
     dropInvalidColors(loadedPalette, filePath);
+    addSavedWordCells(loadedPalette, paletteName, PaletteStore.setFolder);
     this.addPalette(loadedPalette, paletteName);
 
     // Included palettes are drawn with this one, so they are loaded now rather than on click.

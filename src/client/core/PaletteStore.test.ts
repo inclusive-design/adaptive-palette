@@ -13,6 +13,9 @@
 import { vi } from "vitest";
 import { JsonPaletteType } from "../index.d";
 import { PaletteStore, paletteSetPath, resolvePicturePath } from "./PaletteStore";
+import { MemoryStorage } from "./MemoryStorage";
+import { getStorage, setStorage } from "./StorageBackend";
+import { hydrateSavedWords } from "./SavedWords";
 
 describe("PaletteStore", (): void => {
 
@@ -298,6 +301,26 @@ describe("PaletteStore palette sets and includes", (): void => {
     expect(loaded?.cells["extra"].options).not.toHaveProperty("textColor");
     expect(errorSpy).toHaveBeenCalledTimes(2);
     errorSpy.mockRestore();
+  });
+
+  test("loading a palette adds the words saved to it", async (): Promise<void> => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    setStorage(new MemoryStorage());
+    await getStorage().addSavedWord({
+      id: "saved-word-1", paletteSet: "/sets/", palette: "Colours", label: "female teacher", composition: [710]
+    });
+    await hydrateSavedWords();
+    await paletteStore.loadPaletteSet("/sets/picture_set.json");
+
+    const loaded = await paletteStore.getNamedPalette("Colours", true);
+
+    expect(loaded?.cells["saved-word-1"]).toEqual({
+      type: "ActionCodeCell",
+      options: { label: "female teacher", composition: [710], rowStart: 2, columnStart: 1, rowSpan: 1, columnSpan: 1 }
+    });
+    setStorage(new MemoryStorage());
+    await hydrateSavedWords();
+    vi.restoreAllMocks();
   });
 });
 

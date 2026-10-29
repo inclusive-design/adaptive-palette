@@ -29,6 +29,7 @@ whatever this file says. See `isLocalHost()` in [`src/client/core/OllamaApi.ts`]
 | `indicatorLabelLookup` | The Ollama fallback tier for looking up indicator labels. See [IndicatorLabelLookup.md](../IndicatorLabelLookup.md). |
 | `telegraphicTranslation` | Translating a telegraphic message into full sentences. See [TelegraphicMessageTranslation.md](../TelegraphicMessageTranslation.md). |
 | `aboutMe` | The "Suggest updates" button in the "About Me" dialog, which asks a model for facts about the user. See [AboutMe.md](../AboutMe.md). |
+| `wordNaming` | The model names offered in the dialog that names a new word. See [ComposeWords.md](../ComposeWords.md). |
 | `symbolSearch` | The "Add Symbol to Message" trigger and its gloss-search dialog. |
 | `svgBuilderString` | The "Add Symbol by SVG-Builder String" trigger and its dialog. Off in production: it is for development. |
 | `wordPrediction` | Suggesting the next word from the user's past messages, and optionally from a model. See [WordPrediction.md](../WordPrediction.md). |
@@ -190,6 +191,20 @@ is skipped however long the user waits between runs.
 
 The button is also hidden away from `localhost`, whatever this section says, since there is no model
 to ask.
+
+## `wordNaming`
+
+Configures "Suggest names" in the dialog that names a new word. Without the section, the button is
+hidden and the word is named by hand or with the parts' names.
+
+The button is also hidden away from `localhost`, and when Ollama has no model installed, whatever
+this section says, since there is no model to ask.
+
+| Field | Type | Description |
+| ----- | ---- | ----------- |
+| `model` | string | Ollama model name. The empty string means Ollama's first available model. |
+| `systemPrompt` | string or object | Non-empty. Supports `{{numNames}}`, the number of names to ask for (3). |
+| `userPrompt` | string or object | Non-empty. Supports `{{parts}}`, the labels of the word's words joined with " + ". |
 
 ## `wordPrediction`
 

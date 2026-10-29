@@ -15,7 +15,7 @@ import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { aiSuggestionLabel } from "../components/AiBadge";
-import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { applyModifiersToLabel, caretComposition, replaceAtCaret } from "../utils/SymbolEncodingUtils";
@@ -38,12 +38,13 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
   // Marked unavailable rather than `disabled` so the button keeps its place in the tab
-  // order for switch and eye-gaze users. A picture at the caret takes no indicator.
+  // order for switch and eye-gaze users. A picture at the caret takes no indicator, and
+  // neither does the message while a new word is being built.
   const caretSymbolComposition = caretComposition(changeEncodingContents.value);
-  const unavailable = caretSymbolComposition === undefined;
+  const unavailable = caretSymbolComposition === undefined || wordBuildSignal.value !== null;
 
   const cellClicked = async () => {
-    if (caretSymbolComposition === undefined) { speakUnavailable(label); return; }
+    if (unavailable || caretSymbolComposition === undefined) { speakUnavailable(label); return; }
     // Get the symbol at the caret position in the editing area and find the
     // locations within it to replace any existing indicator.
     const { caretPosition, payloads } = changeEncodingContents.value;

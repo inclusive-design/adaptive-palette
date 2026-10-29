@@ -16,9 +16,7 @@ import { html } from "htm/preact";
 
 import { MatchType, SymbolEncodingType } from "../index.d";
 import { findSymbolByGloss } from "../utils/SvgUtils";
-import { changeEncodingContents } from "../state/GlobalData";
-import { editMessage } from "../core/MessageEdit";
-import { insertWordAtCaret } from "../utils/SymbolEncodingUtils";
+import { insertWord } from "../core/MessageEdit";
 import { GlossSearchResults } from "../components/GlossSearchResults";
 import { MessagePreview } from "../components/MessagePreview";
 import { languageSignal, t } from "../i18n/I18n";
@@ -112,11 +110,7 @@ export function ActionSearchGloss (props: ActionSearchGlossProps): VNode {
       userSelectedSymbolId: selected.id,
       modifierInfo: []
     };
-    const added = editMessage(insertWordAtCaret(
-      payload,
-      changeEncodingContents.value.payloads,
-      changeEncodingContents.value.caretPosition
-    ));
+    const added = insertWord(payload);
 
     // If edit is rejected, the status is cleared.
     if (!added) {

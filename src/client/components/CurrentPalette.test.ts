@@ -17,6 +17,9 @@ import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { CurrentPalette } from "./CurrentPalette";
 import { CommandGoBackCell } from "../cells/CommandGoBackCell";
+import { MemoryStorage } from "../core/MemoryStorage";
+import { setStorage } from "../core/StorageBackend";
+import { saveWord } from "../core/SavedWords";
 
 describe("CurrentPalette", (): void => {
 
@@ -121,5 +124,25 @@ describe("CurrentPalette", (): void => {
       expect(container.querySelector("[data-palettename='First Palette']")).not.toBeNull();
     });
     expect(navigationStack.depth).toBe(0);
+  });
+
+  test("draws again when a word is saved to the palette on screen", async (): Promise<void> => {
+    setStorage(new MemoryStorage());
+    const palette = {
+      name: "Saving",
+      cells: {
+        first: {
+          type: "ActionCodeCell",
+          options: { label: "first", composition: 126, rowStart: 1, rowSpan: 1, columnStart: 1, columnSpan: 1 }
+        }
+      }
+    };
+    adaptivePaletteGlobals.navigationStack.currentPalette = palette;
+    render(html`<${CurrentPalette} />`);
+    await screen.findByText("first");
+
+    saveWord(palette, "Saving", "/sets/", "female teacher", [710]);
+
+    expect(await screen.findByText("female teacher")).toBeInTheDocument();
   });
 });

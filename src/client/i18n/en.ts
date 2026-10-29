@@ -61,6 +61,9 @@ export const en = {
 
   // Input area
   inputArea: "Input Area",
+  newWordTag: "New word",
+  wordSpace: "space",
+  combineMarker: "combine marker",
   cursorBackward: "backward",
   cursorForward: "forward",
   cursorStart: "move cursor to start",
@@ -184,6 +187,16 @@ export const en = {
   discardTitle: "Change your message?",
   discardChangeAnyway: "Change anyway",
   discardKeep: "Keep sentences",
+
+  // Naming a new word
+  wordNameTitle: "Name this word",
+  wordNameField: "Type a name:",
+  wordNameUse: "Use this name",
+  wordSuggesting: "Asking for names…",
+  wordSuggestFailed: "No names could be suggested.",
+  wordBack: "Back to word",
+  wordMatchTitle: "This is {{label}}",
+  wordMatchUse: "Use {{label}}",
 
   // Message attributes
   attributeIntent: "Intent",
