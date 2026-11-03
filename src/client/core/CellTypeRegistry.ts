@@ -37,6 +37,7 @@ import { SentenceChoices } from "../features/telegraphic-translation/SentenceCho
 import { PredictedWords } from "../features/word-prediction/PredictedWords";
 import { ContentEncoding } from "../cells/ContentEncoding";
 import { ContentLabel } from "../cells/ContentLabel";
+import { ContentRemoved } from "../cells/ContentRemoved";
 
 export const cellTypeRegistry = {
   "ActionCodeCell": ActionCodeCell,
@@ -60,5 +61,6 @@ export const cellTypeRegistry = {
   "ContentEncoding": ContentEncoding,
   "ContentLabel": ContentLabel,
   "ContentPredictedWords": PredictedWords,
+  "ContentRemoved": ContentRemoved,
   "ContentSentenceChoices": SentenceChoices,
 };

@@ -40,7 +40,7 @@ const ENTITIES = { lt: "<", gt: ">", quot: "\"", apos: "'", amp: "&" };
  * @param {string} raw - The value between an element's tags.
  * @returns {string}
  */
-function xmlText (raw) {
+export function xmlText (raw) {
   return raw.replace(/<!\[CDATA\[([\s\S]*?)\]\]>|&(lt|gt|quot|apos|amp);|&#(x[0-9a-fA-F]+|\d+);/g,
     (match, cdata, entity, code) => cdata ?? ENTITIES[entity] ??
       String.fromCodePoint(code.startsWith("x") ? parseInt(code.slice(1), 16) : Number(code)));
@@ -52,13 +52,13 @@ function xmlText (raw) {
  * @param {string} name - An element name with no attributes on its tag, such as "Caption".
  * @returns {string} - "" when there is no such element.
  */
-function element (xml, name) {
+export function element (xml, name) {
   const match = xml.match(new RegExp(`<${name}>([\\s\\S]*?)</${name}>`));
   return match ? xmlText(match[1]).trim() : "";
 }
 
 // Grid 3 commands that map to one of our command cells.
-const COMMAND_CELLS = {
+export const COMMAND_CELLS = {
   "Jump.Back": "CommandGoBackCell",
   "Jump.Home": "CommandGoToRootCell",
   "Action.Speak": "ActionSpeakCell",
@@ -74,6 +74,12 @@ const MESSAGE_AREA_ID = "content-encoding-area";
 
 // The command cells that speak or change the message, so they name it with `ariaControls`.
 const MESSAGE_COMMANDS = new Set(["ActionSpeakCell", "CommandDelLastEncoding", "CommandClearEncoding"]);
+
+// The comment `clean_grid3.js` writes in a grid it removed for privacy.
+export const REMOVED_MARKER = "<!-- adaptive-palette: removed for privacy -->";
+
+// A `<Cell>` in a `grid.xml`: its attributes, and its body unless it is self-closing.
+export const CELL = /<Cell\b([^>]*?)(?:\/>|>([\s\S]*?)<\/Cell>)/g;
 
 /**
  * Turn a mapping string into a composition: `"B513/B548"` becomes `[513, "/", 548]`. A
@@ -113,7 +119,7 @@ export function slugify (name) {
  *                       "" when it has none.
  */
 export function readCells (xml) {
-  return [...xml.matchAll(/<Cell\b([^>]*?)(?:\/>|>([\s\S]*?)<\/Cell>)/g)].map(([, attributeText, body = ""]) => {
+  return [...xml.matchAll(CELL)].map(([, attributeText, body = ""]) => {
     const attributes = Object.fromEntries(
       [...attributeText.matchAll(/(\w+)="([^"]*)"/g)].map(([, name, value]) => [name, Number(value)])
     );
@@ -179,11 +185,11 @@ function symbolOrPicture (raw, grid) {
 /**
  * Convert one cell read by `readCells()` to a palette cell.
  * @param {Object} raw - A cell from `readCells()`.
- * @param {Object} grid - `{ name, slug, dir, hasWorkspace, mapping, gridNames, icons, styles }`: the
+ * @param {Object} grid - `{ name, slug, dir, hasWorkspace, mapping, gridNames, stubs, icons, styles }`: the
  *                        grid's NFC name, its file slug and its folder; whether it has a message area;
- *                        the mapping, with NFC keys; every grid's name; the standard chart's command
- *                        cell compositions, by cell type; and a Map of each named style's
- *                        `{ backColour, fontColour }`.
+ *                        the mapping, with NFC keys; every grid's name; the names of the grids removed for
+ *                        privacy; the standard chart's command cell compositions, by cell type; and a Map of
+ *                        each named style's `{ backColour, fontColour }`.
  * @returns {Object|null} - `null` for an empty slot, `{ skipped }` with the reason for a cell that
  *                          cannot be imported, or `{ id, cell, copy, warning }`. `copy` names a picture
  *                          file to copy, and `warning` is a problem to report.
@@ -195,6 +201,16 @@ export function convertCell (raw, grid) {
   }
   const id = `cell-${raw.x}-${raw.y}`;
   const label = raw.caption || raw.insertedText;
+  // The cell's own colours, or else its style's. A style Grid 3 has built in is not in styles.xml.
+  const style = grid.styles.get(raw.basedOnStyle);
+  const back = raw.backColour || style?.backColour;
+  const font = raw.fontColour || style?.fontColour;
+  const colours = { ...(back && { backgroundColor: back }), ...(font && { textColor: font }) };
+  // A cell that led to a grid removed for privacy shows its label and the notice, which
+  // `clean_grid3.js` wrote in its caption.
+  if (grid.stubs.has(raw.jumpTo)) {
+    return { id, cell: { type: "ContentRemoved", options: { label, ...colours, ...layout } } };
+  }
   // Grid 3 leaves an insert with no text in some blank cells.
   const onlyEmptyInserts = !label && !raw.image && raw.commands.every(command => command === "Action.InsertText");
   if ((raw.commands.length === 0 && !raw.caption) || onlyEmptyInserts) {
@@ -212,11 +228,6 @@ export function convertCell (raw, grid) {
     const { copy, warning, ...shown } = symbolOrPicture(raw, grid);
     const type = inserts ? "ActionCodeCell" : "ActionBranchToPaletteCell";
     const branchTo = jumps && !noGrid ? { branchTo: raw.jumpTo } : {};
-    // The cell's own colours, or else its style's. A style Grid 3 has built in is not in styles.xml.
-    const style = grid.styles.get(raw.basedOnStyle);
-    const back = raw.backColour || style?.backColour;
-    const font = raw.fontColour || style?.fontColour;
-    const colours = { ...(back && { backgroundColor: back }), ...(font && { textColor: font }) };
     return {
       id,
       cell: { type, options: { label, ...shown, ...branchTo, ...colours, ...layout } },
@@ -292,6 +303,11 @@ export function importGridset (gridsetDir, mapping, setDir) {
     throw new Error(`The start grid "${startPalette}" is not in ${gridsDir}.`);
   }
 
+  // The grids `clean_grid3.js` removed for privacy. They get no palette.
+  const stubs = new Set(grids
+    .filter(grid => fs.readFileSync(path.join(grid.dir, "grid.xml"), "utf8").includes(REMOVED_MARKER))
+    .map(grid => grid.name));
+
   const nfcMapping = Object.fromEntries(Object.entries(mapping).map(([key, value]) => [key.normalize("NFC"), value]));
   const icons = {};
   for (const file of ["input_area.json", "command_bar.json"]) {
@@ -315,13 +331,13 @@ export function importGridset (gridsetDir, mapping, setDir) {
     fs.mkdirSync(path.join(outDir, "palettes"), { recursive: true });
     const report = [];
     const palettes = {};
-    for (const grid of grids) {
+    for (const grid of grids.filter(grid => !stubs.has(grid.name))) {
       const xml = fs.readFileSync(path.join(grid.dir, "grid.xml"), "utf8");
       const raws = readCells(xml);
       const hasWorkspace = raws.some(raw => raw.contentType === "Workspace");
       const cells = {};
       for (const raw of raws) {
-        const result = convertCell(raw, { ...grid, hasWorkspace, mapping: nfcMapping, gridNames, icons, styles });
+        const result = convertCell(raw, { ...grid, hasWorkspace, mapping: nfcMapping, gridNames, stubs, icons, styles });
         const where = `${grid.name} (${raw.x}, ${raw.y})`;
         if (!result) {
           continue;

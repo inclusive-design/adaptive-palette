@@ -39,6 +39,7 @@ three categories by prefix.
 | `ContentEncoding` | Displays the current encoding (the input area showing selected symbols) | layout fields only |
 | `ContentLabel` | Text in a grid slot, with no interaction; `aria-hidden`, so use it only where the cells it heads already name themselves. See [Message Attributes](../MessageAttributes.md) | `label` |
 | `ContentPredictedWords` | The suggested next words: one row of `numSuggestions` slots (a user setting), and a live region that is never shown | layout fields only |
+| `ContentRemoved` | A cell that led to a grid removed for privacy: its label, with the notice on a second line. Text, not a button: pressing it does nothing and switch scanning skips it, but screen readers read it. The Grid 3 import makes it. See [Removing personal grids](Grid3Mapping.md#removing-personal-grids) | `label`; `backgroundColor` and `textColor` (optional) |
 | `ContentSentenceChoices` | The sentence area: a status line, the sentences `CommandMakeSentence` made, and the "type yours" box. With `"layer": true`, the screen palette draws it as a layer over the rows below the header (see [Palettes](Palettes.md#fitting-the-screen)). Its cell id becomes its element id; point `CommandMakeSentence`'s `ariaControls` at it | layout fields only |
 
 ## `PaletteInclude` — another palette in a span

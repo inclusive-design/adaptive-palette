@@ -17,7 +17,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { convertCell, importGridset, parseComposition, readCells, slugify } from "./import_grid3.js";
+import { REMOVED_MARKER, convertCell, importGridset, parseComposition, readCells, slugify } from "./import_grid3.js";
 
 test.each([
   ["B513/B548/B958", [513, "/", 548, "/", 958]],
@@ -142,6 +142,7 @@ describe("convertCell()", () => {
     hasWorkspace: true,
     mapping: { "Grids/Blå sida/0-1-0-text-0.jpg": "B513/B10", "[blissx]18274.wmf": "B711;B81" },
     gridNames: new Set(["Blå sida", "Start"]),
+    stubs: new Set(),
     icons: { CommandGoToRootCell: 392, ActionSpeakCell: 2325 },
     styles: new Map([
       ["Vocab cell", { backColour: "#FEFEF4FF", fontColour: "#000000FF" }],
@@ -328,6 +329,22 @@ describe("convertCell()", () => {
   test("a caption with no command is skipped", () => {
     expect(convertCell(cell({ caption: "frukost" }), grid())).toEqual({ skipped: "unsupported: no command" });
   });
+
+  test("a jump to a grid removed for privacy becomes a ContentRemoved cell with the cell's label and colours", () => {
+    const entry = cell({
+      commands: ["Jump.To"], jumpTo: "Vänner", caption: "Vänner\nBorttaget av integritetsskäl", basedOnStyle: "Vocab cell"
+    });
+    const removed = { ...grid(), gridNames: new Set(["Blå sida", "Start", "Vänner"]), stubs: new Set(["Vänner"]) };
+    expect(convertCell(entry, removed)).toEqual({
+      id: "cell-0-1",
+      cell: {
+        type: "ContentRemoved",
+        options: {
+          label: "Vänner\nBorttaget av integritetsskäl", backgroundColor: "#FEFEF4FF", textColor: "#000000FF", ...layout
+        }
+      }
+    });
+  });
 });
 
 describe("importGridset()", () => {
@@ -505,5 +522,23 @@ describe("importGridset()", () => {
     const gridset = writeGridset(["Start", "Tom Sida", "Tom-Sida"]);
     expect(() => importGridset(gridset, mapping, setDir)).toThrow("tom_sida");
     expect(fs.existsSync(setDir)).toBe(false);
+  });
+
+  test("a grid removed for privacy gets no palette, and a cell that jumps to it becomes ContentRemoved", () => {
+    const setDir = path.join(tmp, "set");
+    const gridset = writeGridset();
+    // A stub as clean_grid3.js writes it. Its notice cell has no command, which the report would list.
+    fs.writeFileSync(path.join(gridset, "Grids", "Blå sida".normalize("NFD"), "grid.xml"), `<Grid>
+      ${REMOVED_MARKER}
+      <Cells><Cell><Content><CaptionAndImage><Caption>Borttaget</Caption></CaptionAndImage></Content></Cell></Cells>
+    </Grid>`);
+
+    const report = importGridset(gridset, mapping, setDir);
+    expect(report).toEqual(["Start (1, 0): skipped, unsupported: Action.Copy"]);
+    expect(readJson(path.join(setDir, "palette_set.json")).palettes).toEqual({ "Start": "palettes/start.json" });
+    expect(fs.existsSync(path.join(setDir, "palettes", "bla_sida.json"))).toBe(false);
+    expect(readJson(path.join(setDir, "palettes", "start.json")).cells["cell-0-0"]).toEqual({
+      type: "ContentRemoved", options: { label: "blå", rowStart: 1, rowSpan: 1, columnStart: 1, columnSpan: 1 }
+    });
   });
 });
