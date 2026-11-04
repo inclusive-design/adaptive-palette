@@ -9,105 +9,105 @@
       "type": "ActionIndicatorCell",
       "options": {"label": {"en": "plural", "sv": "flertal"}, "composition": 99, "rowStart": 2, "rowSpan": 1, "columnStart": 1, "columnSpan": 1}
     },
-    "indicator-definite-plural": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "definite plural", "sv": "bestämd plural"}, "composition": 5996, "rowStart": 2, "rowSpan": 1, "columnStart": 2, "columnSpan": 1}
-    },
-    "indicator-definite": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "definite", "sv": "bestämd"}, "composition": 904, "rowStart": 2, "rowSpan": 1, "columnStart": 3, "columnSpan": 1}
-    },
-    "indicator-thing": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "thing", "sv": "sak"}, "composition": 97, "rowStart": 2, "rowSpan": 1, "columnStart": 4, "columnSpan": 1}
-    },
-    "indicator-abstract": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "abstract", "sv": "abstrakt"}, "composition": 6436, "rowStart": 2, "rowSpan": 1, "columnStart": 5, "columnSpan": 1}
-    },
-    "indicator-plural-thing": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "plural thing", "sv": "flera saker"}, "composition": 98, "rowStart": 2, "rowSpan": 1, "columnStart": 6, "columnSpan": 1}
-    },
-    "indicator-definite-plural-thing": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "definite plural thing", "sv": "bestämda saker"}, "composition": 5998, "rowStart": 2, "rowSpan": 1, "columnStart": 7, "columnSpan": 1}
-    },
-    "indicator-definite-thing": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "definite thing", "sv": "bestämd sak"}, "composition": 5997, "rowStart": 2, "rowSpan": 1, "columnStart": 8, "columnSpan": 1}
-    },
     "indicator-action": {
       "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "action", "sv": "handling"}, "composition": 81, "rowStart": 2, "rowSpan": 1, "columnStart": 9, "columnSpan": 1}
-    },
-    "indicator-active": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "active", "sv": "aktiv"}, "composition": 82, "rowStart": 3, "rowSpan": 1, "columnStart": 1, "columnSpan": 1}
-    },
-    "indicator-past": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "past", "sv": "förr"}, "composition": 92, "rowStart": 3, "rowSpan": 1, "columnStart": 2, "columnSpan": 1}
-    },
-    "indicator-present": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "present", "sv": "nu"}, "composition": 928, "rowStart": 3, "rowSpan": 1, "columnStart": 3, "columnSpan": 1}
-    },
-    "indicator-future": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "future", "sv": "framtida"}, "composition": 87, "rowStart": 3, "rowSpan": 1, "columnStart": 4, "columnSpan": 1}
-    },
-    "indicator-continuous": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "continuous", "sv": "pågående"}, "composition": 903, "rowStart": 3, "rowSpan": 1, "columnStart": 5, "columnSpan": 1}
-    },
-    "indicator-imperative": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "imperative", "sv": "imperativ"}, "composition": 907, "rowStart": 3, "rowSpan": 1, "columnStart": 6, "columnSpan": 1}
-    },
-    "indicator-past-conditional": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "past conditional", "sv": "villkorlig förr"}, "composition": 93, "rowStart": 3, "rowSpan": 1, "columnStart": 7, "columnSpan": 1}
-    },
-    "indicator-present-conditional": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "present conditional", "sv": "villkorlig nu"}, "composition": 83, "rowStart": 3, "rowSpan": 1, "columnStart": 8, "columnSpan": 1}
-    },
-    "indicator-future-conditional": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "future conditional", "sv": "villkorlig framtida"}, "composition": 88, "rowStart": 3, "rowSpan": 1, "columnStart": 9, "columnSpan": 1}
-    },
-    "indicator-past-passive": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "past passive", "sv": "passiv förr"}, "composition": 95, "rowStart": 4, "rowSpan": 1, "columnStart": 1, "columnSpan": 1}
-    },
-    "indicator-passive": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "passive", "sv": "passiv"}, "composition": 91, "rowStart": 4, "rowSpan": 1, "columnStart": 2, "columnSpan": 1}
-    },
-    "indicator-future-passive": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "future passive", "sv": "passiv framtida"}, "composition": 89, "rowStart": 4, "rowSpan": 1, "columnStart": 3, "columnSpan": 1}
-    },
-    "indicator-past-passive-conditional": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "past passive conditional", "sv": "passiv villkorlig förr"}, "composition": 94, "rowStart": 4, "rowSpan": 1, "columnStart": 4, "columnSpan": 1}
-    },
-    "indicator-present-passive-conditional": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "present passive conditional", "sv": "passiv villkorlig nu"}, "composition": 96, "rowStart": 4, "rowSpan": 1, "columnStart": 5, "columnSpan": 1}
-    },
-    "indicator-future-passive-conditional": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "future passive conditional", "sv": "passiv villkorlig framtida"}, "composition": 90, "rowStart": 4, "rowSpan": 1, "columnStart": 6, "columnSpan": 1}
-    },
-    "indicator-description-before-the-fact": {
-      "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "description before the fact", "sv": "beskrivning före"}, "composition": 85, "rowStart": 4, "rowSpan": 1, "columnStart": 7, "columnSpan": 1}
+      "options": {"label": {"en": "action", "sv": "handling"}, "composition": 81, "rowStart": 2, "rowSpan": 1, "columnStart": 2, "columnSpan": 1}
     },
     "indicator-description": {
       "type": "ActionIndicatorCell",
-      "options": {"label": {"en": "description", "sv": "beskrivning"}, "composition": 86, "rowStart": 4, "rowSpan": 1, "columnStart": 8, "columnSpan": 1}
+      "options": {"label": {"en": "description", "sv": "beskrivning"}, "composition": 86, "rowStart": 2, "rowSpan": 1, "columnStart": 3, "columnSpan": 1}
+    },
+    "indicator-past": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "past", "sv": "förr"}, "composition": 92, "rowStart": 2, "rowSpan": 1, "columnStart": 4, "columnSpan": 1}
+    },
+    "indicator-present": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "present", "sv": "nu"}, "composition": 928, "rowStart": 2, "rowSpan": 1, "columnStart": 5, "columnSpan": 1}
+    },
+    "indicator-future": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "future", "sv": "framtida"}, "composition": 87, "rowStart": 2, "rowSpan": 1, "columnStart": 6, "columnSpan": 1}
+    },
+    "indicator-thing": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "thing", "sv": "sak"}, "composition": 97, "rowStart": 2, "rowSpan": 1, "columnStart": 7, "columnSpan": 1}
+    },
+    "indicator-definite-plural": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "definite plural", "sv": "bestämd plural"}, "composition": 5996, "rowStart": 2, "rowSpan": 1, "columnStart": 8, "columnSpan": 1}
+    },
+    "indicator-definite": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "definite", "sv": "bestämd"}, "composition": 904, "rowStart": 2, "rowSpan": 1, "columnStart": 9, "columnSpan": 1}
+    },
+    "indicator-abstract": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "abstract", "sv": "abstrakt"}, "composition": 6436, "rowStart": 3, "rowSpan": 1, "columnStart": 1, "columnSpan": 1}
+    },
+    "indicator-plural-thing": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "plural thing", "sv": "flera saker"}, "composition": 98, "rowStart": 3, "rowSpan": 1, "columnStart": 2, "columnSpan": 1}
+    },
+    "indicator-definite-plural-thing": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "definite plural thing", "sv": "bestämda saker"}, "composition": 5998, "rowStart": 3, "rowSpan": 1, "columnStart": 3, "columnSpan": 1}
+    },
+    "indicator-definite-thing": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "definite thing", "sv": "bestämd sak"}, "composition": 5997, "rowStart": 3, "rowSpan": 1, "columnStart": 4, "columnSpan": 1}
+    },
+    "indicator-active": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "active", "sv": "aktiv"}, "composition": 82, "rowStart": 3, "rowSpan": 1, "columnStart": 5, "columnSpan": 1}
+    },
+    "indicator-continuous": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "continuous", "sv": "pågående"}, "composition": 903, "rowStart": 3, "rowSpan": 1, "columnStart": 6, "columnSpan": 1}
+    },
+    "indicator-imperative": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "imperative", "sv": "imperativ"}, "composition": 907, "rowStart": 3, "rowSpan": 1, "columnStart": 7, "columnSpan": 1}
+    },
+    "indicator-past-conditional": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "past conditional", "sv": "villkorlig förr"}, "composition": 93, "rowStart": 3, "rowSpan": 1, "columnStart": 8, "columnSpan": 1}
+    },
+    "indicator-present-conditional": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "present conditional", "sv": "villkorlig nu"}, "composition": 83, "rowStart": 3, "rowSpan": 1, "columnStart": 9, "columnSpan": 1}
+    },
+    "indicator-future-conditional": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "future conditional", "sv": "villkorlig framtida"}, "composition": 88, "rowStart": 4, "rowSpan": 1, "columnStart": 1, "columnSpan": 1}
+    },
+    "indicator-past-passive": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "past passive", "sv": "passiv förr"}, "composition": 95, "rowStart": 4, "rowSpan": 1, "columnStart": 2, "columnSpan": 1}
+    },
+    "indicator-passive": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "passive", "sv": "passiv"}, "composition": 91, "rowStart": 4, "rowSpan": 1, "columnStart": 3, "columnSpan": 1}
+    },
+    "indicator-future-passive": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "future passive", "sv": "passiv framtida"}, "composition": 89, "rowStart": 4, "rowSpan": 1, "columnStart": 4, "columnSpan": 1}
+    },
+    "indicator-past-passive-conditional": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "past passive conditional", "sv": "passiv villkorlig förr"}, "composition": 94, "rowStart": 4, "rowSpan": 1, "columnStart": 5, "columnSpan": 1}
+    },
+    "indicator-present-passive-conditional": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "present passive conditional", "sv": "passiv villkorlig nu"}, "composition": 96, "rowStart": 4, "rowSpan": 1, "columnStart": 6, "columnSpan": 1}
+    },
+    "indicator-future-passive-conditional": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "future passive conditional", "sv": "passiv villkorlig framtida"}, "composition": 90, "rowStart": 4, "rowSpan": 1, "columnStart": 7, "columnSpan": 1}
+    },
+    "indicator-description-before-the-fact": {
+      "type": "ActionIndicatorCell",
+      "options": {"label": {"en": "description before the fact", "sv": "beskrivning före"}, "composition": 85, "rowStart": 4, "rowSpan": 1, "columnStart": 8, "columnSpan": 1}
     },
     "indicator-description-after-the-fact": {
       "type": "ActionIndicatorCell",

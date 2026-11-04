@@ -68,6 +68,16 @@ describe("modifiers.json agrees with data/modifiers.json", (): void => {
       .toEqual(modifiers.map((modifier) => [CELL_TYPES[modifier.position], modifier.gloss, modifier.composition]));
   });
 
+  // Most-used first, so switch users reach them in the fewest presses. Keep these places stable.
+  test("puts the most-used modifiers first", (): void => {
+    expect(modifierCells().slice(0, 13).map((cell) => [(cell.options.label as { en: string }).en, cell.options.composition]))
+      .toEqual([
+        ["opposite of", 486], ["generalization", 348], ["part of", 502], ["without", 449], ["not", 2088],
+        ["group of", 368], ["more", 937], ["most", 968], ["belongs to", 160], ["same as", 578],
+        ["similar to", 2404], ["looks like", 2405], ["sounds like", 2406]
+      ]);
+  });
+
   // A symbol with no `modifierInfo`, such as a typed composition, has its prefix modifiers
   // skipped by `findClassifierFromLeft()`, so an indicator lands on the base symbol.
   test("findClassifierFromLeft() skips every prefix modifier whole", (): void => {

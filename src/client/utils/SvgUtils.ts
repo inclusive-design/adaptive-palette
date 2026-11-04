@@ -31,17 +31,17 @@ export const SEMANTIC_INDICATORS = [97, 6436]; // thing, abstract
 // Note: These may be relevant to strategies since there is some overlap, e.g.,
 // Semantic and Grammatical strategies.
 const modifierIds = {
-  // much, intensity, without, opposite, generalization, part of, ago, now, future, same
-  semantic: [368, 401, 449, 486, 348, 502, 112, 474, 648, 578],
+  // group of, intensity, without, opposite, generalization, part of, ago, now, future, same as, not
+  semantic: [368, 401, 449, 486, 348, 502, 112, 474, 648, 578, 2088],
   // more, most, belongs to
   grammatical: [937, 968, 160],
-  // similar, similar looking, similar sound
+  // similar to, looks like, sounds like
   conceptTransforming: [2404, 2405, 2406],
   // range of the index numerals from 0 through 9. NOTE THIS IS A RANGE.
   numericRange: [19, 28],
   // metaphor, Blissname, slang, coarse slang
   signalling: [444, 753, 970, 971],
-  // similar feeling, similar smell, similar taste: modifiers made of more than one symbol
+  // feels like, smells like, tastes like: modifiers made of more than one symbol
   multiSymbol: [[2404, "/", 374], [2404, "/", 473], [2404, "/", 642]]
 };
 

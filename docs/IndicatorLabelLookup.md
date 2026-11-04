@@ -8,11 +8,13 @@ and displays the grammatically correct label. For example, "walk" + past-tense i
 
 The "add indicator" button on the command bar opens the indicator palette. It lists every
 indicator in `public/data/indicators.json` in the file's order, 9 per row with no gaps and no
-group headings. Picking an indicator applies it to the symbol at the caret and the
+group headings. The file starts with the most-used ones: plural, action, description, past,
+present, future and thing. Picking an indicator applies it to the symbol at the caret and the
 palette stays open; Back returns to the previous palette. "remove indicator", next to "add
 indicator" on the command bar, removes the indicator from the symbol at the caret.
 
-The palette is `public/palette-sets/standardBlissChart/palettes/indicators.json`. When an
+The palette is `public/palette-sets/standardBlissChart/palettes/indicators.json`. Add a new
+indicator at the end of the file, so that the others keep the places users have learned. When an
 indicator is added to or moved in `indicators.json`, update the palette too;
 `IndicatorsPaletteConsistency.test.ts` fails until they agree.
 
