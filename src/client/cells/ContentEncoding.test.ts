@@ -246,12 +246,12 @@ describe("keeping the caret in view", (): void => {
 
   const options = { columnStart: 1, columnSpan: 1, rowStart: 1, rowSpan: 1 };
   // Words with a label and no symbol, so their widths do not depend on the symbol styles. About
-  // 900px in all, so a 200px area shows three or four at a time.
+  // 900px in all. 300px leaves room for three at once even in a wide default font, such as on Linux.
   const words = Array.from({ length: 20 }, (_, index) => ({ label: `w${index}` }));
   let area: HTMLElement;
 
   // Draws the input area in a frame of the given width, with the message set first.
-  async function renderMessage (payloads: SymbolEncodingType[], caretPosition: number, width = 200): Promise<void> {
+  async function renderMessage (payloads: SymbolEncodingType[], caretPosition: number, width = 300): Promise<void> {
     changeEncodingContents.value = { payloads, caretPosition };
     render(html`
       <div style=${`width: ${width}px`}>
@@ -406,7 +406,7 @@ describe("keeping the caret in view", (): void => {
 
   test("a symbol wider than the area shows its caret bar, and stays put on a redraw", async (): Promise<void> => {
     const wide = words.map((word, index) => index === 10 ? { label: "a-very-long-label-wider-than-the-area" } : word);
-    await renderMessage(wide, 10);
+    await renderMessage(wide, 10, 200);
     await vi.waitFor(() => expect(symbol(10)).toHaveClass("cursorCaret"));
     // Wider than the area, so the caret and its neighbours cannot all show.
     expect(symbol(10).getBoundingClientRect().width).toBeGreaterThan(area.clientWidth);
