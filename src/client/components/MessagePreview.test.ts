@@ -87,4 +87,17 @@ describe("MessagePreview", () => {
 
     expect(await screen.findByText("dog")).toBeInTheDocument();
   });
+
+  test("keeps the caret in view in a long message", () => {
+    changeEncodingContents.value = {
+      payloads: Array.from({ length: 20 }, (_, index) => ({ label: `w${index}` })),
+      caretPosition: 19
+    };
+    render(html`<div style="width: 200px"><${MessagePreview} /></div>`);
+
+    const area = screen.getByRole("group");
+    const caret = area.querySelector(".cursorCaret") as Element;
+    expect(area.scrollLeft).toBeGreaterThan(0);
+    expect(caret.getBoundingClientRect().right).toBeLessThanOrEqual(area.getBoundingClientRect().right);
+  });
 });
