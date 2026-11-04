@@ -258,12 +258,15 @@ export function moveCursorToEnd () {
 };
 
 function handleKeyDown(event: KeyboardEvent) {
+  // The browser's own arrow-key scroll would run after `useCaretInView()` and push the caret out of view.
   if ((!(isApplePlatform && event.metaKey) && event.key === "ArrowLeft") || event.key === "ArrowDown") {
+    event.preventDefault();
     decrementCursor();
     announceIfEnabled(t("cursorBackward"));
   }
 
   if ((!(isApplePlatform && event.metaKey) && event.key === "ArrowRight") || event.key === "ArrowUp") {
+    event.preventDefault();
     incrementCursor();
     announceIfEnabled(t("cursorForward"));
   }

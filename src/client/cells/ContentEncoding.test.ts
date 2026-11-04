@@ -12,6 +12,7 @@
 
 import { render, screen } from "@testing-library/preact";
 import { vi } from "vitest";
+import { userEvent } from "vitest/browser";
 import { html } from "htm/preact";
 import { ContentEncoding, INPUT_AREA_ID, clamp, decrementCursor, incrementCursor, moveCursorToEnd, moveCursorToHome } from "./ContentEncoding";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
@@ -329,6 +330,22 @@ describe("keeping the caret in view", (): void => {
     for (let position = 1; position <= 19; position++) {
       incrementCursor();
       await expectCaretInView(position, Math.min(position + 1, 19));
+    }
+  });
+
+  // `userEvent` from `vitest/browser` sends trusted key presses, so the browser's own scroll runs.
+  test("arrow key presses show the caret and the symbol past it", async (): Promise<void> => {
+    await renderMessage(words, 19);
+    area.focus();
+    await userEvent.keyboard("{Home}");
+    await vi.waitFor(() => expect(symbol(0)).toHaveClass("insertionCaret"));
+    for (let position = 0; position <= 10; position++) {
+      await userEvent.keyboard("{ArrowRight}");
+      await expectCaretInView(position, Math.max(position - 1, 0), position + 1);
+    }
+    for (let position = 9; position >= 0; position--) {
+      await userEvent.keyboard("{ArrowLeft}");
+      await expectCaretInView(position, Math.max(position - 1, 0), position + 1);
     }
   });
 
