@@ -10,8 +10,9 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
+import { RefObject, VNode } from "preact";
 import { html } from "htm/preact";
+import { useLayoutEffect, useRef } from "preact/hooks";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { adaptivePaletteGlobals, changeEncodingContents, settingsSavedCount, wordBuildSignal } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
@@ -131,6 +132,103 @@ export function messageMarkup (): Array<VNode> {
   ];
 }
 
+/**
+ * Scrolls the message area by as little as needed to show the caret with the symbol on each side
+ * of it, or just the caret's bar when the three do not fit. The scroll padding keeps them clear of the
+ * edge markers. Only the area scrolls: `scrollIntoView()` would scroll the page or a dialog too.
+ * @param {HTMLElement} area - The scrolling message element.
+ */
+function showCaret (area: HTMLElement): void {
+  const caret = area.querySelector(".cursorCaret, .insertionCaret");
+  if (!caret) {
+    return;
+  }
+  const padding = parseFloat(getComputedStyle(area).scrollPaddingLeft) || 0;
+  const areaLeft = area.getBoundingClientRect().left + area.clientLeft;
+  const start = areaLeft + padding;
+  const end = areaLeft + area.clientWidth - padding;
+  const rects = [caret.previousElementSibling, caret, caret.nextElementSibling]
+    .filter((element): element is Element => element !== null)
+    .map((element) => element.getBoundingClientRect());
+  let left = Math.min(...rects.map((rect) => rect.left));
+  let right = Math.max(...rects.map((rect) => rect.right));
+  if (right - left > end - start) {
+    const rect = caret.getBoundingClientRect();
+    left = right = caret.classList.contains("cursorCaret") ? rect.right : rect.left;
+  }
+  if (left < start) {
+    area.scrollLeft -= start - left;
+  } else if (right > end) {
+    area.scrollLeft += right - end;
+  }
+}
+
+/**
+ * Marks each edge of the message area that has symbols hidden past it, for the markers.
+ * 1px of slack at the end for sub-pixel widths.
+ * @param {HTMLElement} area - The scrolling message element.
+ */
+function markHiddenEdges (area: HTMLElement): void {
+  area.toggleAttribute("data-hidden-start", area.scrollLeft > 0);
+  area.toggleAttribute("data-hidden-end", area.scrollLeft + area.clientWidth < area.scrollWidth - 1);
+}
+
+/**
+ * Scrolls to the caret, then updates the edge markers.
+ * @param {HTMLElement} area - The scrolling message element.
+ */
+function followCaret (area: HTMLElement): void {
+  showCaret(area);
+  markHiddenEdges(area);
+}
+
+/**
+ * Keeps the caret of a message area in view: after every draw, when the area changes size, and
+ * when a picture in it loads. Scrolling by hand only updates the edge markers, so the area stays
+ * where the user put it until the next change.
+ * @return {RefObject<HTMLDivElement | null>} The ref for the scrolling message element.
+ */
+export function useCaretInView (): RefObject<HTMLDivElement | null> {
+  const areaRef = useRef<HTMLDivElement>(null);
+
+  // No dependency list: every edit, a language change and a settings save draw the area again.
+  useLayoutEffect(() => {
+    if (areaRef.current) {
+      followCaret(areaRef.current);
+    }
+  });
+
+  useLayoutEffect(() => {
+    const area = areaRef.current;
+    if (!area) {
+      return;
+    }
+    const follow = (): void => followCaret(area);
+    const mark = (): void => markHiddenEdges(area);
+    // Observing starts with a call for the current size, which is no change to follow.
+    let width = area.clientWidth;
+    let height = area.clientHeight;
+    const observer = new ResizeObserver(() => {
+      if (area.clientWidth !== width || area.clientHeight !== height) {
+        width = area.clientWidth;
+        height = area.clientHeight;
+        follow();
+      }
+    });
+    observer.observe(area);
+    // `load` does not bubble, so it is caught on its way down to the picture.
+    area.addEventListener("load", follow, true);
+    area.addEventListener("scroll", mark);
+    return (): void => {
+      observer.disconnect();
+      area.removeEventListener("load", follow, true);
+      area.removeEventListener("scroll", mark);
+    };
+  }, []);
+
+  return areaRef;
+}
+
 function moveCursor (positionChange: number = 1) {
   // Note: the new caretPosition can equal -1 indicating that the caret is before the
   // first symbol in the `payloads` array.  But, it cannot be less than -1.
@@ -196,20 +294,23 @@ export function ContentEncoding (props: ContentEncodingProps): VNode {
   void settingsSavedCount.value;
   const { id, options } = props;
   const { columnStart, columnSpan, rowStart, rowSpan } = options;
+  const areaRef = useCaretInView();
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   return html`
-    <div
-      id="${id}"
-      class="contentEncodingArea"
-      role="textbox"
-      aria-label=${t("inputArea")}
-      aria-readonly="true"
-      style="${gridStyles}"
-      tabindex="0"
-      onKeyDown=${handleKeyDown}>
-      ${messageMarkup()}
+    <div class="messageScroller" style="${gridStyles}">
+      <div
+        id="${id}"
+        ref=${areaRef}
+        class="contentEncodingArea"
+        role="textbox"
+        aria-label=${t("inputArea")}
+        aria-readonly="true"
+        tabindex="0"
+        onKeyDown=${handleKeyDown}>
+        ${messageMarkup()}
+      </div>
     </div>
   `;
 }
