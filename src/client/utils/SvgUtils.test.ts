@@ -120,8 +120,8 @@ describe("SvgUtils", (): void => {
     expect(isModifier(nonModifierId)).toEqual(false);
   });
 
-  test("isModifier() recognises \"same\" and the concept-transforming modifiers", (): void => {
-    // same, similar, similar looking, similar sound
+  test("isModifier() recognises \"same as\" and the concept-transforming modifiers", (): void => {
+    // same as, similar to, looks like, sounds like
     [578, 2404, 2405, 2406].forEach((id) => expect(isModifier(id), `id ${id}`).toBe(true));
   });
 
@@ -157,7 +157,7 @@ describe("SvgUtils", (): void => {
     modifiedRevive = [modifierId, "/", modifierId, "/", ...expectedMixedSeparatorsComposition, "/", modifierId];
     expect(findClassifierFromLeft(modifiedRevive)).toEqual(4);
 
-    // A multi-symbol modifier, "similar feeling", is skipped whole, alone or after "without".
+    // A multi-symbol modifier, "feels like", is skipped whole, alone or after "without".
     expect(findClassifierFromLeft([2404, "/", 374, "/", 382])).toEqual(4);
     expect(findClassifierFromLeft([449, "/", 2404, "/", 374, "/", 382])).toEqual(6);
 

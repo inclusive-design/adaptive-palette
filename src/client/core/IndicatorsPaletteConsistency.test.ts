@@ -54,6 +54,13 @@ describe("indicators.json agrees with data/indicators.json", (): void => {
       .toEqual(indicators.map((indicator) => indicator.id));
   });
 
+  // Most-used first, so switch users reach them in the fewest presses. Keep these places stable.
+  test("puts the most-used indicators first", (): void => {
+    // plural, action, description, past, present, future, thing
+    expect(indicatorCells().slice(0, 7).map((options) => options.composition))
+      .toEqual([99, 81, 86, 92, 928, 87, 97]);
+  });
+
   test("every indicator is recognised by isIndicator()", (): void => {
     indicators.forEach((indicator) => expect(isIndicator(indicator.id), `indicator ${indicator.id}`).toBe(true));
   });
