@@ -10,7 +10,8 @@ and touch always work. Switch scanning is an option that is off until it is turn
 3. **Go back.** The backquote key (`` ` ``) goes back one palette. It can be turned off in
    Adjust Settings → General → "Go back with the backquote (`` ` ``) key".
 4. **Input area.** With focus in the message being composed, the arrow keys, Home and End move
-   the caret between symbols.
+   the caret between symbols. However the caret moves, the input area scrolls by itself to keep
+   it and the symbol on each side in view. `❮` or `❯` at an edge means symbols are hidden there.
 5. **Dialogs.** Tab stays inside an open dialog. Escape closes it.
 
 The control with focus has a red border and a solid black ring. After moving to another palette,
