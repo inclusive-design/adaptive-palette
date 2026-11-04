@@ -37,7 +37,7 @@
     "@vitest/browser-playwright": "^5.0.0",
     "eslint": "^10.5.0",
     "globals": "^17.5.0",
-    "markdownlint-cli2": "^0.23.1",
+    "markdownlint-cli2": "^0.24.0",
     "npm-run-all2": "^9.0.2",
     "typescript": "^6.0.3",
     "uuid": "^14.0.0",
