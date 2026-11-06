@@ -242,6 +242,7 @@ export function saveMessageRecord (payloads: SymbolEncodingType[]): void {
   const unmarked = payloads.map((payload) => {
     const stored = { ...payload };
     delete stored.isAiLabel;
+    delete stored.isAiBaseLabel;
     delete stored.pendingLabel;
     return stored;
   });

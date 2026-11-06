@@ -28,6 +28,8 @@ State is managed using the following properties:
 - **`indicatorId`**: The currently applied indicator ID, if any.
 - **`baseLabel`**: The label before any modifier or indicator. Set by the first one and kept after that.
 - **`isAiLabel`**: True when the label is a model's answer.
+- **`isAiBaseLabel`**: True when the base label is a model's answer, such as a new word's suggested name. The label
+  keeps its AI mark while a modifier or indicator wraps it.
 - **`pendingLabel`**: Set while the label waits for the model's answer. Never saved.
 
 The pregenerated table's key is `{userSelectedSymbolId}_{indicatorId}`. It covers an indicator alone.
@@ -60,7 +62,7 @@ A model's answer is recorded on `isAiLabel` and shown with an "AI" badge and in 
 `public/config.json` turns the marking off; see [Config.md](devDoc/Config.md).
 
 While a label waits, word prediction asks the model nothing, Make Sentence and word naming wait for it, and Speak
-speaks what is on screen.
+speaks what is on screen. Any other edit to the message while Make Sentence or word naming waits cancels it.
 
 ### Announcements
 

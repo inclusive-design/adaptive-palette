@@ -16,7 +16,7 @@ import { editMessage, setEditGuard } from "../core/MessageEdit";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { setTestConfig } from "../testUtils/TestConfig";
 import {
-  getStaticNewLabel, initIndicatorLabels, labelFor, relabel,
+  baseOf, getStaticNewLabel, initIndicatorLabels, labelFor, relabel,
   resetSymbolLabelsForTests, startLabelWatcher, whenLabelsSettled
 } from "./SymbolLabelUtils";
 import { isLocalHost, queryChat } from "../core/OllamaApi";
@@ -130,6 +130,17 @@ describe("SymbolLabels", (): void => {
     test("a symbol with no modifiers and no indicator has its base label", (): void => {
       askModel();
       expect(labelFor({ ...help, label: "help more", baseLabel: "help" })).toEqual({ label: "help", isAiLabel: false });
+    });
+
+    test("a base label the model gave keeps its AI mark as modifiers are added and removed", (): void => {
+      // A new word named with the model's suggestion.
+      const sunbeam: SymbolEncodingType = { label: "sunbeam", composition: [382, "/", 2], modifierInfo: [], isAiLabel: true };
+      const sunbeamMore = relabel({ ...sunbeam, modifierInfo: [more], ...baseOf(sunbeam) });
+      expect(sunbeamMore).toMatchObject({ label: "sunbeam more", isAiLabel: true });
+      expect(relabel({ ...sunbeamMore, modifierInfo: [], ...baseOf(sunbeamMore) }))
+        .toMatchObject({ label: "sunbeam", isAiLabel: true });
+      // The user's own base label stays unmarked.
+      expect(relabel({ ...help, modifierInfo: [more], ...baseOf(help) })).toMatchObject({ isAiLabel: false });
     });
 
     test("an indicator alone takes the table's label, with no query", (): void => {
@@ -359,6 +370,18 @@ describe("SymbolLabels", (): void => {
       // It runs once only.
       put(help);
       expect(task).toHaveBeenCalledTimes(2);
+    });
+
+    test("whenLabelsSettled drops the task when the message is edited while it waits", (): void => {
+      const task = vi.fn();
+      put(oppositeHelp);
+      whenLabelsSettled(task);
+      // The modifier is removed, so no label waits, but this is not the message the task was for.
+      put(help);
+      expect(task).not.toHaveBeenCalled();
+      put(oppositeHelp);
+      replies[0]("hinder");
+      expect(task).not.toHaveBeenCalled();
     });
 
   });

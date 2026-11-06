@@ -20,7 +20,7 @@ import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { caretComposition, replaceAtCaret } from "../utils/SymbolEncodingUtils";
-import { relabel } from "../utils/SymbolLabelUtils";
+import { baseOf, relabel } from "../utils/SymbolLabelUtils";
 
 type ActionRemoveModifierPropsType = {
   id: string,
@@ -91,7 +91,7 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
       "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
       "modifierInfo": newModifierInfo,
       "indicatorId": symbolToEdit.indicatorId,
-      "baseLabel": symbolToEdit.baseLabel
+      ...baseOf(symbolToEdit)
     });
     editMessage({ payloads: replaceAtCaret(payloads, caretPosition, edited), caretPosition: caretPosition });
     announceIfEnabled(spokenLabel(edited));

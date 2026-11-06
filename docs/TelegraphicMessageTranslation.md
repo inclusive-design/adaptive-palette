@@ -195,8 +195,9 @@ chose "speak" or moved on before the sentence appeared, the state is cleared wit
 because there is nothing to discard.
 
 A modifier or indicator label may wait for a model's answer. Make Sentence waits for every pending label, so
-sentences are never made from, or shown with, one. An answer the discard question's guard drops stays cached and
-goes in with the next change to the message. See [LabelLookup.md](LabelLookup.md).
+sentences are never made from, or shown with, one. Any other edit to the message while it waits cancels it. An
+answer the discard question's guard drops stays cached and goes in with the next change to the message. See
+[LabelLookup.md](LabelLookup.md).
 
 Sentences the model made are marked apart from a sentence recalled from the message log, unless
 the `markAiSuggestions` setting is off: a warm fill, italic text, and an "AI" badge in the

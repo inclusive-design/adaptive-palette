@@ -182,17 +182,19 @@ function buildQuery (payload: SymbolEncodingType, language: Language): LabelQuer
  * 5. otherwise: the fallback, pending until the model answers.
  *
  * The fallback joins the modifiers' text to the inner label: the table's label or the model's
- * answer for the indicator alone, else the base label.
+ * answer for the indicator alone, else the base label. A base label the model gave keeps its AI
+ * mark wherever it shows.
  * @param {SymbolEncodingType} payload - The symbol, with its parts already changed.
  * @param {Language} language - The language of the label; the UI language by default.
  * @returns {SymbolLabelType}
  */
 export function labelFor (payload: SymbolEncodingType, language: Language = languageSignal.value): SymbolLabelType {
   const base = payload.baseLabel ?? payload.label;
+  const isAiBase = payload.isAiBaseLabel === true;
   const modifiers = payload.modifierInfo ?? [];
   const { indicatorId, userSelectedSymbolId } = payload;
   if (modifiers.length === 0 && indicatorId === undefined) {
-    return { label: base, isAiLabel: false };
+    return { label: base, isAiLabel: isAiBase };
   }
   const table = indicatorId === undefined ? undefined : getStaticNewLabel(userSelectedSymbolId, indicatorId, language);
   if (modifiers.length === 0 && table !== undefined) {
@@ -208,7 +210,7 @@ export function labelFor (payload: SymbolEncodingType, language: Language = lang
     : undefined;
   const fallback = {
     label: applyModifiersToLabel(table ?? indicatorAnswer ?? base, modifiers),
-    isAiLabel: indicatorAnswer !== undefined
+    isAiLabel: indicatorAnswer !== undefined || (table === undefined && isAiBase)
   };
   const query = answers.has(key) ? undefined : buildQuery(payload, language);
   if (!query) {
@@ -216,6 +218,18 @@ export function labelFor (payload: SymbolEncodingType, language: Language = lang
   }
   queries.set(key, query);
   return { ...fallback, pendingLabel: key };
+}
+
+/**
+ * A symbol's base label and whether a model gave it. Before the first modifier or indicator,
+ * that is the symbol's own label and AI mark.
+ * @param {SymbolEncodingType} symbol - The symbol before the change.
+ * @returns {Pick<SymbolEncodingType, "baseLabel" | "isAiBaseLabel">}
+ */
+export function baseOf (symbol: SymbolEncodingType): Pick<SymbolEncodingType, "baseLabel" | "isAiBaseLabel"> {
+  return symbol.baseLabel === undefined
+    ? { baseLabel: symbol.label, isAiBaseLabel: symbol.isAiLabel }
+    : { baseLabel: symbol.baseLabel, isAiBaseLabel: symbol.isAiBaseLabel };
 }
 
 /**
@@ -349,8 +363,21 @@ export function startLabelWatcher (): void {
 }
 
 /**
+ * The message with every label left out, so an answer arriving does not change it.
+ * @param {SymbolEncodingType[]} payloads - The symbols.
+ * @returns {string}
+ */
+function withoutLabels (payloads: SymbolEncodingType[]): string {
+  return JSON.stringify(payloads.map((payload) => (
+    { ...payload, label: undefined, isAiLabel: undefined, pendingLabel: undefined }
+  )));
+}
+
+/**
  * Run a task once no symbol in the message waits for its label: at once when none does. Make
  * Sentence and word naming wait like this, so the model gets "hot", not "opposite of cold".
+ * Any other edit to the message while it waits drops the task: it was asked for the message
+ * as it was.
  *
  * ponytail: no timeout, so a query that never settles holds the task. Add one if users report it.
  * @param {Function} task - What to run.
@@ -361,10 +388,14 @@ export function whenLabelsSettled (task: () => void): void {
     task();
     return;
   }
-  // The first run, inside `effect()`, finds a label still waiting, so it never reaches `stop`
-  // before `stop` is set.
+  const askedFor = withoutLabels(changeEncodingContents.peek().payloads);
+  // The first run, inside `effect()`, finds the same message with a label still waiting, so it
+  // never reaches `stop` before `stop` is set.
   const stop = effect(() => {
-    if (!hasPendingLabel(changeEncodingContents.value.payloads)) {
+    const { payloads } = changeEncodingContents.value;
+    if (withoutLabels(payloads) !== askedFor) {
+      stop();
+    } else if (!hasPendingLabel(payloads)) {
       stop();
       untracked(task);
     }

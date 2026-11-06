@@ -151,6 +151,9 @@ export type SymbolEncodingType = PictureOrSymbolInfoType & {
   // True when the label is a model's answer. Absent and `false` mean the same thing, so test it
   // for truthiness, not against `false`.
   isAiLabel?: boolean,
+  // True when `baseLabel` is a model's answer, such as a new word's name the model suggested.
+  // Set with `baseLabel`, so the label keeps its AI mark while a modifier or indicator wraps it.
+  isAiBaseLabel?: boolean,
   // Set while the label waits for a model's answer: the key of that query. The label meanwhile
   // is the modifiers' text joined to the inner label. Never saved.
   pendingLabel?: string,

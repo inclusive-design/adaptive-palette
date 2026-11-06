@@ -18,10 +18,10 @@ import { spokenLabel } from "../components/AiBadge";
 import { changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
-import { caretComposition, replaceAtCaret } from "../utils/SymbolEncodingUtils";
+import { applyModifiersToLabel, caretComposition, replaceAtCaret } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { findWordIndicators, findClassifierFromLeft } from "../utils/SvgUtils";
-import { getStaticNewLabel, relabel } from "../utils/SymbolLabelUtils";
+import { baseOf, relabel } from "../utils/SymbolLabelUtils";
 import "./ActionIndicatorCell.scss";
 
 type ActionIndicatorCodeCellPropsType = {
@@ -82,7 +82,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
       "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
       "modifierInfo": symbolToEdit.modifierInfo,
       "indicatorId": indicatorId,
-      "baseLabel": symbolToEdit.baseLabel ?? symbolToEdit.label
+      ...baseOf(symbolToEdit)
     });
     // Held by the guard: the label on screen is unchanged, so name the indicator alongside it.
     if (!editMessage({ payloads: replaceAtCaret(payloads, caretPosition, edited), caretPosition: caretPosition })) {
@@ -91,8 +91,9 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
     }
     // A label from the table or the model is spoken as it is. One the model is still working out,
     // or has no answer for, is spoken with the indicator's name, so the click says what changed.
+    // Such a label is the base label with the modifiers' text joined to it.
     const isNewLabel = edited.pendingLabel === undefined &&
-      (edited.isAiLabel || getStaticNewLabel(edited.userSelectedSymbolId, indicatorId) !== undefined);
+      edited.label !== applyModifiersToLabel(edited.baseLabel ?? edited.label, edited.modifierInfo);
     announceIfEnabled(isNewLabel ? spokenLabel(edited) : `${edited.label}, ${label}`);
   };
 

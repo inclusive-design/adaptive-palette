@@ -21,7 +21,7 @@ import { generateGridStyle } from "../utils/GridUtils";
 import { caretComposition, replaceAtCaret } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { findWordIndicators } from "../utils/SvgUtils";
-import { relabel } from "../utils/SymbolLabelUtils";
+import { baseOf, relabel } from "../utils/SymbolLabelUtils";
 
 type ActionIndicatorCodeCellPropsType = {
   id: string,
@@ -86,7 +86,7 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
       "composition": newComposition,
       "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
       "modifierInfo": symbolToEdit.modifierInfo,
-      "baseLabel": symbolToEdit.baseLabel
+      ...baseOf(symbolToEdit)
     });
     editMessage({ payloads: replaceAtCaret(payloads, caretPosition, edited), caretPosition: caretPosition });
     announceIfEnabled(spokenLabel(edited));

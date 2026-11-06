@@ -20,7 +20,7 @@ import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { caretComposition, replaceAtCaret } from "../utils/SymbolEncodingUtils";
-import { relabel } from "../utils/SymbolLabelUtils";
+import { baseOf, relabel } from "../utils/SymbolLabelUtils";
 import "./ActionModifierCell.scss";
 
 export type ActionModifierCodeCellPropsType = {
@@ -84,7 +84,7 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
       "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
       "modifierInfo": newModifierInfo,
       "indicatorId": symbolToEdit.indicatorId,
-      "baseLabel": symbolToEdit.baseLabel ?? symbolToEdit.label
+      ...baseOf(symbolToEdit)
     });
     editMessage({ payloads: replaceAtCaret(payloads, caretPosition, edited), caretPosition: caretPosition });
     announceIfEnabled(spokenLabel(edited));
