@@ -6,9 +6,9 @@ A Bliss modifier changes the meaning of the symbol it is added to, for example "
 ## Choosing a Modifier
 
 The "add modifier" button on the command bar opens the modifier palette. It is unavailable when
-no symbol is at the caret. The palette lists every modifier in `public/data/modifiers.json` in
-the file's order, 9 per row with no gaps and no group headings. The file starts with the
-most-used ones, from "opposite of" to "sounds like"; add a new modifier at the end, so that the
+no symbol is at the caret. The palette lists every modifier in `public/data/modifiers.json`,
+except "Bliss-name", in the file's order, 9 per row with no gaps and no group headings. The file
+starts with the most-used ones, from "opposite of" to "sounds like"; add a new modifier at the end, so that the
 others keep the places users have learned. Picking a modifier adds it to
 the symbol at the caret, before or after the symbol as the entry's `position` says. The palette
 stays open, so modifiers can be stacked; Back returns to the previous palette. "undo modifier",
@@ -22,3 +22,9 @@ is added to or moved in `modifiers.json`, update the palette too;
 modifier is listed in `modifierIds` in `src/client/utils/SvgUtils.ts`: a single symbol in one of
 the id lists, a multi-symbol one in `multiSymbol`. `findClassifierFromLeft()` uses these lists
 to place an indicator after the prefix modifiers.
+
+## Labels
+
+Adding or removing a modifier relabels the symbol: "opposite of" + "cold" becomes "hot". The modifier's text is
+joined to the label at once, and the model is asked for a proper word. See
+[LabelLookup.md](LabelLookup.md).

@@ -40,7 +40,7 @@ export const setupDismissedSignal: Signal<boolean> = signal(false);
  */
 export function requiredModels (config: AdaptivePaletteConfigType): string[] {
   const named = [
-    config.indicatorLabelLookup.model,
+    config.labelLookup.model,
     config.telegraphicTranslation?.model ?? "",
     config.wordPrediction.model
   ];

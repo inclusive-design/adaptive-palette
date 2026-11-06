@@ -13,6 +13,8 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { t } from "../i18n/I18n";
+import { adaptivePaletteGlobals } from "../state/GlobalData";
+import type { SymbolEncodingType } from "../index.d";
 import "./AiBadge.scss";
 
 /**
@@ -26,11 +28,24 @@ export function aiSuggestionLabel (text: string): string {
 }
 
 /**
+ * What a cell says after changing a symbol's label: the label, as a model's suggestion when it
+ * is one and marking is on.
+ * @param {SymbolEncodingType} payload - The changed symbol.
+ * @returns {string}
+ */
+export function spokenLabel (payload: SymbolEncodingType): string {
+  return payload.isAiLabel && adaptivePaletteGlobals.config.markAiSuggestions
+    ? aiSuggestionLabel(payload.label)
+    : payload.label;
+}
+
+/**
  * The badge marking a suggestion as a model's. Always `aria-hidden`, because "AI" announced
  * beside the suggestion reads poorly. A suggested word and a sentence make up for it with an
- * `aria-label` from `aiSuggestionLabel()` on the button carrying them. An indicator label does
- * not: assistive technology reading the composed message back gets the label alone, deliberately,
- * and the announcement spoken as the label lands carries where it came from instead.
+ * `aria-label` from `aiSuggestionLabel()` on the button carrying them. A symbol's label in the
+ * message does not: assistive technology reading the message back gets the label alone,
+ * deliberately. A cell that changes a label says where it came from as it announces it
+ * (`spokenLabel()`); a model's answer that arrives later is not announced.
  * @returns {VNode}
  */
 export function AiBadge (): VNode {

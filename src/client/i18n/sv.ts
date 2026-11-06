@@ -69,7 +69,6 @@ export const sv: Record<keyof typeof en, string> = {
   cursorForward: "framåt",
   cursorStart: "markören till början",
   cursorEnd: "markören till slutet",
-  indicatorLoading: "{{label}} hämtar ny etikett",
 
   // Switch scanning
   scanExitRow: "Lämna raden",
@@ -92,7 +91,7 @@ export const sv: Record<keyof typeof en, string> = {
   settingGroupSymbolEntry: "Symbolinmatning",
   settingGroupWordPrediction: "Ordförslag",
   settingGroupSentences: "Meningar",
-  settingGroupIndicatorLabels: "Indikatoretiketter",
+  settingGroupIndicatorLabels: "Symboletiketter",
   settingLanguage: "Språk",
   settingSpeakEachSymbol: "Läs upp varje symbol när jag lägger till den",
   settingMarkAi: "Markera AI-förslag",
@@ -106,7 +105,7 @@ export const sv: Record<keyof typeof en, string> = {
   settingAskModelWords: "Fråga AI-modellen om förslag",
   settingSentenceChoices: "Antal meningsförslag",
   settingShowBlissSentence: "Visa blissymboler ovanför varje mening",
-  settingAskModelIndicator: "Fråga AI-modellen när ingen etikett hittas",
+  settingAskModelIndicator: "Fråga AI-modellen om en etikett efter en modifierare eller indikator",
 
   // Erase all app data
   eraseLabel: "Radera alla appdata och avsluta",

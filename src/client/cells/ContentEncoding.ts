@@ -80,7 +80,7 @@ export function generateMarkupArray (payloadArray: Array<SymbolEncodingType>, ca
     }
     return html`
       <div class=${`blissSymbol${caretClass}`}>
-        <${BlissSymbol} composition=${payload.composition} picture=${payload.picture} label=${payload.label} isPresentation="true" isMarked=${isMarked} />
+        <${BlissSymbol} composition=${payload.composition} picture=${payload.picture} label=${payload.label} isPresentation="true" isMarked=${isMarked} isPending=${payload.pendingLabel !== undefined} />
       </div>
     `;
   });

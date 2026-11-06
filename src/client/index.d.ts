@@ -140,19 +140,23 @@ export type ModifierInfoType = {
 export type SymbolEncodingType = PictureOrSymbolInfoType & {
   // Dictionary id of the originally selected symbol. Only set when the symbol is
   // selected from the dictionary and not when it is a composed symbol. It's
-  // currently used to look up the new label when an indicator is applied to a symbol.
+  // used to key every relabel, of modifiers as well as indicators, and to look up the table label for an indicator.
   userSelectedSymbolId?: number,   
   modifierInfo?: ModifierInfoType[],
   // id of the indicator currently applied
   indicatorId?: number,
-  // label before any indicator swap; set when a swap occurs
+  // The label before any modifier or indicator. Set by the first modifier or indicator edit and
+  // kept after that: `labelFor()` works the label out from it and the symbol's parts.
   baseLabel?: string,
-  // number of modifierInfo entries present when baseLabel was captured
-  baseModifierCount?: number,
-  // True when the label came from the indicator-label model query rather than the
-  // pregenerated table. Cleared whenever the label stops being the model's; absent
-  // and `false` mean the same thing, so test it for truthiness, not against `false`.
+  // True when the label is a model's answer. Absent and `false` mean the same thing, so test it
+  // for truthiness, not against `false`.
   isAiLabel?: boolean,
+  // True when `baseLabel` is a model's answer, such as a new word's name the model suggested.
+  // Set with `baseLabel`, so the label keeps its AI mark while a modifier or indicator wraps it.
+  isAiBaseLabel?: boolean,
+  // Set while the label waits for a model's answer: the key of that query. The label meanwhile
+  // is the modifiers' text joined to the inner label. Never saved.
+  pendingLabel?: string,
   // A space between two words inside a new word's combine markers. It has no symbol.
   isSpace?: boolean,
   // A word built with Compose new word. Only such a word can be saved to a palette.
@@ -162,7 +166,7 @@ export type SymbolEncodingType = PictureOrSymbolInfoType & {
 // A prompt in `config.json`: one text for every language, or one per language.
 export type PromptType = string | Partial<Record<Language, string>>;
 
-export type IndicatorLabelLookupConfigType = {
+export type LabelLookupConfigType = {
   useModelQueryFallback: boolean,
   model: string,
   systemPrompt: PromptType,
@@ -257,7 +261,7 @@ export type AdaptivePaletteConfigType = {
   backquoteGoesBack: boolean,
   // Two-switch scanning. Off by default; the keys are set in config.json only.
   switchScanning: SwitchScanningConfigType,
-  indicatorLabelLookup: IndicatorLabelLookupConfigType,
+  labelLookup: LabelLookupConfigType,
   telegraphicTranslation?: TelegraphicTranslationConfigType,
   aboutMe?: AboutMeConfigType,
   wordNaming?: WordNamingConfigType,

@@ -43,7 +43,7 @@ const mockedReloadPage = vi.mocked(reloadPage);
 // The config the tests run against: one model asked for, by every section that can.
 function useConfigAskingFor (model: string): void {
   const config = makeDefaultConfig();
-  config.indicatorLabelLookup.model = model;
+  config.labelLookup.model = model;
   adaptivePaletteGlobals.config = config;
 }
 

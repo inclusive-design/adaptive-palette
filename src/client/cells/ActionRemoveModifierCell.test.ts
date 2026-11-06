@@ -12,13 +12,22 @@
 import { vi } from "vitest";
 import { screen, fireEvent } from "@testing-library/preact";
 
-import { changeEncodingContents } from "../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
+import { queryChat } from "../core/OllamaApi";
 import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { ActionRemoveModifierCell } from "./ActionRemoveModifierCell";
+import { resetSymbolLabelsForTests } from "../utils/SymbolLabelUtils";
 import { mockedSpeakUnavailable } from "../testUtils/SpeechUtilsMock";
 
+vi.mock("../core/OllamaApi", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../core/OllamaApi")>();
+  return { ...actual, queryChat: vi.fn() };
+});
+
 vi.mock("../utils/SpeechUtils");
+
+const mockedQueryChat = vi.mocked(queryChat);
 
 describe("ActionRemoveModifierCell", (): void => {
 
@@ -68,19 +77,9 @@ describe("ActionRemoveModifierCell", (): void => {
   };
   const compositionAfterOneModifierRemoved = [368, "/", 313, ";", 86 ];
   const compositionAfterBothModifiersRemoved = [313, ";", 86 ];
-  const blissWordModifierThenIndicator = {
-    label: "big walked",
-    baseLabel: "big walk",
-    baseModifierCount: 1,
-    composition: [ 368, "/", 382, ";", 97 ],
-    indicatorId: 97,
-    modifierInfo: [{ modifierId: [368], modifierGloss: "big", isPrepended: true }],
-    userSelectedSymbolId: 382
-  };
-  const blissWordIndicatorThenModifier = {
-    label: "big walked",
-    baseLabel: "walk",
-    baseModifierCount: 0,
+  const blissWordWithModifierAndIndicator = {
+    label: "big helper",
+    baseLabel: "help",
     composition: [ 368, "/", 382, ";", 97 ],
     indicatorId: 97,
     modifierInfo: [{ modifierId: [368], modifierGloss: "big", isPrepended: true }],
@@ -89,6 +88,12 @@ describe("ActionRemoveModifierCell", (): void => {
 
   beforeAll(async (): Promise<void> => {
     await initAdaptivePaletteGlobals();
+  });
+
+  beforeEach((): void => {
+    resetSymbolLabelsForTests();
+    mockedQueryChat.mockReset();
+    adaptivePaletteGlobals.models = [];
   });
 
   test("is unavailable while the input area is empty", async (): Promise<void> => {
@@ -200,38 +205,13 @@ describe("ActionRemoveModifierCell", (): void => {
     expect(lastSymbol.composition).toStrictEqual(compositionAfterBothModifiersRemoved);
   });
 
-  test("keeps baseLabel and baseModifierCount in sync when removing a modifier that predates an indicator", async (): Promise<void> => {
-    changeEncodingContents.value = {
-      payloads: [blissWordModifierThenIndicator],
-      caretPosition: 0
-    };
+  test("removing the last modifier works the label out from the symbol's parts", async (): Promise<void> => {
+    adaptivePaletteGlobals.indicatorLabels = { en: { "382_97": "helper" } };
+    changeEncodingContents.value = { payloads: [blissWordWithModifierAndIndicator], caretPosition: 0 };
     renderCell(ActionRemoveModifierCell, TEST_CELL_ID, testCell.options);
-    const removeModifierButton = await screen.findByRole("button", {name: testCell.options.label});
-    expect(removeModifierButton).toHaveAttribute("aria-disabled", "false");
+    fireEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
 
-    fireEvent.click(removeModifierButton);
-
-    const updated = changeEncodingContents.value.payloads[0];
-    expect(updated.label).toBe("walked");
-    expect(updated.baseLabel).toBe("walk");
-    expect(updated.baseModifierCount).toBe(0);
-  });
-
-  test("leaves baseLabel and baseModifierCount untouched when removing a modifier that postdates an indicator", async (): Promise<void> => {
-    changeEncodingContents.value = {
-      payloads: [blissWordIndicatorThenModifier],
-      caretPosition: 0
-    };
-    renderCell(ActionRemoveModifierCell, TEST_CELL_ID, testCell.options);
-    const removeModifierButton = await screen.findByRole("button", {name: testCell.options.label});
-    expect(removeModifierButton).toHaveAttribute("aria-disabled", "false");
-
-    fireEvent.click(removeModifierButton);
-
-    const updated = changeEncodingContents.value.payloads[0];
-    expect(updated.label).toBe("walked");
-    expect(updated.baseLabel).toBe("walk");
-    expect(updated.baseModifierCount).toBe(0);
+    expect(changeEncodingContents.value.payloads[0]).toMatchObject({ label: "helper", baseLabel: "help", indicatorId: 97 });
   });
 
   test("clicking while unavailable leaves the input untouched and is announced", async (): Promise<void> => {
@@ -273,10 +253,11 @@ describe("ActionRemoveModifierCell", (): void => {
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
   });
 
-  test("removes a suffix modifier's text from the end of the label, not from inside the word", async (): Promise<void> => {
+  test("removing a suffix modifier restores the base label", async (): Promise<void> => {
     changeEncodingContents.value = {
       payloads: [{
         label: "phone one",
+        baseLabel: "phone",
         composition: [ 8484, "/", 8510 ],
         modifierInfo: [{ modifierId: [8510], modifierGloss: "one", isPrepended: false }]
       }],
@@ -289,17 +270,20 @@ describe("ActionRemoveModifierCell", (): void => {
     expect(changeEncodingContents.value.payloads[0].label).toBe("phone");
   });
 
-  test("keeps the AI mark when a modifier is removed", async (): Promise<void> => {
+  test("removing the modifier turns \"hot\" back into \"cold\", with no query", async (): Promise<void> => {
+    adaptivePaletteGlobals.models = ["phony-model:12b"];
     changeEncodingContents.value = {
-      payloads: [{ ...blissWordIndicatorThenModifier, isAiLabel: true }],
+      payloads: [{
+        label: "hot", baseLabel: "cold", composition: [ 486, "/", 1436 ], userSelectedSymbolId: 1436,
+        modifierInfo: [{ modifierId: [486], modifierGloss: "opposite of", isPrepended: true }], isAiLabel: true
+      }],
       caretPosition: 0
     };
     renderCell(ActionRemoveModifierCell, TEST_CELL_ID, testCell.options);
-    const removeModifierButton = await screen.findByRole("button", { name: testCell.options.label });
-    fireEvent.click(removeModifierButton);
+    fireEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
 
-    const updated = changeEncodingContents.value.payloads[0];
-    expect(updated.label).toBe("walked");
-    expect(updated.isAiLabel).toBe(true);
+    expect(changeEncodingContents.value.payloads[0]).toMatchObject({ label: "cold", isAiLabel: false, composition: [1436] });
+    expect(changeEncodingContents.value.payloads[0]).not.toHaveProperty("pendingLabel");
+    expect(mockedQueryChat).not.toHaveBeenCalled();
   });
 });

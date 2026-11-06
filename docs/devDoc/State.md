@@ -80,7 +80,7 @@ the registry inside `GlobalData.ts` would make the globals import every cell, an
 the globals.
 
 **`core/InitGlobals.ts`** owns `initAdaptivePaletteGlobals()`. Start-up reaches into `SvgUtils`,
-`IndicatorLabelsUtils`, `OllamaApi` and `Config`, and each of those reads the globals back. Holding
+`SymbolLabelUtils`, `OllamaApi` and `Config`, and each of those reads the globals back. Holding
 the function in `GlobalData.ts` would put the state module in a cycle with all four.
 
 For the same reason `GlobalData.ts` must not re-export `initAdaptivePaletteGlobals` as a

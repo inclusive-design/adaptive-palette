@@ -414,6 +414,33 @@ describe("wordPrediction model query", (): void => {
     expect(mockedQueryChat.mock.calls[0][3]).toBe("List 6 words.");
   });
 
+  // A waiting label is the joined modifier text. Asking about it would compete with the label's
+  // own query.
+  describe("while a label up to the caret waits for a model", (): void => {
+    const waiting: SymbolEncodingType = {
+      label: "opposite of cold", composition: 1840, modifierInfo: [], pendingLabel: "key"
+    };
+
+    test("no model query runs, and one runs once the label arrives", async (): Promise<void> => {
+      editMessage({ payloads: [...message("I"), waiting], caretPosition: 1 });
+      await waitForQuery();
+      expect(mockedQueryChat).not.toHaveBeenCalled();
+
+      editMessage({ payloads: message("I", "hot"), caretPosition: 1 });
+      await waitForQuery();
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+    });
+
+    test("a label that settles unchanged still gets its one query", async (): Promise<void> => {
+      editMessage({ payloads: [...message("I"), waiting], caretPosition: 1 });
+      await waitForQuery();
+
+      editMessage({ payloads: message("I", "opposite of cold"), caretPosition: 1 });
+      await waitForQuery();
+      expect(mockedQueryChat).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe("queryContextKeyOf", (): void => {
 
     const payloads = [

@@ -24,7 +24,7 @@ Settings defined in `public/config.json` except these fields: `model`, `systemPr
 | Word prediction | Ask the AI model for suggestions | yes |
 | Sentences | Sentence choices to offer (up to 3) | yes |
 | Sentences | Show Bliss symbols above each sentence | yes |
-| Indicator labels | Ask the AI model when no label is found | yes |
+| Symbol labels | Ask the AI model for a label after a modifier or indicator | yes |
 
 The prompts sent to the model, and which model is asked, are not adjustable here. They stay in
 `public/config.json`.

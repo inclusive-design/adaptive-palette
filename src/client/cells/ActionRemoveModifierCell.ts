@@ -14,11 +14,13 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { BlissSymbol } from "../components/BlissSymbol";
+import { spokenLabel } from "../components/AiBadge";
 import { changeEncodingContents } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
-import { caretComposition, removeModifierFromLabel, replaceAtCaret } from "../utils/SymbolEncodingUtils";
+import { caretComposition, replaceAtCaret } from "../utils/SymbolEncodingUtils";
+import { baseOf, relabel } from "../utils/SymbolLabelUtils";
 
 type ActionRemoveModifierPropsType = {
   id: string,
@@ -47,7 +49,7 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   const cellClicked = () => {
     if (unavailable || caretSymbolComposition === undefined) { speakUnavailable(label); return; }
     // Get the last symbol in the editing area, and create an initial
-    // `newBciAvId` and `newLabel`.
+    // `newComposition`.
     const { caretPosition, payloads } = changeEncodingContents.value;
     const symbolToEdit = payloads[caretPosition];
     let newComposition = (
@@ -55,9 +57,6 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
         [caretSymbolComposition] :
         caretSymbolComposition
     );
-    let newLabel = symbolToEdit.label;
-    let newBaseLabel = symbolToEdit.baseLabel;
-    let newBaseModifierCount = symbolToEdit.baseModifierCount;
 
     // Check for any modifier to remove -- if the symbol has no modifiers,
     // leave the `newComposition` as is. The last modifier is read rather than popped: the
@@ -83,30 +82,19 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
           0, newComposition.length - (removeInfo.modifierId as (string|number)[]).length - 1
         );
       }
-      newLabel = removeModifierFromLabel(newLabel, removeInfo.modifierGloss, removeInfo.isPrepended);
-      // If the removed modifier predates `baseLabel`'s snapshot (i.e. it was
-      // already folded into `baseLabel`'s text when an indicator was applied),
-      // strip it from `baseLabel` too and shrink `baseModifierCount` to match --
-      // otherwise a later indicator removal would reapply/resurrect a modifier
-      // the user just explicitly removed.
-      if (newBaseLabel !== undefined && modifierCountBeforeRemoval <= (newBaseModifierCount ?? 0)) {
-        newBaseLabel = removeModifierFromLabel(newBaseLabel, removeInfo.modifierGloss, removeInfo.isPrepended);
-        newBaseModifierCount = (newBaseModifierCount ?? 0) - 1;
-      }
     }
-    const edited = replaceAtCaret(payloads, caretPosition, {
-      "label": newLabel,
+    // The label comes from the symbol's parts, so removing the modifier also removes its text,
+    // and any word the model gave for the symbol with it.
+    const edited = relabel({
+      "label": symbolToEdit.label,
       "composition": newComposition,
       "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
       "modifierInfo": newModifierInfo,
       "indicatorId": symbolToEdit.indicatorId,
-      "baseLabel": newBaseLabel,
-      "baseModifierCount": newBaseModifierCount,
-      // Only the modifier's text goes; the model's text stays in the label.
-      "isAiLabel": symbolToEdit.isAiLabel
+      ...baseOf(symbolToEdit)
     });
-    editMessage({ payloads: edited, caretPosition: caretPosition });
-    announceIfEnabled(newLabel);
+    editMessage({ payloads: replaceAtCaret(payloads, caretPosition, edited), caretPosition: caretPosition });
+    announceIfEnabled(spokenLabel(edited));
   };
 
   return html`

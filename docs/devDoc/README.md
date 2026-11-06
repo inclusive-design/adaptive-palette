@@ -23,7 +23,7 @@ Technical guide for developers building the adaptive palette.
 
 ## Feature Documentation
 
-- [Indicator Label Lookup](../IndicatorLabelLookup.md)
+- [Symbol Labels After a Modifier or Indicator](../LabelLookup.md)
 - [Telegraphic Message Translation](../TelegraphicMessageTranslation.md)
 - [Word Prediction](../WordPrediction.md)
 - [Message Attributes](../MessageAttributes.md)

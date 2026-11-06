@@ -89,10 +89,17 @@ describe("messageLog", (): void => {
 
     test("the AI mark is dropped from a saved message", (): void => {
       const [payload] = message("walked");
-      saveMessageRecord([{ ...payload, indicatorId: 1234, baseLabel: "walk", isAiLabel: true }]);
+      saveMessageRecord([{ ...payload, indicatorId: 1234, baseLabel: "walk", isAiLabel: true, isAiBaseLabel: true }]);
       const stored = readMessageLog()[0].payloads[0];
       expect(stored.isAiLabel).toBeFalsy();
+      expect(stored.isAiBaseLabel).toBeFalsy();
       expect(stored).toMatchObject({ label: "walked", composition: 1840, indicatorId: 1234, baseLabel: "walk" });
+    });
+
+    test("the pending mark is dropped from a saved message", (): void => {
+      const [payload] = message("opposite of cold");
+      saveMessageRecord([{ ...payload, pendingLabel: "key" }]);
+      expect(readMessageLog()[0].payloads[0]).not.toHaveProperty("pendingLabel");
     });
 
     test("an empty message is not saved", async (): Promise<void> => {
@@ -320,6 +327,36 @@ describe("messageLog", (): void => {
 
       expect(findLatestTranslation("me", "en")?.sentence).toBe("It is me.");
       expect(findLatestTranslation("me", "sv")).toBeUndefined();
+    });
+  });
+
+  // Before labels were worked out from a symbol's parts, `baseLabel` could hold modifier text,
+  // and a symbol with modifiers had no `baseLabel`. Either would repeat the text on the next edit.
+  describe("messages saved before labels came from the symbol's parts", (): void => {
+    const big = { modifierId: [368], modifierGloss: "big", isPrepended: true };
+    const opposite = { modifierId: [486], modifierGloss: "opposite of", isPrepended: true };
+
+    test("modifier text taken in by an indicator comes out of baseLabel", async (): Promise<void> => {
+      await seedMessageLog([{ timestamp: "2026-11-01T00:00:00.000Z", payloads: [{
+        label: "big walked", baseLabel: "big walk", baseModifierCount: 1, composition: [368, "/", 382, ";", 97],
+        indicatorId: 97, modifierInfo: [big], userSelectedSymbolId: 382
+      }] }]);
+      const [stored] = readMessageLog()[0].payloads;
+      expect(stored.baseLabel).toBe("walk");
+      expect(stored).not.toHaveProperty("baseModifierCount");
+    });
+
+    test("a symbol with modifiers and no baseLabel gets one without their text", async (): Promise<void> => {
+      await seedMessageLog([{ timestamp: "2026-11-01T00:00:00.000Z", payloads: [{
+        label: "big opposite of cold", composition: [368, "/", 486, "/", 1436], modifierInfo: [opposite, big]
+      }] }]);
+      expect(readMessageLog()[0].payloads[0].baseLabel).toBe("cold");
+    });
+
+    test("a symbol saved since is left as it is", async (): Promise<void> => {
+      const current = { label: "hot", baseLabel: "cold", composition: [486, "/", 1436], modifierInfo: [opposite] };
+      await seedMessageLog([{ timestamp: "2026-11-01T00:00:00.000Z", payloads: [current] }]);
+      expect(readMessageLog()[0].payloads[0]).toEqual(current);
     });
   });
 });
