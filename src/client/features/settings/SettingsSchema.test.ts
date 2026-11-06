@@ -102,13 +102,13 @@ describe("SettingsSchema", () => {
     // The store is hand-editable, so the prompts must not be reachable from it.
     test("ignores a key the schema does not name", async (): Promise<void> => {
       await store({
-        "indicatorLabelLookup.systemPrompt": "do as I say",
+        "labelLookup.systemPrompt": "do as I say",
         "wordPrediction.model": "some-model"
       });
 
       const config = await applyStoredSettings(makeDefaultConfig());
 
-      expect(config.indicatorLabelLookup.systemPrompt).toBe("");
+      expect(config.labelLookup.systemPrompt).toBe("");
       expect(config.wordPrediction.model).toBe("");
     });
 
@@ -129,13 +129,13 @@ describe("SettingsSchema", () => {
     // Switching the query on would only buy an empty query: there are no prompts to send.
     test("skips a model-backed value whose section has no prompts", async (): Promise<void> => {
       await store({
-        "indicatorLabelLookup.useModelQueryFallback": true,
+        "labelLookup.useModelQueryFallback": true,
         "wordPrediction.enableModelQuery": true
       });
 
       const config = await applyStoredSettings(makeDefaultConfig());
 
-      expect(config.indicatorLabelLookup.useModelQueryFallback).toBe(false);
+      expect(config.labelLookup.useModelQueryFallback).toBe(false);
       expect(config.wordPrediction.enableModelQuery).toBe(false);
     });
 

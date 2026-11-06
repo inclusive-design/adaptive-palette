@@ -287,4 +287,32 @@ describe("CommandMakeSentence", (): void => {
     expect(sentencePaletteSignal.value).toBe("food");
     expect(mockedQueryChat).toHaveBeenCalledTimes(1);
   });
+
+  test("a click waits for a label being worked out, then uses the new one", async (): Promise<void> => {
+    mockedQueryChat.mockResolvedValue({ message: { content: "I am hot." } } as unknown as Awaited<ReturnType<typeof queryChat>>);
+    editMessage({
+      payloads: [
+        { label: "me", composition: [124], modifierInfo: [] },
+        { label: "opposite of cold", composition: [125], modifierInfo: [], pendingLabel: "key" }
+      ],
+      caretPosition: 1
+    });
+    renderCell();
+    await userEvent.click(screen.getByRole("button", { name: make_setence_label }));
+    expect(mockedQueryChat).not.toHaveBeenCalled();
+    expect(finishedMessageSignal.value).toBe("");
+
+    // The model's label arrives.
+    editMessage({
+      payloads: [
+        { label: "me", composition: [124], modifierInfo: [] },
+        { label: "hot", composition: [125], modifierInfo: [] }
+      ],
+      caretPosition: 1
+    });
+    await waitFor(() => expect(mockedQueryChat).toHaveBeenCalled());
+    expect(mockedQueryChat.mock.calls[0][0]).toContain("me hot");
+    expect(finishedMessageSignal.value).toBe("me hot");
+    expect(readMessageLog().at(-1)?.payloads.map((payload) => payload.label)).toEqual(["me", "hot"]);
+  });
 });

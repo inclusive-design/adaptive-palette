@@ -23,6 +23,7 @@ import {
 } from "../../state/GlobalData";
 import { messageText } from "../../core/MessageLog";
 import { isModelTierActive, predictNext, rankModelWords, requestModelWords } from "./WordPredictionUtils";
+import { hasPendingLabel } from "../../utils/SymbolLabelUtils";
 import { attributesPromptText } from "../message-attributes/MessageAttributesState";
 import type { ModelWordsStateType, SymbolEncodingType } from "../../index.d";
 
@@ -69,6 +70,11 @@ let previousContextKey = "";
  * slots changed.
  */
 let previousSavedCount = 0;
+/**
+ * Whether a label up to the caret was waiting for a model when the row was last set. Its
+ * settling asks again, even when the label it settles on is unchanged.
+ */
+let previousWaiting = false;
 
 /**
  * The message text up to the caret, built from symbol labels: what the model is asked about.
@@ -177,6 +183,9 @@ effect((): void => {
   const contextKey = queryContextKeyOf(messageSoFar);
   // Read before any early return, so this runs again after a save. See `settingsSavedCount`.
   const savedCount = settingsSavedCount.value;
+  // A label up to the caret still waiting for a model: the row shows history only, so the two
+  // queries do not compete. The label settling runs this again.
+  const waiting = hasPendingLabel(payloads.slice(0, caretPosition + 1));
   // The user has finished this message. Stop any query still working on it; the words already
   // on the row stay usable -- restamped with the current key so an attribute change afterward
   // does not make `PredictedWords` stop recognizing them as an answer to this message.
@@ -197,11 +206,12 @@ effect((): void => {
     }
     return;
   }
-  if (contextKey === previousContextKey && savedCount === previousSavedCount) {
+  if (contextKey === previousContextKey && savedCount === previousSavedCount && waiting === previousWaiting) {
     return;
   }
   previousContextKey = contextKey;
   previousSavedCount = savedCount;
+  previousWaiting = waiting;
   cancelModelQuery();
   // The words on the row answered the message that is gone.
   modelWordsSignal.value = { status: "idle" };
@@ -212,7 +222,7 @@ effect((): void => {
   const { show } = adaptivePaletteGlobals.config.wordPrediction;
   // An empty message gives the model nothing to go on, and a hidden row nowhere to put the
   // answer.
-  if (!show || !isModelTierActive() || messageSoFar.length === 0) {
+  if (!show || !isModelTierActive() || messageSoFar.length === 0 || waiting) {
     return;
   }
   const labels = payloads.slice(0, caretPosition + 1).map((payload) => payload.label);

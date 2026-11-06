@@ -18,7 +18,7 @@
  */
 import { loadPaletteFromJsonFile } from "./PaletteStore";
 import { JsonPaletteType, LayoutInfoType } from "../index.d";
-import type { IndicatorInfoEntry } from "../utils/IndicatorLabelsUtils";
+import type { IndicatorInfoEntry } from "../utils/SymbolLabelUtils";
 import { isIndicator } from "../utils/SvgUtils";
 
 const PALETTE_PATH = "/palette-sets/standardBlissChart/palettes/indicators.json";

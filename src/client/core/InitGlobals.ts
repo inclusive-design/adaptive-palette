@@ -14,7 +14,7 @@
  * Start-up orchestration for the globals in `GlobalData.ts`.
  *
  * This lives above `GlobalData` rather than inside it.  Initialization has to reach down into
- * `SvgUtils`, `IndicatorLabelsUtils` and `OllamaApi`, and each of those reads the globals back,
+ * `SvgUtils`, `SymbolLabelUtils` and `OllamaApi`, and each of those reads the globals back,
  * so holding this function in `GlobalData` made that module part of a cycle with all three.
  *
  * For the same reason, `GlobalData` must NOT re-export `initAdaptivePaletteGlobals`.  A value
@@ -24,13 +24,15 @@
  * feature's own module scope would fire on any import of the module, including from tests that
  * import it directly and need to decide for themselves whether a guard is in play.
  *
+ * The label watcher in `SymbolLabelUtils` is started here for the same reason.
+ *
  * It also installs the storage backend and reads the saved messages, About Me facts and the saved words in.  The
  * backend is installed here, not at module scope, so a test can put its own in place instead.
  */
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { loadConfig } from "./Config";
 import { getModelNames, isLocalHost } from "./OllamaApi";
-import { initIndicatorLabels } from "../utils/IndicatorLabelsUtils";
+import { initIndicatorLabels, startLabelWatcher } from "../utils/SymbolLabelUtils";
 import { initSvgCompositeDefinitions } from "../utils/SvgUtils";
 import { applyStoredSettings } from "../features/settings/SettingsSchema";
 import { setEditGuard } from "./MessageEdit";
@@ -102,6 +104,8 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
   // edit is offered to telegraphic translation, which holds the ones that would throw away a
   // request or the sentences on screen until the user agrees to them.
   setEditGuard(guardEdit);
+  // Started before anything renders, so every label marked pending is asked about.
+  startLabelWatcher();
   // Home and Back close the sentence layer before they navigate.
   setNavigationOverlay({ isOpen: sentenceLayerOpen, hide: hideSentences });
   initSvgCompositeDefinitions();

@@ -14,11 +14,13 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { BlissSymbol } from "../components/BlissSymbol";
+import { spokenLabel } from "../components/AiBadge";
 import { changeEncodingContents } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { caretComposition, replaceAtCaret } from "../utils/SymbolEncodingUtils";
+import { relabel } from "../utils/SymbolLabelUtils";
 import "./ActionModifierCell.scss";
 
 export type ActionModifierCodeCellPropsType = {
@@ -74,20 +76,18 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
         isPrepended: prepend
       }
     ];
-    const newLabel = prepend ? `${label} ${symbolToEdit.label}` : `${symbolToEdit.label} ${label}`;
-    const edited = replaceAtCaret(payloads, caretPosition, {
-      "label": newLabel,
+    // The label comes from the symbol's parts. The first modifier keeps the label the symbol
+    // had as its base label.
+    const edited = relabel({
+      "label": symbolToEdit.label,
       "composition": newComposition,
       "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
       "modifierInfo": newModifierInfo,
       "indicatorId": symbolToEdit.indicatorId,
-      "baseLabel": symbolToEdit.baseLabel,
-      "baseModifierCount": symbolToEdit.baseModifierCount,
-      // A modifier wraps the label, it does not replace it: the model's text is still in there.
-      "isAiLabel": symbolToEdit.isAiLabel
+      "baseLabel": symbolToEdit.baseLabel ?? symbolToEdit.label
     });
-    editMessage({ payloads: edited, caretPosition: caretPosition });
-    announceIfEnabled(newLabel);
+    editMessage({ payloads: replaceAtCaret(payloads, caretPosition, edited), caretPosition: caretPosition });
+    announceIfEnabled(spokenLabel(edited));
   };
 
   return html`

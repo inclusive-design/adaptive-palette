@@ -1,8 +1,8 @@
-# Label Lookup When Indicator Applied
+# Symbol Labels After a Modifier or Indicator
 
-Bliss indicators (e.g., plural, past tense, adverb) change a symbol's grammatical form without altering
-its core meaning. When a user applies an indicator to a symbol in the input area, the system resolves
-and displays the grammatically correct label. For example, "walk" + past-tense indicator becomes "walked".
+Bliss modifiers (e.g., "opposite of", "much") change a symbol's meaning, and indicators (e.g., plural, past tense)
+change its grammatical form. When the user adds or removes either, the label is worked out again from the symbol's
+parts: "cold" + "opposite of" becomes "hot", and "walk" + past-tense indicator becomes "walked".
 
 ## Choosing an Indicator
 
@@ -24,20 +24,22 @@ The system tracks a symbol's dictionary identity rather than relying on its rend
 State is managed using the following properties:
 
 - **`userSelectedSymbolId`**: The symbol's core dictionary ID, retained through any modifier or indicator edits.
+- **`modifierInfo`**: The modifiers, in the order they were added, each with its text and side.
 - **`indicatorId`**: The currently applied indicator ID, if any.
-- **`baseLabel`**: The original text label, preserved so it can be restored if the indicator is removed or swapped.
-- **`isAiLabel`**: True when the current label came from a model query rather than the pre-generated table.
+- **`baseLabel`**: The label before any modifier or indicator. Set by the first one and kept after that.
+- **`isAiLabel`**: True when the label is a model's answer.
+- **`pendingLabel`**: Set while the label waits for the model's answer. Never saved.
 
-The lookup key for resolving a new label is always `{userSelectedSymbolId}_{indicatorId}`.
+The pregenerated table's key is `{userSelectedSymbolId}_{indicatorId}`. It covers an indicator alone.
 
 ## Label Resolution Order
 
-Indicator application never blocks the UI; the glyph renders immediately, and the label updates once resolution
-completes. The system attempts to resolve the label in the following order:
+Changing a symbol never blocks the UI: the symbol is redrawn at once, and a label the model is asked for arrives
+later. `labelFor()` in `utils/SymbolLabelUtils.ts` checks, in order:
 
-1. **Pre-generated Table (Offline)**
-   Looks up the key in `public/data/new_labels_with_indicator.json`. To optimize file size, the table only
-   contains combinations mapped by Part of Speech (POS):
+1. **No modifiers and no indicator:** the base label.
+2. **Pre-generated table:** an indicator alone, when `public/data/new_labels_with_indicator.json` has the pair. To
+   keep the file small, the table only contains combinations mapped by Part of Speech (POS):
 
    | Symbol POS | Applicable Indicator Group(s) |
    | :--- | :--- |
@@ -45,84 +47,85 @@ completes. The system attempts to resolve the label in the following order:
    | `action` | `Verbal` |
    | `description` | `Adjectival` |
 
-2. **Live Model Query (Ollama)**
-   Acts as a fallback for combinations missing from the table. It can be enabled or disabled
-   in `public/config.json` via `indicatorLabelLookup.useModelQueryFallback`. This feature requires the user's
-   device to be running Ollama.
+3. **Session cache:** the model's answer for the same symbol state earlier in the session. Removing a modifier goes
+   back to a state already asked about, so it costs nothing.
+4. **Model query (Ollama):** on the desktop version, with Ollama running and `labelLookup.useModelQueryFallback`
+   on. While the query runs, the label is the modifiers' text joined to the inner label: the table's label, or the
+   model's answer for the indicator alone, or else the base label. It is dimmed and followed by "…"; a screen reader
+   reads the joined text. If the symbol changes first, the query is stopped and the new state is asked about. Two
+   symbols in the same state share one query.
+5. **Joined text:** when the model can't be asked, or gives no answer, the joined text stays.
 
-   A label resolved this way is recorded as the model's, on the symbol's `isAiLabel` payload field, and shown
-   with an "AI" badge and in italic while it is on screen. The mark is dropped when the indicator is removed
-   or when a swapped indicator resolves through Tier 1, and it survives modifier edits, which leave the
-   model's text in the label. `markAiSuggestions` in `public/config.json` turns the marking off; see
-   [Config.md](devDoc/Config.md).
+A model's answer is recorded on `isAiLabel` and shown with an "AI" badge and in italic. `markAiSuggestions` in
+`public/config.json` turns the marking off; see [Config.md](devDoc/Config.md).
 
-3. **Unchanged Label**
-   If both tiers fail (e.g., missing data, unreachable model, or invalid POS combination), the system gracefully
-   degrades: the visual indicator is applied, but the text label remains unchanged.
+While a label waits, word prediction asks the model nothing, Make Sentence and word naming wait for it, and Speak
+speaks what is on screen.
 
-### Audio Announcement Order
+### Announcements
 
-Audio feedback triggers immediately when an indicator is clicked:
+A cell announces the label known at the click:
 
-1. **Lookup Table Match:** Announces the new label immediately.
-2. **Cached Model Result:** A label the model already returned this session is applied at once, with no loading
-message. Announces `"AI suggestion, {new label}"`, or the new label alone when `markAiSuggestions` is off.
-3. **Model Fallback:** Announces `"{symbol label}, {indicator label} loading new label"` once the indicator is
-selected. Once the model responds, it announces `"AI suggestion, {new label}"`, or the new label alone when
-`markAiSuggestions` is off.
-4. **No Match / Fallback Failed:** Announces `"{symbol label}, {indicator label}"`. The text label remains unchanged.
+1. **A table label, or a model's answer from the session cache:** the label, as `"AI suggestion, {label}"` for a
+   model's answer when `markAiSuggestions` is on.
+2. **An indicator whose label waits or stays unchanged:** `"{label}, {indicator label}"`.
+3. **A modifier whose label waits or falls back:** the joined text.
 
-### Modifier Interaction
-
-Users can add modifiers before or after applying an indicator. The system tracks any modifiers applied *before* the
-indicator and automatically reapplies them to the newly resolved label.
+Nothing is spoken when the model's answer arrives later.
 
 ## Languages
 
 There is one table per language: `new_labels_with_indicator.json` (English) and
-`new_labels_with_indicator_sv.json` (Swedish). The model fallback uses the UI language's prompt and
-gloss, and the cached model result is keyed by language as well as symbol and indicator.
+`new_labels_with_indicator_sv.json` (Swedish). The model query uses the UI language's prompt and
+gloss, and the cached answer is keyed by language as well as the symbol's state.
 
 ## Files Involved
 
 | File | Role |
 | :--- | :--- |
-| `src/client/utils/IndicatorLabelsUtils.ts` | Client module: loads the table, metadata, and implements the resolution logic. |
+| `src/client/utils/SymbolLabelUtils.ts` | Loads the table and metadata, works out labels (`labelFor()`), and asks the model about pending ones. |
 | `public/data/new_labels_with_indicator.json` | Pre-generated lookup table (`{symbolId}_{indicatorId} -> label`). |
 | `public/data/new_labels_with_indicator_sv.json` | Swedish lookup table, same format. |
 | `public/data/indicators.json` | Indicator metadata (id, group, name, purpose). |
 | `public/data/bliss_symbol_explanations.json` | Bliss vocabulary (gloss, POS, explanation) used to build model prompts. |
 | `public/config.json` | Runtime config (enables/disables Ollama fallback, selects model, `markAiSuggestions`). |
+| `src/client/core/InitGlobals.ts` | Starts the label watcher at start-up. |
+| `src/client/core/MessageLog.ts` | Drops `pendingLabel` on save; repairs messages saved before labels came from a symbol's parts. |
+| `src/client/features/telegraphic-translation/CommandMakeSentence.ts` | Waits for pending labels before making sentences. |
+| `src/client/features/compose-word/ComposeWordState.ts` | Waits for pending labels before naming a word. |
+| `src/client/features/word-prediction/WordPredictionState.ts` | Runs no query while a label is pending. |
 | `src/client/cells/ActionIndicatorCell.ts` | Applies an indicator and triggers label resolution. |
-| `src/client/cells/ActionRemoveIndicatorCell.ts` | Removes an indicator and restores `baseLabel`. |
+| `src/client/cells/ActionRemoveIndicatorCell.ts` | Removes an indicator; the label is worked out again. |
+| `src/client/cells/ActionModifierCellCommon.ts` | Adds a modifier and relabels the symbol. |
+| `src/client/cells/ActionRemoveModifierCell.ts` | Removes the last modifier and relabels the symbol. |
 | `src/client/cells/ContentEncoding.ts` | Renders the message; folds `markAiSuggestions` into each symbol's AI mark. |
 | `src/client/components/BlissSymbol.ts` | Draws a symbol; badges and italicises a marked label. |
 | `src/client/components/AiBadge.ts` | The "AI" badge and the spoken "AI suggestion" prefix; styles in `AiBadge.scss`. |
 
 ### Runtime Configuration (`public/config.json`)
 
-This config file controls the live model fallback behavior (Resolution Tier 2) via the `indicatorLabelLookup` object:
+This config file controls the model query via the `labelLookup` object:
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
-| `useModelQueryFallback` | Boolean | Enables or disables the live Ollama fallback. If set to `false`, the system bypasses Tier 2 entirely. |
-| `model` | String | Specifies the name of the local Ollama model to query when the fallback is triggered (e.g., `gemma4:12b`). |
+| `useModelQueryFallback` | Boolean | Whether to ask the model for the label of a symbol with modifiers, or with an indicator the table lacks. |
+| `model` | String | Specifies the name of the local Ollama model to query when the model is asked (e.g., `gemma4:12b`). |
 | `systemPrompt` | String | Required, non-empty. Instructs the model to reply with the resulting label alone. |
 | `userPrompt` | String | Required, non-empty. The per-query prompt, one field per line. |
 
-`userPrompt` supports the placeholders `{{word}}`, `{{pos}}`, `{{explanation}}`, `{{indicator}}`, and
-`{{purpose}}`. A line whose placeholder value is empty is dropped, so the same template serves a symbol with an
-explanation, one without, and a hand-built symbol that has neither a part of speech nor an explanation:
+`userPrompt` supports the placeholders `{{word}}`, `{{pos}}`, `{{explanation}}`, `{{modifiers}}`, `{{indicator}}`
+and `{{purpose}}`. `{{modifiers}}` lists the modifiers in the order they were added, with their side: `opposite of
+(before), much (after)`. A line whose placeholder values are all empty is dropped, so one template serves modifiers
+alone, an indicator alone, both, and a hand-built symbol with no part of speech or explanation:
 
 ```text
-Word: "hammer"
-Part of speech: noun
-Meaning: a tool for driving nails
-Indicator: action — Marks the verb sense
+Word: "cold"
+Part of speech: description
+Meaning: coldness,cold + description indicator
+Modifiers, in order: opposite of (before)
 ```
 
-If either prompt is missing or blank, the whole section is discarded and Tier 2 is disabled; Tier 1 is
-unaffected.
+If either prompt is missing or blank, the whole section is discarded and the model is never asked; the table still works.
 
 ### Indicator Groups (`public/data/indicators.json`)
 
@@ -160,7 +163,7 @@ use the same job script in Step 2 with `--prompts` and `--output` pointing at Sw
 `targetId`, `wordId`, `gloss`, `pos`, `indicatorId`, `indicatorName`, and `prompt`.
 
 This script keeps its own copy of the system prompt and builds its per-pair prompt as a single header line, so it
-can drift from the Tier 2 prompts in `public/config.json`. Edit both when the wording matters.
+can drift from the live model query prompts in `public/config.json`. Edit both when the wording matters.
 
 ### Step 2: Run the Model
 
@@ -177,7 +180,7 @@ python scripts/new_labels_with_indicator/run_new_labels_with_indicator.py \
 **Output:** A JSONL file appending the resolved `newLabel` to each row.
 
 > **Note on Model Selection:** This step intentionally uses a larger, more accurate model (e.g., `gemma-4-31B-it`)
-because it runs on GPU hardware. The live Ollama fallback (Resolution Tier 2) uses a smaller model (e.g., `gemma4:12b`)
+because it runs on GPU hardware. The live model query (Ollama) uses a smaller model (e.g., `gemma4:12b`)
 so it can run efficiently on local user devices.
 
 ### Step 3: Build the Lookup Table

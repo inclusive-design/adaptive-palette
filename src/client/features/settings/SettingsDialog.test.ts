@@ -51,7 +51,7 @@ const SUGGESTIONS_LABEL = "Suggestions to show (max 13)";
 const SENTENCES_LABEL = "Sentence choices to offer";
 const WORDS_LABEL = "Enable word suggestion";
 const MARK_AI_LABEL = "Mark AI suggestions";
-const LABEL_FALLBACK_LABEL = "Ask the AI model when no label is found";
+const LABEL_FALLBACK_LABEL = "Ask the AI model for a label after a modifier or indicator";
 
 /**
  * Point the globals at the file's configuration, changed as given, and say how many models
@@ -95,7 +95,7 @@ describe("SettingsDialog", () => {
 
     const headings = Array.from(document.querySelectorAll("legend")).map((legend) => legend.textContent);
     expect(headings).toEqual([
-      "General", "Symbol entry", "Word prediction", "Sentences", "Indicator labels"
+      "General", "Symbol entry", "Word prediction", "Sentences", "Symbol labels"
     ]);
   });
 
@@ -113,14 +113,14 @@ describe("SettingsDialog", () => {
   // The prompts are what a query needs, and the dialog cannot supply them.
   test("leaves out a model-backed setting whose section has no prompts", () => {
     withConfig({
-      indicatorLabelLookup: {
+      labelLookup: {
         useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: ""
       }
     });
     renderDialog();
 
     const headings = Array.from(document.querySelectorAll("legend")).map((legend) => legend.textContent);
-    expect(headings).not.toContain("Indicator labels");
+    expect(headings).not.toContain("Symbol labels");
     expect(screen.queryByLabelText(LABEL_FALLBACK_LABEL)).not.toBeInTheDocument();
   });
 

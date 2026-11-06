@@ -13,6 +13,7 @@
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { StoredMessage, getStorage } from "./StorageBackend";
 import { isSetPicturePath } from "./PaletteStore";
+import { removeModifierFromLabel } from "../utils/SymbolEncodingUtils";
 import { SymbolEncodingType } from "../index.d";
 import type { Language } from "../i18n/I18n";
 
@@ -100,6 +101,29 @@ export function isMessageRecord (entry: unknown): entry is StoredMessage {
 }
 
 /**
+ * Fix a symbol saved before labels were worked out from its parts, so editing it again does not
+ * repeat a modifier's text. Its `baseLabel` becomes the label with no modifier text:
+ * 1. with `baseModifierCount`, the text of that many first modifiers comes out of `baseLabel`;
+ * 2. with modifiers and no `baseLabel`, the text of every modifier comes out of the label.
+ * A symbol saved since is left as it is.
+ * @param {SymbolEncodingType} payload - A stored symbol. Changed in place.
+ * @returns {void}
+ */
+function upgradeSavedSymbol (payload: SymbolEncodingType & { baseModifierCount?: number }): void {
+  const modifiers = payload.modifierInfo ?? [];
+  // The last modifier added is the outermost text, so it comes out first.
+  const withoutModifiers = (label: string, count: number): string => modifiers.slice(0, count).reduceRight(
+    (text, modifier) => removeModifierFromLabel(text, modifier.modifierGloss, modifier.isPrepended), label
+  );
+  if (payload.baseModifierCount !== undefined && payload.baseLabel !== undefined) {
+    payload.baseLabel = withoutModifiers(payload.baseLabel, payload.baseModifierCount);
+  } else if (payload.baseLabel === undefined && modifiers.length > 0) {
+    payload.baseLabel = withoutModifiers(payload.label, modifiers.length);
+  }
+  delete payload.baseModifierCount;
+}
+
+/**
  * Read the stored messages into this session's log. Called from `initAdaptivePaletteGlobals()`,
  * before anything renders, again after settings are saved, and by tests that seed a log.
  *
@@ -114,6 +138,7 @@ export async function hydrateMessageLog (): Promise<void> {
   }
   try {
     log = (await getStorage().readMessages(maxRecords)).filter(isMessageRecord);
+    log.forEach((record) => record.payloads.forEach(upgradeSavedSymbol));
   } catch (error) {
     console.error(`Could not read the saved messages: ${String(error)}`);
   }
@@ -213,9 +238,11 @@ export function saveMessageRecord (payloads: SymbolEncodingType[]): void {
   }
   // The AI mark is dropped here: a message the user has said is theirs, so its labels stop being
   // the model's. Word prediction replays these payloads, and history suggestions are never marked.
+  // The pending mark goes too: a saved label waits for nothing.
   const unmarked = payloads.map((payload) => {
     const stored = { ...payload };
     delete stored.isAiLabel;
+    delete stored.pendingLabel;
     return stored;
   });
   const record: LoggedMessage = { timestamp: new Date().toISOString(), payloads: unmarked };

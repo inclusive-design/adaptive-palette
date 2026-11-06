@@ -194,10 +194,9 @@ displayed sentence. But when there is no sentence on screen, for example, when a
 chose "speak" or moved on before the sentence appeared, the state is cleared without asking the user anything
 because there is nothing to discard.
 
-Applying an indicator can produce a new label from a model query that arrives later. If sentences are on screen
-by the time it arrives, the question is asked for it as for any other change to the message. If a question is
-already on screen when it arrives, the new label is dropped: it was worked out from the message as it stood
-before the held edit, so it no longer fits either answer.
+A modifier or indicator label may wait for a model's answer. Make Sentence waits for every pending label, so
+sentences are never made from, or shown with, one. An answer the discard question's guard drops stays cached and
+goes in with the next change to the message. See [LabelLookup.md](LabelLookup.md).
 
 Sentences the model made are marked apart from a sentence recalled from the message log, unless
 the `markAiSuggestions` setting is off: a warm fill, italic text, and an "AI" badge in the

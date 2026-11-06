@@ -14,15 +14,14 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { BlissSymbol } from "../components/BlissSymbol";
-import { aiSuggestionLabel } from "../components/AiBadge";
-import { adaptivePaletteGlobals, changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
+import { spokenLabel } from "../components/AiBadge";
+import { changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
-import { applyModifiersToLabel, caretComposition, replaceAtCaret } from "../utils/SymbolEncodingUtils";
+import { caretComposition, replaceAtCaret } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
-import { t } from "../i18n/I18n";
 import { findWordIndicators, findClassifierFromLeft } from "../utils/SvgUtils";
-import { getStaticNewLabel, getNewLabelViaModelQuery } from "../utils/IndicatorLabelsUtils";
+import { getStaticNewLabel, relabel } from "../utils/SymbolLabelUtils";
 import "./ActionIndicatorCell.scss";
 
 type ActionIndicatorCodeCellPropsType = {
@@ -43,7 +42,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
   const caretSymbolComposition = caretComposition(changeEncodingContents.value);
   const unavailable = caretSymbolComposition === undefined || wordBuildSignal.value !== null;
 
-  const cellClicked = async () => {
+  const cellClicked = () => {
     if (unavailable || caretSymbolComposition === undefined) { speakUnavailable(label); return; }
     // Get the symbol at the caret position in the editing area and find the
     // locations within it to replace any existing indicator.
@@ -77,92 +76,24 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
     else {
       newComposition = [ newComposition, ";", indicatorId ];
     }
-    const baseLabel = symbolToEdit.baseLabel ?? symbolToEdit.label;
-    // Track the length of `modifierInfo` at the moment `baseLabel` was captured because
-    // `baseLabel` already has any modifier text that existed when the indicator was applied.
-    // When more modifiers are added after this point, only reapply those to `baseLabel`.
-    const baseModifierCount = symbolToEdit.baseModifierCount ?? (symbolToEdit.modifierInfo?.length ?? 0);
-    const edited = replaceAtCaret(payloads, caretPosition, {
+    const edited = relabel({
       "label": symbolToEdit.label,
       "composition": newComposition,
       "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
       "modifierInfo": symbolToEdit.modifierInfo,
       "indicatorId": indicatorId,
-      "baseLabel": baseLabel,
-      "baseModifierCount": baseModifierCount,
-      // The label has not changed yet, so neither has where it came from. If a tier
-      // answers below, `applyLabel()` overwrites this with that tier's answer.
-      "isAiLabel": symbolToEdit.isAiLabel
+      "baseLabel": symbolToEdit.baseLabel ?? symbolToEdit.label
     });
-    editMessage({ payloads: edited, caretPosition: caretPosition });
-
-    // Compares `indicatorId`, not the full `composition`, because a modifier applied to the
-    // same slot while this indicator's label is still resolving changes `composition` without
-    // superseding the indicator itself -- the resolved label would otherwise be dropped even
-    // though the indicator is still legitimately applied.
-    const isStillCurrent = () => {
-      const latest = changeEncodingContents.value;
-      return latest.payloads[caretPosition] !== undefined &&
-        latest.payloads[caretPosition].indicatorId === indicatorId;
-    };
-
-    const unchangedMessage = `${symbolToEdit.label}, ${props.options.label}`;
-
-    // Apply modifier labels so their text isn't lost (e.g. "big walk" + indicator -> "big walked", not "walked").
-    // When there's no `userSelectedSymbolId`, skip this because modifier text is already folded into
-    // `baseLabel` before it reaches the Ollama prompt. Re-wrapping here would double it.
-    const applyLabel = (label: string, isAiLabel: boolean) => {
-      const latest = changeEncodingContents.value;
-      const finalLabel = symbolToEdit.userSelectedSymbolId !== undefined
-        ? applyModifiersToLabel(label, symbolToEdit.modifierInfo)
-        : label;
-      const relabelled = replaceAtCaret(latest.payloads, caretPosition, {
-        ...latest.payloads[caretPosition],
-        "label": finalLabel,
-        "isAiLabel": isAiLabel
-      });
-      // Announce the final label if the edit is accepted, otherwise announce the unchanged message.
-      // The badge in the input area is `aria-hidden`, so this spoken announcement, made once as
-      // the label lands, is the only audible sign that the label is the model's.
-      if (editMessage({ payloads: relabelled, caretPosition: latest.caretPosition })) {
-        const isMarked = isAiLabel && adaptivePaletteGlobals.config.markAiSuggestions;
-        announceIfEnabled(isMarked ? aiSuggestionLabel(finalLabel) : finalLabel);
-      } else {
-        announceIfEnabled(unchangedMessage);
-      }
-    };
-
-    // Every branch below announces something immediately -- synchronously, before any real
-    // async wait -- so a click always gets audio feedback even if a later click supersedes it
-    // first. Only the resolution after a genuinely in-flight model query (the "pending" branch)
-    // is gated on `isStillCurrent()`.
-    const staticLabel = getStaticNewLabel(symbolToEdit.userSelectedSymbolId, indicatorId);
-    if (staticLabel !== undefined) {
-      applyLabel(staticLabel, false);
+    // Held by the guard: the label on screen is unchanged, so name the indicator alongside it.
+    if (!editMessage({ payloads: replaceAtCaret(payloads, caretPosition, edited), caretPosition: caretPosition })) {
+      announceIfEnabled(`${symbolToEdit.label}, ${label}`);
       return;
     }
-
-    const modelResult = getNewLabelViaModelQuery(symbolToEdit.userSelectedSymbolId, symbolToEdit.label, baseLabel, indicatorId);
-
-    if (modelResult.status === "cached" && modelResult.label !== undefined) {
-      applyLabel(modelResult.label, true);
-      return;
-    }
-    if (modelResult.status !== "pending") {
-      announceIfEnabled(unchangedMessage);
-      return;
-    }
-
-    announceIfEnabled(t("indicatorLoading", { label: unchangedMessage }));
-    const newLabel = await modelResult.promise;
-    if (!isStillCurrent()) {
-      return;
-    }
-    if (newLabel !== undefined) {
-      applyLabel(newLabel, true);
-    } else {
-      announceIfEnabled(unchangedMessage);
-    }
+    // A label from the table or the model is spoken as it is. One the model is still working out,
+    // or has no answer for, is spoken with the indicator's name, so the click says what changed.
+    const isNewLabel = edited.pendingLabel === undefined &&
+      (edited.isAiLabel || getStaticNewLabel(edited.userSelectedSymbolId, indicatorId) !== undefined);
+    announceIfEnabled(isNewLabel ? spokenLabel(edited) : `${edited.label}, ${label}`);
   };
 
   return html`

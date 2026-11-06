@@ -122,7 +122,8 @@ export function applyModifiersToLabel (baseLabel: string, modifierInfo?: Modifie
  * The reverse of `applyModifiersToLabel()` for one modifier: remove its text from the start
  * for a prefix, from the end for a suffix, so a short gloss such as "one" does not cut into the
  * word ("phone one" → "phone"). A label reworded since the modifier was added falls back to
- * removing the first whole-word match.
+ * removing the first whole-word match. Used by `hydrateMessageLog()` to fix messages saved before
+ * labels were worked out from a symbol's parts.
  * @param {string} label - The label holding the modifier's text.
  * @param {string} gloss - The modifier's text.
  * @param {boolean} isPrepended - Whether the modifier is a prefix.

@@ -305,8 +305,8 @@ let pendingAfterApply: (() => void) | undefined;
  */
 export function guardEdit (next: ContentSignalDataType, afterApply?: () => void): boolean {
   // A question is already up. Clicks cannot reach here -- the page is `inert` behind the
-  // dialog -- so this is `ActionIndicatorCell`'s resolved label arriving. It was built from
-  // the message as it stood before the held edit, so it is stale either way: drop it.
+  // dialog -- so this is a model's label arriving from `utils/SymbolLabelUtils.ts`. Drop it: the
+  // answer stays cached, and the next change to the message puts it in.
   if (discardEditPromptSignal.peek() !== null) {
     return true;
   }

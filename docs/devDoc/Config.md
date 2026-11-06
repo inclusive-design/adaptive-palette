@@ -26,7 +26,7 @@ whatever this file says. See `isLocalHost()` in [`src/client/core/OllamaApi.ts`]
 | `markAiSuggestions` | Top-level, not a section. Whether suggestions a model made are marked as such. |
 | `backquoteGoesBack` | Top-level, not a section. Whether the backquote key goes back one palette. |
 | `switchScanning` | Two-switch row scanning, the only kind supported: whether it is on, and its two keys. See [AccessMethods.md](../AccessMethods.md#switches). |
-| `indicatorLabelLookup` | The Ollama fallback tier for looking up indicator labels. See [IndicatorLabelLookup.md](../IndicatorLabelLookup.md). |
+| `labelLookup` | The model query for a symbol's label after its modifiers or indicator change. See [LabelLookup.md](../LabelLookup.md). |
 | `telegraphicTranslation` | Translating a telegraphic message into full sentences. See [TelegraphicMessageTranslation.md](../TelegraphicMessageTranslation.md). |
 | `aboutMe` | The "Suggest updates" button in the "About Me" dialog, which asks a model for facts about the user. See [AboutMe.md](../AboutMe.md). |
 | `wordNaming` | The model names offered in the dialog that names a new word. See [ComposeWords.md](../ComposeWords.md). |
@@ -50,7 +50,7 @@ placeholders all resolve empty is dropped before substitution. This is what lets
 such as the message attributes line -- disappear from the prompt when there is nothing to say.
 The `systemPrompt` fields of `telegraphicTranslation` and `wordPrediction` are prose, not one field
 per line, so they keep plain substitution (`renderTemplate()`) instead, and no line of theirs is ever
-dropped. `indicatorLabelLookup.systemPrompt` is the exception: it is sent verbatim, so a placeholder
+dropped. `labelLookup.systemPrompt` is the exception: it is sent verbatim, so a placeholder
 written there reaches the model as literal text.
 
 ## `language`
@@ -124,21 +124,21 @@ indicator label's italic sits with the badge in `AiBadge.scss`.
 If either key is missing, not shaped like a `KeyboardEvent.code` (`/^[A-Z][A-Za-z0-9]*$/`), or
 both are the same, both keys fall back to the defaults. `enabled` is still read.
 
-## `indicatorLabelLookup`
+## `labelLookup`
 
 | Field | Type | Description |
 | ----- | ---- | ----------- |
-| `useModelQueryFallback` | boolean | Required. Whether to ask a model when the local label lookup finds nothing. |
+| `useModelQueryFallback` | boolean | Required. Whether to ask a model for the label of a symbol with modifiers, or with an indicator the local table lacks. |
 | `model` | string | Ollama model name. Defaults to the empty string, which means Ollama's first available model. |
 | `systemPrompt` | string or object | Required, non-empty. Tells the model to answer with the resulting label alone. |
 | `userPrompt` | string or object | Required, non-empty. See [Prompt placeholders](#prompt-placeholders). |
 
-`userPrompt` placeholders: `{{word}}`, `{{pos}}`, `{{explanation}}`, `{{indicator}}`, `{{purpose}}` --
+`userPrompt` placeholders: `{{word}}`, `{{pos}}`, `{{explanation}}`, `{{modifiers}}`, `{{indicator}}`, `{{purpose}}` --
 one template covers a symbol with an explanation, one without, and a hand-built symbol that has
 neither a part of speech nor an explanation.
 
 When `useModelQueryFallback` is missing or is not a boolean, or either prompt is missing or blank, the whole
-section is discarded and the fallback tier is disabled. The pregenerated lookup keeps working.
+section is discarded and the model is never asked. The pregenerated lookup keeps working.
 
 ## `telegraphicTranslation`
 

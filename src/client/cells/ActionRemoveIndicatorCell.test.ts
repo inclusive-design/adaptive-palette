@@ -12,7 +12,7 @@
 import { vi } from "vitest";
 import { screen, fireEvent } from "@testing-library/preact";
 
-import { changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
@@ -53,18 +53,8 @@ describe("ActionRemoveIndicatorCell", (): void => {
     userSelectedSymbolId: 382
   };
   const blissWordIndicatorThenModifier = {
-    label: "big walked",
-    baseLabel: "walk",
-    baseModifierCount: 0,
-    composition: [ 368, "/", 382, ";", 97 ],
-    indicatorId: 97,
-    modifierInfo: [{ modifierId: [368], modifierGloss: "big", isPrepended: true }],
-    userSelectedSymbolId: 382
-  };
-  const blissWordModifierThenIndicator = {
-    label: "big walked",
-    baseLabel: "big walk",
-    baseModifierCount: 1,
+    label: "big helper",
+    baseLabel: "help",
     composition: [ 368, "/", 382, ";", 97 ],
     indicatorId: 97,
     modifierInfo: [{ modifierId: [368], modifierGloss: "big", isPrepended: true }],
@@ -73,6 +63,10 @@ describe("ActionRemoveIndicatorCell", (): void => {
 
   beforeAll(async (): Promise<void> => {
     await initAdaptivePaletteGlobals();
+  });
+
+  beforeEach((): void => {
+    adaptivePaletteGlobals.models = [];
   });
 
   afterEach((): void => {
@@ -184,7 +178,7 @@ describe("ActionRemoveIndicatorCell", (): void => {
     expect(lastSymbol.composition).toStrictEqual(compositionAfterIndicatorRemoval);
   });
 
-  test("restores the label from baseLabel and clears baseLabel and indicatorId", async (): Promise<void> => {
+  test("restores the base label and drops the indicator", async (): Promise<void> => {
     changeEncodingContents.value = {
       payloads: [blissWordWithIndicatorAndBaseLabel],
       caretPosition: 0
@@ -197,12 +191,12 @@ describe("ActionRemoveIndicatorCell", (): void => {
 
     const restored = changeEncodingContents.value.payloads[0];
     expect(restored.label).toBe("help");
-    expect(restored.baseLabel).toBeUndefined();
+    expect(restored.baseLabel).toBe("help");
     expect(restored.indicatorId).toBeUndefined();
     expect(restored.userSelectedSymbolId).toBe(382);
   });
 
-  test("keeps a modifier applied after the indicator when restoring baseLabel", async (): Promise<void> => {
+  test("keeps the modifiers, joined to the base label", async (): Promise<void> => {
     changeEncodingContents.value = {
       payloads: [blissWordIndicatorThenModifier],
       caretPosition: 0
@@ -214,27 +208,8 @@ describe("ActionRemoveIndicatorCell", (): void => {
     fireEvent.click(removeIndicatorButton);
 
     const restored = changeEncodingContents.value.payloads[0];
-    expect(restored.label).toBe("big walk");
-    expect(restored.baseLabel).toBeUndefined();
-    expect(restored.baseModifierCount).toBeUndefined();
-    expect(restored.indicatorId).toBeUndefined();
-  });
-
-  test("does not double-count a modifier applied before the indicator when restoring baseLabel", async (): Promise<void> => {
-    changeEncodingContents.value = {
-      payloads: [blissWordModifierThenIndicator],
-      caretPosition: 0
-    };
-    renderCell(ActionRemoveIndicatorCell, TEST_CELL_ID, testCell.options);
-    const removeIndicatorButton = await screen.findByRole("button", {name: testCell.options.label});
-    expect(removeIndicatorButton).toHaveAttribute("aria-disabled", "false");
-
-    fireEvent.click(removeIndicatorButton);
-
-    const restored = changeEncodingContents.value.payloads[0];
-    expect(restored.label).toBe("big walk");
-    expect(restored.baseLabel).toBeUndefined();
-    expect(restored.baseModifierCount).toBeUndefined();
+    expect(restored.label).toBe("big help");
+    expect(restored.baseLabel).toBe("help");
     expect(restored.indicatorId).toBeUndefined();
   });
 

@@ -519,9 +519,9 @@ describe("telegraphicTranslationState", (): void => {
     expect(prompts).toEqual([en.discardWorking]);
   });
 
-  // `ActionIndicatorCell` writes a second time when a model resolves a new label, after an
-  // `await`. That write is the only one that can reach the gate while the dialog is up: clicks
-  // cannot, because the page is inert behind it.
+  // The label watcher in `SymbolLabelUtils` writes when a model's label arrives. That write is
+  // the only one that can reach the gate while the dialog is up: clicks cannot, because the page
+  // is inert behind it.
   test("a write arriving while the question is up is dropped", async (): Promise<void> => {
     editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockReturnValue(new Promise(() => undefined) as never);

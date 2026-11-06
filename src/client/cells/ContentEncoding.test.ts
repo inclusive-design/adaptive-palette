@@ -14,7 +14,7 @@ import { render, screen } from "@testing-library/preact";
 import { vi } from "vitest";
 import { userEvent } from "vitest/browser";
 import { html } from "htm/preact";
-import { ContentEncoding, INPUT_AREA_ID, clamp, decrementCursor, incrementCursor, moveCursorToEnd, moveCursorToHome } from "./ContentEncoding";
+import { ContentEncoding, INPUT_AREA_ID, clamp, decrementCursor, generateMarkupArray, incrementCursor, moveCursorToEnd, moveCursorToHome } from "./ContentEncoding";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { editMessage } from "../core/MessageEdit";
 import { SymbolEncodingType } from "../index.d";
@@ -449,4 +449,29 @@ describe("keeping the caret in view", (): void => {
     symbol(0).dispatchEvent(new Event("load"));
     expect(inView(symbol(19))).toBe(true);
   });
+});
+
+describe("a label waiting for a model", (): void => {
+
+  beforeAll(async (): Promise<void> => {
+    await initAdaptivePaletteGlobals();
+  });
+
+  // Drawn without the input area, so the label watcher does not settle the made-up key.
+  test("is dimmed, with a \"…\" hidden from screen readers", (): void => {
+    const waiting: SymbolEncodingType = { label: "opposite of cold", composition: 1436, pendingLabel: "key" };
+    const { container } = render(html`<div>${generateMarkupArray([waiting], 0)}</div>`);
+
+    const label = container.querySelector(".pendingLabel");
+    expect(label?.textContent).toBe("opposite of cold…");
+    expect(label?.querySelector("[aria-hidden='true']")?.textContent).toBe("…");
+  });
+
+  test("a settled label has neither", (): void => {
+    const { container } = render(html`<div>${generateMarkupArray([{ label: "hot", composition: 1827 }], 0)}</div>`);
+
+    expect(container.querySelector(".pendingLabel")).toBeNull();
+    expect(container.textContent).not.toContain("…");
+  });
+
 });

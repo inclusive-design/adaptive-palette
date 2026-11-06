@@ -22,3 +22,9 @@ is added to or moved in `modifiers.json`, update the palette too;
 modifier is listed in `modifierIds` in `src/client/utils/SvgUtils.ts`: a single symbol in one of
 the id lists, a multi-symbol one in `multiSymbol`. `findClassifierFromLeft()` uses these lists
 to place an indicator after the prefix modifiers.
+
+## Labels
+
+Adding or removing a modifier relabels the symbol: "opposite of" + "cold" becomes "hot". The modifier's text is
+joined to the label at once, and the model is asked for a proper word. See
+[LabelLookup.md](LabelLookup.md).
