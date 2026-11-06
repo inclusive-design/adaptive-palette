@@ -12,8 +12,8 @@
 
 /**
  * `modifiers.json` in the palette set is built from `public/data/modifiers.json`. This keeps the
- * two in step: every modifier appears once, in the data file's order, as a prefix or suffix cell
- * per its `position`, filling the rows below the header with no gaps. The header row is checked
+ * two in step: every modifier, except those in `NOT_IN_PALETTE`, appears once, in the data file's
+ * order, as a prefix or suffix cell per its `position`, filling the rows below the header with no gaps. The header row is checked
  * for every palette by `PaletteSetConsistency.test.ts`.
  */
 import { loadPaletteFromJsonFile } from "./PaletteStore";
@@ -30,6 +30,9 @@ type ModifierEntry = {
   gloss: LabelType,
   position: "prefix" | "suffix"
 };
+
+// Modifiers left off the palette on purpose, by composition. 753 is "Bliss-name".
+const NOT_IN_PALETTE = [753];
 
 const CELL_TYPES = { prefix: "ActionPreModifierCell", suffix: "ActionPostModifierCell" };
 
@@ -65,7 +68,9 @@ describe("modifiers.json agrees with data/modifiers.json", (): void => {
 
   test("lists every modifier once, in the data file's order, with its type, label and composition", (): void => {
     expect(modifierCells().map((cell) => [cell.type, cell.options.label, cell.options.composition]))
-      .toEqual(modifiers.map((modifier) => [CELL_TYPES[modifier.position], modifier.gloss, modifier.composition]));
+      .toEqual(modifiers
+        .filter((modifier) => !NOT_IN_PALETTE.includes(modifier.composition as number))
+        .map((modifier) => [CELL_TYPES[modifier.position], modifier.gloss, modifier.composition]));
   });
 
   // Most-used first, so switch users reach them in the fewest presses. Keep these places stable.
