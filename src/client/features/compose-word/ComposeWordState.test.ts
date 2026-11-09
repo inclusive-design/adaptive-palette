@@ -137,4 +137,17 @@ describe("ComposeWordState", (): void => {
       label: "teacher", composition: [513, "/", 949, "/", 412], userSelectedSymbolId: 2559, modifierInfo: []
     });
   });
+
+  test("Done waits for a part's label being worked out, then offers the new one", (): void => {
+    startBuilding();
+    insertWord(word("woman", 710));
+    insertWord({ ...word("opposite of cold", 1436), pendingLabel: "key" });
+    requestFinish();
+    expect(wordDialogSignal.value).toBeNull();
+
+    // The model's label arrives.
+    const [woman] = changeEncodingContents.value.payloads;
+    editMessage({ payloads: [woman, word("hot", 1436)], caretPosition: 1 });
+    expect(wordDialogSignal.value?.partLabels).toEqual(["woman", "hot"]);
+  });
 });

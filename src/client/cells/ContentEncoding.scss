@@ -50,6 +50,12 @@
     }
   }
 
+  /* A label waiting for a model's answer. #595959 keeps at least 6:1 contrast on white and on the
+     yellow caret. */
+  .pendingLabel {
+    color: #595959;
+  }
+
   .cursorCaret {
     background-color: yellow;
     padding-right: 2px;

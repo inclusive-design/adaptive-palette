@@ -18,7 +18,7 @@
  * acquiring a dependency that points back at it.
  */
 import type {
-  AdaptivePaletteConfigType, IndicatorLabelLookupConfigType,
+  AdaptivePaletteConfigType, LabelLookupConfigType,
   TelegraphicTranslationConfigType, FeatureVisibilityConfigType, WordPredictionConfigType,
   AboutMeConfigType, WordNamingConfigType, SwitchScanningConfigType, PromptType
 } from "../index.d";
@@ -84,7 +84,7 @@ export function makeDefaultConfig (): AdaptivePaletteConfigType {
     markAiSuggestions: true,
     backquoteGoesBack: true,
     switchScanning: { enabled: false, moveKey: "Space", selectKey: "Enter" },
-    indicatorLabelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
+    labelLookup: { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" },
     symbolSearch: { show: true },
     svgBuilderString: { show: false },
     wordPrediction: { show: false, numSuggestions: DEFAULT_NUM_SUGGESTIONS, ...DISABLED_MODEL_QUERY }
@@ -92,13 +92,13 @@ export function makeDefaultConfig (): AdaptivePaletteConfigType {
 }
 
 /**
- * Validate the `indicatorLabelLookup` section of the config. Both prompts are required
+ * Validate the `labelLookup` section of the config. Both prompts are required
  * because there are no hardcoded fallback prompts. Returns `undefined` when the section is
- * missing or malformed, which disables the Ollama fallback tier.
+ * missing or malformed, which means the model is never asked.
  * @param {unknown} section - The raw parsed section.
- * @returns {IndicatorLabelLookupConfigType | undefined}
+ * @returns {LabelLookupConfigType | undefined}
  */
-function parseIndicatorLabelLookup (section: unknown): IndicatorLabelLookupConfigType | undefined {
+function parseLabelLookup (section: unknown): LabelLookupConfigType | undefined {
   const candidate = section as {
     useModelQueryFallback?: unknown, model?: unknown, systemPrompt?: unknown, userPrompt?: unknown
   } | undefined;
@@ -286,7 +286,7 @@ function parseSwitchScanning (section: unknown): SwitchScanningConfigType {
 
 /**
  * Fetch and validate `public/config.json`: the top-level `language`, `paletteSet` and
- * `maxRecalledRecords`, and the `indicatorLabelLookup`, `telegraphicTranslation`, `symbolSearch`, `svgBuilderString`,
+ * `maxRecalledRecords`, and the `labelLookup`, `telegraphicTranslation`, `symbolSearch`, `svgBuilderString`,
  * `wordPrediction`, `aboutMe`, `wordNaming` and `switchScanning` sections.
  * @returns {Promise<AdaptivePaletteConfigType>}
  */
@@ -297,7 +297,7 @@ export async function loadConfig (): Promise<AdaptivePaletteConfigType> {
       return makeDefaultConfig();
     }
     const parsed = await response.json() as Record<string, unknown>;
-    const indicatorLabelLookup = parseIndicatorLabelLookup(parsed?.indicatorLabelLookup);
+    const labelLookup = parseLabelLookup(parsed?.labelLookup);
     return {
       language: parseLanguage(parsed?.language) ?? "en",
       paletteSet: isPaletteSetName(parsed?.paletteSet) ? parsed.paletteSet : DEFAULT_PALETTE_SET,
@@ -311,7 +311,7 @@ export async function loadConfig (): Promise<AdaptivePaletteConfigType> {
       // Anything other than `false` leaves the shortcut on, as it was before the setting existed.
       backquoteGoesBack: typeof parsed?.backquoteGoesBack === "boolean" ? parsed.backquoteGoesBack : true,
       switchScanning: parseSwitchScanning(parsed?.switchScanning),
-      indicatorLabelLookup: indicatorLabelLookup ?? makeDefaultConfig().indicatorLabelLookup,
+      labelLookup: labelLookup ?? makeDefaultConfig().labelLookup,
       telegraphicTranslation: parseTelegraphicTranslation(parsed?.telegraphicTranslation),
       aboutMe: parseAboutMe(parsed?.aboutMe),
       wordNaming: parseModelPrompts(parsed?.wordNaming),

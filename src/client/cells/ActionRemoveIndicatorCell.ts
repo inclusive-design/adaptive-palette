@@ -14,12 +14,14 @@ import { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbolInfoType, LayoutInfoType, ContentSignalDataType } from "../index.d";
 import { BlissSymbol } from "../components/BlissSymbol";
+import { spokenLabel } from "../components/AiBadge";
 import { changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
-import { applyModifiersToLabel, caretComposition, replaceAtCaret } from "../utils/SymbolEncodingUtils";
+import { caretComposition, replaceAtCaret } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { findWordIndicators } from "../utils/SvgUtils";
+import { baseOf, relabel } from "../utils/SymbolLabelUtils";
 
 type ActionIndicatorCodeCellPropsType = {
   id: string,
@@ -77,22 +79,17 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
         ...newCompositionArr.slice(0, indicatorIndex),
         ...newCompositionArr.slice(indicatorIndex + 1)
       ];
-    // `baseLabel` already has any modifier text that existed *before* the indicator was first
-    // applied baked into it, so only reapply the modifiers added *after* that point -- tracked
-    // by `baseModifierCount`, the length of `modifierInfo` at the moment `baseLabel` was captured.
-    const restoredBare = symbolToEdit.baseLabel ?? symbolToEdit.label;
-    const modifiersAppliedAfterIndicator = symbolToEdit.modifierInfo?.slice(symbolToEdit.baseModifierCount ?? 0);
-    const restoredLabel = applyModifiersToLabel(restoredBare, modifiersAppliedAfterIndicator);
-    const edited = replaceAtCaret(payloads, caretPosition, {
-      "label": restoredLabel,
+    // The label comes from the symbol's parts. Without the indicator, that is the modifiers'
+    // text joined to the base label, or the model's word for them.
+    const edited = relabel({
+      "label": symbolToEdit.label,
       "composition": newComposition,
       "userSelectedSymbolId": symbolToEdit.userSelectedSymbolId,
-      "modifierInfo": symbolToEdit.modifierInfo
-      // No "isAiLabel" in this list: restoring `baseLabel` restores the user's own text, so the mark
-      // goes with the indicator -- and the mark is only ever set alongside a `baseLabel`, never without.
+      "modifierInfo": symbolToEdit.modifierInfo,
+      ...baseOf(symbolToEdit)
     });
-    editMessage({ payloads: edited, caretPosition: caretPosition });
-    announceIfEnabled(`${restoredLabel}`);
+    editMessage({ payloads: replaceAtCaret(payloads, caretPosition, edited), caretPosition: caretPosition });
+    announceIfEnabled(spokenLabel(edited));
   };
 
   return html`

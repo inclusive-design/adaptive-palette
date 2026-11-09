@@ -190,7 +190,7 @@ command" and "Build output directory" settings:
 
 ### Feature Documentation
 
-- [Label Lookup When Indicator Applied](./docs/IndicatorLabelLookup.md): three-stage pipeline that maps
+- [Symbol Labels After a Modifier or Indicator](./docs/LabelLookup.md): three-stage pipeline that maps
 every symbol+indicator pair that the vocabulary supports to its grammatically correct label.
   - [Corresponding script directory](scripts/new_labels_with_indicator/)
 - [Modifiers](./docs/Modifiers.md): add any Bliss modifier to a symbol from the modifier palette.

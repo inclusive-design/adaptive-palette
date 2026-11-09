@@ -32,7 +32,7 @@ afterEach((): void => {
   vi.unstubAllGlobals();
 });
 
-// A valid `indicatorLabelLookup` section
+// A valid `labelLookup` section
 const INDICATOR_SECTION = {
   useModelQueryFallback: false,
   model: "",
@@ -44,7 +44,7 @@ describe("loadConfig telegraphicTranslation section", (): void => {
 
   test("a numSentences above the maximum is lowered to it", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       telegraphicTranslation: { ...TELEMSG_SECTION, numSentences: 7 }
     });
     const config = await loadConfig();
@@ -60,7 +60,7 @@ describe("loadConfig telegraphicTranslation section", (): void => {
 
   test("a valid section is loaded", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       telegraphicTranslation: TELEMSG_SECTION
     });
     const config = await loadConfig();
@@ -69,7 +69,7 @@ describe("loadConfig telegraphicTranslation section", (): void => {
 
   test("showBlissSentence defaults to true when it is absent", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       telegraphicTranslation: TELEMSG_SECTION
     });
     const config = await loadConfig();
@@ -78,7 +78,7 @@ describe("loadConfig telegraphicTranslation section", (): void => {
 
   test("showBlissSentence is honoured when it is false", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       telegraphicTranslation: { ...TELEMSG_SECTION, showBlissSentence: false }
     });
     const config = await loadConfig();
@@ -87,7 +87,7 @@ describe("loadConfig telegraphicTranslation section", (): void => {
 
   test("a malformed showBlissSentence keeps the rest of the section", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       telegraphicTranslation: { ...TELEMSG_SECTION, showBlissSentence: "yes please" }
     });
     const config = await loadConfig();
@@ -97,14 +97,14 @@ describe("loadConfig telegraphicTranslation section", (): void => {
   });
 
   test("a missing section leaves the feature unconfigured", async (): Promise<void> => {
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
+    stubConfigFetch({ labelLookup: INDICATOR_SECTION });
     const config = await loadConfig();
     expect(config.telegraphicTranslation).toBeUndefined();
   });
 
   test("a malformed section leaves the feature unconfigured", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       telegraphicTranslation: { ...TELEMSG_SECTION, numSentences: "three" }
     });
     const config = await loadConfig();
@@ -113,76 +113,76 @@ describe("loadConfig telegraphicTranslation section", (): void => {
 
   test("an empty prompt leaves the feature unconfigured", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       telegraphicTranslation: { ...TELEMSG_SECTION, systemPrompt: "   " }
     });
     const config = await loadConfig();
     expect(config.telegraphicTranslation).toBeUndefined();
   });
 
-  test("a bad indicatorLabelLookup section does not discard telegraphicTranslation", async (): Promise<void> => {
+  test("a bad labelLookup section does not discard telegraphicTranslation", async (): Promise<void> => {
     stubConfigFetch({ telegraphicTranslation: TELEMSG_SECTION });
     const config = await loadConfig();
-    expect(config.indicatorLabelLookup.useModelQueryFallback).toBe(false);
+    expect(config.labelLookup.useModelQueryFallback).toBe(false);
     expect(config.telegraphicTranslation).toEqual({ ...TELEMSG_SECTION, showBlissSentence: true });
   });
 });
 
-describe("loadConfig indicatorLabelLookup section", (): void => {
+describe("loadConfig labelLookup section", (): void => {
 
   const DISABLED = { useModelQueryFallback: false, model: "", systemPrompt: "", userPrompt: "" };
 
   test("a valid section is loaded with both prompts", async (): Promise<void> => {
     const section = { ...INDICATOR_SECTION, useModelQueryFallback: true, model: "phony-model:12b" };
-    stubConfigFetch({ indicatorLabelLookup: section });
+    stubConfigFetch({ labelLookup: section });
     const config = await loadConfig();
-    expect(config.indicatorLabelLookup).toEqual(section);
+    expect(config.labelLookup).toEqual(section);
   });
 
   test("a missing prompt disables the fallback tier", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: { useModelQueryFallback: true, model: "phony-model:12b", systemPrompt: "Only this one." }
+      labelLookup: { useModelQueryFallback: true, model: "phony-model:12b", systemPrompt: "Only this one." }
     });
     const config = await loadConfig();
-    expect(config.indicatorLabelLookup).toEqual(DISABLED);
+    expect(config.labelLookup).toEqual(DISABLED);
   });
 
   test("an empty prompt disables the fallback tier", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: { ...INDICATOR_SECTION, useModelQueryFallback: true, userPrompt: "   " }
+      labelLookup: { ...INDICATOR_SECTION, useModelQueryFallback: true, userPrompt: "   " }
     });
     const config = await loadConfig();
-    expect(config.indicatorLabelLookup).toEqual(DISABLED);
+    expect(config.labelLookup).toEqual(DISABLED);
   });
 
   test("a missing section disables the fallback tier", async (): Promise<void> => {
     stubConfigFetch({});
     const config = await loadConfig();
-    expect(config.indicatorLabelLookup).toEqual(DISABLED);
+    expect(config.labelLookup).toEqual(DISABLED);
   });
 });
 
 describe("loadConfig maxRecalledRecords", (): void => {
 
   test("a positive integer is loaded as given", async (): Promise<void> => {
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, maxRecalledRecords: 42 });
+    stubConfigFetch({ labelLookup: INDICATOR_SECTION, maxRecalledRecords: 42 });
     const config = await loadConfig();
     expect(config.maxRecalledRecords).toBe(42);
   });
 
   // Zero is how logging is turned off while the features that log stay available.
   test("zero is kept rather than treated as missing", async (): Promise<void> => {
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, maxRecalledRecords: 0 });
+    stubConfigFetch({ labelLookup: INDICATOR_SECTION, maxRecalledRecords: 0 });
     const config = await loadConfig();
     expect(config.maxRecalledRecords).toBe(0);
   });
 
   test("a missing or malformed value falls back to the default", async (): Promise<void> => {
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
+    stubConfigFetch({ labelLookup: INDICATOR_SECTION });
     const missing = await loadConfig();
     expect(missing.maxRecalledRecords).toBe(DEFAULT_MAX_RECALLED_RECORDS);
 
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, maxRecalledRecords: -5 });
+    stubConfigFetch({ labelLookup: INDICATOR_SECTION, maxRecalledRecords: -5 });
     const malformed = await loadConfig();
     expect(malformed.maxRecalledRecords).toBe(DEFAULT_MAX_RECALLED_RECORDS);
   });
@@ -191,14 +191,14 @@ describe("loadConfig maxRecalledRecords", (): void => {
 describe("loadConfig paletteSet", (): void => {
 
   test("a set name is loaded as given", async (): Promise<void> => {
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, paletteSet: "userBlissChart" });
+    stubConfigFetch({ labelLookup: INDICATOR_SECTION, paletteSet: "userBlissChart" });
     const config = await loadConfig();
     expect(config.paletteSet).toBe("userBlissChart");
   });
 
   test("a missing or invalid value falls back to standardBlissChart", async (): Promise<void> => {
     for (const paletteSet of [undefined, "", "../x", 7]) {
-      stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, paletteSet });
+      stubConfigFetch({ labelLookup: INDICATOR_SECTION, paletteSet });
       const config = await loadConfig();
       expect(config.paletteSet, String(paletteSet)).toBe("standardBlissChart");
     }
@@ -213,7 +213,7 @@ describe("loadConfig wordPrediction section", (): void => {
 
   test("a numSuggestions above the maximum is lowered to it", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       wordPrediction: { show: true, numSuggestions: 20 }
     });
     const config = await loadConfig();
@@ -226,7 +226,7 @@ describe("loadConfig wordPrediction section", (): void => {
 
   test("a valid section is loaded as given", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       wordPrediction: { show: true, numSuggestions: 6 }
     });
     const config = await loadConfig();
@@ -235,7 +235,7 @@ describe("loadConfig wordPrediction section", (): void => {
   });
 
   test("a missing section turns the feature off", async (): Promise<void> => {
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
+    stubConfigFetch({ labelLookup: INDICATOR_SECTION });
     const config = await loadConfig();
     expect(config.wordPrediction)
       .toEqual({ show: false, numSuggestions: DEFAULT_NUM_SUGGESTIONS, ...DISABLED_MODEL_QUERY });
@@ -243,7 +243,7 @@ describe("loadConfig wordPrediction section", (): void => {
 
   test("a malformed numSuggestions falls back while the feature stays on", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       wordPrediction: { show: true, numSuggestions: 0 }
     });
     const config = await loadConfig();
@@ -253,7 +253,7 @@ describe("loadConfig wordPrediction section", (): void => {
 
   test("a fully configured model query is loaded as given", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       wordPrediction: {
         show: true, numSuggestions: 6, enableModelQuery: true, model: "phony-model:12b",
         systemPrompt: "List {{numWords}} words.", userPrompt: "Message so far: {{message}}"
@@ -269,7 +269,7 @@ describe("loadConfig wordPrediction section", (): void => {
   // An empty model name means "whichever model Ollama has", as in the other sections.
   test("an empty model name leaves the query enabled", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       wordPrediction: {
         show: true, numSuggestions: 6, enableModelQuery: true, model: "",
         systemPrompt: "List {{numWords}} words.", userPrompt: "Message so far: {{message}}"
@@ -289,7 +289,7 @@ describe("loadConfig wordPrediction section", (): void => {
       { show: true, numSuggestions: 6, enableModelQuery: true, model: 7, systemPrompt: "s", userPrompt: "u" }
     ];
     for (const wordPrediction of incompleteSections) {
-      stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, wordPrediction });
+      stubConfigFetch({ labelLookup: INDICATOR_SECTION, wordPrediction });
       const config = await loadConfig();
       expect(config.wordPrediction)
         .toEqual({ show: true, numSuggestions: 6, ...DISABLED_MODEL_QUERY });
@@ -305,7 +305,7 @@ describe("loadConfig wordPrediction section", (): void => {
       { show: true, numSuggestions: 6, enableModelQuery: "yes", model: "m", systemPrompt: "s", userPrompt: "u" }
     ];
     for (const wordPrediction of offSections) {
-      stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, wordPrediction });
+      stubConfigFetch({ labelLookup: INDICATOR_SECTION, wordPrediction });
       const config = await loadConfig();
       expect(config.wordPrediction).toEqual({
         show: true, numSuggestions: 6, enableModelQuery: false,
@@ -319,7 +319,7 @@ describe("loadConfig feature visibility sections", (): void => {
 
   test("valid sections are loaded as given", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       symbolSearch: { show: false },
       svgBuilderString: { show: true }
     });
@@ -331,7 +331,7 @@ describe("loadConfig feature visibility sections", (): void => {
   // Search is unconditionally visible before this change, so defaulting it on keeps an
   // existing config.json from silently losing the feature. The dev tool is opt-in.
   test("missing sections show search and hide the builder string", async (): Promise<void> => {
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
+    stubConfigFetch({ labelLookup: INDICATOR_SECTION });
     const config = await loadConfig();
     expect(config.symbolSearch).toEqual({ show: true });
     expect(config.svgBuilderString).toEqual({ show: false });
@@ -339,7 +339,7 @@ describe("loadConfig feature visibility sections", (): void => {
 
   test("a non-boolean show falls back to the default", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       symbolSearch: { show: "yes" },
       svgBuilderString: { show: 1 }
     });
@@ -363,7 +363,7 @@ describe("loadConfig announceSymbolOnInput", (): void => {
 
   test("`false` turns input announcements off", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       announceSymbolOnInput: false
     });
     const config = await loadConfig();
@@ -372,7 +372,7 @@ describe("loadConfig announceSymbolOnInput", (): void => {
 
   test("`true` keeps them on", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       announceSymbolOnInput: true
     });
     const config = await loadConfig();
@@ -380,14 +380,14 @@ describe("loadConfig announceSymbolOnInput", (): void => {
   });
 
   test("a missing key leaves them on", async (): Promise<void> => {
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
+    stubConfigFetch({ labelLookup: INDICATOR_SECTION });
     const config = await loadConfig();
     expect(config.announceSymbolOnInput).toBe(true);
   });
 
   test("a non-boolean value leaves them on", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       announceSymbolOnInput: "no"
     });
     const config = await loadConfig();
@@ -408,7 +408,7 @@ describe("loadConfig markAiSuggestions", (): void => {
 
   test("false is honoured", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       markAiSuggestions: false
     });
     const config = await loadConfig();
@@ -417,7 +417,7 @@ describe("loadConfig markAiSuggestions", (): void => {
 
   test("true is honoured", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       markAiSuggestions: true
     });
     const config = await loadConfig();
@@ -425,7 +425,7 @@ describe("loadConfig markAiSuggestions", (): void => {
   });
 
   test("a missing value leaves the marking on", async (): Promise<void> => {
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
+    stubConfigFetch({ labelLookup: INDICATOR_SECTION });
     const config = await loadConfig();
     expect(config.markAiSuggestions).toBe(true);
   });
@@ -433,7 +433,7 @@ describe("loadConfig markAiSuggestions", (): void => {
   // A mistyped config must not quietly stop telling the user what a model made.
   test("a malformed value leaves the marking on", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       markAiSuggestions: "no"
     });
     const config = await loadConfig();
@@ -466,7 +466,7 @@ describe("loadConfig with the shipped config.json", (): void => {
       expect(promptsFor(config.wordPrediction, language)).toBeDefined();
       expect(promptsFor(config.aboutMe, language)).toBeDefined();
       expect(promptsFor(config.wordNaming, language)).toBeDefined();
-      expect(promptsFor(config.indicatorLabelLookup, language)).toBeDefined();
+      expect(promptsFor(config.labelLookup, language)).toBeDefined();
     }
   });
 });
@@ -480,14 +480,14 @@ describe("loadConfig wordNaming section", (): void => {
   };
 
   test("a valid section is loaded as given", async (): Promise<void> => {
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, wordNaming: WORD_NAMING_SECTION });
+    stubConfigFetch({ labelLookup: INDICATOR_SECTION, wordNaming: WORD_NAMING_SECTION });
     expect((await loadConfig()).wordNaming).toEqual(WORD_NAMING_SECTION);
   });
 
   test("a missing section, or one with an empty prompt, leaves name suggestions off", async (): Promise<void> => {
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
+    stubConfigFetch({ labelLookup: INDICATOR_SECTION });
     expect((await loadConfig()).wordNaming).toBeUndefined();
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, wordNaming: { ...WORD_NAMING_SECTION, userPrompt: " " } });
+    stubConfigFetch({ labelLookup: INDICATOR_SECTION, wordNaming: { ...WORD_NAMING_SECTION, userPrompt: " " } });
     expect((await loadConfig()).wordNaming).toBeUndefined();
   });
 });
@@ -502,20 +502,20 @@ describe("loadConfig aboutMe section", (): void => {
   };
 
   test("a valid section is loaded as given", async (): Promise<void> => {
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, aboutMe: ABOUT_ME_SECTION });
+    stubConfigFetch({ labelLookup: INDICATOR_SECTION, aboutMe: ABOUT_ME_SECTION });
     const config = await loadConfig();
     expect(config.aboutMe).toEqual(ABOUT_ME_SECTION);
   });
 
   test("a missing section leaves suggestions unconfigured", async (): Promise<void> => {
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
+    stubConfigFetch({ labelLookup: INDICATOR_SECTION });
     const config = await loadConfig();
     expect(config.aboutMe).toBeUndefined();
   });
 
   test("an empty prompt leaves suggestions unconfigured", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       aboutMe: { ...ABOUT_ME_SECTION, userPrompt: "   " }
     });
     const config = await loadConfig();
@@ -525,7 +525,7 @@ describe("loadConfig aboutMe section", (): void => {
   test("a missing or invalid messagesPerRun falls back and keeps the section", async (): Promise<void> => {
     for (const messagesPerRun of [undefined, 0, -3, 2.5, "40"]) {
       stubConfigFetch({
-        indicatorLabelLookup: INDICATOR_SECTION,
+        labelLookup: INDICATOR_SECTION,
         aboutMe: { ...ABOUT_ME_SECTION, messagesPerRun }
       });
       const config = await loadConfig();
@@ -538,7 +538,7 @@ describe("loadConfig backquoteGoesBack", (): void => {
 
   test("`false` turns the shortcut off", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       backquoteGoesBack: false
     });
     const config = await loadConfig();
@@ -546,14 +546,14 @@ describe("loadConfig backquoteGoesBack", (): void => {
   });
 
   test("a missing key leaves it on", async (): Promise<void> => {
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
+    stubConfigFetch({ labelLookup: INDICATOR_SECTION });
     const config = await loadConfig();
     expect(config.backquoteGoesBack).toBe(true);
   });
 
   test("a non-boolean value leaves it on", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       backquoteGoesBack: "no"
     });
     const config = await loadConfig();
@@ -569,7 +569,7 @@ describe("loadConfig switchScanning", (): void => {
 
   test("a valid section is loaded", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       switchScanning: { enabled: true, moveKey: "KeyA", selectKey: "KeyB" }
     });
     const config = await loadConfig();
@@ -577,14 +577,14 @@ describe("loadConfig switchScanning", (): void => {
   });
 
   test("a missing section leaves scanning off with the default keys", async (): Promise<void> => {
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
+    stubConfigFetch({ labelLookup: INDICATOR_SECTION });
     const config = await loadConfig();
     expect(config.switchScanning).toEqual({ enabled: false, moveKey: "Space", selectKey: "Enter" });
   });
 
   test("a missing key falls back to both default keys and keeps enabled", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       switchScanning: { enabled: true, moveKey: "KeyA" }
     });
     const config = await loadConfig();
@@ -593,7 +593,7 @@ describe("loadConfig switchScanning", (): void => {
 
   test("the same key twice falls back to the default keys", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       switchScanning: { enabled: true, moveKey: "KeyA", selectKey: "KeyA" }
     });
     const config = await loadConfig();
@@ -602,7 +602,7 @@ describe("loadConfig switchScanning", (): void => {
 
   test("a key that is not a KeyboardEvent.code falls back to the default keys", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       switchScanning: { enabled: true, moveKey: "space", selectKey: "Enter" }
     });
     const config = await loadConfig();
@@ -611,7 +611,7 @@ describe("loadConfig switchScanning", (): void => {
 
   test("a non-boolean enabled leaves scanning off", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       switchScanning: { enabled: "yes", moveKey: "KeyA", selectKey: "KeyB" }
     });
     const config = await loadConfig();
@@ -620,7 +620,7 @@ describe("loadConfig switchScanning", (): void => {
 
   test("a malformed section does not affect other sections", async (): Promise<void> => {
     stubConfigFetch({
-      indicatorLabelLookup: INDICATOR_SECTION,
+      labelLookup: INDICATOR_SECTION,
       markAiSuggestions: false,
       switchScanning: "on"
     });
@@ -637,15 +637,15 @@ describe("loadConfig switchScanning", (): void => {
 describe("loadConfig language", (): void => {
 
   test("a supported code is kept", async (): Promise<void> => {
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, language: "sv" });
+    stubConfigFetch({ labelLookup: INDICATOR_SECTION, language: "sv" });
     const config = await loadConfig();
     expect(config.language).toBe("sv");
   });
 
   test("a missing or unsupported code falls back to English", async (): Promise<void> => {
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION, language: "de" });
+    stubConfigFetch({ labelLookup: INDICATOR_SECTION, language: "de" });
     expect((await loadConfig()).language).toBe("en");
-    stubConfigFetch({ indicatorLabelLookup: INDICATOR_SECTION });
+    stubConfigFetch({ labelLookup: INDICATOR_SECTION });
     expect((await loadConfig()).language).toBe("en");
   });
 

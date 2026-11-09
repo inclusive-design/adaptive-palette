@@ -36,7 +36,9 @@ type BlissSymbolPropsType = {
   // label italicised. The caller folds in the config; this only draws it. Only meaningful when
   // `isPresentation` is "true": otherwise the label element is the `aria-labelledby` target, and
   // the badge could land in the computed accessible name despite being `aria-hidden`.
-  isMarked?: boolean
+  isMarked?: boolean,
+  // True when the label waits for a model's answer: the label is dimmed, with "…" after it.
+  isPending?: boolean
 }
 
 /**
@@ -50,7 +52,7 @@ function hidePicture (event: Event): void {
 }
 
 export function BlissSymbol (props: BlissSymbolPropsType): VNode {
-  const { composition, picture, label, color, isPresentation, labelledBy, isMarked } = props;
+  const { composition, picture, label, color, isPresentation, labelledBy, isMarked, isPending } = props;
   // A picture is drawn in place of the symbol, so the symbol is not built.
   const svgElement = picture === undefined && composition !== undefined ? getSvgElement(composition, color) : undefined;
 
@@ -78,8 +80,10 @@ export function BlissSymbol (props: BlissSymbolPropsType): VNode {
     { raw: [`${svgMarkupString}`] }
   ) as unknown as TemplateStringsArray;
 
-  const labelClass = isMarked ? "aiLabel" : undefined;
+  const labelClass = [isMarked && "aiLabel", isPending && "pendingLabel"].filter(Boolean).join(" ") || undefined;
   const badge = isMarked ? html`<${AiBadge} />` : null;
+  // Hidden from screen readers, which read the label alone.
+  const waiting = isPending ? html`<span aria-hidden="true">…</span>` : null;
 
   // The picture is decorative: the label names the cell. Keyed by its path, so a new picture
   // gets a new element rather than one an earlier failure hid.
@@ -89,6 +93,6 @@ export function BlissSymbol (props: BlissSymbolPropsType): VNode {
 
   return html`
     ${pictureElement}${html(templateStringArray)}
-    <div id="${labelledBy}" class=${labelClass}>${badge}${label}</div>
+    <div id="${labelledBy}" class=${labelClass}>${badge}${label}${waiting}</div>
   `;
 }

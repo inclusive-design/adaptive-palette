@@ -19,19 +19,12 @@ import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { Palette } from "./Palette";
 import { CurrentPalette } from "./CurrentPalette";
 import { goBackImpl } from "../cells/CommandGoBackCell";
-import * as IndicatorLabels from "../utils/IndicatorLabelsUtils";
 
-// Mock the indicator label lookup so the "add/remove indicator" step of the label
-// coordination test below can resolve a controlled label instead of depending on a
-// network fetch or Ollama call. An un-configured `getStaticNewLabel()` call returns
-// `undefined` and `getNewLabelViaModelQuery()` reports "not-viable"
-vi.mock("../utils/IndicatorLabelsUtils", () => ({
-  initIndicatorLabels: vi.fn().mockResolvedValue(undefined),
-  getStaticNewLabel: vi.fn().mockReturnValue(undefined),
-  getNewLabelViaModelQuery: vi.fn().mockReturnValue({ status: "not-viable" })
+// The real label code, without fetching the 3 MB tables. Tests set the entries they need.
+vi.mock("../utils/SymbolLabelUtils", async (importOriginal) => ({
+  ...await importOriginal<typeof import("../utils/SymbolLabelUtils")>(),
+  initIndicatorLabels: vi.fn().mockResolvedValue(undefined)
 }));
-
-const mockedGetStaticNewLabel = vi.mocked(IndicatorLabels.getStaticNewLabel);
 
 describe("Palette integration", () => {
 
@@ -273,6 +266,8 @@ describe("Palette integration", () => {
 
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
+    // No test here asks the model.
+    adaptivePaletteGlobals.models = [];
     // Pre-load `testLayerOnePalette` to avoid importing it from a non-existent
     // disk file.
     adaptivePaletteGlobals.paletteStore.addPalette(testLayerOnePalette);
@@ -677,8 +672,7 @@ describe("Palette integration", () => {
     const removeIndicatorButton = await screen.findByText("remove indicator");
 
     // Add "Second Cell" -- its composition (823) is a number, so it gets a
-    // `userSelectedSymbolId`, which is what makes the label-resolving indicator
-    // path (mocked below) engage its modifier re-wrapping logic.
+    // `userSelectedSymbolId`, which is what the table entry `823_99` is keyed on.
     fireEvent.click(secondCell);
     let symbol = changeEncodingContents.value.payloads[0];
     expect(symbol.label).toBe("Second Cell");
@@ -688,35 +682,29 @@ describe("Palette integration", () => {
     symbol = changeEncodingContents.value.payloads[0];
     expect(symbol.label).toBe("opposite of Second Cell");
 
-    // Add an indicator ("plural"). The resolved label is mocked; since the symbol
-    // has a `userSelectedSymbolId`, the resolved label gets re-wrapped in the
-    // modifiers tracked so far ("opposite of").
-    mockedGetStaticNewLabel.mockReturnValueOnce("cells");
+    // Add an indicator ("plural"). The model is not asked here, so the label is the table's
+    // ("cells"), with the modifier's text joined to it.
+    adaptivePaletteGlobals.indicatorLabels = { en: { [`823_${PLURAL_INDICATOR_ID}`]: "cells" } };
     fireEvent.click(addPluralButton);
-    await waitFor(() => {
-      symbol = changeEncodingContents.value.payloads[0];
-      expect(symbol.label).toBe("opposite of cells");
-    });
-    expect(symbol.baseLabel).toBe("opposite of Second Cell");
-    expect(symbol.baseModifierCount).toBe(1);
+    symbol = changeEncodingContents.value.payloads[0];
+    expect(symbol.label).toBe("opposite of cells");
+    expect(symbol.baseLabel).toBe("Second Cell");
 
-    // Add another modifier ("intensity", appended) on top of the indicator's result.
+    // Add another modifier ("intensity", appended).
     fireEvent.click(addIntensityButton);
     symbol = changeEncodingContents.value.payloads[0];
     expect(symbol.label).toBe("opposite of cells intensity");
 
-    // Remove that modifier again -- back to the indicator's resolved label.
+    // Remove that modifier again.
     fireEvent.click(removeModifierButton);
     symbol = changeEncodingContents.value.payloads[0];
     expect(symbol.label).toBe("opposite of cells");
 
-    // Remove the indicator -- the label restores to the pre-indicator, modifier-wrapped
-    // label ("opposite of Second Cell"), and baseLabel/baseModifierCount/indicatorId clear.
+    // Remove the indicator: the modifier stays, joined to the base label.
     fireEvent.click(removeIndicatorButton);
     symbol = changeEncodingContents.value.payloads[0];
     expect(symbol.label).toBe("opposite of Second Cell");
-    expect(symbol.baseLabel).toBeUndefined();
-    expect(symbol.baseModifierCount).toBeUndefined();
+    expect(symbol.baseLabel).toBe("Second Cell");
     expect(symbol.indicatorId).toBeUndefined();
 
     // Add one more modifier after the indicator is gone.

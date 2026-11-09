@@ -24,6 +24,7 @@ import { BlissSymbol } from "../../components/BlissSymbol";
 import { generateGridStyle } from "../../utils/GridUtils";
 import { normalizeComposition } from "../../utils/SymbolEncodingUtils";
 import { speakUnavailable } from "../../utils/SpeechUtils";
+import { whenLabelsSettled } from "../../utils/SymbolLabelUtils";
 
 type CommandMakeSentenceProps = {
   id: string,
@@ -69,16 +70,20 @@ export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode {
       speakUnavailable(label);
       return;
     }
-    // The message is finished, so the row stops reporting on it. Its words stay usable.
-    finishedMessageSignal.value = telegraphicMessage;
-    // Already saved and already made: show them again without asking the model.
-    if (canReopen) {
-      reopenSentences();
-      return;
-    }
-    // Asking for a sentence means the message is finished, so save it.
-    saveMessageRecord(changeEncodingContents.value.payloads);
-    void makeSentences(telegraphicMessage);
+    // A label still being worked out would send the model the joined modifier text, so wait.
+    whenLabelsSettled(() => {
+      const message = currentTelegraphicMessage();
+      // The message is finished, so the row stops reporting on it. Its words stay usable.
+      finishedMessageSignal.value = message;
+      // Already saved and already made: show them again without asking the model.
+      if (canReopenSentences(message)) {
+        reopenSentences();
+        return;
+      }
+      // Asking for a sentence means the message is finished, so save it.
+      saveMessageRecord(changeEncodingContents.peek().payloads);
+      void makeSentences(message);
+    });
   }}>
       ${composition
     ? html`<${BlissSymbol}

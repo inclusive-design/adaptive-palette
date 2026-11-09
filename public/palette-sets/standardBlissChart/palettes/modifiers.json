@@ -105,53 +105,49 @@
       "type": "ActionPreModifierCell",
       "options": {"label": {"en": "metaphor", "sv": "metafor"}, "composition": 444, "rowStart": 4, "rowSpan": 1, "columnStart": 7, "columnSpan": 1}
     },
-    "modifier-bliss-name": {
-      "type": "ActionPreModifierCell",
-      "options": {"label": {"en": "Bliss-name", "sv": "blissnamn"}, "composition": 753, "rowStart": 4, "rowSpan": 1, "columnStart": 8, "columnSpan": 1}
-    },
     "modifier-slang": {
       "type": "ActionPreModifierCell",
-      "options": {"label": {"en": "slang", "sv": "slang"}, "composition": 970, "rowStart": 4, "rowSpan": 1, "columnStart": 9, "columnSpan": 1}
+      "options": {"label": {"en": "slang", "sv": "slang"}, "composition": 970, "rowStart": 4, "rowSpan": 1, "columnStart": 8, "columnSpan": 1}
     },
     "modifier-zero": {
       "type": "ActionPostModifierCell",
-      "options": {"label": {"en": "zero", "sv": "noll"}, "composition": 19, "rowStart": 5, "rowSpan": 1, "columnStart": 1, "columnSpan": 1}
+      "options": {"label": {"en": "zero", "sv": "noll"}, "composition": 19, "rowStart": 4, "rowSpan": 1, "columnStart": 9, "columnSpan": 1}
     },
     "modifier-one": {
       "type": "ActionPostModifierCell",
-      "options": {"label": {"en": "one", "sv": "ett"}, "composition": 20, "rowStart": 5, "rowSpan": 1, "columnStart": 2, "columnSpan": 1}
+      "options": {"label": {"en": "one", "sv": "ett"}, "composition": 20, "rowStart": 5, "rowSpan": 1, "columnStart": 1, "columnSpan": 1}
     },
     "modifier-two": {
       "type": "ActionPostModifierCell",
-      "options": {"label": {"en": "two", "sv": "två"}, "composition": 21, "rowStart": 5, "rowSpan": 1, "columnStart": 3, "columnSpan": 1}
+      "options": {"label": {"en": "two", "sv": "två"}, "composition": 21, "rowStart": 5, "rowSpan": 1, "columnStart": 2, "columnSpan": 1}
     },
     "modifier-three": {
       "type": "ActionPostModifierCell",
-      "options": {"label": {"en": "three", "sv": "tre"}, "composition": 22, "rowStart": 5, "rowSpan": 1, "columnStart": 4, "columnSpan": 1}
+      "options": {"label": {"en": "three", "sv": "tre"}, "composition": 22, "rowStart": 5, "rowSpan": 1, "columnStart": 3, "columnSpan": 1}
     },
     "modifier-four": {
       "type": "ActionPostModifierCell",
-      "options": {"label": {"en": "four", "sv": "fyra"}, "composition": 23, "rowStart": 5, "rowSpan": 1, "columnStart": 5, "columnSpan": 1}
+      "options": {"label": {"en": "four", "sv": "fyra"}, "composition": 23, "rowStart": 5, "rowSpan": 1, "columnStart": 4, "columnSpan": 1}
     },
     "modifier-five": {
       "type": "ActionPostModifierCell",
-      "options": {"label": {"en": "five", "sv": "fem"}, "composition": 24, "rowStart": 5, "rowSpan": 1, "columnStart": 6, "columnSpan": 1}
+      "options": {"label": {"en": "five", "sv": "fem"}, "composition": 24, "rowStart": 5, "rowSpan": 1, "columnStart": 5, "columnSpan": 1}
     },
     "modifier-six": {
       "type": "ActionPostModifierCell",
-      "options": {"label": {"en": "six", "sv": "sex"}, "composition": 25, "rowStart": 5, "rowSpan": 1, "columnStart": 7, "columnSpan": 1}
+      "options": {"label": {"en": "six", "sv": "sex"}, "composition": 25, "rowStart": 5, "rowSpan": 1, "columnStart": 6, "columnSpan": 1}
     },
     "modifier-seven": {
       "type": "ActionPostModifierCell",
-      "options": {"label": {"en": "seven", "sv": "sju"}, "composition": 26, "rowStart": 5, "rowSpan": 1, "columnStart": 8, "columnSpan": 1}
+      "options": {"label": {"en": "seven", "sv": "sju"}, "composition": 26, "rowStart": 5, "rowSpan": 1, "columnStart": 7, "columnSpan": 1}
     },
     "modifier-eight": {
       "type": "ActionPostModifierCell",
-      "options": {"label": {"en": "eight", "sv": "åtta"}, "composition": 27, "rowStart": 5, "rowSpan": 1, "columnStart": 9, "columnSpan": 1}
+      "options": {"label": {"en": "eight", "sv": "åtta"}, "composition": 27, "rowStart": 5, "rowSpan": 1, "columnStart": 8, "columnSpan": 1}
     },
     "modifier-nine": {
       "type": "ActionPostModifierCell",
-      "options": {"label": {"en": "nine", "sv": "nio"}, "composition": 28, "rowStart": 6, "rowSpan": 1, "columnStart": 1, "columnSpan": 1}
+      "options": {"label": {"en": "nine", "sv": "nio"}, "composition": 28, "rowStart": 5, "rowSpan": 1, "columnStart": 9, "columnSpan": 1}
     }
   }
 }

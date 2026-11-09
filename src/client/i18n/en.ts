@@ -68,7 +68,6 @@ export const en = {
   cursorForward: "forward",
   cursorStart: "move cursor to start",
   cursorEnd: "move cursor to end",
-  indicatorLoading: "{{label}} loading new label",
 
   // Switch scanning
   scanExitRow: "Exit row",
@@ -91,7 +90,7 @@ export const en = {
   settingGroupSymbolEntry: "Symbol entry",
   settingGroupWordPrediction: "Word prediction",
   settingGroupSentences: "Sentences",
-  settingGroupIndicatorLabels: "Indicator labels",
+  settingGroupIndicatorLabels: "Symbol labels",
   settingLanguage: "Language",
   settingSpeakEachSymbol: "Speak each symbol as I add it",
   settingMarkAi: "Mark AI suggestions",
@@ -105,7 +104,7 @@ export const en = {
   settingAskModelWords: "Ask the AI model for suggestions",
   settingSentenceChoices: "Sentence choices to offer",
   settingShowBlissSentence: "Show Bliss symbols above each sentence",
-  settingAskModelIndicator: "Ask the AI model when no label is found",
+  settingAskModelIndicator: "Ask the AI model for a label after a modifier or indicator",
 
   // Erase all app data
   eraseLabel: "Erase all app data and quit",

@@ -100,7 +100,7 @@ export const SETTING_DESCRIPTORS: SettingDescriptorType[] = [
     label: "settingShowBlissSentence", group: "settingGroupSentences"
   },
   {
-    path: ["indicatorLabelLookup", "useModelQueryFallback"], kind: "boolean", requiresModel: true,
+    path: ["labelLookup", "useModelQueryFallback"], kind: "boolean", requiresModel: true,
     label: "settingAskModelIndicator", group: "settingGroupIndicatorLabels"
   }
 ];

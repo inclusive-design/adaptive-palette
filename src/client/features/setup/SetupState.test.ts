@@ -19,7 +19,7 @@ const configWith = (models: {
   indicator?: string, telegraphic?: string, prediction?: string
 }): AdaptivePaletteConfigType => {
   const config = makeDefaultConfig();
-  config.indicatorLabelLookup.model = models.indicator ?? "";
+  config.labelLookup.model = models.indicator ?? "";
   config.wordPrediction.model = models.prediction ?? "";
   if (models.telegraphic !== undefined) {
     config.telegraphicTranslation = {

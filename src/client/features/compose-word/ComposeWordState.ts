@@ -23,6 +23,7 @@ import { adaptivePaletteGlobals, changeEncodingContents, wordBuildSignal } from 
 import { editMessage, insertWord } from "../../core/MessageEdit";
 import { PaletteStore } from "../../core/PaletteStore";
 import { isWordSaved, saveWord } from "../../core/SavedWords";
+import { hasPendingLabel, whenLabelsSettled } from "../../utils/SymbolLabelUtils";
 import { glossFor } from "../../utils/SvgUtils";
 import { COMMA_ID, SPACE_PART, insertWordAtCaret } from "../../utils/SymbolEncodingUtils";
 import { languageSignal } from "../../i18n/I18n";
@@ -154,10 +155,16 @@ export function hasSymbol (): boolean {
 
 /**
  * Done: open the dialog that names the word, or says it is already in the vocabulary. Nothing
- * happens while the word has no symbol in it.
+ * happens while the word has no symbol in it. Waits first for any part's label still being
+ * worked out.
  * @returns {void}
  */
 export function requestFinish (): void {
+  // The name is offered from the parts' labels, so wait for "hot" rather than "opposite of cold".
+  if (hasPendingLabel(changeEncodingContents.peek().payloads)) {
+    whenLabelsSettled(requestFinish);
+    return;
+  }
   const build = wordBuildSignal.peek();
   const parts = changeEncodingContents.peek().payloads;
   const composition = build ? wordComposition(parts, build.combine) : [];

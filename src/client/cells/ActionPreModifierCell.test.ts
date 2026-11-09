@@ -11,15 +11,24 @@
  */
 
 import { vi } from "vitest";
-import { screen, fireEvent } from "@testing-library/preact";
+import { screen, fireEvent, waitFor } from "@testing-library/preact";
 
-import { changeEncodingContents } from "../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
+import { queryChat } from "../core/OllamaApi";
 import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { ActionPreModifierCell } from "./ActionPreModifierCell";
-import { mockedSpeakUnavailable } from "../testUtils/SpeechUtilsMock";
+import { resetSymbolLabelsForTests } from "../utils/SymbolLabelUtils";
+import { mockedAnnounceIfEnabled, mockedSpeakUnavailable } from "../testUtils/SpeechUtilsMock";
+
+vi.mock("../core/OllamaApi", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../core/OllamaApi")>();
+  return { ...actual, queryChat: vi.fn() };
+});
 
 vi.mock("../utils/SpeechUtils");
+
+const mockedQueryChat = vi.mocked(queryChat);
 
 describe("ActionPreModifierCell", (): void => {
 
@@ -37,6 +46,19 @@ describe("ActionPreModifierCell", (): void => {
 
   beforeAll(async (): Promise<void> => {
     await initAdaptivePaletteGlobals();
+  });
+
+  const cold = { label: "cold", composition: 1436, userSelectedSymbolId: 1436, modifierInfo: [] };
+
+  beforeEach((): void => {
+    resetSymbolLabelsForTests();
+    mockedQueryChat.mockReset();
+    // The model is asked only in the tests that say so.
+    adaptivePaletteGlobals.models = [];
+    adaptivePaletteGlobals.config.labelLookup = {
+      useModelQueryFallback: true, model: "phony-model:12b",
+      systemPrompt: "Answer with the label.", userPrompt: "Word: \"{{word}}\"\nModifiers, in order: {{modifiers}}"
+    };
   });
 
   test("is unavailable while the input area is empty", async (): Promise<void> => {
@@ -91,6 +113,40 @@ describe("ActionPreModifierCell", (): void => {
     fireEvent.click(button);
 
     expect(changeEncodingContents.value.payloads[0].label).toBe("oppposite of building");
+    expect(changeEncodingContents.value.payloads[0].baseLabel).toBe("building");
+  });
+
+  test("with the model asked, the joined text waits for its answer, then becomes it", async (): Promise<void> => {
+    adaptivePaletteGlobals.models = ["phony-model:12b"];
+    mockedQueryChat.mockResolvedValue({ message: { content: "hot" } } as Awaited<ReturnType<typeof queryChat>>);
+    changeEncodingContents.value = { payloads: [cold], caretPosition: 0 };
+    renderCell(ActionPreModifierCell, TEST_CELL_ID, testCell.options);
+    fireEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
+
+    expect(changeEncodingContents.value.payloads[0]).toMatchObject({ label: "oppposite of cold", baseLabel: "cold" });
+    expect(changeEncodingContents.value.payloads[0].pendingLabel).toBeDefined();
+    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith("oppposite of cold");
+    await waitFor(() => expect(changeEncodingContents.value.payloads[0]).toMatchObject({ label: "hot", isAiLabel: true }));
+  });
+
+  test("a second modifier stops the first query", async (): Promise<void> => {
+    adaptivePaletteGlobals.models = ["phony-model:12b"];
+    const signals: (AbortSignal | undefined)[] = [];
+    mockedQueryChat.mockImplementation((_query, _model, _stream, _system, abortSignal) => {
+      signals.push(abortSignal);
+      return new Promise<never>(() => undefined);
+    });
+    changeEncodingContents.value = { payloads: [cold], caretPosition: 0 };
+    renderCell(ActionPreModifierCell, TEST_CELL_ID, testCell.options);
+    const button = await screen.findByRole("button", { name: testCell.options.label });
+
+    fireEvent.click(button);
+    await waitFor(() => expect(mockedQueryChat).toHaveBeenCalledTimes(1));
+    fireEvent.click(button);
+
+    expect(signals).toHaveLength(2);
+    expect(signals[0]?.aborted).toBe(true);
+    expect(signals[1]?.aborted).toBe(false);
   });
 
   // The unavailable guard lives in `ActionModifierCellCommon`, shared with

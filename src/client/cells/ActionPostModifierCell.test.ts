@@ -12,7 +12,7 @@
 
 import { screen, fireEvent } from "@testing-library/preact";
 
-import { changeEncodingContents } from "../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { ActionPostModifierCell } from "./ActionPostModifierCell";
@@ -33,6 +33,10 @@ describe("ActionPostModifierCell", (): void => {
 
   beforeAll(async (): Promise<void> => {
     await initAdaptivePaletteGlobals();
+  });
+
+  beforeEach((): void => {
+    adaptivePaletteGlobals.models = [];
   });
 
   test("is unavailable while the input area is empty", async (): Promise<void> => {
@@ -92,27 +96,17 @@ describe("ActionPostModifierCell", (): void => {
   // Clicking while unavailable is covered in `ActionPreModifierCell.test.ts`: both cells
   // route through the same guard in `ActionModifierCellCommon`.
 
-  // The model's text is still in the label -- "walked" is still in "walked intensity" -- so the mark stays.
-  // The pre-modifier direction needs no twin test: the flag is carried outside the prepend/append
-  // branch in `ActionModifierCellCommon`, so both cells route through the same line.
-  test("keeps the AI mark when a modifier is added", async (): Promise<void> => {
+  test("appending to a symbol with an indicator joins its text to the table's label", async (): Promise<void> => {
+    adaptivePaletteGlobals.indicatorLabels = { en: { "382_97": "helper" } };
     changeEncodingContents.value = {
       payloads: [{
-        label: "walked",
-        baseLabel: "walk",
-        baseModifierCount: 0,
-        composition: [ 382, ";", 97 ],
-        indicatorId: 97,
-        userSelectedSymbolId: 382,
-        isAiLabel: true
+        label: "helper", baseLabel: "help", composition: [ 382, ";", 97 ], indicatorId: 97, userSelectedSymbolId: 382
       }],
       caretPosition: 0
     };
     renderCell(ActionPostModifierCell, TEST_CELL_ID, testCell.options);
     fireEvent.click(await screen.findByRole("button", { name: testCell.options.label }));
 
-    const updated = changeEncodingContents.value.payloads[0];
-    expect(updated.label).toBe("walked intensity");
-    expect(updated.isAiLabel).toBe(true);
+    expect(changeEncodingContents.value.payloads[0]).toMatchObject({ label: "helper intensity", baseLabel: "help" });
   });
 });
