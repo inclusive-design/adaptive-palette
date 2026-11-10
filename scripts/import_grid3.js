@@ -110,10 +110,24 @@ export function slugify (name) {
 }
 
 /**
+ * The text of Grid 3 rich text, as in `Action.InsertText` or a word list item: its `<r>` runs, with a space
+ * between paragraphs, whitespace collapsed.
+ * @param {string} xml - The rich text: `<p>`, `<s>` and `<r>` elements, maybe wrapped in `<d>`.
+ * @returns {string}
+ */
+function richText (xml) {
+  return xml.split("</p>")
+    .map(paragraph => [...paragraph.matchAll(/<r>([\s\S]*?)<\/r>/g)].map(([, run]) => xmlText(run)).join(""))
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/**
  * The cells of a `grid.xml`, with only the fields the import reads. Grid 3 writes this file by
  * machine and never nests `<Cell>`, so regular expressions are enough.
  * @param {string} xml - The contents of a `grid.xml`.
- * @returns {Object[]} - One `{ x, y, columnSpan, rowSpan, contentType, commands, jumpTo, caption,
+ * @returns {Object[]} - One `{ x, y, columnSpan, rowSpan, contentType, contentSubType, commands, jumpTo, caption,
  *                       image, insertedText, basedOnStyle, backColour, fontColour }` per cell. `jumpTo` is
  *                       NFC, to match grid names. `backColour` and `fontColour` are the cell's own colours,
  *                       "" when it has none.
@@ -131,20 +145,55 @@ export function readCells (xml) {
       columnSpan: attributes.ColumnSpan ?? 1,
       rowSpan: attributes.RowSpan ?? 1,
       contentType: element(body, "ContentType"),
+      contentSubType: element(body, "ContentSubType"),
       commands: [...body.matchAll(/<Command ID="([^"]+)"/g)].map(([, id]) => id),
       jumpTo: xmlText(jumpTo).trim().normalize("NFC"),
       caption: element(body, "Caption"),
       image: element(body, "Image"),
-      insertedText: [...insertText.matchAll(/<r>([\s\S]*?)<\/r>/g)]
-        .map(([, run]) => xmlText(run))
-        .join("")
-        .replace(/\s+/g, " ")
-        .trim(),
+      insertedText: richText(insertText),
       basedOnStyle: element(body, "BasedOnStyle"),
       backColour: element(body, "BackColour"),
       fontColour: element(body, "FontColour")
     };
   });
+}
+
+/**
+ * The items of a grid's word list, in order. Only the `<WordList>` after `</Cells>` is the grid's: one inside
+ * a cell is the parameter of a `Prediction.ChangeWordList`, which is not imported.
+ * @param {string} xml - The contents of a `grid.xml`.
+ * @returns {Object[]} - One `{ text, image }` per item. `image` is "" when the item has no picture.
+ */
+export function readWordList (xml) {
+  const list = xml.slice(Math.max(0, xml.lastIndexOf("</Cells>")))
+    .match(/<WordList>([\s\S]*?)<\/WordList>/)?.[1] ?? "";
+  return [...list.matchAll(/<WordListItem>([\s\S]*?)<\/WordListItem>/g)].map(([, item]) => ({
+    text: richText(item.match(/<Text>([\s\S]*?)<\/Text>/)?.[1] ?? ""),
+    image: element(item, "Image")
+  }));
+}
+
+/**
+ * Write a grid's word list items into its word list cells, so that each filled cell is an ordinary insert cell.
+ * Grid 3 fills the cells in reading order: by Y, then X. Item i goes in the i-th, counting from 0. Cells past
+ * the last item stay blank.
+ * @param {Object[]} raws - The grid's cells from `readCells()`. The word list cells are changed in place, and
+ *                          an embedded picture is named `pictureFile`, as Grid 3 names it: `wordlist-{i}{Image}`.
+ * @param {Object[]} items - The grid's items from `readWordList()`.
+ * @returns {number} - The number of word list cells.
+ */
+export function fillWordList (raws, items) {
+  const slots = raws
+    .filter(raw => raw.contentType === "AutoContent" && raw.contentSubType === "WordList")
+    .sort((a, b) => a.y - b.y || a.x - b.x);
+  slots.slice(0, items.length).forEach((slot, i) => {
+    const { text, image } = items[i];
+    Object.assign(slot, { insertedText: text, image, commands: ["Action.InsertText"] });
+    if (image && !image.startsWith("[")) {
+      slot.pictureFile = `wordlist-${i}${image}`;
+    }
+  });
+  return slots.length;
 }
 
 /**
@@ -165,7 +214,8 @@ function symbolOrPicture (raw, grid) {
   if (!isLibrary && /[/\\]/.test(raw.image)) {
     return { warning: `picture name ${raw.image} not allowed` };
   }
-  const file = `${raw.x}-${raw.y}${raw.image}`;
+  // A word list item's picture is named by its item, not by the cell's position. See `fillWordList()`.
+  const file = raw.pictureFile ?? `${raw.x}-${raw.y}${raw.image}`;
   const spelling = grid.mapping[isLibrary ? raw.image : `Grids/${grid.name}/${file}`];
   if (spelling) {
     return { composition: parseComposition(spelling) };
@@ -274,7 +324,8 @@ function writeJson (file, value) {
  * @param {string} gridsetDir - The unzipped grid set.
  * @param {Object} mapping - The mapping file's contents: picture keys to mapping strings.
  * @param {string} setDir - The palette set folder to write.
- * @returns {string[]} - The report: one line per skipped cell or missing picture.
+ * @returns {string[]} - The report: one line per skipped cell or missing picture, and one per grid whose word
+ *                       list has items with no cell.
  * @throws when two grids have the same file slug, the start grid is missing, or a file cannot be read.
  */
 export function importGridset (gridsetDir, mapping, setDir) {
@@ -334,6 +385,14 @@ export function importGridset (gridsetDir, mapping, setDir) {
     for (const grid of grids.filter(grid => !stubs.has(grid.name))) {
       const xml = fs.readFileSync(path.join(grid.dir, "grid.xml"), "utf8");
       const raws = readCells(xml);
+      const items = readWordList(xml);
+      const slots = fillWordList(raws, items);
+      if (items.length > slots) {
+        const left = items.length - slots;
+        const which = left === 1 ? `item ${slots}` : `items ${slots}–${items.length - 1}`;
+        const reason = slots === 0 ? "no word list cells" : "no free cell";
+        report.push(`${grid.name}: ${left} word list item${left === 1 ? "" : "s"} skipped (${which}), ${reason}`);
+      }
       const hasWorkspace = raws.some(raw => raw.contentType === "Workspace");
       const cells = {};
       for (const raw of raws) {

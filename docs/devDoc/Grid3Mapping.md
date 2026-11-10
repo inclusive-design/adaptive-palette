@@ -137,6 +137,8 @@ the cell's `<Style>` override that style's values.
 
 2. **A file name suffix.** The picture is a file in the grid's folder, named `{X}-{Y}{Image}`. A cell at
    `X="0" Y="1"` with `<Image>-0-text-0.jpg</Image>` shows `0-1-0-text-0.jpg`.
+   A word list item's picture is named by its item instead: `wordlist-{i}{Image}`, where `i` is the item's
+   index, counting from 0. See [Word lists](#word-lists).
 
 Embedded pictures are raster files (jpg, png, bmp), mostly 100 × 100 px. They carry no symbol ID. Most are one
 Bliss symbol with the cell's background colour baked in. Some show a whole Bliss sentence with its words, and
@@ -271,7 +273,8 @@ Embedded pictures carry no symbol ID, so a mapping file made by hand names the s
 }
 ```
 
-1. A key is the picture's path in the grid set, or a library picture's `<Image>` value as written.
+1. A key is the picture's path in the grid set, or a library picture's `<Image>` value as written. A word list
+   item's picture is `Grids/<grid>/wordlist-{i}{Image}`.
 2. A value is a `bliss-svg-builder` string. Each `B<id>` becomes the number `<id>`, and every other part stays a
    string: `"B513/B548"` becomes `[513, "/", 548]`, and `"B513"` becomes `513`.
 
@@ -310,6 +313,19 @@ cells keep the standard chart's colours. Border, font and shape are not imported
 A palette keeps its grid's size. When no imported cell reaches the grid's last column or row, the script puts an
 empty `ContentLabel` with the id `grid-size` in the bottom-right slot, because `Palette.ts` sizes a palette from
 its cells.
+
+### Word lists
+
+A grid can fill some of its cells from a list of words: `<WordList><Items>` after `</Cells>`. Its cells have
+`ContentType` `AutoContent` and `ContentSubType` `WordList`, with no caption or picture of their own.
+
+1. Grid 3 fills the cells in reading order, by Y, then X. Item *i* goes in the *i*-th cell, counting from 0.
+2. Each filled cell becomes an `ActionCodeCell` that inserts the item's `<Text>`, with the item's `<Image>` as its
+   picture (see [Pictures](#pictures)). Cells past the last item are left out, as empty slots.
+3. Items with no cell left are reported, one line per grid. Adaptive Palette has no paging
+   (`Prediction.MoreWords`).
+4. A list in a `Prediction.ChangeWordList` parameter is not imported. The button is skipped, as any command with
+   no equivalent.
 
 ## Removing personal grids
 
