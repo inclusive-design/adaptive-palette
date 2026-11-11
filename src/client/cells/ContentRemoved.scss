@@ -1,0 +1,38 @@
+/*
+ * Copyright The Adaptive Palette copyright holders
+ * See the AUTHORS.md file at the top-level directory of this distribution and at
+ * https://github.com/inclusive-design/adaptive-palette/raw/main/AUTHORS.md.
+ *
+ * Licensed under the New BSD license. You may not use this file except in
+ * compliance with this License.
+ *
+ * You may obtain a copy of the License at
+ * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
+ */
+
+/* A dashed border and italic text that isn't bold, so it doesn't look like a button. The label's
+   line break comes from the palette JSON, so `pre-line` keeps it. */
+.contentRemoved {
+  align-items: center;
+  border: 2px dashed currentColor;
+  border-radius: 1rem;
+  display: flex;
+  font-style: italic;
+  hyphens: auto;
+  justify-content: center;
+  overflow-wrap: break-word;
+  padding: 4px;
+  text-align: center;
+  white-space: pre-line;
+}
+
+/* The label scales with its cell like the labels on the buttons beside it (Palette.scss).
+   `cqh` resolves against the nearest container above an element, so the size is set on the
+   text's own element. */
+.screenPalette > .contentRemoved {
+  container-type: size;
+
+  > span {
+    font-size: clamp(0.74rem, 12cqh, 1.85rem);
+  }
+}

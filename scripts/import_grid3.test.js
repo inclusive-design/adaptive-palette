@@ -17,7 +17,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { convertCell, importGridset, parseComposition, readCells, slugify } from "./import_grid3.js";
+import { REMOVED_MARKER, convertCell, importGridset, fillWordList, parseComposition, readCells, readWordList, slugify } from "./import_grid3.js";
 
 test.each([
   ["B513/B548/B958", [513, "/", 548, "/", 958]],
@@ -87,16 +87,16 @@ const GRID_XML = `<Grid>
 test("readCells() reads each cell's position, commands, caption, picture, inserted text and style", () => {
   expect(readCells(GRID_XML)).toEqual([
     {
-      x: 0, y: 0, columnSpan: 10, rowSpan: 1, contentType: "Workspace", commands: [], jumpTo: "",
+      x: 0, y: 0, columnSpan: 10, rowSpan: 1, contentType: "Workspace", contentSubType: "Chat", commands: [], jumpTo: "",
       caption: "", image: "", insertedText: "", basedOnStyle: "", backColour: "", fontColour: ""
     },
     {
-      x: 2, y: 1, columnSpan: 2, rowSpan: 2, contentType: "", commands: ["Action.InsertText", "Jump.To"],
+      x: 2, y: 1, columnSpan: 2, rowSpan: 2, contentType: "", contentSubType: "", commands: ["Action.InsertText", "Jump.To"],
       jumpTo: "Blå sida", caption: "rita & måla", image: "-0-text-0.jpg", insertedText: "rita, måla",
       basedOnStyle: "Vocab cell", backColour: "#CCFFF6FF", fontColour: ""
     },
     {
-      x: 4, y: 9, columnSpan: 1, rowSpan: 1, contentType: "", commands: ["Jump.Home"], jumpTo: "",
+      x: 4, y: 9, columnSpan: 1, rowSpan: 1, contentType: "", contentSubType: "", commands: ["Jump.Home"], jumpTo: "",
       caption: "hem & karta", image: "[GRID2X]jump.home.wmf", insertedText: "", basedOnStyle: "",
       backColour: "", fontColour: ""
     }
@@ -108,6 +108,12 @@ test("readCells() decodes numeric character references", () => {
   expect(readCells(xml)[0].caption).toBe("Måndag\nkväll");
 });
 
+test("readCells() puts a space between the paragraphs of an inserted phrase", () => {
+  const xml = "<Cell><Content><Commands><Command ID=\"Action.InsertText\"><Parameter Key=\"text\">" +
+    "<d><p><s><r>hej</r></s></p><p><s><r>då</r></s></p></d></Parameter></Command></Commands></Content></Cell>";
+  expect(readCells(xml)[0].insertedText).toBe("hej då");
+});
+
 test("readCells() handles a self-closing cell", () => {
   const cells = readCells("<Cell X=\"3\" Y=\"2\" /><Cell X=\"4\"><Content><CaptionAndImage><Caption>a</Caption></CaptionAndImage></Content></Cell>");
   expect(cells.map(c => [c.x, c.y, c.caption])).toEqual([[3, 2, ""], [4, 0, "a"]]);
@@ -116,6 +122,67 @@ test("readCells() handles a self-closing cell", () => {
 test("readCells() matches a decomposed grid name in Jump.To to its composed form", () => {
   const xml = `<Cell><Content><Commands><Command ID="Jump.To"><Parameter Key="grid">${"Blå sida".normalize("NFD")}</Parameter></Command></Commands></Content></Cell>`;
   expect(readCells(xml)[0].jumpTo).toBe("Blå sida".normalize("NFC"));
+});
+
+// A grid with a word list, made up. The Prediction.ChangeWordList cell holds a list of its own, which is not the
+// grid's. Its slots are listed out of reading order, as Grid 3 writes them.
+const SLOT = (x, y) => `<Cell X="${x}" Y="${y}"><Content><ContentType>AutoContent</ContentType>` +
+  "<ContentSubType>WordList</ContentSubType><CaptionAndImage xsi:nil=\"true\" /></Content></Cell>";
+const ITEM = (text, image) =>
+  `<WordListItem><Text>${text}</Text>${image ? `<Image>${image}</Image>` : ""}` +
+  "<PartOfSpeech>Unknown</PartOfSpeech></WordListItem>";
+const WORD_LIST_XML = `<Grid><Cells>
+  ${SLOT(1, 1)}${SLOT(0, 1)}${SLOT(1, 0)}${SLOT(0, 0)}
+  <Cell X="2"><Content><Commands><Command ID="Prediction.ChangeWordList"><Parameter Key="wordlist">
+    <WordList><Items>${ITEM("<p><s><r>gömd</r></s></p>")}</Items></WordList>
+  </Parameter></Command></Commands><CaptionAndImage><Caption>byt</Caption></CaptionAndImage></Content></Cell>
+</Cells>
+<WordList><Items>
+  ${ITEM("<p><s Image=\"[blissx]15961.wmf\"><r>Jeans</r></s></p>", "[blissx]15961.wmf")}
+  ${ITEM("<p><s><r>Cargo</r><r><![CDATA[byxa]]></r></s></p>", "-0.jpeg")}
+  ${ITEM("<d><p><s><r>hej</r></s></p><p><s><r>då</r></s></p></d>", "-0.png")}
+  ${ITEM("<p><s><r>sist</r></s></p>")}
+  ${ITEM("<p><s><r>över</r></s></p>")}
+</Items></WordList></Grid>`;
+
+test("readWordList() reads the grid's items, not a list in a Prediction.ChangeWordList", () => {
+  expect(readWordList(WORD_LIST_XML)).toEqual([
+    { text: "Jeans", image: "[blissx]15961.wmf" },
+    { text: "Cargobyxa", image: "-0.jpeg" },
+    { text: "hej då", image: "-0.png" },
+    { text: "sist", image: "" },
+    { text: "över", image: "" }
+  ]);
+  expect(readWordList("<Grid><Cells></Cells></Grid>")).toEqual([]);
+});
+
+test("fillWordList() fills the slots in reading order and names each embedded picture by its item", () => {
+  const raws = readCells(WORD_LIST_XML);
+  expect(fillWordList(raws, readWordList(WORD_LIST_XML))).toBe(4);
+  const filled = raws.map(({ x, y, commands, insertedText, image, pictureFile }) =>
+    ({ x, y, commands, insertedText, image, pictureFile }));
+  expect(filled).toEqual([
+    { x: 1, y: 1, commands: ["Action.InsertText"], insertedText: "sist", image: "", pictureFile: undefined },
+    {
+      x: 0, y: 1, commands: ["Action.InsertText"], insertedText: "hej då", image: "-0.png",
+      pictureFile: "wordlist-2-0.png"
+    },
+    {
+      x: 1, y: 0, commands: ["Action.InsertText"], insertedText: "Cargobyxa", image: "-0.jpeg",
+      pictureFile: "wordlist-1-0.jpeg"
+    },
+    {
+      x: 0, y: 0, commands: ["Action.InsertText"], insertedText: "Jeans", image: "[blissx]15961.wmf",
+      pictureFile: undefined
+    },
+    { x: 2, y: 0, commands: ["Prediction.ChangeWordList"], insertedText: "", image: "", pictureFile: undefined }
+  ]);
+});
+
+test("fillWordList() leaves the slots past the last item blank", () => {
+  const raws = readCells(`<Cells>${SLOT(0, 0)}${SLOT(1, 0)}</Cells>`);
+  expect(fillWordList(raws, [{ text: "ja", image: "" }])).toBe(2);
+  expect(raws[1]).toMatchObject({ commands: [], insertedText: "" });
 });
 
 describe("convertCell()", () => {
@@ -142,6 +209,7 @@ describe("convertCell()", () => {
     hasWorkspace: true,
     mapping: { "Grids/Blå sida/0-1-0-text-0.jpg": "B513/B10", "[blissx]18274.wmf": "B711;B81" },
     gridNames: new Set(["Blå sida", "Start"]),
+    stubs: new Set(),
     icons: { CommandGoToRootCell: 392, ActionSpeakCell: 2325 },
     styles: new Map([
       ["Vocab cell", { backColour: "#FEFEF4FF", fontColour: "#000000FF" }],
@@ -328,6 +396,22 @@ describe("convertCell()", () => {
   test("a caption with no command is skipped", () => {
     expect(convertCell(cell({ caption: "frukost" }), grid())).toEqual({ skipped: "unsupported: no command" });
   });
+
+  test("a jump to a grid removed for privacy becomes a ContentRemoved cell with the cell's label and colours", () => {
+    const entry = cell({
+      commands: ["Jump.To"], jumpTo: "Vänner", caption: "Vänner\nBorttaget av integritetsskäl", basedOnStyle: "Vocab cell"
+    });
+    const removed = { ...grid(), gridNames: new Set(["Blå sida", "Start", "Vänner"]), stubs: new Set(["Vänner"]) };
+    expect(convertCell(entry, removed)).toEqual({
+      id: "cell-0-1",
+      cell: {
+        type: "ContentRemoved",
+        options: {
+          label: "Vänner\nBorttaget av integritetsskäl", backgroundColor: "#FEFEF4FF", textColor: "#000000FF", ...layout
+        }
+      }
+    });
+  });
 });
 
 describe("importGridset()", () => {
@@ -420,6 +504,48 @@ describe("importGridset()", () => {
     expect(fs.existsSync(path.join(setDir, "pictures", "bla_sida", "0-0.jpg"))).toBe(false);
   });
 
+  test("imports a word list into its cells and reports the items with no free cell", () => {
+    const setDir = path.join(tmp, "set");
+    const gridset = writeGridset();
+    const words = path.join(gridset, "Grids", "Ord");
+    fs.mkdirSync(words);
+    fs.writeFileSync(path.join(words, "grid.xml"), WORD_LIST_XML);
+    fs.writeFileSync(path.join(words, "wordlist-2-0.png"), "hej");
+    const withWords = { ...mapping, "[blissx]15961.wmf": "B100", "Grids/Ord/wordlist-1-0.jpeg": "B200" };
+
+    const report = importGridset(gridset, withWords, setDir);
+    expect(report).toEqual([
+      "Ord: 1 word list item skipped (item 4), no free cell",
+      "Ord (2, 0): skipped, unsupported: Prediction.ChangeWordList",
+      "Start (1, 0): skipped, unsupported: Action.Copy"
+    ]);
+    const layout = (x, y) => ({ rowStart: y + 1, rowSpan: 1, columnStart: x + 1, columnSpan: 1 });
+    expect(readJson(path.join(setDir, "palettes", "ord.json")).cells).toEqual({
+      "cell-0-0": { type: "ActionCodeCell", options: { label: "Jeans", composition: 100, ...layout(0, 0) } },
+      "cell-1-0": { type: "ActionCodeCell", options: { label: "Cargobyxa", composition: 200, ...layout(1, 0) } },
+      "cell-0-1": {
+        type: "ActionCodeCell",
+        options: { label: "hej då", picture: "../pictures/ord/wordlist-2-0.png", ...layout(0, 1) }
+      },
+      "cell-1-1": { type: "ActionCodeCell", options: { label: "sist", ...layout(1, 1) } }
+    });
+    expect(fs.readFileSync(path.join(setDir, "pictures", "ord", "wordlist-2-0.png"), "utf8")).toBe("hej");
+  });
+
+  test("reports a word list with no cells to fill", () => {
+    const setDir = path.join(tmp, "set");
+    const gridset = writeGridset();
+    const startXml = path.join(gridset, "Grids", "Start", "grid.xml");
+    fs.writeFileSync(startXml, fs.readFileSync(startXml, "utf8").replace("</Grid>",
+      "<WordList><Items><WordListItem><Text><p><s><r>a</r></s></p></Text></WordListItem>" +
+      "<WordListItem><Text><p><s><r>b</r></s></p></Text></WordListItem></Items></WordList></Grid>"));
+
+    expect(importGridset(gridset, mapping, setDir)).toEqual([
+      "Start: 2 word list items skipped (items 0–1), no word list cells",
+      "Start (1, 0): skipped, unsupported: Action.Copy"
+    ]);
+  });
+
   test("a second run replaces the first", () => {
     const setDir = path.join(tmp, "set");
     const gridset = writeGridset();
@@ -505,5 +631,23 @@ describe("importGridset()", () => {
     const gridset = writeGridset(["Start", "Tom Sida", "Tom-Sida"]);
     expect(() => importGridset(gridset, mapping, setDir)).toThrow("tom_sida");
     expect(fs.existsSync(setDir)).toBe(false);
+  });
+
+  test("a grid removed for privacy gets no palette, and a cell that jumps to it becomes ContentRemoved", () => {
+    const setDir = path.join(tmp, "set");
+    const gridset = writeGridset();
+    // A stub as clean_grid3.js writes it. Its notice cell has no command, which the report would list.
+    fs.writeFileSync(path.join(gridset, "Grids", "Blå sida".normalize("NFD"), "grid.xml"), `<Grid>
+      ${REMOVED_MARKER}
+      <Cells><Cell><Content><CaptionAndImage><Caption>Borttaget</Caption></CaptionAndImage></Content></Cell></Cells>
+    </Grid>`);
+
+    const report = importGridset(gridset, mapping, setDir);
+    expect(report).toEqual(["Start (1, 0): skipped, unsupported: Action.Copy"]);
+    expect(readJson(path.join(setDir, "palette_set.json")).palettes).toEqual({ "Start": "palettes/start.json" });
+    expect(fs.existsSync(path.join(setDir, "palettes", "bla_sida.json"))).toBe(false);
+    expect(readJson(path.join(setDir, "palettes", "start.json")).cells["cell-0-0"]).toEqual({
+      type: "ContentRemoved", options: { label: "blå", rowStart: 1, rowSpan: 1, columnStart: 1, columnSpan: 1 }
+    });
   });
 });

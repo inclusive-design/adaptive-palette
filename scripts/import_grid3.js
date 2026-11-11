@@ -40,7 +40,7 @@ const ENTITIES = { lt: "<", gt: ">", quot: "\"", apos: "'", amp: "&" };
  * @param {string} raw - The value between an element's tags.
  * @returns {string}
  */
-function xmlText (raw) {
+export function xmlText (raw) {
   return raw.replace(/<!\[CDATA\[([\s\S]*?)\]\]>|&(lt|gt|quot|apos|amp);|&#(x[0-9a-fA-F]+|\d+);/g,
     (match, cdata, entity, code) => cdata ?? ENTITIES[entity] ??
       String.fromCodePoint(code.startsWith("x") ? parseInt(code.slice(1), 16) : Number(code)));
@@ -52,13 +52,13 @@ function xmlText (raw) {
  * @param {string} name - An element name with no attributes on its tag, such as "Caption".
  * @returns {string} - "" when there is no such element.
  */
-function element (xml, name) {
+export function element (xml, name) {
   const match = xml.match(new RegExp(`<${name}>([\\s\\S]*?)</${name}>`));
   return match ? xmlText(match[1]).trim() : "";
 }
 
 // Grid 3 commands that map to one of our command cells.
-const COMMAND_CELLS = {
+export const COMMAND_CELLS = {
   "Jump.Back": "CommandGoBackCell",
   "Jump.Home": "CommandGoToRootCell",
   "Action.Speak": "ActionSpeakCell",
@@ -74,6 +74,12 @@ const MESSAGE_AREA_ID = "content-encoding-area";
 
 // The command cells that speak or change the message, so they name it with `ariaControls`.
 const MESSAGE_COMMANDS = new Set(["ActionSpeakCell", "CommandDelLastEncoding", "CommandClearEncoding"]);
+
+// The comment `clean_grid3.js` writes in a grid it removed for privacy.
+export const REMOVED_MARKER = "<!-- adaptive-palette: removed for privacy -->";
+
+// A `<Cell>` in a `grid.xml`: its attributes, and its body unless it is self-closing.
+export const CELL = /<Cell\b([^>]*?)(?:\/>|>([\s\S]*?)<\/Cell>)/g;
 
 /**
  * Turn a mapping string into a composition: `"B513/B548"` becomes `[513, "/", 548]`. A
@@ -104,16 +110,30 @@ export function slugify (name) {
 }
 
 /**
+ * The text of Grid 3 rich text, as in `Action.InsertText` or a word list item: its `<r>` runs, with a space
+ * between paragraphs, whitespace collapsed.
+ * @param {string} xml - The rich text: `<p>`, `<s>` and `<r>` elements, maybe wrapped in `<d>`.
+ * @returns {string}
+ */
+function richText (xml) {
+  return xml.split("</p>")
+    .map(paragraph => [...paragraph.matchAll(/<r>([\s\S]*?)<\/r>/g)].map(([, run]) => xmlText(run)).join(""))
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/**
  * The cells of a `grid.xml`, with only the fields the import reads. Grid 3 writes this file by
  * machine and never nests `<Cell>`, so regular expressions are enough.
  * @param {string} xml - The contents of a `grid.xml`.
- * @returns {Object[]} - One `{ x, y, columnSpan, rowSpan, contentType, commands, jumpTo, caption,
+ * @returns {Object[]} - One `{ x, y, columnSpan, rowSpan, contentType, contentSubType, commands, jumpTo, caption,
  *                       image, insertedText, basedOnStyle, backColour, fontColour }` per cell. `jumpTo` is
  *                       NFC, to match grid names. `backColour` and `fontColour` are the cell's own colours,
  *                       "" when it has none.
  */
 export function readCells (xml) {
-  return [...xml.matchAll(/<Cell\b([^>]*?)(?:\/>|>([\s\S]*?)<\/Cell>)/g)].map(([, attributeText, body = ""]) => {
+  return [...xml.matchAll(CELL)].map(([, attributeText, body = ""]) => {
     const attributes = Object.fromEntries(
       [...attributeText.matchAll(/(\w+)="([^"]*)"/g)].map(([, name, value]) => [name, Number(value)])
     );
@@ -125,20 +145,55 @@ export function readCells (xml) {
       columnSpan: attributes.ColumnSpan ?? 1,
       rowSpan: attributes.RowSpan ?? 1,
       contentType: element(body, "ContentType"),
+      contentSubType: element(body, "ContentSubType"),
       commands: [...body.matchAll(/<Command ID="([^"]+)"/g)].map(([, id]) => id),
       jumpTo: xmlText(jumpTo).trim().normalize("NFC"),
       caption: element(body, "Caption"),
       image: element(body, "Image"),
-      insertedText: [...insertText.matchAll(/<r>([\s\S]*?)<\/r>/g)]
-        .map(([, run]) => xmlText(run))
-        .join("")
-        .replace(/\s+/g, " ")
-        .trim(),
+      insertedText: richText(insertText),
       basedOnStyle: element(body, "BasedOnStyle"),
       backColour: element(body, "BackColour"),
       fontColour: element(body, "FontColour")
     };
   });
+}
+
+/**
+ * The items of a grid's word list, in order. Only the `<WordList>` after `</Cells>` is the grid's: one inside
+ * a cell is the parameter of a `Prediction.ChangeWordList`, which is not imported.
+ * @param {string} xml - The contents of a `grid.xml`.
+ * @returns {Object[]} - One `{ text, image }` per item. `image` is "" when the item has no picture.
+ */
+export function readWordList (xml) {
+  const list = xml.slice(Math.max(0, xml.lastIndexOf("</Cells>")))
+    .match(/<WordList>([\s\S]*?)<\/WordList>/)?.[1] ?? "";
+  return [...list.matchAll(/<WordListItem>([\s\S]*?)<\/WordListItem>/g)].map(([, item]) => ({
+    text: richText(item.match(/<Text>([\s\S]*?)<\/Text>/)?.[1] ?? ""),
+    image: element(item, "Image")
+  }));
+}
+
+/**
+ * Write a grid's word list items into its word list cells, so that each filled cell is an ordinary insert cell.
+ * Grid 3 fills the cells in reading order: by Y, then X. Item i goes in the i-th, counting from 0. Cells past
+ * the last item stay blank.
+ * @param {Object[]} raws - The grid's cells from `readCells()`. The word list cells are changed in place, and
+ *                          an embedded picture is named `pictureFile`, as Grid 3 names it: `wordlist-{i}{Image}`.
+ * @param {Object[]} items - The grid's items from `readWordList()`.
+ * @returns {number} - The number of word list cells.
+ */
+export function fillWordList (raws, items) {
+  const slots = raws
+    .filter(raw => raw.contentType === "AutoContent" && raw.contentSubType === "WordList")
+    .sort((a, b) => a.y - b.y || a.x - b.x);
+  slots.slice(0, items.length).forEach((slot, i) => {
+    const { text, image } = items[i];
+    Object.assign(slot, { insertedText: text, image, commands: ["Action.InsertText"] });
+    if (image && !image.startsWith("[")) {
+      slot.pictureFile = `wordlist-${i}${image}`;
+    }
+  });
+  return slots.length;
 }
 
 /**
@@ -159,7 +214,8 @@ function symbolOrPicture (raw, grid) {
   if (!isLibrary && /[/\\]/.test(raw.image)) {
     return { warning: `picture name ${raw.image} not allowed` };
   }
-  const file = `${raw.x}-${raw.y}${raw.image}`;
+  // A word list item's picture is named by its item, not by the cell's position. See `fillWordList()`.
+  const file = raw.pictureFile ?? `${raw.x}-${raw.y}${raw.image}`;
   const spelling = grid.mapping[isLibrary ? raw.image : `Grids/${grid.name}/${file}`];
   if (spelling) {
     return { composition: parseComposition(spelling) };
@@ -179,11 +235,11 @@ function symbolOrPicture (raw, grid) {
 /**
  * Convert one cell read by `readCells()` to a palette cell.
  * @param {Object} raw - A cell from `readCells()`.
- * @param {Object} grid - `{ name, slug, dir, hasWorkspace, mapping, gridNames, icons, styles }`: the
+ * @param {Object} grid - `{ name, slug, dir, hasWorkspace, mapping, gridNames, stubs, icons, styles }`: the
  *                        grid's NFC name, its file slug and its folder; whether it has a message area;
- *                        the mapping, with NFC keys; every grid's name; the standard chart's command
- *                        cell compositions, by cell type; and a Map of each named style's
- *                        `{ backColour, fontColour }`.
+ *                        the mapping, with NFC keys; every grid's name; the names of the grids removed for
+ *                        privacy; the standard chart's command cell compositions, by cell type; and a Map of
+ *                        each named style's `{ backColour, fontColour }`.
  * @returns {Object|null} - `null` for an empty slot, `{ skipped }` with the reason for a cell that
  *                          cannot be imported, or `{ id, cell, copy, warning }`. `copy` names a picture
  *                          file to copy, and `warning` is a problem to report.
@@ -195,6 +251,16 @@ export function convertCell (raw, grid) {
   }
   const id = `cell-${raw.x}-${raw.y}`;
   const label = raw.caption || raw.insertedText;
+  // The cell's own colours, or else its style's. A style Grid 3 has built in is not in styles.xml.
+  const style = grid.styles.get(raw.basedOnStyle);
+  const back = raw.backColour || style?.backColour;
+  const font = raw.fontColour || style?.fontColour;
+  const colours = { ...(back && { backgroundColor: back }), ...(font && { textColor: font }) };
+  // A cell that led to a grid removed for privacy shows its label and the notice, which
+  // `clean_grid3.js` wrote in its caption.
+  if (grid.stubs.has(raw.jumpTo)) {
+    return { id, cell: { type: "ContentRemoved", options: { label, ...colours, ...layout } } };
+  }
   // Grid 3 leaves an insert with no text in some blank cells.
   const onlyEmptyInserts = !label && !raw.image && raw.commands.every(command => command === "Action.InsertText");
   if ((raw.commands.length === 0 && !raw.caption) || onlyEmptyInserts) {
@@ -212,11 +278,6 @@ export function convertCell (raw, grid) {
     const { copy, warning, ...shown } = symbolOrPicture(raw, grid);
     const type = inserts ? "ActionCodeCell" : "ActionBranchToPaletteCell";
     const branchTo = jumps && !noGrid ? { branchTo: raw.jumpTo } : {};
-    // The cell's own colours, or else its style's. A style Grid 3 has built in is not in styles.xml.
-    const style = grid.styles.get(raw.basedOnStyle);
-    const back = raw.backColour || style?.backColour;
-    const font = raw.fontColour || style?.fontColour;
-    const colours = { ...(back && { backgroundColor: back }), ...(font && { textColor: font }) };
     return {
       id,
       cell: { type, options: { label, ...shown, ...branchTo, ...colours, ...layout } },
@@ -263,7 +324,8 @@ function writeJson (file, value) {
  * @param {string} gridsetDir - The unzipped grid set.
  * @param {Object} mapping - The mapping file's contents: picture keys to mapping strings.
  * @param {string} setDir - The palette set folder to write.
- * @returns {string[]} - The report: one line per skipped cell or missing picture.
+ * @returns {string[]} - The report: one line per skipped cell or missing picture, and one per grid whose word
+ *                       list has items with no cell.
  * @throws when two grids have the same file slug, the start grid is missing, or a file cannot be read.
  */
 export function importGridset (gridsetDir, mapping, setDir) {
@@ -292,6 +354,11 @@ export function importGridset (gridsetDir, mapping, setDir) {
     throw new Error(`The start grid "${startPalette}" is not in ${gridsDir}.`);
   }
 
+  // The grids `clean_grid3.js` removed for privacy. They get no palette.
+  const stubs = new Set(grids
+    .filter(grid => fs.readFileSync(path.join(grid.dir, "grid.xml"), "utf8").includes(REMOVED_MARKER))
+    .map(grid => grid.name));
+
   const nfcMapping = Object.fromEntries(Object.entries(mapping).map(([key, value]) => [key.normalize("NFC"), value]));
   const icons = {};
   for (const file of ["input_area.json", "command_bar.json"]) {
@@ -315,13 +382,21 @@ export function importGridset (gridsetDir, mapping, setDir) {
     fs.mkdirSync(path.join(outDir, "palettes"), { recursive: true });
     const report = [];
     const palettes = {};
-    for (const grid of grids) {
+    for (const grid of grids.filter(grid => !stubs.has(grid.name))) {
       const xml = fs.readFileSync(path.join(grid.dir, "grid.xml"), "utf8");
       const raws = readCells(xml);
+      const items = readWordList(xml);
+      const slots = fillWordList(raws, items);
+      if (items.length > slots) {
+        const left = items.length - slots;
+        const which = left === 1 ? `item ${slots}` : `items ${slots}–${items.length - 1}`;
+        const reason = slots === 0 ? "no word list cells" : "no free cell";
+        report.push(`${grid.name}: ${left} word list item${left === 1 ? "" : "s"} skipped (${which}), ${reason}`);
+      }
       const hasWorkspace = raws.some(raw => raw.contentType === "Workspace");
       const cells = {};
       for (const raw of raws) {
-        const result = convertCell(raw, { ...grid, hasWorkspace, mapping: nfcMapping, gridNames, icons, styles });
+        const result = convertCell(raw, { ...grid, hasWorkspace, mapping: nfcMapping, gridNames, stubs, icons, styles });
         const where = `${grid.name} (${raw.x}, ${raw.y})`;
         if (!result) {
           continue;

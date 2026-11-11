@@ -137,6 +137,8 @@ the cell's `<Style>` override that style's values.
 
 2. **A file name suffix.** The picture is a file in the grid's folder, named `{X}-{Y}{Image}`. A cell at
    `X="0" Y="1"` with `<Image>-0-text-0.jpg</Image>` shows `0-1-0-text-0.jpg`.
+   A word list item's picture is named by its item instead: `wordlist-{i}{Image}`, where `i` is the item's
+   index, counting from 0. See [Word lists](#word-lists).
 
 Embedded pictures are raster files (jpg, png, bmp), mostly 100 × 100 px. They carry no symbol ID. Most are one
 Bliss symbol with the cell's background colour baked in. Some show a whole Bliss sentence with its words, and
@@ -248,8 +250,9 @@ node scripts/import_grid3.js "temp/My grids.gridset" temp/mapping.json myBlissCh
 1. The arguments are the grid set folder, a mapping file and the set name. The name cannot be
    `standardBlissChart`. The script stops with `Not found: <path>` when the grid set or mapping is missing.
 2. The script writes `public/palette-sets/<set>/` again: `palette_set.json`, one palette per grid in
-   `palettes/`, and the pictures the palettes use in `pictures/`. It writes to `<set>.partial/` first and
-   replaces the set only when that succeeds, so a failed run leaves the earlier import as it was.
+   `palettes/` (none for a grid [removed for privacy](#removing-personal-grids)), and the pictures the palettes use
+   in `pictures/`. It writes to `<set>.partial/` first and replaces the set only when that succeeds, so a failed run
+   leaves the earlier import as it was.
 3. It lists each cell it skipped or could not find a picture for, then the URL to open, such as
    `http://localhost:3000/?set=myBlissChart`.
 
@@ -270,7 +273,8 @@ Embedded pictures carry no symbol ID, so a mapping file made by hand names the s
 }
 ```
 
-1. A key is the picture's path in the grid set, or a library picture's `<Image>` value as written.
+1. A key is the picture's path in the grid set, or a library picture's `<Image>` value as written. A word list
+   item's picture is `Grids/<grid>/wordlist-{i}{Image}`.
 2. A value is a `bliss-svg-builder` string. Each `B<id>` becomes the number `<id>`, and every other part stays a
    string: `"B513/B548"` becomes `[513, "/", 548]`, and `"B513"` becomes `513`.
 
@@ -281,6 +285,7 @@ The first matching row decides. A self-closing `<Cell/>` is an empty cell.
 | Grid 3 cell | Becomes |
 | ----------- | ------- |
 | `ContentType` `Workspace` | `ContentEncoding`. A second one in the same grid is skipped |
+| Has `Jump.To` naming a grid removed for privacy (see [Removing personal grids](#removing-personal-grids)) | `ContentRemoved`, with the cell's label and colours. The removed grid gets no palette |
 | No commands and no caption, or only an `Action.InsertText` with no text, caption or picture | Left out: an empty slot |
 | Has `Action.InsertText` and `Jump.To` | `ActionCodeCell` with `branchTo`, which goes to the grid after the insert. `branchTo` is left out, and the report lists the cell, when the grid does not exist. Other commands are dropped |
 | Has `Action.InsertText` | `ActionCodeCell`. The other commands are dropped |
@@ -308,6 +313,101 @@ cells keep the standard chart's colours. Border, font and shape are not imported
 A palette keeps its grid's size. When no imported cell reaches the grid's last column or row, the script puts an
 empty `ContentLabel` with the id `grid-size` in the bottom-right slot, because `Palette.ts` sizes a palette from
 its cells.
+
+### Word lists
+
+A grid can fill some of its cells from a list of words: `<WordList><Items>` after `</Cells>`. Its cells have
+`ContentType` `AutoContent` and `ContentSubType` `WordList`, with no caption or picture of their own.
+
+1. Grid 3 fills the cells in reading order, by Y, then X. Item *i* goes in the *i*-th cell, counting from 0.
+2. Each filled cell becomes an `ActionCodeCell` that inserts the item's `<Text>`, with the item's `<Image>` as its
+   picture (see [Pictures](#pictures)). Cells past the last item are left out, as empty slots.
+3. Items with no cell left are reported, one line per grid. Adaptive Palette has no paging
+   (`Prediction.MoreWords`).
+4. A list in a `Prediction.ChangeWordList` parameter is not imported. The button is skipped, as any command with
+   no equivalent.
+
+## Removing personal grids
+
+`scripts/clean_grid3.js` writes a copy of an unzipped grid set with some grids emptied, so that the copy can be shared
+without their personal data. It never changes the grid set itself.
+
+1. Unzip the `.gridset` into a folder in `temp/`.
+2. Write the list file: each grid to remove, one per line, named as its folder in `Grids/` is.
+3. Run the script, giving the grid set folder, a new output folder and the list file:
+
+   ```sh
+   node scripts/clean_grid3.js "temp/My grids" "temp/My grids clean" temp/grids-to-remove.txt
+   ```
+
+4. Review every report line and the kept grids. To change anything, delete the output folder first, then:
+   - If a grid that can no longer be reached is personal, add it to the list and go back to step 3.
+   - If a leak-check hit is personal, list its grid and go back to step 3. Or change it in Grid 3, export and unzip
+     the grid set again, and go back to step 1.
+5. Zip the clean copy, not the grid set (see below).
+
+The report prints words from the grids, such as names. Don't paste it anywhere, including into AI tools.
+
+The script stops, and writes nothing, when:
+
+1. the output folder exists, or is inside the grid set
+2. `<output folder>.partial` exists (see below)
+3. the list names no grids, names a grid the grid set doesn't have, or names the start grid
+4. the grid set holds a symbolic link, which the copy would share
+
+In the copy:
+
+1. **A listed grid** keeps its folder, name and `GridGuid`. Everything else in its folder is deleted. Its new
+   `grid.xml` holds a notice ("Removed for privacy", or "Borttaget av integritetsskäl" in a Swedish grid set), a
+   Back cell, and the comment `<!-- adaptive-palette: removed for privacy -->`.
+2. **A cell that jumps to a listed grid** shows its caption, or its inserted text when it has no caption, with the
+   notice on a second line. With neither, it shows the notice alone. Its picture and its insert are deleted. Its jump
+   and its other commands stay.
+3. **`FileMap.xml`** no longer lists the deleted files. Nothing else in it changes.
+4. **Other grids** are kept, including subgrids of the listed ones.
+
+The report lists:
+
+1. the number of grids removed and of cells changed
+2. each picture of a changed cell that is not in the grid set, and each one whose name holds `/` or `\`. That
+   picture stays in the copy, so check it by hand
+3. each kept grid that could be reached from the start grid before, and can't now
+4. each place where a caption or inserted text from a listed grid is still in the copy, in any XML file but the
+   emptied grids. For example, `Leak check, Grids/Start/grid.xml: "Anna"`. The search ignores case, so a short
+   common word can give false hits. It does not look for the captions of Back, Home, Speak, Delete word and Clear
+   cells, or for text that is also a grid's name.
+
+The script writes the copy to `<output folder>.partial` and renames it when done. If the script fails, it deletes the
+partial copy. If it is stopped, delete the partial copy by hand: it holds the personal grids.
+
+To open the copy in Grid 3, zip it as a `.gridset`. macOS `zip` writes accented names, such as "Vänner", in a form
+Grid 3 may not read. This command writes them as UTF-8 and leaves out `.DS_Store` files, which list folder contents.
+
+```sh
+python3 -I -c 'import os,sys,unicodedata,zipfile
+src,dst=sys.argv[1:]
+with zipfile.ZipFile(dst,"w",zipfile.ZIP_DEFLATED) as z:
+  for d,_,fs in os.walk(src):
+    for f in fs:
+      if f!=".DS_Store":
+        p=os.path.join(d,f)
+        z.write(p,unicodedata.normalize("NFC",os.path.relpath(p,src)))' \
+  "temp/My grids clean" "temp/My grids clean.gridset"
+```
+
+`import_grid3.js` makes no palette for a grid with the comment. It turns each cell that jumps to one into a
+`ContentRemoved` cell. If Grid 3 saves the grid set again and drops the comment, the emptied grid imports as an
+ordinary palette that shows the notice and a Back cell.
+
+Not covered:
+
+1. Personal content in kept grids that the report doesn't find, such as a photo of a person, or a name that is in
+   no listed grid's captions or inserted texts. Review kept grids by hand.
+2. The parameters of the other commands in a changed entry cell, such as a link in `ComputerControl.Run` or a key
+   string. They stay.
+3. Photo metadata, such as location and dates, in pictures that are kept.
+4. The description in `Settings0/settings.xml`, and `Settings0/thumbnail.bmp`.
+5. Grid names, which stay. A grid whose name is itself personal can't be hidden this way.
 
 ## Example grid set in numbers
 

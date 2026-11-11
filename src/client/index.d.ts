@@ -364,6 +364,9 @@ export type ContentLabelType = LayoutInfoType & {
   label: string
 };
 
+// A cell that led to a grid removed for privacy. See `cells/ContentRemoved.ts`.
+export type ContentRemovedType = ContentLabelType & CellColorsType;
+
 /*
  * What an About Me fact is about. The dialog and the prompt list categories in the order of
  * `FACT_CATEGORIES` in `features/about-me/AboutMeState.ts`.
