@@ -20,13 +20,16 @@ import { SymbolEncodingType, ContentSignalDataType, ModifierInfoType, SymbolComp
 export const COMMA_ID = 5;
 
 /**
- * A space part: separates two words in a new word. It has no symbol, so
+ * A space part: a full space between two words in a new word. It has no symbol, so
  * modifiers and indicators are unavailable on it, as on a picture.
  */
 export const SPACE_PART: SymbolEncodingType = { label: "", isSpace: true };
 
+// A comma part. Goes between the words of a new word inside the combine markers.
+export const COMMA_PART: SymbolEncodingType = { label: ",", composition: COMMA_ID, modifierInfo: [] };
+
 /**
- * Whether a part is a word rather than a space or a comma. A space goes in only between two words.
+ * Whether a part is a word rather than a space or a comma.
  * @param {SymbolEncodingType | undefined} payload - The part, or `undefined` for none.
  * @returns {boolean}
  */
@@ -41,16 +44,16 @@ export function isWordPart (payload: SymbolEncodingType | undefined): boolean {
  * @param {SymbolEncodingType} wordToAdd   - The new Bliss-word to add.
  * @param {SymbolEncodingType[]} symbolSet - The set of Bliss-words to add to. Not modified.
  * @param {number} caretPos                - The insertion point within `symbolSet`.
- * @param {boolean} spaced                 - Whether words are spaced, as inside a new word's
- *                                           combine markers. A word added after a word then gets
- *                                           a space before it.
+ * @param {boolean} withComma              - Whether words are separated by commas, as inside a new
+ *                                           word's combine markers. A word added after a word then
+ *                                           gets a comma before it.
  * @return {ContentSignalDataType} - A new symbol set and the new caret position.
  */
 export function insertWordAtCaret (
-  wordToAdd: SymbolEncodingType, symbolSet: SymbolEncodingType[], caretPos: number, spaced = false
+  wordToAdd: SymbolEncodingType, symbolSet: SymbolEncodingType[], caretPos: number, withComma = false
 ): ContentSignalDataType {
-  const added = spaced && isWordPart(wordToAdd) && isWordPart(symbolSet[caretPos])
-    ? [SPACE_PART, wordToAdd]
+  const added = withComma && isWordPart(wordToAdd) && isWordPart(symbolSet[caretPos])
+    ? [COMMA_PART, wordToAdd]
     : [wordToAdd];
   const insertAt = caretPos + 1;
   return {
@@ -61,7 +64,7 @@ export function insertWordAtCaret (
 
 /**
  * Delete the symbol at the caret and move the caret onto the one before. Deleting a word also
- * deletes a space just before it. Nothing changes when the caret is before the first symbol.
+ * deletes a space or a comma just before it. Nothing changes when the caret is before the first symbol.
  * @param {SymbolEncodingType[]} symbolSet - The symbols. Not modified.
  * @param {number} caretPos                - The caret position.
  * @returns {ContentSignalDataType}
@@ -70,7 +73,10 @@ export function deleteAtCaret (symbolSet: SymbolEncodingType[], caretPos: number
   if (caretPos < 0) {
     return { payloads: symbolSet, caretPosition: caretPos };
   }
-  const from = isWordPart(symbolSet[caretPos]) && symbolSet[caretPos - 1]?.isSpace ? caretPos - 1 : caretPos;
+  const before = symbolSet[caretPos - 1];
+  const from = isWordPart(symbolSet[caretPos]) && before !== undefined && !isWordPart(before)
+    ? caretPos - 1
+    : caretPos;
   return {
     payloads: [...symbolSet.slice(0, from), ...symbolSet.slice(caretPos + 1)],
     caretPosition: from - 1

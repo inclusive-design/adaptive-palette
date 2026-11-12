@@ -92,7 +92,7 @@ export function editMessage (next: ContentSignalDataType, afterApply?: () => voi
 }
 
 /**
- * Add a word after the caret, with a space before it inside a new word's combine markers. Every
+ * Add a word after the caret, with a comma before it inside a new word's combine markers. Every
  * cell that adds a word adds it this way.
  * @param {SymbolEncodingType} word - The word to add.
  * @param {Function} afterApply     - Optional. As for `editMessage()`.
@@ -100,6 +100,6 @@ export function editMessage (next: ContentSignalDataType, afterApply?: () => voi
  */
 export function insertWord (word: SymbolEncodingType, afterApply?: () => void): boolean {
   const { payloads, caretPosition } = changeEncodingContents.value;
-  const spaced = wordBuildSignal.value?.combine ?? false;
-  return editMessage(insertWordAtCaret(word, payloads, caretPosition, spaced), afterApply);
+  const withComma = wordBuildSignal.value?.combine ?? false;
+  return editMessage(insertWordAtCaret(word, payloads, caretPosition, withComma), afterApply);
 }
