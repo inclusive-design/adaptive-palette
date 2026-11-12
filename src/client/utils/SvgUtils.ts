@@ -275,7 +275,7 @@ export function findClassifierFromLeft (id: SymbolCompositionType): number {
 /**
  * Utility function to find symbol information by BCI-AV-ID (user-facing lookup).
  *
- * @param {SymbolCompositionType} bciAvId - The BCI-AV-ID to search for
+ * @param {number} bciAvId - The BCI-AV-ID to search for
  * @return {Object} - The full information about the given BCI-AV-ID, or
  *                    `undefined` if there is no such ID.
  */
@@ -381,18 +381,6 @@ function getSvgBuilder (composition: SymbolCompositionType, color?: string): Bli
     });
   }
   return builder;
-}
-
-/**
- * Get the SVG markup as a string based on the given ID or array.
- *
- * @param {SymbolCompositionType} composition - A ID (a number) or an array of
- *                           IDs and separators, e.g.
- *                           `[ 106, "/", 12 ]`
- * @return {String} - The corresponding SVG markup.
- */
-export function getSvgMarkupString (composition: SymbolCompositionType): string {
-  return getSvgBuilder(composition).svgCode;
 }
 
 /**

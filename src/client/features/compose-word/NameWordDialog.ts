@@ -24,8 +24,8 @@ import {
 import { MAX_SUGGESTED_NAMES, canSuggestNames, requestNameSuggestions } from "./WordNamingUtils";
 import "./NameWordDialog.scss";
 
-export const NAME_WORD_DIALOG_ID = "nameWordDialog";
-export const NAME_FIELD_ID = "nameWordField";
+const NAME_WORD_DIALOG_ID = "nameWordDialog";
+const NAME_FIELD_ID = "nameWordField";
 const NAMES_LABEL_ID = "nameWordNamesLabel";
 
 type SuggestStateType = { status: "idle" } | { status: "working" } | { status: "done", names: string[] };

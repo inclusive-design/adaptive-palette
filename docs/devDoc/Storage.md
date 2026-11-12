@@ -176,7 +176,8 @@ every test stores into: it is quick, leaves nothing behind for the next test to 
 the `deleteDatabase` slowness that makes Firefox and WebKit tests flaky. It is the hosted site's
 backend as well, so the tests run against the code the app runs, not a double that resembles it.
 
-`core/IndexedDbStorage.test.ts` and `core/InitGlobals.test.ts` are the two that touch a real
+`core/IndexedDbStorage.test.ts`, `core/InitGlobals.test.ts` and
+`features/settings/SettingsDialog.test.ts` are the three that touch a real
 database. Each test uses a database name of its own, so nothing ever waits on `deleteDatabase`
 unblocking behind a connection another test left open.
 

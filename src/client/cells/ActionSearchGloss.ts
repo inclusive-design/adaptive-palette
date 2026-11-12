@@ -22,8 +22,8 @@ import { MessagePreview } from "../components/MessagePreview";
 import { languageSignal, t } from "../i18n/I18n";
 import "./ActionSearchGloss.scss";
 
-export const GLOSS_ENTRY_FIELD_ID = "glossSearchField";
-export const LABEL_FIELD_ID = "glossSearchLabelField";
+const GLOSS_ENTRY_FIELD_ID = "glossSearchField";
+const LABEL_FIELD_ID = "glossSearchLabelField";
 
 // Every result is a tab stop inside the dialog's focus trap, so an unbounded result set
 // puts the "Add to message" and "Close" buttons out of reach of a forward-only switch

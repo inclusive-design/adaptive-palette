@@ -133,7 +133,7 @@ rather than inside either feature. An entry's gloss is a comma-separated list of
 ### Two indexes
 
 The vocabulary is indexed by sense on first use, once for each of the two readings below, and every
-lookup is a map hit. It used to be scanned per lookup — 6420 entries, twice over on a miss — which
+lookup is a map hit. It used to be scanned per lookup — every entry, twice over on a miss — which
 cost about 8 ms per sentence. Every span of every candidate sentence is looked up synchronously
 before the choices are first drawn, so that time lands on the first paint. Building both indexes
 costs about 15 ms, once.
@@ -145,7 +145,7 @@ only if that missed. It reads the gloss of the language the sentence is in. The 
    on;
 2. **senses normalized**, with the trailing parenthetical dropped, with `preferSingleSense` off.
 
-1192 of the 6420 entries carry a trailing parenthetical, and most of them disambiguate rather than
+About one entry in five carries a trailing parenthetical, and most of them disambiguate rather than
 annotate. Normalizing in one pass turns those into single-sense entries that outrank the right
 answer, sending `i` to id 37 instead of id 1840 and `a` to id 29 instead of id 100. Only a key whose
 every candidate is qualified reaches the second index, which is exactly what normalization is for.
@@ -293,6 +293,6 @@ Deliberately not handled:
 
 | File | Owns |
 | ---- | ---- |
-| [`features/telegraphic-translation/BlissSentenceUtils.ts`](../../src/client/features/telegraphic-translation/BlissSentenceUtils.ts) | Parsing, segmentation, keys, indicators. Exports `blissSlots()` and `sentenceSpans()` |
+| [`features/telegraphic-translation/BlissSentenceUtils.ts`](../../src/client/features/telegraphic-translation/BlissSentenceUtils.ts) | Parsing, segmentation, keys, indicators. Exports `blissSlots()`, `spanSlots()` and `sentenceSpans()` |
 | [`features/telegraphic-translation/BlissSentence.ts`](../../src/client/features/telegraphic-translation/BlissSentence.ts) | The row component |
 | [`utils/GlossLookupUtils.ts`](../../src/client/utils/GlossLookupUtils.ts) | The gloss lookup, shared with word prediction |

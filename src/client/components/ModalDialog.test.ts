@@ -161,6 +161,38 @@ describe("ModalDialog", () => {
     await waitFor(() => expect(opener).toHaveFocus());
   });
 
+  // The `close` event of a dialog closed by unmounting arrives once the component is gone, so
+  // focus has to be returned as the dialog is taken away.
+  test("returns focus to the opener when it is unmounted while open", async () => {
+    const onClose = vi.fn();
+    const { rerender } = render(html`
+      <div>
+        <button type="button">opener</button>
+        <${ModalDialog} id="testDialog" title=${TITLE} isOpen=${false} onClose=${onClose}>
+          <p>body</p>
+        <//>
+      </div>
+    `);
+
+    const opener = screen.getByRole("button", { name: "opener" });
+    opener.focus();
+
+    rerender(html`
+      <div>
+        <button type="button">opener</button>
+        <${ModalDialog} id="testDialog" title=${TITLE} isOpen=${true} onClose=${onClose}>
+          <p>body</p>
+        <//>
+      </div>
+    `);
+    await waitFor(() => expect(screen.getByText("body")).toBeVisible());
+
+    rerender(html`<div><button type="button">opener</button></div>`);
+
+    await waitFor(() => expect(screen.getByRole("button", { name: "opener" })).toHaveFocus());
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
   // A dialog opened from something other than a click on its opener -- a signal effect, say
   // -- has no useful opener to go back to, so it names the target itself.
   test("restoreFocusTo outranks the opener", async () => {

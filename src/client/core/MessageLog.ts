@@ -223,8 +223,9 @@ function remember (record: LoggedMessage): void {
  * Record a message the user has said, stamped with the current time.
  *
  * A message that has been said before is stored again rather than replacing the earlier
- * copy: how often a word is used is what word prediction ranks by. If a message is just
- * stored, both "Speak" and "Sentence" buttons will be save the same message again.
+ * copy: how often a word is used is what word prediction ranks by. The one exception is a
+ * message with the same text as the last record, which is skipped, so pressing "Speak" and
+ * then "Sentence" stores the message once.
  * @param {SymbolEncodingType[]} payloads - The symbols in the message.
  * @returns {void}
  */

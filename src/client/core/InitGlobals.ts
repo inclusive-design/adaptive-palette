@@ -14,8 +14,8 @@
  * Start-up orchestration for the globals in `GlobalData.ts`.
  *
  * This lives above `GlobalData` rather than inside it.  Initialization has to reach down into
- * `SvgUtils`, `SymbolLabelUtils` and `OllamaApi`, and each of those reads the globals back,
- * so holding this function in `GlobalData` made that module part of a cycle with all three.
+ * modules such as `SvgUtils`, `SymbolLabelUtils` and `MessageLog`, which read the globals back,
+ * so holding this function in `GlobalData` made that module part of a cycle with each of them.
  *
  * For the same reason, `GlobalData` must NOT re-export `initAdaptivePaletteGlobals`.  A value
  * re-export is a real import and would rebuild the cycle.
@@ -91,13 +91,10 @@ export function installStorage (isLocal: boolean): AdaptivePaletteStorage {
 
 /**
  * Initialize the `adaptivePaletteGlobals` structure.
- * @param {HTMLElement} mainPaletteContainerId  - Optional argument specifying
- *                                                the id of a container element,
- *                                                e.g., a `<div>` element, to
- *                                                use for rendering the the
- *                                                main paletted Defaults to the
- *                                                empty string which denotes
- *                                                the `<body>delement.
+ * @param {string} mainPaletteContainerId - Optional. The id of the container element, such
+ *                                          as a `<div>`, that the main palette is drawn
+ *                                          in. Defaults to the empty string, which
+ *                                          denotes the `<body>` element.
  */
 export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string): Promise<void> {
   // Registered before anything renders, so no edit can reach the message unguarded. Every

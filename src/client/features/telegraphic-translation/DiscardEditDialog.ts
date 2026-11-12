@@ -21,7 +21,7 @@ import { ModalDialog } from "../../components/ModalDialog";
 import { INPUT_AREA_ID } from "../../cells/ContentEncoding";
 import { t } from "../../i18n/I18n";
 
-export const DISCARD_EDIT_DIALOG_ID = "discardEditDialog";
+const DISCARD_EDIT_DIALOG_ID = "discardEditDialog";
 
 /**
  * Where focus goes when the dialog closes. Normally the input area, where the edit was made.

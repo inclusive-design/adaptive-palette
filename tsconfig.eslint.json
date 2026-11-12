@@ -1,5 +1,6 @@
 {
   "extends": "./tsconfig",
   "include": ["**/*.ts", "**/*.js", "**/*.mjs", "**/*.cjs"],
+  "exclude": ["node_modules", "dist", "dist-desktop"],
   "files": ["src/client/index.d.ts"]
 }

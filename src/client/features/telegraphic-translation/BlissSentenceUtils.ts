@@ -223,7 +223,7 @@ function isAside (term: TaggedTermType): boolean {
  *
  * Imperative is tested first because compromise tags an imperative `PresentTense` as well, so
  * a tense-first order would never reach it. Passive, conditional and continuous are left out:
- * see the spec's step 4.
+ * see "Deliberately not handled" in `docs/devDoc/BlissSentences.md`.
  *
  * `form === "imperative"` is not on its own evidence of a command: compromise also reports it
  * for the bare verb of a modal question, so "Can you help me?" would be marked as an order.

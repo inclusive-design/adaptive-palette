@@ -18,7 +18,6 @@ import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { atRootWithNoOverlay, hideNavigationOverlay } from "../core/NavigationOverlay";
 import { BlissSymbol } from "../components/BlissSymbol";
-import "./ActionCodeCell.scss";
 
 type CommandGoToRootCellPropsType = {
   id: string,

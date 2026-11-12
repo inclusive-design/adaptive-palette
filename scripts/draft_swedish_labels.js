@@ -20,7 +20,7 @@
  *    explanation. The same label on the same symbol is asked once.
  * A cell whose label is already an object is skipped, so a stopped run can be started again.
  * A palette file that JSON.stringify would reflow (hand-formatted lines) is edited in place instead.
- * The drafts are machine translations; see docs/issue.md, "Decisions and known limits".
+ * The drafts are machine translations.
  */
 
 import fs from "fs";

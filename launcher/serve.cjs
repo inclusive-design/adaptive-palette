@@ -251,7 +251,7 @@ function findDist (execPath, moduleDir) {
   const candidates = [
     // macOS: Adaptive Palette.app/Contents/MacOS/<binary>
     path.resolve(binDir, "..", "Resources", "dist"),
-    // Windows: AdaptivePalette\AdaptivePalette.exe
+    // Windows: AdaptivePalette\node.exe
     path.resolve(binDir, "dist"),
     // A checkout, run as `node launcher/main.cjs`.
     path.resolve(moduleDir, "..", "dist")

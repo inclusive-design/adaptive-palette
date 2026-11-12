@@ -21,8 +21,8 @@ import { missingModels, reloadPage, setupDismissedSignal, setupStatus } from "./
 import { t } from "../../i18n/I18n";
 import "./FirstRunSetup.scss";
 
-export const SETUP_DIALOG_ID = "firstRunSetupDialog";
-export const OLLAMA_DOWNLOAD_URL = "https://ollama.com/download";
+const SETUP_DIALOG_ID = "firstRunSetupDialog";
+const OLLAMA_DOWNLOAD_URL = "https://ollama.com/download";
 
 /**
  * The accessible name of the progress bar: an unnamed one is announced as nothing but
@@ -30,7 +30,7 @@ export const OLLAMA_DOWNLOAD_URL = "https://ollama.com/download";
  * @param {string[]} models - The models being downloaded.
  * @returns {string}
  */
-export const PROGRESS_LABEL = (models: string[]): string =>
+const PROGRESS_LABEL = (models: string[]): string =>
   t("setupProgress", { models: models.join(` ${t("and")} `) });
 
 /**

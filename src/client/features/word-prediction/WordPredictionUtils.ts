@@ -45,8 +45,8 @@ const CONTEXT_LENGTHS = [2, 1];
 
 // How much a word's overall use in the user's history counts against the model's own ranking
 // of it. The two weights sum to 1.
-export const W_HISTORY = 0.4;
-export const W_MODEL = 1 - W_HISTORY;
+const W_HISTORY = 0.4;
+const W_MODEL = 1 - W_HISTORY;
 
 // How fast a model word's score falls with its position in the reply: 1st = 1.0, 2nd = 0.9,
 // and so on to a floor of 0. A plain chat reply carries no probabilities, so rank stands in
@@ -167,7 +167,7 @@ function loggedMessages (): SymbolEncodingType[][] {
 }
 
 /**
- * Whether query model for word suggestions. Return true when both of these are true:
+ * Whether to query a model for word suggestions. Returns true when all of these are true:
  * 1. `enableModelQuery` is enabled.
  * 2. There is at least one model available.
  * 3. The config has prompts for the UI language.

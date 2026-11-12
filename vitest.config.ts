@@ -13,7 +13,7 @@ export default defineConfig({
     // different one each run, in any of the three browsers. One retry absorbs that; a real
     // failure still fails both attempts.
     retry: 1,
-    // `initAdaptivePaletteGlobals()` runs in a `beforeAll` in 26 of these files and loads the
+    // `initAdaptivePaletteGlobals()` runs in a `beforeAll` in many of these files and loads the
     // symbol data, so the default 10s hook budget is the first thing contention breaks.
     hookTimeout: 30000,
     testTimeout: 30000,

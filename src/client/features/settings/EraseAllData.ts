@@ -19,7 +19,7 @@ import { getStorage } from "../../core/StorageBackend";
 import { t } from "../../i18n/I18n";
 import "./EraseAllData.scss";
 
-export const ERASE_DIALOG_ID = "eraseAllDataDialog";
+const ERASE_DIALOG_ID = "eraseAllDataDialog";
 
 /**
  * Ask the launcher to shut down.

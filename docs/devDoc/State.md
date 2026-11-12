@@ -13,7 +13,8 @@ What holds application state, and why the modules that touch it are split the wa
 | `paletteStore` | The `PaletteStore` caching loaded palettes |
 | `navigationStack` | The `NavigationStack` tracking where the user is |
 | `models` | Ollama model names found at start-up; empty when Ollama is not running |
-| `config` | The validated `public/config.json`, or its defaults. See [Config.md](Config.md) |
+| `config` | The validated `public/config.json`, or its defaults, with the user's saved settings applied. See [Config.md](Config.md) |
+| `fileConfig` | `config.json` as it was read, before the saved settings. The settings dialog compares against it |
 | `indicatorLabels` | The pregenerated symbol-plus-indicator label lookup |
 | `mainPaletteContainerId` | The `id` of the element the main palette renders into |
 
@@ -69,19 +70,19 @@ rather than plain fields:
 Cells that navigate only set state. `ActionBranchToPaletteCell` pushes, `CommandGoBackCell` pops,
 `CommandGoToRootCell` flushes. None of them renders a palette.
 
-## Three modules deliberately kept out of `state/`
+## Four modules deliberately kept out of `state/`
 
 The first two splits exist to break an import cycle; `npm run lint:cycles` fails if either is
-undone. The third is a layering choice rather than a cycle fix.
+undone. The last two are layering choices rather than cycle fixes.
 
 **`core/CellTypeRegistry.ts`** maps each `type` string to its component. `components/Palette.ts`
 needs the registry to render a cell, and the registered cells read `adaptivePaletteGlobals`. Putting
 the registry inside `GlobalData.ts` would make the globals import every cell, and every cell import
 the globals.
 
-**`core/InitGlobals.ts`** owns `initAdaptivePaletteGlobals()`. Start-up reaches into `SvgUtils`,
-`SymbolLabelUtils`, `OllamaApi` and `Config`, and each of those reads the globals back. Holding
-the function in `GlobalData.ts` would put the state module in a cycle with all four.
+**`core/InitGlobals.ts`** owns `initAdaptivePaletteGlobals()`. Start-up reaches into modules such
+as `SvgUtils`, `SymbolLabelUtils` and `MessageLog`, which read the globals back. Holding the
+function in `GlobalData.ts` would put the state module in a cycle with each of them.
 
 For the same reason `GlobalData.ts` must not re-export `initAdaptivePaletteGlobals` as a
 convenience. A value re-export is a real import and rebuilds the cycle.
@@ -104,11 +105,18 @@ anything renders. It:
 1. Registers telegraphic translation's `guardEdit` with `setEditGuard()`. This is first, and
    synchronous, so no edit can reach the message unguarded even while the fetches below are in
    flight.
-2. Loads the Blissary composite definitions used to draw symbols.
-3. Records the container id for the main palette display area.
-4. Fetches the Ollama model list, `public/config.json` and the indicator label lookup in parallel,
-   then stores the results on `adaptivePaletteGlobals`.
+2. Starts the symbol label watcher, and registers the sentence layer as the overlay Home and Back
+   close first.
+3. Loads the Blissary composite definitions used to draw symbols.
+4. Records the container id for the main palette display area.
+5. Installs the storage backend: IndexedDB on this computer, memory on the public website. See
+   [Storage.md](Storage.md).
+6. In parallel, fetches the Ollama model list, `public/config.json` and the indicator label tables,
+   and opens the storage. The results go on `adaptivePaletteGlobals`.
+7. Applies the user's saved settings over the config, then sets the UI language. `?lang=` in the
+   page URL wins.
+8. Reads the saved messages, About Me facts and saved words into their caches.
 
 Only then does `index.js` load the palette set the page URL names (see [Palettes](Palettes.md#choosing-a-set)),
-then the start palette with the palettes it includes. It mounts `CurrentPalette` and the discard dialog, then the
-first-run setup and the top bar.
+then the start palette with the palettes it includes. It mounts `CurrentPalette`, the discard and
+name-word dialogs, the first-run setup on the desktop version, and the top bar.

@@ -4,7 +4,7 @@
  *
  * Example:
  * node generate_indicator_label_prompts.js ../../public/data/bliss_symbol_explanations.json \
- *   ../../public/data/indicators.json ../data/new_labels_with_indicator_prompts.jsonl
+ *   ../../public/data/indicators.json ./data/new_labels_with_indicator_prompts.jsonl
  *
  * Reads Bliss word data and the curated indicator table (../../public/data/indicators.json), and for
  * every word whose `pos` matches an indicator's group (see GROUP_TO_POS), emits one prompt

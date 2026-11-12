@@ -26,7 +26,7 @@ export const DATABASE_NAME = "AdaptivePalette";
 export const MESSAGES_STORE = "messages";
 export const SETTINGS_STORE = "settings";
 export const ABOUT_ME_STORE = "aboutMe";
-export const SAVED_WORDS_STORE = "savedWords";
+const SAVED_WORDS_STORE = "savedWords";
 
 const DATABASE_VERSION = 2;
 
