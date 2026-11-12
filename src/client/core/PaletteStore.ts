@@ -61,7 +61,7 @@ export function paletteSetPath (search: string, defaultSet = DEFAULT_PALETTE_SET
  *
  * @param {String} jsonFilePath - Path of the JSON file to load, including the
  *                                ".json" extension.
- * @return {JsonPaletteType}    - The palette itself, or `null` if it could not be
+ * @return {JsonPaletteType}    - The palette itself, or `undefined` if it could not be
  *                                loaded.
  */
 export async function loadPaletteFromJsonFile (jsonFilePath: string): Promise<JsonPaletteType | undefined> {
@@ -69,10 +69,11 @@ export async function loadPaletteFromJsonFile (jsonFilePath: string): Promise<Js
     const response = await fetch(jsonFilePath);
     if (!response.ok) {
       console.error(`Error loading ${jsonFilePath}: ${response.status}`);
+      return undefined;
     }
     return await response.json() as JsonPaletteType;
   } catch (error) {
-    console.error(`Error loading ${jsonFilePath}:, ${String(error)}`);
+    console.error(`Error loading ${jsonFilePath}: ${String(error)}`);
   }
 }
 
@@ -202,9 +203,8 @@ export class PaletteStore {
    * palette's name/identifier matches a palette already in the store, it
    * replaces it.
    * @param: {JsonPaletteType} palette - The palette to add to the store.
-   * @param: {JsonPaletteType}.name    - The internal name of the palette.
-   * @param: {String} name             - Optional, the preferred name of th
-   *                                     palette.
+   * @param: {String} paletteName      - Optional. The name to store the palette under.
+   *                                     Defaults to the palette's own `name`.
    */
   addPalette (palette: JsonPaletteType | undefined, paletteName?: string): void {
     if (!palette) {

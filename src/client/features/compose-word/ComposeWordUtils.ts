@@ -57,7 +57,7 @@ export function firstGloss (gloss: string): string {
  * @param {SymbolCompositionType} composition - A part's composition.
  * @returns {TokenType[]}
  */
-export function expandComposition (composition: SymbolCompositionType): TokenType[] {
+function expandComposition (composition: SymbolCompositionType): TokenType[] {
   const tokens = typeof composition === "number" ? [composition] : composition;
   return tokens.flatMap((token) => {
     const entry = typeof token === "number" ? entryOf(token) : undefined;

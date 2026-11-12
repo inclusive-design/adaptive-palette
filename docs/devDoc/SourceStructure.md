@@ -25,6 +25,9 @@ src/client/
     telegraphic-translation/
     message-attributes/
     settings/
+    setup/
+    about-me/
+    switch-scanning/
     compose-word/
 ```
 

@@ -82,15 +82,9 @@ function clientFor (abortSignal?: AbortSignal): Ollama {
  *                                Rejects with a `DOMException` named `"AbortError"` when
  *                                the signal fires; callers that cancel deliberately should
  *                                not treat that as a failure.
- * @param Promise<ChatResponse | any>  - The response from the service. Note:
- *                                the value type <any> is technically
- *                                <<AbortableAsyncIterator<ChatResponse>>,
- *                                when the response is streamed; otherwise
- *                                just <ChatResponse>.  However, the ollama
- *                                module does not export the type
- *                                `AbortableAsyncIterator` yet.  See issues:
- *                                https://github.com/ollama/ollama-js/issues/135
- *                                https://github.com/ollama/ollama-js/issues/187
+ * @return {Promise<ChatResponse | AsyncIterable<ChatResponse>>} - The response from the
+ *                                service: an iterator of `ChatResponse` parts when it is
+ *                                streamed, otherwise one `ChatResponse`.
  */
 export async function queryChat (query: string, modelName: string, streamResp: boolean, systemPrompt?: string, abortSignal?: AbortSignal): Promise<ChatResponse | AsyncIterable<ChatResponse>> {
   // Indicator label lookup queries a named model without checking the model list, so the

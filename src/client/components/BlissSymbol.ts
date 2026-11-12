@@ -41,6 +41,25 @@ type BlissSymbolPropsType = {
   isPending?: boolean
 }
 
+// One template per SVG markup string. `html` keeps every template array it is given, keyed by
+// the array itself, and never drops one, so a new array on each draw would grow without end.
+const svgTemplates = new Map<string, TemplateStringsArray>();
+
+/**
+ * The SVG markup as a template `html` can parse into elements. `html` takes a
+ * `TemplateStringsArray`, which is an array of strings with a `raw` copy of itself.
+ * @param {string} markup - The SVG markup, or the empty string for no symbol.
+ * @returns {TemplateStringsArray}
+ */
+function svgTemplate (markup: string): TemplateStringsArray {
+  let template = svgTemplates.get(markup);
+  if (!template) {
+    template = Object.assign([markup], { raw: [markup] });
+    svgTemplates.set(markup, template);
+  }
+  return template;
+}
+
 /**
  * Hide a picture that could not be loaded, so no broken-image icon shows. The label stays.
  * @param {Event} event - The picture's `error` event.
@@ -71,14 +90,7 @@ export function BlissSymbol (props: BlissSymbolPropsType): VNode {
     svgMarkupString = svgElement.outerHTML;
   }
 
-  // The construction below is _only_ for the unit tests to avoid the error:
-  // "Argument of type 'any[]' is not assignable to parameter of type
-  // 'TemplateStringsArray.  Property raw is mssing ..."
-  // see: https://stackoverflow.com/questions/50706337/importing-html-to-typescript-to-use-as-templatestringliteral#answer-51012181
-  const templateStringArray = Object.assign(
-    [`${svgMarkupString}`],
-    { raw: [`${svgMarkupString}`] }
-  ) as unknown as TemplateStringsArray;
+  const templateStringArray = svgTemplate(svgMarkupString);
 
   const labelClass = [isMarked && "aiLabel", isPending && "pendingLabel"].filter(Boolean).join(" ") || undefined;
   const badge = isMarked ? html`<${AiBadge} />` : null;

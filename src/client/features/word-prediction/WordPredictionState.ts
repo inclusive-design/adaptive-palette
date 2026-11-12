@@ -38,7 +38,7 @@ export const DEBOUNCE_MS = 400;
  * The fewest words to ask for. Words with no Bliss symbol are dropped, so the reply has to
  * be longer than the number of slots it is filling.
  */
-export const MIN_WORDS_REQUESTED = 5;
+const MIN_WORDS_REQUESTED = 5;
 
 /**
  * Signal carrying the model's contribution to the suggestion row. `idle` adds nothing,

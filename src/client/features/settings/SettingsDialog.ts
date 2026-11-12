@@ -25,7 +25,7 @@ import { hydrateMessageLog } from "../../core/MessageLog";
 import { languageSignal, t } from "../../i18n/I18n";
 import "./SettingsDialog.scss";
 
-export const SETTINGS_FORM_ID = "adjustSettingsForm";
+const SETTINGS_FORM_ID = "adjustSettingsForm";
 
 /**
  * The note on a setting its section's switch has turned off.

@@ -63,14 +63,10 @@ function isSvgBuilderString (theString: string): boolean {
 }
 
 /**
- * Converts a string that encodes the information required by the SvgUtils
- * (svg builder) to the proper format -- an array of IDs and separators.
- * Three forms are accepted:
- * - BCI-AV-ID codes and separators: 'SVG:13166;9011:SVG'
- * - Blissary codes and separators: 'SVG:B220;B99:SVG'
- * @param {string} svgBuilderString - The string to convert.
- * @return {Array} - An array of IDs and separators required by the SvgUtils.
- * @throws {Error} - If the encoding is not well formed.
+ * The Blissary ID of the symbol with the given BCI AV ID.
+ * @param {number} bciAvId - The BCI AV ID to look up.
+ * @return {number} - The symbol's Blissary ID.
+ * @throws {Error} - If no symbol has that BCI AV ID.
  */
 function bciAvIdToBlissaryId(bciAvId: number): number {
   const symbol = findSymbolByBciAvId(bciAvId);
@@ -83,7 +79,8 @@ function bciAvIdToBlissaryId(bciAvId: number): number {
  * (svg builder) to the proper format -- an array of IDs and separators.
  * @param {string} theString - The string to convert, which should be in the
  * form 'SVG:...:SVG', where the "..." is a series of separated BCI AV IDs,
- * Blissary IDs, and separators ("/", ";", "//", ";;").
+ * Blissary IDs, and separators ("/", ";", "//", ";;"). For example,
+ * 'SVG:13166;9011:SVG' (BCI AV IDs) or 'SVG:B220;B99:SVG' (Blissary IDs).
  * @return {Array} - An array of the IDs and separators required by the SvgUtils.
  * @throws {Error} - If the encoding is not well formed.
  */

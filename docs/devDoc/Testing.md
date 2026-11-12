@@ -43,8 +43,8 @@ Anything after `--` goes to Vitest. See its
 A test sits beside its source as `<Module>.test.ts`, and Vitest picks up
 `src/client/**/*.test.ts`. A feature slice keeps its tests inside the slice folder.
 
-`src/client/__screenshots__/` holds screenshots Vitest writes when a browser test fails. It is
-gitignored and safe to delete; nothing asserts against those images.
+A `__screenshots__/` folder beside the test files holds screenshots Vitest writes when a browser
+test fails. These folders are gitignored and safe to delete; nothing asserts against those images.
 
 ## Writing tests
 
@@ -88,6 +88,7 @@ how much is read back into the log comes from `maxRecalledRecords`. `seedMessage
 in it, as opposed to what the app has cached. These three are the only place a test reaches into
 the message log's storage.
 
-`core/IndexedDbStorage.test.ts` is the one test file that touches a real database, opening one
-with a name of its own per test so nothing waits on `deleteDatabase` unblocking behind a
-connection another test left open. See [Storage.md](Storage.md).
+Three test files touch a real database: `core/IndexedDbStorage.test.ts`,
+`core/InitGlobals.test.ts` and `features/settings/SettingsDialog.test.ts`. Each opens one with a
+name of its own per test, so nothing waits on `deleteDatabase` unblocking behind a connection
+another test left open. See [Storage.md](Storage.md).

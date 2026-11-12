@@ -59,9 +59,8 @@ export default [{
     ...typescriptEslint.configs["disable-type-checked"].rules
   }
 },
-// In Jest, we frequently test whether a specific method on an object was called
-// that requires to pass the method directly into the expect() function,
-// so unbound-method is a false positive with Jest's expect(mock.fn) pattern.
+// Tests often pass a mocked method straight to `expect()`, as in `expect(mock.fn)`.
+// `unbound-method` reports that pattern, so it is off in test files.
 {
   files: ["**/*.test.ts", "**/*.test.js"],
   rules: {

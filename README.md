@@ -90,7 +90,7 @@ npx vite preview
 ```
 
 _**NOTE:** `npx vite preview` launches a local static web server to preview the build
-in the `/dist` directory.
+in the `/dist` directory._
 
 ### Test the Public Website Version
 
@@ -147,7 +147,7 @@ npm test
 You can pass in arguments to the tests runner by placing them after a `--`. For example,
 if you want to only run a single test you could call `npm test -- {test file name}`.
 
-For a complete list CLI flags that can be passed to the tests see Vitest's
+For a complete list of CLI flags that can be passed to the tests see Vitest's
 [Command Line Interface](https://vitest.dev/guide/cli.html) docs.
 
 _**NOTE:** The browser tests make use of Playwright to test real browsers. If you haven't already, you
@@ -184,7 +184,7 @@ In the "Deployment details" for the preview, use the following for the "Build
 command" and "Build output directory" settings:
 
 - Build command: `npm run build`
-- Build output directory:: `/dist`
+- Build output directory: `/dist`
 
 ## Documentation
 
@@ -196,11 +196,13 @@ every symbol+indicator pair that the vocabulary supports to its grammatically co
 - [Modifiers](./docs/Modifiers.md): add any Bliss modifier to a symbol from the modifier palette.
 - [Compose New Words](./docs/ComposeWords.md): build, name and save a Bliss word that is not in the vocabulary.
 - [Telegraphic Message Translation](./docs/TelegraphicMessageTranslation.md): use a local Ollama model to
-turn telegraphic messages into complete, speakable English sentences.
+turn telegraphic messages into complete, speakable sentences.
 - [Word Prediction](./docs/WordPrediction.md): suggest the words most likely to come next, from the user's
 past messages and optionally from a local Ollama model.
-- [Adjust Settings](./docs/Settings.md): change the runtime settings from within the app, saved in the
-browser and applied at the next page load.
+- [Message Attributes](./docs/MessageAttributes.md): tag a message with its intent, tone, feeling and
+priority, for the AI model's word and sentence suggestions.
+- [Adjust Settings](./docs/Settings.md): change the runtime settings from within the app. They apply as
+soon as they are saved.
 - [About Me](./docs/AboutMe.md): notes about the user that sentence and word suggestions use,
 typed in or accepted from the AI model's suggestions. Desktop version only.
 - [Access Methods](./docs/AccessMethods.md): use the palette with a keyboard, mouse, touch or two
@@ -224,8 +226,7 @@ input area, and modal dialogs.
 
 - [Developer Documentation](./docs/devDoc/README.md): technical guide for developers building the
   adaptive palette. Covers the source structure, application state, runtime configuration, palettes,
-  cell types, Bliss sentences and testing, testing, and desktop
-  packaging.
+  cell types, Bliss sentences, storage, testing, and desktop packaging.
 
 ## Attribution
 

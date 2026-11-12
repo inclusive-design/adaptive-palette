@@ -50,7 +50,7 @@ export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode {
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   // Marked unavailable rather than `disabled`: a disabled button loses focus when
-  // it is disabled, which costs a switch or eye-gaze user loses their scan position in
+  // it is disabled, which costs a switch or eye-gaze user their scan position in
   // the middle of the interaction. `aria-disabled` says the same thing to assistive
   // technology while keeping the element focusable.
   // Kept sentences for this message, hidden by Home or Back or left on another palette, open

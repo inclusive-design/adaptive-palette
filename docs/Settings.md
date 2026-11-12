@@ -6,8 +6,8 @@ has to be rebuilt or edited by hand.
 
 ## What can be changed
 
-Settings defined in `public/config.json` except these fields: `model`, `systemPrompt`, `userPrompt`,
-`aboutMe.messagesPerRun`, `switchScanning.moveKey` and `switchScanning.selectKey`.
+Settings defined in `public/config.json` except these fields: `paletteSet`, `model`, `systemPrompt`,
+`userPrompt`, `aboutMe.messagesPerRun`, `switchScanning.moveKey` and `switchScanning.selectKey`.
 
 | Group | Setting | Needs Ollama |
 | ----- | ------- | ------------ |

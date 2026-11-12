@@ -12,7 +12,7 @@
 
 import { VNode, ComponentChildren } from "preact";
 import { html } from "htm/preact";
-import { useEffect, useRef } from "preact/hooks";
+import { useEffect, useLayoutEffect, useRef } from "preact/hooks";
 import { languageSignal, t } from "../i18n/I18n";
 
 import "./ModalDialog.scss";
@@ -31,8 +31,7 @@ type ModalDialogProps = {
  * A modal dialog built on the native `<dialog>` element. `showModal()` supplies the
  * focus trap, Escape-to-close, and background `inert` -- all of which go subtly wrong
  * when hand-rolled. Because WebKit does not return focus to the opener on close, focus
- * restoration is done explicitly by moving focus to the first element before the dialog
- * opens.
+ * is returned explicitly, to the element that had it before the dialog opened.
  *
  * `restoreFocusTo` names where focus goes when the dialog closes.
  *
@@ -53,6 +52,9 @@ export function ModalDialog (props: ModalDialogProps): VNode {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const openerRef = useRef<HTMLElement | null>(null);
   const isUnmountingRef = useRef(false);
+  // The latest `restoreFocusTo`, for the unmount clean-up, which keeps the first render's props.
+  const restoreFocusToRef = useRef(restoreFocusTo);
+  restoreFocusToRef.current = restoreFocusTo;
   const headingId = `${id}-title`;
 
   // `showModal()` throws when the dialog is already open, and `close()` on an already
@@ -70,15 +72,30 @@ export function ModalDialog (props: ModalDialogProps): VNode {
     }
   }, [isOpen]);
 
+  // A named target can be unreachable: another modal dialog may still be open, which makes
+  // everything outside it `inert`, and `focus()` on an inert element does nothing. Falling
+  // back to the opener keeps focus where the user was working instead of on `<body>`.
+  const restoreFocus = () => {
+    const target = restoreFocusToRef.current?.() ?? openerRef.current;
+    target?.focus();
+    if (target !== openerRef.current && document.activeElement !== target) {
+      openerRef.current?.focus();
+    }
+  };
+
   // Unmounting an open dialog would tear it out of the top layer without running the
   // close algorithm, stranding focus instead of restoring it to the opener. Kept
   // separate from the effect above: putting this in that effect's cleanup would close
   // the dialog on every toggle and make its `else if` branch dead code.
-  useEffect(() => () => {
+  // A layout effect: its clean-up runs while the dialog is still in the document. An
+  // effect's clean-up runs after it is removed, when there is nothing left to close.
+  useLayoutEffect(() => () => {
     isUnmountingRef.current = true;
     const dialog = dialogRef.current;
     if (dialog?.open) {
       dialog.close();
+      // The `close` event arrives after the component is gone, so focus is returned here.
+      restoreFocus();
     }
   }, []);
 
@@ -99,15 +116,8 @@ export function ModalDialog (props: ModalDialogProps): VNode {
   // The `close` event is queued as a task, so a dialog closed by unmounting fires it once
   // the component is gone. Reporting that as a close would tell the parent the user
   // answered a question that was taken off the screen.
-  // A named target can be unreachable: another modal dialog may still be open, which makes
-  // everything outside it `inert`, and `focus()` on an inert element does nothing. Falling
-  // back to the opener keeps focus where the user was working instead of on `<body>`.
   const handleClose = () => {
-    const target = restoreFocusTo?.() ?? openerRef.current;
-    target?.focus();
-    if (target !== openerRef.current && document.activeElement !== target) {
-      openerRef.current?.focus();
-    }
+    restoreFocus();
     if (!isUnmountingRef.current) {
       onClose();
     }

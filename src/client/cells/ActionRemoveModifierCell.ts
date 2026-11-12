@@ -35,9 +35,7 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
 
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
-  // Disabled state of the remove button depends on if the last symbol in the
-  // input field (if any) has a modifier AND if there is more than one symbol in
-  // the encoding.
+  // The remove button is unavailable unless the symbol at the caret has a modifier.
   // Marked unavailable rather than `disabled` so the button keeps its place in the tab
   // order for switch and eye-gaze users.
   // A picture has no symbol to remove a modifier from.
@@ -48,8 +46,8 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   // Handle the request to remove the last placed modifier.
   const cellClicked = () => {
     if (unavailable || caretSymbolComposition === undefined) { speakUnavailable(label); return; }
-    // Get the last symbol in the editing area, and create an initial
-    // `newComposition`.
+    // Get the symbol at the caret position in the editing area, and create an
+    // initial `newComposition`.
     const { caretPosition, payloads } = changeEncodingContents.value;
     const symbolToEdit = payloads[caretPosition];
     let newComposition = (

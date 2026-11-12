@@ -29,7 +29,7 @@ export type ActionModifierCodeCellPropsType = {
 };
 
 /*
- * The commond code for rendering modifier cells and handling their activation,
+ * The common code for rendering modifier cells and handling their activation,
  * by for example a mouse click.
  */
 export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType, prepend: boolean): VNode {

@@ -4,10 +4,10 @@ run_new_labels_with_indicator.py — using a local HuggingFace model to generate
 for Bliss words when an indicator is applied.
 
 Usage:
-  python scripts/run_new_labels_with_indicator.py \\
+  python scripts/new_labels_with_indicator/run_new_labels_with_indicator.py \\
     --model /path/to/hf-checkpoint \\
-    --prompts scripts/data/new_labels_with_indicator_prompts.jsonl \\
-    --output scripts/data/new_labels_with_indicator.jsonl \\
+    --prompts scripts/new_labels_with_indicator/data/new_labels_with_indicator_prompts.jsonl \\
+    --output scripts/new_labels_with_indicator/data/new_labels_with_indicator.jsonl \\
     [--runner my-model] \\
     [--prompt-version indicator-label-prompts-v1] \\
     [--quantize]
@@ -23,8 +23,6 @@ overwrites `--output` from scratch; because generation is deterministic (see
   {"targetId":"101_99","wordId":101,"gloss":"...","pos":"noun","indicatorId":99,
    "indicatorName":"plural","newLabel":"...","rawResponseText":"...","runner":"...",
    "promptVersion":"..."}
-
-Adapted from docs/test_slm.py.
 """
 import argparse
 import json

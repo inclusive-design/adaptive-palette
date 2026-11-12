@@ -92,7 +92,7 @@ type SenseIndexesType = {
 };
 
 // The dictionary indexed once per language, rather than scanned per lookup: every span of
-// every sentence choice is looked up, and a miss used to walk all 6420 entries twice. Rebuilt
+// every sentence choice is looked up, and a miss used to walk every entry twice. Rebuilt
 // if the dictionary itself is ever replaced.
 const senseIndexes = new Map<Language, SenseIndexesType>();
 
@@ -122,8 +122,8 @@ function indexes (language: Language): SenseIndexesType {
 /**
  * The dictionary entry for a word or phrase in a language, or `undefined`.
  *
- * The gloss as written is tried across the whole dictionary before any normalizing. 1192 of
- * the 6420 entries carry a trailing parenthetical and most of them disambiguate rather than
+ * The gloss as written is tried across the whole dictionary before any normalizing. About one
+ * entry in five carries a trailing parenthetical and most of them disambiguate rather than
  * annotate -- "ice cream (cone)", "side (body)", and 52 alphabet entries such as
  * "a (lowercase)". Normalizing in one pass turns those into single-sense entries that outrank
  * the right answer, sending "i" to id 37 instead of id 1840 and "a" to id 29 instead of

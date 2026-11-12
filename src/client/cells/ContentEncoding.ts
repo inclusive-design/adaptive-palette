@@ -60,7 +60,8 @@ const NO_CARET = -2;
  * - if the caret position is -1, and there are symbols in the array, add a
  *   special caret markup to indicate insertion is possible before the first
  *   symbol.
- * @param {ContentSignalDataType} symbols: Array of symbols and caret position.
+ * @param {Array<SymbolEncodingType>} payloadArray - The symbols.
+ * @param {number} caretPos - The caret position: the index of the symbol it is on, or -1.
  * @return {Array<VNode>} - Array of markup for the symbols
  */
 export function generateMarkupArray (payloadArray: Array<SymbolEncodingType>, caretPos: number): Array<VNode> {

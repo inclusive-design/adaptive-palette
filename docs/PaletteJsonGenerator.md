@@ -37,7 +37,7 @@ within a row are separated by spaces. Four item types are accepted:
 | ---- | ------ | ----------- |
 | Blank | `BLANK` | An empty cell with no symbol or label |
 | BCI AV ID | `25605` | A number matching a specific Bliss symbol; the gloss becomes the label |
-| Gloss | `GLOSS:gloss text:GLOSS` | Searches for an exact or partial gloss match; spaces allowed in the gloss text |
+| Gloss | `GLOSS:gloss text:GLOSS` | Searches for an exact or partial gloss match; spaces allowed in the gloss text. A single word can be written without the markers |
 | SVG builder string | `SVG:...:SVG` | Composes a symbol from component IDs using the [bliss-svg-builder](https://github.com/hlridge/bliss-svg-builder) (see [SVG Builder String Syntax](#svg-builder-string-syntax) below) |
 
 ### Labels
@@ -90,7 +90,7 @@ Sections 3.3, 3.6, and 3.7.
   for a single gloss input are listed in the **Matches** section; only the first match appears in the palette.
   Click again after editing the text area to regenerate.
 - **Save palette** — exports the palette as `<palette-name>.json` to the browser's download folder.
-- **Clear palette** — removes the preview and resets the Matches and Errors listings.
+- **Clear palette display** — removes the preview and resets the Matches and Errors listings.
 
 ## Matches and Errors
 

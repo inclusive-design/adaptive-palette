@@ -53,8 +53,7 @@ export class NavigationStack {
   }
 
   /**
-   * Puah a palette onto the top of the navigation stack and also remember where
-   * it was rendered.
+   * Push a palette onto the top of the navigation stack.
    * @param: {JsonPaletteType} palette - The palette to push.  If `null` or
    *                                     `undefined`, the navigation stack is
    *                                      left untouched.

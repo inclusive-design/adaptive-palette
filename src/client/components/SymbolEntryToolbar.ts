@@ -24,10 +24,10 @@ import { AboutMeDialog } from "../features/about-me/AboutMeDialog";
 import { t } from "../i18n/I18n";
 import "./SymbolEntryToolbar.scss";
 
-export const SEARCH_DIALOG_ID = "searchSymbolDialog";
-export const SVG_DIALOG_ID = "svgBuilderStringDialog";
-export const SETTINGS_DIALOG_ID = "adjustSettingsDialog";
-export const ABOUT_ME_DIALOG_ID = "aboutMeDialog";
+const SEARCH_DIALOG_ID = "searchSymbolDialog";
+const SVG_DIALOG_ID = "svgBuilderStringDialog";
+const SETTINGS_DIALOG_ID = "adjustSettingsDialog";
+const ABOUT_ME_DIALOG_ID = "aboutMeDialog";
 
 type OpenDialogType = "search" | "svg" | "settings" | "aboutMe" | null;
 

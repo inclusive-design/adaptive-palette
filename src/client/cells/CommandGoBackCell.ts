@@ -18,7 +18,6 @@ import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { atRootWithNoOverlay, hideNavigationOverlay, navigationOverlayOpen } from "../core/NavigationOverlay";
 import type { Language } from "../i18n/I18n";
 import { BlissSymbol } from "../components/BlissSymbol";
-import "./ActionCodeCell.scss";
 
 type CommandGoBackCellPropsType = {
   id: string,
@@ -48,8 +47,8 @@ export function goBackImpl (): void {
 };
 
 /*
- * Event handler for an CommandGoBackCellPropsType button/cell that, when
- * clicked, goes back one palette.
+ * Event handler for a CommandGoBackCell button/cell that, when clicked, goes back
+ * one palette.
  */
 const goBackToPalette = (event: Event, language?: Language): void => {
   const button = event.currentTarget as HTMLElement;

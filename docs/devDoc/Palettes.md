@@ -84,8 +84,8 @@ The set name is its folder name, and it appears in the page URL. Conventions:
 1. `public/data/` and `public/config.json`.
 2. The stored settings and message log. The browser keeps one store per site, so every set shares one message log,
    and word prediction in one set draws on messages written in another.
-3. `src/client/index.scss` styles the palettes named "Standard Header" and "Command Bar". A set that names them
-   differently loses those styles.
+3. `src/client/index.scss` styles the palettes named "Standard Header", "Input Area" and "Command Bar". A set
+   that names them differently loses those styles.
 
 ## Screens
 
@@ -97,8 +97,8 @@ palette, `ContentSentenceChoices`, `ContentPredictedWords` and the Command Bar p
 has `"layer": true`, so the screen palette draws it as a layer, not in the header's row (see
 [Fitting the screen](#fitting-the-screen)).
 
-`src/client/index.scss` styles the Standard Header and Command Bar palettes by name, with `[data-palettename="..."]`
-selectors, so renaming either palette drops its styles.
+`src/client/index.scss` styles the Standard Header, Input Area and Command Bar palettes by name, with
+`[data-palettename="..."]` selectors, so renaming any of them drops its styles.
 
 Keep `standard-header` the first key in `cells`. Preact then keeps the header's elements when navigating, so focus
 and typed text stay.
@@ -230,7 +230,8 @@ modifiers cannot change a picture word.
 5. Every set git tracks is published on the public website, so its pictures must be licensed for public release.
 
 **`backgroundColor`** and **`textColor`** are CSS colours, such as `"#E86E9B"`, for the cell's background and for
-its label and Bliss symbol. Only `ActionCodeCell` and `ActionBranchToPaletteCell` read them. `PaletteStore` drops a
+its label and Bliss symbol. Only `ActionCodeCell`, `ActionBranchToPaletteCell` and `ContentRemoved` read them.
+`PaletteStore` drops a
 value that is not a colour when it loads the palette, and logs an error, so a palette cannot add other styles
 through it. A branch cell that is unavailable (`needsCaretSymbol`) shows the command colours instead. Palettes
 imported from Grid 3 use them (see [Mapping Grid 3 Grid Sets](Grid3Mapping.md#what-each-cell-becomes)).

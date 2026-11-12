@@ -285,8 +285,9 @@ function parseSwitchScanning (section: unknown): SwitchScanningConfigType {
 }
 
 /**
- * Fetch and validate `public/config.json`: the top-level `language`, `paletteSet` and
- * `maxRecalledRecords`, and the `labelLookup`, `telegraphicTranslation`, `symbolSearch`, `svgBuilderString`,
+ * Fetch and validate `public/config.json`: the top-level `language`, `paletteSet`,
+ * `maxRecalledRecords`, `announceSymbolOnInput`, `markAiSuggestions` and `backquoteGoesBack`,
+ * and the `labelLookup`, `telegraphicTranslation`, `symbolSearch`, `svgBuilderString`,
  * `wordPrediction`, `aboutMe`, `wordNaming` and `switchScanning` sections.
  * @returns {Promise<AdaptivePaletteConfigType>}
  */

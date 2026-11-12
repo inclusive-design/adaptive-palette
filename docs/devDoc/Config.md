@@ -7,7 +7,8 @@ falls back to its default and leaves the other sections intact. If the file itse
 every section falls back.
 
 Some of these fields can also be changed from within the app, through the **Adjust Settings**
-dialog: everything except `model`, `systemPrompt`, `userPrompt`, and `aboutMe.messagesPerRun`.
+dialog: everything except `paletteSet`, `model`, `systemPrompt`, `userPrompt`,
+`aboutMe.messagesPerRun`, `switchScanning.moveKey` and `switchScanning.selectKey`.
 Those choices are kept in the storage layer and applied over the file at start-up and on each save by
 `applyStoredSettings()` in
 [`src/client/features/settings/SettingsSchema.ts`](../../src/client/features/settings/SettingsSchema.ts),
@@ -101,7 +102,9 @@ fill, italic text, and an "AI" badge, and name themselves to a screen reader as
 An indicator label the model produced is marked too, but more lightly: an "AI" badge before the
 label and the label in italic, with no fill. A word or sentence is an offer the user picks from,
 so a fill that marks the whole cell fits; an indicator label is already applied, part of the
-message rather than an offer. It is announced as "AI suggestion, `<text>`" once, as it lands.
+message rather than an offer. The cell that changes the label announces it as
+"AI suggestion, `<text>`" when the model's answer is already known. An answer that arrives later
+is not announced. See [LabelLookup.md](../LabelLookup.md#announcements).
 
 Only what a model produced is marked. A suggested word found in the user's own message history
 is not, and neither is a sentence recalled from the message log, which the user approved

@@ -4,8 +4,8 @@
 
 Technical guide for developers building the adaptive palette.
 
-- [Source Structure](SourceStructure.md) — where the source code live, and the rule that decides
-  where a new one goes.
+- [Source Structure](SourceStructure.md) — where the source code lives, and the rule that decides
+  where a new file goes.
 - [State](State.md) — the globals singleton, the signals, and why the start-up and registry modules
   sit outside `state/`.
 - [Runtime Configuration](Config.md) — every field in `public/config.json` and what a malformed one
@@ -24,21 +24,24 @@ Technical guide for developers building the adaptive palette.
 ## Feature Documentation
 
 - [Symbol Labels After a Modifier or Indicator](../LabelLookup.md)
+- [Modifiers](../Modifiers.md)
 - [Telegraphic Message Translation](../TelegraphicMessageTranslation.md)
 - [Word Prediction](../WordPrediction.md)
 - [Message Attributes](../MessageAttributes.md)
 - [Adjust Settings](../Settings.md)
 - [Compose New Words](../ComposeWords.md)
 - [About Me](../AboutMe.md)
+- [Access Methods](../AccessMethods.md)
 
 ## Interoperability
 
 - [Mapping Grid 3 Grid Sets](Grid3Mapping.md) — how a Grid 3 export is structured, how it maps to
-  Adaptive Palette, and the gaps an import would have to close.
+  Adaptive Palette, how to import one and remove its personal grids, and what cannot be
+  represented yet.
 
 ## Tooling
 
 - [Shortcut Keys](../ShortcutKeys.md) — keyboard shortcuts for navigation, caret movement and
   dialogs.
-- [Palette Generator](../PaletteJsonGenerator.md),
-- [Generating Bliss Symbol Explanations](../GenerateBlissSymbolExplanations.md).
+- [Palette Generator](../PaletteJsonGenerator.md)
+- [Generating Bliss Symbol Explanations](../GenerateBlissSymbolExplanations.md)

@@ -12,7 +12,7 @@
 
 import { vi } from "vitest";
 import { JsonPaletteType } from "../index.d";
-import { PaletteStore, paletteSetPath, resolvePicturePath } from "./PaletteStore";
+import { PaletteStore, loadPaletteFromJsonFile, paletteSetPath, resolvePicturePath } from "./PaletteStore";
 import { MemoryStorage } from "./MemoryStorage";
 import { getStorage, setStorage } from "./StorageBackend";
 import { hydrateSavedWords } from "./SavedWords";
@@ -380,5 +380,24 @@ describe("resolvePicturePath", (): void => {
     ].forEach((picture) => {
       expect(resolvePicturePath(picture, paletteFileUrl, setFolder), picture).toBeUndefined();
     });
+  });
+});
+
+describe("loadPaletteFromJsonFile", (): void => {
+
+  afterEach((): void => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  test("returns nothing for a response that is not OK, even when it has a JSON body", async (): Promise<void> => {
+    vi.spyOn(console, "error").mockImplementation((): void => {});
+    vi.stubGlobal("fetch", (): Promise<Response> => Promise.resolve({
+      ok: false,
+      status: 404,
+      json: () => Promise.resolve({ error: "not found" })
+    } as Response));
+    expect(await loadPaletteFromJsonFile("/missing.json")).toBeUndefined();
+    expect(console.error).toHaveBeenCalledWith("Error loading /missing.json: 404");
   });
 });

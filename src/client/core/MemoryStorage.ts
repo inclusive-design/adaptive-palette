@@ -17,15 +17,15 @@
  * shared computer, where a message left in IndexedDB is readable by whoever sits down at it
  * next. Holding the data here instead means nothing outlives the tab: a reload clears it.
  *
- * It is also what every test but the two that open a real database stores into. It is quick, it
+ * It is also what every test but the few that open a real database stores into. It is quick, it
  * cannot leave a database behind for the next test to find, and deleting one is slow enough
  * in Firefox and WebKit to make tests flaky.
  *
  * Values are cloned on the way in and out, as a real store's structured clone would, so a
  * caller cannot alter what is stored by holding on to a reference.
  */
-import { AdaptivePaletteStorage, StoredMessage } from "./StorageBackend";
-import { MessageRecordType } from "./MessageLog";
+import type { AdaptivePaletteStorage, StoredMessage } from "./StorageBackend";
+import type { MessageRecordType } from "./MessageLog";
 import type { AboutMeType, SavedWordType } from "../index.d";
 
 export class MemoryStorage implements AdaptivePaletteStorage {

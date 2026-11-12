@@ -19,9 +19,9 @@ import type { ContentSignalDataType, BlissSymbolEntry, WordBuildType } from "../
 
 // NOTE: this import causes a warning serving the application using the `vite`
 // server.  The warning suggests to *not* use the `public` folder but to use
-// the `src` folder instead.  However, this code is also served using node
-// express and it is in the proper location for that envionment.  A copy of the
-// warning follows:
+// the `src` folder instead.  The file stays in `public` because the palette
+// generator app and the scripts read it from there.  A copy of the warning
+// follows:
 // "Assets in public directory cannot be imported from JavaScript.
 //  If you intend to import that asset, put the file in the src directory, and use /src/data/bliss_symbol_explanations.json instead of /public/data/bliss_symbol_explanations.json.
 //  If you intend to use the URL of that asset, use /data/bliss_symbol_explanations.json?url.

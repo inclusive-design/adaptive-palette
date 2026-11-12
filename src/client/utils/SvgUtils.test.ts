@@ -15,7 +15,7 @@ import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import {
   compositionToBstr, bstrToComposition, isIndicator,
   findIndicators, findWordIndicators, isModifier, findClassifierFromLeft, findSymbolByBciAvId,
-  getSvgElement, getSvgMarkupString, findSymbolByGloss,
+  getSvgElement, findSymbolByGloss,
 } from "./SvgUtils";
 
 describe("SvgUtils", (): void => {
@@ -97,7 +97,7 @@ describe("SvgUtils", (): void => {
     // invalidId=0 produces "B0" which BlissSVGBuilder doesn't recognize -- it now
     // always returns a builder (with a warning), rendering an empty <svg> rather
     // than nothing.
-    expect(getSvgMarkupString(invalidId)).toBeDefined();
+    expect(getSvgElement(invalidId)).toBeDefined();
   });
 
   test("Create a SymbolCompositionType from a Blissary SVG builder string", (): void => {
@@ -184,48 +184,41 @@ describe("SvgUtils", (): void => {
 
   test("Composite symbol renders identically via bare id and its expanded composition", (): void => {
     // 1903 = "to know", isCharacter: false, composition: [412, ";", 81]
-    expect(getSvgMarkupString(1903)).toBe(getSvgMarkupString([412, ";", 81]));
+    expect(getSvgElement(1903).outerHTML).toBe(getSvgElement([412, ";", 81]).outerHTML);
   });
 
   test("getSvgBuilder logs console.error for an invalid id but still returns a builder", (): void => {
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
 
     const svgElement = getSvgElement(invalidId);
-    const svgMarkupString = getSvgMarkupString(invalidId);
 
     expect(svgElement).toBeDefined();
     expect(svgElement).not.toBeNull();
-    expect(svgMarkupString).toBeDefined();
     expect(consoleErrorSpy).toHaveBeenCalled();
 
     consoleErrorSpy.mockRestore();
   });
 
-  test("Get SVG Element and markup for single ID", (): void => {
+  test("Get SVG Element for single ID", (): void => {
     expect(getSvgElement(singleId)).toBeDefined();
-    expect(getSvgMarkupString(singleId)).toBeDefined();
   });
 
-  test("Get SVG Element and markup for invalid id", (): void => {
+  test("Get SVG Element for invalid id", (): void => {
     // For invalid ids, getSvgBuilder always returns a builder with empty content.
     expect(getSvgElement(invalidId)).toBeDefined();
     expect(getSvgElement(invalidId)).not.toBeNull();
-    expect(getSvgMarkupString(invalidId)).toBeDefined();
   });
 
-  test("Get SVG Element and markup for id array using slash, semi-colon, and kern codes", (): void => {
+  test("Get SVG Element for id array using slash, semi-colon, and kern codes", (): void => {
     expect(getSvgElement(expectedMixedSeparatorsComposition)).toBeDefined();
-    expect(getSvgMarkupString(expectedMixedSeparatorsComposition)).toBeDefined();
   });
 
-  test("Get SVG Element and markup for id array using double-slash code", (): void => {
+  test("Get SVG Element for id array using double-slash code", (): void => {
     expect(getSvgElement(expectedMultiWordComposition)).toBeDefined();
-    expect(getSvgMarkupString(expectedMultiWordComposition)).toBeDefined();
   });
 
-  test("Get SVG Element and markup for id array using X code", (): void => {
-    expect(getSvgElement(expectedMultiWordComposition)).toBeDefined();
-    expect(getSvgMarkupString(expectedMultiWordComposition)).toBeDefined();
+  test("Get SVG Element for id array using X code", (): void => {
+    expect(getSvgElement(expectedAbcComposition)).toBeDefined();
   });
 
   test("Multiword using '//'", (): void => {
@@ -233,7 +226,7 @@ describe("SvgUtils", (): void => {
     expect(bstrToComposition(twoWordIdString)).toEqual(twoWordId);
   });
 
-  test("Get SVG Element and markup for composite symbol (isCharacter: false)", (): void => {
+  test("Get SVG Element for composite symbol (isCharacter: false)", (): void => {
     // ID 1758 = "group (people)", isCharacter: false, composition: [368, "/", 513].
     // Registered by initSvgCompositeDefinitions() as a bare-id alias to "B368/B513",
     // so BlissSVGBuilder resolves it to real content without any resolution step
@@ -242,7 +235,6 @@ describe("SvgUtils", (): void => {
     expect(svgElement).toBeDefined();
     // Verify the SVG has actual content (not an empty <g>)
     expect(svgElement?.querySelector("path, use, rect, circle, line, polyline, polygon")).not.toBe(null);
-    expect(getSvgMarkupString(1758)).toBeDefined();
   });
 });
 

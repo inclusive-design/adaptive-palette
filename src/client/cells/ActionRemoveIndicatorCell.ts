@@ -32,7 +32,7 @@ type ActionIndicatorCodeCellPropsType = {
  * Given an array of symbols examine the symbol at the caret position to find
  * its indicator, if any. A picture has none.
  * @param {ContentSignalDataType} symbols: Array of symbols and caret position.
- * @return {number} - The index of the indicator in the symbol's BciAvType, or
+ * @return {number} - The index of the indicator in the symbol's composition, or
  *                    -1 if it has no indicator.
  */
 function caretSymbolIndicatorPosition (symbols: ContentSignalDataType): number {
@@ -50,7 +50,7 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
   const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   // Enable the remove-indicator button only if there is an indicator on the
-  // last symbol in the encoding contents array.
+  // symbol at the caret.
   const indicatorPosition = caretSymbolIndicatorPosition(changeEncodingContents.value);
   // Marked unavailable rather than `disabled` so the button keeps its place in the tab
   // order for switch and eye-gaze users. Not available while a new word is being built.

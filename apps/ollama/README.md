@@ -35,10 +35,10 @@ ollama and added incrementally to the display area(s) on the web page as the
 model(s) provides them.
 
 In the adaptive palette main directory, execute this command line instruction to
-install the ollama JavaScript package:
+install the project's dependencies:
 
 ```text
-npm install ollama
+npm ci
 ```
 
 Launch the web-app chat client using the command:

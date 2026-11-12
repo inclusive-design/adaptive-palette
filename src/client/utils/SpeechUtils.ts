@@ -23,7 +23,7 @@ import { Language, SPEECH_LANGS, languageSignal, t } from "../i18n/I18n";
  * @param {Language} language - The language of the text: the UI language unless given.
  */
 export function speak(text: string, language: Language = languageSignal.value): void {
-  // If the text-to-speech feature is unavailable, do nothing. This happens when running node tests.
+  // If the browser has no text-to-speech, do nothing.
   if (!window.speechSynthesis) {
     return;
   }

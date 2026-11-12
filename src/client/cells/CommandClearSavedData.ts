@@ -24,7 +24,7 @@ import { getStorage } from "../core/StorageBackend";
 import { t } from "../i18n/I18n";
 import "./CommandClearSavedData.scss";
 
-export const CLEAR_SAVED_DATA_DIALOG_ID = "clearSavedDataDialog";
+const CLEAR_SAVED_DATA_DIALOG_ID = "clearSavedDataDialog";
 
 /**
  * Discard everything the app has saved.

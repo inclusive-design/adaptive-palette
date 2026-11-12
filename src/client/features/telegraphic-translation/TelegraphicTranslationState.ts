@@ -15,7 +15,7 @@
  * 1. the signal the sentence area renders from
  * 2. the request that produces the sentences
  * 3. the cancellation of a request the user has moved on from
- * `telegraphicTranslationUtils.ts` holds the side-effect-free utility functions.
+ * `TelegraphicTranslationUtils.ts` holds the side-effect-free utility functions.
  */
 import { batch, signal } from "@preact/signals";
 import { adaptivePaletteGlobals, changeEncodingContents, settingsSavedCount } from "../../state/GlobalData";
@@ -41,7 +41,7 @@ export const sentenceCompletionsSignal = signal<SentenceCompletionsStateType>(ID
 
 /**
  * The question the discard dialog is showing, or `null` when nothing is being asked.
- * `SentenceChoices` renders the dialog from this; the answer arrives through
+ * `DiscardEditDialog` renders the dialog from this; the answer arrives through
  * `confirmDiscardEdit` or `cancelDiscardEdit`.
  */
 export const discardEditPromptSignal = signal<string | null>(null);

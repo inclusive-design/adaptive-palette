@@ -10,9 +10,9 @@ three categories by prefix.
 | ---- | ------- | ------------------------- |
 | `ActionCodeCell` | Appends a Bliss symbol, or a picture, to the encoding area when clicked | `label`, and `composition` or `picture` (see [Palettes](Palettes.md#palette-json-structure)); `branchTo` (optional) goes to that palette after the insert, and gives the cell the folder look; `backgroundColor` and `textColor` (optional) |
 | `ActionBranchToPaletteCell` | Navigates to another palette | `label`, `composition` or `picture`, `branchTo` (the palette's name in [`palette_set.json`](../../public/palette-sets/standardBlissChart/palette_set.json)); `needsCaretSymbol` (optional) shows it as a command that is unavailable while no Bliss symbol is at the caret; `unavailableWhileBuildingWord` (optional) makes it unavailable while a word is being built; `backgroundColor` and `textColor` (optional) |
-| `ActionIndicatorCell` | Applies a Bliss indicator to the last symbol in the encoding area | `label`, `composition` |
-| `ActionPreModifierCell` | Prepends a modifier to the last symbol | `label`, `composition` |
-| `ActionPostModifierCell` | Appends a modifier to the last symbol | `label`, `composition` |
+| `ActionIndicatorCell` | Applies a Bliss indicator to the symbol at the caret | `label`, `composition` |
+| `ActionPreModifierCell` | Prepends a modifier to the symbol at the caret | `label`, `composition` |
+| `ActionPostModifierCell` | Appends a modifier to the symbol at the caret | `label`, `composition` |
 | `ActionRemoveIndicatorCell` | Removes an indicator from the symbol at the caret | `label`, `composition` |
 | `ActionRemoveModifierCell` | Removes a modifier from the symbol at the caret | `label`, `composition` |
 | `ActionSpeakCell` | Speaks the message aloud and records it, which feeds word prediction | `label`, `composition`, `ariaControls` |
