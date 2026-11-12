@@ -16,7 +16,7 @@ import { useRef, useState } from "preact/hooks";
 
 import { insertWord } from "../core/MessageEdit";
 import { bstrToComposition } from "../utils/SvgUtils";
-import { MessagePreview } from "../components/MessagePreview";
+import { MessagePreview } from "./MessagePreview";
 import { t } from "../i18n/I18n";
 import "./ActionSvgEntryField.scss";
 
