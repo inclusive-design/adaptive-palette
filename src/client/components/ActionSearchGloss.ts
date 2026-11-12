@@ -17,8 +17,8 @@ import { html } from "htm/preact";
 import { MatchType, SymbolEncodingType } from "../index.d";
 import { findSymbolByGloss } from "../utils/SvgUtils";
 import { insertWord } from "../core/MessageEdit";
-import { GlossSearchResults } from "../components/GlossSearchResults";
-import { MessagePreview } from "../components/MessagePreview";
+import { GlossSearchResults } from "./GlossSearchResults";
+import { MessagePreview } from "./MessagePreview";
 import { languageSignal, t } from "../i18n/I18n";
 import "./ActionSearchGloss.scss";
 
