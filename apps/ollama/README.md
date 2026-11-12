@@ -35,7 +35,7 @@ ollama and added incrementally to the display area(s) on the web page as the
 model(s) provides them.
 
 In the adaptive palette main directory, execute this command line instruction to
-install the project's dependencies, which include the ollama JavaScript package:
+install the project's dependencies:
 
 ```text
 npm ci
