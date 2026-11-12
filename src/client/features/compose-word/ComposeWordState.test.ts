@@ -1,9 +1,9 @@
 import type { SymbolEncodingType } from "../../index.d";
 import { changeEncodingContents, wordBuildSignal } from "../../state/GlobalData";
 import { editMessage, insertWord, setEditGuard } from "../../core/MessageEdit";
-import { SPACE_PART } from "../../utils/SymbolEncodingUtils";
+import { AUTO_COMMA_PART, COMMA_PART, SPACE_PART } from "../../utils/SymbolEncodingUtils";
 import {
-  cancelBuilding, chooseMatch, chooseName, insertSpace, requestFinish, setCombine, splitAtCaret,
+  cancelBuilding, chooseMatch, chooseName, insertComma, insertSpace, requestFinish, setCombine, splitAtCaret,
   startBuilding, wordDialogSignal
 } from "./ComposeWordState";
 
@@ -38,39 +38,68 @@ describe("ComposeWordState", (): void => {
     expect(wordBuildSignal.value).toBeNull();
   });
 
-  test("words added before the marker stay joined; the next one gets a space", (): void => {
+  test("turning the marker on puts a comma between the words already there", (): void => {
     startBuilding();
     insertWord(cat);
     insertWord(colour);
     setCombine(true);
+    expect(changeEncodingContents.value).toEqual({ payloads: [cat, AUTO_COMMA_PART, colour], caretPosition: 2 });
     insertWord(night);
-    expect(changeEncodingContents.value.payloads).toEqual([cat, colour, SPACE_PART, night]);
+    expect(changeEncodingContents.value.payloads).toEqual([cat, AUTO_COMMA_PART, colour, AUTO_COMMA_PART, night]);
+  });
+
+  test("turning the marker on puts a comma between split characters", (): void => {
+    startBuilding();
+    insertWord(word("teacher", 2559));
+    splitAtCaret();
+    setCombine(true);
+    expect(labels()).toEqual(["person", ",", "giving", ",", "knowledge"]);
+    expect(changeEncodingContents.value.caretPosition).toBe(4);
   });
 
   test("Space adds a space after the caret", (): void => {
-    // Scenario 8: cat and colour joined, night spaced, then a space added after cat.
     startBuilding();
+    setCombine(true);
     insertWord(cat);
     insertWord(colour);
-    setCombine(true);
-    insertWord(night);
     editMessage({ payloads: changeEncodingContents.value.payloads, caretPosition: 0 });
     insertSpace();
     expect(changeEncodingContents.value).toEqual({
-      payloads: [cat, SPACE_PART, colour, SPACE_PART, night], caretPosition: 1
+      payloads: [cat, SPACE_PART, AUTO_COMMA_PART, colour], caretPosition: 1
     });
   });
 
-  test("turning the marker off keeps the spaces", (): void => {
+  test("turning the marker off removes the auto commas and keeps the user's comma", (): void => {
     startBuilding();
     setCombine(true);
     insertWord(cat);
     insertWord(colour);
+    insertComma();
     insertWord(night);
     setCombine(false);
-    expect(changeEncodingContents.value).toEqual({
-      payloads: [cat, SPACE_PART, colour, SPACE_PART, night], caretPosition: 4
-    });
+    expect(changeEncodingContents.value).toEqual({ payloads: [cat, colour, COMMA_PART, night], caretPosition: 3 });
+    expect(wordBuildSignal.value?.combine).toBe(false);
+  });
+
+  test("on, off and on again gives the same parts as the first on", (): void => {
+    startBuilding();
+    insertWord(cat);
+    insertWord(colour);
+    insertWord(night);
+    setCombine(true);
+    const firstOn = changeEncodingContents.value;
+    setCombine(false);
+    setCombine(true);
+    expect(changeEncodingContents.value).toEqual(firstOn);
+  });
+
+  test("an edit the guard holds leaves the marker as it was", (): void => {
+    startBuilding();
+    insertWord(cat);
+    insertWord(colour);
+    setEditGuard(() => true);
+    setCombine(true);
+    expect(changeEncodingContents.value.payloads).toEqual([cat, colour]);
     expect(wordBuildSignal.value?.combine).toBe(false);
   });
 
@@ -88,6 +117,31 @@ describe("ComposeWordState", (): void => {
     splitAtCaret();
     expect(labels()).toEqual(["person", "giving", "knowledge"]);
     expect(changeEncodingContents.value.caretPosition).toBe(2);
+  });
+
+  test("Split with the marker on puts a comma between the characters", (): void => {
+    startBuilding();
+    setCombine(true);
+    insertWord(word("teacher", 2559));
+    splitAtCaret();
+    expect(labels()).toEqual(["person", ",", "giving", ",", "knowledge"]);
+    expect(changeEncodingContents.value.caretPosition).toBe(4);
+  });
+
+  test("Done with the marker on joins words and commas a quarter space apart", (): void => {
+    startBuilding();
+    setCombine(true);
+    insertWord(word("woman", 710));
+    insertWord(word("knowledge", 412));
+    requestFinish();
+    expect(wordDialogSignal.value?.composition).toEqual([233, "/", 710, "/", 5, "/", 412, "/", 233]);
+  });
+
+  test("Comma adds a comma after the caret", (): void => {
+    startBuilding();
+    insertWord(cat);
+    insertComma();
+    expect(changeEncodingContents.value).toEqual({ payloads: [cat, COMMA_PART], caretPosition: 1 });
   });
 
   test("Done offers the words' labels as the name", (): void => {

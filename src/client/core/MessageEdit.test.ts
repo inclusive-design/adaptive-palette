@@ -12,7 +12,7 @@
 
 import { changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
 import { editMessage, insertWord, setEditGuard } from "./MessageEdit";
-import { SPACE_PART } from "../utils/SymbolEncodingUtils";
+import { AUTO_COMMA_PART } from "../utils/SymbolEncodingUtils";
 import type { ContentSignalDataType } from "../index.d";
 
 describe("editMessage()", (): void => {
@@ -178,9 +178,9 @@ describe("insertWord()", (): void => {
     expect(changeEncodingContents.value).toEqual({ payloads: [cat, colour], caretPosition: 1 });
   });
 
-  test("Inserts a space before the word inside the combine markers", (): void => {
+  test("Inserts a comma before the word inside the combine markers", (): void => {
     wordBuildSignal.value = { message: { payloads: [], caretPosition: -1 }, combine: true };
     insertWord(colour);
-    expect(changeEncodingContents.value).toEqual({ payloads: [cat, SPACE_PART, colour], caretPosition: 2 });
+    expect(changeEncodingContents.value).toEqual({ payloads: [cat, AUTO_COMMA_PART, colour], caretPosition: 2 });
   });
 });
