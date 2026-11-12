@@ -25,9 +25,11 @@ import { PaletteStore } from "../../core/PaletteStore";
 import { isWordSaved, saveWord } from "../../core/SavedWords";
 import { hasPendingLabel, whenLabelsSettled } from "../../utils/SymbolLabelUtils";
 import { glossFor } from "../../utils/SvgUtils";
-import { COMMA_PART, SPACE_PART, insertWordAtCaret } from "../../utils/SymbolEncodingUtils";
+import { AUTO_COMMA_PART, COMMA_PART, SPACE_PART, insertWordAtCaret } from "../../utils/SymbolEncodingUtils";
 import { languageSignal } from "../../i18n/I18n";
-import { defaultName, findExistingWord, firstGloss, isSymbolWord, splitPart, wordComposition } from "./ComposeWordUtils";
+import {
+  addAutoCommas, defaultName, findExistingWord, firstGloss, isSymbolWord, removeAutoCommas, splitPart, wordComposition
+} from "./ComposeWordUtils";
 
 /**
  * What the dialog after Done shows. `match` is set when the word is already in the vocabulary.
@@ -90,15 +92,20 @@ function finishBuilding (word: SymbolEncodingType): void {
 }
 
 /**
- * Turn the combine marker on or off. The commas and spaces stay either way: the user deletes them.
+ * Turn the combine marker on or off. On puts an auto comma between every two neighbouring words; off
+ * removes every auto comma. The user's own commas and spaces stay.
  * @param {boolean} on - Whether the marker is to be on.
  * @returns {void}
  */
 export function setCombine (on: boolean): void {
   const build = wordBuildSignal.peek();
-  if (build) {
-    wordBuildSignal.value = { ...build, combine: on };
+  if (!build) {
+    return;
   }
+  const message = changeEncodingContents.peek();
+  editMessage(on ? addAutoCommas(message) : removeAutoCommas(message), () => {
+    wordBuildSignal.value = { ...build, combine: on };
+  });
 }
 
 /**
@@ -141,7 +148,7 @@ export function splitAtCaret (): void {
   }
   const characters = splitPart(part, languageSignal.peek());
   const parts = wordBuildSignal.peek()?.combine
-    ? characters.flatMap((character, i) => (i === 0 ? [character] : [COMMA_PART, character]))
+    ? characters.flatMap((character, i) => (i === 0 ? [character] : [AUTO_COMMA_PART, character]))
     : characters;
   editMessage({
     payloads: [...payloads.slice(0, caretPosition), ...parts, ...payloads.slice(caretPosition + 1)],

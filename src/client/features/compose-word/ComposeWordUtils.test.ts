@@ -10,8 +10,10 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 import type { SymbolCompositionType, SymbolEncodingType } from "../../index.d";
-import { COMMA_ID, SPACE_PART } from "../../utils/SymbolEncodingUtils";
-import { defaultName, findExistingWord, splitPart, wordComposition } from "./ComposeWordUtils";
+import { AUTO_COMMA_PART, COMMA_ID, SPACE_PART } from "../../utils/SymbolEncodingUtils";
+import {
+  addAutoCommas, defaultName, findExistingWord, removeAutoCommas, splitPart, wordComposition
+} from "./ComposeWordUtils";
 
 const part = (label: string, composition: SymbolCompositionType): SymbolEncodingType =>
   ({ label, composition, modifierInfo: [] });
@@ -105,5 +107,46 @@ describe("findExistingWord()", (): void => {
 
   test("finds nothing for a new word", (): void => {
     expect(findExistingWord([710, "/", 949, "/", 412])).toBeUndefined();
+  });
+});
+
+describe("addAutoCommas()", (): void => {
+
+  test("puts an auto comma between every two neighbouring words, and keeps the caret on its part", (): void => {
+    expect(addAutoCommas({ payloads: [cat, colour, night], caretPosition: 1 })).toEqual({
+      payloads: [cat, AUTO_COMMA_PART, colour, AUTO_COMMA_PART, night], caretPosition: 2
+    });
+  });
+
+  test("adds nothing next to a comma or a space", (): void => {
+    expect(addAutoCommas({ payloads: [cat, comma, colour, SPACE_PART, night], caretPosition: 4 })).toEqual({
+      payloads: [cat, comma, colour, SPACE_PART, night], caretPosition: 4
+    });
+  });
+
+  test("leaves a caret before the first part there", (): void => {
+    expect(addAutoCommas({ payloads: [cat, colour], caretPosition: -1 })).toEqual({
+      payloads: [cat, AUTO_COMMA_PART, colour], caretPosition: -1
+    });
+  });
+});
+
+describe("removeAutoCommas()", (): void => {
+
+  test("removes the auto commas and keeps the user's commas and spaces", (): void => {
+    expect(removeAutoCommas({
+      payloads: [cat, AUTO_COMMA_PART, colour, comma, night, SPACE_PART, woman], caretPosition: 6
+    })).toEqual({ payloads: [cat, colour, comma, night, SPACE_PART, woman], caretPosition: 5 });
+  });
+
+  test("moves a caret on an auto comma to the part before it", (): void => {
+    expect(removeAutoCommas({ payloads: [cat, AUTO_COMMA_PART, colour], caretPosition: 1 })).toEqual({
+      payloads: [cat, colour], caretPosition: 0
+    });
+  });
+
+  test("undoes addAutoCommas()", (): void => {
+    const message = { payloads: [cat, colour, comma, night], caretPosition: 3 };
+    expect(removeAutoCommas(addAutoCommas(message))).toEqual(message);
   });
 });

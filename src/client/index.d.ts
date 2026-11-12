@@ -159,6 +159,8 @@ export type SymbolEncodingType = PictureOrSymbolInfoType & {
   pendingLabel?: string,
   // A space between two words inside a new word's combine markers. It has no symbol.
   isSpace?: boolean,
+  // A comma added automatically inside a new word's combine markers. Turning the marker off removes it.
+  isAutoComma?: boolean,
   // A word built with Compose new word. Only such a word can be saved to a palette.
   isComposedWord?: boolean
 }

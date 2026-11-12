@@ -12,7 +12,7 @@
 
 import {
   applyModifiersToLabel, insertWordAtCaret, removeModifierFromLabel, normalizeComposition, replaceAtCaret,
-  caretComposition, deleteAtCaret, COMMA_PART, SPACE_PART
+  caretComposition, deleteAtCaret, COMMA_PART, AUTO_COMMA_PART, SPACE_PART
 } from "./SymbolEncodingUtils";
 
 // A minimal symbol payload; only the label distinguishes one from another in these tests.
@@ -152,7 +152,7 @@ describe("insertWordAtCaret() with a comma between words", (): void => {
 
   test("A word gets a comma between it and the word before it", (): void => {
     expect(insertWordAtCaret(symbol("colour"), [symbol("cat")], 0, true)).toEqual({
-      payloads: [symbol("cat"), COMMA_PART, symbol("colour")],
+      payloads: [symbol("cat"), AUTO_COMMA_PART, symbol("colour")],
       caretPosition: 2
     });
   });

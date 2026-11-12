@@ -27,6 +27,8 @@ export const SPACE_PART: SymbolEncodingType = { label: "", isSpace: true };
 
 // A comma part. Goes between the words of a new word inside the combine markers.
 export const COMMA_PART: SymbolEncodingType = { label: ",", composition: COMMA_ID, modifierInfo: [] };
+// A comma added automatically. Turning the combine marker off removes it; a comma the user added stays.
+export const AUTO_COMMA_PART: SymbolEncodingType = { ...COMMA_PART, isAutoComma: true };
 
 /**
  * Whether a part is a word rather than a space or a comma.
@@ -53,7 +55,7 @@ export function insertWordAtCaret (
   wordToAdd: SymbolEncodingType, symbolSet: SymbolEncodingType[], caretPos: number, withComma = false
 ): ContentSignalDataType {
   const added = withComma && isWordPart(wordToAdd) && isWordPart(symbolSet[caretPos])
-    ? [COMMA_PART, wordToAdd]
+    ? [AUTO_COMMA_PART, wordToAdd]
     : [wordToAdd];
   const insertAt = caretPos + 1;
   return {

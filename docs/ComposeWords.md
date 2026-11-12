@@ -17,23 +17,24 @@ finished word instead: it goes on the word's classifier. Speak and Make Sentence
 
 | Control | What it does |
 | ------- | ------------ |
-| Split | Breaks the part at the caret into its characters. Teacher becomes person, giving and knowledge. |
-| Combine marker | Puts a combine marker at each end of the word. Select it again to take both markers away. The spaces stay. |
+| Split | Breaks the part at the caret into its characters. Teacher becomes person, giving and knowledge. With the combine marker on, a comma goes between them. |
+| Combine marker | Puts a combine marker at each end of the word, and a comma between the words already there. Select it again to take both markers and those commas away. |
 | Space | Adds a space after the caret. |
 | Comma | Adds a comma after the caret. |
 | Cancel | Drops the word and goes back to the message. |
 | Done | Finishes the word, then asks for its name. |
 
-## Spaces
+## Commas and spaces
 
-1. Once the combine marker is on, each word added gets a space between it and the word before it.
-2. Words added before the marker was turned on stay joined.
-3. The caret stops on a space. Delete removes it, and Space adds one.
-4. Split and add modifier never add a space.
-5. Deleting a word also deletes the space before it.
-6. Space works without the marker too, and turning the marker off keeps every space.
+1. Turning the combine marker on puts a comma between every two neighbouring words already there.
+2. Once the marker is on, each word added gets a comma between it and the word before it, and Split puts a comma
+   between the characters it makes.
+3. Turning the marker off removes those commas. Commas and spaces added with Comma and Space stay.
+4. The caret stops on a comma or a space. Delete removes it. Comma and Space add one.
+5. Deleting a word also deletes the comma or space before it.
+6. Comma and Space work without the marker too.
 
-In the finished word, a space is a full space. The characters inside a word stay a quarter space apart.
+In the finished word, a comma sits a quarter space from its neighbours, like the characters. A space is a full space.
 
 ## Name the word
 
