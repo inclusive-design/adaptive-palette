@@ -2,21 +2,34 @@
 
 ## [0.4.0](https://github.com/inclusive-design/adaptive-palette/compare/v0.3.0...v0.4.0) (2026-11-12)
 
-
 ### Features
 
-* Address issues discovered when importing Grid 3 gridsets (resolves [#288](https://github.com/inclusive-design/adaptive-palette/issues/288)) ([#289](https://github.com/inclusive-design/adaptive-palette/issues/289)) ([b13372c](https://github.com/inclusive-design/adaptive-palette/commit/b13372c16af6032d7a0159bda5b005479b3dc760))
-* automatically add commas in btw composing words when composing a new word using the combine marker (resolves [#313](https://github.com/inclusive-design/adaptive-palette/issues/313)) ([#314](https://github.com/inclusive-design/adaptive-palette/issues/314)) ([a0ac86e](https://github.com/inclusive-design/adaptive-palette/commit/a0ac86e1e2efcf5b021628e8aab540437fcd8c03))
-* clean personal data from Grid 3 exported file & support the import of word list items (resolves [#297](https://github.com/inclusive-design/adaptive-palette/issues/297) & [#306](https://github.com/inclusive-design/adaptive-palette/issues/306)) ([#309](https://github.com/inclusive-design/adaptive-palette/issues/309)) ([1c5bc89](https://github.com/inclusive-design/adaptive-palette/commit/1c5bc89472f3fc00d83e19138f3d3e255b28095a))
-* Keep the caret in view in the input area (resolves [#292](https://github.com/inclusive-design/adaptive-palette/issues/292)) ([#298](https://github.com/inclusive-design/adaptive-palette/issues/298)) ([67957c6](https://github.com/inclusive-design/adaptive-palette/commit/67957c66bb975f7879737934e1edd59d828dadab))
-* Relabel a symbol with the model after its modifiers or indicator change (resolves [#301](https://github.com/inclusive-design/adaptive-palette/issues/301)) ([#302](https://github.com/inclusive-design/adaptive-palette/issues/302)) ([572204a](https://github.com/inclusive-design/adaptive-palette/commit/572204ab772a4b9dab18e69044f90ccebc68a820))
-* support composing new Bliss words (resolves [#293](https://github.com/inclusive-design/adaptive-palette/issues/293)) ([#294](https://github.com/inclusive-design/adaptive-palette/issues/294)) ([dce48fa](https://github.com/inclusive-design/adaptive-palette/commit/dce48fa1feba37839ce112576fc4df2f616f7e03))
+#### Bliss Words
 
+* Users can now compose new Bliss words and name them, with names suggested by the model ([#294](https://github.com/inclusive-design/adaptive-palette/issues/294)) ([dce48fa](https://github.com/inclusive-design/adaptive-palette/commit/dce48fa1feba37839ce112576fc4df2f616f7e03)).
+* Turning the combine marker on or off now adds or removes commas between words ([#314](https://github.com/inclusive-design/adaptive-palette/issues/314)) ([a0ac86e](https://github.com/inclusive-design/adaptive-palette/commit/a0ac86e1e2efcf5b021628e8aab540437fcd8c03)).
+
+#### Labels
+
+* A symbol is now relabeled by the model after its modifiers or indicator change ([#302](https://github.com/inclusive-design/adaptive-palette/issues/302)) ([572204a](https://github.com/inclusive-design/adaptive-palette/commit/572204ab772a4b9dab18e69044f90ccebc68a820)).
+
+#### Grid 3 Import
+
+* Grid 3 gridsets can now be imported, and the desktop app can be packaged with a user's own palette set ([#289](https://github.com/inclusive-design/adaptive-palette/issues/289)) ([b13372c](https://github.com/inclusive-design/adaptive-palette/commit/b13372c16af6032d7a0159bda5b005479b3dc760)).
+* Personal data can now be cleaned from Grid 3 exports, and word list items can be imported ([#309](https://github.com/inclusive-design/adaptive-palette/issues/309)) ([1c5bc89](https://github.com/inclusive-design/adaptive-palette/commit/1c5bc89472f3fc00d83e19138f3d3e255b28095a)).
+
+#### Palettes & Layout
+
+* The caret now stays in view in the input area ([#298](https://github.com/inclusive-design/adaptive-palette/issues/298)) ([67957c6](https://github.com/inclusive-design/adaptive-palette/commit/67957c66bb975f7879737934e1edd59d828dadab)).
+* The most-used indicators and modifiers now come first in their palettes ([#300](https://github.com/inclusive-design/adaptive-palette/issues/300)) ([b36dd07](https://github.com/inclusive-design/adaptive-palette/commit/b36dd07772d824337e4ccd5f656817f81fad850f)).
 
 ### Bug Fixes
 
-* consistent command buttons, symbols and labels grow with cell sizes (resolves [#281](https://github.com/inclusive-design/adaptive-palette/issues/281)) ([#282](https://github.com/inclusive-design/adaptive-palette/issues/282)) ([f3c780e](https://github.com/inclusive-design/adaptive-palette/commit/f3c780eb4f248e62ae238af372d4856b81af15ee))
+* Command buttons now look consistent, and symbols and labels grow with cell sizes ([#282](https://github.com/inclusive-design/adaptive-palette/issues/282)) ([f3c780e](https://github.com/inclusive-design/adaptive-palette/commit/f3c780eb4f248e62ae238af372d4856b81af15ee)).
 
+### Infrastructure
+
+* Code has been cleaned up: stale comments and unused code removed, and files in `cells/` that are not cells moved to `components/` ([#311](https://github.com/inclusive-design/adaptive-palette/issues/311)) ([487f2c3](https://github.com/inclusive-design/adaptive-palette/commit/487f2c32f7886a0ddeee07c836d9fcff53665d82)) ([#312](https://github.com/inclusive-design/adaptive-palette/issues/312)) ([cd5efa3](https://github.com/inclusive-design/adaptive-palette/commit/cd5efa36484162f6bca57b7ad1a5add869befb06)).
 ## [0.3.0](https://github.com/inclusive-design/adaptive-palette/compare/v0.2.1...v0.3.0) (2026-10-22)
 
 ### Features
