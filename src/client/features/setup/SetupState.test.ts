@@ -89,8 +89,12 @@ describe("SetupState", (): void => {
   });
 
   describe("setupStatus", () => {
-    test("an empty model list means Ollama is not answering", () => {
-      expect(setupStatus(configWith({ indicator: "gemma4:12b" }), [])).toBe("noOllama");
+    test("no model list means Ollama is not answering", () => {
+      expect(setupStatus(configWith({ indicator: "gemma4:12b" }), null)).toBe("noOllama");
+    });
+
+    test("an empty model list means Ollama answers but has nothing downloaded", () => {
+      expect(setupStatus(configWith({ indicator: "gemma4:12b" }), [])).toBe("missingModels");
     });
 
     test("a model the config asks for and Ollama has not got", () => {
@@ -110,7 +114,7 @@ describe("SetupState", (): void => {
     // Nothing would use a model, so the tester is not asked to download one -- the state a
     // `config.json` that fails to parse falls back to.
     test("a config that asks for no model is ready even with Ollama down", () => {
-      expect(setupStatus(configWith({}), [])).toBe("ready");
+      expect(setupStatus(configWith({}), null)).toBe("ready");
     });
   });
 });

@@ -24,6 +24,7 @@ import { findLatestTranslation, messageText } from "../../core/MessageLog";
 import { clearAttributes, selectedAttributesSignal } from "../message-attributes/MessageAttributesState";
 import type { ContentSignalDataType, SentenceCompletionsStateType } from "../../index.d";
 import { languageSignal, t } from "../../i18n/I18n";
+import { isModelRunFailure } from "../../core/OllamaApi";
 
 /**
  * Nothing to show. Shared rather than rewritten at each use so the idle shape stays in one
@@ -262,11 +263,12 @@ export async function makeSentences (telegraphicMessage: string): Promise<void> 
       return;
     }
     console.error(`Could not make sentences: ${String(error)}`);
+    const errorKey = isModelRunFailure(error) ? "sentenceModelFailed" as const : undefined;
     const pending = sentenceCompletionsSignal.peek();
     if (pending.status === "working" && pending.telegraphicMessage === telegraphicMessage) {
       // Keeps a recalled sentence and the model query: the user can still speak, and what they
       // type is still recorded against the message.
-      sentenceCompletionsSignal.value = { ...pending, status: "error" };
+      sentenceCompletionsSignal.value = { ...pending, status: "error", errorKey };
     } else if (pending.status === "idle") {
       // Picking the model failed, before the state ever went `working`. Without this the user
       // is left with no error line at all.

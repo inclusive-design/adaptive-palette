@@ -80,7 +80,7 @@ The first time, a box may appear:
 - **"The AI features need Ollama, which is not running"** — install Ollama as above, start
   it, then choose **Try again**. Or choose **Continue without AI features** to use the
   palette now.
-- **"The AI features need [model name], which Ollama has not got yet"** — choose
+- **"The AI features need gemma4:12b, which Ollama has not got yet"** — choose
   **Download**. It is several gigabytes and takes a while; the bar shows how far it has
   got. You can cancel and do it another time.
 
@@ -88,7 +88,49 @@ Either way, **Continue without AI features** gets you a working palette straight
 
 Opening the app again while it is already running just brings the browser back to it.
 
-## 4. Quitting
+## 4. Troubleshooting
+
+If the AI features don't work, check these in order. The commands go in Command Prompt on
+Windows, or Terminal on macOS.
+
+1. **Is Ollama running?** Open `http://127.0.0.1:11434` in your browser. It should say
+   "Ollama is running". If it doesn't, start Ollama: on Windows from the Start menu, on
+   macOS from Applications.
+2. **Does Ollama have the model?** Run:
+
+   ```text
+   ollama list
+   ```
+
+   The model the first-run box named must be in the list. If it isn't, download it, then
+   **reload the Adaptive Palette page**. The app only checks for models when it starts.
+
+   ```text
+   ollama pull gemma4:12b
+   ```
+
+3. **Does the model run?** Run:
+
+   ```text
+   ollama run gemma4:12b "hello"
+   ```
+
+   If it fails, open Ollama's log and read the last lines:
+   - Windows: `%LOCALAPPDATA%\Ollama\server.log`
+   - macOS: `~/.ollama/logs/server.log`
+
+   | The log says | Fix |
+   | --- | --- |
+   | Unknown or unsupported model architecture | Update Ollama from [ollama.com/download](https://ollama.com/download) |
+   | Out of memory | Close other programs and try again |
+   | Error loading model, or a checksum error | Run `ollama rm gemma4:12b`, then `ollama pull gemma4:12b` |
+
+4. **Still stuck?** In the browser, press F12 and open the **Console** tab. Lines starting
+   with `Could not make sentences:` or `Failed to fetch Ollama models:` say what went wrong.
+   A "CORS" or "Failed to fetch" error usually means Ollama isn't running or can't be
+   reached: go back to step 1.
+
+## 5. Quitting
 
 Close the browser tab and the app keeps running quietly in the background. Opening the app
 again brings the browser straight back to it.
@@ -103,7 +145,7 @@ restart or shut down your computer.
 deletes every message, setting and About Me note you have saved, and there is no undo. Use it only when you mean to
 erase your data, such as when you are uninstalling.
 
-## 5. Uninstalling
+## 6. Uninstalling
 
 Do these in order. **Erase your data first:** once the app is deleted there is no way left
 to reach it from inside the app.
@@ -121,7 +163,7 @@ Deleting it is the whole of it.
 If you deleted the app before erasing your data, you can still clear it from the browser:
 open the browser's site settings for `localhost:3210` and choose **Clear site data**.
 
-## 6. Updates
+## 7. Updates
 
 There is no automatic update. Check the
 [releases page](https://github.com/inclusive-design/adaptive-palette/releases) for a newer

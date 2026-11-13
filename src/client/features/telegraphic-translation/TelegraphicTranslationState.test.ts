@@ -230,6 +230,32 @@ describe("telegraphicTranslationState", (): void => {
     consoleErrorSpy.mockRestore();
   });
 
+  test("a model Ollama cannot run is named in the error state", async (): Promise<void> => {
+    editMessage(INPUT_CONTENTS);
+    mockedQueryChat.mockRejectedValue(
+      Object.assign(new Error("model failed"), { name: "ResponseError", status_code: 500 })
+    );
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    await requestForCurrentMessage();
+
+    expect(sentenceCompletionsSignal.value.status).toBe("error");
+    expect(sentenceCompletionsSignal.value.errorKey).toBe("sentenceModelFailed");
+    consoleErrorSpy.mockRestore();
+  });
+
+  test("a connection failure keeps the general error", async (): Promise<void> => {
+    editMessage(INPUT_CONTENTS);
+    mockedQueryChat.mockRejectedValue(new TypeError("Failed to fetch"));
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    await requestForCurrentMessage();
+
+    expect(sentenceCompletionsSignal.value.status).toBe("error");
+    expect(sentenceCompletionsSignal.value.errorKey).toBeUndefined();
+    consoleErrorSpy.mockRestore();
+  });
+
   test("editing the message clears the error state without asking", async (): Promise<void> => {
     editMessage(INPUT_CONTENTS);
     mockedQueryChat.mockRejectedValue(new Error("connection refused"));
