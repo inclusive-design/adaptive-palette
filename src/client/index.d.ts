@@ -10,7 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import type { Language, LabelType } from "./i18n/I18n";
+import type { Language, LabelType, StringKey } from "./i18n/I18n";
 
 // Symbol composition can be either a symbol ID defined in bliss_symbol_explanations.json,
 // for example 1433, or an array of symbol IDs and/or strings that represent the composition
@@ -326,7 +326,9 @@ export type SentenceCompletionsStateType = {
   // The language the sentences were asked for in. Absent means the UI language.
   language?: Language,
   // Each sentence's words, as the model gave them, for a language `compromise` cannot parse.
-  words?: Map<string, SentenceSpanType[]>
+  words?: Map<string, SentenceSpanType[]>,
+  // The message to show for the `error` status. Absent means `sentenceCannotComplete`.
+  errorKey?: StringKey
 };
 
 /**

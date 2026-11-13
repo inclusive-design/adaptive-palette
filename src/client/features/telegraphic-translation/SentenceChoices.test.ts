@@ -133,6 +133,15 @@ describe("SentenceChoices", (): void => {
     expect(liveRegion?.textContent).toBe(en.sentenceCannotComplete);
   });
 
+  test("a model Ollama cannot run shows its own message", async (): Promise<void> => {
+    sentenceCompletionsSignal.value = {
+      ...IDLE_SENTENCE_STATE, status: "error", errorKey: "sentenceModelFailed"
+    };
+    render(html`<${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} />`);
+
+    expect(await screen.findByText(en.sentenceModelFailed)).toBeVisible();
+  });
+
   test("draws a Swedish sentence's Bliss row from its words", async (): Promise<void> => {
     sentenceCompletionsSignal.value = {
       status: "ready", sentences: ["Jag åt."], recalledSentence: null, model: "phony-model:12b",

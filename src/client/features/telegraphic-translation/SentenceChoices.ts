@@ -300,7 +300,7 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
 
   // An error is announced on any palette, so a request that fails while the user is away is
   // still heard. Progress is announced only where the sentences are.
-  const statusText = state.status === "error" ? t("sentenceCannotComplete")
+  const statusText = state.status === "error" ? t(state.errorKey ?? "sentenceCannotComplete")
     : !isOpen ? ""
       : state.status === "working"
         ? (state.sentences.length > 0 ? t("sentenceMakingMore") : t("sentenceWorking"))

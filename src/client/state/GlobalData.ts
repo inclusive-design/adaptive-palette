@@ -44,6 +44,9 @@ export const adaptivePaletteGlobals = {
   paletteStore: new PaletteStore(),
   navigationStack: new NavigationStack(),
   models: [] as string[],
+  // Whether Ollama answered the last model list request. `models` is empty both when it did
+  // not and when it has no models; the first-run modal needs to tell those apart.
+  ollamaReachable: false,
   config: makeDefaultConfig(),
   // `config.json` as it was read, before the user's saved settings were applied. The settings
   // dialog compares against it to work out which of its values are overrides.

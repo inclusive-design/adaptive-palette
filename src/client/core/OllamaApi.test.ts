@@ -11,7 +11,7 @@
  */
 
 import { vi } from "vitest";
-import { getModelNames, isLocalHost, pullModel, queryChat } from "./OllamaApi";
+import { getModelNames, isLocalHost, isModelRunFailure, pullModel, queryChat } from "./OllamaApi";
 import ollama from "ollama/browser";
 
 // Mock the entire ollama/browser module.
@@ -83,7 +83,7 @@ describe("OllamaApi", (): void => {
       expect(modelNames).toEqual(["llama3", "mistral"]);
     });
 
-    test("returns an empty array when the request fails", async (): Promise<void> => {
+    test("returns null when the request fails", async (): Promise<void> => {
       // Intentionally mock an error response to test error handling. Also spy on
       // console.error to suppress expected error logs during testing.
       const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
@@ -92,8 +92,32 @@ describe("OllamaApi", (): void => {
 
       const modelNames = await getModelNames();
       expect(mockedOllama.list).toHaveBeenCalledTimes(1);
-      expect(modelNames).toEqual([]);
+      expect(modelNames).toBeNull();
       consoleErrorSpy.mockRestore();
+    });
+
+    test("returns an empty array when Ollama has no models", async (): Promise<void> => {
+      mockedOllama.list.mockResolvedValue({ models: [] });
+
+      expect(await getModelNames()).toEqual([]);
+    });
+  });
+
+  describe("isModelRunFailure", () => {
+    // What `ollama-js` throws for an error answer. Its `ResponseError` class is not exported.
+    const responseError = (status: number): Error =>
+      Object.assign(new Error("model failed"), { name: "ResponseError", status_code: status });
+
+    test("is true when Ollama answers with a server error", (): void => {
+      expect(isModelRunFailure(responseError(500))).toBe(true);
+    });
+
+    test("is false for a client error", (): void => {
+      expect(isModelRunFailure(responseError(404))).toBe(false);
+    });
+
+    test("is false when Ollama cannot be reached", (): void => {
+      expect(isModelRunFailure(new TypeError("Failed to fetch"))).toBe(false);
     });
   });
 
