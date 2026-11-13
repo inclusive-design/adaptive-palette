@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.4.1](https://github.com/inclusive-design/adaptive-palette/compare/v0.4.0...v0.4.1) (2026-11-13)
+
+
+### Features
+
+* Fix the first-run problems found on a Windows install (resolves [#316](https://github.com/inclusive-design/adaptive-palette/issues/316)) ([#317](https://github.com/inclusive-design/adaptive-palette/issues/317)) ([01cdbfc](https://github.com/inclusive-design/adaptive-palette/commit/01cdbfc3511d83e1b0bba542e3af12abb2775770))
+* Import only a Grid 3 user's vocabulary into the standard layout (resolves [#315](https://github.com/inclusive-design/adaptive-palette/issues/315)) ([#319](https://github.com/inclusive-design/adaptive-palette/issues/319)) ([7f96dfa](https://github.com/inclusive-design/adaptive-palette/commit/7f96dfa825845e6faf9254193e2de8b0019988ac))
+
+
+### Miscellaneous Chores
+
+* release 0.4.1 ([4bd5d4f](https://github.com/inclusive-design/adaptive-palette/commit/4bd5d4f173706fadef65f74cee8d7ce9da9cb438))
+
 ## [0.4.0](https://github.com/inclusive-design/adaptive-palette/compare/v0.3.0...v0.4.0) (2026-11-12)
 
 ### Features
