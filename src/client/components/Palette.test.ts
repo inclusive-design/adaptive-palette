@@ -376,9 +376,22 @@ describe("Palette", (): void => {
       const { container } = render(html`<${Palette} json=${screenPalette(2)} isScreen=${true} />`);
       await screen.findByText("Cell 1");
 
-      expect(paletteNamed(container, "Screen").style.gridTemplateRows).toBe("auto minmax(64px, 1fr) minmax(64px, 1fr)");
+      expect(paletteNamed(container, "Screen").style.gridTemplateRows).toBe("auto minmax(0px, 1fr) minmax(0px, 1fr)");
       // A palette drawn inside it keeps rows sized by their content.
       expect(paletteNamed(container, "Header").style.gridTemplateRows).toBe("");
+    });
+
+    test("12 rows fit a short screen without scrolling", async (): Promise<void> => {
+      const { container } = render(html`
+        <div style="height: 300px;">
+          <${Palette} json=${screenPalette(12)} isScreen=${true} />
+        </div>
+      `);
+      await screen.findByText("Cell 11");
+
+      const palette = paletteNamed(container, "Screen");
+      expect(palette.scrollHeight).toBeLessThanOrEqual(palette.clientHeight);
+      expect(palette.getBoundingClientRect().height).toBeLessThanOrEqual(300);
     });
 
     test("draws the header's sentence cell over every row below the header", async (): Promise<void> => {
@@ -413,7 +426,7 @@ describe("Palette", (): void => {
       const { container } = render(html`<${Palette} json=${palette} isScreen=${true} />`);
       await screen.findByText("Cell 1");
 
-      expect(paletteNamed(container, "Screen").style.gridTemplateRows).toBe("auto auto minmax(64px, 1fr) minmax(64px, 1fr)");
+      expect(paletteNamed(container, "Screen").style.gridTemplateRows).toBe("auto auto minmax(0px, 1fr) minmax(0px, 1fr)");
       const layer = container.querySelector(".sentenceChoices") as HTMLElement;
       expect(layer.style.gridRowStart).toBe("3");
       expect(layer.style.gridRowEnd).toBe("span 2");

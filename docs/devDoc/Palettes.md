@@ -133,8 +133,8 @@ The palette on screen fits the window, whatever its JSON says:
 1. A row holding only included palettes, such as the header, is as tall as its content. The bands
    in the header have their 1024×650 heights up to 650px tall, and grow with the screen's height
    from there.
-2. Every other row shares what is left, and never goes below 64px. At 1024×650, 4 rows are 89px
-   each and 5 rows 70px; 6 rows scroll.
+2. Every other row shares what is left, with no minimum, so a palette of many rows gets small
+   cells and never scrolls. At 1024×650, 4 rows are 89px each and 5 rows 70px.
 3. Columns shrink to fit the width, so the page never scrolls sideways. The body grid is
    `grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr)`. Below 1024×650
    the page scrolls vertically, never sideways.
