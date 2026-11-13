@@ -127,8 +127,8 @@ Windows, or Terminal on macOS.
 
 4. **Still stuck?** In the browser, press F12 and open the **Console** tab. Lines starting
    with `Could not make sentences:` or `Failed to fetch Ollama models:` say what went wrong.
-   A "CORS" error means the `OLLAMA_ORIGINS` setting is blocking the app: remove it, or add
-   `http://localhost:*`, then restart Ollama.
+   A "CORS" or "Failed to fetch" error usually means Ollama isn't running or can't be
+   reached: go back to step 1.
 
 ## 5. Quitting
 
