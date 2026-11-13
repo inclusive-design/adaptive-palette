@@ -34,7 +34,7 @@ import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { SET_NAME } from "./import_grid3.js";
+import { SET_NAME } from "./import_grid3_layout.js";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const outDir = path.join(root, "dist-desktop");

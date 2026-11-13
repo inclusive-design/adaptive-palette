@@ -12,6 +12,7 @@
 
 import { VNode } from "preact";
 import { html } from "htm/preact";
+import { useLayoutEffect, useRef } from "preact/hooks";
 import { getSvgElement } from "../utils/SvgUtils";
 import { AiBadge } from "./AiBadge";
 import { SymbolCompositionType } from "../index.d";
@@ -70,6 +71,26 @@ function hidePicture (event: Event): void {
   console.error(`Picture not loaded: ${img.src}`);
 }
 
+// Each step multiplies the label's font size by this, until the label fits.
+const LABEL_SCALE_STEP = 0.9;
+
+/**
+ * Shrink a label until its text fits its box, or its font size reaches the 0.5rem floor
+ * `Palette.scss` sets. Starts again from full size, so a label grows back when its cell grows.
+ * @param {HTMLElement} labelElement - The label.
+ */
+function fitLabel (labelElement: HTMLElement): void {
+  const minFontSize = 0.5 * parseFloat(getComputedStyle(document.documentElement).fontSize);
+  const overflows = (): boolean => labelElement.scrollHeight > labelElement.clientHeight ||
+    labelElement.scrollWidth > labelElement.clientWidth;
+  let scale = 1;
+  labelElement.style.setProperty("--labelScale", "1");
+  while (overflows() && parseFloat(getComputedStyle(labelElement).fontSize) > minFontSize) {
+    scale *= LABEL_SCALE_STEP;
+    labelElement.style.setProperty("--labelScale", String(scale));
+  }
+}
+
 export function BlissSymbol (props: BlissSymbolPropsType): VNode {
   const { composition, picture, label, color, isPresentation, labelledBy, isMarked, isPending } = props;
   // A picture is drawn in place of the symbol, so the symbol is not built.
@@ -103,8 +124,22 @@ export function BlissSymbol (props: BlissSymbolPropsType): VNode {
     <img key=${picture} class="cellPicture" src=${picture} alt="" aria-hidden="true" onError=${hidePicture} />
   `;
 
+  // In a screen palette cell, a long label shrinks to fit, and again whenever the cell resizes.
+  const labelRef = useRef<HTMLDivElement>(null);
+  useLayoutEffect((): (() => void) | undefined => {
+    const labelElement = labelRef.current;
+    const cell = labelElement?.parentElement;
+    if (!labelElement || !cell?.matches(".screenPalette > button")) {
+      return undefined;
+    }
+    fitLabel(labelElement);
+    const observer = new ResizeObserver((): void => fitLabel(labelElement));
+    observer.observe(cell);
+    return (): void => observer.disconnect();
+  }, [label]);
+
   return html`
     ${pictureElement}${html(templateStringArray)}
-    <div id="${labelledBy}" class=${labelClass}>${badge}${label}${waiting}</div>
+    <div id="${labelledBy}" ref=${labelRef} class=${labelClass}>${badge}${label}${waiting}</div>
   `;
 }

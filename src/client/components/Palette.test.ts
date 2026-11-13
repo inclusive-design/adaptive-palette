@@ -376,9 +376,22 @@ describe("Palette", (): void => {
       const { container } = render(html`<${Palette} json=${screenPalette(2)} isScreen=${true} />`);
       await screen.findByText("Cell 1");
 
-      expect(paletteNamed(container, "Screen").style.gridTemplateRows).toBe("auto minmax(64px, 1fr) minmax(64px, 1fr)");
+      expect(paletteNamed(container, "Screen").style.gridTemplateRows).toBe("auto minmax(0px, 1fr) minmax(0px, 1fr)");
       // A palette drawn inside it keeps rows sized by their content.
       expect(paletteNamed(container, "Header").style.gridTemplateRows).toBe("");
+    });
+
+    test("12 rows fit a short screen without scrolling", async (): Promise<void> => {
+      const { container } = render(html`
+        <div style="height: 300px;">
+          <${Palette} json=${screenPalette(12)} isScreen=${true} />
+        </div>
+      `);
+      await screen.findByText("Cell 11");
+
+      const palette = paletteNamed(container, "Screen");
+      expect(palette.scrollHeight).toBeLessThanOrEqual(palette.clientHeight);
+      expect(palette.getBoundingClientRect().height).toBeLessThanOrEqual(300);
     });
 
     test("draws the header's sentence cell over every row below the header", async (): Promise<void> => {
@@ -413,7 +426,7 @@ describe("Palette", (): void => {
       const { container } = render(html`<${Palette} json=${palette} isScreen=${true} />`);
       await screen.findByText("Cell 1");
 
-      expect(paletteNamed(container, "Screen").style.gridTemplateRows).toBe("auto auto minmax(64px, 1fr) minmax(64px, 1fr)");
+      expect(paletteNamed(container, "Screen").style.gridTemplateRows).toBe("auto auto minmax(0px, 1fr) minmax(0px, 1fr)");
       const layer = container.querySelector(".sentenceChoices") as HTMLElement;
       expect(layer.style.gridRowStart).toBe("3");
       expect(layer.style.gridRowEnd).toBe("span 2");
@@ -425,6 +438,82 @@ describe("Palette", (): void => {
 
       const layer = container.querySelector(".sentenceChoices") as HTMLElement;
       expect(layer.parentElement).toBe(paletteNamed(container, "Header"));
+    });
+
+    describe("a long label", (): void => {
+
+      const LONG_LABEL = "Var snäll att ändra knappen på kontakten så jag kan tända och släcka själv, " +
+        "och gör det innan kvällen kommer";
+      // A small picture, so the test loads no file.
+      const PICTURE = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'/>";
+
+      // The header across 3 columns; below it, a long label with a picture next to a short label,
+      // then a row of short labels.
+      const longLabelPalette = (): JsonPaletteType => ({
+        name: "Screen",
+        cells: {
+          "header": { type: "PaletteInclude", options: { palette: "Header", rowStart: 1, rowSpan: 1, columnStart: 1, columnSpan: 3 } },
+          "long": { type: "ActionCodeCell", options: { label: LONG_LABEL, picture: PICTURE, rowStart: 2, rowSpan: 1, columnStart: 1, columnSpan: 1 } },
+          "short": { type: "ActionCodeCell", options: { label: "Hej", composition: 823, rowStart: 2, rowSpan: 1, columnStart: 2, columnSpan: 1 } },
+          "below": { type: "ActionCodeCell", options: { label: "Nej", composition: 823, rowStart: 3, rowSpan: 1, columnStart: 1, columnSpan: 1 } }
+        }
+      });
+
+      const labelOf = (container: Element, id: string): HTMLElement =>
+        container.querySelector(`[id='${id}'] > div`) as HTMLElement;
+      const fontSizeOf = (element: Element): number => parseFloat(getComputedStyle(element).fontSize);
+
+      test("shrinks until the whole label fits, and the picture keeps 20% of the cell", async (): Promise<void> => {
+        const { container } = render(html`
+          <div style="height: 600px; width: 600px;">
+            <${Palette} json=${longLabelPalette()} isScreen=${true} />
+          </div>
+        `);
+        await screen.findByText("Hej");
+
+        const longLabel = labelOf(container, "long");
+        const shortLabel = labelOf(container, "short");
+        expect(longLabel.scrollHeight).toBeLessThanOrEqual(longLabel.clientHeight);
+        expect(fontSizeOf(longLabel)).toBeLessThan(fontSizeOf(shortLabel));
+        expect(shortLabel.style.getPropertyValue("--labelScale")).toBe("1");
+
+        const cell = container.querySelector("[id='long']") as HTMLElement;
+        const picture = cell.querySelector("img.cellPicture") as HTMLElement;
+        // The cell's content box: its height less 4px of padding on each side.
+        const contentHeight = cell.clientHeight - 8;
+        expect(picture.getBoundingClientRect().height).toBeGreaterThanOrEqual(0.2 * contentHeight - 1);
+      });
+
+      test("grows again when the cell grows", async (): Promise<void> => {
+        const { container } = render(html`
+          <div id="sizer" style="height: 600px; width: 600px;">
+            <${Palette} json=${longLabelPalette()} isScreen=${true} />
+          </div>
+        `);
+        await screen.findByText("Hej");
+        const longLabel = labelOf(container, "long");
+        const smallSize = fontSizeOf(longLabel);
+
+        const sizer = container.querySelector("#sizer") as HTMLElement;
+        sizer.style.height = "1200px";
+        sizer.style.width = "1200px";
+
+        await vi.waitFor((): void => {
+          expect(fontSizeOf(longLabel)).toBeGreaterThan(smallSize);
+        });
+        expect(longLabel.scrollHeight).toBeLessThanOrEqual(longLabel.clientHeight);
+      });
+
+      test("is not fitted outside the screen palette", async (): Promise<void> => {
+        const { container } = render(html`
+          <div style="height: 300px; width: 300px;">
+            <${Palette} json=${longLabelPalette()} />
+          </div>
+        `);
+        await screen.findByText("Hej");
+
+        expect(labelOf(container, "long").style.getPropertyValue("--labelScale")).toBe("");
+      });
     });
   });
 

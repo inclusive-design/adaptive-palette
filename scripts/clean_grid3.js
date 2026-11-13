@@ -20,7 +20,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { CELL, COMMAND_CELLS, REMOVED_MARKER, element, readCells, xmlText } from "./import_grid3.js";
+import { CELL, COMMAND_CELLS, REMOVED_MARKER, element, readCells, xmlText } from "./import_grid3_layout.js";
 
 // The captions of a removed grid's notice and Back cells, by language.
 const CAPTIONS = {
@@ -38,7 +38,7 @@ function escapeXml (text) {
 }
 
 /**
- * The `grid.xml` of a removed grid: a notice above a Back cell, and the marker `import_grid3.js`
+ * The `grid.xml` of a removed grid: a notice above a Back cell, and the marker `import_grid3_layout.js`
  * looks for. Laid out as Grid 3 writes a grid: CRLF line endings and no final newline.
  * @param {string} guid - The removed grid's `GridGuid`.
  * @param {Object} captions - The notice and Back captions, from `CAPTIONS`.

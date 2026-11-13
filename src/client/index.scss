@@ -10,8 +10,8 @@ html {
 
 /*
  * The page is exactly the height of the screen: the top bar, then the palette, which takes
- * the rest. Below 650px tall the bands keep their 1024×650 heights and the vocabulary rows
- * stop at 64px, so the page scrolls down. Columns shrink, so it never scrolls sideways.
+ * the rest. Below 650px tall the bands keep their 1024×650 heights, so the page scrolls down.
+ * Columns shrink, so it never scrolls sideways.
  *
  * Zooming in makes the window fewer CSS px tall. The bands and the vocabulary grow with that
  * height, so on a screen taller than 650px they stay about the same size on screen as you zoom

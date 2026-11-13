@@ -239,12 +239,18 @@ Adaptive Palette works the same way: each palette is a whole screen below the to
 the Standard Header palette for the message area, sentence choices, word predictions and command bar. An imported
 grid can place those cells itself. See [Palettes](Palettes.md#screens).
 
-## Importing a grid set
+## Importing a grid set with its layout
 
-`scripts/import_grid3.js` turns an unzipped grid set into a palette set:
+There are two imports. Each takes the same arguments.
+
+1. `scripts/import_grid3_layout.js` makes each grid a whole screen, laid out as in Grid 3, with its own message
+   area and command buttons. The standard header, with Make Sentences, word prediction and the command bar, is
+   not on these screens.
+2. `scripts/import_grid3_vocabulary.js` puts the grid's words under the standard header. See
+   [Importing the vocabulary only](#importing-the-vocabulary-only). Use this one for a user.
 
 ```sh
-node scripts/import_grid3.js "temp/My grids.gridset" temp/mapping.json myBlissChart
+node scripts/import_grid3_layout.js "temp/My grids.gridset" temp/mapping.json myGrid3Layout
 ```
 
 1. The arguments are the grid set folder, a mapping file and the set name. The name cannot be
@@ -259,7 +265,8 @@ node scripts/import_grid3.js "temp/My grids.gridset" temp/mapping.json myBlissCh
 A grid set holds personal data, so git ignores every palette set but `standardBlissChart`, and
 `npm run package:desktop` leaves out the sets git does not track. To package a bundle for the grid set's owner,
 name the set: `INCLUDE_SETS=myBlissChart npm run package:desktop`. The bundle holds that set and
-`standardBlissChart`, opens on that set, and is named after it. See [Packaging the Desktop Build](Deployment.md#how-it-is-built).
+`standardBlissChart`, opens on that set in the language of its start palette, and is named after it.
+See [Packaging the Desktop Build](Deployment.md#how-it-is-built).
 
 ### The mapping file
 
@@ -290,6 +297,7 @@ The first matching row decides. A self-closing `<Cell/>` is an empty cell.
 | Has `Action.InsertText` and `Jump.To` | `ActionCodeCell` with `branchTo`, which goes to the grid after the insert. `branchTo` is left out, and the report lists the cell, when the grid does not exist. Other commands are dropped |
 | Has `Action.InsertText` | `ActionCodeCell`. The other commands are dropped |
 | Has `Jump.To` | `ActionBranchToPaletteCell`. Skipped when the grid it names does not exist |
+| Has a `Settings.Rest*` command, such as `Settings.RestPointer` | `ContentLabel` with the cell's label and colours. It is where a user who selects by dwell leaves the pointer: it does nothing when pressed, and switch scanning skips it. Its picture, a Grid 3 icon, is not in the export |
 | `Jump.Back`, `Jump.Home` | `CommandGoBackCell`, `CommandGoToRootCell` |
 | `Action.Speak`, `Action.DeleteWord`, `Action.Clear` | `ActionSpeakCell`, `CommandDelLastEncoding`, `CommandClearEncoding` |
 | Anything else | Skipped |
@@ -326,6 +334,45 @@ A grid can fill some of its cells from a list of words: `<WordList><Items>` afte
    (`Prediction.MoreWords`).
 4. A list in a `Prediction.ChangeWordList` parameter is not imported. The button is skipped, as any command with
    no equivalent.
+
+## Importing the vocabulary only
+
+A user moving from Grid 3 knows where each word is. `scripts/import_grid3_vocabulary.js` keeps the words there
+and gives every screen the standard header in place of the grid's own message area and command buttons:
+
+```sh
+node scripts/import_grid3_vocabulary.js "temp/My grids.gridset" temp/mapping.json myBlissChart
+```
+
+Each cell is converted as in [What each cell becomes](#what-each-cell-becomes), then sorted:
+
+1. **Word:** an `ActionCodeCell`, `ActionBranchToPaletteCell` or `ContentRemoved`.
+2. **Rest:** the `ContentLabel` a rest cell becomes. A label, a cell with a caption and no commands such as a
+   heading, is converted the same way and counts as a rest cell.
+3. **Empty:** an empty slot.
+4. **Command:** everything else, including the message area and the cells that were skipped. It is left out.
+
+Each palette is:
+
+1. The Standard Header in row 1, spanning every column.
+2. The grid's word and rest cells below it, in their Grid 3 places, except that:
+   1. A row is removed when it holds no word or rest cell, unless every cell in it was empty. So a bottom bar of
+      Home, Back, Speak and Clear is removed, while a row left empty for resting stays.
+   2. Columns are removed the same way, looking only at the rows that stay. A column whose only command is in a
+      removed bottom bar is then empty, so it stays.
+   3. A command cell in a row and column that stay becomes an empty slot, so the words around it do not move.
+   4. The cells after a removed row or column move up or left. A word or rest cell keeps every row and column it
+      spans.
+
+A grid with no word or rest cell gets no palette, nor does a grid whose only words open such grids. A folder cell
+that opens one is left out, and a word cell that also opens one only inserts. The report lists each.
+
+`palette_set.json` also lists the standard palettes the header and command bar open: Standard Header, Input Area,
+Command Bar, indicators, modifiers and attributes. Each points to its file in `standardBlissChart`, which every
+desktop bundle includes, so it is not copied. The script stops if a grid has one of those names.
+
+The report lists what the layout import lists, then, for each palette, how many command
+cells, rows and columns were left out.
 
 ## Removing personal grids
 
@@ -395,7 +442,7 @@ with zipfile.ZipFile(dst,"w",zipfile.ZIP_DEFLATED) as z:
   "temp/My grids clean" "temp/My grids clean.gridset"
 ```
 
-`import_grid3.js` makes no palette for a grid with the comment. It turns each cell that jumps to one into a
+`import_grid3_layout.js` makes no palette for a grid with the comment. It turns each cell that jumps to one into a
 `ContentRemoved` cell. If Grid 3 saves the grid set again and drops the comment, the emptied grid imports as an
 ordinary palette that shows the notice and a Back cell.
 
@@ -442,9 +489,10 @@ it.
    `ActionCodeCell` can go to another palette after its insert, so the 12 cells that insert and then jump keep
    both. For every other combination the import keeps the insert, or else the jump, and drops the rest.
 5. **Commands with no equivalent.** Computer control (32 cells) works outside the browser and is likely out of
-   scope. Also missing: clipboard (5), rest (2), grid explorer (2), opening another grid set (1) and spelling
-   correction (1). Reading a cell aloud (7) is close: with "announce symbol on input" on, a branch cell speaks
-   its label when pressed, but the setting covers every cell, not one.
+   scope. Also missing: clipboard (5), grid explorer (2), opening another grid set (1) and spelling
+   correction (1). A rest cell becomes a ContentLabel, which does nothing when pressed. Reading a cell aloud (7)
+   is close: with "announce symbol on input" on, a branch cell speaks its label when pressed, but the setting
+   covers every cell, not one.
 6. **Per-cell styles.** Grid 3 sets background, border and text colour, font, font size and shape per cell.
    Adaptive Palette styles cells by type in SCSS. Only the background and text colours of word and folder cells are imported.
 7. **Switch scanning.** Adaptive Palette has two-switch row scanning only (see

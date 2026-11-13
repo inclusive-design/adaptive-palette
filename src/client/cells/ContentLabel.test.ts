@@ -43,4 +43,12 @@ describe("ContentLabel", (): void => {
     const label = document.getElementById(TEST_CELL_ID) as HTMLElement;
     expect(label.getAttribute("aria-hidden")).toBe("true");
   });
+
+  test("takes a background and a text colour", (): void => {
+    renderCell(ContentLabel, TEST_CELL_ID, { ...testCell.options, backgroundColor: "#FEFEF4FF", textColor: "#FF0000FF" });
+
+    const label = document.getElementById(TEST_CELL_ID) as HTMLElement;
+    expect(getComputedStyle(label).backgroundColor).toBe("rgb(254, 254, 244)");
+    expect(getComputedStyle(label).color).toBe("rgb(255, 0, 0)");
+  });
 });

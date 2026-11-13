@@ -363,8 +363,8 @@ export type AttributeCellType = BlissSymbolInfoType & LayoutInfoType & {
   category: string
 };
 
-// The options a `ContentLabel` carries in the palette JSON.
-export type ContentLabelType = LayoutInfoType & {
+// The options a `ContentLabel` carries in the palette JSON. The Grid 3 import gives a rest cell its colours.
+export type ContentLabelType = LayoutInfoType & CellColorsType & {
   label: string
 };
 

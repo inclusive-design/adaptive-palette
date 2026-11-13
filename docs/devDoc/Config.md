@@ -62,6 +62,11 @@ and `?lang=` in the page URL overrides both for that page, without changing `con
 or the saved choice. All three are read through
 `parseLanguage()` in [`src/client/i18n/I18n.ts`](../../src/client/i18n/I18n.ts).
 
+A palette's own `language` does not change it. `npm start` uses `public/config.json`, so a
+Swedish set opens with English UI text there unless you add `?lang=sv`. Packaging with
+`INCLUDE_SETS` sets it, in the bundle only, to the language of the first set's start palette. See
+[Packaging the Desktop Build](Deployment.md#how-it-is-built).
+
 ## `paletteSet`
 
 The palette set the app opens when the page URL has no `?set=`: a folder name under

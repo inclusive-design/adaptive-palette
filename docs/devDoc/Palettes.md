@@ -61,7 +61,7 @@ stops start-up with an error in the console.
 
 To add a set, create its folder with a `palette_set.json` and a `palettes/` folder, then open the app with
 `?set=<folder>`. To make a set from a Grid 3 grid set, see
-[Importing a grid set](Grid3Mapping.md#importing-a-grid-set).
+[Importing a grid set](Grid3Mapping.md#importing-a-grid-set-with-its-layout).
 
 Git ignores every set but `standardBlissChart`, because an imported set holds personal data. To ship a new set, add
 a `!public/palette-sets/<set>/` line to `.gitignore`. `npm run package:desktop` leaves out the sets git does not
@@ -133,12 +133,14 @@ The palette on screen fits the window, whatever its JSON says:
 1. A row holding only included palettes, such as the header, is as tall as its content. The bands
    in the header have their 1024×650 heights up to 650px tall, and grow with the screen's height
    from there.
-2. Every other row shares what is left, and never goes below 64px. At 1024×650, 4 rows are 89px
-   each and 5 rows 70px; 6 rows scroll.
+2. Every other row shares what is left, with no minimum, so a palette of many rows gets small
+   cells and never scrolls. At 1024×650, 4 rows are 89px each and 5 rows 70px.
 3. Columns shrink to fit the width, so the page never scrolls sideways. The body grid is
    `grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr)`. Below 1024×650
    the page scrolls vertically, never sideways.
-4. A cell clips what does not fit. Its symbol shrinks to the height its label leaves.
+4. A cell clips what does not fit. Its symbol shrinks to the height its label leaves, down to 20%
+   of the cell's height. A label too long for its cell shrinks until it fits, down to 0.5rem, and
+   is clipped only below that.
 
 A cell with `"layer": true` in its options, such as the header's `ContentSentenceChoices`, is not
 drawn in the header. The screen palette draws it over every row below the header, spanning all

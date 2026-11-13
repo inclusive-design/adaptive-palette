@@ -11,12 +11,13 @@
  */
 /*
  * Usage, from the repository root:
- * node scripts/import_grid3.js <grid set folder> <mapping file> <set name>
+ * node scripts/import_grid3_layout.js <grid set folder> <mapping file> <set name>
  *
  * Converts an unzipped Grid 3 grid set into the palette set `public/palette-sets/<set name>/`,
- * replacing any earlier import. The mapping file names the Bliss symbols each picture shows,
- * such as `{ "Grids/Person/0-1-0-text-0.jpg": "B513" }`. See docs/devDoc/Grid3Mapping.md,
- * "Importing a grid set".
+ * replacing any earlier import. Each grid becomes a whole screen laid out as in Grid 3, with its own
+ * message area and command buttons. `import_grid3_vocabulary.js` imports the vocabulary only. The
+ * mapping file names the Bliss symbols each picture shows, such as
+ * `{ "Grids/Person/0-1-0-text-0.jpg": "B513" }`. See docs/devDoc/Grid3Mapping.md.
  */
 
 import fs from "node:fs";
@@ -286,6 +287,12 @@ export function convertCell (raw, grid) {
     };
   }
 
+  // A rest cell is where a dwell user leaves the pointer, so it does nothing when pressed. Its picture is
+  // a Grid 3 icon, which is not in the export.
+  if (raw.commands.some(command => command.startsWith("Settings.Rest"))) {
+    return { id, cell: { type: "ContentLabel", options: { label, ...colours, ...layout } } };
+  }
+
   const type = COMMAND_CELLS[raw.commands.find(command => command in COMMAND_CELLS)];
   if (!type) {
     return { skipped: `unsupported: ${raw.commands.join(" + ") || "no command"}` };
@@ -295,15 +302,23 @@ export function convertCell (raw, grid) {
 }
 
 /**
+ * A grid's size, from its column and row definitions.
+ * @param {string} xml - The grid's `grid.xml`.
+ * @returns {number[]} - `[columns, rows]`. 0 when the grid defines none.
+ */
+export function gridSize (xml) {
+  return [xml.match(/<ColumnDefinition\b/g)?.length ?? 0, xml.match(/<RowDefinition\b/g)?.length ?? 0];
+}
+
+/**
  * Keep a palette the size of its grid. `Palette.ts` sizes a palette from its cells, so when no cell
- * reaches the grid's last column or row, an empty `ContentLabel` is put in the bottom-right slot.
+ * reaches the last column or row, an empty `ContentLabel` is put in the bottom-right slot.
  * That slot is free, since a cell in it would reach both.
  * @param {Object} cells - The palette's cells, by id. Changed in place.
- * @param {string} xml - The grid's `grid.xml`, whose column and row definitions give its size.
+ * @param {number} columns - The palette's number of columns.
+ * @param {number} rows - The palette's number of rows.
  */
-function fillGridSize (cells, xml) {
-  const columns = xml.match(/<ColumnDefinition\b/g)?.length ?? 0;
-  const rows = xml.match(/<RowDefinition\b/g)?.length ?? 0;
+export function fillGridSize (cells, columns, rows) {
   const options = Object.values(cells).map(cell => cell.options);
   const right = Math.max(0, ...options.map(o => o.columnStart + o.columnSpan - 1));
   const bottom = Math.max(0, ...options.map(o => o.rowStart + o.rowSpan - 1));
@@ -314,21 +329,34 @@ function fillGridSize (cells, xml) {
   }
 }
 
-function writeJson (file, value) {
+export function writeJson (file, value) {
   fs.writeFileSync(file, JSON.stringify(value, null, 2) + "\n", "utf8");
 }
 
 /**
- * Write the palette set for a grid set into `setDir`, replacing whatever is there. The set is
- * written beside it first, so a run that fails leaves the earlier import as it was.
+ * Copy a picture from a grid's folder into the set being written.
+ * @param {string} outDir - The set being written.
+ * @param {Object} grid - A grid from `readGridset()`.
+ * @param {string} file - The picture's file name in the grid's folder.
+ */
+export function copyPicture (outDir, grid, file) {
+  const pictures = path.join(outDir, "pictures", grid.slug);
+  fs.mkdirSync(pictures, { recursive: true });
+  fs.copyFileSync(path.join(grid.dir, file), path.join(pictures, file));
+}
+
+/**
+ * Read an unzipped grid set and check it.
  * @param {string} gridsetDir - The unzipped grid set.
  * @param {Object} mapping - The mapping file's contents: picture keys to mapping strings.
- * @param {string} setDir - The palette set folder to write.
- * @returns {string[]} - The report: one line per skipped cell or missing picture, and one per grid whose word
- *                       list has items with no cell.
+ * @returns {Object} - `{ startPalette, language, grids, context }`. `grids` are the grids not removed for privacy,
+ *                     sorted by name, each `{ name, slug, dir, xml, raws, hasWorkspace, wordListProblem }`: `raws` are
+ *                     its cells from `readCells()` with its word list filled in, and `wordListProblem` is the report
+ *                     line for word list items with no cell, or "". `context` is what `convertCell()` needs besides
+ *                     the grid: `{ mapping, gridNames, stubs, icons, styles }`.
  * @throws when two grids have the same file slug, the start grid is missing, or a file cannot be read.
  */
-export function importGridset (gridsetDir, mapping, setDir) {
+export function readGridset (gridsetDir, mapping) {
   const settings = fs.readFileSync(path.join(gridsetDir, "Settings0", "settings.xml"), "utf8");
   const startPalette = element(settings, "StartGrid").normalize("NFC");
   const language = element(settings, "Language").startsWith("sv") ? "sv" : "en";
@@ -355,9 +383,8 @@ export function importGridset (gridsetDir, mapping, setDir) {
   }
 
   // The grids `clean_grid3.js` removed for privacy. They get no palette.
-  const stubs = new Set(grids
-    .filter(grid => fs.readFileSync(path.join(grid.dir, "grid.xml"), "utf8").includes(REMOVED_MARKER))
-    .map(grid => grid.name));
+  const xmls = new Map(grids.map(grid => [grid.name, fs.readFileSync(path.join(grid.dir, "grid.xml"), "utf8")]));
+  const stubs = new Set(grids.filter(grid => xmls.get(grid.name).includes(REMOVED_MARKER)).map(grid => grid.name));
 
   const nfcMapping = Object.fromEntries(Object.entries(mapping).map(([key, value]) => [key.normalize("NFC"), value]));
   const icons = {};
@@ -376,27 +403,80 @@ export function importGridset (gridsetDir, mapping, setDir) {
       xmlText(name), { backColour: element(body, "BackColour"), fontColour: element(body, "FontColour") }
     ]));
 
+  const read = grids.filter(grid => !stubs.has(grid.name)).map(grid => {
+    const xml = xmls.get(grid.name);
+    const raws = readCells(xml);
+    const items = readWordList(xml);
+    const slots = fillWordList(raws, items);
+    let wordListProblem = "";
+    if (items.length > slots) {
+      const left = items.length - slots;
+      const which = left === 1 ? `item ${slots}` : `items ${slots}–${items.length - 1}`;
+      const reason = slots === 0 ? "no word list cells" : "no free cell";
+      wordListProblem = `${grid.name}: ${left} word list item${left === 1 ? "" : "s"} skipped (${which}), ${reason}`;
+    }
+    return { ...grid, xml, raws, hasWorkspace: raws.some(raw => raw.contentType === "Workspace"), wordListProblem };
+  });
+  return {
+    startPalette, language, grids: read, context: { mapping: nfcMapping, gridNames, stubs, icons, styles }
+  };
+}
+
+/**
+ * Write a palette set into `setDir`, replacing whatever is there. It is written beside it first, so a
+ * run that fails leaves the earlier set as it was.
+ * @param {string} setDir - The palette set folder to write.
+ * @param {function(string): void} write - Writes the set into the folder it is given, which has an
+ *                                         empty `palettes/` folder.
+ */
+export function writeSet (setDir, write) {
   const outDir = `${setDir}.partial`;
   fs.rmSync(outDir, { recursive: true, force: true });
   try {
     fs.mkdirSync(path.join(outDir, "palettes"), { recursive: true });
-    const report = [];
-    const palettes = {};
-    for (const grid of grids.filter(grid => !stubs.has(grid.name))) {
-      const xml = fs.readFileSync(path.join(grid.dir, "grid.xml"), "utf8");
-      const raws = readCells(xml);
-      const items = readWordList(xml);
-      const slots = fillWordList(raws, items);
-      if (items.length > slots) {
-        const left = items.length - slots;
-        const which = left === 1 ? `item ${slots}` : `items ${slots}–${items.length - 1}`;
-        const reason = slots === 0 ? "no word list cells" : "no free cell";
-        report.push(`${grid.name}: ${left} word list item${left === 1 ? "" : "s"} skipped (${which}), ${reason}`);
+    write(outDir);
+    // The earlier set is moved aside, not deleted, so it can be put back if the rename fails,
+    // as it can on Windows while another program has the folder open.
+    const oldDir = `${setDir}.old`;
+    fs.rmSync(oldDir, { recursive: true, force: true });
+    if (fs.existsSync(setDir)) {
+      fs.renameSync(setDir, oldDir);
+    }
+    try {
+      fs.renameSync(outDir, setDir);
+    } catch (error) {
+      if (fs.existsSync(oldDir)) {
+        fs.renameSync(oldDir, setDir);
       }
-      const hasWorkspace = raws.some(raw => raw.contentType === "Workspace");
+      throw error;
+    }
+    fs.rmSync(oldDir, { recursive: true, force: true });
+  } finally {
+    fs.rmSync(outDir, { recursive: true, force: true });
+  }
+}
+
+/**
+ * Write the palette set for a grid set into `setDir`, each grid as a whole screen.
+ * @param {string} gridsetDir - The unzipped grid set.
+ * @param {Object} mapping - The mapping file's contents: picture keys to mapping strings.
+ * @param {string} setDir - The palette set folder to write.
+ * @returns {string[]} - The report: one line per skipped cell or missing picture, and one per grid whose word
+ *                       list has items with no cell.
+ * @throws when two grids have the same file slug, the start grid is missing, or a file cannot be read.
+ */
+export function importGridset (gridsetDir, mapping, setDir) {
+  const { startPalette, language, grids, context } = readGridset(gridsetDir, mapping);
+  const report = [];
+  writeSet(setDir, outDir => {
+    const palettes = {};
+    for (const grid of grids) {
+      if (grid.wordListProblem) {
+        report.push(grid.wordListProblem);
+      }
       const cells = {};
-      for (const raw of raws) {
-        const result = convertCell(raw, { ...grid, hasWorkspace, mapping: nfcMapping, gridNames, stubs, icons, styles });
+      for (const raw of grid.raws) {
+        const result = convertCell(raw, { ...grid, ...context });
         const where = `${grid.name} (${raw.x}, ${raw.y})`;
         if (!result) {
           continue;
@@ -413,43 +493,28 @@ export function importGridset (gridsetDir, mapping, setDir) {
           report.push(`${where}: ${result.warning}`);
         }
         if (result.copy) {
-          const pictures = path.join(outDir, "pictures", grid.slug);
-          fs.mkdirSync(pictures, { recursive: true });
-          fs.copyFileSync(path.join(grid.dir, result.copy), path.join(pictures, result.copy));
+          copyPicture(outDir, grid, result.copy);
         }
         cells[result.id] = result.cell;
       }
-      fillGridSize(cells, xml);
+      fillGridSize(cells, ...gridSize(grid.xml));
       palettes[grid.name] = `palettes/${grid.slug}.json`;
       writeJson(path.join(outDir, palettes[grid.name]), { name: grid.name, language, cells });
     }
     writeJson(path.join(outDir, "palette_set.json"), { formatVersion: 1, startPalette, palettes });
-    // The earlier import is moved aside, not deleted, so it can be put back if the rename fails,
-    // as it can on Windows while another program has the folder open.
-    const oldDir = `${setDir}.old`;
-    fs.rmSync(oldDir, { recursive: true, force: true });
-    if (fs.existsSync(setDir)) {
-      fs.renameSync(setDir, oldDir);
-    }
-    try {
-      fs.renameSync(outDir, setDir);
-    } catch (error) {
-      if (fs.existsSync(oldDir)) {
-        fs.renameSync(oldDir, setDir);
-      }
-      throw error;
-    }
-    fs.rmSync(oldDir, { recursive: true, force: true });
-    return report;
-  } finally {
-    fs.rmSync(outDir, { recursive: true, force: true });
-  }
+  });
+  return report;
 }
 
-if (import.meta.main) {
+/**
+ * The command line both import scripts share: check the arguments, run the import, print the report.
+ * @param {string} script - The script's file name, for the usage message.
+ * @param {function(string, Object, string): string[]} importSet - Writes the set and returns the report.
+ */
+export function runImport (script, importSet) {
   const [gridsetDir, mappingFile, setName] = process.argv.slice(2);
   if (!gridsetDir || !mappingFile || !SET_NAME.test(setName ?? "")) {
-    console.error("Usage: node scripts/import_grid3.js <grid set folder> <mapping file> <set name>");
+    console.error(`Usage: node scripts/${script} <grid set folder> <mapping file> <set name>`);
     console.error("The set name may hold only letters, digits, _ and -.");
     process.exit(1);
   }
@@ -463,8 +528,12 @@ if (import.meta.main) {
   }
   const mapping = JSON.parse(fs.readFileSync(mappingFile, "utf8"));
   const setDir = path.join(root, "public", "palette-sets", setName);
-  const report = importGridset(gridsetDir, mapping, setDir);
+  const report = importSet(gridsetDir, mapping, setDir);
   report.forEach(line => console.log(line));
   console.log(`Wrote ${path.relative(root, setDir)}, with ${report.length} problems listed above.`);
   console.log(`Open http://localhost:3000/?set=${setName}`);
+}
+
+if (import.meta.main) {
+  runImport("import_grid3_layout.js", importGridset);
 }

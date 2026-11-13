@@ -83,7 +83,8 @@ describe("CurrentPalette", (): void => {
 
   test("The current palette is rendered", async (): Promise<void> => {
     adaptivePaletteGlobals.navigationStack.currentPalette = firstPalette;
-    const { container } = render(html`<${CurrentPalette} />`);
+    // The screen palette fills its parent, so the parent needs a height.
+    const { container } = render(html`<div style="height: 300px;"><${CurrentPalette} /></div>`);
 
     expect(await screen.findByText("First Cell")).toBeVisible();
     expect(container.querySelector("[data-palettename='First Palette']")).not.toBeNull();

@@ -17,7 +17,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { REMOVED_MARKER, convertCell, importGridset, fillWordList, parseComposition, readCells, readWordList, slugify } from "./import_grid3.js";
+import { REMOVED_MARKER, convertCell, importGridset, fillWordList, parseComposition, readCells, readWordList, slugify } from "./import_grid3_layout.js";
 
 test.each([
   ["B513/B548/B958", [513, "/", 548, "/", 958]],
@@ -396,6 +396,18 @@ describe("convertCell()", () => {
   test("a caption with no command is skipped", () => {
     expect(convertCell(cell({ caption: "frukost" }), grid())).toEqual({ skipped: "unsupported: no command" });
   });
+
+  test.each(["Settings.RestPointer", "Settings.RestAll", "Settings.RestEyeGaze", "Settings.RestSwitch"])(
+    "a %s cell becomes a ContentLabel with its caption and colours", command => {
+      const rest = cell({ commands: [command], caption: "vila", image: "[GRID3X]rest.wmf", basedOnStyle: "Vocab cell" });
+      expect(convertCell(rest, grid())).toEqual({
+        id: "cell-0-1",
+        cell: {
+          type: "ContentLabel",
+          options: { label: "vila", backgroundColor: "#FEFEF4FF", textColor: "#000000FF", ...layout }
+        }
+      });
+    });
 
   test("a jump to a grid removed for privacy becomes a ContentRemoved cell with the cell's label and colours", () => {
     const entry = cell({
