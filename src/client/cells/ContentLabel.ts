@@ -13,7 +13,7 @@
 import { VNode } from "preact";
 import { html } from "htm/preact";
 import { ContentLabelType } from "../index.d";
-import { generateGridStyle } from "../utils/GridUtils";
+import { colorStyle, generateGridStyle } from "../utils/GridUtils";
 import "./ContentLabel.scss";
 
 type ContentLabelPropsType = {
@@ -22,7 +22,8 @@ type ContentLabelPropsType = {
 };
 
 /**
- * Text in a grid slot, with no interaction: a heading for a row or a column of cells.
+ * Text in a grid slot, with no interaction: a heading for a row or a column of cells, or a Grid 3
+ * rest cell, where a dwell user can leave the pointer.
  *
  * Always `aria-hidden`, so use it only where the cells it heads already name themselves.
  * On the attributes palette every button's `aria-label` starts with its category, so reading
@@ -33,11 +34,11 @@ type ContentLabelPropsType = {
  */
 export function ContentLabel (props: ContentLabelPropsType): VNode {
   const { id, options } = props;
-  const { label, columnStart, columnSpan, rowStart, rowSpan } = options;
+  const { label, columnStart, columnSpan, rowStart, rowSpan, backgroundColor, textColor } = options;
 
-  const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
+  const style = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan) + colorStyle(backgroundColor, textColor);
 
   return html`
-    <div id="${id}" class="contentLabel" style="${gridStyles}" aria-hidden="true"><span>${label}</span></div>
+    <div id="${id}" class="contentLabel" style="${style}" aria-hidden="true"><span>${label}</span></div>
   `;
 }

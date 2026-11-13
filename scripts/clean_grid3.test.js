@@ -17,7 +17,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { cleanGridset } from "./clean_grid3.js";
-import { REMOVED_MARKER, readCells } from "./import_grid3.js";
+import { REMOVED_MARKER, readCells } from "./import_grid3_layout.js";
 
 // "Vänner" is the grid to remove. Its folder name is decomposed, as macOS can unzip it, while the
 // list and Jump.To name it composed. "Vänner jobb" is reached only through it, "Hobby" from the

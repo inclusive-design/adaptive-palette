@@ -61,7 +61,7 @@ stops start-up with an error in the console.
 
 To add a set, create its folder with a `palette_set.json` and a `palettes/` folder, then open the app with
 `?set=<folder>`. To make a set from a Grid 3 grid set, see
-[Importing a grid set](Grid3Mapping.md#importing-a-grid-set).
+[Importing a grid set](Grid3Mapping.md#importing-a-grid-set-with-its-layout).
 
 Git ignores every set but `standardBlissChart`, because an imported set holds personal data. To ship a new set, add
 a `!public/palette-sets/<set>/` line to `.gitignore`. `npm run package:desktop` leaves out the sets git does not
