@@ -31,10 +31,11 @@
 
   /* The symbol sits above the label, and both scale with the cell: the symbol is 70% of its
      height, the label 12%, from 0.74rem up to 2.5 times that, so 500% zoom still doubles it
-     (WCAG 1.4.4). A label on two lines takes room from
-     the symbol. A long label breaks at a hyphen and the cell clips it; its accessible name keeps
-     all of it. `cqh` resolves against the nearest container above an element, so the label's
-     size is set on the label, not on the button. */
+     (WCAG 1.4.4). A label too long for the room left shrinks until it fits, down to 0.5rem:
+     `BlissSymbol.ts` lowers `--labelScale`. The symbol keeps at least 20% of the cell's height.
+     A label that still does not fit is clipped; its accessible name keeps all of it. A long word
+     breaks at a hyphen. `cqh` resolves against the nearest container above an element, so the
+     label's size is set on the label, not on the button. */
   > button {
     align-items: center;
     container-type: size;
@@ -52,12 +53,15 @@
       /* Lifts the 4rem cap that index.scss gives every symbol. */
       max-height: none;
       max-width: 100%;
-      min-height: 0;
+      min-height: 20cqh;
       width: auto;
     }
 
+    /* The label's box is the room left, so `BlissSymbol.ts` can see when its text overflows. */
     > div {
-      font-size: clamp(0.74rem, 12cqh, 1.85rem);
+      font-size: max(0.5rem, clamp(0.74rem, 12cqh, 1.85rem) * var(--labelScale, 1));
+      min-height: 0;
+      overflow: hidden;
     }
   }
 }

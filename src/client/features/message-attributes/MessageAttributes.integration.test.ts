@@ -95,7 +95,8 @@ describe("Message attributes: whole-feature walkthrough", (): void => {
     const { navigationStack, paletteStore } = adaptivePaletteGlobals;
     paletteStore.addPalette(rootPalette);
     navigationStack.flushReset(rootPalette);
-    render(html`<${CurrentPalette} />`);
+    // The screen palette fills its parent, so the parent needs a height.
+    render(html`<div style="height: 600px;"><${CurrentPalette} /></div>`);
     render(html`<${DiscardEditDialog} />`);
     render(html`<${MessageAttributesBar} />`);
   };

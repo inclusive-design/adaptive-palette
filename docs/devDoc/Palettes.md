@@ -138,7 +138,9 @@ The palette on screen fits the window, whatever its JSON says:
 3. Columns shrink to fit the width, so the page never scrolls sideways. The body grid is
    `grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr)`. Below 1024×650
    the page scrolls vertically, never sideways.
-4. A cell clips what does not fit. Its symbol shrinks to the height its label leaves.
+4. A cell clips what does not fit. Its symbol shrinks to the height its label leaves, down to 20%
+   of the cell's height. A label too long for its cell shrinks until it fits, down to 0.5rem, and
+   is clipped only below that.
 
 A cell with `"layer": true` in its options, such as the header's `ContentSentenceChoices`, is not
 drawn in the header. The screen palette draws it over every row below the header, spanning all
