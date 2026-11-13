@@ -176,6 +176,7 @@ export const sv: Record<keyof typeof en, string> = {
   sentenceWorking: "⏳ Skapar meningar…",
   sentenceMakingMore: "⏳ Skapar fler meningar…",
   sentenceCannotComplete: "⚠ Kunde inte skapa meningar. Försök igen.",
+  sentenceModelFailed: "⚠ Ollama kunde inte köra modellen. Se Felsökning i installationsguiden.",
   sentenceTypeYours: "Passar inget? Skriv din egen",
   sentenceSpeak: "Läs upp",
   sentenceDone: "✓ Klar",

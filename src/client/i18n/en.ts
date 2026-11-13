@@ -175,6 +175,7 @@ export const en = {
   sentenceWorking: "⏳ Making sentences…",
   sentenceMakingMore: "⏳ Making more sentences…",
   sentenceCannotComplete: "⚠ Could not make sentences. Try again.",
+  sentenceModelFailed: "⚠ Ollama could not run the model. See Troubleshooting in the install guide.",
   sentenceTypeYours: "None fit? Type yours",
   sentenceSpeak: "Speak",
   sentenceDone: "✓ Done",

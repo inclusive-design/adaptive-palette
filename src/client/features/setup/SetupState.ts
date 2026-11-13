@@ -76,15 +76,13 @@ export function missingModels (
 /**
  * What the modal should be showing.
  *
- * An empty model list is read as Ollama not answering, which is how the rest of the app
- * already reads it: `getModelNames()` returns an empty array both when Ollama is down and
- * when it holds no models, and either way there is nothing to query.
  * @param {AdaptivePaletteConfigType} config - The configuration in force.
- * @param {string[]} available - The model names Ollama reports.
+ * @param {string[] | null} available - The model names Ollama reports, or `null` when Ollama
+ *                                      cannot be reached.
  * @returns {SetupStatusType}
  */
 export function setupStatus (
-  config: AdaptivePaletteConfigType, available: string[]
+  config: AdaptivePaletteConfigType, available: string[] | null
 ): SetupStatusType {
   // Nothing is asked for, so there is nothing to set up. A `config.json` that fails to
   // parse falls back to defaults naming no model and no AI feature on: without this the
@@ -92,7 +90,7 @@ export function setupStatus (
   if (requiredModels(config).length === 0) {
     return "ready";
   }
-  if (available.length === 0) {
+  if (available === null) {
     return "noOllama";
   }
   return missingModels(config, available).length > 0 ? "missingModels" : "ready";

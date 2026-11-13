@@ -121,7 +121,8 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
       console.error(`Could not open the saved data: ${String(error)}`);
     })
   ]);
-  adaptivePaletteGlobals.models = models;
+  adaptivePaletteGlobals.models = models ?? [];
+  adaptivePaletteGlobals.ollamaReachable = models !== null;
   adaptivePaletteGlobals.fileConfig = config;
   // The user's saved settings are applied.
   adaptivePaletteGlobals.config = await applyStoredSettings(config);

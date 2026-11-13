@@ -52,6 +52,7 @@ describe("FirstRunSetup", (): void => {
   beforeEach((): void => {
     setupDismissedSignal.value = false;
     useConfigAskingFor("gemma4:12b");
+    adaptivePaletteGlobals.ollamaReachable = false;
   });
 
   afterEach((): void => {
@@ -60,6 +61,7 @@ describe("FirstRunSetup", (): void => {
 
   test("shows nothing when the model is already there", (): void => {
     adaptivePaletteGlobals.models = ["gemma4:12b"];
+    adaptivePaletteGlobals.ollamaReachable = true;
     render(html`<${FirstRunSetup} />`);
     expect(screen.queryByRole("dialog")).toBeNull();
   });
@@ -73,6 +75,29 @@ describe("FirstRunSetup", (): void => {
       "href", "https://ollama.com/download"
     );
     expect(screen.getByRole("button", { name: en.setupRetry })).toBeInTheDocument();
+  });
+
+  test("offers the download when Ollama answers with no models", (): void => {
+    adaptivePaletteGlobals.models = [];
+    adaptivePaletteGlobals.ollamaReachable = true;
+    render(html`<${FirstRunSetup} />`);
+
+    expect(screen.getByRole("dialog")).toMatchTextContent(MISSING_MODEL_TEXT(["gemma4:12b"]));
+    expect(screen.getByRole("button", { name: en.setupDownload })).toBeInTheDocument();
+  });
+
+  test("trying again offers the download once Ollama answers with no models", async (): Promise<void> => {
+    adaptivePaletteGlobals.models = [];
+    mockedGetModelNames.mockResolvedValue([]);
+    render(html`<${FirstRunSetup} />`);
+
+    await userEvent.click(screen.getByRole("button", { name: en.setupRetry }));
+
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: en.setupDownload })).toBeInTheDocument()
+    );
+    expect(adaptivePaletteGlobals.ollamaReachable).toBe(true);
+    expect(mockedReloadPage).not.toHaveBeenCalled();
   });
 
   test("continuing without AI features closes it and leaves the app usable", async (): Promise<void> => {
@@ -97,7 +122,7 @@ describe("FirstRunSetup", (): void => {
 
   test("trying again while Ollama is still down keeps the dialog up", async (): Promise<void> => {
     adaptivePaletteGlobals.models = [];
-    mockedGetModelNames.mockResolvedValue([]);
+    mockedGetModelNames.mockResolvedValue(null);
     render(html`<${FirstRunSetup} />`);
 
     await userEvent.click(screen.getByRole("button", { name: en.setupRetry }));
@@ -123,6 +148,7 @@ describe("FirstRunSetup", (): void => {
 
   test("names the missing model and offers to download it", (): void => {
     adaptivePaletteGlobals.models = ["llama3:8b"];
+    adaptivePaletteGlobals.ollamaReachable = true;
     render(html`<${FirstRunSetup} />`);
 
     expect(screen.getByRole("dialog")).toMatchTextContent("gemma4:12b");
@@ -131,6 +157,7 @@ describe("FirstRunSetup", (): void => {
 
   test("shows how far the download has got, then reloads", async (): Promise<void> => {
     adaptivePaletteGlobals.models = ["llama3:8b"];
+    adaptivePaletteGlobals.ollamaReachable = true;
     mockedPullModel.mockImplementation(async (model, onProgress) => {
       void model;
       onProgress({ completed: 25, total: 100 });
@@ -147,6 +174,7 @@ describe("FirstRunSetup", (): void => {
 
   test("a failed download says so and leaves the dialog open", async (): Promise<void> => {
     adaptivePaletteGlobals.models = ["llama3:8b"];
+    adaptivePaletteGlobals.ollamaReachable = true;
     mockedPullModel.mockRejectedValue(new Error("Connection refused"));
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     render(html`<${FirstRunSetup} />`);
@@ -164,6 +192,7 @@ describe("FirstRunSetup", (): void => {
   // most likely to be in, and for the one after a failure.
   test("still offers to continue without AI features while the download is running", async (): Promise<void> => {
     adaptivePaletteGlobals.models = ["llama3:8b"];
+    adaptivePaletteGlobals.ollamaReachable = true;
     // A pull that never settles: the dialog stays in its downloading state.
     mockedPullModel.mockImplementation(() => new Promise<void>(() => {}));
     render(html`<${FirstRunSetup} />`);
@@ -178,6 +207,7 @@ describe("FirstRunSetup", (): void => {
 
   test("still offers to continue without AI features after a failed download", async (): Promise<void> => {
     adaptivePaletteGlobals.models = ["llama3:8b"];
+    adaptivePaletteGlobals.ollamaReachable = true;
     mockedPullModel.mockRejectedValue(new Error("Connection refused"));
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     render(html`<${FirstRunSetup} />`);
@@ -191,6 +221,7 @@ describe("FirstRunSetup", (): void => {
 
   test("a cancelled download is not reported as a failure", async (): Promise<void> => {
     adaptivePaletteGlobals.models = ["llama3:8b"];
+    adaptivePaletteGlobals.ollamaReachable = true;
     mockedPullModel.mockRejectedValue(
       new DOMException("The user aborted a request.", "AbortError")
     );

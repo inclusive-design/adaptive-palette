@@ -32,22 +32,40 @@ export function isLocalHost (hostname: string = window.location.hostname): boole
 }
 
 /**
- * Retrieve a list of models available from the service
- * @return {Promise<string[]>} - Array of the names of the available models.
+ * Retrieve a list of models available from the service.
+ * @return {Promise<string[] | null>} - The names of the available models, or `null` when Ollama
+ *                                      cannot be reached. An empty array means Ollama answered
+ *                                      but has no models.
  */
-export async function getModelNames(): Promise<string[]> {
-  // An empty list is how every feature already reads "no Ollama", so nothing else has to
-  // know about hosting.
+export async function getModelNames(): Promise<string[] | null> {
+  // The hosted site never reaches Ollama, so it reads as "not reachable".
   if (!isLocalHost()) {
-    return [];
+    return null;
   }
   try {
     const list = await ollama.list();
     return list.models.map((model) => model.name);
   } catch (error) {
     console.error("Failed to fetch Ollama models:", error);
-    return [];
+    return null;
   }
+}
+
+/**
+ * Whether Ollama received a request but could not run the model: too little memory, an Ollama
+ * too old for the model, or a broken download. Ollama answers these with a 5xx.
+ *
+ * `ollama-js` throws a `ResponseError` carrying `status_code` for an error answer, but does not
+ * export the class, so it is recognized by name.
+ * @param {unknown} error - What the request rejected with.
+ * @returns {boolean}
+ */
+export function isModelRunFailure (error: unknown): boolean {
+  if (!(error instanceof Error) || error.name !== "ResponseError") {
+    return false;
+  }
+  const status = (error as Error & { status_code?: number }).status_code ?? 0;
+  return status >= 500;
 }
 
 /**
