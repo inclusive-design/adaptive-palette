@@ -80,7 +80,7 @@ The first time, a box may appear:
 - **"The AI features need Ollama, which is not running"** — install Ollama as above, start
   it, then choose **Try again**. Or choose **Continue without AI features** to use the
   palette now.
-- **"The AI features need [model name], which Ollama has not got yet"** — choose
+- **"The AI features need gemma4:12b, which Ollama has not got yet"** — choose
   **Download**. It is several gigabytes and takes a while; the bar shows how far it has
   got. You can cancel and do it another time.
 
