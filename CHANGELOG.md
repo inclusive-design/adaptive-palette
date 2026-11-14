@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.4.1](https://github.com/inclusive-design/adaptive-palette/compare/v0.4.0...v0.4.1) (2026-11-13)
+
+### Features
+
+#### Grid 3 Import
+
+* A Grid 3 user's vocabulary can now be imported on its own, placed under the standard header layout ([#319](https://github.com/inclusive-design/adaptive-palette/issues/319)) ([7f96dfa](https://github.com/inclusive-design/adaptive-palette/commit/7f96dfa825845e6faf9254193e2de8b0019988ac)).
+
+### Bug Fixes
+
+* First-run setup problems found on a Windows install have been fixed, and the setup now names the missing model ([#317](https://github.com/inclusive-design/adaptive-palette/issues/317)) ([01cdbfc](https://github.com/inclusive-design/adaptive-palette/commit/01cdbfc3511d83e1b0bba542e3af12abb2775770)).
+* Imported palettes no longer scroll vertically, and pictures and cell text now shrink to fit their cells ([#319](https://github.com/inclusive-design/adaptive-palette/issues/319)) ([7f96dfa](https://github.com/inclusive-design/adaptive-palette/commit/7f96dfa825845e6faf9254193e2de8b0019988ac)).
+
 ## [0.4.0](https://github.com/inclusive-design/adaptive-palette/compare/v0.3.0...v0.4.0) (2026-11-12)
 
 ### Features
