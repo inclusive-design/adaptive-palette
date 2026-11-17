@@ -132,9 +132,56 @@ describe("NameWordDialog", (): void => {
       const abortSignal = vi.mocked(queryChat).mock.calls[0][4] as AbortSignal;
       expect(abortSignal.aborted).toBe(false);
 
-      await userEvent.click(screen.getByRole("button", { name: en.wordBack }));
+      await userEvent.click(await screen.findByRole("button", { name: en.wordBack }));
 
       await waitFor(() => expect(abortSignal.aborted).toBe(true));
+    });
+
+    test("choosing the name offered stops the request", async (): Promise<void> => {
+      vi.mocked(queryChat).mockReturnValue(new Promise(() => {}) as never);
+      buildWord([word("woman", 710), word("giving", 949)]);
+      await screen.findByText(en.wordSuggesting);
+      const abortSignal = vi.mocked(queryChat).mock.calls[0][4] as AbortSignal;
+
+      await userEvent.click(await screen.findByRole("button", { name: en.wordUseDefault }));
+
+      await waitFor(() => expect(abortSignal.aborted).toBe(true));
+    });
+
+    test("an answer for a dialog closed before it came is not offered when the dialog opens again", async (): Promise<void> => {
+      const answers: ((value: unknown) => void)[] = [];
+      vi.mocked(queryChat).mockImplementation(() => new Promise((resolve) => { answers.push(resolve); }) as never);
+      buildWord([word("woman", 710), word("giving", 949)]);
+      await screen.findByText(en.wordSuggesting);
+      const dialogElement = document.querySelector("dialog");
+      const closed = new Promise((resolve) => dialogElement?.addEventListener("close", resolve, { once: true }));
+      await userEvent.click(await screen.findByRole("button", { name: en.wordBack }));
+      // The `close` event ModalDialog handles comes a task after the click. Opening the dialog again before it
+      // would have that event close the new one.
+      await closed;
+
+      requestFinish();
+      await waitFor(() => expect(answers).toHaveLength(2));
+      answers[0]({ message: { content: "old name" } });
+      // Let the old answer land, and any render it causes.
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(screen.queryByRole("button", { name: "AI suggestion, old name" })).toBeNull();
+      expect(screen.getByText(en.wordSuggesting)).toBeInTheDocument();
+    });
+
+    test("pressing Done again before the dialog shows asks for names once", async (): Promise<void> => {
+      vi.mocked(queryChat).mockReturnValue(new Promise(() => {}) as never);
+      startBuilding();
+      insertWord(word("woman", 710));
+      insertWord(word("giving", 949));
+      requestFinish();
+      requestFinish();
+
+      expect(await screen.findByText(en.wordSuggesting)).toBeInTheDocument();
+      const calls = vi.mocked(queryChat).mock.calls;
+      expect(calls.length).toBeGreaterThan(0);
+      calls.forEach((call, i) => expect((call[4] as AbortSignal).aborted).toBe(i < calls.length - 1));
     });
 
     test("does not ask for names for a word already in the vocabulary", async (): Promise<void> => {

@@ -15,7 +15,7 @@ import { render, screen, cleanup, waitFor } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
-import { adaptivePaletteGlobals, changeEncodingContents } from "../../state/GlobalData";
+import { adaptivePaletteGlobals, changeEncodingContents, settingsSavedCount } from "../../state/GlobalData";
 import { aiSuggestionLabel } from "../../components/AiBadge";
 import { setTestConfig } from "../../testUtils/TestConfig";
 import {
@@ -645,18 +645,70 @@ describe("SentenceChoices", (): void => {
       expect(screen.getByPlaceholderText(en.sentenceTypeYours)).toBeVisible();
     });
 
+    const LONG_SENTENCE = "I would really like to have a big warm bun sandwich with cheese and some tea, please.";
+
     test("a sentence whose Bliss row overflows its slot shows its text only, and keeps its whole name", async (): Promise<void> => {
       const short = "I am hungry.";
-      const long = "I would really like to have a big warm bun sandwich with cheese and some tea, please.";
-      sentenceCompletionsSignal.value = { ...READY_STATE, sentences: [short, long] };
+      sentenceCompletionsSignal.value = { ...READY_STATE, sentences: [short, LONG_SENTENCE] };
       // Tall enough for a one-line row in each of the three slots.
       renderInGrid(400);
 
-      const choice = await screen.findByRole("button", { name: long });
+      const choice = await screen.findByRole("button", { name: LONG_SENTENCE });
       await waitFor(() => expect(choice.querySelector(".blissSentence")).toBeNull());
-      expect(choice.querySelector(".sentenceText")?.textContent).toBe(long);
+      expect(choice.querySelector(".sentenceText")?.textContent).toBe(LONG_SENTENCE);
       // The short sentence's row fits, so it stays.
       expect(screen.getByRole("button", { name: short }).querySelector(".blissSentence")).not.toBeNull();
+    });
+
+    test("a sentence shown as text only gets its Bliss row back when the window gives it room", async (): Promise<void> => {
+      sentenceCompletionsSignal.value = { ...READY_STATE, sentences: [SENTENCES[0], LONG_SENTENCE] };
+      const { container } = renderInGrid(400);
+      const choice = await screen.findByRole("button", { name: LONG_SENTENCE });
+      await waitFor(() => expect(choice.querySelector(".blissSentence")).toBeNull());
+      // The layer's ResizeObserver skips its first report, the size the rows were measured at. Wait two
+      // frames for it, so the resize below is a change it acts on.
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+      (container.firstElementChild as HTMLElement).style.gridTemplateRows = "40px 2000px";
+
+      await waitFor(() =>
+        expect(screen.getByRole("button", { name: LONG_SENTENCE }).querySelector(".blissSentence")).not.toBeNull());
+    });
+
+    test("a sentence shown as text only gets its Bliss row back when there are fewer slots", async (): Promise<void> => {
+      sentenceCompletionsSignal.value = { ...READY_STATE, sentences: [LONG_SENTENCE] };
+      renderInGrid(400);
+      const choice = await screen.findByRole("button", { name: LONG_SENTENCE });
+      await waitFor(() => expect(choice.querySelector(".blissSentence")).toBeNull());
+
+      // Three slots go down to one, so the one slot is three times as tall.
+      setTestConfig({
+        markAiSuggestions: false,
+        telegraphicTranslation: {
+          model: "phony-model:12b", numSentences: 1, systemPrompt: "prompt", userPrompt: "prompt", showBlissSentence: true
+        }
+      });
+      settingsSavedCount.value++;
+
+      await waitFor(() =>
+        expect(screen.getByRole("button", { name: LONG_SENTENCE }).querySelector(".blissSentence")).not.toBeNull());
+    });
+
+    test("a sentence shown as text only gets its Bliss row back when the layer opens again in a bigger window", async (): Promise<void> => {
+      adaptivePaletteGlobals.navigationStack.flushReset({ name: "Screen", cells: {} });
+      sentencePaletteSignal.value = "Screen";
+      sentenceCompletionsSignal.value = { ...READY_STATE, sentences: [LONG_SENTENCE] };
+      const { container } = renderInGrid(400);
+      const choice = await screen.findByRole("button", { name: LONG_SENTENCE });
+      await waitFor(() => expect(choice.querySelector(".blissSentence")).toBeNull());
+
+      hideSentences();
+      await waitFor(() => expect(screen.queryByRole("button", { name: LONG_SENTENCE })).toBeNull());
+      (container.firstElementChild as HTMLElement).style.gridTemplateRows = "40px 2000px";
+      reopenSentences();
+
+      await waitFor(() =>
+        expect(screen.getByRole("button", { name: LONG_SENTENCE }).querySelector(".blissSentence")).not.toBeNull());
     });
 
     test("is a group named by its title", (): void => {

@@ -11,7 +11,7 @@
  */
 import { VNode } from "preact";
 import { html } from "htm/preact";
-import { useEffect, useState } from "preact/hooks";
+import { useState } from "preact/hooks";
 import { ModalDialog } from "../../components/ModalDialog";
 import { BlissSymbol } from "../../components/BlissSymbol";
 import { AiBadge, aiSuggestionLabel } from "../../components/AiBadge";
@@ -19,16 +19,14 @@ import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { INPUT_AREA_ID } from "../../cells/ContentEncoding";
 import { t } from "../../i18n/I18n";
 import {
-  type WordDialogType, chooseMatch, chooseName, closeWordDialog, wordDialogSignal
+  type WordDialogType, chooseMatch, chooseName, closeWordDialog, nameSuggestionsSignal, wordDialogSignal
 } from "./ComposeWordState";
-import { MAX_SUGGESTED_NAMES, canSuggestNames, requestNameSuggestions } from "./WordNamingUtils";
+import { MAX_SUGGESTED_NAMES } from "./WordNamingUtils";
 import "./NameWordDialog.scss";
 
 const NAME_WORD_DIALOG_ID = "nameWordDialog";
 const NAME_FIELD_ID = "nameWordField";
 const NAMES_LABEL_ID = "nameWordNamesLabel";
-
-type SuggestStateType = { status: "idle" } | { status: "working" } | { status: "done", names: string[] };
 
 /**
  * The dialog's body. Mounted only while the dialog is open, so the typed name starts empty each time.
@@ -38,28 +36,7 @@ type SuggestStateType = { status: "idle" } | { status: "working" } | { status: "
 function NameWordBody (props: { dialog: WordDialogType }): VNode {
   const { dialog } = props;
   const [typedName, setTypedName] = useState("");
-  const [suggest, setSuggest] = useState<SuggestStateType>({ status: "idle" });
-
-  // Ask the model for names once, as the dialog opens. Not for a word already in the vocabulary.
-  // Closing the dialog stops the request, so going back and pressing Done again never queues
-  // another behind it.
-  useEffect(() => {
-    if (dialog.match || !canSuggestNames()) {
-      return;
-    }
-    const controller = new AbortController();
-    setSuggest({ status: "working" });
-    requestNameSuggestions(dialog.partLabels, dialog.offeredName, controller.signal)
-      .then((names) => setSuggest({ status: "done", names }))
-      .catch((error) => {
-        if (controller.signal.aborted) {
-          return;
-        }
-        console.error(`Could not suggest names: ${String(error)}`);
-        setSuggest({ status: "done", names: [] });
-      });
-    return () => controller.abort();
-  }, []);
+  const suggest = nameSuggestionsSignal.value;
 
   if (dialog.match) {
     const { label, composition } = dialog.match;

@@ -12,7 +12,7 @@
 
 import { Fragment, VNode } from "preact";
 import { html } from "htm/preact";
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useState } from "preact/hooks";
 
 import { ModalDialog } from "../../components/ModalDialog";
 import { getStorage } from "../../core/StorageBackend";
@@ -35,6 +35,16 @@ async function quitApp (): Promise<void> {
   } catch {
     // No launcher behind this page. The message on screen covers it.
   }
+}
+
+/**
+ * A ref that focuses its element as it appears. Defined outside the component, so Preact gets the same
+ * ref on every render and calls it only when the element is added or removed.
+ * @param {HTMLElement | null} element - The element, or `null` as it goes.
+ * @returns {void}
+ */
+function focusOnMount (element: HTMLElement | null): void {
+  element?.focus();
 }
 
 type EraseAllDataProps = {
@@ -61,32 +71,16 @@ export function EraseAllData (props: EraseAllDataProps): VNode {
   // erase is already irreversible, so nothing on screen may claim otherwise: both buttons are
   // disabled, and closing the dialog is refused rather than honoured.
   const [isPending, setIsPending] = useState(false);
-  const pendingRef = useRef<HTMLParagraphElement>(null);
-  const doneRef = useRef<HTMLParagraphElement>(null);
-  const failureRef = useRef<HTMLParagraphElement>(null);
 
-  // `showModal()` makes everything outside the dialog inert, and while the erase runs every
-  // control inside it is disabled, so without this focus would sit on `<body>` with nothing
-  // to tab or scan to: a dead end for a switch or eye-gaze user. Focusing the pending
-  // paragraph is also what reads it out.
-  useEffect(() => {
-    pendingRef.current?.focus();
-  }, [isPending]);
-
-  // The pending paragraph that held focus is unmounted with the failure, so focus would fall
-  // back to `<body>` inside a dialog that is open again. The failure message is where the
-  // tester needs to be, and focusing it is also what reads it out.
-  useEffect(() => {
-    failureRef.current?.focus();
-  }, [hasFailed]);
-
-  // The dialog is gone by now, and the opener it would have restored focus to went with it,
-  // so focus would land on `<body>`. Moving it to the completion message is also the only
-  // reliable way to have it announced: a live region inserted with its text already in it
-  // is not announced by every screen reader.
-  useEffect(() => {
-    doneRef.current?.focus();
-  }, [isDone]);
+  // Each status paragraph takes focus as it appears (`focusOnMount`), which is also what has it read out:
+  // 1. Pending: `showModal()` makes everything outside the dialog inert, and while the erase runs every
+  //    control inside it is disabled. Without this, focus would sit on `<body>` with nothing to tab or
+  //    scan to: a dead end for a switch or eye-gaze user.
+  // 2. Failure: the pending paragraph that held focus goes with the failure, so focus would fall to
+  //    `<body>` inside a dialog that is open again.
+  // 3. Done: the dialog is gone, and the opener it would have restored focus to went with it, which is
+  //    also why the `close` event's restore that follows leaves focus here. A live region inserted with
+  //    its text already in it is not announced by every screen reader.
 
   // WebKit does not focus a <button> on mouse click, so ModalDialog would otherwise
   // capture the wrong opener to restore focus to when the dialog closes.
@@ -122,7 +116,7 @@ export function EraseAllData (props: EraseAllDataProps): VNode {
 
   if (isDone) {
     return html`
-      <p class="eraseAllDataDone" role="status" tabindex="-1" ref=${doneRef}>${t("eraseDone")}</p>
+      <p class="eraseAllDataDone" role="status" tabindex="-1" ref=${focusOnMount}>${t("eraseDone")}</p>
     `;
   }
 
@@ -142,9 +136,9 @@ export function EraseAllData (props: EraseAllDataProps): VNode {
         onClose=${cancel}>
         <p>${t("eraseQuestion")}</p>
         ${isPending && html`
-          <p class="eraseAllDataPending" role="status" tabindex="-1" ref=${pendingRef}>${t("erasePending")}</p>
+          <p class="eraseAllDataPending" role="status" tabindex="-1" ref=${focusOnMount}>${t("erasePending")}</p>
         `}
-        ${hasFailed && html`<p class="eraseAllDataFailure" role="alert" tabindex="-1" ref=${failureRef}>${t("eraseFailed")}</p>`}
+        ${hasFailed && html`<p class="eraseAllDataFailure" role="alert" tabindex="-1" ref=${focusOnMount}>${t("eraseFailed")}</p>`}
         <div class="eraseAllDataChoices">
           <button
             type="button"
