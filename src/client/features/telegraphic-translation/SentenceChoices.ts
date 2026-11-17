@@ -51,6 +51,9 @@ function rowFits (button: HTMLElement): boolean {
   return rowBox.top >= box.top - 1 && rowBox.bottom <= box.bottom + 1 && rowBox.right <= box.right + 1;
 }
 
+// No sentence shown as text only.
+const NO_SENTENCES: ReadonlySet<string> = new Set();
+
 /**
  * The sentence area, the `ContentSentenceChoices` cell. The screen palette draws it over its
  * vocabulary rows (see `Palette.ts`). It is open while `sentenceCompletionsSignal` is not
@@ -79,8 +82,19 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
   const isOpen = sentenceLayerOpen();
   const choicesRef = useRef<HTMLDivElement>(null);
   const wasAskingRef = useRef(false);
-  // The sentences shown as text only, because their Bliss rows do not fit their slots.
-  const [textOnly, setTextOnly] = useState<ReadonlySet<string>>(new Set());
+
+  // One slot per sentence asked for, so a sentence that arrives late fills a slot held for it.
+  // A sentence already on screen keeps its slot when the setting goes down.
+  const numSentences = adaptivePaletteGlobals.config.telegraphicTranslation?.numSentences ?? 1;
+  const numSlots = Math.min(MAX_NUM_SENTENCES, Math.max(numSentences, state.sentences.length));
+
+  // The sentences shown as text only, because their Bliss rows do not fit their slots, and the layout
+  // they were measured in. The slots change size when the layer opens or closes, their number changes
+  // or a new message arrives. A set measured in another layout is not used, so every Bliss row gets
+  // another try.
+  const layout = `${isOpen}|${numSlots}|${state.telegraphicMessage}`;
+  const [measured, setMeasured] = useState({ layout, textOnly: NO_SENTENCES });
+  const textOnly = measured.layout === layout ? measured.textOnly : NO_SENTENCES;
 
   const firstChoice = (): HTMLButtonElement | null =>
     choicesRef.current?.querySelector<HTMLButtonElement>(".sentenceChoice") ?? null;
@@ -141,17 +155,6 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
     };
   }, [isOpen, paletteName]);
 
-  // One slot per sentence asked for, so a sentence that arrives late fills a slot held for it.
-  // A sentence already on screen keeps its slot when the setting goes down.
-  const numSentences = adaptivePaletteGlobals.config.telegraphicTranslation?.numSentences ?? 1;
-  const numSlots = Math.min(MAX_NUM_SENTENCES, Math.max(numSentences, state.sentences.length));
-
-  // The slots change size when the layer closes, their number changes or a new message arrives,
-  // so every Bliss row gets another try. Runs before the measuring below.
-  useLayoutEffect(() => {
-    setTextOnly((previous) => previous.size === 0 ? previous : new Set());
-  }, [isOpen, numSlots, state.telegraphicMessage]);
-
   // Read per render rather than at module load: the settings dialog can turn this off while
   // sentences are on screen.
   const showBlissSentence =
@@ -160,16 +163,18 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
   // A sentence whose Bliss row does not fit its slot shows its text only. Measured when what is
   // drawn in the slots changes; a text-only sentence has no row, so this settles.
   useLayoutEffect((): void => {
-    if (!isOpen) {
-      return;
+    let overflowing: string[] = [];
+    if (isOpen) {
+      overflowing = Array.from(choicesRef.current?.querySelectorAll<HTMLElement>(".sentenceChoice") ?? [])
+        .filter((button) => !rowFits(button))
+        .map((button) => button.dataset.sentence ?? "");
     }
-    const overflowing = Array.from(choicesRef.current?.querySelectorAll<HTMLElement>(".sentenceChoice") ?? [])
-      .filter((button) => !rowFits(button))
-      .map((button) => button.dataset.sentence ?? "");
-    if (overflowing.length > 0) {
-      setTextOnly((previous) => new Set([...previous, ...overflowing]));
+    // A set kept from another layout is dropped even when nothing overflows here, so it cannot come back
+    // with that layout. The layer closing counts: nothing watches its size while it is closed.
+    if (overflowing.length > 0 || (measured.layout !== layout && measured.textOnly.size > 0)) {
+      setMeasured({ layout, textOnly: new Set([...textOnly, ...overflowing]) });
     }
-  }, [isOpen, state, textOnly, numSlots, showBlissSentence]);
+  }, [isOpen, state, measured, numSlots, showBlissSentence]);
 
   // The slots change size with the window, so every Bliss row gets another try. The first
   // callback reports the size the rows were just measured at, so it is skipped.
@@ -182,8 +187,8 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
     const observer = new ResizeObserver(([entry]) => {
       const size = `${entry.contentRect.width}x${entry.contentRect.height}`;
       if (lastSize !== null && size !== lastSize) {
-        // A new set even when empty: the render it causes measures the rows again.
-        setTextOnly(new Set());
+        // A new object even when nothing is text only: the render it causes measures the rows again.
+        setMeasured((previous) => ({ layout: previous.layout, textOnly: NO_SENTENCES }));
       }
       lastSize = size;
     });

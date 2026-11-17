@@ -30,6 +30,7 @@ import { languageSignal } from "../../i18n/I18n";
 import {
   addAutoCommas, defaultName, findExistingWord, firstGloss, isSymbolWord, removeAutoCommas, splitPart, wordComposition
 } from "./ComposeWordUtils";
+import { canSuggestNames, requestNameSuggestions } from "./WordNamingUtils";
 
 /**
  * What the dialog after Done shows. `match` is set when the word is already in the vocabulary.
@@ -44,6 +45,42 @@ export type WordDialogType = {
 
 // The dialog after Done, or `null` while it is closed.
 export const wordDialogSignal = signal<WordDialogType | null>(null);
+
+/**
+ * The model's names for the word in the dialog: `idle` when none are asked for (no model, or the word
+ * is already in the vocabulary), `working` while they are, then `done`.
+ */
+export type NameSuggestionsType = { status: "idle" } | { status: "working" } | { status: "done", names: string[] };
+
+export const nameSuggestionsSignal = signal<NameSuggestionsType>({ status: "idle" });
+
+// Stops the request for names when the dialog closes before the answer comes.
+let nameRequest: AbortController | null = null;
+
+/**
+ * Ask the model for names for the word in the dialog that just opened.
+ * @param {WordDialogType} dialog - The dialog.
+ * @returns {void}
+ */
+function askForNames (dialog: WordDialogType): void {
+  const controller = new AbortController();
+  nameRequest = controller;
+  nameSuggestionsSignal.value = { status: "working" };
+  // An answer that lands after its dialog closed is dropped, so it is not offered in the next one.
+  const settle = (names: string[]): void => {
+    if (wordDialogSignal.peek() === dialog) {
+      nameSuggestionsSignal.value = { status: "done", names };
+    }
+  };
+  requestNameSuggestions(dialog.partLabels, dialog.offeredName, controller.signal)
+    .then(settle)
+    .catch((error: unknown) => {
+      if (!controller.signal.aborted) {
+        console.error(`Could not suggest names: ${String(error)}`);
+        settle([]);
+      }
+    });
+}
 
 /**
  * Start building a word at the caret. The message is set aside and the input area holds the
@@ -84,7 +121,7 @@ function finishBuilding (word: SymbolEncodingType): void {
   if (!build) {
     return;
   }
-  wordDialogSignal.value = null;
+  closeWordDialog();
   const { payloads, caretPosition } = build.message;
   editMessage(insertWordAtCaret(word, payloads, caretPosition), () => {
     wordBuildSignal.value = null;
@@ -183,7 +220,7 @@ export function requestFinish (): void {
     return;
   }
   const entry = findExistingWord(composition);
-  wordDialogSignal.value = {
+  const dialog: WordDialogType = {
     composition,
     offeredName: defaultName(parts),
     partLabels: parts.filter(isSymbolWord).map((part) => part.label),
@@ -195,13 +232,24 @@ export function requestFinish (): void {
       }
     })
   };
+  // A second Done queued while a label was pending lands here too: stop the first request.
+  nameRequest?.abort();
+  nameSuggestionsSignal.value = { status: "idle" };
+  wordDialogSignal.value = dialog;
+  // Ask the model for names once, as the dialog opens. Not for a word already in the vocabulary.
+  if (!dialog.match && canSuggestNames()) {
+    askForNames(dialog);
+  }
 }
 
 /**
- * Back to word: close the dialog and keep building.
+ * Close the dialog: Back to word, Escape, or after a name is chosen. Stops the request for names, so
+ * going back and pressing Done again never queues another behind it.
  * @returns {void}
  */
 export function closeWordDialog (): void {
+  nameRequest?.abort();
+  nameRequest = null;
   wordDialogSignal.value = null;
 }
 

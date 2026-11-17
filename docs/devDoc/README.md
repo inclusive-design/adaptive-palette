@@ -8,6 +8,8 @@ Technical guide for developers building the adaptive palette.
   where a new file goes.
 - [State](State.md) — the globals singleton, the signals, and why the start-up and registry modules
   sit outside `state/`.
+- [Effects](Effects.md) — when an effect hook is the right tool, what to use instead, and Preact 11's
+  effect timing.
 - [Runtime Configuration](Config.md) — every field in `public/config.json` and what a malformed one
   falls back to.
 - [Palettes](Palettes.md) — how a palette renders, the palette set, screens, and the palette JSON

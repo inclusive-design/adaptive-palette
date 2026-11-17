@@ -80,7 +80,7 @@ describe("EraseAllData", (): void => {
     expect(screen.getByRole("button", { name: en.dialogDismiss })).toBeDisabled();
     // With every control disabled, the pending text is the only thing left to hold focus.
     // Without it a switch or eye-gaze user would be left on `<body>` with nothing to scan.
-    // `useEffect` runs after the paint, so the move is a tick behind the text appearing.
+    // `waitFor`, since the paragraph appears in a render after the click.
     await waitFor(() => expect(screen.getByText(en.erasePending)).toHaveFocus());
 
     resolveDestroy();
@@ -98,6 +98,9 @@ describe("EraseAllData", (): void => {
     // The dialog and the button that opened it are both gone, so focus is put on the
     // message: it is also what has it announced.
     await waitFor(() => expect(screen.getByText(en.eraseDone)).toHaveFocus());
+    // `ModalDialog` restores focus again from the `close` event, a task later.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(screen.getByText(en.eraseDone)).toHaveFocus();
     expect(fetchSpy).toHaveBeenCalledWith("/quit", { method: "POST" });
     await storage.open();
     expect(await storage.readSettings()).toEqual({});
