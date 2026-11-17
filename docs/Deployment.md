@@ -12,112 +12,126 @@ itself.
 
 ## System requirements
 
-**Disk space** — 8 GB free. Almost all of that is the AI model Ollama downloads
-(`gemma4:12b`, 7.6 GB); Adaptive Palette itself is up to about 300 MB — macOS ships a
-universal binary covering both Mac architectures, so it is the larger of the two; Windows is
-smaller. You can skip the model and run the palette without the AI features, which needs
-only that much.
+Windows, or macOS 13.5 (Ventura) or newer.
 
-**Computer** — Windows, or macOS 13.5 (Ventura) or newer. The computer requirements are decided by Ollama to support
-model execution — see Ollama's requirements [on Windows](https://docs.ollama.com/windows#system-requirements)
-and [on macOS](https://docs.ollama.com/macos#system-requirements).
+| | With AI features | Without AI features |
+| --- | --- | --- |
+| Memory (RAM) | 16 GB | No minimum |
+| Free disk space | 10 GB | 1 GB |
+
+The AI features also need a computer that meets Ollama's requirements
+[on Windows](https://docs.ollama.com/windows#system-requirements) or
+[on macOS](https://docs.ollama.com/macos#system-requirements).
 
 ## 1. Install Ollama
 
-Download it from [ollama.com/download](https://ollama.com/download) and run the installer
-for your system. Start it once it is installed, and leave it running.
+Ollama runs the word suggestions, the sentence choices and the label lookup. Everything else
+in Adaptive Palette works without it, so you can skip this step if you don't want the AI
+features.
 
-Adaptive Palette works without Ollama. The word suggestions, the sentence choices, and the
-label lookup are the parts that need it; everything else works either way.
+Download Ollama from [ollama.com/download](https://ollama.com/download) and run the
+installer. Start it once it is installed, and leave it running.
 
 ## 2. Install Adaptive Palette
 
-Go to the [releases page](https://github.com/inclusive-design/adaptive-palette/releases) and
-take the newest release. Under its **Assets** section, download the zip for your system:
+Go to the [releases page](https://github.com/inclusive-design/adaptive-palette/releases),
+open the newest release, and under **Assets** download `AdaptivePalette-windows.zip` or
+`AdaptivePalette-macos.zip`. The macOS zip works on both Intel and Apple Silicon Macs.
 
-| Your system | Download |
-| --- | --- |
-| Windows | `AdaptivePalette-windows.zip` |
-| macOS | `AdaptivePalette-macos.zip` |
+On **Windows**, open the zip and drag the **AdaptivePalette** folder to where you want to
+keep it, such as your Desktop. The app is the whole folder, so keep it together. The
+**AdaptivePalette** file inside it, with the two gears, starts the app; make a shortcut to it
+if you want one on your Desktop.
 
-One macOS download covers both Intel and Apple Silicon Macs, so there is no processor to
-choose between: take `AdaptivePalette-macos.zip` whichever Mac you have.
-
-**Windows** — open the zip and drag the **AdaptivePalette** folder to wherever you want to
-keep it, such as your Desktop. Keep the folder together: the app is the whole folder, and
-will not run out of it. Inside it, **AdaptivePalette** (the file with the two gears) is what
-starts the app; make a shortcut to it if you want one on your Desktop.
-
-**macOS** — open the zip. Drag **Adaptive Palette** to wherever you want to keep it, such
-as your Applications folder or your Desktop.
+On **macOS**, open the zip and drag **Adaptive Palette** to your Applications folder or your
+Desktop.
 
 ### The warning the first time you open it
 
-The app is not signed with a paid certificate yet, so your computer will warn you about it
-the first time.
+The app is not signed with a paid certificate yet, so your computer warns you about it the
+first time you open it. You only have to let it through once.
 
-**Windows** — you will see a blue "Windows protected your PC" box. Choose **More info**,
-then **Run anyway**. You only have to do this once.
+On **Windows**, a blue "Windows protected your PC" box appears. Choose **More info**, then
+**Run anyway**.
 
-**macOS** — double-clicking shows a warning that the app cannot be opened because Apple
-cannot check it for malicious software. To let it through, which you only have to do once:
+On **macOS**, a warning says Apple cannot check the app for malicious software. To let it
+through:
 
 1. Double-click the app, then choose **Done** in the warning box.
-2. Click the Apple menu in the top left corner, and choose **System Settings**.
+2. Open the Apple menu in the top left corner and choose **System Settings**.
 3. Choose **Privacy & Security** in the side menu.
-4. Scroll down to the **Security** section.
-5. Choose **Open Anyway** next to the message about the app.
-6. Type your Mac login password and choose **OK**.
+4. Scroll down to the **Security** section and choose **Open Anyway** next to the message
+   about the app.
+5. Type your Mac login password and choose **OK**.
 
 ## 3. First run
 
-Start the app — on Windows, **AdaptivePalette** inside the folder; on macOS, the **Adaptive
-Palette** app. Your usual web browser opens at `http://localhost:3210`, with the palette in
-it.
+Start the app: on Windows, the **AdaptivePalette** file inside the folder; on macOS, the
+**Adaptive Palette** app. Your usual web browser opens at `http://localhost:3210` with the
+palette in it.
 
-The first time, a box may appear:
+The first time, a box may tell you the AI features are not ready yet. If it says Ollama is
+not running, start Ollama and choose **Try again**. If it says Ollama does not have
+`gemma4:12b` yet, choose **Download**. The model is several gigabytes, so this takes a while;
+the bar shows how far it has got, and you can cancel and download it another time. Either
+way, **Continue without AI features** gives you a working palette straight away.
 
-- **"The AI features need Ollama, which is not running"** — install Ollama as above, start
-  it, then choose **Try again**. Or choose **Continue without AI features** to use the
-  palette now.
-- **"The AI features need gemma4:12b, which Ollama has not got yet"** — choose
-  **Download**. It is several gigabytes and takes a while; the bar shows how far it has
-  got. You can cancel and do it another time.
+If the AI features still don't work after this, see [Troubleshooting](#troubleshooting).
 
-Either way, **Continue without AI features** gets you a working palette straight away.
+## Quitting
 
-Opening the app again while it is already running just brings the browser back to it.
+Closing the browser tab does not stop the app: it keeps running quietly in the background,
+and opening the app again brings the browser straight back to it.
 
-## 4. Troubleshooting
+To stop it on **Windows**, close the black console window that opened when the app started.
+On **macOS** there is no quit button yet and no Dock icon; the app stops when you restart or
+shut down your computer.
 
-If the AI features don't work, check these in order. The commands go in Command Prompt on
+**Erase all app data and quit**, on the **Adjust Settings** page, is not a quit button. It
+permanently deletes every message, setting and About Me note you have saved, with no undo.
+Use it only when you mean to erase your data, such as when you are uninstalling.
+
+## Updating
+
+There is no automatic update. Check the
+[releases page](https://github.com/inclusive-design/adaptive-palette/releases) for a newer
+version. To update, erase your data and delete the old app as described in
+[Uninstalling](#uninstalling), then install the new one. Close all of the app's browser tabs
+before you start the new version.
+
+## Uninstalling
+
+Erase your data first, because once the app is deleted you can no longer reach it from
+inside the app. Do these in order:
+
+1. In the app, open **Adjust Settings** and choose **Erase all app data and quit**.
+2. Delete the app. On Windows, delete the **AdaptivePalette** folder; on macOS, drag
+   **Adaptive Palette** to the Trash.
+3. Uninstall Ollama, if you no longer want it, following Ollama's instructions
+   [on Windows](https://docs.ollama.com/windows#uninstall) or
+   [on macOS](https://docs.ollama.com/macos#uninstall).
+4. Delete the models Ollama downloaded, which take several gigabytes each:
+   `%USERPROFILE%\.ollama` on Windows, or `~/.ollama` on macOS.
+
+The app writes nothing anywhere else: no installer, no registry entries, no hidden folders.
+
+If you deleted the app before erasing your data, you can still clear it from the browser:
+open the browser's site settings for `localhost:3210` and choose **Clear site data**.
+
+## Troubleshooting
+
+If the AI features don't work, check these in order. Commands go in Command Prompt on
 Windows, or Terminal on macOS.
 
 1. **Is Ollama running?** Open `http://127.0.0.1:11434` in your browser. It should say
-   "Ollama is running". If it doesn't, start Ollama: on Windows from the Start menu, on
-   macOS from Applications.
-2. **Does Ollama have the model?** Run:
-
-   ```text
-   ollama list
-   ```
-
-   The model the first-run box named must be in the list. If it isn't, download it, then
-   **reload the Adaptive Palette page**. The app only checks for models when it starts.
-
-   ```text
-   ollama pull gemma4:12b
-   ```
-
-3. **Does the model run?** Run:
-
-   ```text
-   ollama run gemma4:12b "hello"
-   ```
-
-   If it fails, open Ollama's log and read the last lines:
-   - Windows: `%LOCALAPPDATA%\Ollama\server.log`
-   - macOS: `~/.ollama/logs/server.log`
+   "Ollama is running". If it doesn't, start Ollama from the Start menu on Windows, or from
+   Applications on macOS.
+2. **Does Ollama have the model?** Run `ollama list`. If `gemma4:12b` is not in the list,
+   run `ollama pull gemma4:12b`, then reload the Adaptive Palette page. The app only checks
+   for models when the page loads.
+3. **Does the model run?** Run `ollama run gemma4:12b "hello"`. If it fails, read the last
+   lines of Ollama's log, at `%LOCALAPPDATA%\Ollama\server.log` on Windows or
+   `~/.ollama/logs/server.log` on macOS:
 
    | The log says | Fix |
    | --- | --- |
@@ -129,46 +143,6 @@ Windows, or Terminal on macOS.
    with `Could not make sentences:` or `Failed to fetch Ollama models:` say what went wrong.
    A "CORS" or "Failed to fetch" error usually means Ollama isn't running or can't be
    reached: go back to step 1.
-
-## 5. Quitting
-
-Close the browser tab and the app keeps running quietly in the background. Opening the app
-again brings the browser straight back to it.
-
-**Windows** — the app opens a black console window when it starts. Closing that window
-stops the app straight away.
-
-**macOS** — there is no quit button yet, and the app keeps no Dock icon. It stops when you
-restart or shut down your computer.
-
-"Adjust Settings" page has **Erase all app data and quit**. That is not a quit button: it permanently
-deletes every message, setting and About Me note you have saved, and there is no undo. Use it only when you mean to
-erase your data, such as when you are uninstalling.
-
-## 6. Uninstalling
-
-Do these in order. **Erase your data first:** once the app is deleted there is no way left
-to reach it from inside the app.
-
-| What | How |
-| --- | --- |
-| Your saved messages and settings | In the app, open **Adjust Settings** and choose **Erase all app data and quit**. |
-| The app | Windows: delete the **AdaptivePalette** folder. macOS: drag **Adaptive Palette** to the Trash. |
-| Ollama | Use Ollama's own uninstall instructions: [on Windows](https://docs.ollama.com/windows#uninstall), [on macOS](https://docs.ollama.com/macos#uninstall). |
-| The models Ollama downloaded | Delete `%USERPROFILE%\.ollama` on Windows, or `~/.ollama` on macOS. This is the big one — several gigabytes per model. |
-
-The app writes nothing anywhere else: no installer, no registry entries, no hidden folders.
-Deleting it is the whole of it.
-
-If you deleted the app before erasing your data, you can still clear it from the browser:
-open the browser's site settings for `localhost:3210` and choose **Clear site data**.
-
-## 7. Updates
-
-There is no automatic update. Check the
-[releases page](https://github.com/inclusive-design/adaptive-palette/releases) for a newer
-version. Erase your data and delete the old app first, then install the new one.
-Close all of the app's browser tabs before you start the new version.
 
 ---
 
