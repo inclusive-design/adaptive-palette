@@ -20,7 +20,6 @@ import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { caretComposition } from "../utils/SymbolEncodingUtils";
 import { colorStyle } from "../utils/GridUtils";
 import type { Language } from "../i18n/I18n";
-import "./ActionBranchToPaletteCell.scss";
 
 type ActionBranchToPalettePropsType = {
   id: string,
@@ -70,7 +69,7 @@ export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType
     if (unavailable) { speakUnavailable(label); return; }
     void navigateToPalette(event, labelLanguage);
   };
-  const className = `actionBranchToPaletteCell foldedCorner${isCommand ? " btn-command" : ""}`;
+  const className = `symbolCell actionBranchToPaletteCell foldedCorner${isCommand ? " btn-command" : ""}`;
 
   return html`
     <button

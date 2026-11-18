@@ -21,7 +21,6 @@ import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { caretComposition } from "../utils/SymbolEncodingUtils";
 import { baseOf, relabel } from "../core/SymbolLabelUtils";
-import "./ActionModifierCell.scss";
 
 export type ActionModifierCodeCellPropsType = {
   id: string,
@@ -93,7 +92,7 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
   };
 
   return html`
-    <button id="${props.id}" class="actionModifierCell" style="${gridStyles}" onClick=${cellClicked} aria-disabled=${unavailable}>
+    <button id="${props.id}" class="symbolCell actionModifierCell" style="${gridStyles}" onClick=${cellClicked} aria-disabled=${unavailable}>
       <${BlissSymbol}
         composition=${modifierComposition}
         label=${label}

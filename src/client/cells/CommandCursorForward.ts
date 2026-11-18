@@ -12,10 +12,9 @@
 
 import type { VNode } from "preact";
 import { html } from "htm/preact";
-import { BlissSymbol } from "../components/BlissSymbol";
+import { CommandButton } from "../components/CommandButton";
 import { incrementCursor } from "./ContentEncoding";
 import type { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
-import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
 
 type CommandCursorForwardProps = {
@@ -27,23 +26,13 @@ type CommandCursorForwardProps = {
 
 export function CommandCursorForward (props: CommandCursorForwardProps): VNode {
   const { id, options } = props;
-  const { label, labelLanguage, composition, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
-
-  const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
     incrementCursor();
-    announceIfEnabled(label, labelLanguage);
+    announceIfEnabled(options.label, options.labelLanguage);
   };
 
   return html`
-    <button
-      id="${id}"
-      class="btn-command"
-      style="${gridStyles}"
-      aria-controls=${ariaControls}
-      onClick=${cellClicked}>
-      <${BlissSymbol} composition=${composition} label=${label}/>
-    </button>
+    <${CommandButton} id=${id} options=${options} ariaControls=${options.ariaControls} onClick=${cellClicked} />
   `;
 }

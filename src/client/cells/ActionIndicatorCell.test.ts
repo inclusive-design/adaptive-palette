@@ -93,7 +93,7 @@ describe("ActionIndicatorCell", (): void => {
 
     renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
 
-    const button = await expectCellRendered(TEST_CELL_ID, testCell.options, "actionIndicatorCell");
+    const button = await expectCellRendered(TEST_CELL_ID, testCell.options, "symbolCell actionIndicatorCell");
 
     // Check disabled state.  `changeEncodingContents` is initialized
     // with an empty array, hence there should be an `aria-disabled` attribute.
@@ -116,7 +116,7 @@ describe("ActionIndicatorCell", (): void => {
 
     renderCell(ActionIndicatorCell, TEST_CELL_ID, testCell.options);
 
-    let button = await expectCellRendered(TEST_CELL_ID, testCell.options, "actionIndicatorCell");
+    let button = await expectCellRendered(TEST_CELL_ID, testCell.options, "symbolCell actionIndicatorCell");
 
     // Check disabled state. `changeEncodingContents` is initialized
     // with an empty array, hence there should be an `aria-disabled` attribute.

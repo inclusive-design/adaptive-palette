@@ -22,7 +22,6 @@ import { applyModifiersToLabel, caretComposition } from "../utils/SymbolEncoding
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { findWordIndicators, findClassifierFromLeft } from "../utils/SvgUtils";
 import { baseOf, relabel } from "../core/SymbolLabelUtils";
-import "./ActionIndicatorCell.scss";
 
 type ActionIndicatorCodeCellPropsType = {
   id: string,
@@ -96,7 +95,7 @@ export function ActionIndicatorCell (props: ActionIndicatorCodeCellPropsType): V
   };
 
   return html`
-    <button id="${props.id}" class="actionIndicatorCell" style="${gridStyles}" onClick=${cellClicked} aria-disabled=${unavailable}>
+    <button id="${props.id}" class="symbolCell actionIndicatorCell" style="${gridStyles}" onClick=${cellClicked} aria-disabled=${unavailable}>
       <${BlissSymbol}
         composition=${indicatorId}
         label=${label}

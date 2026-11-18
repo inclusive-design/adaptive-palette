@@ -70,6 +70,22 @@ button {
   }
 }
 
+/*
+ * The look of the palette's word, indicator, modifier and branch cells. It comes before
+ * `.btn-command` so a branch that edits the message takes the command colours. Unavailable
+ * changes only the fill: restating the border would outrank the red hover and focus border.
+ */
+.symbolCell {
+  border: 3px solid blue;
+  background-color: white;
+  padding-inline: 0.5rem;
+  text-align: center;
+
+  &[aria-disabled="true"] {
+    background-color: silver;
+  }
+}
+
 .btn-command {
   background-color: lightsalmon;
 

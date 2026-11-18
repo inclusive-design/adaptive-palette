@@ -68,7 +68,7 @@ export function ActionSpeakCell (props: ActionSpeakCellPropsType): VNode {
   return html`
     <button
       id="${id}"
-      class="ActionSpeakCell btn-command"
+      class="actionSpeakCell btn-command"
       style="${gridStyles}"
       aria-controls=${ariaControls}
       aria-disabled=${cannotRun}

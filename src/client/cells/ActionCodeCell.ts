@@ -20,7 +20,6 @@ import { goToPalette } from "../core/PaletteNavigation";
 import { colorStyle, generateGridStyle } from "../utils/GridUtils";
 import { normalizeComposition } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
-import "./ActionCodeCell.scss";
 
 type ActionCodeCellPropsType = {
   id: string,
@@ -59,7 +58,7 @@ export function ActionCodeCell (props: ActionCodeCellPropsType): VNode {
 
   return html`
     <button
-      id="${props.id}" class="ActionCodeCell${branchTo ? " foldedCorner" : ""}" style="${gridStyles + colorStyle(backgroundColor, textColor)}"
+      id="${props.id}" class="symbolCell actionCodeCell${branchTo ? " foldedCorner" : ""}" style="${gridStyles + colorStyle(backgroundColor, textColor)}"
       onClick=${cellClicked}>
       <${BlissSymbol}
         composition=${composition}

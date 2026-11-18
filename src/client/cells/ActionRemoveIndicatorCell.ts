@@ -13,13 +13,12 @@
 import type { VNode } from "preact";
 import { html } from "htm/preact";
 import type { BlissSymbolInfoType, LayoutInfoType, ContentSignalDataType } from "../index.d";
-import { BlissSymbol } from "../components/BlissSymbol";
+import { CommandButton } from "../components/CommandButton";
 import { spokenLabel } from "../components/AiBadge";
 import { changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
 import { editSymbolAtCaret } from "../core/MessageEdit";
-import { generateGridStyle } from "../utils/GridUtils";
 import { caretComposition } from "../utils/SymbolEncodingUtils";
-import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
+import { announceIfEnabled } from "../utils/SpeechUtils";
 import { findWordIndicators } from "../utils/SvgUtils";
 import { baseOf, relabel } from "../core/SymbolLabelUtils";
 
@@ -42,22 +41,15 @@ function caretSymbolIndicatorPosition (symbols: ContentSignalDataType): number {
 }
 
 export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsType): VNode {
-  const {
-    columnStart, columnSpan, rowStart, rowSpan, label
-  } = props.options;
-  const removeIndicatorComposition = props.options.composition;
-
-  const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
+  const { label } = props.options;
 
   // Enable the remove-indicator button only if there is an indicator on the
   // symbol at the caret.
   const indicatorPosition = caretSymbolIndicatorPosition(changeEncodingContents.value);
-  // Marked unavailable rather than `disabled` so the button keeps its place in the tab
-  // order for switch and eye-gaze users. Not available while a new word is being built.
+  // Not available while a new word is being built.
   const unavailable = indicatorPosition === -1 || wordBuildSignal.value !== null;
 
   const cellClicked = () => {
-    if (unavailable) { speakUnavailable(label); return; }
     // Get the symbol at the caret position in the editing area and find the
     // locations within it to replace any existing indicator.
     const { caretPosition, payloads } = changeEncodingContents.value;
@@ -95,11 +87,6 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
   };
 
   return html`
-    <button id="${props.id}" class="btn-command" style="${gridStyles}" onClick=${cellClicked} aria-disabled=${unavailable}>
-      <${BlissSymbol}
-        composition=${removeIndicatorComposition}
-        label=${label}
-      />
-    </button>
+    <${CommandButton} id=${props.id} options=${props.options} unavailable=${unavailable} onClick=${cellClicked} />
   `;
 }

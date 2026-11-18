@@ -12,11 +12,10 @@
 
 import type { VNode } from "preact";
 import { html } from "htm/preact";
-import { BlissSymbol } from "../components/BlissSymbol";
+import { CommandButton } from "../components/CommandButton";
 import { changeEncodingContents } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
 import type { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
-import { generateGridStyle } from "../utils/GridUtils";
 import { deleteAtCaret } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
 
@@ -29,9 +28,6 @@ type CommandDelLastEncodingProps = {
 
 export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNode {
   const { id, options } = props;
-  const { label, labelLanguage, composition, columnStart, columnSpan, rowStart, rowSpan, ariaControls } = options;
-
-  const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   const cellClicked = (): void => {
     const { payloads, caretPosition } = changeEncodingContents.value;
@@ -44,17 +40,10 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNo
     if (payloads.length !== 0 && caretPosition !== -1) {
       editMessage(deleteAtCaret(payloads, caretPosition));
     }
-    announceIfEnabled(label, labelLanguage);
+    announceIfEnabled(options.label, options.labelLanguage);
   };
 
   return html`
-    <button
-      id="${id}"
-      class="btn-command"
-      style="${gridStyles}"
-      aria-controls=${ariaControls}
-      onClick=${cellClicked}>
-      <${BlissSymbol} composition=${composition} label=${label}/>
-    </button>
+    <${CommandButton} id=${id} options=${options} ariaControls=${options.ariaControls} onClick=${cellClicked} />
   `;
 }
