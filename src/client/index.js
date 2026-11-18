@@ -20,6 +20,8 @@ import { announceIfEnabled, speakUnavailable } from "./utils/SpeechUtils";
 import { goBackImpl } from "./cells/CommandGoBackCell";
 import { atRootWithNoOverlay } from "./core/NavigationOverlay";
 import { elementAllowsTextEntry } from "./utils/TextEntryUtils";
+// Before the component imports, so a component's own rule wins over index.scss at equal specificity.
+import "./index.scss";
 import { CurrentPalette } from "./components/CurrentPalette";
 import { DiscardEditDialog } from "./features/telegraphic-translation/DiscardEditDialog";
 import { NameWordDialog } from "./features/compose-word/NameWordDialog";
@@ -28,7 +30,6 @@ import { MessageAttributesBar } from "./features/message-attributes/MessageAttri
 import { FirstRunSetup } from "./features/setup/FirstRunSetup";
 import { followSwitchScanningSetting } from "./features/switch-scanning/SwitchScanning";
 import { languageSignal, t } from "./i18n/I18n";
-import "./index.scss";
 
 // Initialize any globals used elsewhere in the code.
 await initAdaptivePaletteGlobals("mainPaletteDisplayArea");

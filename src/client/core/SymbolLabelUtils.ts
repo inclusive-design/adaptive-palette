@@ -134,14 +134,21 @@ function labelKey (payload: SymbolEncodingType, language: Language): string {
  * the symbol, its indicator or its word is missing from the loaded data.
  * @param {SymbolEncodingType} payload - The symbol.
  * @param {Language} language - The language to ask in.
+ * @param {string} key - The symbol's label key, under which a query already built is kept.
  * @returns {LabelQueryType | undefined}
  */
-function buildQuery (payload: SymbolEncodingType, language: Language): LabelQueryType | undefined {
+function buildQuery (payload: SymbolEncodingType, language: Language, key: string): LabelQueryType | undefined {
   const { config, models, symbols } = adaptivePaletteGlobals;
   const lookup = config.labelLookup;
   const prompts = promptsFor(lookup, language);
   if (!isLocalHost() || models.length === 0 || !lookup.useModelQueryFallback || !prompts) {
     return undefined;
+  }
+  // Built once per key: building looks the symbol up in the whole Bliss table, and warns when the
+  // configured model is missing.
+  const cached = queries.get(key);
+  if (cached) {
+    return cached;
   }
   let indicator = { indicator: "", purpose: "" };
   if (payload.indicatorId !== undefined) {
@@ -213,7 +220,7 @@ export function labelFor (payload: SymbolEncodingType, language: Language = lang
     label: applyModifiersToLabel(table ?? indicatorAnswer ?? base, modifiers),
     isAiLabel: indicatorAnswer !== undefined || (table === undefined && isAiBase)
   };
-  const query = answers.has(key) ? undefined : buildQuery(payload, language);
+  const query = answers.has(key) ? undefined : buildQuery(payload, language, key);
   if (!query) {
     return fallback;
   }

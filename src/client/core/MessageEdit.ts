@@ -22,7 +22,8 @@
  * that no cell imports a feature.
  */
 import { changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
-import { insertWordAtCaret } from "../utils/SymbolEncodingUtils";
+import { insertWordAtCaret, replaceAtCaret } from "../utils/SymbolEncodingUtils";
+import { announceIfEnabled } from "../utils/SpeechUtils";
 import type { ContentSignalDataType, SymbolEncodingType } from "../index.d";
 
 /**
@@ -71,7 +72,7 @@ export function clearMessage (): void {
     clearer();
     return;
   }
-  changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+  editMessage({ payloads: [], caretPosition: -1 });
 }
 
 /**
@@ -116,6 +117,23 @@ export function editMessage (next: ContentSignalDataType, afterApply?: () => voi
   changeEncodingContents.value = next;
   afterApply?.();
   return true;
+}
+
+/**
+ * Replace the symbol at the caret with an edited one, as the modifier and indicator cells do.
+ * When the guard holds the edit, the label on screen is unchanged, so the old label is spoken
+ * with the cell's label.
+ * @param {SymbolEncodingType} edited - The symbol with its new parts and label.
+ * @param {string} cellLabel          - The label of the cell that made the change.
+ * @returns {boolean} - As for `editMessage()`. On `true` the caller announces the new label.
+ */
+export function editSymbolAtCaret (edited: SymbolEncodingType, cellLabel: string): boolean {
+  const { payloads, caretPosition } = changeEncodingContents.value;
+  if (editMessage({ payloads: replaceAtCaret(payloads, caretPosition, edited), caretPosition })) {
+    return true;
+  }
+  announceIfEnabled(`${payloads[caretPosition].label}, ${cellLabel}`);
+  return false;
 }
 
 /**

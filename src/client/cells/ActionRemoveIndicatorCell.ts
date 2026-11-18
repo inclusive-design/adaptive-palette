@@ -16,9 +16,9 @@ import type { BlissSymbolInfoType, LayoutInfoType, ContentSignalDataType } from 
 import { BlissSymbol } from "../components/BlissSymbol";
 import { spokenLabel } from "../components/AiBadge";
 import { changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
-import { editMessage } from "../core/MessageEdit";
+import { editSymbolAtCaret } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
-import { caretComposition, replaceAtCaret } from "../utils/SymbolEncodingUtils";
+import { caretComposition } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { findWordIndicators } from "../utils/SvgUtils";
 import { baseOf, relabel } from "../core/SymbolLabelUtils";
@@ -88,9 +88,7 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
       "modifierInfo": symbolToEdit.modifierInfo,
       ...baseOf(symbolToEdit)
     });
-    // Held by the guard: the label on screen is unchanged, so name this cell alongside it.
-    if (!editMessage({ payloads: replaceAtCaret(payloads, caretPosition, edited), caretPosition: caretPosition })) {
-      announceIfEnabled(`${symbolToEdit.label}, ${label}`);
+    if (!editSymbolAtCaret(edited, label)) {
       return;
     }
     announceIfEnabled(spokenLabel(edited));

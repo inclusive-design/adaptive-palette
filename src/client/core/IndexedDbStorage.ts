@@ -116,17 +116,7 @@ export class IndexedDbStorage implements AdaptivePaletteStorage {
           request.result.close();
           return;
         }
-        const database = request.result;
-        // Another tab wants to upgrade or delete the database. Step aside: this tab stops saving,
-        // and the other tab is not blocked.
-        database.onversionchange = (): void => {
-          database.close();
-          if (this.database === database) {
-            this.database = undefined;
-          }
-          console.warn("The saved data was upgraded or erased in another tab. This tab no longer saves.");
-        };
-        this.database = database;
+        this.database = request.result;
         resolve();
       };
       request.onerror = (): void => reject(requestError(request));

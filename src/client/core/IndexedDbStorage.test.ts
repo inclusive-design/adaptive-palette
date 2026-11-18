@@ -122,25 +122,4 @@ describe("IndexedDbStorage", (): void => {
     const unopened = new IndexedDbStorage(`AdaptivePaletteTest-unopened-${Date.now()}`);
     await expect(unopened.readMessages(10)).rejects.toThrow("The database is not open.");
   });
-
-  // A newer build in another tab opens the database at a higher version. This tab must let it,
-  // or the new tab runs storing nothing.
-  test("closes its connection when a newer version asks for the database", async (): Promise<void> => {
-    const name = `AdaptivePaletteTest-versionchange-${Date.now()}`;
-    const storage = new IndexedDbStorage(name);
-    await storage.open();
-
-    const upgraded = await new Promise<IDBDatabase>((resolve, reject) => {
-      const request = window.indexedDB.open(name, 100);
-      request.onblocked = (): void => reject(new Error("blocked by the open connection"));
-      request.onsuccess = (): void => resolve(request.result);
-      request.onerror = (): void => reject(request.error ?? new Error("open failed"));
-    });
-    expect(upgraded.version).toBe(100);
-    upgraded.close();
-    await new Promise<void>((resolve) => {
-      const request = window.indexedDB.deleteDatabase(name);
-      request.onsuccess = request.onerror = (): void => resolve();
-    });
-  });
 });

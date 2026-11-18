@@ -16,10 +16,10 @@ import type { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { spokenLabel } from "../components/AiBadge";
 import { changeEncodingContents } from "../state/GlobalData";
-import { editMessage } from "../core/MessageEdit";
+import { editSymbolAtCaret } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
-import { caretComposition, replaceAtCaret } from "../utils/SymbolEncodingUtils";
+import { caretComposition } from "../utils/SymbolEncodingUtils";
 import { baseOf, relabel } from "../core/SymbolLabelUtils";
 
 type ActionRemoveModifierPropsType = {
@@ -91,9 +91,7 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
       "indicatorId": symbolToEdit.indicatorId,
       ...baseOf(symbolToEdit)
     });
-    // Held by the guard: the label on screen is unchanged, so name this cell alongside it.
-    if (!editMessage({ payloads: replaceAtCaret(payloads, caretPosition, edited), caretPosition: caretPosition })) {
-      announceIfEnabled(`${symbolToEdit.label}, ${label}`);
+    if (!editSymbolAtCaret(edited, label)) {
       return;
     }
     announceIfEnabled(spokenLabel(edited));
