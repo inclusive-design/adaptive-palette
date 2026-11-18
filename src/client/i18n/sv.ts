@@ -57,7 +57,7 @@ export const sv: Record<keyof typeof en, string> = {
 
   // Clear saved data
   clearConfirm: "Rensa",
-  clearQuestion: "Detta raderar alla meddelanden och Om mig-anteckningar du har sparat, och meddelandet du skriver nu. Det går inte att ångra.",
+  clearQuestion: "Detta raderar alla meddelanden, inställningar, sparade ord och Om mig-anteckningar du har sparat, och meddelandet du skriver nu. Det går inte att ångra.",
   clearFailed: "Sparade data kunde inte rensas. Webbläsaren låter inte appen använda sin lagring.",
 
   // Input area
@@ -109,7 +109,7 @@ export const sv: Record<keyof typeof en, string> = {
 
   // Erase all app data
   eraseLabel: "Radera alla appdata och avsluta",
-  eraseQuestion: "Detta raderar alla meddelanden, inställningar och Om mig-anteckningar du har sparat, och avslutar sedan. Det går inte att ångra.",
+  eraseQuestion: "Detta raderar alla meddelanden, inställningar, sparade ord och Om mig-anteckningar du har sparat, och avslutar sedan. Det går inte att ångra.",
   eraseNote: "Gör detta innan du tar bort appen: när appen är borta går det inte längre att nå dessa data.",
   eraseConfirm: "Radera och avsluta",
   eraseFailed: "Data kunde inte raderas. Stäng andra flikar som visar Adaptive Palette och försök igen.",

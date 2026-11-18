@@ -98,7 +98,7 @@ describe("requestFactSuggestions", (): void => {
     replyWith("");
     await requestFactSuggestions();
     expect(mockedQueryChat).toHaveBeenCalledWith(
-      "Messages:\nold\nI walk my dog Rex.", "phony-model:12b", false, "Find facts."
+      "Messages:\nold\nI walk my dog Rex.", "phony-model:12b", "Find facts."
     );
   });
 

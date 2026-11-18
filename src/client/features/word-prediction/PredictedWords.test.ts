@@ -21,7 +21,7 @@ import { DISABLED_MODEL_QUERY } from "../../core/Config";
 import { saveMessageRecord } from "../../core/MessageLog";
 import { moreSuggestionsMessage, PredictedWords } from "./PredictedWords";
 import { cancelModelQuery, modelWordsSignal, queryContextKeyOf } from "./WordPredictionState";
-import { SymbolEncodingType } from "../../index.d";
+import type { SymbolEncodingType } from "../../index.d";
 import { aiSuggestionLabel } from "../../components/AiBadge";
 import { selectedAttributesSignal, clearAttributes } from "../message-attributes/MessageAttributesState";
 import { testPicture } from "../../testUtils/CellTestUtils";

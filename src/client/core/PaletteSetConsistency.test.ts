@@ -10,7 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { BranchToInfoType, JsonPaletteType, PaletteIncludeType } from "../index.d";
+import type { BranchToInfoType, JsonPaletteType, PaletteIncludeType } from "../index.d";
 import { PALETTE_INCLUDE_TYPE, PaletteStore } from "./PaletteStore";
 import type { LabelType } from "../i18n/I18n";
 

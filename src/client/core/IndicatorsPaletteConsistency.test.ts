@@ -17,8 +17,8 @@
  * `PaletteSetConsistency.test.ts`.
  */
 import { loadPaletteFromJsonFile } from "./PaletteStore";
-import { JsonPaletteType, LayoutInfoType } from "../index.d";
-import type { IndicatorInfoEntry } from "../utils/SymbolLabelUtils";
+import type { JsonPaletteType, LayoutInfoType } from "../index.d";
+import type { IndicatorInfoEntry } from "./SymbolLabelUtils";
 import { isIndicator } from "../utils/SvgUtils";
 
 const PALETTE_PATH = "/palette-sets/standardBlissChart/palettes/indicators.json";

@@ -18,8 +18,8 @@
  * edit is published. An edit the guard holds never reaches the signal, so there is nothing to
  * take back.
  *
- * This lives in `core/` rather than in the feature that vetoes edits, so that no cell imports
- * a feature.
+ * This lives in `core/` rather than in the feature that vetoes edits or clears the message, so
+ * that no cell imports a feature.
  */
 import { changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
 import { insertWordAtCaret } from "../utils/SymbolEncodingUtils";
@@ -45,6 +45,33 @@ let guard: EditGuard | null = null;
  */
 export function setEditGuard (fn: EditGuard | null): void {
   guard = fn;
+}
+
+/**
+ * Empties the message together with what a feature keeps that belongs to it, such as the
+ * sentences made from it. Registered from `core/InitGlobals.ts`.
+ */
+let clearer: (() => void) | null = null;
+
+/**
+ * Register what Delete all does. With none registered, it empties the message alone.
+ * @param {Function | null} fn - The clearer, or `null` to remove the one registered.
+ * @returns {void}
+ */
+export function setMessageClearer (fn: (() => void) | null): void {
+  clearer = fn;
+}
+
+/**
+ * Delete the whole message, through the registered clearer if there is one.
+ * @returns {void}
+ */
+export function clearMessage (): void {
+  if (clearer) {
+    clearer();
+    return;
+  }
+  changeEncodingContents.value = { payloads: [], caretPosition: -1 };
 }
 
 /**

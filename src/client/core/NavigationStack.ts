@@ -11,7 +11,7 @@
  */
 
 import { signal } from "@preact/signals";
-import { JsonPaletteType } from "../index.d";
+import type { JsonPaletteType } from "../index.d";
 
 export class NavigationStack {
 

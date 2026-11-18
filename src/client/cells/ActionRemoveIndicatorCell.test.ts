@@ -14,9 +14,10 @@ import { screen, fireEvent } from "@testing-library/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
+import { setEditGuard } from "../core/MessageEdit";
 import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { ActionRemoveIndicatorCell } from "./ActionRemoveIndicatorCell";
-import { mockedSpeakUnavailable } from "../testUtils/SpeechUtilsMock";
+import { mockedAnnounceIfEnabled, mockedSpeakUnavailable } from "../testUtils/SpeechUtilsMock";
 
 vi.mock("../utils/SpeechUtils");
 
@@ -71,6 +72,7 @@ describe("ActionRemoveIndicatorCell", (): void => {
 
   afterEach((): void => {
     wordBuildSignal.value = null;
+    setEditGuard(null);
   });
 
   test("is unavailable while the input area is empty", async (): Promise<void> => {
@@ -245,5 +247,18 @@ describe("ActionRemoveIndicatorCell", (): void => {
     const restored = changeEncodingContents.value.payloads[0];
     expect(restored.label).toBe("help");
     expect(restored.isAiLabel).toBeFalsy();
+  });
+
+  // The guard holds the edit to ask whether it may discard the user's sentences. Naming the new
+  // label would name a word that is nowhere in the message.
+  test("an edit the guard holds is announced with the old label", async (): Promise<void> => {
+    changeEncodingContents.value = { payloads: [blissWordWithIndicatorAndBaseLabel], caretPosition: 0 };
+    renderCell(ActionRemoveIndicatorCell, TEST_CELL_ID, testCell.options);
+    const button = await screen.findByRole("button", { name: testCell.options.label });
+    setEditGuard(() => true);
+    fireEvent.click(button);
+
+    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(`helper, ${testCell.options.label}`);
+    expect(changeEncodingContents.value.payloads[0].label).toBe("helper");
   });
 });

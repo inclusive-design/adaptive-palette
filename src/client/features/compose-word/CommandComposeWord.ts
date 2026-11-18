@@ -11,13 +11,13 @@
  */
 
 
-import { VNode } from "preact";
+import type { VNode } from "preact";
 import { html } from "htm/preact";
 import { useLayoutEffect, useRef } from "preact/hooks";
 import type { LayoutInfoType, PictureOrSymbolInfoType } from "../../index.d";
 import { BlissSymbol } from "../../components/BlissSymbol";
 import { wordBuildSignal } from "../../state/GlobalData";
-import { INPUT_AREA_ID } from "../../cells/ContentEncoding";
+import { inputAreaElement } from "../../utils/TextEntryUtils";
 import { generateGridStyle } from "../../utils/GridUtils";
 import { announceIfEnabled, speakUnavailable } from "../../utils/SpeechUtils";
 import {
@@ -61,7 +61,7 @@ export function CommandComposeWord (props: CommandComposeWordProps): VNode | nul
   // so the cleanup runs while the button is still in the page.
   useLayoutEffect(() => () => {
     if (buttonRef.current && document.activeElement === buttonRef.current) {
-      document.getElementById(INPUT_AREA_ID)?.focus();
+      inputAreaElement()?.focus();
     }
   }, []);
   // `hasOwn`, so a name such as "toString" inherited from Object is not taken for an action.

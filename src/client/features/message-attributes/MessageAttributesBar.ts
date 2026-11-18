@@ -10,7 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
+import type { VNode } from "preact";
 import { html } from "htm/preact";
 import { useLayoutEffect, useRef, useState } from "preact/hooks";
 import { BlissSymbol } from "../../components/BlissSymbol";
@@ -116,7 +116,6 @@ export function MessageAttributesBar (): VNode | null {
         <${BlissSymbol}
           composition=${attribute.composition}
           label=${label}
-          isPresentation="true"
         />
       </button>
     `;

@@ -129,7 +129,7 @@ describe("NameWordDialog", (): void => {
       vi.mocked(queryChat).mockReturnValue(new Promise(() => {}) as never);
       buildWord([word("woman", 710), word("giving", 949)]);
       await screen.findByText(en.wordSuggesting);
-      const abortSignal = vi.mocked(queryChat).mock.calls[0][4] as AbortSignal;
+      const abortSignal = vi.mocked(queryChat).mock.calls[0][3] as AbortSignal;
       expect(abortSignal.aborted).toBe(false);
 
       await userEvent.click(await screen.findByRole("button", { name: en.wordBack }));
@@ -141,7 +141,7 @@ describe("NameWordDialog", (): void => {
       vi.mocked(queryChat).mockReturnValue(new Promise(() => {}) as never);
       buildWord([word("woman", 710), word("giving", 949)]);
       await screen.findByText(en.wordSuggesting);
-      const abortSignal = vi.mocked(queryChat).mock.calls[0][4] as AbortSignal;
+      const abortSignal = vi.mocked(queryChat).mock.calls[0][3] as AbortSignal;
 
       await userEvent.click(await screen.findByRole("button", { name: en.wordUseDefault }));
 
@@ -181,7 +181,7 @@ describe("NameWordDialog", (): void => {
       expect(await screen.findByText(en.wordSuggesting)).toBeInTheDocument();
       const calls = vi.mocked(queryChat).mock.calls;
       expect(calls.length).toBeGreaterThan(0);
-      calls.forEach((call, i) => expect((call[4] as AbortSignal).aborted).toBe(i < calls.length - 1));
+      calls.forEach((call, i) => expect((call[3] as AbortSignal).aborted).toBe(i < calls.length - 1));
     });
 
     test("does not ask for names for a word already in the vocabulary", async (): Promise<void> => {

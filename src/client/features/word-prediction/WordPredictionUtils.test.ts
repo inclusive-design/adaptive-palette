@@ -23,7 +23,7 @@ import {
   selectedAttributesSignal, clearAttributes
 } from "../message-attributes/MessageAttributesState";
 import { aboutMeSignal } from "../about-me/AboutMeState";
-import { SymbolEncodingType } from "../../index.d";
+import type { SymbolEncodingType } from "../../index.d";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 import { en } from "../../i18n/en";
 import { languageSignal } from "../../i18n/I18n";
@@ -358,10 +358,9 @@ describe("wordPrediction with a model answering as well", (): void => {
       replyWith("food\ntea");
       const words = await requestModelWords("I want", 6);
       expect(words).toEqual(["food", "tea"]);
-      const [userPrompt, model, streamed, systemPrompt] = mockedQueryChat.mock.calls[0];
+      const [userPrompt, model, systemPrompt] = mockedQueryChat.mock.calls[0];
       expect(userPrompt).toBe("Message so far: I want");
       expect(model).toBe("phony-model:12b");
-      expect(streamed).toBe(false);
       expect(systemPrompt).toBe("List 6 words.");
     });
 

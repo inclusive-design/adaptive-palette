@@ -23,7 +23,7 @@ import {
   discardEditPromptSignal, focusedMessageSignal, guardEdit, IDLE_SENTENCE_STATE,
   sentenceCompletionsSignal, typedSentenceSignal
 } from "./TelegraphicTranslationState";
-import { INPUT_AREA_ID } from "../../cells/ContentEncoding";
+import { INPUT_AREA_CLASS } from "../../utils/TextEntryUtils";
 import { SentenceChoices } from "./SentenceChoices";
 import { DiscardEditDialog } from "./DiscardEditDialog";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
@@ -94,7 +94,7 @@ describe("DiscardEditDialog", (): void => {
   const renderPage = (): void => {
     render(html`
       <div>
-        <div id=${INPUT_AREA_ID} tabindex="0" role="textbox" aria-label="Input Area"></div>
+        <div class=${INPUT_AREA_CLASS} tabindex="0" role="textbox" aria-label="Input Area"></div>
         <div><${SentenceChoices} id=${CELL_ID} options=${CELL_OPTIONS} /></div>
         <${DiscardEditDialog} />
       </div>
@@ -183,7 +183,7 @@ describe("DiscardEditDialog", (): void => {
     sentenceCompletionsSignal.value = READY_STATE;
     render(html`
       <div>
-        <div id=${INPUT_AREA_ID} tabindex="0" role="textbox" aria-label="Input Area"></div>
+        <div class=${INPUT_AREA_CLASS} tabindex="0" role="textbox" aria-label="Input Area"></div>
         <${DiscardEditDialog} />
       </div>
     `);
@@ -193,7 +193,7 @@ describe("DiscardEditDialog", (): void => {
     await userEvent.click(screen.getByRole("button", { name: en.discardKeep }));
 
     await waitFor(() => {
-      expect(document.getElementById(INPUT_AREA_ID)).toHaveFocus();
+      expect(document.querySelector(`.${INPUT_AREA_CLASS}`)).toHaveFocus();
     });
     expect(focusedMessageSignal.value).toBeNull();
   });
@@ -204,7 +204,7 @@ describe("DiscardEditDialog", (): void => {
     await userEvent.click(screen.getByRole("button", { name: en.discardKeep }));
 
     await waitFor(() => {
-      expect(document.getElementById(INPUT_AREA_ID)).toHaveFocus();
+      expect(document.querySelector(`.${INPUT_AREA_CLASS}`)).toHaveFocus();
     });
   });
 });

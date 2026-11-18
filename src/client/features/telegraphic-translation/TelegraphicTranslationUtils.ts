@@ -12,10 +12,11 @@
 
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { renderTemplate, renderPromptLines, promptsFor, replyLine } from "../../utils/PromptUtils";
-import { queryChat } from "../../core/OllamaApi";
+import { pickModel, queryChat } from "../../core/OllamaApi";
 import { attributesPromptText } from "../message-attributes/MessageAttributesState";
 import { aboutMePromptText } from "../about-me/AboutMeState";
-import { Language, languageSignal, t } from "../../i18n/I18n";
+import type { Language} from "../../i18n/I18n";
+import { languageSignal, t } from "../../i18n/I18n";
 import {
   FUTURE_INDICATOR_ID, IMPERATIVE_INDICATOR_ID, PAST_INDICATOR_ID, PLURAL_INDICATOR_ID
 } from "./BlissSentenceUtils";
@@ -35,25 +36,6 @@ const WORD_TAG_INDICATORS: Record<string, number> = {
   imperative: IMPERATIVE_INDICATOR_ID,
   plural: PLURAL_INDICATOR_ID
 };
-
-/**
- * Choose the model to query: the configured one when Ollama reports it as available,
- * otherwise the first available model.
- * @param {string} configuredModel - The model name from the config, possibly empty.
- * @returns {string}
- * @throws {Error} When no models are available.
- */
-export function pickModel (configuredModel: string): string {
-  const { models } = adaptivePaletteGlobals;
-  if (models.length === 0) {
-    throw new Error(t("noModels"));
-  }
-  if (models.includes(configuredModel)) {
-    return configuredModel;
-  }
-  console.warn(`Model "${configuredModel}" is not available; using "${models[0]}" instead.`);
-  return models[0];
-}
 
 /**
  * One reply line without its list number, or `undefined` when it is not a sentence: blank, a
@@ -163,11 +145,10 @@ export async function requestSentences (telegraphicMessage: string, abortSignal?
   const response = await queryChat(
     renderPromptLines(prompts.userPrompt, values),
     model,
-    false,
     renderTemplate(prompts.systemPrompt, values),
     abortSignal
   );
-  const content = "message" in response ? (response.message?.content || "") : "";
+  const content = response.message.content || "";
   const sentences = parseSentences(content);
   if (sentences.length === 0) {
     throw new Error(t("sentenceNoSentences"));

@@ -10,13 +10,15 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { Fragment, VNode } from "preact";
+import type { VNode } from "preact";
+import { Fragment } from "preact";
 import { html } from "htm/preact";
 import { useState } from "preact/hooks";
 
 import { adaptivePaletteGlobals, settingsSavedCount } from "../../state/GlobalData";
+import type { SettingDescriptorType, SettingValueType} from "./SettingsSchema";
 import {
-  SETTING_DESCRIPTORS, SettingDescriptorType, SettingValueType,
+  SETTING_DESCRIPTORS,
   applyStoredSettings, currentValue, isOffered, saveSettings, settingKey
 } from "./SettingsSchema";
 import { EraseAllData } from "./EraseAllData";

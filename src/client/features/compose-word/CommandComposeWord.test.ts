@@ -22,7 +22,7 @@ import { setStorage } from "../../core/StorageBackend";
 import { adaptivePaletteGlobals, changeEncodingContents, wordBuildSignal } from "../../state/GlobalData";
 import { renderCell } from "../../testUtils/CellTestUtils";
 import { Palette } from "../../components/Palette";
-import { INPUT_AREA_ID } from "../../cells/ContentEncoding";
+import { INPUT_AREA_CLASS } from "../../utils/TextEntryUtils";
 import { mockedSpeakUnavailable } from "../../testUtils/SpeechUtilsMock";
 import { CommandComposeWord, type ComposeActionType } from "./CommandComposeWord";
 import { startBuilding, wordDialogSignal } from "./ComposeWordState";
@@ -68,14 +68,14 @@ describe("CommandComposeWord", (): void => {
   test("Compose new word, taken away as the word starts, leaves the focus on the input area", async (): Promise<void> => {
     const options = { label: "Compose new word", action: "new", buildingWord: false, rowStart: 1, rowSpan: 1, columnStart: 1, columnSpan: 1 };
     const bar: JsonPaletteType = { name: "Bar", cells: { "compose-new": { type: "CommandComposeWord", options } } };
-    render(html`<div id=${INPUT_AREA_ID} tabindex="0"></div><${Palette} json=${bar} />`);
+    render(html`<div class=${INPUT_AREA_CLASS} tabindex="0"></div><${Palette} json=${bar} />`);
     const button = await screen.findByRole("button", { name: "Compose new word" });
     button.focus();
 
     fireEvent.click(button);
 
     await waitFor(() => expect(screen.queryByRole("button", { name: "Compose new word" })).toBeNull());
-    expect(document.activeElement?.id).toBe(INPUT_AREA_ID);
+    expect(document.activeElement).toHaveClass(INPUT_AREA_CLASS);
   });
 
   test("Space is available without the combine marker", async (): Promise<void> => {

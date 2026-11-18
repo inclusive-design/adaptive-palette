@@ -10,10 +10,10 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
+import type { VNode } from "preact";
 import { html } from "htm/preact";
 
-import { MatchType } from "../index.d";
+import type { MatchType } from "../index.d";
 import { BlissSymbol } from "./BlissSymbol";
 import { t } from "../i18n/I18n";
 import "./GlossSearchResults.scss";
@@ -51,7 +51,6 @@ function resultCell (
       <${BlissSymbol}
         composition=${match.composition ?? match.id}
         label=${match.label}
-        isPresentation="true"
       />
       <span class="glossSearchResultSelected">${t("searchSelected")}</span>
     </button>

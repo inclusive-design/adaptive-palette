@@ -10,18 +10,21 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { Fragment, VNode } from "preact";
+import type { VNode } from "preact";
+import { Fragment } from "preact";
 import { html } from "htm/preact";
 import { useEffect, useRef, useState } from "preact/hooks";
 
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { speakUnavailable } from "../../utils/SpeechUtils";
 import type { DismissedFactType, FactCategoryType, AboutMeFactType } from "../../index.d";
+import type { FactSuggestionType} from "./AboutMeState";
 import {
-  FACT_CATEGORIES, FACT_CATEGORY_KEYS, FactSuggestionType, aboutMeSignal,
+  FACT_CATEGORIES, FACT_CATEGORY_KEYS, aboutMeSignal,
   addFact, editFact, removeFact, acceptSuggestion, rejectSuggestion, restoreDismissed
 } from "./AboutMeState";
-import { requestFactSuggestions, LearningResultType } from "./AboutMeExtractionUtils";
+import type { LearningResultType } from "./AboutMeExtractionUtils";
+import { requestFactSuggestions } from "./AboutMeExtractionUtils";
 import { t } from "../../i18n/I18n";
 import "./AboutMeDialog.scss";
 

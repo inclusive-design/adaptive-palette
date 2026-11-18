@@ -20,12 +20,13 @@
 
 import { effect, untracked } from "@preact/signals";
 import { adaptivePaletteGlobals, changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
-import { editMessage } from "../core/MessageEdit";
-import { renderPromptLines, promptsFor } from "./PromptUtils";
-import { glossFor } from "./SvgUtils";
-import { applyModifiersToLabel } from "./SymbolEncodingUtils";
-import { isLocalHost, queryChat } from "../core/OllamaApi";
-import { LANGUAGES, Language, languageSignal } from "../i18n/I18n";
+import { editMessage } from "./MessageEdit";
+import { renderPromptLines, promptsFor } from "../utils/PromptUtils";
+import { glossFor } from "../utils/SvgUtils";
+import { applyModifiersToLabel } from "../utils/SymbolEncodingUtils";
+import { isLocalHost, pickModel, queryChat } from "./OllamaApi";
+import type { Language} from "../i18n/I18n";
+import { LANGUAGES, languageSignal } from "../i18n/I18n";
 import type { SymbolEncodingType } from "../index.d";
 
 export type IndicatorInfoEntry = {
@@ -169,7 +170,7 @@ function buildQuery (payload: SymbolEncodingType, language: Language): LabelQuer
   return {
     userPrompt: renderPromptLines(prompts.userPrompt, { ...word, modifiers, ...indicator }),
     systemPrompt: prompts.systemPrompt,
-    model: lookup.model || models[0]
+    model: pickModel(lookup.model)
   };
 }
 
@@ -300,9 +301,9 @@ function applyAnswers (): void {
 function startQuery (key: string, query: LabelQueryType): void {
   const controller = new AbortController();
   inFlight.set(key, controller);
-  void queryChat(query.userPrompt, query.model, false, query.systemPrompt, controller.signal)
+  void queryChat(query.userPrompt, query.model, query.systemPrompt, controller.signal)
     .then((response) => {
-      const content = "message" in response ? (response.message?.content ?? "").trim() : "";
+      const content = (response.message.content ?? "").trim();
       return content.length > 0 ? content : undefined;
     })
     .catch((error: unknown) => {

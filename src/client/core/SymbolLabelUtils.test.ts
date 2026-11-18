@@ -12,19 +12,19 @@
 
 import { vi } from "vitest";
 import { adaptivePaletteGlobals, changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
-import { editMessage, setEditGuard } from "../core/MessageEdit";
-import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
+import { editMessage, setEditGuard } from "./MessageEdit";
+import { initAdaptivePaletteGlobals } from "./InitGlobals";
 import { setTestConfig } from "../testUtils/TestConfig";
 import {
   baseOf, getStaticNewLabel, initIndicatorLabels, labelFor, relabel,
   resetSymbolLabelsForTests, startLabelWatcher, whenLabelsSettled
 } from "./SymbolLabelUtils";
-import { isLocalHost, queryChat } from "../core/OllamaApi";
+import { isLocalHost, queryChat } from "./OllamaApi";
 import { languageSignal } from "../i18n/I18n";
 import type { ModifierInfoType, PromptType, SymbolEncodingType } from "../index.d";
 
-vi.mock("../core/OllamaApi", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../core/OllamaApi")>();
+vi.mock("./OllamaApi", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./OllamaApi")>();
   return { ...actual, queryChat: vi.fn(), isLocalHost: vi.fn(() => true) };
 });
 
@@ -230,7 +230,7 @@ describe("SymbolLabels", (): void => {
       wordBuildSignal.value = null;
       signals = [];
       replies = [];
-      mockedQueryChat.mockImplementation((_query, _model, _stream, _system, abortSignal) => {
+      mockedQueryChat.mockImplementation((_query, _model, _system, abortSignal) => {
         signals.push(abortSignal);
         return new Promise<ChatReply>((resolve) => {
           replies.push((content) => resolve({ message: { content } } as ChatReply));
@@ -277,7 +277,7 @@ describe("SymbolLabels", (): void => {
 
     test("a query stopped by fetch's AbortError keeps nothing, and is asked again", async (): Promise<void> => {
       // As in production: `fetch` rejects with an AbortError when its signal fires.
-      mockedQueryChat.mockImplementation((_query, _model, _stream, _system, abortSignal) => {
+      mockedQueryChat.mockImplementation((_query, _model, _system, abortSignal) => {
         return new Promise<ChatReply>((_resolve, reject) => {
           abortSignal?.addEventListener("abort", () => reject(new DOMException("", "AbortError")));
         });
@@ -337,10 +337,9 @@ describe("SymbolLabels", (): void => {
     test("the prompt lists the modifiers in order with their side, and drops an absent indicator", (): void => {
       const gloss = adaptivePaletteGlobals.symbols.find((symbol) => symbol.id === 382)!.gloss;
       put({ ...oppositeHelp, modifierInfo: [opposite, more] });
-      const [userPrompt, modelName, streamResp, systemPrompt] = mockedQueryChat.mock.calls[0];
+      const [userPrompt, modelName, systemPrompt] = mockedQueryChat.mock.calls[0];
       expect(userPrompt).toBe(`Word: "${gloss}"\nModifiers, in order: opposite of (before), more (after)`);
       expect(modelName).toBe("gemma4:12b");
-      expect(streamResp).toBe(false);
       expect(systemPrompt).toBe(SYSTEM_PROMPT);
     });
 
@@ -355,7 +354,7 @@ describe("SymbolLabels", (): void => {
       languageSignal.value = "sv";
       put(oppositeHelp);
       expect(mockedQueryChat.mock.calls[0][0]).toContain("Word: \"hjälp, stöd\"");
-      expect(mockedQueryChat.mock.calls[0][3]).toBe("Svenska.");
+      expect(mockedQueryChat.mock.calls[0][2]).toBe("Svenska.");
     });
 
     test("whenLabelsSettled runs a task at once, or once every label has settled", async (): Promise<void> => {

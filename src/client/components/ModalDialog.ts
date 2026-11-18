@@ -10,7 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode, ComponentChildren } from "preact";
+import type { VNode, ComponentChildren } from "preact";
 import { html } from "htm/preact";
 import { useEffect, useLayoutEffect, useRef } from "preact/hooks";
 import { languageSignal, t } from "../i18n/I18n";

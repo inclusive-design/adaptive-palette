@@ -9,9 +9,8 @@
  * You may obtain a copy of the License at
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
-import { v4 as uuidv4 } from "uuid";
-import { findSymbolByBciAvId } from "../../src/client/utils/SvgUtils";
-import { SymbolCompositionType, BlissSymbolEntry, JsonPaletteType } from "../../src/client/index.d";
+import { findSymbolByBciAvId, findSymbolByGloss } from "../../src/client/utils/SvgUtils";
+import type { SymbolCompositionType, JsonPaletteType, MatchType } from "../../src/client/index.d";
 import { PALETTE_INCLUDE_TYPE } from "../../src/client/core/PaletteStore";
 
 const BLANK_CELL = "BLANK";
@@ -23,34 +22,13 @@ export const STANDARD_HEADER_PALETTE = "Standard Header";
 const STANDARD_HEADER_ID = "standard-header";
 const FIRST_CELL_ROW = 2;
 
-type MatchInfo = {
-  id: number,
-  bciAvId?: number,
-  label: string,
-  composition?: SymbolCompositionType
-};
-
-type MatchByInfo = { [label: string]: MatchInfo[] };
+export type MatchByInfo = { [label: string]: MatchType[] };
 
 type ProcessPaletteResult = {
   paletteJson: JsonPaletteType,
   matches: MatchByInfo[],
   errors: string[]
 };
-
-let bliss_gloss: BlissSymbolEntry[];
-export async function fetchBlissGlossJson (): Promise<BlissSymbolEntry[]> {
-  // Read and parse the Bliss gloss JSON file
-  try {
-    const fetchResponse = await fetch("/data/bliss_symbol_explanations.json");
-    const json = await fetchResponse.json() as { data: BlissSymbolEntry[] };
-    bliss_gloss = json.data;
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    console.error(`Error fetching 'bliss_symbol_explanations.json': ${message}`);
-  }
-  return bliss_gloss;
-}
 
 /**
  * Test for the presencs of a string that encodes SVG builder information.  Such
@@ -99,57 +77,18 @@ function convertSvgBuilderString (theString: string): SymbolCompositionType {
 }
 
 /**
- * Finds the BCI AV ID(s) for a given label.  The label is compared to each of
- * the glosses where a match is defined as either an exact match, or a "word"
- * match using the regular expression /\bword\b/, where "word" is the value of
- * the given label.
- * @param {string} label - The label to use to search for matches in the gloss.
- * @param {Array} blissSymbolEntries - Array of objects containing BCI AV IDs, and
- *                               their glosses:
- *                               { id: number, gloss: string, ... }
- * @returns {Array} An array of objects whose gloss matches the given label:
- *                  { id: {number}, gloss: {string}, ... }
- * @throws {Error} If no BCI AV ID is found for the label.
+ * The symbols whose English gloss matches a label: an exact match, or the label as a whole
+ * word. Uses the app's own search, which escapes the label.
+ * @param {string} label - The label to search for.
+ * @returns {MatchType[]}
+ * @throws {Error} If no symbol matches.
  */
-function findBciAvId(label: string, blissSymbolEntries: BlissSymbolEntry[]): MatchInfo[] {
-  const matches: MatchInfo[] = [];
-  // Search for the label in the Bliss gloss
-  console.log(`For label ${label}:`);
-  for (const oneBlissSymbolEntry of blissSymbolEntries) {
-    // Try an exact match or a word match
-    const wordMatch = new RegExp(`\\b${label}\\b`);
-    if ((label === oneBlissSymbolEntry.gloss) || wordMatch.test(oneBlissSymbolEntry.gloss)) {
-      matches.push({
-        id: oneBlissSymbolEntry.id,
-        bciAvId: oneBlissSymbolEntry.bciAvId ?? undefined,
-        label: oneBlissSymbolEntry.gloss,
-        composition: oneBlissSymbolEntry.composition
-      });
-      console.log(`\tFound match: ${oneBlissSymbolEntry.gloss}, bci-av-id: ${oneBlissSymbolEntry.bciAvId}`);
-    }
-  }
-  // If no BCI AV ID is found, throw an error
+function findMatches (label: string): MatchType[] {
+  const matches = findSymbolByGloss(label, "en");
   if (matches.length === 0) {
     throw new Error(`BciAvId not found for label: ${label}`);
   }
   return matches;
-}
-
-/**
- * Find full gloss item for a given BCI AV ID.
- * @param {string} bciAvId - A string version of the id.
- * @param {Array} blissSymbolEntries - Array of objects containing BCI AV IDs, and their
- *                               glosses:
- *                              { id: {number}, gloss: {string}, ... }
- * @returns {Object} The object that matches the given BCI AV ID
- * @throws {Error} If the given BCI AV ID is invalid (not in the gloss)
- */
-function findByBciAvId (bciAvId: string, blissSymbolEntries: BlissSymbolEntry[]): BlissSymbolEntry {
-  const theEntry = blissSymbolEntries.find((entry) => (entry.bciAvId === parseInt(bciAvId)));
-  if (theEntry === undefined) {
-    throw new Error(`BciAvId not found for BCI AV ID: ${bciAvId}`);
-  }
-  return theEntry;
 }
 
 /**
@@ -253,7 +192,7 @@ export function processPaletteLabels (
         else if (infoString.startsWith("GLOSS:") && infoString.endsWith(":GLOSS")) {
           // Multi-word gloss search using GLOSS:...:GLOSS enclosing marker
           const glossText = infoString.slice("GLOSS:".length, -":GLOSS".length);
-          const matches = findBciAvId(glossText, bliss_gloss);
+          const matches = findMatches(glossText);
           cell.options.composition = matches[0].composition ?? matches[0].id;
           cell.options.label = actualLabel || glossText;
           const inputMatches: MatchByInfo = {};
@@ -265,14 +204,17 @@ export function processPaletteLabels (
           // the ID for the composition field.
           const parsedId = parseInt(infoString);
           if (!isNaN(parsedId)) {
-            const glossEntry = findByBciAvId(infoString, bliss_gloss);
+            const glossEntry = findSymbolByBciAvId(parsedId);
+            if (!glossEntry) {
+              throw new Error(`BciAvId not found for BCI AV ID: ${infoString}`);
+            }
             cell.options.composition = glossEntry.id;
             cell.options.label = actualLabel || glossEntry.gloss;
           }
           else {
             // Find the ID(s) for the current infoString label.
             // Use the composition of the first match (or its ID).
-            const matches = findBciAvId(infoString, bliss_gloss);
+            const matches = findMatches(infoString);
             cell.options.composition = matches[0].composition ?? matches[0].id;
             cell.options.label = actualLabel || infoString;
             const inputMatches: MatchByInfo = {};
@@ -291,7 +233,7 @@ export function processPaletteLabels (
         cell.options.label += " NOT FOUND";
         cell.options.composition = [ 2088, "/", 303, ";", 92, "/", 1044];
       }
-      finalJson.cells[`${infoString}-${uuidv4()}`] = cell;
+      finalJson.cells[`${infoString}-${crypto.randomUUID()}`] = cell;
     });
   });
   // First in `cells`, so navigating between palettes keeps the header's elements.

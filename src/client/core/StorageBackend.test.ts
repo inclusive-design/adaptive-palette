@@ -10,7 +10,8 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { AdaptivePaletteStorage, getStorage, setStorage } from "./StorageBackend";
+import type { AdaptivePaletteStorage} from "./StorageBackend";
+import { getStorage, setStorage } from "./StorageBackend";
 
 describe("storage backend registry", (): void => {
 

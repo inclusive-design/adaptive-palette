@@ -10,14 +10,12 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
+import type { VNode } from "preact";
 import { html } from "htm/preact";
 import { useLayoutEffect, useRef } from "preact/hooks";
 import { getSvgElement } from "../utils/SvgUtils";
 import { AiBadge } from "./AiBadge";
-import { SymbolCompositionType } from "../index.d";
-
-export const GRAPHIC_ROLE = "graphic-symbol img";
+import type { SymbolCompositionType } from "../index.d";
 
 type BlissSymbolPropsType = {
   // The symbol to draw. Absent for a picture, or for a cell that shows its label only.
@@ -27,16 +25,8 @@ type BlissSymbolPropsType = {
   label: string,
   // The colour of the symbol's strokes and letters, as a CSS colour. Black when absent.
   color?: string,
-  // Aria markup information for svg part of the BlissSymbol.  The first is
-  // really a boolean, but the html template function converts it to string
-  // values.
-  isPresentation: "true" | "false",
-  // @id of label element when isPresntation is "false"
-  labelledBy?: string,
   // True when the label's provenance is to be marked: the badge before the label, and the
-  // label italicised. The caller folds in the config; this only draws it. Only meaningful when
-  // `isPresentation` is "true": otherwise the label element is the `aria-labelledby` target, and
-  // the badge could land in the computed accessible name despite being `aria-hidden`.
+  // label italicised. The caller folds in the config; this only draws it.
   isMarked?: boolean,
   // True when the label waits for a model's answer: the label is dimmed, with "…" after it.
   isPending?: boolean
@@ -92,22 +82,14 @@ function fitLabel (labelElement: HTMLElement): void {
 }
 
 export function BlissSymbol (props: BlissSymbolPropsType): VNode {
-  const { composition, picture, label, color, isPresentation, labelledBy, isMarked, isPending } = props;
+  const { composition, picture, label, color, isMarked, isPending } = props;
   // A picture is drawn in place of the symbol, so the symbol is not built.
   const svgElement = picture === undefined && composition !== undefined ? getSvgElement(composition, color) : undefined;
 
-  // Deal with aria markup, depending on whether the SVG is for presentation only or
-  // associates with a labelled area.
+  // The label names the symbol, so the drawing is hidden from screen readers.
   let svgMarkupString = "";
   if (svgElement) {
-    if (isPresentation === "true") {
-      svgElement.setAttribute("aria-hidden", "true");
-    } else {
-      svgElement.setAttribute("role", `${GRAPHIC_ROLE}`);
-      if (labelledBy) {
-        svgElement.setAttribute("aria-labelledby", labelledBy);
-      }
-    }
+    svgElement.setAttribute("aria-hidden", "true");
     svgMarkupString = svgElement.outerHTML;
   }
 
@@ -140,6 +122,6 @@ export function BlissSymbol (props: BlissSymbolPropsType): VNode {
 
   return html`
     ${pictureElement}${html(templateStringArray)}
-    <div id="${labelledBy}" ref=${labelRef} class=${labelClass}>${badge}${label}${waiting}</div>
+    <div ref=${labelRef} class=${labelClass}>${badge}${label}${waiting}</div>
   `;
 }

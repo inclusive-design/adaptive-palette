@@ -2,6 +2,10 @@
 
 Build a Bliss word that is not in the vocabulary, name it, use it in a message, and save it to a palette.
 
+Section numbers (§) in the code comments refer to
+[The Fundamental Rules of Blissymbolics](https://www.blissymbolics.org/images/bliss-fundamental-rules-2020-06-16.pdf)
+(BCI, 2020).
+
 ## Build a word
 
 1. Select **Compose new word** on the command bar. A dashed box marked "New word" opens in the message, at the caret.

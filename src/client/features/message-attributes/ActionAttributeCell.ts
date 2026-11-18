@@ -10,9 +10,9 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
+import type { VNode } from "preact";
 import { html } from "htm/preact";
-import { AttributeCellType } from "../../index.d";
+import type { AttributeCellType } from "../../index.d";
 import { BlissSymbol } from "../../components/BlissSymbol";
 import { generateGridStyle } from "../../utils/GridUtils";
 import { announceIfEnabled } from "../../utils/SpeechUtils";
@@ -67,7 +67,7 @@ export function ActionAttributeCell (props: ActionAttributeCellPropsType): VNode
       aria-label="${accessibleName}"
       aria-pressed=${isSelected}
       onClick=${cellClicked}>
-      <${BlissSymbol} composition=${composition} label=${label} isPresentation="true" />
+      <${BlissSymbol} composition=${composition} label=${label} />
     </button>
   `;
 }

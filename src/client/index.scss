@@ -88,7 +88,7 @@ button {
   position: relative;
   overflow: hidden;
 
-  :before {
+  &::before {
     content: "";
     position: absolute;
     top: 0;
@@ -100,11 +100,7 @@ button {
     border-bottom-color: black;
     border-left-color: black;
     background: #658E15;
-    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
-    -moz-box-shadow: 0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
     box-shadow: 0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
-    //  Firefox 3.0 damage limitation
-    display: block; width: 0;
   }
 }
 

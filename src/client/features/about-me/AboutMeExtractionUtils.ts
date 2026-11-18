@@ -16,12 +16,13 @@
  */
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { renderTemplate, renderPromptLines, promptsFor, replyLine } from "../../utils/PromptUtils";
-import { queryChat } from "../../core/OllamaApi";
+import { pickModel, queryChat } from "../../core/OllamaApi";
 import { isMessageRecord, recordMessageText } from "../../core/MessageLog";
-import { getStorage, StoredMessage } from "../../core/StorageBackend";
-import { pickModel } from "../telegraphic-translation/TelegraphicTranslationUtils";
+import type { StoredMessage } from "../../core/StorageBackend";
+import { getStorage } from "../../core/StorageBackend";
+import type { FactSuggestionType} from "./AboutMeState";
 import {
-  FACT_CATEGORIES, FactSuggestionType, isKnownText, aboutMePromptText, aboutMeSignal, recordLearning
+  FACT_CATEGORIES, isKnownText, aboutMePromptText, aboutMeSignal, recordLearning
 } from "./AboutMeState";
 import type { AboutMeConfigType } from "../../index.d";
 import { languageSignal, t } from "../../i18n/I18n";
@@ -139,10 +140,9 @@ async function askModel (
     // Line-per-field: with no facts or no dismissals, that line is dropped.
     renderPromptLines(prompts.userPrompt, values),
     model,
-    false,
     renderTemplate(prompts.systemPrompt, values)
   );
-  const content = "message" in response ? (response.message?.content || "") : "";
+  const content = response.message.content || "";
   const seen = new Set<string>();
   return parseFactSuggestions(content).filter(({ text }) => {
     const key = text.toLowerCase();

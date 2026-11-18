@@ -10,9 +10,9 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
+import type { VNode } from "preact";
 import { html } from "htm/preact";
-import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
+import type { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { spokenLabel } from "../components/AiBadge";
 import { changeEncodingContents } from "../state/GlobalData";
@@ -20,7 +20,7 @@ import { editMessage } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { caretComposition, replaceAtCaret } from "../utils/SymbolEncodingUtils";
-import { baseOf, relabel } from "../utils/SymbolLabelUtils";
+import { baseOf, relabel } from "../core/SymbolLabelUtils";
 import "./ActionModifierCell.scss";
 
 export type ActionModifierCodeCellPropsType = {
@@ -86,7 +86,11 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
       "indicatorId": symbolToEdit.indicatorId,
       ...baseOf(symbolToEdit)
     });
-    editMessage({ payloads: replaceAtCaret(payloads, caretPosition, edited), caretPosition: caretPosition });
+    // Held by the guard: the label on screen is unchanged, so name this cell alongside it.
+    if (!editMessage({ payloads: replaceAtCaret(payloads, caretPosition, edited), caretPosition: caretPosition })) {
+      announceIfEnabled(`${symbolToEdit.label}, ${label}`);
+      return;
+    }
     announceIfEnabled(spokenLabel(edited));
   };
 
@@ -95,7 +99,6 @@ export function ActionModifierCellCommon (props: ActionModifierCodeCellPropsType
       <${BlissSymbol}
         composition=${modifierComposition}
         label=${label}
-        isPresentation=true
       />
     </button>
   `;

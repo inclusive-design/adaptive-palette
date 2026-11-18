@@ -18,11 +18,11 @@
  * Nothing is ever deleted to make room. The message log is kept whole, and how much of it the
  * app reads back is `maxRecalledRecords`, applied by the caller through `readMessages()`.
  */
-import { AdaptivePaletteStorage, StoredMessage } from "./StorageBackend";
+import type { AdaptivePaletteStorage, StoredMessage } from "./StorageBackend";
 import type { MessageRecordType } from "./MessageLog";
 import type { AboutMeType, SavedWordType } from "../index.d";
 
-export const DATABASE_NAME = "AdaptivePalette";
+const DATABASE_NAME = "AdaptivePalette";
 export const MESSAGES_STORE = "messages";
 export const SETTINGS_STORE = "settings";
 export const ABOUT_ME_STORE = "aboutMe";
@@ -116,7 +116,17 @@ export class IndexedDbStorage implements AdaptivePaletteStorage {
           request.result.close();
           return;
         }
-        this.database = request.result;
+        const database = request.result;
+        // Another tab wants to upgrade or delete the database. Step aside: this tab stops saving,
+        // and the other tab is not blocked.
+        database.onversionchange = (): void => {
+          database.close();
+          if (this.database === database) {
+            this.database = undefined;
+          }
+          console.warn("The saved data was upgraded or erased in another tab. This tab no longer saves.");
+        };
+        this.database = database;
         resolve();
       };
       request.onerror = (): void => reject(requestError(request));

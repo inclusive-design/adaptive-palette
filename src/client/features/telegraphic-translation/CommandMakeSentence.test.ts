@@ -170,7 +170,7 @@ describe("CommandMakeSentence", (): void => {
       expect(sentenceCompletionsSignal.value.status).toBe("ready");
     });
     expect(mockedQueryChat).toHaveBeenCalledWith(
-      "Telegraphic message: me hungry", "phony-model:12b", false, "Give 3 sentences.",
+      "Telegraphic message: me hungry", "phony-model:12b", "Give 3 sentences.",
       expect.any(AbortSignal)
     );
   });

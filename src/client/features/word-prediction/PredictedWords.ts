@@ -10,7 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
+import type { VNode } from "preact";
 import { html } from "htm/preact";
 
 import {
@@ -23,7 +23,7 @@ import { BlissSymbol } from "../../components/BlissSymbol";
 import { announceIfEnabled } from "../../utils/SpeechUtils";
 import { isModelTierActive, predictNext } from "./WordPredictionUtils";
 import { messageUpToCaret, queryContextKeyOf, modelWordsSignal } from "./WordPredictionState";
-import { ContentPredictedWordsType, SymbolEncodingType } from "../../index.d";
+import type { ContentPredictedWordsType, SymbolEncodingType } from "../../index.d";
 import { generateGridStyle } from "../../utils/GridUtils";
 import { languageSignal, t } from "../../i18n/I18n";
 import "./PredictedWords.scss";
@@ -126,7 +126,6 @@ export function PredictedWords (props: PredictedWordsPropsType): VNode | null {
           composition=${suggestion.composition}
           picture=${suggestion.picture}
           label=${suggestion.label}
-          isPresentation=true
         />
       </button>
     `;

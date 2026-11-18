@@ -36,13 +36,13 @@ on your computer: nothing you write leaves it.
 ## Supported Browsers
 
 The current version of Chrome, Edge, Firefox or Safari. The oldest versions that work are Chrome and Edge
-120, Firefox 115 and Safari 17. Tests run in Chromium, Firefox and WebKit.
+120, Firefox 121 and Safari 17. Tests run in Chromium, Firefox and WebKit.
 
 ## Supported Picture Formats
 
 A palette cell can show a picture in place of a Bliss symbol. The picture can be PNG, JPEG, GIF, WebP, AVIF,
-SVG or BMP. Any size and shape works: the picture is scaled to fit its cell, at most 64 pixels tall, and keeps its
-proportions. A near-square picture about 128–192 pixels tall shows largest and stays sharp on high-resolution screens.
+SVG or BMP. Any size and shape works: the picture is scaled to fit its cell and keeps its proportions. A near-square
+picture about 128–192 pixels tall shows largest and stays sharp on high-resolution screens.
 See [Palettes](./docs/devDoc/Palettes.md#palette-json-structure).
 
 ## Install
@@ -157,21 +157,13 @@ See [Testing](./docs/devDoc/Testing.md) for the test setup, watch mode and runni
 
 ## Demonstrations
 
-The sub-folder [`demos`](./demos) contains code for a number of demonstrations.
-These are short examples.  The [`apps`](./apps) folder contains more fully
-built-out application examples.  See the respective READMEs and documentation
-for instructions on how to run the software.
+The [`apps`](./apps) folder contains a standalone application. See its documentation for how to
+run it.
 
-- [Ollama Chat Web-App](./apps/ollama/README.md): a chat application running on
-  `localhost` that provides access to multiple models using the Ollama localhost
-  web service.
 - [Palette Generator Web-App](./docs/PaletteJsonGenerator.md): an
   application for generating and saving a palette using the Bliss gloss.  By
   providing a set of gloss words, BCI AV IDs, or svg builder strings, the Bliss
   gloss is searched and a palette is generated based on matches found.
-- [Ollama Chat Service Demo](./demos/Ollama%20Chat%20Service/README.md): a
-  simple web-app that runs on `localhost` for sending queries to an Ollama
-  chatbot service also running on `localhost`.
 
 ## Cloudflare
 

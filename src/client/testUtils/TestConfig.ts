@@ -12,7 +12,7 @@
 
 import { makeDefaultConfig } from "../core/Config";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
-import { AdaptivePaletteConfigType } from "../index.d";
+import type { AdaptivePaletteConfigType } from "../index.d";
 
 /**
  * Set the runtime config to the app defaults, with the sections the test cares about replaced.

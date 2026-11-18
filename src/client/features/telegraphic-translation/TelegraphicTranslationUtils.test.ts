@@ -15,7 +15,7 @@ import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { queryChat } from "../../core/OllamaApi";
 import { setTestConfig } from "../../testUtils/TestConfig";
 import {
-  pickModel, parseSentences, parseSentenceWords, parseWordsLine, requestSentences
+  parseSentences, parseSentenceWords, parseWordsLine, requestSentences
 } from "./TelegraphicTranslationUtils";
 import { FUTURE_INDICATOR_ID, PAST_INDICATOR_ID, PLURAL_INDICATOR_ID } from "./BlissSentenceUtils";
 import {
@@ -53,26 +53,6 @@ describe("telegraphicTranslation", (): void => {
 
   afterEach((): void => {
     languageSignal.value = "en";
-  });
-
-  describe("pickModel", (): void => {
-
-    test("uses the configured model when it is available", (): void => {
-      expect(pickModel("other-model:7b")).toBe("other-model:7b");
-    });
-
-    test("falls back to the first available model when the configured one is missing", (): void => {
-      expect(pickModel("not-installed:70b")).toBe("phony-model:12b");
-    });
-
-    test("falls back to the first available model when none is configured", (): void => {
-      expect(pickModel("")).toBe("phony-model:12b");
-    });
-
-    test("throws when no model is available", (): void => {
-      adaptivePaletteGlobals.models = [];
-      expect((): string => pickModel("phony-model:12b")).toThrow(en.noModels);
-    });
   });
 
   describe("parseSentences", (): void => {
@@ -159,7 +139,7 @@ describe("telegraphicTranslation", (): void => {
 
       const result = await requestSentences("jag hungrig");
 
-      expect(mockedQueryChat).toHaveBeenCalledWith("Message: jag hungrig", expect.any(String), false, "sv system", undefined);
+      expect(mockedQueryChat).toHaveBeenCalledWith("Message: jag hungrig", expect.any(String), "sv system", undefined);
       expect(result.language).toBe("sv");
     });
 
@@ -187,7 +167,6 @@ describe("telegraphicTranslation", (): void => {
       expect(mockedQueryChat).toHaveBeenCalledWith(
         "Telegraphic message: me hungry",
         "phony-model:12b",
-        false,
         "Give 3 sentences.",
         undefined
       );
@@ -204,14 +183,13 @@ describe("telegraphicTranslation", (): void => {
       expect(mockedQueryChat).toHaveBeenCalledWith(
         "Telegraphic message: me hungry",
         "phony-model:12b",
-        false,
         "Give 3 sentences.",
         controller.signal
       );
       // An `AbortSignal`'s state lives in prototype getters, so deep equality treats any two
       // signals as alike. Only identity proves the caller's own signal was forwarded rather
       // than a freshly made one.
-      expect(mockedQueryChat.mock.calls[0][4]).toBe(controller.signal);
+      expect(mockedQueryChat.mock.calls[0][3]).toBe(controller.signal);
     });
 
     test("rejects when the model returns nothing usable", async (): Promise<void> => {

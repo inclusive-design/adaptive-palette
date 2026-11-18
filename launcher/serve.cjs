@@ -14,8 +14,8 @@
  * The desktop launcher: a static server for the built app, and the few pieces of
  * operating-system glue around it.
  *
- * CommonJS because Node's single-executable-application feature runs the embedded main
- * script under CommonJS only.
+ * CommonJS for historical reasons: Node's single-executable feature, which needs it, was tried
+ * first and dropped. The bundle now runs these as plain files, so ES modules would also work.
  *
  * Nothing here runs on import. `main.cjs` is the entry point. The macOS entry script
  * requires this file as a launch preflight, so a top-level side effect that keeps the
@@ -43,6 +43,20 @@ const HEALTH_APP = "adaptive-palette";
 // so the two spellings of loopback cannot drift away from the port.
 const QUIT_ORIGINS = [`http://localhost:${PORT}`, `http://${HOST}:${PORT}`];
 const QUIT_HOSTS = [`localhost:${PORT}`, `${HOST}:${PORT}`];
+
+// The host names a request may be addressed to. Any other name in `Host` is DNS rebinding:
+// an attacker's hostname resolving to 127.0.0.1, which would let their page read what is
+// served here. The port is not checked: `/quit` checks it, and tests serve on other ports.
+const SERVED_HOSTNAMES = ["localhost", HOST];
+
+/**
+ * Whether a `Host` header names this machine.
+ * @param {string | undefined} host - The `Host` header.
+ * @returns {boolean}
+ */
+function isServedHost (host) {
+  return typeof host === "string" && SERVED_HOSTNAMES.includes(host.replace(/:\d+$/, ""));
+}
 
 const CONTENT_TYPES = {
   ".avif": "image/avif",
@@ -134,6 +148,12 @@ function sendFile (file, response) {
 function createPaletteServer (root, onQuit) {
   const rootDir = path.resolve(root);
   return http.createServer((request, response) => {
+    if (!isServedHost(request.headers.host)) {
+      response.writeHead(403);
+      response.end();
+      return;
+    }
+
     const urlPath = (request.url || "/").split("?")[0];
 
     if (urlPath === "/health") {

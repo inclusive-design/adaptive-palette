@@ -186,7 +186,7 @@ plain-string labels. Any other value is read as `"en"`.
 UI language, then the palette's language, then the first label given, so a palette written in
 one language always shows its own labels. A cell speaks its label in the language it was shown
 in. When all of a palette's labels are in one language, the palette marks it with `lang`. Every
-label in the standard chart has both; `scripts/draft_swedish_labels.js` drafted the Swedish ones.
+label in the standard chart has both.
 
 **Layout options** are shared by every cell type:
 

@@ -10,7 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
+import type { VNode } from "preact";
 import { html } from "htm/preact";
 
 import { changeEncodingContents, finishedMessageSignal } from "../../state/GlobalData";
@@ -19,12 +19,12 @@ import {
   canReopenSentences, currentTelegraphicMessage, makeSentences, reopenSentences,
   sentenceCompletionsSignal
 } from "./TelegraphicTranslationState";
-import { BlissSymbolInfoType, LayoutInfoType } from "../../index.d";
+import type { BlissSymbolInfoType, LayoutInfoType } from "../../index.d";
 import { BlissSymbol } from "../../components/BlissSymbol";
 import { generateGridStyle } from "../../utils/GridUtils";
 import { normalizeComposition } from "../../utils/SymbolEncodingUtils";
 import { speakUnavailable } from "../../utils/SpeechUtils";
-import { whenLabelsSettled } from "../../utils/SymbolLabelUtils";
+import { whenLabelsSettled } from "../../core/SymbolLabelUtils";
 
 type CommandMakeSentenceProps = {
   id: string,
@@ -89,7 +89,6 @@ export function CommandMakeSentence (props: CommandMakeSentenceProps): VNode {
     ? html`<${BlissSymbol}
           composition=${normalizeComposition(composition)}
           label=${label}
-          isPresentation=true
         />`
     : label}
     </button>

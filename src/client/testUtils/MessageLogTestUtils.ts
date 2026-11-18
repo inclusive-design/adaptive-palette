@@ -19,7 +19,8 @@
  * Call these after setting `adaptivePaletteGlobals.config`: how much is read back into the
  * log comes from `maxRecalledRecords`.
  */
-import { MessageRecordType, hydrateMessageLog } from "../core/MessageLog";
+import type { MessageRecordType} from "../core/MessageLog";
+import { hydrateMessageLog } from "../core/MessageLog";
 import { setStorage } from "../core/StorageBackend";
 import { MemoryStorage } from "../core/MemoryStorage";
 

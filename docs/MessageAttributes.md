@@ -67,7 +67,7 @@ the line from a prompt stops the attributes reaching that feature and breaks not
 [Config.md](devDoc/Config.md) for how the placeholder is rendered and validated.
 
 Without Ollama running, neither feature queries a model — word prediction falls back to message
-history alone and the Sentence button is hidden — so the attributes have nothing to reach. **Msg
+history alone and the Make Sentences button is hidden — so the attributes have nothing to reach. **Msg
 Style** is hidden as well: `"requiresModel": true` on its cell in
 `public/palette-sets/standardBlissChart/palettes/command_bar.json` tells [`Palette.ts`](devDoc/Palettes.md)
 to leave the cell out and to close the command bar up over its column. The rest of the feature is

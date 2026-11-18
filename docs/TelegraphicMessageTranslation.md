@@ -99,7 +99,7 @@ The **Speak** button next to the typing area's text field is marked `aria-disabl
 while the field is empty or holds only spaces. Pressing it then announces that it is unavailable instead
 of speaking.
 
-Pressing **Sentence** first looks the message up in the message log (see [Saved Data](#saved-data)). If
+Pressing **Make Sentences** first looks the message up in the message log (see [Saved Data](#saved-data)). If
 the message has been translated before, its most recently recorded sentence appears immediately, with no
 model query. It waits to be tapped like any other sentence, and nothing is recorded until it is. With
 `numSentences` at `1` that is the whole interaction. With `numSentences` above `1`, the model is asked
@@ -141,7 +141,7 @@ The sentence area can be in one of four states:
 **Edit message** closes the layer and keeps the message and its attributes. **✓ Done** closes it and
 clears them.
 
-The layer shows only on the palette where **Sentence** was pressed. The user can leave through the
+The layer shows only on the palette where **Make Sentences** was pressed. The user can leave through the
 controls it does not cover, such as **Back**, **Home**, "add indicator" or **Msg Style**, and use
 every cell of the other palette. The sentences are kept until the message changes:
 
@@ -149,7 +149,7 @@ every cell of the other palette. The sentences are kept until the message change
 2. **Home** closes it and goes to the home chart. The layer does not show there.
 3. Going back to the palette from another one, after "add indicator" for example, shows the
    layer again, unless **Home** or **Back** closed it.
-4. **Sentence** shows the kept sentences again on the current palette, without asking the model
+4. **Make Sentences** shows the kept sentences again on the current palette, without asking the model
    again. This works while they are still being made too. After a change to the language, the
    attributes or the number of sentences, or after a failed request, it asks the model again.
 5. Changing the message drops them without asking, because they are not on screen.
@@ -194,7 +194,7 @@ displayed sentence. But when there is no sentence on screen, for example, when a
 chose "speak" or moved on before the sentence appeared, the state is cleared without asking the user anything
 because there is nothing to discard.
 
-A modifier or indicator label may wait for a model's answer. Make Sentence waits for every pending label, so
+A modifier or indicator label may wait for a model's answer. Make Sentences waits for every pending label, so
 sentences are never made from, or shown with, one. Any other edit to the message while it waits cancels it. An
 answer the discard question's guard drops stays cached and goes in with the next change to the message. See
 [LabelLookup.md](LabelLookup.md).
@@ -234,7 +234,7 @@ the feature enters the **Error** state.
 ## Saved Data
 
 Translations are stored in the shared **Message Log**, described in
-[WordPrediction.md](WordPrediction.md). Pressing **Sentence** records the message itself; choosing a
+[WordPrediction.md](WordPrediction.md). Pressing **Make Sentences** records the message itself; choosing a
 sentence adds the translation to that record:
 
 - Model name
@@ -264,12 +264,12 @@ Data can currently be inspected through browser developer tools. No in-applicati
 
 | Situation | Behaviour |
 | --- | --- |
-| Ollama is not running or no models are installed | The top bar shows the short notice "AI off: Ollama isn't running". The **Sentence** button is not shown. |
-| `config.telegraphicTranslation` is missing or invalid | The top bar shows the short notice "Sentences off: check config.json" and the **Sentence** button is not shown. No fallback configuration is applied. |
+| Ollama is not running or no models are installed | The top bar shows the short notice "AI off: Ollama isn't running". The **Make Sentences** button is not shown. |
+| `config.telegraphicTranslation` is missing or invalid | The top bar shows the short notice "Sentences off: check config.json" and the **Make Sentences** button is not shown. No fallback configuration is applied. |
 | Configured model is unavailable | The first available model is used and a warning is logged to the console. |
 | Message has a past translation | Its most recently spoken sentence is shown first, with no query. Remaining sentences are requested only when `numSentences` is above `1`. |
 | Model repeats the recalled sentence | The repeat is dropped; the list can end up shorter than `numSentences`. |
-| Empty message | The **Sentence** button is marked `aria-disabled` and cannot be activated. |
+| Empty message | The **Make Sentences** button is marked `aria-disabled` and cannot be activated. |
 | Text field empty | The **Speak** button is marked `aria-disabled` and announces it is unavailable when pressed. |
 | **Done** or **Delete all** pressed while choices are visible | The message and generated choices are cleared. Any saved preference remains. |
 | **Edit message** pressed while choices are visible | The choices are closed. The message and its attributes are kept. |

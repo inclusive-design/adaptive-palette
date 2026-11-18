@@ -6,7 +6,7 @@ A Bliss modifier changes the meaning of the symbol it is added to, for example "
 ## Choosing a Modifier
 
 The "add modifier" button on the command bar opens the modifier palette. It is unavailable when
-no symbol is at the caret. The palette lists every modifier in `public/data/modifiers.json`,
+no symbol is at the caret. The palette lists every modifier in `src/client/core/Modifiers.json`,
 except "Bliss-name", in the file's order, 9 per row with no gaps and no group headings. The file
 starts with the most-used ones, from "opposite of" to "sounds like"; add a new modifier at the end, so that the
 others keep the places users have learned. Picking a modifier adds it to
@@ -17,7 +17,7 @@ next to "add modifier" on the command bar, removes the last modifier added.
 An indicator added to a symbol with modifiers goes above the base symbol, not above a modifier.
 
 The palette is `public/palette-sets/standardBlissChart/palettes/modifiers.json`. When a modifier
-is added to or moved in `modifiers.json`, update the palette too;
+is added to or moved in `src/client/core/Modifiers.json`, update the palette too;
 `ModifiersPaletteConsistency.test.ts` fails until they agree. It also fails until a new prefix
 modifier is listed in `modifierIds` in `src/client/utils/SvgUtils.ts`: a single symbol in one of
 the id lists, a multi-symbol one in `multiSymbol`. `findClassifierFromLeft()` uses these lists

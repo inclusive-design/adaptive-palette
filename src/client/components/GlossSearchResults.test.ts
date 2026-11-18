@@ -15,7 +15,7 @@ import { render, screen, cleanup } from "@testing-library/preact";
 import userEvent from "@testing-library/user-event";
 import { html } from "htm/preact";
 
-import { MatchType } from "../index.d";
+import type { MatchType } from "../index.d";
 import { GlossSearchResults } from "./GlossSearchResults";
 
 // Real entries from `public/data/bliss_symbol_explanations.json`, so the symbols

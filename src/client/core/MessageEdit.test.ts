@@ -11,7 +11,7 @@
  */
 
 import { changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
-import { editMessage, insertWord, setEditGuard } from "./MessageEdit";
+import { clearMessage, editMessage, insertWord, setEditGuard, setMessageClearer } from "./MessageEdit";
 import { AUTO_COMMA_PART } from "../utils/SymbolEncodingUtils";
 import type { ContentSignalDataType } from "../index.d";
 
@@ -182,5 +182,25 @@ describe("insertWord()", (): void => {
     wordBuildSignal.value = { message: { payloads: [], caretPosition: -1 }, combine: true };
     insertWord(colour);
     expect(changeEncodingContents.value).toEqual({ payloads: [cat, AUTO_COMMA_PART, colour], caretPosition: 2 });
+  });
+});
+
+describe("clearMessage()", (): void => {
+
+  afterEach((): void => {
+    setMessageClearer(null);
+  });
+
+  test("empties the message when no feature registered a clearer", (): void => {
+    changeEncodingContents.value = { payloads: [{ label: "juice", composition: 1840 }], caretPosition: 0 };
+    clearMessage();
+    expect(changeEncodingContents.value).toEqual({ payloads: [], caretPosition: -1 });
+  });
+
+  test("calls the registered clearer instead", (): void => {
+    const clearer = vi.fn();
+    setMessageClearer(clearer);
+    clearMessage();
+    expect(clearer).toHaveBeenCalledTimes(1);
   });
 });

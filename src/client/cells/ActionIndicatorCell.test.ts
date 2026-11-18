@@ -20,7 +20,7 @@ import { queryChat } from "../core/OllamaApi";
 import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { ActionIndicatorCell } from "./ActionIndicatorCell";
 import { aiSuggestionLabel } from "../components/AiBadge";
-import { resetSymbolLabelsForTests } from "../utils/SymbolLabelUtils";
+import { resetSymbolLabelsForTests } from "../core/SymbolLabelUtils";
 import { mockedAnnounceIfEnabled, mockedSpeakUnavailable } from "../testUtils/SpeechUtilsMock";
 import { languageSignal } from "../i18n/I18n";
 import type { SymbolEncodingType } from "../index.d";

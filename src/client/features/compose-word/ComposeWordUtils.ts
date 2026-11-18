@@ -68,7 +68,8 @@ function expandComposition (composition: SymbolCompositionType): TokenType[] {
 
 /**
  * Drop the grammatical indicators, such as action, plural and past, with the `;` or `;;` before
- * each. A semantic one, the thing or abstract indicator, stays (§7.0).
+ * each. A semantic one, the thing or abstract indicator, stays (Fundamental Rules of Blissymbolics
+ * §7.0; see docs/ComposeWords.md).
  * @param {TokenType[]} tokens - Characters and separators.
  * @returns {TokenType[]}
  */

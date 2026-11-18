@@ -160,6 +160,36 @@ describe("launcher", () => {
       expect(await response.text()).not.toContain("do not serve me");
     });
 
+    // DNS rebinding: an attacker's hostname resolving to 127.0.0.1 must not be able to read
+    // what the launcher serves, which can include the user's own palette set and pictures.
+    test("refuses a request addressed to some other hostname", async () => {
+      const url = await start();
+      const { port } = new URL(url);
+      const status = await new Promise((resolve, reject) => {
+        const request = http.request(
+          { host: "127.0.0.1", port, path: "/", method: "GET", headers: { host: `attacker.test:${port}` } },
+          (response) => {
+            response.resume();
+            response.on("end", () => resolve(response.statusCode));
+          }
+        );
+        request.on("error", reject);
+        request.end();
+      });
+      expect(status).toBe(403);
+    });
+
+    test("answers under localhost as well as 127.0.0.1", async () => {
+      const url = await start();
+      const { port } = new URL(url);
+      const response = await fetch(`http://localhost:${port}/health`).catch(() => null);
+      // Some machines resolve localhost to ::1 only, where nothing listens; that says nothing
+      // about the Host check, so only a response is checked.
+      if (response) {
+        expect(response.status).toBe(200);
+      }
+    });
+
     test("GET /quit is not a way to quit", async () => {
       const onQuit = vi.fn();
       const url = await start(onQuit);

@@ -10,10 +10,11 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { FunctionComponent } from "preact";
-import { render, screen, RenderResult } from "@testing-library/preact";
+import type { FunctionComponent } from "preact";
+import type { RenderResult } from "@testing-library/preact";
+import { render, screen } from "@testing-library/preact";
 import { html } from "htm/preact";
-import { PictureOrSymbolInfoType, LayoutInfoType } from "../index.d";
+import type { PictureOrSymbolInfoType, LayoutInfoType } from "../index.d";
 
 /**
  * Render a palette cell the way the palette does: with its id and its options, and nothing else.

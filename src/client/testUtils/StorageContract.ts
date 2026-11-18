@@ -14,8 +14,8 @@
  * The behaviour every storage backend must have, written once and run against each of them.
  * A backend that passes this is one the app can be switched to.
  */
-import { AdaptivePaletteStorage } from "../core/StorageBackend";
-import { MessageRecordType } from "../core/MessageLog";
+import type { AdaptivePaletteStorage } from "../core/StorageBackend";
+import type { MessageRecordType } from "../core/MessageLog";
 import type { AboutMeType, SavedWordType } from "../index.d";
 
 /**

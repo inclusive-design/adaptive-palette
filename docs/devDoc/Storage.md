@@ -88,12 +88,6 @@ choice, from `isLocalHost()` — the same guard that decides whether the app may
 the answer as an argument rather than reading the hostname, because under the test runner the hostname
 is always `localhost` and the hosted branch could not otherwise be tested.
 
-On a hosted page it also calls `removeLegacyDatabase()`, which deletes the app's IndexedDB database.
-The hosted site used to save messages there, so visitors from before this change still have them in
-their browser — on the very machines where that is the problem. The delete is not awaited, and runs on
-every hosted load: deleting a database that is not there succeeds, so it needs no flag, and a load
-blocked by another tab is retried by the next one.
-
 ## Installing a backend
 
 `setStorage()` installs the backend the app uses; `getStorage()` returns it, throwing when none

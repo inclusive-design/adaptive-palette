@@ -10,7 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import {
+import type {
   JsonPaletteType, PaletteFileMapType, PaletteIncludeType, PaletteSetType, PictureOrSymbolInfoType
 } from "../index.d";
 import { addSavedWordCells } from "./SavedWords";
@@ -219,7 +219,6 @@ export class PaletteStore {
       return;
     }
     PaletteStore.paletteMap[palName] = palette;
-    console.log(`Palette ${palName} added to the store.`);
   }
 
   /**
@@ -234,26 +233,9 @@ export class PaletteStore {
       const palette = PaletteStore.paletteMap[paletteName];
       if (palette) {
         delete PaletteStore.paletteMap[paletteName];
-        console.log(`Palette ${paletteName} removed from the store.`);
       }
       return palette;
     }
-  }
-
-  /**
-   * Accessor for the number of palettes in the store.
-   * @return: {integer} the number of palettes in the store}.
-   */
-  get numPalettes() : number {
-    return Object.keys(PaletteStore.paletteMap).length;
-  }
-
-  /**
-   * Accessor for a list of names of palettes in the store.
-   * @return: {Array} of palette names.
-   */
-  get paletteList(): string[] {
-    return Object.keys(PaletteStore.paletteMap);
   }
 
   /**

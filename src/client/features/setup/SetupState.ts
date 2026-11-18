@@ -19,8 +19,10 @@
  * (`reloadPage()` below is the one exception: a thin wrapper the modal calls, not a
  * derivation.)
  */
-import { signal, Signal } from "@preact/signals";
-import { AdaptivePaletteConfigType } from "../../index.d";
+import type { Signal } from "@preact/signals";
+import { signal } from "@preact/signals";
+import type { AdaptivePaletteConfigType } from "../../index.d";
+import { hasModel } from "../../core/OllamaApi";
 
 export type SetupStatusType = "ready" | "noOllama" | "missingModels";
 
@@ -42,23 +44,11 @@ export function requiredModels (config: AdaptivePaletteConfigType): string[] {
   const named = [
     config.labelLookup.model,
     config.telegraphicTranslation?.model ?? "",
-    config.wordPrediction.model
+    config.wordPrediction.model,
+    config.aboutMe?.model ?? "",
+    config.wordNaming?.model ?? ""
   ];
   return [...new Set(named.filter((name) => name !== ""))];
-}
-
-/**
- * Whether Ollama has a model.
- *
- * Ollama reports every model with a tag, and gives an untagged pull the tag `latest`, so a
- * configuration that names `gemma4` is satisfied by `gemma4:latest`.
- * @param {string[]} available - The model names Ollama reports.
- * @param {string} wanted - The name the configuration asks for.
- * @returns {boolean}
- */
-export function hasModel (available: string[], wanted: string): boolean {
-  const withTag = wanted.includes(":") ? wanted : `${wanted}:latest`;
-  return available.some((candidate) => candidate === wanted || candidate === withTag);
 }
 
 /**

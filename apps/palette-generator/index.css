@@ -18,11 +18,7 @@ body#paletteGenerator {
   display:none
 }
 
-/*
-  * Needed to override palette button styles.
-  * TODO: modify palette's index.scss to add a class specifically for palette
-  * buttons, something like `button.palette { ... }`.`
-  */
+/* Overrides the palette's button styles for this page's own buttons. */
 button.usual {
   text-transform: none;
   overflow: visible;
