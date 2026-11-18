@@ -44,6 +44,6 @@ export function CommandDelLastEncoding (props: CommandDelLastEncodingProps): VNo
   };
 
   return html`
-    <${CommandButton} id=${id} options=${options} ariaControls=${options.ariaControls} onClick=${cellClicked} />
+    <${CommandButton} id=${id} options=${options} onClick=${cellClicked} />
   `;
 }

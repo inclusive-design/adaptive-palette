@@ -64,6 +64,7 @@ from there.
 - Modules under `src/client` use PascalCase: `SpeechUtils.ts`, not `speech-utils.ts`.
 - A test sits beside its source as `<Module>.test.ts`.
 - A component's styles sit beside it as `<Component>.scss`.
+  Styles several cells share, such as `.symbolCell` and `.btn-command`, sit in `index.scss`.
 - Feature slice folders use kebab-case: `word-prediction/`.
 
 ## Structural check

@@ -46,6 +46,15 @@ describe("CommandButton", (): void => {
     expect(button).not.toHaveAttribute("aria-disabled");
   });
 
+  test("reads aria-controls from its options and passes other attributes on", async (): Promise<void> => {
+    const withControls = { ...options, "ariaControls": "area" };
+    render(html`<${CommandButton} id=${TEST_ID} options=${withControls} aria-haspopup="dialog" onClick=${vi.fn()} />`);
+
+    const button = await screen.findByRole("button", { name: options.label });
+    expect(button).toHaveAttribute("aria-controls", "area");
+    expect(button).toHaveAttribute("aria-haspopup", "dialog");
+  });
+
   test("a click runs the handler", async (): Promise<void> => {
     const onClick = vi.fn();
     render(html`<${CommandButton} id=${TEST_ID} options=${options} unavailable=${false} onClick=${onClick} />`);

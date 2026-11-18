@@ -37,17 +37,13 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
     (payloads[caretPosition].modifierInfo?.length ?? 0) === 0;
   // Handle the request to remove the last placed modifier.
   const cellClicked = () => {
-    // `CommandButton` has already stopped a click while unavailable. This narrows the type.
-    if (caretSymbolComposition === undefined) { return; }
     // Get the symbol at the caret position in the editing area, and create an
     // initial `newComposition`.
     const { caretPosition, payloads } = changeEncodingContents.value;
     const symbolToEdit = payloads[caretPosition];
-    let newComposition = (
-      typeof caretSymbolComposition === "number" ?
-        [caretSymbolComposition] :
-        caretSymbolComposition
-    );
+    // Defined: `CommandButton` does not call this while the button is unavailable.
+    const composition = caretSymbolComposition as NonNullable<typeof caretSymbolComposition>;
+    let newComposition = typeof composition === "number" ? [composition] : composition;
 
     // Check for any modifier to remove -- if the symbol has no modifiers,
     // leave the `newComposition` as is. The last modifier is read rather than popped: the

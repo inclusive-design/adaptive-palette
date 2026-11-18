@@ -19,12 +19,15 @@ import { speakUnavailable } from "../utils/SpeechUtils";
 
 type CommandButtonPropsType = {
   id: string,
-  options: BlissSymbolInfoType & LayoutInfoType,
+  options: BlissSymbolInfoType & LayoutInfoType & { ariaControls?: string },
+  // Overrides `options.ariaControls`.
   ariaControls?: string,
   // Marked unavailable rather than `disabled`: a disabled button leaves the tab order, which
   // costs a switch or eye-gaze user their scan position. Left out, the button is never unavailable.
   unavailable?: boolean,
-  onClick: () => void
+  onClick: (event: Event) => void,
+  // Any other attribute, such as `ref` or `aria-pressed`, goes on the button as given.
+  [attribute: string]: unknown
 };
 
 /*
@@ -32,15 +35,15 @@ type CommandButtonPropsType = {
  * unavailable button says so and does not run `onClick`.
  */
 export function CommandButton (props: CommandButtonPropsType): VNode {
-  const { id, options, ariaControls, unavailable, onClick } = props;
+  const { id, options, ariaControls, unavailable, onClick, ...attributes } = props;
   const { label, composition, columnStart, columnSpan, rowStart, rowSpan } = options;
 
-  const cellClicked = (): void => {
+  const cellClicked = (event: Event): void => {
     if (unavailable) {
       speakUnavailable(label);
       return;
     }
-    onClick();
+    onClick(event);
   };
 
   return html`
@@ -48,8 +51,9 @@ export function CommandButton (props: CommandButtonPropsType): VNode {
       id="${id}"
       class="btn-command"
       style="${generateGridStyle(columnStart, columnSpan, rowStart, rowSpan)}"
-      aria-controls=${ariaControls}
+      aria-controls=${ariaControls ?? options.ariaControls}
       aria-disabled=${unavailable}
+      ...${attributes}
       onClick=${cellClicked}>
       <${BlissSymbol} composition=${composition} label=${label} />
     </button>

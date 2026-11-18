@@ -39,6 +39,6 @@ export function CommandClearEncoding (props: CommandClearEncodingProps): VNode {
   };
 
   return html`
-    <${CommandButton} id=${id} options=${options} ariaControls=${options.ariaControls} onClick=${cellClicked} />
+    <${CommandButton} id=${id} options=${options} onClick=${cellClicked} />
   `;
 }

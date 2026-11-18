@@ -18,7 +18,7 @@ import { goToPalette } from "../core/PaletteNavigation";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { caretComposition } from "../utils/SymbolEncodingUtils";
-import { colorStyle } from "../utils/GridUtils";
+import { colorStyle, generateGridStyle } from "../utils/GridUtils";
 import type { Language } from "../i18n/I18n";
 
 type ActionBranchToPalettePropsType = {
@@ -60,11 +60,8 @@ export function ActionBranchToPaletteCell (props: ActionBranchToPalettePropsType
     (!!unavailableWhileBuildingWord && wordBuildSignal.value !== null);
 
   // An unavailable button drops its own colours, so the greying of `.btn-command` shows.
-  const gridStyles = `
-    grid-column: ${columnStart} / span ${columnSpan};
-    grid-row: ${rowStart} / span ${rowSpan};
-    ${unavailable ? "" : colorStyle(backgroundColor, textColor)}
-  `;
+  const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan) +
+    (unavailable ? "" : colorStyle(backgroundColor, textColor));
   const cellClicked = (event: Event) => {
     if (unavailable) { speakUnavailable(label); return; }
     void navigateToPalette(event, labelLanguage);
