@@ -23,7 +23,7 @@ import { adaptivePaletteGlobals, changeEncodingContents, wordBuildSignal } from 
 import { editMessage, insertWord } from "../../core/MessageEdit";
 import { PaletteStore } from "../../core/PaletteStore";
 import { isWordSaved, saveWord } from "../../core/SavedWords";
-import { hasPendingLabel, whenLabelsSettled } from "../../utils/SymbolLabelUtils";
+import { hasPendingLabel, whenLabelsSettled } from "../../core/SymbolLabelUtils";
 import { glossFor } from "../../utils/SvgUtils";
 import { AUTO_COMMA_PART, COMMA_PART, SPACE_PART, insertWordAtCaret } from "../../utils/SymbolEncodingUtils";
 import { languageSignal } from "../../i18n/I18n";

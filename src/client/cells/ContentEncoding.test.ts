@@ -14,10 +14,10 @@ import { render, screen } from "@testing-library/preact";
 import { vi } from "vitest";
 import { userEvent } from "vitest/browser";
 import { html } from "htm/preact";
-import { ContentEncoding, INPUT_AREA_ID, clamp, decrementCursor, generateMarkupArray, incrementCursor, moveCursorToEnd, moveCursorToHome } from "./ContentEncoding";
+import { ContentEncoding, clamp, decrementCursor, generateMarkupArray, incrementCursor, moveCursorToEnd, moveCursorToHome } from "./ContentEncoding";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { editMessage } from "../core/MessageEdit";
-import { SymbolEncodingType } from "../index.d";
+import type { SymbolEncodingType } from "../index.d";
 import { renderCell, testPicture } from "../testUtils/CellTestUtils";
 import { adaptivePaletteGlobals, changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
 import { SPACE_PART } from "../utils/SymbolEncodingUtils";
@@ -255,7 +255,7 @@ describe("keeping the caret in view", (): void => {
     changeEncodingContents.value = { payloads, caretPosition };
     render(html`
       <div style=${`width: ${width}px`}>
-        <${ContentEncoding} id=${INPUT_AREA_ID} options=${options} />
+        <${ContentEncoding} id="content-encoding-area" options=${options} />
       </div>
     `);
     area = await screen.findByRole("textbox");

@@ -10,8 +10,10 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import ollama, { ChatResponse, Ollama } from "ollama/browser";
+import type { ChatResponse} from "ollama/browser";
+import ollama, { Ollama } from "ollama/browser";
 import { t } from "../i18n/I18n";
+import { adaptivePaletteGlobals } from "../state/GlobalData";
 
 const LOCAL_HOSTNAMES = ["localhost", "127.0.0.1", "[::1]"];
 
@@ -29,6 +31,52 @@ const LOCAL_HOSTNAMES = ["localhost", "127.0.0.1", "[::1]"];
  */
 export function isLocalHost (hostname: string = window.location.hostname): boolean {
   return LOCAL_HOSTNAMES.includes(hostname);
+}
+
+/**
+ * The installed name of a model the configuration asks for, or `undefined` when it is not
+ * installed. Ollama reports every model with a tag and gives an untagged pull the tag `latest`,
+ * so a configuration that names `gemma4` is satisfied by `gemma4:latest`.
+ * @param {string[]} available - The model names Ollama reports.
+ * @param {string} wanted - The name the configuration asks for.
+ * @returns {string | undefined}
+ */
+function installedName (available: string[], wanted: string): string | undefined {
+  const withTag = wanted.includes(":") ? wanted : `${wanted}:latest`;
+  return available.find((candidate) => candidate === wanted || candidate === withTag);
+}
+
+/**
+ * Whether Ollama has a model. See `installedName()` for the tag rule.
+ * @param {string[]} available - The model names Ollama reports.
+ * @param {string} wanted - The name the configuration asks for.
+ * @returns {boolean}
+ */
+export function hasModel (available: string[], wanted: string): boolean {
+  return installedName(available, wanted) !== undefined;
+}
+
+/**
+ * Choose the model to query: the configured one when Ollama has it, by the same rule
+ * first-run setup checks with, otherwise the first available model. Warns only when a model
+ * was named and is missing: an empty name means "whichever model Ollama reports first".
+ * @param {string} configuredModel - The model name from the config, possibly empty.
+ * @returns {string}
+ * @throws {Error} When no models are available.
+ */
+export function pickModel (configuredModel: string): string {
+  const { models } = adaptivePaletteGlobals;
+  if (models.length === 0) {
+    throw new Error(t("noModels"));
+  }
+  const installed = configuredModel === "" ? undefined : installedName(models, configuredModel);
+  if (installed) {
+    return installed;
+  }
+  if (configuredModel !== "") {
+    console.warn(`Model "${configuredModel}" is not available; using "${models[0]}" instead.`);
+  }
+  return models[0];
 }
 
 /**
@@ -84,15 +132,11 @@ function clientFor (abortSignal?: AbortSignal): Ollama {
 }
 
 /**
- * Function for passing the chat string and optionally a system prompt to the
- * ollama `chat()` service. The request can optionally ask that the response
- * be streamed or returned all at once.
+ * Send a query, and optionally a system prompt, to the Ollama `chat()` service, and return the
+ * whole reply.
  * @param {String} query        - The prompt string to query the service.
  * @param {String} modelName    - The name of the model to query.
- * @param {Boolean} streamResp  - Whether to stream the response or return it
- *                                all at once.
- * @param {String} systemPrompt - Optional system prompt, defaults to the
- *                                empty string.
+ * @param {String} systemPrompt - Optional system prompt; an empty one is not sent.
  * @param {AbortSignal} abortSignal - Optional signal to cancel the request. `ollama-js`
  *                                does not pass a signal on the non-streaming path, so inject
  *                                AbortController.signal through a custom `fetch` on a
@@ -100,44 +144,23 @@ function clientFor (abortSignal?: AbortSignal): Ollama {
  *                                Rejects with a `DOMException` named `"AbortError"` when
  *                                the signal fires; callers that cancel deliberately should
  *                                not treat that as a failure.
- * @return {Promise<ChatResponse | AsyncIterable<ChatResponse>>} - The response from the
- *                                service: an iterator of `ChatResponse` parts when it is
- *                                streamed, otherwise one `ChatResponse`.
+ * @return {Promise<ChatResponse>} - The reply.
  */
-export async function queryChat (query: string, modelName: string, streamResp: boolean, systemPrompt?: string, abortSignal?: AbortSignal): Promise<ChatResponse | AsyncIterable<ChatResponse>> {
-  // Indicator label lookup queries a named model without checking the model list, so the
-  // model list alone does not keep a hosted page from reaching Ollama.
+export async function queryChat (query: string, modelName: string, systemPrompt?: string, abortSignal?: AbortSignal): Promise<ChatResponse> {
+  // The last check before a request leaves the page: a hosted page never reaches Ollama, even
+  // when a caller forgets its own check.
   if (!isLocalHost()) {
     throw new Error(t("hosted"));
   }
-  const messageArray = [];
+  const messages = [];
   if (systemPrompt && systemPrompt.length !== 0) {
-    messageArray.push({
-      role: "system",
-      content: systemPrompt
-    });
+    messages.push({ role: "system", content: systemPrompt });
   }
-  messageArray.push({ role: "user", content: query });
+  messages.push({ role: "user", content: query });
 
-  const request = {
-    model: modelName,
-    messages: messageArray,
-    keep_alive: 15,
-    think: false
-  };
-
-  const client = clientFor(abortSignal);
-
-  // Workaround for TypeScript error TS2769:
-  // `ollama.chat()` has overloads that require a literal `true` or `false` for the `stream` property.
-  // Passing a dynamic boolean variable fails type checking.
-  // We use an if/else block to pass the literal values explicitly and satisfy the compiler.
-  // Ref: https://github.com/ollama/ollama-js/issues/78
-  if (streamResp) {
-    return await client.chat({ ...request, stream: true });
-  } else {
-    return await client.chat({ ...request, stream: false });
-  }
+  // No `keep_alive`: Ollama's default, or the user's `OLLAMA_KEEP_ALIVE`, keeps the model loaded
+  // between requests.
+  return await clientFor(abortSignal).chat({ model: modelName, messages, think: false, stream: false });
 }
 
 /**

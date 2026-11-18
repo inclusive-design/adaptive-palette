@@ -10,9 +10,9 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
+import type { VNode } from "preact";
 import { html } from "htm/preact";
-import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
+import type { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { atRootWithNoOverlay, hideNavigationOverlay, navigationOverlayOpen } from "../core/NavigationOverlay";

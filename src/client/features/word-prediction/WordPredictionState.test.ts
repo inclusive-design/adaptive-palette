@@ -26,7 +26,7 @@ import {
 import {
   selectedAttributesSignal, clearAttributes
 } from "../message-attributes/MessageAttributesState";
-import { SymbolEncodingType } from "../../index.d";
+import type { SymbolEncodingType } from "../../index.d";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 import { en } from "../../i18n/en";
 
@@ -411,7 +411,7 @@ describe("wordPrediction model query", (): void => {
     compose("I");
     await waitForQuery();
     // Three slots left after the history's one suggestion.
-    expect(mockedQueryChat.mock.calls[0][3]).toBe("List 6 words.");
+    expect(mockedQueryChat.mock.calls[0][2]).toBe("List 6 words.");
   });
 
   // A waiting label is the joined modifier text. Asking about it would compete with the label's

@@ -23,7 +23,7 @@ import {
 } from "../../state/GlobalData";
 import { messageText } from "../../core/MessageLog";
 import { isModelTierActive, predictNext, rankModelWords, requestModelWords } from "./WordPredictionUtils";
-import { hasPendingLabel } from "../../utils/SymbolLabelUtils";
+import { hasPendingLabel } from "../../core/SymbolLabelUtils";
 import { attributesPromptText } from "../message-attributes/MessageAttributesState";
 import type { ModelWordsStateType, SymbolEncodingType } from "../../index.d";
 

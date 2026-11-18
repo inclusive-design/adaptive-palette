@@ -10,8 +10,9 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
-import { ActionModifierCodeCellPropsType, ActionModifierCellCommon }
+import type { VNode } from "preact";
+import type { ActionModifierCodeCellPropsType} from "./ActionModifierCellCommon";
+import { ActionModifierCellCommon }
   from "./ActionModifierCellCommon";
 
 const PREPENDED = true;

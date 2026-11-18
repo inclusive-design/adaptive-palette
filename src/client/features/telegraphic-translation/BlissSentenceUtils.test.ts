@@ -16,7 +16,7 @@ import {
 } from "./BlissSentenceUtils";
 import { parseWordsLine } from "./TelegraphicTranslationUtils";
 import { saveMessageRecord } from "../../core/MessageLog";
-import { SymbolCompositionType, SymbolEncodingType } from "../../index.d";
+import type { SymbolCompositionType, SymbolEncodingType } from "../../index.d";
 import { compositionToBstr, getSvgElement, initSvgCompositeDefinitions } from "../../utils/SvgUtils";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 

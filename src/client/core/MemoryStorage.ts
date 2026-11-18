@@ -106,11 +106,6 @@ export class MemoryStorage implements AdaptivePaletteStorage {
   }
 
   destroy (): Promise<void> {
-    this.messages = [];
-    this.savedWords = [];
-    this.settings = {};
-    this.aboutMe = { facts: [], dismissed: [], pending: [] };
-    this.nextId = 1;
-    return Promise.resolve();
+    return this.clearAll();
   }
 }

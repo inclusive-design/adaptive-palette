@@ -48,7 +48,7 @@ import {
 } from "../telegraphic-translation/TelegraphicTranslationState";
 import { DiscardEditDialog } from "../telegraphic-translation/DiscardEditDialog";
 import { MessageAttributesBar } from "./MessageAttributesBar";
-import { JsonPaletteType } from "../../index.d";
+import type { JsonPaletteType } from "../../index.d";
 
 vi.mock("../../utils/SpeechUtils");
 vi.mock("../../core/OllamaApi", async (importOriginal) => {

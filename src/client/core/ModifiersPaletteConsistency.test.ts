@@ -11,18 +11,18 @@
  */
 
 /**
- * `modifiers.json` in the palette set is built from `public/data/modifiers.json`. This keeps the
+ * `modifiers.json` in the palette set is built from `Modifiers.json`. This keeps the
  * two in step: every modifier, except those in `NOT_IN_PALETTE`, appears once, in the data file's
  * order, as a prefix or suffix cell per its `position`, filling the rows below the header with no gaps. The header row is checked
  * for every palette by `PaletteSetConsistency.test.ts`.
  */
 import { loadPaletteFromJsonFile } from "./PaletteStore";
-import { BlissSymbolInfoType, JsonPaletteType, LayoutInfoType, SymbolCompositionType } from "../index.d";
+import modifiersData from "./Modifiers.json";
+import type { BlissSymbolInfoType, JsonPaletteType, LayoutInfoType, SymbolCompositionType } from "../index.d";
 import type { LabelType } from "../i18n/I18n";
 import { findClassifierFromLeft } from "../utils/SvgUtils";
 
 const PALETTE_PATH = "/palette-sets/standardBlissChart/palettes/modifiers.json";
-const MODIFIERS_PATH = "/data/modifiers.json";
 
 type ModifierEntry = {
   composition: SymbolCompositionType,
@@ -41,7 +41,7 @@ type ModifierCell = {
   options: LayoutInfoType & Omit<BlissSymbolInfoType, "label"> & { label: LabelType }
 };
 
-describe("modifiers.json agrees with data/modifiers.json", (): void => {
+describe("modifiers.json agrees with Modifiers.json", (): void => {
 
   let palette: JsonPaletteType;
   let modifiers: ModifierEntry[];
@@ -52,11 +52,7 @@ describe("modifiers.json agrees with data/modifiers.json", (): void => {
       throw new Error(`Could not load ${PALETTE_PATH}`);
     }
     palette = loaded;
-    const response = await fetch(MODIFIERS_PATH);
-    if (!response.ok) {
-      throw new Error(`Could not load ${MODIFIERS_PATH}`);
-    }
-    modifiers = await response.json() as ModifierEntry[];
+    modifiers = modifiersData as ModifierEntry[];
   });
 
   // The modifier cells in reading order: row by row, left to right.

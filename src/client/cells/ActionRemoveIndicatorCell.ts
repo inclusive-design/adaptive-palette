@@ -10,18 +10,18 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
+import type { VNode } from "preact";
 import { html } from "htm/preact";
-import { BlissSymbolInfoType, LayoutInfoType, ContentSignalDataType } from "../index.d";
+import type { BlissSymbolInfoType, LayoutInfoType, ContentSignalDataType } from "../index.d";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { spokenLabel } from "../components/AiBadge";
 import { changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
-import { editMessage } from "../core/MessageEdit";
+import { editSymbolAtCaret } from "../core/MessageEdit";
 import { generateGridStyle } from "../utils/GridUtils";
-import { caretComposition, replaceAtCaret } from "../utils/SymbolEncodingUtils";
+import { caretComposition } from "../utils/SymbolEncodingUtils";
 import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
 import { findWordIndicators } from "../utils/SvgUtils";
-import { baseOf, relabel } from "../utils/SymbolLabelUtils";
+import { baseOf, relabel } from "../core/SymbolLabelUtils";
 
 type ActionIndicatorCodeCellPropsType = {
   id: string,
@@ -88,7 +88,9 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
       "modifierInfo": symbolToEdit.modifierInfo,
       ...baseOf(symbolToEdit)
     });
-    editMessage({ payloads: replaceAtCaret(payloads, caretPosition, edited), caretPosition: caretPosition });
+    if (!editSymbolAtCaret(edited, label)) {
+      return;
+    }
     announceIfEnabled(spokenLabel(edited));
   };
 
@@ -97,7 +99,6 @@ export function ActionRemoveIndicatorCell (props: ActionIndicatorCodeCellPropsTy
       <${BlissSymbol}
         composition=${removeIndicatorComposition}
         label=${label}
-        isPresentation=true
       />
     </button>
   `;

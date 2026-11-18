@@ -37,7 +37,7 @@ The pregenerated table's key is `{userSelectedSymbolId}_{indicatorId}`. It cover
 ## Label Resolution Order
 
 Changing a symbol never blocks the UI: the symbol is redrawn at once, and a label the model is asked for arrives
-later. `labelFor()` in `utils/SymbolLabelUtils.ts` checks, in order:
+later. `labelFor()` in `core/SymbolLabelUtils.ts` checks, in order:
 
 1. **No modifiers and no indicator:** the base label.
 2. **Pre-generated table:** an indicator alone, when `public/data/new_labels_with_indicator.json` has the pair. To
@@ -61,8 +61,8 @@ later. `labelFor()` in `utils/SymbolLabelUtils.ts` checks, in order:
 A model's answer is recorded on `isAiLabel` and shown with an "AI" badge and in italic. `markAiSuggestions` in
 `public/config.json` turns the marking off; see [Config.md](devDoc/Config.md).
 
-While a label waits, word prediction asks the model nothing, Make Sentence and word naming wait for it, and Speak
-speaks what is on screen. Any other edit to the message while Make Sentence or word naming waits cancels it.
+While a label waits, word prediction asks the model nothing, Make Sentences and word naming wait for it, and Speak
+speaks what is on screen. Any other edit to the message while Make Sentences or word naming waits cancels it.
 
 ### Announcements
 
@@ -85,7 +85,7 @@ gloss, and the cached answer is keyed by language as well as the symbol's state.
 
 | File | Role |
 | :--- | :--- |
-| `src/client/utils/SymbolLabelUtils.ts` | Loads the table and metadata, works out labels (`labelFor()`), and asks the model about pending ones. |
+| `src/client/core/SymbolLabelUtils.ts` | Loads the table and metadata, works out labels (`labelFor()`), and asks the model about pending ones. |
 | `public/data/new_labels_with_indicator.json` | Pre-generated lookup table (`{symbolId}_{indicatorId} -> label`). |
 | `public/data/new_labels_with_indicator_sv.json` | Swedish lookup table, same format. |
 | `public/data/indicators.json` | Indicator metadata (id, group, name, purpose). |
@@ -113,7 +113,7 @@ This config file controls the model query via the `labelLookup` object:
 | `useModelQueryFallback` | Boolean | Whether to ask the model for the label of a symbol with modifiers, or with an indicator the table lacks. |
 | `model` | String | Specifies the name of the local Ollama model to query when the model is asked (e.g., `gemma4:12b`). |
 | `systemPrompt` | String | Required, non-empty. Instructs the model to reply with the resulting label alone. |
-| `userPrompt` | String | Required, non-empty. The per-query prompt, one field per line. |
+| `userPrompt` | String or object | Required, non-empty. The per-query prompt, one field per line; an object gives one per language (`en`, `sv`). |
 
 `userPrompt` supports the placeholders `{{word}}`, `{{pos}}`, `{{explanation}}`, `{{modifiers}}`, `{{indicator}}`
 and `{{purpose}}`. `{{modifiers}}` lists the modifiers in the order they were added, with their side: `opposite of

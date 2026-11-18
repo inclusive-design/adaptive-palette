@@ -32,41 +32,25 @@
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { loadConfig } from "./Config";
 import { getModelNames, isLocalHost } from "./OllamaApi";
-import { initIndicatorLabels, startLabelWatcher } from "../utils/SymbolLabelUtils";
+import { initIndicatorLabels, startLabelWatcher } from "./SymbolLabelUtils";
 import { initSvgCompositeDefinitions } from "../utils/SvgUtils";
 import { applyStoredSettings } from "../features/settings/SettingsSchema";
-import { setEditGuard } from "./MessageEdit";
+import { setEditGuard, setMessageClearer } from "./MessageEdit";
 import { setNavigationOverlay } from "./NavigationOverlay";
 import {
-  guardEdit, hideSentences, sentenceLayerOpen
+  clearMessageAndChoices, guardEdit, hideSentences, sentenceLayerOpen
 } from "../features/telegraphic-translation/TelegraphicTranslationState";
-import { DATABASE_NAME, IndexedDbStorage } from "./IndexedDbStorage";
+import { IndexedDbStorage } from "./IndexedDbStorage";
 import { MemoryStorage } from "./MemoryStorage";
-import { AdaptivePaletteStorage, setStorage } from "./StorageBackend";
+import type { AdaptivePaletteStorage} from "./StorageBackend";
+import { setStorage } from "./StorageBackend";
 import { hydrateMessageLog } from "./MessageLog";
 import { hydrateSavedWords } from "./SavedWords";
 import { hydrateAboutMe } from "../features/about-me/AboutMeState";
 import { languageSignal, startLanguage } from "../i18n/I18n";
 
 /**
- * Delete the app's IndexedDB database.
- *
- * The hosted site used to save the user's messages there. Visitors from before that changed
- * still have those messages in their browser, which on a shared computer is exactly the thing
- * this is meant to stop, so the database is removed the first time the new build loads.
- *
- * The name is a parameter for the same reason `IndexedDbStorage`'s is: a test passes one of
- * its own and never waits on a delete unblocking behind a connection another test left open.
- * @param {string} name - The database to delete. Defaults to the app's own.
- * @returns {Promise<void>} - Rejects when another tab is holding the database open.
- */
-export function removeLegacyDatabase (name: string = DATABASE_NAME): Promise<void> {
-  return new IndexedDbStorage(name).destroy();
-}
-
-/**
- * Install the backend this page stores into, and on a hosted page start erasing what an
- * earlier visit saved.
+ * Install the backend this page stores into.
  *
  * Off this computer the app may be on a public or shared machine, where anything left in the
  * browser is readable by whoever sits down next. There it stores in memory and a reload clears
@@ -80,12 +64,6 @@ export function removeLegacyDatabase (name: string = DATABASE_NAME): Promise<voi
 export function installStorage (isLocal: boolean): AdaptivePaletteStorage {
   const storage = isLocal ? new IndexedDbStorage() : new MemoryStorage();
   setStorage(storage);
-  if (!isLocal) {
-    // Not awaited: nothing in start-up depends on it.
-    void removeLegacyDatabase().catch((error: unknown) => {
-      console.error(`Could not remove the previously saved data: ${String(error)}`);
-    });
-  }
   return storage;
 }
 
@@ -101,6 +79,8 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
   // edit is offered to telegraphic translation, which holds the ones that would throw away a
   // request or the sentences on screen until the user agrees to them.
   setEditGuard(guardEdit);
+  // Delete all also drops the sentences and attributes that belong to the message.
+  setMessageClearer(clearMessageAndChoices);
   // Started before anything renders, so every label marked pending is asked about.
   startLabelWatcher();
   // Home and Back close the sentence layer before they navigate.

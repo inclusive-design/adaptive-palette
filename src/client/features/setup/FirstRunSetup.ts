@@ -10,12 +10,13 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
+import type { VNode } from "preact";
 import { html } from "htm/preact";
 import { useRef, useState } from "preact/hooks";
 
 import { ModalDialog } from "../../components/ModalDialog";
-import { PullProgressType, getModelNames, pullModel } from "../../core/OllamaApi";
+import type { PullProgressType} from "../../core/OllamaApi";
+import { getModelNames, pullModel } from "../../core/OllamaApi";
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { missingModels, reloadPage, setupDismissedSignal, setupStatus } from "./SetupState";
 import { t } from "../../i18n/I18n";

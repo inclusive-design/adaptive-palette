@@ -10,11 +10,11 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
+import type { VNode } from "preact";
 import { useState, useRef } from "preact/hooks";
 import { html } from "htm/preact";
 
-import { MatchType, SymbolEncodingType } from "../index.d";
+import type { MatchType, SymbolEncodingType } from "../index.d";
 import { findSymbolByGloss } from "../utils/SvgUtils";
 import { insertWord } from "../core/MessageEdit";
 import { GlossSearchResults } from "./GlossSearchResults";

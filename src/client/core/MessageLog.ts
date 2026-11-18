@@ -11,10 +11,11 @@
  */
 
 import { adaptivePaletteGlobals } from "../state/GlobalData";
-import { StoredMessage, getStorage } from "./StorageBackend";
+import type { StoredMessage} from "./StorageBackend";
+import { getStorage } from "./StorageBackend";
 import { isSetPicturePath } from "./PaletteStore";
 import { removeModifierFromLabel } from "../utils/SymbolEncodingUtils";
-import { SymbolEncodingType } from "../index.d";
+import type { SymbolEncodingType } from "../index.d";
 import type { Language } from "../i18n/I18n";
 
 /*

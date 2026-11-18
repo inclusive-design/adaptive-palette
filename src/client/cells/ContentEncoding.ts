@@ -10,20 +10,19 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { RefObject, VNode } from "preact";
+import type { RefObject, VNode } from "preact";
 import { html } from "htm/preact";
 import { useLayoutEffect, useRef } from "preact/hooks";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { adaptivePaletteGlobals, changeEncodingContents, settingsSavedCount, wordBuildSignal } from "../state/GlobalData";
 import { editMessage } from "../core/MessageEdit";
-import { ContentEncodingType, SymbolEncodingType } from "../index.d";
+import type { ContentEncodingType, SymbolEncodingType } from "../index.d";
 import { COMBINE_MARKER_ID } from "../utils/SvgUtils";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
+import { INPUT_AREA_CLASS } from "../utils/TextEntryUtils";
 import { t } from "../i18n/I18n";
 import "./ContentEncoding.scss";
-
-export const INPUT_AREA_ID = "content-encoding-area";   // better way?
 
 const isApplePlatform = navigator.platform.startsWith("Mac") || navigator.platform.startsWith("iPhone") || navigator.platform.startsWith("iPad");
 
@@ -81,7 +80,7 @@ export function generateMarkupArray (payloadArray: Array<SymbolEncodingType>, ca
     }
     return html`
       <div class=${`blissSymbol${caretClass}`}>
-        <${BlissSymbol} composition=${payload.composition} picture=${payload.picture} label=${payload.label} isPresentation="true" isMarked=${isMarked} isPending=${payload.pendingLabel !== undefined} />
+        <${BlissSymbol} composition=${payload.composition} picture=${payload.picture} label=${payload.label} isMarked=${isMarked} isPending=${payload.pendingLabel !== undefined} />
       </div>
     `;
   });
@@ -99,7 +98,7 @@ function newWordMarkup (parts: SymbolEncodingType[], caretPos: number, combine: 
   // A function, so each end gets an element of its own.
   const marker = (): VNode | null => combine
     ? html`<div class="blissSymbol combineMarker">
-        <${BlissSymbol} composition=${COMBINE_MARKER_ID} label=${t("combineMarker")} isPresentation="true" />
+        <${BlissSymbol} composition=${COMBINE_MARKER_ID} label=${t("combineMarker")} />
       </div>`
     : null;
   const partsMarkup = parts.length === 0
@@ -307,7 +306,7 @@ export function ContentEncoding (props: ContentEncodingProps): VNode {
       <div
         id="${id}"
         ref=${areaRef}
-        class="contentEncodingArea"
+        class=${INPUT_AREA_CLASS}
         role="textbox"
         aria-label=${t("inputArea")}
         aria-readonly="true"

@@ -13,7 +13,17 @@
 /**
  * Whether a key press lands where the user is typing text.
  */
-import { INPUT_AREA_ID } from "../cells/ContentEncoding";
+/** The class of the input area. Palettes name the cell as they like, so its id cannot be used. */
+export const INPUT_AREA_CLASS = "contentEncodingArea";
+
+/**
+ * The input area. The message preview in the symbol dialogs shares its class, for its styles,
+ * and comes first in the page, so it is left out.
+ * @returns {HTMLElement | null}
+ */
+export function inputAreaElement (): HTMLElement | null {
+  return document.querySelector<HTMLElement>(`.${INPUT_AREA_CLASS}:not(.messagePreviewArea)`);
+}
 
 const textInputTypes = [
   "date", "datetime-local", "email", "month", "number", "password", "search",
@@ -28,7 +38,7 @@ const textInputTypes = [
  */
 export function elementAllowsTextEntry (element: unknown): boolean {
   if (!(element instanceof HTMLElement)) { return false; }
-  return element.id !== INPUT_AREA_ID && (
+  return !element.classList.contains(INPUT_AREA_CLASS) && (
     (element instanceof HTMLInputElement && textInputTypes.includes(element.type)) ||
     element instanceof HTMLTextAreaElement ||
     element instanceof HTMLSelectElement ||

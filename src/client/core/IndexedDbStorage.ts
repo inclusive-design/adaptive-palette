@@ -18,11 +18,11 @@
  * Nothing is ever deleted to make room. The message log is kept whole, and how much of it the
  * app reads back is `maxRecalledRecords`, applied by the caller through `readMessages()`.
  */
-import { AdaptivePaletteStorage, StoredMessage } from "./StorageBackend";
+import type { AdaptivePaletteStorage, StoredMessage } from "./StorageBackend";
 import type { MessageRecordType } from "./MessageLog";
 import type { AboutMeType, SavedWordType } from "../index.d";
 
-export const DATABASE_NAME = "AdaptivePalette";
+const DATABASE_NAME = "AdaptivePalette";
 export const MESSAGES_STORE = "messages";
 export const SETTINGS_STORE = "settings";
 export const ABOUT_ME_STORE = "aboutMe";

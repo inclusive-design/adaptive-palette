@@ -10,13 +10,12 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
+import type { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "../components/BlissSymbol";
-import { clearMessageAndChoices } from "../features/telegraphic-translation/TelegraphicTranslationState";
-import { editMessage } from "../core/MessageEdit";
+import { clearMessage, editMessage } from "../core/MessageEdit";
 import { wordBuildSignal } from "../state/GlobalData";
-import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
+import type { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
 
@@ -38,7 +37,7 @@ export function CommandClearEncoding (props: CommandClearEncodingProps): VNode {
     if (wordBuildSignal.value) {
       editMessage({ payloads: [], caretPosition: -1 });
     } else {
-      clearMessageAndChoices();
+      clearMessage();
     }
     announceIfEnabled(label, labelLanguage);
   };

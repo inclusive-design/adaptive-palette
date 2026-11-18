@@ -10,9 +10,9 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
+import type { VNode } from "preact";
 import { html } from "htm/preact";
-import { ContentLabelType } from "../index.d";
+import type { ContentLabelType } from "../index.d";
 import { colorStyle, generateGridStyle } from "../utils/GridUtils";
 import "./ContentLabel.scss";
 

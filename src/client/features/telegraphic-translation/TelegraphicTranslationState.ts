@@ -19,12 +19,12 @@
  */
 import { batch, signal } from "@preact/signals";
 import { adaptivePaletteGlobals, changeEncodingContents, settingsSavedCount } from "../../state/GlobalData";
-import { requestSentences, pickModel } from "./TelegraphicTranslationUtils";
+import { requestSentences } from "./TelegraphicTranslationUtils";
 import { findLatestTranslation, messageText } from "../../core/MessageLog";
 import { clearAttributes, selectedAttributesSignal } from "../message-attributes/MessageAttributesState";
 import type { ContentSignalDataType, SentenceCompletionsStateType } from "../../index.d";
 import { languageSignal, t } from "../../i18n/I18n";
-import { isModelRunFailure } from "../../core/OllamaApi";
+import { isModelRunFailure, pickModel } from "../../core/OllamaApi";
 
 /**
  * Nothing to show. Shared rather than rewritten at each use so the idle shape stays in one
@@ -110,8 +110,8 @@ export function abortActiveSentenceRequest (): void {
 }
 
 /**
- * Discard the message in the input area together with the attributes set on it and any
- * sentences made from it, aborting a request in flight first.
+ * Discard the message in the input area together with the attributes set on it, any
+ * sentences made from it and the sentence typed for it, aborting a request in flight first.
  * The sentence state is cleared first, and the message is then written past `editMessage()`:
  * going through the gate with the state still `working` or `ready` would ask the user to
  * confirm a discard they have just asked for.
@@ -119,10 +119,13 @@ export function abortActiveSentenceRequest (): void {
  */
 export function clearMessageAndChoices (): void {
   abortActiveSentenceRequest();
-  sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
-  changeEncodingContents.value = { payloads: [], caretPosition: -1 };
-  // The attributes belong to the message.
-  clearAttributes();
+  batch((): void => {
+    sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
+    typedSentenceSignal.value = "";
+    changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+    // The attributes belong to the message.
+    clearAttributes();
+  });
 }
 
 /**
@@ -307,7 +310,7 @@ let pendingAfterApply: (() => void) | undefined;
  */
 export function guardEdit (next: ContentSignalDataType, afterApply?: () => void): boolean {
   // A question is already up. Clicks cannot reach here -- the page is `inert` behind the
-  // dialog -- so this is a model's label arriving from `utils/SymbolLabelUtils.ts`. Drop it: the
+  // dialog -- so this is a model's label arriving from `core/SymbolLabelUtils.ts`. Drop it: the
   // answer stays cached, and the next change to the message puts it in.
   if (discardEditPromptSignal.peek() !== null) {
     return true;
@@ -366,6 +369,8 @@ export function confirmDiscardEdit (): void {
   batch((): void => {
     discardEditPromptSignal.value = null;
     sentenceCompletionsSignal.value = IDLE_SENTENCE_STATE;
+    // The typed sentence was for the message being replaced.
+    typedSentenceSignal.value = "";
     if (edit) {
       // Raw: the edit was frozen on its way in, and the guard has already ruled on it.
       changeEncodingContents.value = edit;

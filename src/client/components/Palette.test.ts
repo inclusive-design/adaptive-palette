@@ -14,7 +14,7 @@ import { vi } from "vitest";
 import { cleanup, render, screen } from "@testing-library/preact";
 import { html } from "htm/preact";
 
-import { JsonPaletteType } from "../index.d";
+import type { JsonPaletteType } from "../index.d";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { setTestConfig } from "../testUtils/TestConfig";
 import { adaptivePaletteGlobals, wordBuildSignal } from "../state/GlobalData";

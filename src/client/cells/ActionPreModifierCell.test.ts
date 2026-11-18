@@ -15,10 +15,11 @@ import { screen, fireEvent, waitFor } from "@testing-library/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
+import { setEditGuard } from "../core/MessageEdit";
 import { queryChat } from "../core/OllamaApi";
 import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { ActionPreModifierCell } from "./ActionPreModifierCell";
-import { resetSymbolLabelsForTests } from "../utils/SymbolLabelUtils";
+import { resetSymbolLabelsForTests } from "../core/SymbolLabelUtils";
 import { mockedAnnounceIfEnabled, mockedSpeakUnavailable } from "../testUtils/SpeechUtilsMock";
 
 vi.mock("../core/OllamaApi", async (importOriginal) => {
@@ -59,6 +60,10 @@ describe("ActionPreModifierCell", (): void => {
       useModelQueryFallback: true, model: "phony-model:12b",
       systemPrompt: "Answer with the label.", userPrompt: "Word: \"{{word}}\"\nModifiers, in order: {{modifiers}}"
     };
+  });
+
+  afterEach((): void => {
+    setEditGuard(null);
   });
 
   test("is unavailable while the input area is empty", async (): Promise<void> => {
@@ -132,7 +137,7 @@ describe("ActionPreModifierCell", (): void => {
   test("a second modifier stops the first query", async (): Promise<void> => {
     adaptivePaletteGlobals.models = ["phony-model:12b"];
     const signals: (AbortSignal | undefined)[] = [];
-    mockedQueryChat.mockImplementation((_query, _model, _stream, _system, abortSignal) => {
+    mockedQueryChat.mockImplementation((_query, _model, _system, abortSignal) => {
       signals.push(abortSignal);
       return new Promise<never>(() => undefined);
     });
@@ -186,5 +191,18 @@ describe("ActionPreModifierCell", (): void => {
     expect(JSON.stringify(changeEncodingContents.value)).toBe(before);
     expect(mockedSpeakUnavailable).toHaveBeenCalledWith(testCell.options.label);
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
+  });
+
+  // The guard holds the edit to ask whether it may discard the user's sentences. Naming the new
+  // label would name a word that is nowhere in the message.
+  test("an edit the guard holds is announced with the old label", async (): Promise<void> => {
+    changeEncodingContents.value = { payloads: [cold], caretPosition: 0 };
+    renderCell(ActionPreModifierCell, TEST_CELL_ID, testCell.options);
+    const button = await screen.findByRole("button", { name: testCell.options.label });
+    setEditGuard(() => true);
+    fireEvent.click(button);
+
+    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(`cold, ${testCell.options.label}`);
+    expect(changeEncodingContents.value.payloads[0].label).toBe("cold");
   });
 });

@@ -10,9 +10,9 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
+import type { VNode } from "preact";
 import { html } from "htm/preact";
-import { BlissSymbolCellType } from "../index.d";
+import type { BlissSymbolCellType } from "../index.d";
 import { changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
 import { goToPalette } from "../core/PaletteNavigation";
 import { BlissSymbol } from "../components/BlissSymbol";

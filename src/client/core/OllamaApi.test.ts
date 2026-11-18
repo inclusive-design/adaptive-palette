@@ -11,8 +11,12 @@
  */
 
 import { vi } from "vitest";
-import { getModelNames, isLocalHost, isModelRunFailure, pullModel, queryChat } from "./OllamaApi";
+import {
+  getModelNames, hasModel, isLocalHost, isModelRunFailure, pickModel, pullModel, queryChat
+} from "./OllamaApi";
 import ollama from "ollama/browser";
+import { adaptivePaletteGlobals } from "../state/GlobalData";
+import { en } from "../i18n/en";
 
 // Mock the entire ollama/browser module.
 // `vi.mock` is hoisted above const declarations, so anything the factory closes over has
@@ -61,6 +65,57 @@ describe("OllamaApi", (): void => {
 
     test("is false for a public hostname", (): void => {
       expect(isLocalHost("adaptive-palette.pages.dev")).toBe(false);
+    });
+  });
+
+  describe("hasModel", () => {
+    test("accepts an exact name", () => {
+      expect(hasModel(["gemma4:12b", "llama3:8b"], "gemma4:12b")).toBe(true);
+    });
+    test("does not accept another tag", () => {
+      expect(hasModel(["gemma4:27b"], "gemma4:12b")).toBe(false);
+    });
+    test("accepts :latest for a name with no tag", () => {
+      expect(hasModel(["gemma4:latest"], "gemma4")).toBe(true);
+    });
+    test("finds nothing in an empty list", () => {
+      expect(hasModel([], "gemma4:12b")).toBe(false);
+    });
+  });
+
+  describe("pickModel", () => {
+    beforeEach(() => {
+      adaptivePaletteGlobals.models = ["phony-model:12b", "other-model:7b", "gemma4:latest"];
+    });
+
+    test("uses the configured model when it is available", () => {
+      expect(pickModel("other-model:7b")).toBe("other-model:7b");
+    });
+
+    test("uses the installed :latest model for a configured name with no tag", () => {
+      const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+      expect(pickModel("gemma4")).toBe("gemma4:latest");
+      expect(warn).not.toHaveBeenCalled();
+      warn.mockRestore();
+    });
+
+    test("falls back to the first available model, with a warning, when the configured one is missing", () => {
+      const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+      expect(pickModel("not-installed:70b")).toBe("phony-model:12b");
+      expect(warn).toHaveBeenCalledTimes(1);
+      warn.mockRestore();
+    });
+
+    test("falls back quietly when no model is configured", () => {
+      const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+      expect(pickModel("")).toBe("phony-model:12b");
+      expect(warn).not.toHaveBeenCalled();
+      warn.mockRestore();
+    });
+
+    test("throws when no model is available", () => {
+      adaptivePaletteGlobals.models = [];
+      expect(() => pickModel("phony-model:12b")).toThrow(en.noModels);
     });
   });
 
@@ -129,11 +184,10 @@ describe("OllamaApi", (): void => {
     test("queries without a system prompt when none is given", async () => {
       mockedOllama.chat.mockResolvedValue(mockResponse as unknown as OllamaChatResponse);
 
-      const response = await queryChat(mockQuery, mockModel, false);
+      const response = await queryChat(mockQuery, mockModel);
       expect(mockedOllama.chat).toHaveBeenCalledTimes(1);
       expect(mockedOllama.chat).toHaveBeenCalledWith({
         model: mockModel,
-        keep_alive: 15,
         think: false,
         stream: false,
         messages: [
@@ -147,10 +201,9 @@ describe("OllamaApi", (): void => {
       mockedOllama.chat.mockResolvedValue(mockResponse as unknown as OllamaChatResponse);
       const systemPrompt = "You are a helpful geography teacher.";
 
-      await queryChat(mockQuery, mockModel, false, systemPrompt);
+      await queryChat(mockQuery, mockModel, systemPrompt);
       expect(mockedOllama.chat).toHaveBeenCalledWith({
         model: mockModel,
-        keep_alive: 15,
         think: false,
         stream: false,
         messages: [
@@ -163,7 +216,7 @@ describe("OllamaApi", (): void => {
     test("ignores an empty system prompt", async () => {
       mockedOllama.chat.mockResolvedValue(mockResponse as unknown as OllamaChatResponse);
 
-      await queryChat(mockQuery, mockModel, false, "");
+      await queryChat(mockQuery, mockModel, "");
       expect(mockedOllama.chat).toHaveBeenCalledWith(
         expect.objectContaining({
           messages: [
@@ -174,32 +227,10 @@ describe("OllamaApi", (): void => {
       );
     });
 
-    test("streams the reply when streamResp is true", async () => {
-      // For a stream, Ollama returns an AsyncIterable. Mock it using an async generator.
-      async function* mockStream() {
-        // Add a mock `await` to satisfies the linter. Otherwise, the linter complains an async
-        // function is not waiting for anything inside it.
-        await Promise.resolve();
-        yield { message: { content: "Pa" } };
-        yield { message: { content: "ris" } };
-      }
-      mockedOllama.chat.mockResolvedValue(mockStream() as unknown as OllamaChatResponse);
-
-      const response = await queryChat(mockQuery, mockModel, true);
-      expect(mockedOllama.chat).toHaveBeenCalledWith(
-        expect.objectContaining({
-          stream: true,
-        })
-      );
-
-      // Verify we actually get the async iterable back
-      expect(typeof (response as AsyncIterable<unknown>)[Symbol.asyncIterator]).toBe("function");
-    });
-
     test("uses the shared singleton and builds no client when no signal is given", async () => {
       mockedOllama.chat.mockResolvedValue(mockResponse as unknown as OllamaChatResponse);
 
-      await queryChat(mockQuery, mockModel, false);
+      await queryChat(mockQuery, mockModel);
 
       expect(mockedOllama.chat).toHaveBeenCalledTimes(1);
       expect(mockOllamaClass).not.toHaveBeenCalled();
@@ -211,14 +242,13 @@ describe("OllamaApi", (): void => {
       const fetchSpy = vi.spyOn(globalThis, "fetch")
         .mockResolvedValue(new Response("{}"));
 
-      const response = await queryChat(mockQuery, mockModel, false, undefined, controller.signal);
+      const response = await queryChat(mockQuery, mockModel, undefined, controller.signal);
 
       expect(mockOllamaClass).toHaveBeenCalledTimes(1);
       expect(mockedOllama.chat).not.toHaveBeenCalled();
       expect(mockClientChat).toHaveBeenCalledTimes(1);
       expect(mockClientChat).toHaveBeenCalledWith({
         model: mockModel,
-        keep_alive: 15,
         think: false,
         stream: false,
         messages: [

@@ -21,8 +21,8 @@ import { CurrentPalette } from "./CurrentPalette";
 import { goBackImpl } from "../cells/CommandGoBackCell";
 
 // The real label code, without fetching the 3 MB tables. Tests set the entries they need.
-vi.mock("../utils/SymbolLabelUtils", async (importOriginal) => ({
-  ...await importOriginal<typeof import("../utils/SymbolLabelUtils")>(),
+vi.mock("../core/SymbolLabelUtils", async (importOriginal) => ({
+  ...await importOriginal<typeof import("../core/SymbolLabelUtils")>(),
   initIndicatorLabels: vi.fn().mockResolvedValue(undefined)
 }));
 

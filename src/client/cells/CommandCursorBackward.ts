@@ -10,11 +10,11 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
+import type { VNode } from "preact";
 import { html } from "htm/preact";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { decrementCursor } from "./ContentEncoding";
-import { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
+import type { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
 

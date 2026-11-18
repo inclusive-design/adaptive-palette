@@ -10,9 +10,9 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
+import type { VNode } from "preact";
 import { html } from "htm/preact";
-import { CellColorsType, PictureOrSymbolInfoType, LayoutInfoType, SymbolEncodingType } from "../index.d";
+import type { CellColorsType, PictureOrSymbolInfoType, LayoutInfoType, SymbolEncodingType } from "../index.d";
 import { BlissSymbol } from "../components/BlissSymbol";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { insertWord } from "../core/MessageEdit";
@@ -66,7 +66,6 @@ export function ActionCodeCell (props: ActionCodeCellPropsType): VNode {
         picture=${picture}
         label=${label}
         color="currentColor"
-        isPresentation=true
       />
     </button>
   `;

@@ -10,7 +10,8 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 import { adaptivePaletteGlobals } from "../state/GlobalData";
-import { Language, SPEECH_LANGS, languageSignal, t } from "../i18n/I18n";
+import type { Language} from "../i18n/I18n";
+import { SPEECH_LANGS, languageSignal, t } from "../i18n/I18n";
 
 /**
  * Text-to-speech functions

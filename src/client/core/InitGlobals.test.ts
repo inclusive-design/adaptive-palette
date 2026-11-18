@@ -17,7 +17,7 @@
  * `installStorage()` takes the answer rather than reading the hostname, because under the test
  * runner the hostname is always `localhost` and the hosted branch could never be reached.
  */
-import { initAdaptivePaletteGlobals, installStorage, removeLegacyDatabase } from "./InitGlobals";
+import { initAdaptivePaletteGlobals, installStorage } from "./InitGlobals";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { languageSignal } from "../i18n/I18n";
 import { IndexedDbStorage } from "./IndexedDbStorage";
@@ -39,36 +39,6 @@ describe("installStorage", (): void => {
     const storage = installStorage(false);
     expect(storage).toBeInstanceOf(MemoryStorage);
     expect(getStorage()).toBe(storage);
-  });
-});
-
-describe("removeLegacyDatabase", (): void => {
-
-  test("erases the database it names", async (): Promise<void> => {
-    const name = `AdaptivePaletteTest-legacy-${Date.now()}`;
-
-    const before = new IndexedDbStorage(name);
-    await before.open();
-    await before.addMessage({
-      timestamp: "2026-09-17T00:00:00.000Z",
-      payloads: [{ label: "juice", composition: 1840, modifierInfo: [] }]
-    });
-    // Asserted before the delete as well as after it: without this the test would pass just
-    // as happily if the message had never been written.
-    expect(await before.readMessages(10)).toHaveLength(1);
-    // Awaited: the delete below is blocked by a connection that is not yet released, and in
-    // WebKit that is still the case a moment after a write.
-    await before.close();
-
-    await removeLegacyDatabase(name);
-
-    const after = new IndexedDbStorage(name);
-    await after.open();
-    expect(await after.readMessages(10)).toEqual([]);
-    await after.close();
-    // Opening it again re-created it. Deleting it a second time leaves nothing behind for the
-    // next run, and shows that deleting a database twice is harmless.
-    await removeLegacyDatabase(name);
   });
 });
 

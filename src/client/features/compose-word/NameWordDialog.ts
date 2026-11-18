@@ -9,14 +9,14 @@
  * You may obtain a copy of the License at
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
-import { VNode } from "preact";
+import type { VNode } from "preact";
 import { html } from "htm/preact";
 import { useState } from "preact/hooks";
 import { ModalDialog } from "../../components/ModalDialog";
 import { BlissSymbol } from "../../components/BlissSymbol";
 import { AiBadge, aiSuggestionLabel } from "../../components/AiBadge";
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
-import { INPUT_AREA_ID } from "../../cells/ContentEncoding";
+import { inputAreaElement } from "../../utils/TextEntryUtils";
 import { t } from "../../i18n/I18n";
 import {
   type WordDialogType, chooseMatch, chooseName, closeWordDialog, nameSuggestionsSignal, wordDialogSignal
@@ -41,7 +41,7 @@ function NameWordBody (props: { dialog: WordDialogType }): VNode {
   if (dialog.match) {
     const { label, composition } = dialog.match;
     return html`
-      <div class="wordPreview"><${BlissSymbol} composition=${composition} label="" isPresentation="true" /></div>
+      <div class="wordPreview"><${BlissSymbol} composition=${composition} label="" /></div>
       <div class="dialogFooter">
         <button type="button" autofocus onClick=${chooseMatch}>${t("wordMatchUse", { label })}</button>
         <button type="button" onClick=${closeWordDialog}>${t("wordBack")}</button>
@@ -72,7 +72,7 @@ function NameWordBody (props: { dialog: WordDialogType }): VNode {
   // The name offered comes first and takes the focus: one selection names the word without a keyboard.
   // With none, the name field takes it.
   return html`
-    <div class="wordPreview"><${BlissSymbol} composition=${dialog.composition} label="" isPresentation="true" /></div>
+    <div class="wordPreview"><${BlissSymbol} composition=${dialog.composition} label="" /></div>
     <p id=${NAMES_LABEL_ID} class="wordSectionLabel">${t("wordChooseName")}</p>
     <div class="wordNames" role="group" aria-labelledby=${NAMES_LABEL_ID}>
       ${hasOffered && html`<button type="button" autofocus onClick=${useOffered}>
@@ -119,7 +119,7 @@ export function NameWordDialog (): VNode {
       title=${title}
       isOpen=${dialog !== null}
       onClose=${closeWordDialog}
-      restoreFocusTo=${() => document.getElementById(INPUT_AREA_ID)}>
+      restoreFocusTo=${() => inputAreaElement()}>
       ${dialog && html`<${NameWordBody} dialog=${dialog} />`}
     <//>
   `;

@@ -10,7 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
+import type { VNode } from "preact";
 import { html } from "htm/preact";
 import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
 
@@ -19,11 +19,12 @@ import {
   discardEditPromptSignal, typedSentenceSignal, focusedMessageSignal, sentenceLayerOpen
 } from "./TelegraphicTranslationState";
 import { announceIfEnabled, speak, speakUnavailable } from "../../utils/SpeechUtils";
-import { saveTranslation, SentenceSourceType } from "../../core/MessageLog";
+import type { SentenceSourceType } from "../../core/MessageLog";
+import { saveTranslation } from "../../core/MessageLog";
 import { MAX_NUM_SENTENCES } from "../../core/Config";
 import { generateGridStyle } from "../../utils/GridUtils";
 import { firstOwnControl } from "../../utils/FocusUtils";
-import { ContentSentenceChoicesType } from "../../index.d";
+import type { ContentSentenceChoicesType } from "../../index.d";
 import { adaptivePaletteGlobals, settingsSavedCount } from "../../state/GlobalData";
 import { AiBadge, aiSuggestionLabel } from "../../components/AiBadge";
 import { BlissSentence, BLISS_SENTENCE_CLASS } from "./BlissSentence";
@@ -228,7 +229,6 @@ export function SentenceChoices (props: SentenceChoicesPropsType): VNode {
   const finish = (): void => {
     announceIfEnabled(t("sentenceDoneSpoken"));
     clearMessageAndChoices();
-    typedSentenceSignal.value = "";
   };
 
   // "Edit message" closes the layer and keeps the message, for the user to change.

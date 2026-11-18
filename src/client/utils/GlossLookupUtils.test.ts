@@ -11,7 +11,7 @@
  */
 
 import { findGlossEntry, normalizeSense, resolveWordPayload } from "./GlossLookupUtils";
-import { SymbolEncodingType } from "../index.d";
+import type { SymbolEncodingType } from "../index.d";
 
 describe("GlossLookupUtils", (): void => {
 

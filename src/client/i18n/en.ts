@@ -56,7 +56,7 @@ export const en = {
 
   // Clear saved data
   clearConfirm: "Clear",
-  clearQuestion: "This deletes every message and About Me note you have saved, and the message you are writing now. It cannot be undone.",
+  clearQuestion: "This deletes every message, setting, saved word and About Me note you have saved, and the message you are writing now. It cannot be undone.",
   clearFailed: "The saved data could not be cleared. This browser is not letting the app use its storage.",
 
   // Input area
@@ -108,7 +108,7 @@ export const en = {
 
   // Erase all app data
   eraseLabel: "Erase all app data and quit",
-  eraseQuestion: "This deletes every message, setting and About Me note you have saved, and then quits. It cannot be undone.",
+  eraseQuestion: "This deletes every message, setting, saved word and About Me note you have saved, and then quits. It cannot be undone.",
   eraseNote: "Do this before deleting the app: once the app is gone there is no way left to reach this data.",
   eraseConfirm: "Erase and quit",
   eraseFailed: "The data could not be erased. Close any other tab showing Adaptive Palette, then try again.",

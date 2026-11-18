@@ -21,7 +21,7 @@
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { findSymbolByGloss, glossFor } from "./SvgUtils";
 import type { Language } from "../i18n/I18n";
-import {
+import type {
   BlissSymbolEntry, ResolutionRungType, SymbolCompositionType, SymbolEncodingType
 } from "../index.d";
 

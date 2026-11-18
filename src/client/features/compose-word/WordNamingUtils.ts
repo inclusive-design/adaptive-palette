@@ -14,10 +14,9 @@
  * Desktop version only.
  */
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
-import { isLocalHost, queryChat } from "../../core/OllamaApi";
+import { isLocalHost, pickModel, queryChat } from "../../core/OllamaApi";
 import { languageSignal } from "../../i18n/I18n";
 import { promptsFor, renderTemplate, replyLine } from "../../utils/PromptUtils";
-import { pickModel } from "../telegraphic-translation/TelegraphicTranslationUtils";
 
 export const MAX_SUGGESTED_NAMES = 3;
 
@@ -69,9 +68,9 @@ export async function requestNameSuggestions (
   }
   const values = { parts: partLabels.join(" + "), numNames: String(MAX_SUGGESTED_NAMES) };
   const response = await queryChat(
-    renderTemplate(prompts.userPrompt, values), pickModel(config.model), false,
+    renderTemplate(prompts.userPrompt, values), pickModel(config.model),
     renderTemplate(prompts.systemPrompt, values), abortSignal
   );
-  const content = "message" in response ? (response.message?.content || "") : "";
+  const content = response.message.content || "";
   return parseNames(content, offeredName);
 }

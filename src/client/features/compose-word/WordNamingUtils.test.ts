@@ -54,7 +54,7 @@ describe("requestNameSuggestions()", (): void => {
 
     expect(await requestNameSuggestions(["woman", "giving", "knowledge"], "woman giving knowledge"))
       .toEqual(["female teacher"]);
-    expect(mockedQueryChat).toHaveBeenCalledWith("Parts: woman + giving + knowledge", "phony-model:12b", false, "Name it.", undefined);
+    expect(mockedQueryChat).toHaveBeenCalledWith("Parts: woman + giving + knowledge", "phony-model:12b", "Name it.", undefined);
   });
 
   test("names can be suggested only with a model and the section configured", (): void => {

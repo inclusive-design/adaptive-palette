@@ -4,27 +4,16 @@ import tsParser from "@typescript-eslint/parser";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all
-});
 
 export default [{
   ignores: ["**/dist/", "**/dist-desktop/", "**/node_modules/"],
-}, ...compat.extends(
-  "eslint:recommended",
-  "plugin:@typescript-eslint/recommended",
-  "plugin:@typescript-eslint/recommended-type-checked"
-), {
-  plugins: {
-    "@typescript-eslint": typescriptEslint,
-  },
-
+},
+js.configs.recommended,
+...typescriptEslint.configs["flat/recommended-type-checked"],
+{
   languageOptions: {
     globals: {
       ...globals.browser,
@@ -47,6 +36,18 @@ export default [{
     semi: ["error", "always"],
   },
 },
+// A type imported as a value counts as a runtime edge for the cycle check, so types are
+// imported with `import type`.
+{
+  files: ["**/*.ts"],
+  rules: {
+    "@typescript-eslint/consistent-type-imports": ["error", {
+      fixStyle: "separate-type-imports",
+      // Tests type a partial module mock with `typeof import("...")`.
+      disallowTypeAnnotations: false
+    }],
+  },
+},
 {
   files: ["scripts/**/*.js", "apps/**/*.js"],
   languageOptions: {
@@ -67,8 +68,8 @@ export default [{
     "@typescript-eslint/unbound-method": "off",
   },
 },
-// The launcher is CommonJS because Node's single-executable feature runs only
-// CommonJS, and it is plain JavaScript, so type-aware rules have nothing to read.
+// The launcher is CommonJS for historical reasons, and it is plain JavaScript, so
+// type-aware rules have nothing to read.
 {
   files: ["launcher/**/*.cjs"],
   languageOptions: {
@@ -77,8 +78,7 @@ export default [{
   },
   rules: {
     ...typescriptEslint.configs["disable-type-checked"].rules,
-    // `require` is not a style choice here: Node's single-executable feature runs the
-    // embedded main script under CommonJS only.
+    // The launcher is CommonJS, so it loads modules with `require`.
     "@typescript-eslint/no-require-imports": "off"
   }
 },

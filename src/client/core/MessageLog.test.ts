@@ -12,14 +12,15 @@
 
 import { vi } from "vitest";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
-import {
-  MessageRecordType, TranslationInfoType, findLatestTranslation, hydrateMessageLog, messageText, readMessageLog, recordMessageText,
+import type {
+  MessageRecordType, TranslationInfoType} from "./MessageLog";
+import { findLatestTranslation, hydrateMessageLog, messageText, readMessageLog, recordMessageText,
   saveMessageRecord, saveTranslation
 } from "./MessageLog";
 import { setStorage } from "./StorageBackend";
 import { MemoryStorage } from "./MemoryStorage";
 import { readStoredMessages, resetMessageLog, seedMessageLog } from "../testUtils/MessageLogTestUtils";
-import { SymbolEncodingType } from "../index.d";
+import type { SymbolEncodingType } from "../index.d";
 import { PaletteStore } from "./PaletteStore";
 
 describe("messageLog", (): void => {

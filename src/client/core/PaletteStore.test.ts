@@ -11,7 +11,7 @@
  */
 
 import { vi } from "vitest";
-import { JsonPaletteType } from "../index.d";
+import type { JsonPaletteType } from "../index.d";
 import { PaletteStore, loadPaletteFromJsonFile, paletteSetPath, resolvePicturePath } from "./PaletteStore";
 import { MemoryStorage } from "./MemoryStorage";
 import { getStorage, setStorage } from "./StorageBackend";
@@ -120,14 +120,14 @@ describe("PaletteStore", (): void => {
   test("Non-empty PaletteStore", (): void => {
     paletteStore.addPalette(dummyPalette1);
     expect(paletteStore.isEmpty()).toBe(false);
-    expect(paletteStore.numPalettes).toBe(1);
-    expect(paletteStore.paletteList).toEqual(["dummyPalette1"]);
+    expect(Object.keys(PaletteStore.paletteMap).length).toBe(1);
+    expect(Object.keys(PaletteStore.paletteMap)).toEqual(["dummyPalette1"]);
   });
 
   test("Add another palette", (): void  => {
     paletteStore.addPalette(dummyPalette2, dummyPalette2Name);
-    expect(paletteStore.numPalettes).toBe(2);
-    expect(paletteStore.paletteList).toEqual(["dummyPalette1", dummyPalette2Name]);
+    expect(Object.keys(PaletteStore.paletteMap).length).toBe(2);
+    expect(Object.keys(PaletteStore.paletteMap)).toEqual(["dummyPalette1", dummyPalette2Name]);
   });
 
   test("Retrieve a palette, with and without loading", async (): Promise<void> => {
@@ -138,23 +138,23 @@ describe("PaletteStore", (): void => {
     // It should be added to the store and returned.
     retrievedPalette = await paletteStore.getNamedPalette(mockPalette.name, true);
     expect(retrievedPalette).toBe(mockPalette);
-    expect(paletteStore.numPalettes).toBe(3);
-    expect(paletteStore.paletteList).toEqual(["dummyPalette1", dummyPalette2Name, "mockPalette"]);
+    expect(Object.keys(PaletteStore.paletteMap).length).toBe(3);
+    expect(Object.keys(PaletteStore.paletteMap)).toEqual(["dummyPalette1", dummyPalette2Name, "mockPalette"]);
 
     // `nonExistentPalette` is not in the store and the file name map does not name a file
     // for it, so there is nothing to load. The result is undefined and the store is
     // unchanged.
     retrievedPalette = await paletteStore.getNamedPalette("nonExistentPalette", true);
     expect(retrievedPalette).toBe(undefined);
-    expect(paletteStore.numPalettes).toBe(3);
-    expect(paletteStore.paletteList).toEqual(["dummyPalette1", dummyPalette2Name, "mockPalette"]);
+    expect(Object.keys(PaletteStore.paletteMap).length).toBe(3);
+    expect(Object.keys(PaletteStore.paletteMap)).toEqual(["dummyPalette1", dummyPalette2Name, "mockPalette"]);
   });
 
   test("Delete a palette", async (): Promise<void> => {
-    const numPalettes = paletteStore.numPalettes;
+    const numPalettes = Object.keys(PaletteStore.paletteMap).length;
     const removedPalette = paletteStore.removePalette(dummyPalette1.name);
     expect(removedPalette).toBe(dummyPalette1);
-    expect(paletteStore.numPalettes).toBe(numPalettes - 1);
+    expect(Object.keys(PaletteStore.paletteMap).length).toBe(numPalettes - 1);
     const retrievedPalette = await paletteStore.getNamedPalette(dummyPalette1.name);
     expect(retrievedPalette).toBeUndefined();
   });
@@ -266,7 +266,7 @@ describe("PaletteStore palette sets and includes", (): void => {
     const loaded = await paletteStore.getNamedPalette("Screen", true);
 
     expect(loaded?.name).toBe("Screen");
-    expect(paletteStore.paletteList.sort()).toEqual(["Header", "Loop", "Screen"]);
+    expect(Object.keys(PaletteStore.paletteMap).sort()).toEqual(["Header", "Loop", "Screen"]);
     expect(fetched).toEqual([
       "/sets/palette_set.json", "/sets/screen.json", "/sets/parts/header.json", "/sets/parts/loop.json"
     ]);

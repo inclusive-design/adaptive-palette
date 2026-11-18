@@ -14,11 +14,12 @@ import { screen, fireEvent } from "@testing-library/preact";
 
 import { adaptivePaletteGlobals, changeEncodingContents } from "../state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
+import { setEditGuard } from "../core/MessageEdit";
 import { queryChat } from "../core/OllamaApi";
 import { renderCell, expectCellRendered } from "../testUtils/CellTestUtils";
 import { ActionRemoveModifierCell } from "./ActionRemoveModifierCell";
-import { resetSymbolLabelsForTests } from "../utils/SymbolLabelUtils";
-import { mockedSpeakUnavailable } from "../testUtils/SpeechUtilsMock";
+import { resetSymbolLabelsForTests } from "../core/SymbolLabelUtils";
+import { mockedAnnounceIfEnabled, mockedSpeakUnavailable } from "../testUtils/SpeechUtilsMock";
 
 vi.mock("../core/OllamaApi", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../core/OllamaApi")>();
@@ -94,6 +95,10 @@ describe("ActionRemoveModifierCell", (): void => {
     resetSymbolLabelsForTests();
     mockedQueryChat.mockReset();
     adaptivePaletteGlobals.models = [];
+  });
+
+  afterEach((): void => {
+    setEditGuard(null);
   });
 
   test("is unavailable while the input area is empty", async (): Promise<void> => {
@@ -285,5 +290,18 @@ describe("ActionRemoveModifierCell", (): void => {
     expect(changeEncodingContents.value.payloads[0]).toMatchObject({ label: "cold", isAiLabel: false, composition: [1436] });
     expect(changeEncodingContents.value.payloads[0]).not.toHaveProperty("pendingLabel");
     expect(mockedQueryChat).not.toHaveBeenCalled();
+  });
+
+  // The guard holds the edit to ask whether it may discard the user's sentences. Naming the new
+  // label would name a word that is nowhere in the message.
+  test("an edit the guard holds is announced with the old label", async (): Promise<void> => {
+    changeEncodingContents.value = { payloads: [blissWordWithPreModifier], caretPosition: 0 };
+    renderCell(ActionRemoveModifierCell, TEST_CELL_ID, testCell.options);
+    const button = await screen.findByRole("button", { name: testCell.options.label });
+    setEditGuard(() => true);
+    fireEvent.click(button);
+
+    expect(mockedAnnounceIfEnabled).toHaveBeenCalledWith(`flame, ${testCell.options.label}`);
+    expect(changeEncodingContents.value.payloads[0].label).toBe("flame");
   });
 });

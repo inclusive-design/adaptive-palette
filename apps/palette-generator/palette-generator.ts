@@ -13,26 +13,38 @@
 import { render } from "preact";
 import { html } from "htm/preact";
 import { Palette } from "../../src/client/components/Palette";
-import { processPaletteLabels, fetchBlissGlossJson, STANDARD_HEADER_PALETTE } from "./paletteJsonGenerator";
+import { processPaletteLabels, STANDARD_HEADER_PALETTE } from "./paletteJsonGenerator";
+import type { MatchByInfo } from "./paletteJsonGenerator";
 import "../../src/client/index.scss";
 import { adaptivePaletteGlobals } from "../../src/client/state/GlobalData";
 import { initAdaptivePaletteGlobals } from "../../src/client/core/InitGlobals";
 import { cellTypeRegistry } from "../../src/client/core/CellTypeRegistry";
 import { PALETTE_INCLUDE_TYPE, paletteSetPath } from "../../src/client/core/PaletteStore";
-import { JsonPaletteType } from "../../src/client/index.d";
+import type { JsonPaletteType, MatchType } from "../../src/client/index.d";
 
-type MatchInfo = {
-  bciAvId: number,
-  label: string,
-  composition?: (string | number)[],
-  fullComposition?: (string | number)[]
-};
-type MatchByInfo = { [label: string]: MatchInfo[] };
+/**
+ * An element the page's HTML always has.
+ * @param {string} id - The element's id.
+ * @returns {T}
+ * @throws {Error} When the page has no such element.
+ */
+function pageElement<T extends HTMLElement = HTMLElement> (id: string): T {
+  const element = document.getElementById(id);
+  if (!element) {
+    throw new Error(`The page has no #${id}`);
+  }
+  return element as T;
+}
 
+// HTML UI Elements
+const paletteName = pageElement<HTMLInputElement>("paletteName");
+const rowStart = pageElement<HTMLInputElement>("rowStart");
+const colStart = pageElement<HTMLInputElement>("colStart");
+const generatePalette = pageElement("generatePalette");
+const paletteDisplay = pageElement("paletteDisplay");
 
 // Initialize any globals used elsewhere in the code.
 await initAdaptivePaletteGlobals("paletteDisplay");
-await fetchBlissGlossJson();
 // Generated palettes include the Standard Header, so it and the palettes it includes are loaded from
 // the palette set that `?set=` in the page URL names, or else `config.paletteSet`. As in the main app,
 // a bad set name or a missing `palette_set.json` throws.
@@ -49,7 +61,7 @@ const MAX_MATCHES_OUTPUT = 7;
  * set up a handler to adjust the palette for changes in the cell type.
  */
 function initCellTypesSelect () {
-  const cellTypesSelect = document.getElementById("cellTypes") as HTMLSelectElement;
+  const cellTypesSelect = pageElement<HTMLSelectElement>("cellTypes");
   Object.keys(cellTypeRegistry).forEach ((cellType) => {
     // Content areas are not symbol cells, so they are not offered.
     if (!["ContentEncoding", "ContentPredictedWords", "ContentSentenceChoices"].includes(cellType)) {
@@ -97,9 +109,10 @@ function handleGenerateDisplayButton () {
 
   const glossesArray = makeGlossesArrays();
   if (glossesArray.length === 0) {
-    paletteDisplay.innerText = "<p>Missing glosses ?</p>";
+    render(html`<p>Missing glosses?</p>`, paletteDisplay);
+    return;
   }
-  const cellTypesSelect = document.getElementById("cellTypes") as HTMLSelectElement;
+  const cellTypesSelect = pageElement<HTMLSelectElement>("cellTypes");
   const lookupResults = processPaletteLabels(
     glossesArray,
     paletteName.value,
@@ -114,7 +127,7 @@ function handleGenerateDisplayButton () {
   render(html`<${Palette} json=${lookupResults.paletteJson} />`, paletteDisplay);
   reportMatches(lookupResults.matches);
   reportErrors(lookupResults.errors);
-  document.getElementById("savePalette").removeAttribute("disabled");
+  pageElement("savePalette").removeAttribute("disabled");
 }
 
 /**
@@ -136,7 +149,7 @@ async function handleNameChange () {
  *                   row of the palette.
  */
 function makeGlossesArrays (): string[][] {
-  const glossInputEl = document.getElementById("glossInput") as HTMLTextAreaElement;
+  const glossInputEl = pageElement<HTMLTextAreaElement>("glossInput");
   const glossRowsText = glossInputEl.value;
   if (glossRowsText.trim() === "") {
     console.error("No glosses provided");
@@ -165,10 +178,10 @@ function clearPaletteDisplay () {
   render(html``, paletteDisplay);
   adaptivePaletteGlobals.paletteStore.removePalette(currentPaletteName);
   currentPaletteName = "";
-  document.getElementById("saveMessage").innerText = "";
-  document.getElementById("savePalette").setAttribute("disabled", "disabled");
-  document.getElementById("mainMatchesDisplay").innerText = "";
-  document.getElementById("errorList").innerText = "";
+  pageElement("saveMessage").innerText = "";
+  pageElement("savePalette").setAttribute("disabled", "disabled");
+  pageElement("mainMatchesDisplay").innerText = "";
+  pageElement("errorList").innerText = "";
 }
 
 /**
@@ -188,7 +201,7 @@ async function savePalette () {
     saveLink.click();
     setTimeout(() => {
       URL.revokeObjectURL(saveLink.href);
-      document.getElementById("saveMessage").innerText = `Saved to downloads folder as "${palette.name}.json"`;
+      pageElement("saveMessage").innerText = `Saved to downloads folder as "${palette.name}.json"`;
     }, 6000);
   }
 }
@@ -220,7 +233,7 @@ function updatePaletteName (palette: JsonPaletteType, nameFromUI: string) {
  */
 function reportMatches(allMatches: MatchByInfo[]) {
   // Empty out any previous report
-  const mainMatchesEl = document.getElementById("mainMatchesDisplay");
+  const mainMatchesEl = pageElement("mainMatchesDisplay");
   mainMatchesEl.innerText = "";
   allMatches.forEach((aMatch) => {
     const dl = document.createElement("dl");
@@ -230,17 +243,14 @@ function reportMatches(allMatches: MatchByInfo[]) {
     const matchString = Object.keys(aMatch)[0];
     dt.innerText = matchString;
 
-    const matchesForString: MatchInfo[] = aMatch[matchString];
+    const matchesForString: MatchType[] = aMatch[matchString];
     for (let i = 0; i < MAX_MATCHES_OUTPUT && i < matchesForString.length; i++) {
-      const match: MatchInfo = matchesForString[i];
+      const match: MatchType = matchesForString[i];
       const dd = document.createElement("dd");
       dl.append(dd);
       let compositionString = "";
       if (match.composition) {
-        compositionString = `, '${match.composition.join("")}'`;
-      }
-      if (match.fullComposition) {
-        compositionString += ` (${match.fullComposition.join("")});`;
+        compositionString = `, '${[match.composition].flat().join("")}'`;
       }
       dd.innerText = `${match.bciAvId}: ${match.label}${compositionString}`;
     }
@@ -257,8 +267,8 @@ function reportMatches(allMatches: MatchByInfo[]) {
  * @param {Array} errors - array of error meesaages ({String})
  */
 function reportErrors(errors: string[]) {
-  const noErrorEl = document.getElementById("noErrors");
-  const errorListEl = document.getElementById("errorList");  // a <ul> element
+  const noErrorEl = pageElement("noErrors");
+  const errorListEl = pageElement("errorList");  // a <ul> element
   if (!errors || errors.length === 0) {
     errorListEl.innerText = "";
     noErrorEl.style.display = "block";
@@ -274,17 +284,10 @@ function reportErrors(errors: string[]) {
   }
 }
 
-// HTML UI Elements
-const paletteName = document.getElementById("paletteName") as HTMLInputElement;
-const rowStart = document.getElementById("rowStart") as HTMLInputElement;
-const colStart = document.getElementById("colStart") as HTMLInputElement;
-const generatePalette = document.getElementById("generatePalette");
-const paletteDisplay = document.getElementById("paletteDisplay");
-
 // Listeners
 generatePalette.addEventListener("click", handleGenerateDisplayButton);
 paletteName.addEventListener("change", () => { void handleNameChange(); });
-document.getElementById("clearPaletteDisplay").addEventListener("click", clearPaletteDisplay);
-document.getElementById("savePalette").addEventListener("click", () => { void savePalette(); });
+pageElement("clearPaletteDisplay").addEventListener("click", clearPaletteDisplay);
+pageElement("savePalette").addEventListener("click", () => { void savePalette(); });
 
 initCellTypesSelect();

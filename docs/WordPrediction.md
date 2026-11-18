@@ -101,7 +101,7 @@ cells shows the wait instead.
 queries and results.
 * **Context-aware:** Like the model replies, status messages are tied to the specific input they belong to
 and disappear if the user continues typing.
-* **Finished messages:** Pressing **Speak** or **Sentence** records the message as finished. The
+* **Finished messages:** Pressing **Speak** or **Make Sentences** records the message as finished. The
 status line goes quiet for it and any query still running stops, while the words already
 suggested stay on the row. Changing the message finishes it no longer, so building the same
 message again predicts as normal.
@@ -177,7 +177,7 @@ contains:
 Full symbols are stored rather than plain text so a suggestion can be drawn as a symbol and
 inserted unchanged.
 
-A message is saved when the user presses **Speak** or **Sentence**: both mean the message is
+A message is saved when the user presses **Speak** or **Make Sentences**: both mean the message is
 finished, so it counts towards prediction.
 
 Repeated messages identical to the last stored message are skipped.
@@ -199,10 +199,10 @@ means no new predictions are learned.
 | A model query fails or returns nothing usable | An error is logged to the console and the status line clears. The row keeps the suggestions the history gave it. |
 | The model's words all lack Bliss symbols | The slots stay empty. The console line reports the drop. |
 | The user changes the message mid-query | The request is cancelled without asking, and its words and status are never shown. Suggestions are recomputed at once, so nothing is lost. |
-| **Speak** or **Sentence** is pressed mid-query | The request is cancelled and the status line goes quiet. The words already on the row stay there. |
+| **Speak** or **Make Sentences** is pressed mid-query | The request is cancelled and the status line goes quiet. The words already on the row stay there. |
 | The message is finished and the caret is moved | Nothing is asked for. Moving the caret does not change the message. |
 | A message said earlier is built again | Prediction runs as normal: the first change to the message ends the finished state. |
 | The store cannot be read | An error is logged to the console and the history reads as empty. Composing a message is unaffected. |
 | The store cannot be written | An error is logged to the console. Speech and the message itself are unaffected. |
 | Speech synthesis is unavailable | No speech is produced. Suggestions, selection, and saving continue to work. |
-| Empty message when **Speak** or **Sentence** is pressed | The button is `aria-disabled` and announces that it is unavailable. Nothing is saved. |
+| Empty message when **Speak** or **Make Sentences** is pressed | The button is `aria-disabled` and announces that it is unavailable. Nothing is saved. |

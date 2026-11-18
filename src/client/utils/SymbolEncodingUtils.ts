@@ -9,14 +9,15 @@
  * You may obtain a copy of the License at
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
-import { SymbolEncodingType, ContentSignalDataType, ModifierInfoType, SymbolCompositionType } from "../index.d";
+import type { SymbolEncodingType, ContentSignalDataType, ModifierInfoType, SymbolCompositionType } from "../index.d";
 
 /**
  * Operations on the symbols of a composed message: inserting one at the caret, rebuilding a
  * symbol's label from its tracked modifiers, and normalizing a symbol's composition.
  */
 
-// The Bliss comma. It may separate the words of a new word (§8.7).
+// The Bliss comma. It may separate the words of a new word (Fundamental Rules of Blissymbolics
+// §8.7; see docs/ComposeWords.md).
 export const COMMA_ID = 5;
 
 /**

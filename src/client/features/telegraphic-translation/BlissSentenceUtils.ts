@@ -21,7 +21,7 @@ import nlp from "compromise";
 import { findGlossEntry, glossPayload } from "../../utils/GlossLookupUtils";
 import type { Language } from "../../i18n/I18n";
 import { readMessageLog } from "../../core/MessageLog";
-import { BlissSentenceSlotType, SentenceSpanType, SymbolEncodingType } from "../../index.d";
+import type { BlissSentenceSlotType, SentenceSpanType, SymbolEncodingType } from "../../index.d";
 
 // The language `compromise` parses. A sentence in any other needs its words from the model.
 export const PARSE_LANGUAGE: Language = "en";

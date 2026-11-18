@@ -163,6 +163,19 @@ describe("telegraphicTranslationState", (): void => {
     expect(selectedAttributesSignal.value).toEqual([]);
   });
 
+  test("clearing the message also clears the typed sentence", (): void => {
+    typedSentenceSignal.value = "I want lunch.";
+    clearMessageAndChoices();
+    expect(typedSentenceSignal.value).toBe("");
+  });
+
+  test("Change anyway clears the typed sentence", (): void => {
+    typedSentenceSignal.value = "I want lunch.";
+    discardEditPromptSignal.value = en.discardWorking;
+    confirmDiscardEdit();
+    expect(typedSentenceSignal.value).toBe("");
+  });
+
   test("an empty message does not query", async (): Promise<void> => {
     await requestForCurrentMessage();
 
@@ -200,7 +213,7 @@ describe("telegraphicTranslationState", (): void => {
       words: new Map()
     });
     expect(mockedQueryChat).toHaveBeenCalledWith(
-      "Telegraphic message: me hungry", "phony-model:12b", false, "Give 3 sentences.",
+      "Telegraphic message: me hungry", "phony-model:12b", "Give 3 sentences.",
       expect.any(AbortSignal)
     );
   });
@@ -466,7 +479,7 @@ describe("telegraphicTranslationState", (): void => {
       expect(mockedQueryChat).toHaveBeenCalledTimes(1);
     });
 
-    const signal = mockedQueryChat.mock.calls[0][4] as AbortSignal;
+    const signal = mockedQueryChat.mock.calls[0][3] as AbortSignal;
     expect(signal.aborted).toBe(false);
 
     editMessage(EDITED_CONTENTS);
@@ -526,7 +539,7 @@ describe("telegraphicTranslationState", (): void => {
     resolvers[0]({ message: { content: "1. I am hungry." } });
     await firstRequest;
 
-    const secondSignal = mockedQueryChat.mock.calls[1][4] as AbortSignal;
+    const secondSignal = mockedQueryChat.mock.calls[1][3] as AbortSignal;
     editMessage({ payloads: [], caretPosition: -1 });
     expect(secondSignal.aborted).toBe(true);
   });
@@ -586,7 +599,7 @@ describe("telegraphicTranslationState", (): void => {
     await waitFor(() => {
       expect(mockedQueryChat).toHaveBeenCalledTimes(1);
     });
-    const signal = mockedQueryChat.mock.calls[0][4] as AbortSignal;
+    const signal = mockedQueryChat.mock.calls[0][3] as AbortSignal;
 
     // The user changes the message, is told it would stop the sentence being made, and
     // decides against it. The symbols and the caret go back where they were, and the model
@@ -711,7 +724,7 @@ describe("telegraphicTranslationState", (): void => {
     await waitFor(() => {
       expect(mockedQueryChat).toHaveBeenCalledTimes(1);
     });
-    const signal = mockedQueryChat.mock.calls[0][4] as AbortSignal;
+    const signal = mockedQueryChat.mock.calls[0][3] as AbortSignal;
 
     abortActiveSentenceRequest();
 
@@ -974,7 +987,7 @@ describe("telegraphicTranslationState", (): void => {
     await waitFor(() => {
       expect(mockedQueryChat).toHaveBeenCalledTimes(1);
     });
-    const signal = mockedQueryChat.mock.calls[0][4] as AbortSignal;
+    const signal = mockedQueryChat.mock.calls[0][3] as AbortSignal;
 
     clearMessageAndChoices();
 
@@ -999,7 +1012,7 @@ describe("telegraphicTranslationState", (): void => {
     selectedAttributesSignal.value = [{ category: "Feeling", label: "angry", composition: 1198 }];
     let querySignal: AbortSignal | undefined;
     mockedQueryChat.mockImplementation(((...args: unknown[]) => {
-      querySignal = args[4] as AbortSignal;
+      querySignal = args[3] as AbortSignal;
       return new Promise((resolve, reject) => {
         querySignal?.addEventListener("abort", () => reject(new DOMException("Aborted", "AbortError")));
       });

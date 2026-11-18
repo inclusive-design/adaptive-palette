@@ -10,8 +10,9 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { BlissSVGBuilder, BlissOptions } from "bliss-svg-builder";
-import { BlissSymbolEntry, SymbolCompositionType, MatchType } from "../index.d";
+import type { BlissOptions } from "bliss-svg-builder";
+import { BlissSVGBuilder } from "bliss-svg-builder";
+import type { BlissSymbolEntry, SymbolCompositionType, MatchType } from "../index.d";
 import type { Language } from "../i18n/I18n";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
 
@@ -24,7 +25,8 @@ const indicatorIds = {
   list: [902, 903, 928, 992, 6436, 6439]  // bciAvId 24665, 28043, 24807, 25458, 16436, 16439
 };
 
-// Indicators that carry meaning rather than grammar, kept on the parts of a word (§7.0).
+// Indicators that carry meaning rather than grammar, kept on the parts of a word (Fundamental
+// Rules of Blissymbolics §7.0; see docs/ComposeWords.md).
 export const SEMANTIC_INDICATORS = [97, 6436]; // thing, abstract
 
 // Lists of modifier symbols
@@ -45,7 +47,7 @@ const modifierIds = {
   multiSymbol: [[2404, "/", 374], [2404, "/", 473], [2404, "/", 642]]
 };
 
-// The combine marker: one at each end of a word the user invented (§6.5.4.5).
+// The combine marker: one at each end of a word the user invented (Fundamental Rules §6.5.4.5).
 export const COMBINE_MARKER_ID = 233;
 
 /**
@@ -302,9 +304,6 @@ export function glossFor (entry: BlissSymbolEntry, language: Language): string {
  * The label is compared to each gloss in the given language, where a match is either an exact
  * match, or the label as a whole word: no letter, digit or underscore just before or after it.
  * `\b` is not used because it treats "å", "ä" and "ö" as non-letters.
- *
- * Note: this was based on a similar function used in
- * `./apps/palette-generator/paletteJsonGenerator.ts`
  *
  * @param {string} label - The label to use to search for matches in the gloss.
  * @param {Language} language - The language of the glosses to search.

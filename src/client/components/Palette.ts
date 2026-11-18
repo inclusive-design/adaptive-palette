@@ -10,15 +10,16 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
+import type { VNode } from "preact";
 import { html } from "htm/preact";
-import { JsonPaletteType, LayoutInfoType, PaletteIncludeType } from "../index.d";
+import type { JsonPaletteType, LayoutInfoType, PaletteIncludeType } from "../index.d";
 import { adaptivePaletteGlobals, wordBuildSignal } from "../state/GlobalData";
 import { cellTypeRegistry } from "../core/CellTypeRegistry";
 import { PALETTE_INCLUDE_TYPE, PaletteStore } from "../core/PaletteStore";
 import { savedWordCount } from "../core/SavedWords";
 import { generateGridStyle } from "../utils/GridUtils";
-import { Language, LabelType, parseLanguage, resolveLabel } from "../i18n/I18n";
+import type { Language, LabelType} from "../i18n/I18n";
+import { parseLanguage, resolveLabel } from "../i18n/I18n";
 import "./Palette.scss";
 
 type PalettePropsType = {

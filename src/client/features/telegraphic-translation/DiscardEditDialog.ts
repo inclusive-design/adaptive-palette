@@ -10,7 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
+import type { VNode } from "preact";
 import { html } from "htm/preact";
 
 import {
@@ -18,7 +18,7 @@ import {
   confirmDiscardEdit, cancelDiscardEdit
 } from "./TelegraphicTranslationState";
 import { ModalDialog } from "../../components/ModalDialog";
-import { INPUT_AREA_ID } from "../../cells/ContentEncoding";
+import { inputAreaElement } from "../../utils/TextEntryUtils";
 import { t } from "../../i18n/I18n";
 
 const DISCARD_EDIT_DIALOG_ID = "discardEditDialog";
@@ -42,7 +42,7 @@ function restoreDialogFocus (): HTMLElement | null {
       return choice;
     }
   }
-  return document.getElementById(INPUT_AREA_ID);
+  return inputAreaElement();
 }
 
 /**

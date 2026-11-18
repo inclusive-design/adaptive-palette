@@ -10,7 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 
-import { VNode } from "preact";
+import type { VNode } from "preact";
 import { html } from "htm/preact";
 import { useMemo } from "preact/hooks";
 import { BlissSymbol } from "../../components/BlissSymbol";
@@ -57,7 +57,6 @@ export function BlissSentence (props: BlissSentencePropsType): VNode {
               composition=${slot.payload.composition}
               picture=${slot.payload.picture}
               label=${slot.text}
-              isPresentation="true"
             />
           </span>`
     : html`

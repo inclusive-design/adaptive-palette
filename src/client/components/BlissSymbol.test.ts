@@ -16,7 +16,7 @@ import { html } from "htm/preact";
 
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { testPicture } from "../testUtils/CellTestUtils";
-import { BlissSymbol, GRAPHIC_ROLE } from "./BlissSymbol";
+import { BlissSymbol } from "./BlissSymbol";
 
 describe("BlissSymbol", (): void => {
   const singleSymbol = {
@@ -29,7 +29,6 @@ describe("BlissSymbol", (): void => {
     label: "VERB+S"
   };
 
-  const MOCK_LABEL_ID = "mockLabelId";
   const UNKNOWN_COMPOSITION = -1;
 
   beforeAll(async () => {
@@ -41,7 +40,6 @@ describe("BlissSymbol", (): void => {
       <${BlissSymbol}
         composition=${singleSymbol.composition}
         label="${singleSymbol.label}"
-        isPresentation=true
       />`
     );
     const blissSymbolLabelDiv = await screen.findByText(singleSymbol.label);
@@ -63,7 +61,6 @@ describe("BlissSymbol", (): void => {
       <${BlissSymbol}
         composition=${UNKNOWN_COMPOSITION}
         label="${arraySymbol.label}"
-        isPresentation=true
       />`
     );
     const blissSymbolLabelDiv = await screen.findByText(arraySymbol.label);
@@ -87,7 +84,6 @@ describe("BlissSymbol", (): void => {
       <${BlissSymbol}
         composition=${arraySymbol.composition}
         label="${arraySymbol.label}"
-        isPresentation=true
       />`
     );
     const blissSymbolLabelDiv = await screen.findByText(arraySymbol.label);
@@ -107,7 +103,6 @@ describe("BlissSymbol", (): void => {
       <${BlissSymbol}
         composition=${arraySymbol.composition}
         label="${arraySymbol.label}"
-        isPresentation=true
       />`
     );
     const blissSymbolLabelDiv = await screen.findByText(arraySymbol.label);
@@ -121,30 +116,17 @@ describe("BlissSymbol", (): void => {
     expect(svgElement.getAttribute("aria-labelledby")).toBe(null);
   });
 
-  test("gives the svg a graphic role and label when it is not presentational", async (): Promise<void> => {
-    render(html`
-      <${BlissSymbol}
-        composition=${arraySymbol.composition}
-        label="${arraySymbol.label}"
-        isPresentation=false
-        labelledBy=${MOCK_LABEL_ID}
-      />`
-    );
-    const blissSymbolLabelDiv = await screen.findByText(arraySymbol.label);
-    const parentNode = blissSymbolLabelDiv.parentNode;
-    if (!parentNode) {
-      throw new Error("Parent node of blissSymbolLabelDiv is null");
-    }
-    const svgElement = parentNode.querySelector("svg")!;
-    expect(svgElement.getAttribute("role")).toBe(GRAPHIC_ROLE);
-    expect(svgElement.getAttribute("aria-labelledby")).toBe(MOCK_LABEL_ID);
-    expect(svgElement.getAttribute("aria-hidden")).toBe(null);
+  test("the symbol is hidden from screen readers; the label names it", (): void => {
+    render(html`<${BlissSymbol} composition=${arraySymbol.composition} label="anything" />`);
+    const svgElement = document.querySelector("svg") as SVGElement;
+    expect(svgElement).toHaveAttribute("aria-hidden", "true");
+    expect(svgElement).not.toHaveAttribute("role");
   });
 
   test.each(["png", "jpg", "gif", "webp", "avif", "svg", "bmp"])(
     "draws a %s picture in place of the symbol, hidden from assistive technology",
     async (format): Promise<void> => {
-      render(html`<${BlissSymbol} picture=${testPicture(format)} label="bread" isPresentation=true />`);
+      render(html`<${BlissSymbol} picture=${testPicture(format)} label="bread" />`);
       const labelDiv = await screen.findByText("bread");
       const parentNode = labelDiv.parentNode as HTMLElement;
 
@@ -161,7 +143,7 @@ describe("BlissSymbol", (): void => {
 
   test("hides a picture that cannot be loaded, and keeps the label", async (): Promise<void> => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
-    render(html`<${BlissSymbol} picture="/src/client/testUtils/pictures/missing.png" label="bread" isPresentation=true />`);
+    render(html`<${BlissSymbol} picture="/src/client/testUtils/pictures/missing.png" label="bread" />`);
     const labelDiv = await screen.findByText("bread");
     const img = (labelDiv.parentNode as HTMLElement).querySelector("img")!;
 
@@ -172,7 +154,7 @@ describe("BlissSymbol", (): void => {
   });
 
   test("draws the label only when there is neither a picture nor a symbol", async (): Promise<void> => {
-    render(html`<${BlissSymbol} label="bread" isPresentation=true />`);
+    render(html`<${BlissSymbol} label="bread" />`);
     const labelDiv = await screen.findByText("bread");
     expect((labelDiv.parentNode as HTMLElement).childNodes.length).toBe(1);
   });

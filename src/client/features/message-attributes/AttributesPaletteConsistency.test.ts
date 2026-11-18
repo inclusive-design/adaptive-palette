@@ -28,7 +28,7 @@
  * the generic palette-rendering machinery `Palette.integration.test.ts` already covers.
  */
 import { loadPaletteFromJsonFile } from "../../core/PaletteStore";
-import { AttributeCellType, ContentLabelType, JsonPaletteType } from "../../index.d";
+import type { AttributeCellType, ContentLabelType, JsonPaletteType } from "../../index.d";
 import { type LabelType, resolveLabel } from "../../i18n/I18n";
 import { clearAttributes, toggleAttribute, attributesPromptText } from "./MessageAttributesState";
 

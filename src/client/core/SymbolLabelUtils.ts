@@ -20,12 +20,13 @@
 
 import { effect, untracked } from "@preact/signals";
 import { adaptivePaletteGlobals, changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
-import { editMessage } from "../core/MessageEdit";
-import { renderPromptLines, promptsFor } from "./PromptUtils";
-import { glossFor } from "./SvgUtils";
-import { applyModifiersToLabel } from "./SymbolEncodingUtils";
-import { isLocalHost, queryChat } from "../core/OllamaApi";
-import { LANGUAGES, Language, languageSignal } from "../i18n/I18n";
+import { editMessage } from "./MessageEdit";
+import { renderPromptLines, promptsFor } from "../utils/PromptUtils";
+import { glossFor } from "../utils/SvgUtils";
+import { applyModifiersToLabel } from "../utils/SymbolEncodingUtils";
+import { isLocalHost, pickModel, queryChat } from "./OllamaApi";
+import type { Language} from "../i18n/I18n";
+import { LANGUAGES, languageSignal } from "../i18n/I18n";
 import type { SymbolEncodingType } from "../index.d";
 
 export type IndicatorInfoEntry = {
@@ -133,14 +134,21 @@ function labelKey (payload: SymbolEncodingType, language: Language): string {
  * the symbol, its indicator or its word is missing from the loaded data.
  * @param {SymbolEncodingType} payload - The symbol.
  * @param {Language} language - The language to ask in.
+ * @param {string} key - The symbol's label key, under which a query already built is kept.
  * @returns {LabelQueryType | undefined}
  */
-function buildQuery (payload: SymbolEncodingType, language: Language): LabelQueryType | undefined {
+function buildQuery (payload: SymbolEncodingType, language: Language, key: string): LabelQueryType | undefined {
   const { config, models, symbols } = adaptivePaletteGlobals;
   const lookup = config.labelLookup;
   const prompts = promptsFor(lookup, language);
   if (!isLocalHost() || models.length === 0 || !lookup.useModelQueryFallback || !prompts) {
     return undefined;
+  }
+  // Built once per key: building looks the symbol up in the whole Bliss table, and warns when the
+  // configured model is missing.
+  const cached = queries.get(key);
+  if (cached) {
+    return cached;
   }
   let indicator = { indicator: "", purpose: "" };
   if (payload.indicatorId !== undefined) {
@@ -169,7 +177,7 @@ function buildQuery (payload: SymbolEncodingType, language: Language): LabelQuer
   return {
     userPrompt: renderPromptLines(prompts.userPrompt, { ...word, modifiers, ...indicator }),
     systemPrompt: prompts.systemPrompt,
-    model: lookup.model || models[0]
+    model: pickModel(lookup.model)
   };
 }
 
@@ -212,7 +220,7 @@ export function labelFor (payload: SymbolEncodingType, language: Language = lang
     label: applyModifiersToLabel(table ?? indicatorAnswer ?? base, modifiers),
     isAiLabel: indicatorAnswer !== undefined || (table === undefined && isAiBase)
   };
-  const query = answers.has(key) ? undefined : buildQuery(payload, language);
+  const query = answers.has(key) ? undefined : buildQuery(payload, language, key);
   if (!query) {
     return fallback;
   }
@@ -300,9 +308,9 @@ function applyAnswers (): void {
 function startQuery (key: string, query: LabelQueryType): void {
   const controller = new AbortController();
   inFlight.set(key, controller);
-  void queryChat(query.userPrompt, query.model, false, query.systemPrompt, controller.signal)
+  void queryChat(query.userPrompt, query.model, query.systemPrompt, controller.signal)
     .then((response) => {
-      const content = "message" in response ? (response.message?.content ?? "").trim() : "";
+      const content = (response.message.content ?? "").trim();
       return content.length > 0 ? content : undefined;
     })
     .catch((error: unknown) => {
