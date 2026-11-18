@@ -51,7 +51,7 @@ describe("ActionCodeCell", (): void => {
 
     renderCell(ActionCodeCell, TEST_CELL_ID, testCell.options);
 
-    const button = await expectCellRendered(TEST_CELL_ID, testCell.options, "ActionCodeCell");
+    const button = await expectCellRendered(TEST_CELL_ID, testCell.options, "symbolCell actionCodeCell");
 
     // Check disabled state (should be enabled)
     expect(button.getAttribute("disabled")).toBe(null);
@@ -114,7 +114,7 @@ describe("ActionCodeCell", (): void => {
     changeEncodingContents.value = { payloads: [], caretPosition: -1 };
 
     renderCell(ActionCodeCell, "picture-cell-uuid", pictureCell);
-    const button = await expectCellRendered("picture-cell-uuid", pictureCell, "ActionCodeCell");
+    const button = await expectCellRendered("picture-cell-uuid", pictureCell, "symbolCell actionCodeCell");
     expect(button.querySelector("img")?.getAttribute("src")).toBe(testPicture());
     expect(button.querySelector("svg")).toBe(null);
     fireEvent.click(button);

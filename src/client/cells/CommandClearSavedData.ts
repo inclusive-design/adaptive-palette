@@ -15,10 +15,9 @@ import { Fragment } from "preact";
 import { html } from "htm/preact";
 import { useState } from "preact/hooks";
 
-import { BlissSymbol } from "../components/BlissSymbol";
+import { CommandButton } from "../components/CommandButton";
 import { ModalDialog } from "../components/ModalDialog";
 import type { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
-import { generateGridStyle } from "../utils/GridUtils";
 import { announceIfEnabled } from "../utils/SpeechUtils";
 import { hydrateMessageLog } from "../core/MessageLog";
 import { getStorage } from "../core/StorageBackend";
@@ -65,11 +64,9 @@ type CommandClearSavedDataProps = {
  */
 export function CommandClearSavedData (props: CommandClearSavedDataProps): VNode {
   const { id, options } = props;
-  const { label, labelLanguage, composition, columnStart, columnSpan, rowStart, rowSpan } = options;
+  const { label, labelLanguage } = options;
   const [isConfirming, setIsConfirming] = useState(false);
   const [hasFailed, setHasFailed] = useState(false);
-
-  const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
 
   // WebKit does not focus a <button> on mouse click, so ModalDialog would otherwise
   // capture the wrong opener to restore focus to when the dialog closes.
@@ -97,14 +94,7 @@ export function CommandClearSavedData (props: CommandClearSavedDataProps): VNode
   // more element that the palette grid would then try to place.
   return html`
     <${Fragment}>
-    <button
-      id="${id}"
-      class="btn-command"
-      style="${gridStyles}"
-      aria-haspopup="dialog"
-      onClick=${askToConfirm}>
-      <${BlissSymbol} composition=${composition} label=${label} />
-    </button>
+    <${CommandButton} id=${id} options=${options} aria-haspopup="dialog" onClick=${askToConfirm} />
     <${ModalDialog}
       id=${CLEAR_SAVED_DATA_DIALOG_ID}
       title=${label}

@@ -14,10 +14,9 @@ import type { VNode } from "preact";
 import { html } from "htm/preact";
 import type { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
-import { generateGridStyle } from "../utils/GridUtils";
-import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
+import { announceIfEnabled } from "../utils/SpeechUtils";
 import { atRootWithNoOverlay, hideNavigationOverlay } from "../core/NavigationOverlay";
-import { BlissSymbol } from "../components/BlissSymbol";
+import { CommandButton } from "../components/CommandButton";
 
 type CommandGoToRootCellPropsType = {
   id: string,
@@ -41,34 +40,20 @@ export function goToRootImpl (): void {
 }
 
 export function CommandGoToRootCell (props: CommandGoToRootCellPropsType): VNode {
+  const { label, labelLanguage } = props.options;
 
-  const {
-    columnStart, columnSpan, rowStart, rowSpan, composition, label, labelLanguage
-  } = props.options;
-  const ariaControlsId = adaptivePaletteGlobals.mainPaletteContainerId;
-
-  const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
-
-  // Marked unavailable rather than `disabled`: a disabled button leaves the tab order,
-  // which costs a switch or eye-gaze user their scan position.  Unavailable when the root
-  // palette is already displayed with no layer over it.
+  // Unavailable when the root palette is already displayed with no layer over it.
   const unavailable = atRootWithNoOverlay();
 
   const cellClicked = (): void => {
-    if (unavailable) {
-      speakUnavailable(label);
-      return;
-    }
     announceIfEnabled(label, labelLanguage);
     goToRootImpl();
   };
 
   return html`
-    <button
-      id="${props.id}" class="btn-command" style="${gridStyles}"
-      aria-controls="${ariaControlsId}" aria-disabled=${unavailable}
-      onClick=${cellClicked}>
-      <${BlissSymbol} composition=${composition} label=${label} />
-    </button>
+    <${CommandButton}
+      id=${props.id} options=${props.options}
+      ariaControls=${adaptivePaletteGlobals.mainPaletteContainerId}
+      unavailable=${unavailable} onClick=${cellClicked} />
   `;
 }

@@ -14,10 +14,9 @@ import type { VNode } from "preact";
 import { html } from "htm/preact";
 import type { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
 import { adaptivePaletteGlobals } from "../state/GlobalData";
-import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
+import { announceIfEnabled } from "../utils/SpeechUtils";
 import { atRootWithNoOverlay, hideNavigationOverlay, navigationOverlayOpen } from "../core/NavigationOverlay";
-import type { Language } from "../i18n/I18n";
-import { BlissSymbol } from "../components/BlissSymbol";
+import { CommandButton } from "../components/CommandButton";
 
 type CommandGoBackCellPropsType = {
   id: string,
@@ -46,43 +45,21 @@ export function goBackImpl (): void {
   }
 };
 
-/*
- * Event handler for a CommandGoBackCell button/cell that, when clicked, goes back
- * one palette.
- */
-const goBackToPalette = (event: Event, language?: Language): void => {
-  const button = event.currentTarget as HTMLElement;
-  if (atRootWithNoOverlay()) {
-    speakUnavailable(button.innerText);
-    return;
-  }
-  announceIfEnabled(button.innerText, language);
-  goBackImpl();
-};
-
 export function CommandGoBackCell (props: CommandGoBackCellPropsType): VNode {
+  const { label, labelLanguage } = props.options;
 
-  const {
-    columnStart, columnSpan, rowStart, rowSpan, composition, label, labelLanguage
-  } = props.options;
-  const ariaControlsId = adaptivePaletteGlobals.mainPaletteContainerId;
-
-  // Marked unavailable rather than `disabled`: a disabled button leaves the tab order,
-  // which costs a switch or eye-gaze user their scan position.  Unavailable when there is
-  // nowhere to go back to.
+  // Unavailable when there is nowhere to go back to.
   const unavailable = atRootWithNoOverlay();
 
-  const gridStyles = `
-    grid-column: ${columnStart} / span ${columnSpan};
-    grid-row: ${rowStart} / span ${rowSpan};
-  `;
+  const cellClicked = (): void => {
+    announceIfEnabled(label, labelLanguage);
+    goBackImpl();
+  };
 
   return html`
-    <button
-      id="${props.id}" class="btn-command" style="${gridStyles}"
-      aria-controls="${ariaControlsId}" aria-disabled=${unavailable}
-      onClick=${(event: Event) => goBackToPalette(event, labelLanguage)}>
-      <${BlissSymbol} composition=${composition} label=${label} />
-    </button>
+    <${CommandButton}
+      id=${props.id} options=${props.options}
+      ariaControls=${adaptivePaletteGlobals.mainPaletteContainerId}
+      unavailable=${unavailable} onClick=${cellClicked} />
   `;
 }

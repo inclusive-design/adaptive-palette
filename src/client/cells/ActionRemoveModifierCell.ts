@@ -13,12 +13,11 @@
 import type { VNode } from "preact";
 import { html } from "htm/preact";
 import type { BlissSymbolInfoType, LayoutInfoType } from "../index.d";
-import { BlissSymbol } from "../components/BlissSymbol";
+import { CommandButton } from "../components/CommandButton";
 import { spokenLabel } from "../components/AiBadge";
 import { changeEncodingContents } from "../state/GlobalData";
 import { editSymbolAtCaret } from "../core/MessageEdit";
-import { generateGridStyle } from "../utils/GridUtils";
-import { announceIfEnabled, speakUnavailable } from "../utils/SpeechUtils";
+import { announceIfEnabled } from "../utils/SpeechUtils";
 import { caretComposition } from "../utils/SymbolEncodingUtils";
 import { baseOf, relabel } from "../core/SymbolLabelUtils";
 
@@ -28,16 +27,9 @@ type ActionRemoveModifierPropsType = {
 };
 
 export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType): VNode {
-  const {
-    columnStart, columnSpan, rowStart, rowSpan, label
-  } = props.options;
-  const removeModifierComposition = props.options.composition;
-
-  const gridStyles = generateGridStyle(columnStart, columnSpan, rowStart, rowSpan);
+  const { label } = props.options;
 
   // The remove button is unavailable unless the symbol at the caret has a modifier.
-  // Marked unavailable rather than `disabled` so the button keeps its place in the tab
-  // order for switch and eye-gaze users.
   // A picture has no symbol to remove a modifier from.
   const caretSymbolComposition = caretComposition(changeEncodingContents.value);
   const { payloads, caretPosition } = changeEncodingContents.value;
@@ -45,16 +37,13 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
     (payloads[caretPosition].modifierInfo?.length ?? 0) === 0;
   // Handle the request to remove the last placed modifier.
   const cellClicked = () => {
-    if (unavailable || caretSymbolComposition === undefined) { speakUnavailable(label); return; }
     // Get the symbol at the caret position in the editing area, and create an
     // initial `newComposition`.
     const { caretPosition, payloads } = changeEncodingContents.value;
     const symbolToEdit = payloads[caretPosition];
-    let newComposition = (
-      typeof caretSymbolComposition === "number" ?
-        [caretSymbolComposition] :
-        caretSymbolComposition
-    );
+    // Defined: `CommandButton` does not call this while the button is unavailable.
+    const composition = caretSymbolComposition as NonNullable<typeof caretSymbolComposition>;
+    let newComposition = typeof composition === "number" ? [composition] : composition;
 
     // Check for any modifier to remove -- if the symbol has no modifiers,
     // leave the `newComposition` as is. The last modifier is read rather than popped: the
@@ -98,11 +87,6 @@ export function ActionRemoveModifierCell (props: ActionRemoveModifierPropsType):
   };
 
   return html`
-    <button id="${props.id}" class="btn-command" style="${gridStyles}" onClick=${cellClicked} aria-disabled=${unavailable}>
-      <${BlissSymbol}
-        composition=${removeModifierComposition}
-        label=${label}
-      />
-    </button>
+    <${CommandButton} id=${props.id} options=${props.options} unavailable=${unavailable} onClick=${cellClicked} />
   `;
 }

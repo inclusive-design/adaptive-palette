@@ -48,7 +48,7 @@ describe("ActionBranchToPaletteCell", (): void => {
     renderCell(ActionBranchToPaletteCell, TEST_CELL_ID, goToPaletteCell.options);
 
     const button = await expectCellRendered(
-      TEST_CELL_ID, goToPaletteCell.options, "actionBranchToPaletteCell foldedCorner"
+      TEST_CELL_ID, goToPaletteCell.options, "symbolCell actionBranchToPaletteCell foldedCorner"
     );
 
     // Check disabled state (should be enabled)
@@ -65,7 +65,7 @@ describe("ActionBranchToPaletteCell", (): void => {
 
     renderCell(ActionBranchToPaletteCell, TEST_CELL_ID, options);
 
-    const button = await expectCellRendered(TEST_CELL_ID, options, "actionBranchToPaletteCell foldedCorner");
+    const button = await expectCellRendered(TEST_CELL_ID, options, "symbolCell actionBranchToPaletteCell foldedCorner");
     expect(button.querySelector("img")?.getAttribute("src")).toBe(testPicture());
     expect(button.querySelector("svg")).toBe(null);
     expect(button).toHaveAttribute("data-branchto", "Food");
@@ -97,7 +97,7 @@ describe("ActionBranchToPaletteCell", (): void => {
 
     renderCell(ActionBranchToPaletteCell, TEST_CELL_ID, options);
     const button = await expectCellRendered(
-      TEST_CELL_ID, options, "actionBranchToPaletteCell foldedCorner btn-command"
+      TEST_CELL_ID, options, "symbolCell actionBranchToPaletteCell foldedCorner btn-command"
     );
     expect(button).toHaveAttribute("aria-disabled", "true");
 

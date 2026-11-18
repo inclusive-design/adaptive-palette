@@ -43,7 +43,7 @@ describe("ActionPostModifierCell", (): void => {
 
     renderCell(ActionPostModifierCell, TEST_CELL_ID, testCell.options);
 
-    const button = await expectCellRendered(TEST_CELL_ID, testCell.options, "actionModifierCell");
+    const button = await expectCellRendered(TEST_CELL_ID, testCell.options, "symbolCell actionModifierCell");
 
     // Check disabled state. `changeEncodingContents` is initialized
     // with an empty array, hence there should be an `aria-disabled` attribute.
@@ -65,7 +65,7 @@ describe("ActionPostModifierCell", (): void => {
     };
     renderCell(ActionPostModifierCell, TEST_CELL_ID, testCell.options);
 
-    let button = await expectCellRendered(TEST_CELL_ID, testCell.options, "actionModifierCell");
+    let button = await expectCellRendered(TEST_CELL_ID, testCell.options, "symbolCell actionModifierCell");
 
     // Check disabled state.  `changeEncodingContents` is initialized
     // with a symbol, hence there should be an `aria-disabled` attribute.
