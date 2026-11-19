@@ -17,7 +17,7 @@
 import type { BlissSymbolEntry, ContentSignalDataType, SymbolCompositionType, SymbolEncodingType } from "../../index.d";
 import type { Language } from "../../i18n/I18n";
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
-import { COMBINE_MARKER_ID, SEMANTIC_INDICATORS, glossFor, isIndicator } from "../../utils/SvgUtils";
+import { COMBINE_MARKER_ID, SEMANTIC_INDICATORS, findSymbolById, glossFor, isIndicator } from "../../utils/SvgUtils";
 import { AUTO_COMMA_PART, isWordPart, normalizeComposition } from "../../utils/SymbolEncodingUtils";
 
 type TokenType = string | number;
@@ -25,8 +25,7 @@ type TokenType = string | number;
 // A kerning code moves one character against the next. It carries no meaning.
 const KERNING = /^[AR]K:/;
 
-const entryOf = (id: number): BlissSymbolEntry | undefined =>
-  adaptivePaletteGlobals.symbols.find((symbol) => symbol.id === id);
+const entryOf = findSymbolById;
 
 const isOverlay = (token: TokenType | undefined): boolean => token === ";" || token === ";;";
 

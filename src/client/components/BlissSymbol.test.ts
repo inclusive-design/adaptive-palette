@@ -17,6 +17,13 @@ import { html } from "htm/preact";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import { testPicture } from "../testUtils/CellTestUtils";
 import { BlissSymbol } from "./BlissSymbol";
+import { getSvgElement } from "../utils/SvgUtils";
+import { adaptivePaletteGlobals } from "../state/GlobalData";
+
+vi.mock("../utils/SvgUtils", async (importOriginal) => {
+  const original = await importOriginal<typeof import("../utils/SvgUtils")>();
+  return { ...original, getSvgElement: vi.fn(original.getSvgElement) };
+});
 
 describe("BlissSymbol", (): void => {
   const singleSymbol = {
@@ -33,6 +40,37 @@ describe("BlissSymbol", (): void => {
 
   beforeAll(async () => {
     await initAdaptivePaletteGlobals();
+  });
+
+  test("builds a symbol once, however often it is drawn", async (): Promise<void> => {
+    // A colour no other test uses, so earlier draws are not in the cache.
+    const color = "rgb(1, 2, 3)";
+    const drawn = html`<${BlissSymbol} composition=${1758} color=${color} label="group" />`;
+    render(drawn).unmount();
+    const { container } = render(drawn);
+    expect(await screen.findByText("group")).toBeVisible();
+    expect(container.querySelector("svg")).not.toBeNull();
+    const builds = vi.mocked(getSvgElement).mock.calls
+      .filter(([composition, buildColor]) => composition === 1758 && buildColor === color);
+    expect(builds.length).toBe(1);
+  });
+
+  test("builds a symbol again after the symbol list changes", async (): Promise<void> => {
+    // A colour no other test uses, so earlier draws are not in the cache.
+    const color = "rgb(4, 5, 6)";
+    const drawn = html`<${BlissSymbol} composition=${1758} color=${color} label="group" />`;
+    const original = adaptivePaletteGlobals.symbols;
+    try {
+      render(drawn).unmount();
+      adaptivePaletteGlobals.symbols = [...original];
+      render(drawn);
+      expect(await screen.findByText("group")).toBeVisible();
+    } finally {
+      adaptivePaletteGlobals.symbols = original;
+    }
+    const builds = vi.mocked(getSvgElement).mock.calls
+      .filter(([composition, buildColor]) => composition === 1758 && buildColor === color);
+    expect(builds.length).toBe(2);
   });
 
   test(`BlissSymbol defined by a single composition id (${singleSymbol.label})`, async (): Promise<void> => {

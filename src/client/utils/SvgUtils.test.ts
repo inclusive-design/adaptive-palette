@@ -10,11 +10,11 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 import { vi } from "vitest";
-import { BlissSVGBuilder } from "bliss-svg-builder";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
+import { adaptivePaletteGlobals } from "../state/GlobalData";
 import {
   compositionToBstr, bstrToComposition, isIndicator,
-  findIndicators, findWordIndicators, isModifier, findClassifierFromLeft, findSymbolByBciAvId,
+  findIndicators, findWordIndicators, isModifier, findClassifierFromLeft, findSymbolByBciAvId, findSymbolById,
   getSvgElement, findSymbolByGloss,
 } from "./SvgUtils";
 
@@ -71,25 +71,13 @@ describe("SvgUtils", (): void => {
     expect(result).toBe(expectedConcatenation);
   });
 
-  test("compositionToBstr treats composite ids as bare aliases", (): void => {
+  test("compositionToBstr expands a composite to its own composition", (): void => {
     // 1291 = "big, large", isCharacter: false, composition: [936, ";", 86]
-    expect(compositionToBstr(1291)).toBe("1291");
+    expect(compositionToBstr(1291)).toBe("B936;B86");
 
     // 1903 = "to know", isCharacter: false, composition: [412, ";", 81] -- mixed into
-    // an array alongside character ids 449 and 401, which keep their "B" prefix.
-    expect(compositionToBstr([1903, "/", 449, "/", 401])).toBe("1903/B449/B401");
-  });
-
-  test("initSvgCompositeDefinitions registers every composite symbol as a BlissSVGBuilder alias", (): void => {
-    // 1758 = "group (people)", isCharacter: false, composition: [368, "/", 513].
-    // Its own dictionary id should now resolve as an alias, with no `getResolvedComposition`
-    // step in the way.
-    expect(BlissSVGBuilder.isDefined("1758")).toBe(true);
-    expect(BlissSVGBuilder.getDefinition("1758")?.codeString).toBe("B368/B513");
-
-    // A character symbol (823 = CONJ.) is deliberately NOT registered as an alias:
-    // it must always be referenced by its native "B<id>" code (see compositionToBstr()).
-    expect(BlissSVGBuilder.isDefined("823")).toBe(false);
+    // an array alongside character ids 449 and 401.
+    expect(compositionToBstr([1903, "/", 449, "/", 401])).toBe("B412;B81/B449/B401");
   });
 
   test("Unknown id produces empty-ish SVG", (): void => {
@@ -182,6 +170,25 @@ describe("SvgUtils", (): void => {
     expect(actual).toEqual(undefined);
   });
 
+  test("findSymbolById() returns the entry, or undefined for an unknown id", (): void => {
+    // 1758 = "group (people)", composition: [368, "/", 513]
+    expect(findSymbolById(1758)?.composition).toEqual([368, "/", 513]);
+    expect(findSymbolById(invalidId)).toBeUndefined();
+  });
+
+  test("findSymbolById() follows a new symbol list", (): void => {
+    const original = adaptivePaletteGlobals.symbols;
+    try {
+      const changed = { ...findSymbolById(1758)!, composition: [368] };
+      adaptivePaletteGlobals.symbols = original.map((entry) => entry.id === 1758 ? changed : entry);
+      expect(findSymbolById(1758)).toBe(changed);
+      expect(compositionToBstr(1758)).toBe("B368");
+    } finally {
+      adaptivePaletteGlobals.symbols = original;
+    }
+    expect(findSymbolById(1758)?.composition).toEqual([368, "/", 513]);
+  });
+
   test("Composite symbol renders identically via bare id and its expanded composition", (): void => {
     // 1903 = "to know", isCharacter: false, composition: [412, ";", 81]
     expect(getSvgElement(1903).outerHTML).toBe(getSvgElement([412, ";", 81]).outerHTML);
@@ -228,9 +235,7 @@ describe("SvgUtils", (): void => {
 
   test("Get SVG Element for composite symbol (isCharacter: false)", (): void => {
     // ID 1758 = "group (people)", isCharacter: false, composition: [368, "/", 513].
-    // Registered by initSvgCompositeDefinitions() as a bare-id alias to "B368/B513",
-    // so BlissSVGBuilder resolves it to real content without any resolution step
-    // in SvgUtils.ts itself.
+    // compositionToBstr() expands it to "B368/B513".
     const svgElement = getSvgElement(1758);
     expect(svgElement).toBeDefined();
     // Verify the SVG has actual content (not an empty <g>)

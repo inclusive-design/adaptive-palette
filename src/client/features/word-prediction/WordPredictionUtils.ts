@@ -13,6 +13,7 @@
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
 import { readMessageLog } from "../../core/MessageLog";
 import { resolveWordPayload } from "../../utils/GlossLookupUtils";
+import { findSymbolById } from "../../utils/SvgUtils";
 import { normalizeComposition } from "../../utils/SymbolEncodingUtils";
 import { renderTemplate, renderPromptLines, promptsFor, replyLine } from "../../utils/PromptUtils";
 import { pickModel, queryChat } from "../../core/OllamaApi";
@@ -79,7 +80,7 @@ function hasLabel (label: string): boolean {
 function seedPayload (composition: SymbolCompositionType, label: string): SymbolEncodingType {
   const symbolId = normalizeComposition(composition);
   const symbol = typeof symbolId === "number"
-    ? adaptivePaletteGlobals.symbols.find((entry) => entry.id === symbolId)
+    ? findSymbolById(symbolId)
     : undefined;
   return {
     label,

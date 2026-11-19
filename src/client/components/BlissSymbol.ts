@@ -32,21 +32,30 @@ type BlissSymbolPropsType = {
   isPending?: boolean
 }
 
-// One template per SVG markup string. `html` keeps every template array it is given, keyed by
-// the array itself, and never drops one, so a new array on each draw would grow without end.
+// One template per symbol and colour, so each is built once. `html` keeps every template array it is
+// given, keyed by the array itself, and never drops one, so a new array on each draw would grow
+// without end.
 const svgTemplates = new Map<string, TemplateStringsArray>();
 
+// The template for no symbol: a picture, or a label alone.
+const NO_SVG = Object.assign([""], { raw: [""] });
+
 /**
- * The SVG markup as a template `html` can parse into elements. `html` takes a
- * `TemplateStringsArray`, which is an array of strings with a `raw` copy of itself.
- * @param {string} markup - The SVG markup, or the empty string for no symbol.
+ * The symbol's SVG markup as a template `html` can parse into elements. The drawing is hidden from
+ * screen readers, since the label names the symbol.
+ * @param {SymbolCompositionType} composition - The symbol.
+ * @param {string} color - Optional. The colour of the strokes and letters.
  * @returns {TemplateStringsArray}
  */
-function svgTemplate (markup: string): TemplateStringsArray {
-  let template = svgTemplates.get(markup);
+function svgTemplate (composition: SymbolCompositionType, color?: string): TemplateStringsArray {
+  const key = `${JSON.stringify(composition)}|${color}`;
+  let template = svgTemplates.get(key);
   if (!template) {
+    const svgElement = getSvgElement(composition, color);
+    svgElement.setAttribute("aria-hidden", "true");
+    const markup = svgElement.outerHTML;
     template = Object.assign([markup], { raw: [markup] });
-    svgTemplates.set(markup, template);
+    svgTemplates.set(key, template);
   }
   return template;
 }
@@ -84,16 +93,9 @@ function fitLabel (labelElement: HTMLElement): void {
 export function BlissSymbol (props: BlissSymbolPropsType): VNode {
   const { composition, picture, label, color, isMarked, isPending } = props;
   // A picture is drawn in place of the symbol, so the symbol is not built.
-  const svgElement = picture === undefined && composition !== undefined ? getSvgElement(composition, color) : undefined;
-
-  // The label names the symbol, so the drawing is hidden from screen readers.
-  let svgMarkupString = "";
-  if (svgElement) {
-    svgElement.setAttribute("aria-hidden", "true");
-    svgMarkupString = svgElement.outerHTML;
-  }
-
-  const templateStringArray = svgTemplate(svgMarkupString);
+  const templateStringArray = picture === undefined && composition !== undefined
+    ? svgTemplate(composition, color)
+    : NO_SVG;
 
   const labelClass = [isMarked && "aiLabel", isPending && "pendingLabel"].filter(Boolean).join(" ") || undefined;
   const badge = isMarked ? html`<${AiBadge} />` : null;
