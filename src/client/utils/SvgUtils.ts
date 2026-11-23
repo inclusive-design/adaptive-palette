@@ -110,53 +110,18 @@ export function compositionToBstr (id: SymbolCompositionType): string {
     if (typeof item !== "number") {
       return item;
     }
-    const symbol = adaptivePaletteGlobals.symbols.find(s => s.id === item);
-    if (symbol && !symbol.isCharacter) {
-      // Composite (word-level) symbols are registered as bare-id aliases via
-      // initSvgCompositeDefinitions()/BlissSVGBuilder.define(), so the id itself
-      // is a valid code. For composites whose alias registration failed, fall
-      // back to inlining this composite's own flattened composition directly --
-      // safe since compositions never nest another composite.
-      return BlissSVGBuilder.isDefined(String(item))
-        ? String(item)
-        : compositionToBstr(symbol.composition as SymbolCompositionType);
-    }
-    // Character symbols always use BlissSVGBuilder's native "B<id>" code, never a
-    // bare-id alias. Unknown ids also fall here.
-    return "B" + item;
+    // A composite (word) expands to its own composition, which holds characters only. A
+    // character, or an unknown id, uses the builder's "B<id>" code.
+    const symbol = findSymbolById(item);
+    return symbol && !symbol.isCharacter
+      ? compositionToBstr(symbol.composition as SymbolCompositionType)
+      : "B" + item;
   };
 
   if (typeof id === "number") {
     return toToken(id);
   }
   return id.map(toToken).join("");
-}
-
-/**
- * Register every composite symbol (`isCharacter: false`) in
- * `adaptivePaletteGlobals.symbols` as a `BlissSVGBuilder` alias, keyed by its
- * own numeric ID, aliasing to its flattened base-character bstr. Character
- * symbols are deliberately NOT registered: they must always be referenced by
- * their native `"B<id>"` code (see the comment in `compositionToBstr()`), so
- * a bare-id alias for them would be both unnecessary and misleading.
- * Called once from `initAdaptivePaletteGlobals()`.
- * Note: BlissSVGBuilder.define() can still reject a composite's codeString
- * (e.g. composition with "XOH"). compositionToBstr() falls back to inline
- * expansion for any composite whose alias fails to register.
- */
-export function initSvgCompositeDefinitions (): void {
-  const definitions: Record<string, { codeString: string }> = {};
-  for (const symbol of adaptivePaletteGlobals.symbols) {
-    if (!symbol.isCharacter) {
-      definitions[String(symbol.id)] = {
-        codeString: compositionToBstr(symbol.composition as SymbolCompositionType)
-      };
-    }
-  }
-  const result = BlissSVGBuilder.define(definitions);
-  if (result.errors.length) {
-    console.error(`BlissSVGBuilder.define(): ${result.errors.length} symbol(s) failed to register due to internal coordinates`);
-  }
 }
 
 /*
@@ -272,6 +237,18 @@ export function findClassifierFromLeft (id: SymbolCompositionType): number {
     }
   }
   return rightMost;
+}
+
+// The dictionary by id. `adaptivePaletteGlobals.symbols` is never replaced, so this is built once.
+const symbolsById = new Map(adaptivePaletteGlobals.symbols.map((symbol) => [symbol.id, symbol]));
+
+/**
+ * The dictionary entry with this id.
+ * @param {number} id - The symbol's id.
+ * @return {BlissSymbolEntry | undefined} - The entry, or `undefined` if there is no such id.
+ */
+export function findSymbolById (id: number): BlissSymbolEntry | undefined {
+  return symbolsById.get(id);
 }
 
 /**

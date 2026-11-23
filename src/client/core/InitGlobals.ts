@@ -33,7 +33,6 @@ import { adaptivePaletteGlobals } from "../state/GlobalData";
 import { loadConfig } from "./Config";
 import { getModelNames, isLocalHost } from "./OllamaApi";
 import { initIndicatorLabels, startLabelWatcher } from "./SymbolLabelUtils";
-import { initSvgCompositeDefinitions } from "../utils/SvgUtils";
 import { applyStoredSettings } from "../features/settings/SettingsSchema";
 import { setEditGuard, setMessageClearer } from "./MessageEdit";
 import { setNavigationOverlay } from "./NavigationOverlay";
@@ -85,7 +84,6 @@ export async function initAdaptivePaletteGlobals (mainPaletteContainerId?:string
   startLabelWatcher();
   // Home and Back close the sentence layer before they navigate.
   setNavigationOverlay({ isOpen: sentenceLayerOpen, hide: hideSentences });
-  initSvgCompositeDefinitions();
   adaptivePaletteGlobals.mainPaletteContainerId = mainPaletteContainerId || "";
 
   // Installed before it is opened, so a browser that refuses a database still leaves every

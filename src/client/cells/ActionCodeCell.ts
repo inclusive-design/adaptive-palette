@@ -14,7 +14,7 @@ import type { VNode } from "preact";
 import { html } from "htm/preact";
 import type { CellColorsType, PictureOrSymbolInfoType, LayoutInfoType, SymbolEncodingType } from "../index.d";
 import { BlissSymbol } from "../components/BlissSymbol";
-import { adaptivePaletteGlobals } from "../state/GlobalData";
+import { findSymbolById } from "../utils/SvgUtils";
 import { insertWord } from "../core/MessageEdit";
 import { goToPalette } from "../core/PaletteNavigation";
 import { colorStyle, generateGridStyle } from "../utils/GridUtils";
@@ -38,7 +38,7 @@ export function ActionCodeCell (props: ActionCodeCellPropsType): VNode {
 
   const cellClicked = () => {
     const symbol = typeof composition === "number"
-      ? adaptivePaletteGlobals.symbols.find(s => s.id === composition)
+      ? findSymbolById(composition)
       : null;
     // The payload includes an empty `modifierInfo` for this new symbol. A picture is not in the
     // Bliss dictionary, so it has no `userSelectedSymbolId`.

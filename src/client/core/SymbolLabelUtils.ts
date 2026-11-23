@@ -22,7 +22,7 @@ import { effect, untracked } from "@preact/signals";
 import { adaptivePaletteGlobals, changeEncodingContents, wordBuildSignal } from "../state/GlobalData";
 import { editMessage } from "./MessageEdit";
 import { renderPromptLines, promptsFor } from "../utils/PromptUtils";
-import { glossFor } from "../utils/SvgUtils";
+import { findSymbolById, glossFor } from "../utils/SvgUtils";
 import { applyModifiersToLabel } from "../utils/SymbolEncodingUtils";
 import { isLocalHost, pickModel, queryChat } from "./OllamaApi";
 import type { Language} from "../i18n/I18n";
@@ -138,7 +138,7 @@ function labelKey (payload: SymbolEncodingType, language: Language): string {
  * @returns {LabelQueryType | undefined}
  */
 function buildQuery (payload: SymbolEncodingType, language: Language, key: string): LabelQueryType | undefined {
-  const { config, models, symbols } = adaptivePaletteGlobals;
+  const { config, models } = adaptivePaletteGlobals;
   const lookup = config.labelLookup;
   const prompts = promptsFor(lookup, language);
   if (!isLocalHost() || models.length === 0 || !lookup.useModelQueryFallback || !prompts) {
@@ -160,7 +160,7 @@ function buildQuery (payload: SymbolEncodingType, language: Language, key: strin
   }
   let word = { word: payload.baseLabel ?? payload.label, pos: "", explanation: "" };
   if (payload.userSelectedSymbolId !== undefined) {
-    const symbol = symbols.find((entry) => entry.id === payload.userSelectedSymbolId);
+    const symbol = findSymbolById(payload.userSelectedSymbolId);
     if (!symbol) {
       return undefined;
     }

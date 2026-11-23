@@ -14,16 +14,11 @@ import { render } from "@testing-library/preact";
 import { html } from "htm/preact";
 import { BlissSentence } from "./BlissSentence";
 import { saveMessageRecord } from "../../core/MessageLog";
-import { initSvgCompositeDefinitions } from "../../utils/SvgUtils";
 import { resetMessageLog } from "../../testUtils/MessageLogTestUtils";
 import { testPicture } from "../../testUtils/CellTestUtils";
 import { PaletteStore } from "../../core/PaletteStore";
 
 describe("BlissSentence", (): void => {
-
-  beforeAll((): void => {
-    initSvgCompositeDefinitions();
-  });
 
   beforeEach(async (): Promise<void> => {
     await resetMessageLog();

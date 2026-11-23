@@ -17,16 +17,13 @@
 import type { BlissSymbolEntry, ContentSignalDataType, SymbolCompositionType, SymbolEncodingType } from "../../index.d";
 import type { Language } from "../../i18n/I18n";
 import { adaptivePaletteGlobals } from "../../state/GlobalData";
-import { COMBINE_MARKER_ID, SEMANTIC_INDICATORS, glossFor, isIndicator } from "../../utils/SvgUtils";
+import { COMBINE_MARKER_ID, SEMANTIC_INDICATORS, findSymbolById, glossFor, isIndicator } from "../../utils/SvgUtils";
 import { AUTO_COMMA_PART, isWordPart, normalizeComposition } from "../../utils/SymbolEncodingUtils";
 
 type TokenType = string | number;
 
 // A kerning code moves one character against the next. It carries no meaning.
 const KERNING = /^[AR]K:/;
-
-const entryOf = (id: number): BlissSymbolEntry | undefined =>
-  adaptivePaletteGlobals.symbols.find((symbol) => symbol.id === id);
 
 const isOverlay = (token: TokenType | undefined): boolean => token === ";" || token === ";;";
 
@@ -61,7 +58,7 @@ export function firstGloss (gloss: string): string {
 function expandComposition (composition: SymbolCompositionType): TokenType[] {
   const tokens = typeof composition === "number" ? [composition] : composition;
   return tokens.flatMap((token) => {
-    const entry = typeof token === "number" ? entryOf(token) : undefined;
+    const entry = typeof token === "number" ? findSymbolById(token) : undefined;
     return entry && !entry.isCharacter && Array.isArray(entry.composition) ? entry.composition : [token];
   });
 }
@@ -163,7 +160,7 @@ export function splitPart (part: SymbolEncodingType, language: Language): Symbol
   }
   return groups.filter((group) => group.length > 0).map((group) => {
     const id = group.find((token): token is number => typeof token === "number");
-    const entry = id === undefined ? undefined : entryOf(id);
+    const entry = id === undefined ? undefined : findSymbolById(id);
     // A letter, such as "Xa", is labelled with the letter.
     const label = entry ? firstGloss(glossFor(entry, language)) : group.join("").replace(/^X/, "");
     return { label, composition: normalizeComposition(group), modifierInfo: [] };
