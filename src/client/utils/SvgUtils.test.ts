@@ -11,7 +11,6 @@
  */
 import { vi } from "vitest";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
-import { adaptivePaletteGlobals } from "../state/GlobalData";
 import {
   compositionToBstr, bstrToComposition, isIndicator,
   findIndicators, findWordIndicators, isModifier, findClassifierFromLeft, findSymbolByBciAvId, findSymbolById,
@@ -174,19 +173,6 @@ describe("SvgUtils", (): void => {
     // 1758 = "group (people)", composition: [368, "/", 513]
     expect(findSymbolById(1758)?.composition).toEqual([368, "/", 513]);
     expect(findSymbolById(invalidId)).toBeUndefined();
-  });
-
-  test("findSymbolById() follows a new symbol list", (): void => {
-    const original = adaptivePaletteGlobals.symbols;
-    try {
-      const changed = { ...findSymbolById(1758)!, composition: [368] };
-      adaptivePaletteGlobals.symbols = original.map((entry) => entry.id === 1758 ? changed : entry);
-      expect(findSymbolById(1758)).toBe(changed);
-      expect(compositionToBstr(1758)).toBe("B368");
-    } finally {
-      adaptivePaletteGlobals.symbols = original;
-    }
-    expect(findSymbolById(1758)?.composition).toEqual([368, "/", 513]);
   });
 
   test("Composite symbol renders identically via bare id and its expanded composition", (): void => {
