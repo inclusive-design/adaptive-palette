@@ -34,7 +34,8 @@ type BlissSymbolPropsType = {
 
 // One template per symbol and colour, so each is built once. `html` keeps every template array it is
 // given, keyed by the array itself, and never drops one, so a new array on each draw would grow
-// without end.
+// without end. Dropping entries here would not free memory, since `html` still holds the arrays.
+// ponytail: grows by one entry per symbol and colour drawn in a session; fine for a palette's worth.
 const svgTemplates = new Map<string, TemplateStringsArray>();
 
 // The template for no symbol: a picture, or a label alone.

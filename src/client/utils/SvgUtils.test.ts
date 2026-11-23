@@ -10,6 +10,7 @@
  * https://github.com/inclusive-design/adaptive-palette/blob/main/LICENSE
  */
 import { vi } from "vitest";
+import { BlissSVGBuilder } from "bliss-svg-builder";
 import { initAdaptivePaletteGlobals } from "../core/InitGlobals";
 import {
   compositionToBstr, bstrToComposition, isIndicator,
@@ -178,6 +179,12 @@ describe("SvgUtils", (): void => {
   test("Composite symbol renders identically via bare id and its expanded composition", (): void => {
     // 1903 = "to know", isCharacter: false, composition: [412, ";", 81]
     expect(getSvgElement(1903).outerHTML).toBe(getSvgElement([412, ";", 81]).outerHTML);
+  });
+
+  test("A word indicator on an expanded composite draws as it did on the composite's alias", (): void => {
+    // 1440 = "came", composition: [335, ";", 81, "/", 428], which already carries an indicator (81).
+    BlissSVGBuilder.define({ "1440": { codeString: compositionToBstr(1440) } });
+    expect(getSvgElement([1440, ";;", 92]).outerHTML).toBe(new BlissSVGBuilder("1440;;B92").svgElement.outerHTML);
   });
 
   test("getSvgBuilder logs console.error for an invalid id but still returns a builder", (): void => {
