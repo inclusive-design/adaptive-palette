@@ -25,6 +25,9 @@ The desktop version is for everyday use and protects your privacy. It saves your
 the AI features can tailor their suggestions to you, and both that data and the AI models stay
 on your computer: nothing you write leaves it.
 
+The AI features run on your computer, so their speed depends on it. To see how fast they would
+be on a computer before installing, run the [Response Time Test](./docs/ResponseTimeTest.md).
+
 ## Accessibility
 
 - **Screen size:** the whole interface fits on a screen of at least 1024×650 CSS pixels, such as a
