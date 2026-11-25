@@ -362,13 +362,53 @@ function packageWindows (included) {
   return zip;
 }
 
+/**
+ * The Response Time Test zip: Node, the launcher folder, and the two files the test reads,
+ * `public/config.json` (the prompts) and `package.json` (the version), at the paths it reads
+ * them from in the repo. See docs/ResponseTimeTest.md.
+ * @returns {string} - Path to the zip.
+ */
+function packageResponseTimeTest () {
+  const folder = path.join(outDir, "ResponseTimeTest");
+  fs.rmSync(folder, { recursive: true, force: true });
+  const mac = process.platform === "darwin";
+  copyRuntime(folder, mac ? "node" : "node.exe");
+  fs.mkdirSync(path.join(folder, "public"));
+  fs.copyFileSync(path.join(root, "public", "config.json"), path.join(folder, "public", "config.json"));
+  fs.copyFileSync(path.join(root, "package.json"), path.join(folder, "package.json"));
+  const zip = path.join(outDir, `ResponseTimeTest-${mac ? "macos" : "windows"}.zip`);
+  fs.rmSync(zip, { force: true });
+  if (mac) {
+    const entry = path.join(folder, "ResponseTimeTest.command");
+    fs.writeFileSync(entry, "#!/bin/sh\ncd \"$(dirname \"$0\")\" || exit 1\n./node launcher/responseTimeTest.cjs\n");
+    fs.chmodSync(entry, 0o755);
+    // Apple Silicon refuses an unsigned executable. Ad hoc, as for the app.
+    run("codesign", ["--sign", "-", "--force", path.join(folder, "node")]);
+    run("ditto", ["-c", "-k", "--keepParent", folder, zip]);
+  } else {
+    fs.writeFileSync(
+      path.join(folder, "ResponseTimeTest.bat"),
+      "@echo off\r\n\"%~dp0node.exe\" \"%~dp0launcher\\responseTimeTest.cjs\"\r\n"
+    );
+    run("powershell", ["-NoProfile", "-Command", `Compress-Archive -Path '${folder}' -DestinationPath '${zip}'`]);
+  }
+  return zip;
+}
+
 function version () {
   return JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8")).version;
 }
 
 // Only when run as `node scripts/package_desktop.js`. A test imports this file for the pure
 // functions it exports, and importing it must not build, sign, or zip anything.
-if (import.meta.main) {
+if (import.meta.main && process.argv.includes("--response-time-test")) {
+  // Needs no `dist`: the test never serves the app.
+  if (!["darwin", "win32"].includes(process.platform)) {
+    throw new Error(`No Response Time Test zip is built for ${process.platform}.`);
+  }
+  fs.mkdirSync(outDir, { recursive: true });
+  console.log(`Packaged ${path.relative(root, packageResponseTimeTest())}`);
+} else if (import.meta.main) {
   // Checked before anything is deleted, downloaded or built, so a mistyped name costs nothing.
   if (!fs.existsSync(path.join(root, "dist"))) {
     throw new Error("There is no `dist` to package. Run `npm run build` first.");

@@ -38,6 +38,9 @@ Go to the [releases page](https://github.com/inclusive-design/adaptive-palette/r
 open the newest release, and under **Assets** download `AdaptivePalette-windows.zip` or
 `AdaptivePalette-macos.zip`. The macOS zip works on both Intel and Apple Silicon Macs.
 
+To find out how fast the AI features will be on a computer before installing, see
+[Response Time Test](ResponseTimeTest.md).
+
 On **Windows**, open the zip and drag the **AdaptivePalette** folder to where you want to
 keep it, such as your Desktop. The app is the whole folder, so keep it together. The
 **AdaptivePalette** file inside it, with the two gears, starts the app; make a shortcut to it
