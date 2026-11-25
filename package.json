@@ -9,6 +9,7 @@
     "start": "vite --port 3000",
     "build": "vite build",
     "package:desktop": "npm run build && node scripts/package_desktop.js",
+    "package:response-time-test": "node scripts/package_desktop.js --response-time-test",
     "typecheck": "tsc --noEmit",
     "lint": "run-p lint:*",
     "lint:js": "eslint .",
