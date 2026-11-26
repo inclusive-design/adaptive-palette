@@ -184,14 +184,16 @@ function buildUniversalNode (nodeTarget) {
  * them can run one against the other.
  * @param {string} target - Directory to copy into.
  * @param {string} nodeName - Filename to give the Node binary.
+ * @param {function(string): boolean} keep - Whether to ship a file of `launcher/`, by name.
  * @returns {void}
  */
-function copyRuntime (target, nodeName) {
+function copyRuntime (target, nodeName, keep) {
   fs.mkdirSync(target, { recursive: true });
-  fs.cpSync(path.join(root, "launcher"), path.join(target, "launcher"), {
+  const launcher = path.join(root, "launcher");
+  fs.cpSync(launcher, path.join(target, "launcher"), {
     recursive: true,
     // Test files have no place in a shipped bundle.
-    filter: (src) => !/\.test\.[cm]?js$/.test(src)
+    filter: (src) => src === launcher || (!/\.test\.[cm]?js$/.test(src) && keep(path.basename(src)))
   });
   const nodeTarget = path.join(target, nodeName);
   if (process.platform === "darwin") {
@@ -289,12 +291,15 @@ function zipName (included, platform) {
   return `AdaptivePalette${included.length > 0 ? `-${included[0]}` : ""}-${platform}.zip`;
 }
 
+const RESPONSE_TIME_TEST = "responseTimeTest.cjs";
+const isAppLauncherFile = (name) => name !== RESPONSE_TIME_TEST;
+
 function packageMac (included) {
   const app = path.join(outDir, "Adaptive Palette.app");
   fs.rmSync(app, { recursive: true, force: true });
   const contents = path.join(app, "Contents");
   const macOS = path.join(contents, "MacOS");
-  copyRuntime(macOS, "node");
+  copyRuntime(macOS, "node", isAppLauncherFile);
   const launcherScript = path.join(macOS, "adaptive-palette");
 
   // Preflight before `exec`: catches binaries Node cannot start (wrong arch, missing dylib),
@@ -347,7 +352,7 @@ exec ./node launcher/main.cjs
 function packageWindows (included) {
   const folder = path.join(outDir, "AdaptivePalette");
   fs.rmSync(folder, { recursive: true, force: true });
-  copyRuntime(folder, "node.exe");
+  copyRuntime(folder, "node.exe", isAppLauncherFile);
   fs.writeFileSync(
     path.join(folder, "AdaptivePalette.bat"),
     "@echo off\r\n\"%~dp0node.exe\" \"%~dp0launcher\\main.cjs\"\r\n"
@@ -372,7 +377,7 @@ function packageResponseTimeTest () {
   const folder = path.join(outDir, "ResponseTimeTest");
   fs.rmSync(folder, { recursive: true, force: true });
   const mac = process.platform === "darwin";
-  copyRuntime(folder, mac ? "node" : "node.exe");
+  copyRuntime(folder, mac ? "node" : "node.exe", (name) => name === RESPONSE_TIME_TEST);
   fs.mkdirSync(path.join(folder, "public"));
   fs.copyFileSync(path.join(root, "public", "config.json"), path.join(folder, "public", "config.json"));
   fs.copyFileSync(path.join(root, "package.json"), path.join(folder, "package.json"));
@@ -380,7 +385,13 @@ function packageResponseTimeTest () {
   fs.rmSync(zip, { force: true });
   if (mac) {
     const entry = path.join(folder, "ResponseTimeTest.command");
-    fs.writeFileSync(entry, "#!/bin/sh\ncd \"$(dirname \"$0\")\" || exit 1\n./node launcher/responseTimeTest.cjs\n");
+    // Approving this script in Privacy & Security does not approve `./node` beside it, which
+    // Gatekeeper would then block too. Clearing the folder's quarantine first avoids that.
+    fs.writeFileSync(entry, `#!/bin/sh
+cd "$(dirname "$0")" || exit 1
+xattr -dr com.apple.quarantine . 2>/dev/null
+./node launcher/${RESPONSE_TIME_TEST}
+`);
     fs.chmodSync(entry, 0o755);
     // Apple Silicon refuses an unsigned executable. Ad hoc, as for the app.
     run("codesign", ["--sign", "-", "--force", path.join(folder, "node")]);

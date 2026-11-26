@@ -14,7 +14,7 @@ import fs from "node:fs";
 import { describe, expect, test } from "vitest";
 import { renderPromptLines, renderTemplate } from "../src/client/utils/PromptUtils.ts";
 import {
-  COLUMNS, ROW_COLUMNS, chatMessages, gpuUse, ollamaAssets, parseMacGpu, parseNvidiaSmi, parseWindowsGpu,
+  COLUMNS, ROW_COLUMNS, chatMessages, gpuUse, installedName, ollamaAssets, parseMacGpu, parseNvidiaSmi, parseWindowsGpu,
   resultValues, spreadsheetRow
 } from "./responseTimeTest.cjs";
 
@@ -54,6 +54,16 @@ describe("parseMacGpu", () => {
     expect(parseMacGpu(json)).toEqual({ gpu: "Intel UHD Graphics 630 + AMD Radeon Pro 5500M", vram: "8" });
   });
 
+  test("takes the largest memory, whichever GPU is listed first", () => {
+    const json = JSON.stringify({
+      SPDisplaysDataType: [
+        { sppci_model: "Intel UHD Graphics 630", spdisplays_vram: "1536 MB" },
+        { sppci_model: "AMD Radeon Pro 5500M", spdisplays_vram: "8 GB" }
+      ]
+    });
+    expect(parseMacGpu(json).vram).toBe("8");
+  });
+
   test("converts MB to GB", () => {
     const json = JSON.stringify({ SPDisplaysDataType: [{ sppci_model: "Radeon", spdisplays_vram: "2048 MB" }] });
     expect(parseMacGpu(json).vram).toBe("2");
@@ -83,12 +93,31 @@ describe("parseNvidiaSmi", () => {
   test("reads the first GPU's name and memory", () => {
     expect(parseNvidiaSmi("NVIDIA GeForce RTX 3060, 12288 MiB\n")).toEqual({ gpu: "NVIDIA GeForce RTX 3060", vram: "12" });
   });
+
+  test("reports unknown memory when nvidia-smi gives none", () => {
+    expect(parseNvidiaSmi("NVIDIA GeForce MX150, [N/A]\n").vram).toBe("unknown");
+  });
+});
+
+describe("installedName", () => {
+  test("matches a name without a tag to its :latest", () => {
+    expect(installedName(["gemma4:latest"], "gemma4")).toBe("gemma4:latest");
+  });
+
+  test("matches the exact name, and nothing else", () => {
+    expect(installedName(["gemma4:12b"], "gemma4:12b")).toBe("gemma4:12b");
+    expect(installedName(["gemma4:12b"], "gemma4")).toBeUndefined();
+  });
 });
 
 describe("gpuUse", () => {
   test("is the share of the model in GPU memory", () => {
     const ps = { models: [{ name: "gemma4:12b", size: 10e9, size_vram: 4e9 }] };
     expect(gpuUse(ps, "gemma4:12b")).toBe("40% GPU");
+  });
+
+  test("finds a model named without a tag", () => {
+    expect(gpuUse({ models: [{ name: "gemma4:latest", size: 10e9, size_vram: 10e9 }] }, "gemma4")).toBe("100% GPU");
   });
 
   test("is unknown when the model is not loaded", () => {

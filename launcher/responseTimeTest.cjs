@@ -36,6 +36,7 @@ const MIN_FREE_GB = 12;
 // WORK_DIR so an interrupted run still knows, records that this test made it.
 const USER_OLLAMA_DIR = path.join(os.homedir(), ".ollama");
 const MADE_USER_OLLAMA_DIR = path.join(WORK_DIR, "made-user-ollama-folder");
+const OWN_USER_OLLAMA_FILES = ["id_ed25519", "id_ed25519.pub", "cache"];
 // Cold, warm 1, warm 2. Different messages: Ollama answers a repeated prompt from its cache.
 const DEFAULT_MESSAGES = ["want drink water", "go park tomorrow", "mother come home"];
 
@@ -107,15 +108,18 @@ function sizeGb (text) {
 }
 
 /**
- * GPU names and dedicated memory from `system_profiler SPDisplaysDataType -json`. Apple
- * Silicon and Intel integrated graphics share the computer's memory: "shared".
+ * GPU names and the largest dedicated memory from `system_profiler SPDisplaysDataType -json`.
+ * Apple Silicon and Intel integrated graphics share the computer's memory: "shared".
  * @param {string} json - The command's output.
  * @returns {{gpu: string, vram: string}}
  */
 function parseMacGpu (json) {
   const cards = JSON.parse(json).SPDisplaysDataType ?? [];
-  const vram = cards.map((card) => sizeGb(card.spdisplays_vram)).find((size) => size !== undefined);
-  return { gpu: cards.map((card) => card.sppci_model).filter(Boolean).join(" + ") || "unknown", vram: vram ?? "shared" };
+  const sizes = cards.map((card) => sizeGb(card.spdisplays_vram)).filter((size) => size !== undefined).map(Number);
+  return {
+    gpu: cards.map((card) => card.sppci_model).filter(Boolean).join(" + ") || "unknown",
+    vram: sizes.length > 0 ? String(Math.max(...sizes)) : "shared"
+  };
 }
 
 /**
@@ -141,7 +145,21 @@ function parseWindowsGpu (json) {
  */
 function parseNvidiaSmi (csv) {
   const [name, memory] = csv.trim().split("\n")[0].split(",").map((part) => part.trim());
-  return { gpu: name, vram: oneDecimal(parseInt(memory, 10) / 1024) };
+  const mib = parseInt(memory, 10);
+  return { gpu: name, vram: Number.isFinite(mib) ? oneDecimal(mib / 1024) : "unknown" };
+}
+
+/**
+ * The name in `available` that is `wanted`, where a name without a tag means ":latest".
+ * ponytail: a copy of `installedName()` in `src/client/core/OllamaApi.ts`, which a .cjs file
+ * cannot import.
+ * @param {string[]} available - The model names Ollama reports.
+ * @param {string} wanted - The model name from `config.json`.
+ * @returns {string|undefined}
+ */
+function installedName (available, wanted) {
+  const withTag = wanted.includes(":") ? wanted : `${wanted}:latest`;
+  return available.find((candidate) => candidate === wanted || candidate === withTag);
 }
 
 /**
@@ -151,7 +169,8 @@ function parseNvidiaSmi (csv) {
  * @returns {string} - Such as "100% GPU", or "unknown".
  */
 function gpuUse (ps, model) {
-  const loaded = ps.models?.find((entry) => entry.name === model || entry.model === model);
+  const name = installedName(ps.models?.map((entry) => entry.name) ?? [], model);
+  const loaded = ps.models?.find((entry) => entry.name === name);
   return loaded?.size ? `${Math.round(loaded.size_vram / loaded.size * 100)}% GPU` : "unknown";
 }
 
@@ -339,7 +358,7 @@ function progress () {
 async function existingOllama (model) {
   try {
     const { models } = await api(EXISTING_HOST, "tags", undefined, 2000);
-    if (!models.some((entry) => entry.name === model)) {
+    if (!installedName(models.map((entry) => entry.name), model)) {
       return undefined;
     }
     const { version } = await api(EXISTING_HOST, "version", undefined, 2000);
@@ -414,6 +433,11 @@ async function startOwnOllama (gpu) {
     fs.renameSync(staging, ollamaDir);
   }
 
+  const host = `http://${OWN_ADDRESS}`;
+  if (await api(host, "version", undefined, 1000).then(() => true, () => false)) {
+    // Most likely an Ollama left running by an earlier test that was closed mid-run.
+    throw new Error(`Something is already using ${OWN_ADDRESS}. Restart the computer and run the test again.`);
+  }
   if (!fs.existsSync(USER_OLLAMA_DIR)) {
     fs.writeFileSync(MADE_USER_OLLAMA_DIR, "");
   }
@@ -425,7 +449,9 @@ async function startOwnOllama (gpu) {
   server.on("error", (error) => {
     failure = error;
   });
-  const host = `http://${OWN_ADDRESS}`;
+  server.on("exit", (code, signal) => {
+    failure ??= new Error(`Ollama stopped as it started (${code ?? signal}).`);
+  });
   for (let attempt = 0; attempt < 60; attempt++) {
     if (failure) {
       throw failure;
@@ -495,9 +521,9 @@ async function ask (question) {
   return answer;
 }
 
+const read = (file) => JSON.parse(fs.readFileSync(path.join(__dirname, "..", file), "utf8"));
+
 async function main () {
-  const base = path.join(__dirname, "..");
-  const read = (file) => JSON.parse(fs.readFileSync(path.join(base, file), "utf8"));
   const section = read("public/config.json").telegraphicTranslation;
   const model = section.model;
   const toolVersion = read("package.json").version;
@@ -555,39 +581,56 @@ async function main () {
     console.log(row);
     console.log("");
   }
+}
 
+/**
+ * Stop the Ollama this tool started and offer to delete what it downloaded. Runs after a
+ * failed run too, so nothing is left behind.
+ * @returns {Promise<void>}
+ */
+async function cleanUp () {
   if (server) {
     // Unloading the model makes Ollama stop its runner process, which holds files open on Windows.
-    await api(ollama.host, "generate", { model, keep_alive: 0 }).catch(() => {});
+    const { model } = read("public/config.json").telegraphicTranslation;
+    await api(`http://${OWN_ADDRESS}`, "generate", { model, keep_alive: 0 }).catch(() => {});
   }
   await stopServer();
-  if (fs.existsSync(WORK_DIR) && !ollama.label.startsWith("existing")) {
-    const answer = await ask("Delete the downloaded model and Ollama (about 10 GB)? [Y/n] ");
-    if (!/^n/i.test(answer.trim())) {
-      try {
-        if (fs.existsSync(MADE_USER_OLLAMA_DIR)) {
-          // Only what `ollama serve` made, and the folder only if that leaves it empty: an
-          // Ollama installed since then keeps its models in this folder.
-          for (const file of ["id_ed25519", "id_ed25519.pub", "cache"]) {
-            fs.rmSync(path.join(USER_OLLAMA_DIR, file), { recursive: true, force: true });
-          }
-          try {
-            fs.rmdirSync(USER_OLLAMA_DIR);
-          } catch {
-            // Not empty: leave it.
-          }
-        }
-        fs.rmSync(WORK_DIR, { recursive: true, force: true });
-        console.log("Deleted.");
-      } catch (error) {
-        console.log(`Could not delete ${WORK_DIR}: ${error.message}. Delete it by hand.`);
+  if (!fs.existsSync(WORK_DIR)) {
+    return;
+  }
+  const answer = await ask("Delete the Ollama and model this test downloaded (up to 10 GB)? [Y/n] ");
+  if (/^n/i.test(answer.trim())) {
+    return;
+  }
+  try {
+    if (fs.existsSync(MADE_USER_OLLAMA_DIR) && ownsUserOllamaDir()) {
+      for (const file of OWN_USER_OLLAMA_FILES) {
+        fs.rmSync(path.join(USER_OLLAMA_DIR, file), { recursive: true, force: true });
       }
+      fs.rmdirSync(USER_OLLAMA_DIR);
     }
+    fs.rmSync(WORK_DIR, { recursive: true, force: true });
+    console.log("Deleted.");
+  } catch (error) {
+    console.log(`Could not delete ${WORK_DIR}: ${error.message}. Delete it by hand.`);
+  }
+}
+
+/**
+ * Whether `~/.ollama` holds only what this test's `ollama serve` made. An Ollama installed since
+ * adds to it (models, logs) and reuses the key pair, so then it is left alone.
+ * @returns {boolean}
+ */
+function ownsUserOllamaDir () {
+  try {
+    return fs.readdirSync(USER_OLLAMA_DIR).every((file) => OWN_USER_OLLAMA_FILES.includes(file));
+  } catch {
+    return false;
   }
 }
 
 module.exports = {
-  COLUMNS, ROW_COLUMNS, chatMessages, gpuUse, ollamaAssets, parseMacGpu, parseNvidiaSmi, parseWindowsGpu,
+  COLUMNS, ROW_COLUMNS, chatMessages, gpuUse, installedName, ollamaAssets, parseMacGpu, parseNvidiaSmi, parseWindowsGpu,
   resultValues, spreadsheetRow
 };
 
@@ -600,5 +643,8 @@ if (require.main === module) {
       console.log("Run the test again. If it stops at the same place, send this message to the Adaptive Palette team.");
       process.exitCode = 1;
     })
-    .finally(() => ask("\nPress Enter to close."));
+    .finally(async () => {
+      await cleanUp().catch((error) => console.log(`Could not clean up: ${error.message}`));
+      await ask("\nPress Enter to close.");
+    });
 }

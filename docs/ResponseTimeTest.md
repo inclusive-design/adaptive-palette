@@ -7,7 +7,7 @@ You need:
 
 - Windows 10 or newer, or macOS 13.5 or newer
 - About 12 GB of free disk space, 16 GB RAM or above, and an internet connection
-- 15 minutes, mostly downloading
+- 15 to 30 minutes, mostly downloading
 
 ## 1. Download
 
@@ -32,13 +32,9 @@ On **macOS**:
 
 A window shows the test's progress. Leave it open until it finishes.
 
-## 3. Paste the result
+## 3. Paste the result (Optional)
 
-At the end the test copies your result. Click the first cell of the first empty row in the
-spreadsheet you were sent, and paste.
-
-If the window says it could not copy, select its text from the first quote mark to the end,
-copy, and paste.
+At the end the test copies your result and paste in the spreadsheet you were sent.
 
 ## 4. Clean up
 
