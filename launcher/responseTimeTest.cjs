@@ -32,6 +32,10 @@ const EXISTING_HOST = "http://127.0.0.1:11434";
 const OWN_ADDRESS = "127.0.0.1:11435";
 const WORK_DIR = path.join(os.tmpdir(), "adaptive-palette-response-test");
 const MIN_FREE_GB = 12;
+// `ollama serve` makes this folder on first start (a key pair and a cache). The marker, kept in
+// WORK_DIR so an interrupted run still knows, records that this test made it.
+const USER_OLLAMA_DIR = path.join(os.homedir(), ".ollama");
+const MADE_USER_OLLAMA_DIR = path.join(WORK_DIR, "made-user-ollama-folder");
 // Cold, warm 1, warm 2. Different messages: Ollama answers a repeated prompt from its cache.
 const DEFAULT_MESSAGES = ["want drink water", "go park tomorrow", "mother come home"];
 
@@ -410,6 +414,9 @@ async function startOwnOllama (gpu) {
     fs.renameSync(staging, ollamaDir);
   }
 
+  if (!fs.existsSync(USER_OLLAMA_DIR)) {
+    fs.writeFileSync(MADE_USER_OLLAMA_DIR, "");
+  }
   let failure;
   server = spawn(binary, ["serve"], {
     env: { ...process.env, OLLAMA_HOST: OWN_ADDRESS, OLLAMA_MODELS: path.join(WORK_DIR, "models") },
@@ -558,6 +565,18 @@ async function main () {
     const answer = await ask("Delete the downloaded model and Ollama (about 10 GB)? [Y/n] ");
     if (!/^n/i.test(answer.trim())) {
       try {
+        if (fs.existsSync(MADE_USER_OLLAMA_DIR)) {
+          // Only what `ollama serve` made, and the folder only if that leaves it empty: an
+          // Ollama installed since then keeps its models in this folder.
+          for (const file of ["id_ed25519", "id_ed25519.pub", "cache"]) {
+            fs.rmSync(path.join(USER_OLLAMA_DIR, file), { recursive: true, force: true });
+          }
+          try {
+            fs.rmdirSync(USER_OLLAMA_DIR);
+          } catch {
+            // Not empty: leave it.
+          }
+        }
         fs.rmSync(WORK_DIR, { recursive: true, force: true });
         console.log("Deleted.");
       } catch (error) {
