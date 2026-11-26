@@ -184,14 +184,16 @@ function buildUniversalNode (nodeTarget) {
  * them can run one against the other.
  * @param {string} target - Directory to copy into.
  * @param {string} nodeName - Filename to give the Node binary.
+ * @param {function(string): boolean} keep - Whether to ship a file of `launcher/`, by name.
  * @returns {void}
  */
-function copyRuntime (target, nodeName) {
+function copyRuntime (target, nodeName, keep) {
   fs.mkdirSync(target, { recursive: true });
-  fs.cpSync(path.join(root, "launcher"), path.join(target, "launcher"), {
+  const launcher = path.join(root, "launcher");
+  fs.cpSync(launcher, path.join(target, "launcher"), {
     recursive: true,
     // Test files have no place in a shipped bundle.
-    filter: (src) => !/\.test\.[cm]?js$/.test(src)
+    filter: (src) => src === launcher || (!/\.test\.[cm]?js$/.test(src) && keep(path.basename(src)))
   });
   const nodeTarget = path.join(target, nodeName);
   if (process.platform === "darwin") {
@@ -289,12 +291,15 @@ function zipName (included, platform) {
   return `AdaptivePalette${included.length > 0 ? `-${included[0]}` : ""}-${platform}.zip`;
 }
 
+const RESPONSE_TIME_TEST = "responseTimeTest.cjs";
+const isAppLauncherFile = (name) => name !== RESPONSE_TIME_TEST;
+
 function packageMac (included) {
   const app = path.join(outDir, "Adaptive Palette.app");
   fs.rmSync(app, { recursive: true, force: true });
   const contents = path.join(app, "Contents");
   const macOS = path.join(contents, "MacOS");
-  copyRuntime(macOS, "node");
+  copyRuntime(macOS, "node", isAppLauncherFile);
   const launcherScript = path.join(macOS, "adaptive-palette");
 
   // Preflight before `exec`: catches binaries Node cannot start (wrong arch, missing dylib),
@@ -347,7 +352,7 @@ exec ./node launcher/main.cjs
 function packageWindows (included) {
   const folder = path.join(outDir, "AdaptivePalette");
   fs.rmSync(folder, { recursive: true, force: true });
-  copyRuntime(folder, "node.exe");
+  copyRuntime(folder, "node.exe", isAppLauncherFile);
   fs.writeFileSync(
     path.join(folder, "AdaptivePalette.bat"),
     "@echo off\r\n\"%~dp0node.exe\" \"%~dp0launcher\\main.cjs\"\r\n"
@@ -362,13 +367,59 @@ function packageWindows (included) {
   return zip;
 }
 
+/**
+ * The Response Time Test zip: Node, the launcher folder, and the two files the test reads,
+ * `public/config.json` (the prompts) and `package.json` (the version), at the paths it reads
+ * them from in the repo. See docs/ResponseTimeTest.md.
+ * @returns {string} - Path to the zip.
+ */
+function packageResponseTimeTest () {
+  const folder = path.join(outDir, "ResponseTimeTest");
+  fs.rmSync(folder, { recursive: true, force: true });
+  const mac = process.platform === "darwin";
+  copyRuntime(folder, mac ? "node" : "node.exe", (name) => name === RESPONSE_TIME_TEST);
+  fs.mkdirSync(path.join(folder, "public"));
+  fs.copyFileSync(path.join(root, "public", "config.json"), path.join(folder, "public", "config.json"));
+  fs.copyFileSync(path.join(root, "package.json"), path.join(folder, "package.json"));
+  const zip = path.join(outDir, `ResponseTimeTest-${mac ? "macos" : "windows"}.zip`);
+  fs.rmSync(zip, { force: true });
+  if (mac) {
+    const entry = path.join(folder, "ResponseTimeTest.command");
+    // Approving this script in Privacy & Security does not approve `./node` beside it, which
+    // Gatekeeper would then block too. Clearing the folder's quarantine first avoids that.
+    fs.writeFileSync(entry, `#!/bin/sh
+cd "$(dirname "$0")" || exit 1
+xattr -dr com.apple.quarantine . 2>/dev/null
+./node launcher/${RESPONSE_TIME_TEST}
+`);
+    fs.chmodSync(entry, 0o755);
+    // Apple Silicon refuses an unsigned executable. Ad hoc, as for the app.
+    run("codesign", ["--sign", "-", "--force", path.join(folder, "node")]);
+    run("ditto", ["-c", "-k", "--keepParent", folder, zip]);
+  } else {
+    fs.writeFileSync(
+      path.join(folder, "ResponseTimeTest.bat"),
+      "@echo off\r\n\"%~dp0node.exe\" \"%~dp0launcher\\responseTimeTest.cjs\"\r\n"
+    );
+    run("powershell", ["-NoProfile", "-Command", `Compress-Archive -Path '${folder}' -DestinationPath '${zip}'`]);
+  }
+  return zip;
+}
+
 function version () {
   return JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8")).version;
 }
 
 // Only when run as `node scripts/package_desktop.js`. A test imports this file for the pure
 // functions it exports, and importing it must not build, sign, or zip anything.
-if (import.meta.main) {
+if (import.meta.main && process.argv.includes("--response-time-test")) {
+  // Needs no `dist`: the test never serves the app.
+  if (!["darwin", "win32"].includes(process.platform)) {
+    throw new Error(`No Response Time Test zip is built for ${process.platform}.`);
+  }
+  fs.mkdirSync(outDir, { recursive: true });
+  console.log(`Packaged ${path.relative(root, packageResponseTimeTest())}`);
+} else if (import.meta.main) {
   // Checked before anything is deleted, downloaded or built, so a mistyped name costs nothing.
   if (!fs.existsSync(path.join(root, "dist"))) {
     throw new Error("There is no `dist` to package. Run `npm run build` first.");

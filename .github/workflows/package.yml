@@ -31,8 +31,10 @@ jobs:
         run: npm ci
       - name: Package
         run: npm run package:desktop
+      - name: Package the Response Time Test
+        run: npm run package:response-time-test
       - name: Attach to the release
         shell: bash
-        run: gh release upload "${{ github.event.release.tag_name }}" dist-desktop/AdaptivePalette-*.zip --clobber
+        run: gh release upload "${{ github.event.release.tag_name }}" dist-desktop/AdaptivePalette-*.zip dist-desktop/ResponseTimeTest-*.zip --clobber
         env:
           GH_TOKEN: ${{ github.token }}
