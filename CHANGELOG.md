@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.5.0](https://github.com/inclusive-design/adaptive-palette/compare/v0.4.1...v0.5.0) (2026-11-26)
+
+
+### Features
+
+* cache symbol drawing in a map to avoid repeated re-painting (resolves [#332](https://github.com/inclusive-design/adaptive-palette/issues/332)) ([#333](https://github.com/inclusive-design/adaptive-palette/issues/333)) ([0efa8b5](https://github.com/inclusive-design/adaptive-palette/commit/0efa8b502cbe341d35dc08099068706e644b0408))
+* code clean up and optimization (resolves [#324](https://github.com/inclusive-design/adaptive-palette/issues/324)) ([#325](https://github.com/inclusive-design/adaptive-palette/issues/325)) ([3b5dcba](https://github.com/inclusive-design/adaptive-palette/commit/3b5dcbab80715d643ba9a37242926ec2d35e60c0))
+* implement a response time tester (resolves [#334](https://github.com/inclusive-design/adaptive-palette/issues/334)) ([#335](https://github.com/inclusive-design/adaptive-palette/issues/335)) ([8880eb4](https://github.com/inclusive-design/adaptive-palette/commit/8880eb469e863b58eb8c250515b986a78e1ea6af))
+* Replace misused effect hooks (useEffect, useLayoutEffect) (resolves [#321](https://github.com/inclusive-design/adaptive-palette/issues/321)) ([#322](https://github.com/inclusive-design/adaptive-palette/issues/322)) ([b01c3c0](https://github.com/inclusive-design/adaptive-palette/commit/b01c3c0dd6bb0b843e5825895ae6ef4aef074e4b))
+* use shared cell component and css for command buttons (resolves [#326](https://github.com/inclusive-design/adaptive-palette/issues/326)) ([#327](https://github.com/inclusive-design/adaptive-palette/issues/327)) ([9c2b107](https://github.com/inclusive-design/adaptive-palette/commit/9c2b10744404fa2e5c9bdd15e45aa46eccf7485e))
+
 ## [0.4.1](https://github.com/inclusive-design/adaptive-palette/compare/v0.4.0...v0.4.1) (2026-11-13)
 
 ### Features
